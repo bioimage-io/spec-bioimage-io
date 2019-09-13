@@ -1,7 +1,7 @@
 # Bioimiage.io Entry Configuration
 
 An entry in the bioimage.io model zoo is defined by a configuration stored as yaml according to the following specification:
-The configuration must contain the keys  `version`, `language`, `framework`, `model`, `training`, `data`, `info`.
+The configuration must contain the keys  `version`, `language`, `framework`, `model`, `training`, `data`, `meta`.
 
 ## version
 
@@ -34,7 +34,9 @@ framework:
     pytorch: 1.1
 
 model:
-    definition: link/to/definition.py
+    definition:
+        source: link/to/definition.py
+        hash: 12
     weights:
         source: link/to/weights.torch
         hash: 42
@@ -46,8 +48,7 @@ training:
         Adam:
             beta: 0.01
     pretrained_on:
-        source: doi
-        hash: 21
+        - {source: doi1, hash: 21}
     batch_size: 4
     target:
         task: "Segmentation"
