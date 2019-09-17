@@ -6,9 +6,11 @@ class Upsample(nn.Module):
     def __init__(self, scale_factor, mode='bilinear'):
         super().__init__()
         self.scale_factor = scale_factor
+        self.mode = mode
 
     def forward(self, input):
-        return nn.interpolate(input, scale_factor=self.scale_factor, mode=self.mode)
+        return nn.functional.interpolate(input, scale_factor=self.scale_factor, mode=self.mode,
+                                         align_corners=False)
 
 
 class UNet2d(nn.Module):
@@ -41,10 +43,10 @@ class UNet2d(nn.Module):
                              nn.Conv2d(out_channels, out_channels, kernel_size, padding=padding),
                              nn.ReLU(inplace=True))
 
-    def upsampler(self):
+    def downsampler(self):
         return nn.MaxPool2d(2)
 
-    def downsampler(self, in_channels, out_channels):
+    def upsampler(self, in_channels, out_channels):
         return nn.Sequential(Upsample(2), nn.Conv2d(in_channels, out_channels, 1))
 
     def forward(self, input):
@@ -58,12 +60,17 @@ class UNet2d(nn.Module):
 
         x = self.base(x)
 
-        for decoder, sampler, enc in zip(self.decoders[::-1],
-                                         self.downsamplers[::-1],
-                                         from_encoder):
+        for decoder, sampler, enc in zip(self.decoders,
+                                         self.upsamplers,
+                                         from_encoder[::-1]):
             x = sampler(x)
             x = torch.cat([enc, x], dim=1)
             x = decoder(x)
 
         x = self.output(x)
         return x
+
+
+if __name__ == '__main__':
+    from core.train import train
+    train('example_configuration.yaml', 'unet2d_weights.torch', 10)

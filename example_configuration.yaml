@@ -4,14 +4,14 @@ framework:
     pytorch: 1.1
 
 model:
-    script:
+    definition:
         source: unet2d.py
         hash: 12
+        name: UNet2d
+        kwargs: {input_channels: 1, output_channels: 1}
     weights:
-        source: link/to/weights.torch
-        hash: 42
-    class_name: UNet2D
-    kwargs: {input_channels: 1, output_channels: 1}
+        source: 10.5281/zenodo.3446812
+        hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     documentation: unet2d.md
     input_axes: "cyx"
     input_size: [1, 256, 256]
@@ -23,21 +23,21 @@ training:
         name: BCELoss
         kwargs: {reduction: "mean"}
         transformations:
-            - Sigmoid
+            - {name: Sigmoid}
     optimizer:
         name: Adam
-        kwargs: {beta: 0.01}
+        kwargs: {lr: 0.002}
     pretrained_on:
-        - {source: doi1, hash: 21}
+        - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
     batch_size: 4
 
 data:
     input_transformations:
-        - Normalize
+        - {name: NormalizeZeroMeanUnitVariance, kwargs: {eps: 0.000001}}
     output_transformations:
-        - Sigmoid
+        - {name: Sigmoid}
 
 meta:
-    description: A 2d U-Net pretrained on ISBI2012 EM segmentation challenge.
-    cite: Ronneberger et al.
+    description: A 2d U-Net pretrained on broad nucleus dataset.
+    cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
     parent_model: 2d-unet
