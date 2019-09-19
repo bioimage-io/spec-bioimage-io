@@ -19,13 +19,14 @@ Deep learning framework used for this entry. Currently supported frameworks are 
 
 Model definition and weights.
 Must contain the keys:
-- `script`: script with model definition.
+- `definition`: script with model definition.
   - `source`: relative path from config file to the script
   - `hash`: hash of the script file
+  - `name`: Name of class defining the model in `script`
+  - `kwargs`: Optional keyword arguments for the model class. 
 - `weights`: model weights
   -  source: link to the model weight file
   - hash: hash of the model weight file
-- `class_name`: Name of class defining the model in `script`
 - `input_axes`: Expected input axes of the model
 - `input_size`: Valid input size for the model
 - `output_axes`: Output axes of the model
@@ -46,9 +47,11 @@ Must contain:
 - `optimizer`: optimizer used in training
   - `name`: Name of the optimizer (must)
   - `kwargs`: keyword arguments for the optimizer (can)
-- `pretrained_on`: list of datasets the model was trained on, valid entry:
-  - `source`: doi of training data
-  - `hash`: hash of training data
+- `pretrained_on`: description of pre-training:
+  - `datasets`: list of datasets the model was trained on, valid entry:
+    - `name`: Name of dataset in the core library.
+    - TODO need optional ways of specifying identifiers for custom training data via url / doi
+  - `n_iterations`: Number of iterations used in training (change to iterations ?)
 - `batch_size`: batch size used for training
 
 ## data
@@ -72,14 +75,14 @@ framework:
     pytorch: 1.1
 
 model:
-    script:
+    definition:
         source: unet2d.py
-        hash: 12
-    class_name: UNet2D
-    kwargs: {input_channels: 1, output_channels: 1}
+        hash: {sha256: 27892992d157f4cf10d7ab4365c83fc29eb6f1f7e6031049cfbd859e5891ebe0}
+        name: UNet2d
+        kwargs: {input_channels: 1, output_channels: 1}
     weights:
-        source: link/to/weights.torch
-        hash: 42
+        source: 10.5281/zenodo.3446812
+        hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     documentation: unet2d.md
     input_axes: "cyx"
     input_size: [1, 256, 256]
@@ -90,23 +93,25 @@ training:
     loss:
         name: BCELoss
         kwargs: {reduction: "mean"}
-        transformations: 
-            - Sigmoid
+        transformations:
+            - {name: Sigmoid}
     optimizer:
         name: Adam
-        kwargs: {beta: 0.01}
+        kwargs: {lr: 0.002}
     pretrained_on:
-        - {source: doi1, hash: 21}
+        datasets:
+            - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
+        n_iterations: 500
     batch_size: 4
 
 data:
     input_transformations:
-        - Normalize
+        - {name: NormalizeZeroMeanUnitVariance, kwargs: {eps: 0.000001}}
     output_transformations:
-        - Sigmoid
+        - {name: Sigmoid}
 
 meta:
-    description: A 2d U-Net pretrained on ISBI2012 EM segmentation challenge.
-    cite: Ronneberger et al.
+    description: A 2d U-Net pretrained on broad nucleus dataset.
+    cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
     parent_model: 2d-unet
 ```
