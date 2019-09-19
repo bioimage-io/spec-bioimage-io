@@ -37,11 +37,11 @@ def parse_train_config(train_config, model):
     ds_config = pretrained_conf['datasets'][0]
     ds = get_class(ds_config['name'], [datasets])()
 
-    n_epochs = pretrained_conf['n_epochs']
+    n_iterations = pretrained_conf['n_iterations']
 
     return {'loss': loss, 'optimizer': optimizer,
             'transforms': transforms, 'batch_size': batch_size,
-            'dataset': ds, 'n_epochs': n_epochs}
+            'dataset': ds, 'n_iterations': n_iterations}
 
 
 def parse_data_config(data_config):

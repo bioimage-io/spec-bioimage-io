@@ -51,7 +51,7 @@ Must contain:
   - `datasets`: list of datasets the model was trained on, valid entry:
     - `name`: Name of dataset in the core library.
     - TODO need optional ways of specifying identifiers for custom training data via url / doi
-  - `n_epocs`: Number of epochs used in training (change to iterations ?)
+  - `n_iterations`: Number of iterations used in training (change to iterations ?)
 - `batch_size`: batch size used for training
 
 ## data
@@ -101,7 +101,7 @@ training:
     pretrained_on:
         datasets:
             - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
-        n_epochs: 10  # maybe change to iterations?
+        n_iterations: 500
     batch_size: 4
 
 data:

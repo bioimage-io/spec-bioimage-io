@@ -30,7 +30,7 @@ training:
     pretrained_on:
         datasets:
             - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
-        n_epochs: 10
+        n_iterations: 500
     batch_size: 4
 
 data:
