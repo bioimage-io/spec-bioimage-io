@@ -6,7 +6,7 @@ from .transforms import apply_transforms
 from .parser import parse_config
 
 
-def train(config_file, out_file, n_epochs):
+def train(config_file, out_file):
     config = parse_config(config_file)
     model, train_config, data_config = config['model'], config['training'], config['data']
     model.train()
@@ -14,6 +14,7 @@ def train(config_file, out_file, n_epochs):
     optimizer, loss = train_config['optimizer'], train_config['loss']
     loss_trafos, batch_size = train_config['transforms'], train_config['batch_size']
     ds = train_config['dataset']
+    n_epochs = train_config['n_epochs']
 
     in_trafos = data_config['input_transforms']
 

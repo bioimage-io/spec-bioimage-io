@@ -28,7 +28,9 @@ training:
         name: Adam
         kwargs: {lr: 0.002}
     pretrained_on:
-        - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
+        datasets:
+            - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
+        n_epochs: 10
     batch_size: 4
 
 data:

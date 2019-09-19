@@ -30,15 +30,18 @@ def parse_train_config(train_config, model):
 
     batch_size = train_config['batch_size']
 
+    pretrained_conf = train_config['pretrained_on']
     # This needs to be more sophisticated in practice
     # need to support concatenating multiple datasets
     # need to support custom urls/dois and validate hashes
-    ds_config = train_config['pretrained_on'][0]
+    ds_config = pretrained_conf['datasets'][0]
     ds = get_class(ds_config['name'], [datasets])()
+
+    n_epochs = pretrained_conf['n_epochs']
 
     return {'loss': loss, 'optimizer': optimizer,
             'transforms': transforms, 'batch_size': batch_size,
-            'dataset': ds}
+            'dataset': ds, 'n_epochs': n_epochs}
 
 
 def parse_data_config(data_config):

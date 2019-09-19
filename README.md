@@ -19,7 +19,7 @@ Deep learning framework used for this entry. Currently supported frameworks are 
 
 Model definition and weights.
 Must contain the keys:
-- `script`: script with model definition.
+- `definition`: script with model definition.
   - `source`: relative path from config file to the script
   - `hash`: hash of the script file
   - `name`: Name of class defining the model in `script`
@@ -47,9 +47,11 @@ Must contain:
 - `optimizer`: optimizer used in training
   - `name`: Name of the optimizer (must)
   - `kwargs`: keyword arguments for the optimizer (can)
-- `pretrained_on`: list of datasets the model was trained on, valid entry:
-  - `name`: Name of dataset in the core library.
-  - TODO need optional ways of specifying identifiers for custom training data via url / doi
+- `pretrained_on`: description of pre-training:
+  - `datasets`: list of datasets the model was trained on, valid entry:
+    - `name`: Name of dataset in the core library.
+    - TODO need optional ways of specifying identifiers for custom training data via url / doi
+  - `n_epocs`: Number of epochs used in training (change to iterations ?)
 - `batch_size`: batch size used for training
 
 ## data
@@ -97,7 +99,9 @@ training:
         name: Adam
         kwargs: {lr: 0.002}
     pretrained_on:
-        - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
+        datasets:
+            - {name: NucleiDataset}  # optional: source : {identifier: doi/url, hash: hash_value}
+        n_epochs: 10  # maybe change to iterations?
     batch_size: 4
 
 data:
