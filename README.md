@@ -48,8 +48,8 @@ Must contain:
   - `name`: Name of the optimizer (must)
   - `kwargs`: keyword arguments for the optimizer (can)
 - `pretrained_on`: list of datasets the model was trained on, valid entry:
-  - `source`: doi of training data
-  - `hash`: hash of training data
+  - `name`: Name of dataset in the core library.
+  - TODO need optional ways of specifying identifiers for custom training data via url / doi
 - `batch_size`: batch size used for training
 
 ## data
