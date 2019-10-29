@@ -1,4 +1,5 @@
 name: UNet2dExample
+description: A 2d U-Net pretrained on broad nucleus dataset.
 format_version: 0.1.0
 language: python
 dependencies:
@@ -6,7 +7,6 @@ dependencies:
     pytorch: >=1.1,<1.2
     numpy: >1.11
     bioimageio_normalize: 0.1
-description: A 2d U-Net pretrained on broad nucleus dataset.
 cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
 authors:
     - Constantin Pape
