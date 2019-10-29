@@ -3,20 +3,23 @@ import torch.utils.data
 from tqdm import trange
 
 from .transforms import apply_transforms
-from .parser import parse_config
+from .data import NucleiDataset
 
 
-def train(config_file, out_file):
-    config = parse_config(config_file)
-    model, train_config, data_config = config['model'], config['training'], config['data']
+def train(model, train_config, out_file):
     model.train()
 
-    optimizer, loss = train_config['optimizer'], train_config['loss']
-    loss_trafos, batch_size = train_config['transforms'], train_config['batch_size']
-    ds = train_config['dataset']
-    n_iterations = train_config['n_iterations']
+    optimizer_conf, loss = train_config['optimizer'], train_config['loss']
+    optimizer = optimizer_conf['class'](model.parameters(), **optimizer_conf['kwargs'])
+    preprocess = train_config['preprocess']
 
-    in_trafos = data_config['input_transforms']
+    # TODO don't hardcode this, but load from config!
+    ds = NucleiDataset()
+    n_iterations = 100
+    batch_size = 2
+    # ds = train_config['dataset']
+    # n_iterations = train_config['n_iterations']
+    # batch_size = train_config['batch_size']
 
     loader = torch.utils.data.DataLoader(ds, shuffle=True, num_workers=2, batch_size=batch_size)
 
@@ -24,10 +27,11 @@ def train(config_file, out_file):
         x, y = next(iter(loader))
         optimizer.zero_grad()
 
-        x, y = apply_transforms(in_trafos, x, y)
+        x, y = apply_transforms(preprocess, x, y)
         out = model(x)
-        out, y = apply_transforms(loss_trafos, out, y)
-        ll = loss(out, y)
+        # kinda hacky ...
+        out, y = apply_transforms(loss[:-1], out, y)
+        ll = loss[-1](out, y)
 
         ll.backward()
         optimizer.step()

@@ -3,15 +3,15 @@ description: A 2d U-Net pretrained on broad nucleus dataset.
 format_version: 0.1.0
 language: python
 dependencies:
-    python: >=3.7
-    pytorch: >=1.1,<1.2
-    numpy: >1.11
-    bioimageio_normalize: 0.1
+    python >=3.7
+    pytorch >=1.1,<1.2
+    numpy >1.11
+    # bioimageio_normalize: 0.1
 cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
 authors:
     - Constantin Pape
     - Fynn Beutenmueller
-doumcentation: some.md
+doumcentation: unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
 
 model:
@@ -19,7 +19,7 @@ model:
     # how to specify entry point
     # ('native entry point')
     definition:  # native entry point
-        source: unet2d.py:UNet2d
+        source: ./unet2d.py:UNet2d
         hash: 12
         kwargs: {input_channels: 1, output_channels: 1}
     input: # needs to become ordered dict (same for output)
@@ -45,31 +45,32 @@ model:
 # FOR NOW: One model one weight file
 prediction:
     preprocess:
-        - {name: ./file_name.py:NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - {name: core.transforms.NormalizeZeroMeanUnitVariance, kwargs: {}}
     weights:
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     postprocess: []
     # optional reference data
 
-
 training:
     preprocess:
-        - {name: bioimageio_normalize.NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - {name: core.transforms.NormalizeZeroMeanUnitVariance, kwargs: {}}
+        # - {name: bioimageio_normalize.NormalizeZeroMeanUnitVariance, kwargs: {}}
     loss:
-        - {name: Sigmoid}
-        - {name: BCELoss, kwargs: {reduction: mean}}
+        # - {name: torch.nn.Sigmoid}
+        - {name: core.transforms.Sigmoid}
+        - {name: torch.nn.BCELoss, kwargs: {reduction: mean}}
     optimizer:
-        name: Adam
+        name: torch.optim.Adam
         kwargs: {lr: 0.002}
     validation:
         - {}
-    # input_shapes: [[4, 1, 512, 512]]  
     input:
         shape: [4, 1, 512, 512]
     target:
         shape: [4, 1, 512, 512]
         axes: bcyx
+    # entry_point: ./unet2d.py:train
     # more hyperparameters
     # initialization: {name: FromWeights, kwargs: {uri: ...}}
     # initialization: {name: He}
