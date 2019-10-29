@@ -1,19 +1,20 @@
-version: 0.0.1
+name: UNet2dExample
+format_version: 0.1.0
 language: python
-framework:
-    pytorch: 1.1
-
-meta:
-    description: A 2d U-Net pretrained on broad nucleus dataset.
-    cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
-    authors:
-        - Constantin Pape
-        - Fynn Beutenmueller
-    doumcentation: some.md
-    tags: [unet2d, pytorch, nucleus-segmentation]
+dependencies:
+    python: >=3.7
+    pytorch: >=1.1,<1.2
+    numpy: >1.11
+    bioimageio_normalize: 0.1
+description: A 2d U-Net pretrained on broad nucleus dataset.
+cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+authors:
+    - Constantin Pape
+    - Fynn Beutenmueller
+doumcentation: some.md
+tags: [unet2d, pytorch, nucleus-segmentation]
 
 model:
-    name: UNet2dExample
     # how would this look for a FIJI project?
     # how to specify entry point
     # ('native entry point')
@@ -23,18 +24,20 @@ model:
         kwargs: {input_channels: 1, output_channels: 1}
     input: # needs to become ordered dict (same for output)
         axes: bcyx #btczyx
-        datatype: float32
-        datarange: [-inf, inf]
+        data_type: float32
+        data_range: [-inf, inf]
         shape:
-            reference: [null, 1, 256, 256]
-            minimal_valid_step: [null, 0, 32, 32]
+            min: [1, 1, 32, 32]
+            step: [null, 0, 32, 32]
+            # exact: [null, 1, 256, 256]
     output:
-        axes: cyx
-        datatype: float32
-        datarange: [0, 1]
+        axes: bcyx
+        data_type: float32
+        data_range: [0, 1]
         shape:
-            scale: [1, 1, 1]
-            offset: [0, 0, 0]
+            scale: [1, 1, 1, 1]
+            offset: [0, 0, 0, 0]
+            # exact: [...]
 
 # discussion: do we support a single or multiple weights?
 # example kipoi: ginger templating
@@ -42,7 +45,7 @@ model:
 # FOR NOW: One model one weight file
 prediction:
     preprocess:
-        - {name: NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - {name: ./file_name.py:NormalizeZeroMeanUnitVariance, kwargs: {}}
     weights:
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
@@ -52,7 +55,7 @@ prediction:
 
 training:
     preprocess:
-        - {name: NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - {name: bioimageio_normalize.NormalizeZeroMeanUnitVariance, kwargs: {}}
     loss:
         - {name: Sigmoid}
         - {name: BCELoss, kwargs: {reduction: mean}}
@@ -61,11 +64,17 @@ training:
         kwargs: {lr: 0.002}
     validation:
         - {}
-    batch_size: 4
+    # input_shapes: [[4, 1, 512, 512]]  
+    input:
+        shape: [4, 1, 512, 512]
+    target:
+        shape: [4, 1, 512, 512]
+        axes: bcyx
     # more hyperparameters
     # initialization: {name: FromWeights, kwargs: {uri: ...}}
     # initialization: {name: He}
     train_on:
+        # todo: sampling
         dataset: something  # can take a list of source
         n_iterations: 1000
         # n_epochs: 10
