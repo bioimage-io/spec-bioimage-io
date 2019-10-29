@@ -3,26 +3,32 @@ language: python
 framework:
     pytorch: 1.1
 
+meta:
+    description: A 2d U-Net pretrained on broad nucleus dataset.
+    cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+    authors:
+        - Constantin Pape
+        - Fynn Beutenmueller
+    doumcentation: some.md
+    tags: [unet2d, pytorch, nucleus-segmentation]
+
 model:
-    identifier: UNet2dExample
+    name: UNet2dExample
     # how would this look for a FIJI project?
     # how to specify entry point
     # ('native entry point')
-    definition:
-        source: unet2d.py
+    definition:  # native entry point
+        source: unet2d.py:UNet2d
         hash: 12
-        name: UNet2d
         kwargs: {input_channels: 1, output_channels: 1}
-    input:
-        dimensions: 3
-        axes: cyx
+    input: # needs to become ordered dict (same for output)
+        axes: bcyx #btczyx
         datatype: float32
         datarange: [-inf, inf]
         shape:
-            reference: [1, 256, 256]
-            minimal_valid_step: [0, 32, 32]
+            reference: [null, 1, 256, 256]
+            minimal_valid_step: [null, 0, 32, 32]
     output:
-        dimensions: 3
         axes: cyx
         datatype: float32
         datarange: [0, 1]
@@ -30,14 +36,18 @@ model:
             scale: [1, 1, 1]
             offset: [0, 0, 0]
 
-predict:
+# discussion: do we support a single or multiple weights?
+# example kipoi: ginger templating
+# list for ensembles?
+# FOR NOW: One model one weight file
+prediction:
     preprocess:
         - {name: NormalizeZeroMeanUnitVariance, kwargs: {}}
     weights:
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     postprocess: []
-    # example_dataset ?
+    # optional reference data
 
 
 training:
@@ -52,20 +62,10 @@ training:
     validation:
         - {}
     batch_size: 4
+    # more hyperparameters
     # initialization: {name: FromWeights, kwargs: {uri: ...}}
     # initialization: {name: He}
     train_on:
-        dataset: null
+        dataset: something  # can take a list of source
         n_iterations: 1000
         # n_epochs: 10
-
-
-meta:
-    description: A 2d U-Net pretrained on broad nucleus dataset.
-    cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
-    parent_model: 2d-unet
-    authors:
-        - Constantin Pape
-        - Fynn Beutenmueller
-    doumcentation: some.md
-    tags: [unet2d, pytorch, nucleus-segmentation]
