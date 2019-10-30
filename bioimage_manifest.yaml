@@ -1,0 +1,8 @@
+name: Example Models
+description: A repository for example models
+
+models:
+  - UNet2d.model.yaml
+
+transforms:
+  - Normalization.transform.yaml
