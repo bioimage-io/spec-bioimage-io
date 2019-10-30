@@ -7,14 +7,19 @@ description: A 2d U-Net pretrained on broad nucleus dataset.
 format_version: 0.1.0
 language: python
 framework: pytorch
-# TODO DOI
-cite: ["Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015.",]
-# TODO authors = github handles optional 
+# we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
+cite:
+    - {text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015.", doi: https://doi.org/10.1007/978-3-319-24574-4_28}
+# TODO authors = github handles optional
 authors:
     - Constantin Pape
     - Fynn Beutenmueller
-doucementation: unet2d.md
+documentation: ./unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
+# optional:
+thumbnail: ./my_thumbnail.png
+test_input: ./my_test_image.png
+test_output: ./my_test_output.png
 
 model:
     # how would this look for a FIJI project?
