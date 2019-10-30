@@ -18,37 +18,36 @@ documentation: ./unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
 # optional:
 thumbnail: ./my_thumbnail.png
-test_input: ./my_test_image.png
-test_output: ./my_test_output.png
+test_input: ./my_test_input.npy  # language + extension defines memory representation
+test_output: ./my_test_output.npy
 
-model:
-    # how would this look for a FIJI project?
-    # how to specify entry point
-    # ('native entry point')
-    definition:  # native entry point
-        source: ./unet2d.py:UNet2d
-        kwargs: {input_channels: 1, output_channels: 1}
-    input: # needs to become ordered dict (same for output) or list of dicts should contain names to 
-        # discussion about NCHWD versus bxyzt this also has implications on the location of the origin and the 
-        axes: bcyx #btczyx
-        data_type: float32
-        data_range: [-inf, inf]
-        shape:
-            min: [1, 1, 32, 32]
-            step: [null, 0, 32, 32]
-            # exact can also be list
-            # exact: [null, 1, 256, 256]
-    output:
-        axes: bcyx
-        data_type: float32
-        data_range: [0, 1]
-        shape:
-            reference_input_name: "input1"
-            scale: [1, 1, 1, 1]
-            offset: [0, 0, 0, 0]
-            # exact: [...]
-            # halo tells you what to crop from the output image
-            halo: [0, 0, 32, 32]
+# how would this look for a FIJI project?
+# how to specify entry point
+# ('native entry point')
+source: ./unet2d.py:UNet2d
+kwargs: {input_channels: 1, output_channels: 1}
+inputs: # needs to become ordered dict (same for output) or list of dicts should contain names to 
+    # discussion about NCHWD versus bxyzt this also has implications on the location of the origin and the 
+  - name: input1
+    axes: bcyx #btczyx
+    data_type: float32
+    data_range: [-inf, inf]
+    shape:
+        min: [1, 1, 32, 32]
+        step: [null, 0, 32, 32]
+        # exact: [null, 1, 256, 256]  # exact can also be list
+outputs:
+  - name: output1
+    description: network probabilities  # optional description
+    axes: bcyx
+    data_type: float32
+    data_range: [0, 1]
+    shape:
+        reference_input: input1
+        scale: [1, 1, 1, 1]
+        offset: [0, 0, 0, 0]
+        # exact: [...]  # exact can also be list
+        halo: [0, 0, 32, 32] # halo tells you what to crop from the output image
 
 # discussion: do we support a single or multiple weights?
 # example kipoi: ginger templating
@@ -56,7 +55,9 @@ model:
 # FOR NOW: One model one weight file
 prediction:
     preprocess:
-        - {name: core.transforms.NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - NormalizeZeroMeanUnitVariancePerBatch.transform.yaml
+            eps: 1.0e-4  # overwrite default of transformation
+            # version: 0.1.0  # required for transforms from core
     weights:
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
@@ -64,18 +65,16 @@ prediction:
     # enable different ways of specifying the dependencies.
     # this would hold all training dependencies, e.g. as a frozen conda environment
     # or as a pom.xml
-    dependencies: # this is a file to the dependencies
-        conda:./environment.yaml
+    dependencies: conda:./environment.yaml  # this is a file to the dependencies
     # bioimageio_normalize: 0.1
     # optional reference data
 
 training:
     preprocess:
-        - {name: core.transforms.NormalizeZeroMeanUnitVariance, kwargs: {}}
-        # - {name: bioimageio_normalize.NormalizeZeroMeanUnitVariance, kwargs: {}}
+        - NormalizeZeroMeanUnitVariancePerBatch.transform.yaml
     loss:
-        # - {name: torch.nn.Sigmoid}
-        - {name: core.transforms.Sigmoid}
+        - Sigmoid.transform.yaml:
+            apply_to: [0]
         - {name: torch.nn.BCELoss, kwargs: {reduction: mean}}
     optimizer:
         name: torch.optim.Adam
