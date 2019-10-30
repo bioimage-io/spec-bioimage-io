@@ -1,0 +1,23 @@
+name: Sigmoid
+description: 1/(1+e^-x)
+format_version: 0.1.0
+language: python
+cite: []
+authors:
+    - Constantin Pape
+    - Fynn Beutenmueller
+    - Maksim Novikov
+    - Florian Jug
+documentation: sigmoid.md
+tags: [normalization]
+# optional:
+test_input: ./my_test_sigmoid_input.npy
+test_output: ./my_test_sigmoid_output.npy
+
+dependencies: conda:./environment.yaml
+ 
+inputs: any
+outputs: identity
+
+source: .core.transforms.Sigmoid
+kwargs: {apply_to}
