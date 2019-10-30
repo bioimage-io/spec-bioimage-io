@@ -43,6 +43,7 @@ model:
         data_type: float32
         data_range: [0, 1]
         shape:
+            reference_input_name: "input1"
             scale: [1, 1, 1, 1]
             offset: [0, 0, 0, 0]
             # exact: [...]
