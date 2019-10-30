@@ -15,9 +15,9 @@ test_input: ./my_test_sigmoid_input.npy
 test_output: ./my_test_sigmoid_output.npy
 
 dependencies: conda:./environment.yaml
- 
+
 inputs: any
 outputs: identity
 
-source: .core.transforms.Sigmoid
+source: ./transforms.py:Sigmoid
 kwargs: {apply_to}

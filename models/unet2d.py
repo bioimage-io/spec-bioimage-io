@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 
-import core
-
 
 class Upsample(nn.Module):
     def __init__(self, scale_factor, mode='bilinear'):
@@ -12,7 +10,7 @@ class Upsample(nn.Module):
 
     def forward(self, input):
         return nn.functional.interpolate(input, scale_factor=self.scale_factor, mode=self.mode,
-                                     align_corners=False)
+                                         align_corners=False)
 
 
 class UNet2d(nn.Module):
@@ -71,13 +69,3 @@ class UNet2d(nn.Module):
 
         x = self.output(x)
         return x
-
-
-def training(config, output):
-    train_config = core.parse_training_config(config)
-    model = core.load_model(config)
-    core.train(model, train_config, output)
-
-
-if __name__ == '__main__':
-    training('example_configuration.yaml', 'unet2d_weights.torch')

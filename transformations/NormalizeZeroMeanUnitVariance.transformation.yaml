@@ -18,7 +18,6 @@ test_input: ./my_test_norm_input.npy  # language + extension defines memory repr
 test_output: ./my_test_norm_output.npy
 
 dependencies: conda:./environment.yaml
- 
 # inputs:  # optional: needed if input tensor restrictions apply
 #  - name: input1
 #    axes: bcyx #btczyx
@@ -26,10 +25,10 @@ dependencies: conda:./environment.yaml
 #    data_range: [-inf, inf]
 #    shape: # optional: needed if shape restrictions apply
 #        min: [1, 1, 32, 32]
-#        step: [null, 0, 32, 32] 
+#        step: [null, 0, 32, 32]
 #        # exact: [null, 1, 256, 256]  # exact can also be list
 
-source: ./code/transforms.py:NormalizeZeroMeanUnitVariance
+source: ./transforms.py:NormalizeZeroMeanUnitVariance
 kwargs: [eps]   # type this? default value: can be overwritten by model.yaml
 inputs: any
 outputs: identity
