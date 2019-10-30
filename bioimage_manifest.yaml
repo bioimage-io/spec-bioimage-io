@@ -2,7 +2,8 @@ name: Example Models
 description: A repository for example models
 
 models:
-  - UNet2d.model.yaml
+  - models/UNet2dExample.model.yaml
 
 transformations:
-  - NormalizeZeroMeanUnitVariance.transform.yaml
+  - transformations/NormalizeZeroMeanUnitVariance.transform.yaml
+  - transformations/Sigmoid.transformation.yaml
