@@ -29,7 +29,7 @@ dependencies: conda:./environment.yaml
 #        step: [null, 0, 32, 32] 
 #        # exact: [null, 1, 256, 256]  # exact can also be list
 
-source: .core.transforms.NormalizeZeroMeanUnitVariance
+source: ./code/transforms.py:NormalizeZeroMeanUnitVariance
 kwargs: [eps]   # type this? default value: can be overwritten by model.yaml
 inputs: any
 outputs: identity
