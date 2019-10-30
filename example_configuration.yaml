@@ -1,17 +1,19 @@
+# TODO physical scale of the data
+# TODO discuss the depenendencies more closely
+# TODO discuss the training, description of the training process, training data 
+
 name: UNet2dExample
 description: A 2d U-Net pretrained on broad nucleus dataset.
 format_version: 0.1.0
 language: python
-dependencies:
-    python >=3.7
-    pytorch >=1.1,<1.2
-    numpy >1.11
-    # bioimageio_normalize: 0.1
-cite: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+framework: pytorch
+# TODO DOI
+cite: ["Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015.",]
+# TODO authors = github handles optional 
 authors:
     - Constantin Pape
     - Fynn Beutenmueller
-doumcentation: unet2d.md
+doucementation: unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
 
 model:
@@ -50,6 +52,12 @@ prediction:
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     postprocess: []
+    # enable different ways of specifying the dependencies.
+    # this would hold all training dependencies, e.g. as a frozen conda environment
+    # or as a pom.xml
+    dependencies: # this is a file to the dependencies
+        conda:./environment.yaml
+    # bioimageio_normalize: 0.1
     # optional reference data
 
 training:
@@ -79,3 +87,8 @@ training:
         dataset: something  # can take a list of source
         n_iterations: 1000
         # n_epochs: 10
+    # enable different ways of specifying the dependencies.
+    # this would hold all training dependencies, e.g. as a frozen conda environment
+    # or as a pom.xml
+    dependencies: # this is a file to the dependencies
+        conda:./environment.yaml
