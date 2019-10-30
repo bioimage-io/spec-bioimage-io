@@ -14,8 +14,8 @@ documentation: NormalizeZeroMeanUnitVariance.md
 tags: [normalization]
 # optional:
 thumbnail: ./NormalizeZeroMeanUnitVariance.png
-test_input: ./my_test_trf_image.npy  # language + extension defines memory representation
-test_output: ./my_test_trf_output.npy
+test_input: ./my_test_norm_input.npy  # language + extension defines memory representation
+test_output: ./my_test_norm_output.npy
 
 dependencies: conda:./environment.yaml
  
