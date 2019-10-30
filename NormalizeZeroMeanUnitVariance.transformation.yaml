@@ -8,18 +8,16 @@ cite: []
 authors:
     - Constantin Pape
     - Fynn Beutenmueller
-    - Maskim Novikov
-    - Florian Jung
-documentation: ""
+    - Maksim Novikov
+    - Florian Jug
+documentation: NormalizeZeroMeanUnitVariance.md
 tags: [normalization]
 # optional:
-test_input: ./my_test_trf_image.zip
+thumbnail: ./NormalizeZeroMeanUnitVariance.png
+test_input: ./my_test_trf_image.npy  # language + extension defines memory representation
 test_output: ./my_test_trf_output.npy
 
 dependencies: conda:./environment.yaml
-
-kwargs:
-  eps: 1.0e-6 # type this?
  
 # inputs:  # optional: needed if input tensor restrictions apply
 #  - name: input1
@@ -31,6 +29,8 @@ kwargs:
 #        step: [null, 0, 32, 32] 
 #        # exact: [null, 1, 256, 256]  # exact can also be list
 
+source: .core.transforms.NormalizeZeroMeanUnitVariance
+kwargs: [eps]   # type this? default value: can be overwritten by model.yaml
 inputs: any
 outputs: identity
 # List of possible values for 'inputs' and 'outputs':
@@ -38,7 +38,3 @@ outputs: identity
 # additional possible values for 'outputs':
 # identity: number/shape of output tensors is the same as input tensors
 # same number: same number of tensors as was given to input is returned (shape may change)
-
-definition:
-  - source: .core.transforms.NormalizeZeroMeanUnitVariance
-    kwargs: {eps: eps}
