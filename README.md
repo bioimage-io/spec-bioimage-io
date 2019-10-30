@@ -1,43 +1,82 @@
-# Bioimiage.io Entry Configuration
+# Bioimiage.io Configuration Specification
 
-An entry in the bioimage.io model zoo is defined by a configuration yaml configuration file according to the following specification:
-The configuration must contain the keys  `version`, `language`, `framework`, `model`, `training`, `data`, `meta`.
+## Transformation Specification:
+A transformation in the bioimage.io model zoo is defined by a configuration file `<transformation name>.transformation.yaml` according to the following specification
+The configuration must contain the keys: `name`, `description`, `format_version`, `language`, `cite`, `authors`, `documentation`, `tags`, `dependencies`, `source`, `kwargs`, `inputs`, and `outputs`. The following additional keys are optional: `thumbnail`, `test_input`, and `test_output`.
 
-## version
+### `name`
+###  `description`
+### `format_version`
+Version of this bioimage.io configuration spec.
 
-Version of the bioimage.io configuration spec. (Should be in synch with core library).
-
-## language
-
+### `language`
 Programming language of the model definition. Must map to one of `python`, `java` or `javascript`.
 
-## framework
+### `cite`
 
-Deep learning framework used for this entry. Currently supported frameworks are `tensorflow` and `pytorch`.
+### `authors`
 
-## model
+### `documentation`
+Relative path to file with additional documentation in markdown.
 
-Model definition and weights.
-Must contain the keys:
-- `definition`: script with model definition.
-  - `source`: relative path from config file to the script
-  - `hash`: hash of the script file
-  - `name`: Name of class defining the model in `script`
-  - `kwargs`: Optional keyword arguments for the model class. 
+### `tags`
+
+### `dependencies`
+
+### `source`
+<relative path from config file to the implementation source file>:<identifier of transformation/model within the source file>
+
+### `kwargs`
+Keyword arguments for the transformation/model class specified by [`source`](#source).
+
+### `inputs`
+Either a string from the following choices:
+  - any: any number/shape of input tensors is accepted/returned
+
+or a list of [tensor specifications](#tensor-specification).
+
+#### tensor specification
+- name: input1
+- axes: string of axes identifiers, e.g. btczyx
+- data_type: data type (e.g. float32)
+- data_range: tuple of (minimum, maximum)
+- [shape]: optional: needed if shape restrictions apply
+     - Either
+       - `min`: minimum shape with same length as `axes`.
+       - `step`: minimum shape change with same length as `axes`. 
+     - or
+       - `exact`: exact shape (or list thereof) with same lenght as `axes`
+
+### `outputs`
+Either a string from the following choices:
+  - any: any number/shape of input tensors is accepted/returned
+  - identity: number/shape of output tensors is the same as input tensors
+  - same number: same number of tensors as given to input is returned (shape may differ)
+
+or a list of [tensor specifications](#tensor-specification).
+
+### `thumbnail`
+
+### `test_input`
+
+### `test_output`
+
+## Model Specification:
+A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml` according to the [transformation specification](#transformation-entry) and the **additional** following specification:
+The configuration must contain the keys: `framework`, `prediction`, and `training`.
+
+### `framework`
+Deep learning framework used for this model. Currently supported frameworks are `tensorflow` and `pytorch`.
+
+### `prediction`
+Sub specification of prediction:
 - `weights`: model weights
-  -  source: link to the model weight file
-  - hash: hash of the model weight file
-- `input_axes`: Expected input axes of the model
-- `input_size`: Valid input size for the model
-- `output_axes`: Output axes of the model
+  `source`: link to the model weight file
+  `hash`: hash of hash of the model weight file specified by `source`
 
-Can contain:
-- `kwargs`: Keyword argument passed to the constructor of `class_name`.
-- `documentation`: Relative path to file with additional documentation in markdown.
-- `minimal_valid_step`: Minimal valid step size per axis when changing inut size.
-
-## training
-
+### `training`
+Sub specification of training:
+todo
 Definition of the training procedure.
 Must contain:
 - `loss`: loss function used in training
@@ -54,16 +93,14 @@ Must contain:
   - `n_iterations`: Number of iterations used in training (change to iterations ?)
 - `batch_size`: batch size used for training
 
+
+
 ## data
 
 Additional transformations.
 Can contain:
 - `input_transformations`: List of transformations applied to data before passed to the model.
 - `output_transformatons`:
-
-## meta
-
-Additional information.
 
 
 # Example Configuration
