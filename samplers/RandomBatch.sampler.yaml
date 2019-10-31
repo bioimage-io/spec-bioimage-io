@@ -2,9 +2,8 @@ name: RandomBatch
 description: random batch sampler
 format_version: 0.1.0
 language: python
-# we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
+
 cite: []
-# TODO authors = github handles optional
 authors:
     - Constantin Pape
     - Fynn Beutenmueller
@@ -12,8 +11,6 @@ authors:
     - Florian Jug
 documentation: RandomBatchSampler.md
 tags: []
-# optional:
-thumbnail: ./RandomBatchSampler.png
 
 dependencies: conda:./environment.yaml
 # inputs:  # optional: needed if input tensor restrictions apply
@@ -29,7 +26,10 @@ dependencies: conda:./environment.yaml
 # here we assume NormalizeZeroMeanUnitVariance is tested alone.
 source: ./samplers.py:RandomBatch
 kwargs: [seed, output_shape, overlap]   # type this? default value: can be overwritten by model.yaml
+
 outputs: any
+
+
 # List of possible values for 'inputs' and 'outputs':
 # any: any number/shape of input tensors is accepted/returned
 # additional possible values for 'outputs':

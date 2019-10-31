@@ -4,29 +4,29 @@
 
 name: UNet2dExample
 description: A 2d U-Net pretrained on broad nucleus dataset.
-format_version: 0.1.0
-language: python
-framework: pytorch
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
     - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
       doi: https://doi.org/10.1007/978-3-319-24574-4_28
-# TODO authors = github handles optional
 authors:
-    - Constantin Pape
+    - Constantin Pape;@constantinpape
     - Fynn Beutenmueller
 documentation: ./unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
-# optional:
-thumbnail: ./my_thumbnail.png
+
+format_version: 0.1.0
+language: python
+framework: pytorch
+
+source: ./unet2d.py:UNet2d
+kwargs: {input_channels: 1, output_channels: 1}
+
 test_input: ./my_test_input.npy  # language + extension defines memory representation
 test_output: ./my_test_output.npy
 
-# how would this look for a FIJI project?
-# how to specify entry point
-# ('native entry point')
-source: ./unet2d.py:UNet2d
-kwargs: {input_channels: 1, output_channels: 1}
+# optional:
+thumbnail: ./my_thumbnail.png
+
 inputs: # needs to become ordered dict (same for output) or list of dicts should contain names to
     # discussion about NCHWD versus bxyzt this also has implications on the location of the origin and the
   - name: input1
@@ -56,40 +56,34 @@ outputs:
 # FOR NOW: One model one weight file
 prediction:
     preprocess:
-        - source: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
+        - spec: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
           kwargs:
               eps: 1.0e-6  # currently all kwargs need to be specified (here or in the consumer)
               apply_to: [0]
           # version: 0.1.0  # required for transforms from core
     weights:
+        # TODO how do we make clear that this is a doi? doi:.... ?
         source: 10.5281/zenodo.3446812
         hash: {md5: c16cb3ba3cb9d257550fd19067ecfb91}
     postprocess: null
-    # enable different ways of specifying the dependencies.
-    # this would hold all training dependencies, e.g. as a frozen conda environment
-    # or as a pom.xml
     dependencies: conda:./environment.yaml  # this is a file to the dependencies
-    # bioimageio_normalize: 0.1
-    # optional reference data
 
 #
 training:
     setup:
-        reader: ./nN5.reader.yaml
-            kwargs: {uri: https://www.mydata.com/my_test_file.n5 }
-        sampler: core.samplers.random_patch # return an iteratable and random accessible object with `length`, `position` and other properties
+        reader:
+            spec: ../readers/nN5.reader.yaml
+            kwargs: {uri: https://www.mydata.com/my_test_file.n5}
+        sampler:
+            spec: ../samplers/RandomBatch.sampler.yaml
             kwargs: {seed: 123, output_shape: [1, 2, 256, 256], overlap: [0, 0, 100, 100]}
         preprocess:
-            - source: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
+            - spec: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
               kwargs: {eps: 1.0e-6, apply_to: [0]}
         loss:
-            # how can we specify an 'object'?
-            # local ../../trafos/my_trafo.transformation.yaml
-            # repo https:://github.com/..../:my_trafor.transformation.yaml@1.0.0
-            # Sigmoid (fetch the name from the 'core' for the given language and framework)
-            - source: ../transformations/Sigmoid.transformation.yaml
+            - spec: ../transformations/Sigmoid.transformation.yaml
               kwargs: {apply_to: [0]}
-            - source: ../transformations/BCELoss.transformation.yaml
+            - spec: ../transformations/BCELoss.transformation.yaml
         optimizer:
             name: torch.optim.Adam  # TODO do we need a yaml for this too ?
             kwargs: {lr: 0.002}
@@ -104,5 +98,4 @@ training:
     # or as a pom.xml
     dependencies: # this is a file to the dependencies
         conda:./environment.yaml
-    description:
-
+    description: "Train the unet via binary cross entropy"
