@@ -8,9 +8,6 @@ authors:
     - Constantin Pape
 documentation: bce_loss.md
 tags: [loss, binary cross entropy]
-# optional:
-test_input: ./my_test_bce_input.npy
-test_output: ./my_test_bce_output.npy
 
 dependencies: conda:./environment.yaml
 
