@@ -7,3 +7,9 @@ models:
 transformations:
   - transformations/NormalizeZeroMeanUnitVariance.transform.yaml
   - transformations/Sigmoid.transformation.yaml
+
+readers:
+  - nN5.reader.yaml
+
+samplers:
+  - RandomBatch.samplers.yaml

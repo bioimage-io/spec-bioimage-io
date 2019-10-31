@@ -73,6 +73,11 @@ prediction:
     # optional reference data
 
 training:
+    dataset:
+        reader: ./nN5.reader.yaml
+            kwargs: {uri: https://www.mydata.com/my_test_file.n5 }
+        sampler: core.samplers.random_patch # return an iteratable and random accessible object with `length`, `position` and other properties
+            kwargs: {seed: 123, output_shape: [1, 2, 256, 256], overlap: [0, 0, 100, 100]}
     preprocess:
         - source: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
           kwargs: {eps: 1.0e-6, apply_to: [0]}
@@ -104,3 +109,4 @@ training:
     # or as a pom.xml
     dependencies: # this is a file to the dependencies
         conda:./environment.yaml
+

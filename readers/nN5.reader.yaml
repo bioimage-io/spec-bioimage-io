@@ -1,0 +1,21 @@
+name: nN5
+description: nN5 reader
+format_version: 0.1.0
+language: python
+cite: []
+authors:
+    - Wei Ouyang
+    - Florian Jug
+documentation: nN5_reader.md
+tags: []
+
+dependencies: conda:./environment.yaml
+
+
+source: core.readers.nN5 # return an iteratable and random accessible object with `length`, `position` and other properties
+kwargs: {uri}
+
+# data_source = core.readers.nN5(uri=...)
+# [(batches, channels, width, height)] = data_source.get_shape()
+# tensor_1 = data_source.get([3, range(0,2), range(100, 356), range(110, 366)])
+
