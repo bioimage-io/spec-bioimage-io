@@ -69,8 +69,3 @@ class UNet2d(nn.Module):
 
         x = self.output(x)
         return x
-
-
-if __name__ == '__main__':
-    from core.train import train
-    train('example_configuration.yaml', 'unet2d_weights.torch')

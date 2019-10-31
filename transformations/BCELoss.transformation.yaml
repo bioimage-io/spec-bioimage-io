@@ -1,0 +1,33 @@
+name: Sigmoid
+description: 1/(1+e^-x)
+format_version: 0.1.0
+language: python
+framework: pytorch
+cite: []
+authors:
+    - Constantin Pape
+documentation: sigmoid.md
+tags: [normalization]
+# optional:
+test_input: ./my_test_bce_input.npy
+test_output: ./my_test_bce_output.npy
+
+dependencies: conda:./environment.yaml
+
+source: torch.nn.BCELoss
+
+inputs:  # optional: needed if input tensor restrictions apply
+ - name: input
+   # axes: bcyx #btczyx  TODO we don't care about axes here, what do we do?
+   data_type: float32
+   data_range: [0, 1]
+ - name: target
+   # axes: bcyx #btczyx  TODO we don't care about axes here, what do we do?
+   data_type: float32
+   data_range: [0, 1]
+
+outputs:
+    - name: loss
+      data_type: float32
+      data_range: [0, 1]
+      axes: scalar  # TODO

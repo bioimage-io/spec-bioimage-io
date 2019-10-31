@@ -1,0 +1,39 @@
+name: NormalizeZeroMeanUnitVariance
+description: normalization zero mean standard variance
+format_version: 0.1.0
+language: python
+# we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
+cite: []
+# TODO authors = github handles optional
+authors:
+    - Constantin Pape
+    - Fynn Beutenmueller
+    - Maksim Novikov
+    - Florian Jug
+documentation: NormalizeZeroMeanUnitVariance.md
+tags: [normalization]
+# optional:
+thumbnail: ./NormalizeZeroMeanUnitVariance.png
+test_input: ./my_test_norm_input.npy  # language + extension defines memory representation
+test_output: ./my_test_norm_output.npy
+
+dependencies: conda:./environment.yaml
+# inputs:  # optional: needed if input tensor restrictions apply
+#  - name: input1
+#    axes: bcyx #btczyx
+#    data_type: float32
+#    data_range: [-inf, inf]
+#    shape: # optional: needed if shape restrictions apply
+#        min: [1, 1, 32, 32]
+#        step: [null, 0, 32, 32]
+#        # exact: [null, 1, 256, 256]  # exact can also be list
+
+source: ./transforms.py:NormalizeZeroMeanUnitVariance
+kwargs: [eps]   # type this? default value: can be overwritten by model.yaml
+inputs: any
+outputs: identity
+# List of possible values for 'inputs' and 'outputs':
+# any: any number/shape of input tensors is accepted/returned
+# additional possible values for 'outputs':
+# identity: number/shape of output tensors is the same as input tensors
+# same number: same number of tensors as was given to input is returned (shape may change)
