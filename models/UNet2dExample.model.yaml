@@ -72,41 +72,37 @@ prediction:
     # bioimageio_normalize: 0.1
     # optional reference data
 
+#
 training:
-    dataset:
+    setup:
         reader: ./nN5.reader.yaml
             kwargs: {uri: https://www.mydata.com/my_test_file.n5 }
         sampler: core.samplers.random_patch # return an iteratable and random accessible object with `length`, `position` and other properties
             kwargs: {seed: 123, output_shape: [1, 2, 256, 256], overlap: [0, 0, 100, 100]}
-    preprocess:
-        - source: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
-          kwargs: {eps: 1.0e-6, apply_to: [0]}
-    loss:
-        - source: ../transformations/Sigmoid.transformation.yaml
-          kwargs: {apply_to: [0]}
-        - source: ../transformations/BCELoss.transformation.yaml
-    optimizer:
-        name: torch.optim.Adam
-        kwargs: {lr: 0.002}
-    validation:
-        - {}
-    input:
-        shape: [4, 1, 512, 512]
-    target:
-        shape: [4, 1, 512, 512]
-        axes: bcyx
-    # entry_point: ./unet2d.py:train
-    # more hyperparameters
-    # initialization: {name: FromWeights, kwargs: {uri: ...}}
-    # initialization: {name: He}
-    train_on:
-        # todo: sampling
-        dataset: something  # can take a list of source
-        n_iterations: 1000
-        # n_epochs: 10
+        preprocess:
+            - source: ../transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
+              kwargs: {eps: 1.0e-6, apply_to: [0]}
+        loss:
+            # how can we specify an 'object'?
+            # local ../../trafos/my_trafo.transformation.yaml
+            # repo https:://github.com/..../:my_trafor.transformation.yaml@1.0.0
+            # Sigmoid (fetch the name from the 'core' for the given language and framework)
+            - source: ../transformations/Sigmoid.transformation.yaml
+              kwargs: {apply_to: [0]}
+            - source: ../transformations/BCELoss.transformation.yaml
+        optimizer:
+            name: torch.optim.Adam  # TODO do we need a yaml for this too ?
+            kwargs: {lr: 0.002}
+        # validation:
+        #   - {}
+        # callback_engine:
+        #    - {}
+    source: ./train.py:my_train_function
+    kwargs: {n_epochs: 100}
     # enable different ways of specifying the dependencies.
     # this would hold all training dependencies, e.g. as a frozen conda environment
     # or as a pom.xml
     dependencies: # this is a file to the dependencies
         conda:./environment.yaml
+    description:
 
