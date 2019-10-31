@@ -13,7 +13,9 @@ The configurations are represented by a yaml file.
 
 Each configuration must contain the following keys:
 `name`, `description`, `cite`, `authors`, `documentation`, `tags` `format_version`, `language`, `framework`,`source`, `kwargs`.
-[//]: # Do we have any optional config keys?
+<!---
+Do we have any optional config keys?
+-->
 
 ### `name`
 Name of the transformation. This name should equal the name of any existing, logically equivalent object of the same category in another framework.
@@ -41,7 +43,9 @@ Version of this bioimage.io configuration specification.
 ### `language`
 
 Programming language of the model definition. For now, we support `python` and `java`.
-[//]: # `javascript`?
+<!---
+What about `javascript`?
+-->
 
 ###  framework
 
@@ -59,18 +63,24 @@ or the implementation in an available dependency:
 For example:
 - ./my_function:MyImplementation
 - core_library.some_module.some_function
-[//]: # TODO java: <path-to-jar>:ClassName ?
+<!---
+java: <path-to-jar>:ClassName ?
+-->
 
 ### `kwargs`
 Keyword arguments for the implementation specified by [`source`](#source).
 
-[//]: # Do we want any positional arguments ? mandatory or optional?
+<!---
+Do we want any positional arguments ? mandatory or optional?
+-->
 
 
 ## Transformation Specification
 
 A transformation describes an operation that takes a list of input tensors and produces a list of output tensors.
-[//]: # Stateful, stateless, do we care?
+<!--
+Stateful, stateless, do we care?
+-->
 
 A confiuration entry in the bioimage.io model zoo is defined by a configuration file `<transformation name>.transformation.yaml`.
 The configuration file must contain the [common keys](##Common Keys) and the keys `inputs`, `outputs` and `dependencies`.
@@ -110,9 +120,10 @@ For example:
 - conda:./environment.yaml
 - maven:./pom.xml
 - pip:./requirements.txt
-
-[//]: #`I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now
-[//]: # <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt`
+<!---
+`I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now
+<format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt`
+-->
 
 
 ## Model Specification
@@ -135,14 +146,16 @@ Image that will be displayed on the Model Zoo website to represent this Model.
 ### `inputs`
 Describes the input tensors expected by this model.
 Must be a list of [tensor specifications](#tensor-specification).
-
-[//]: # Force this to be explicit, or also allow any?
+<!--
+Force this to be explicit, or also allow any?
+-->
 
 ### `outputs`
 Describes the output tensors from this model.
 Must be a list of [tensor specifications](#tensor-specification).
-
-[//]: # Force this to be explicit, or also allow any, identity, same?
+<!--
+Force this to be explicit, or also allow any, identity, same?
+-->
 
 ### `prediction`
 Specification of prediction for the model. Must cotain the following keys:
@@ -155,7 +168,9 @@ Specification of prediction for the model. Must cotain the following keys:
 
 ### transformation entry
 Must be a dictionary with the key `spec`: relative path or link to a [transformation specification](## Transformation specification) file. The relative path must be specified as `file:./some/my_trafo.transformation.yaml`. The link as `https://https::github.com/some_repo/some_file/my_other_trafo.transformation.yaml`.
-[//]: # Is this the correct URI format now?
+<!--
+Is this the correct URI format now?
+-->
 
 Can contain the key `kwargs`: instantiation of keyword arguments for this transformation.
 
@@ -182,7 +197,6 @@ Data CAN be private!
 
 The reader config must contain the [common keys](## Common keys) and the key `dependencies`.
 
-
 ## Sampler Specification
 A sampler entry in the bioimage.io model zoo is defined by a configuration file `<sampler name>.sampler.yaml`.
 A sampler defines a sequence of batches over a reader. 
@@ -192,6 +206,10 @@ The sampler config must contain the [common keys](## Common keys), the key `depe
 
 # Example Configurations
 
+See examples for configuration specifications in the subfolders [models](./models), [readers](./readers), [samplers](./samplers) and [transformations](./transformations).
+
+
+<!--- The includes do not work
 ## Transformation
 
 ```yaml
@@ -215,3 +233,4 @@ The sampler config must contain the [common keys](## Common keys), the key `depe
 ```yaml
 [!INCLUDE[sampler config](./samplers/RandomBatch.sampler.yaml)]
 ```
+-->
