@@ -1,13 +1,13 @@
-name: Sigmoid
-description: 1/(1+e^-x)
+name: BCELoss
+description: Binary cross entropy loss
 format_version: 0.1.0
 language: python
 framework: pytorch
 cite: []
 authors:
     - Constantin Pape
-documentation: sigmoid.md
-tags: [normalization]
+documentation: bce_loss.md
+tags: [loss, binary cross entropy]
 # optional:
 test_input: ./my_test_bce_input.npy
 test_output: ./my_test_bce_output.npy
