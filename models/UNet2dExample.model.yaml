@@ -85,7 +85,7 @@ training:
               kwargs: {apply_to: [0]}
             - spec: ../transformations/BCELoss.transformation.yaml
         optimizer:
-            name: torch.optim.Adam  # TODO do we need a yaml for this too ?
+            source: torch.optim.Adam  # TODO do we need a yaml for this too ?
             kwargs: {lr: 0.002}
         # validation:
         #   - {}
