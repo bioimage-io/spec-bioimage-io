@@ -167,7 +167,7 @@ Specification of prediction for the model. Must cotain the following keys:
 - `dependencies`: dependencies required to run prediction. See [transformation config](#transformation-specification).
 
 ### transformation entry
-Must be a dictionary with the key `spec`: relative path or link to a [transformation specification](#-transformation-specification) file. The relative path must be specified as `file:/./some/my_trafo.transformation.yaml`. The link as `https:/github.com/some_repo/some_file/my_other_trafo.transformation.yaml`.
+Must be a dictionary with the key `spec`: relative path or link to a [transformation specification](#-transformation-specification) file. The relative path must be specified as `file://./some/my_trafo.transformation.yaml`. The link as `https://github.com/some_repo/some_file/my_other_trafo.transformation.yaml`.
 <!--
 Is this the correct URI format now?
 -->
