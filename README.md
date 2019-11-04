@@ -83,7 +83,7 @@ Stateful, stateless, do we care?
 -->
 
 A confiuration entry in the bioimage.io model zoo is defined by a configuration file `<transformation name>.transformation.yaml`.
-The configuration file must contain the [common keys](##Common Keys) and the keys `inputs`, `outputs` and `dependencies`.
+The configuration file must contain the [common keys](#common-keys) and the keys `inputs`, `outputs` and `dependencies`.
 
 ### `inputs`
 Describes the input tensors expected by this transformation.
@@ -129,7 +129,7 @@ For example:
 ## Model Specification
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
-The configuration file must contain the [common keys](## Common Keys and the keys `test_input`, test_output, `inputs`, `outputs,` `prediction`, `training`.
+The configuration file must contain the [common keys](#common-keys) and the keys `test_input`, test_output, `inputs`, `outputs,` `prediction`, `training`.
 It may contain the key `thumbnail`. Note that only the model specification contains test data, for all other implementations, we assume that the underlying components are sufficiently tested and we just perform one integration test for running the model.
 
 ### `test_input`
@@ -159,15 +159,15 @@ Force this to be explicit, or also allow any, identity, same?
 
 ### `prediction`
 Specification of prediction for the model. Must cotain the following keys:
-- `weights`: model weights to load for prediction, that were obtained by the training processs described in [training](### training).
+- `weights`: model weights to load for prediction, that were obtained by the training processs described in [training](#training).
   `source`: link to the model weight file. Preferably a zenode doi.
   `hash`: hash of hash of the model weight file specified by `source`
-- `preprocess`:  list of transformations applied before the model input. Can be null if no preprocsssing is necessary. List entries must adhere to the [transformation entry](### transformation entry) format.
+- `preprocess`:  list of transformations applied before the model input. Can be null if no preprocsssing is necessary. List entries must adhere to the [transformation entry](#transformation-entry) format.
 - `postprocess`: list of transformations applied after the model input. Can be null if no preprocessing is necessary. List entries must adhere to the [transformation entry] format.
-- `dependencies`: dependencies required to run prediction. See [transformation config](## Transformation specification).
+- `dependencies`: dependencies required to run prediction. See [transformation config](#transformation-specification).
 
 ### transformation entry
-Must be a dictionary with the key `spec`: relative path or link to a [transformation specification](## Transformation specification) file. The relative path must be specified as `file:/./some/my_trafo.transformation.yaml`. The link as `https:/github.com/some_repo/some_file/my_other_trafo.transformation.yaml`.
+Must be a dictionary with the key `spec`: relative path or link to a [transformation specification](#-transformation-specification) file. The relative path must be specified as `file:/./some/my_trafo.transformation.yaml`. The link as `https:/github.com/some_repo/some_file/my_other_trafo.transformation.yaml`.
 <!--
 Is this the correct URI format now?
 -->
@@ -179,10 +179,10 @@ Specification of training process used to obtain the model weights. Must contain
 - `source`: Implementation of the training process. Can either be a relative file and 
 - `kwargs`: Keyword arguments for the training implementation, that are not part of `setup`.
 - `setup`: The training set-up that is instantiated by the training function. It must contain the keys listed belows (for which we will provide parser functions.) It can consist additional keys, which needs to be parsed separately and may be used to extend the core library.
-    - `reader`: specification of a [reader config](## Reader Specification).
-    - `sampler`: specification of a [sampler config](## Sampler Specification).
-    - `preprocess`: list of [transformation entries](### transformation entry) that are applied before tensors are fed to the model. 
-    - `loss`: transformations that are applied to model outputs and loss.  list of [transformation entries](`### transformation entries`). Last entry must be the actual loss.
+    - `reader`: specification of a [reader config](#reader-specification).
+    - `sampler`: specification of a [sampler config](#sampler-specification).
+    - `preprocess`: list of [transformation entries](#transformation-entry) that are applied before tensors are fed to the model. 
+    - `loss`: transformations that are applied to model outputs and loss.  list of [transformation entries](#transformation-entries). Last entry must be the actual loss.
     - `optimizer`: optimizer used in training. For now, we have no specification for this, but just use the framework specific implementation directly. We may want to change this.
       - `source`: Implementation of the optimizer. As usual, either relative path or importable from dependencies.
       - `kwargs`: keyword arguments for the optimizer
@@ -195,13 +195,13 @@ A reader implements access to data. A reader can read from one or multiple data-
 It implements an interface that allows random access to arbitrary sub-tensors of the data-set.
 Data CAN be private!
 
-The reader config must contain the [common keys](## Common keys) and the key `dependencies`.
+The reader config must contain the [common keys](#common-keys) and the key `dependencies`.
 
 ## Sampler Specification
 A sampler entry in the bioimage.io model zoo is defined by a configuration file `<sampler name>.sampler.yaml`.
 A sampler defines a sequence of batches over a reader. 
 
-The sampler config must contain the [common keys](## Common keys), the key `dependencies` and `outputs`, see output description in [the transformation specifiaction](# Transformation Specification).
+The sampler config must contain the [common keys](#common-keys), the key `dependencies` and `outputs`, see output description in [the transformation specifiaction](#transformation-specification).
 
 
 # Example Configurations
