@@ -45,6 +45,7 @@ outputs:
     data_range: [0, 1]
     shape:
         reference_input: input1
+        # output_shape = input_shape * scale + offset
         scale: [1, 1, 1, 1]
         offset: [0, 0, 0, 0]
         # exact: [...]  # exact can also be list
