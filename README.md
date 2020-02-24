@@ -37,6 +37,9 @@ Relative path to file with additional documentation in markdown.
 ### `tags`
 A list of tags.
 
+### `covers`
+A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`. 
+
 ### `format_version`
 Version of this bioimage.io configuration specification.
 
