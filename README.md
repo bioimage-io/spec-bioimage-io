@@ -27,6 +27,9 @@ A string containing a brief description.
 A citation entry or list of citation entries.
 Each entry contains of a mandatory `text` field and either one or both of `doi` and `url`.
 
+### `license`
+A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
+
 ### `authors`
 A list of author strings. 
 A string can be seperated by `;` in order to identify multiple handles per author.
@@ -36,6 +39,11 @@ Relative path to file with additional documentation in markdown.
 
 ### `tags`
 A list of tags.
+
+### `covers`
+A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.
+
+Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 
 ### `format_version`
 Version of this bioimage.io configuration specification.
@@ -47,7 +55,7 @@ Programming language of the model definition. For now, we support `python` and `
 What about `javascript`?
 -->
 
-###  framework
+###  `framework`
 
 The deep learning framework for which this object has been implemented. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.
@@ -129,8 +137,7 @@ For example:
 ## Model Specification
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
-The configuration file must contain the [common keys](#common-keys) and the keys `test_input`, test_output, `inputs`, `outputs,` `prediction`, `training`.
-It may contain the key `thumbnail`. Note that only the model specification contains test data, for all other implementations, we assume that the underlying components are sufficiently tested and we just perform one integration test for running the model.
+The configuration file must contain the [common keys](#common-keys) and the keys `test_input`, test_output, `inputs`, `outputs,` `prediction`, `training`. Note that only the model specification contains test data, for all other implementations, we assume that the underlying components are sufficiently tested and we just perform one integration test for running the model.
 
 ### `test_input`
 Relative file path to test input. `language` and the file extension define its memory representation.
@@ -139,9 +146,6 @@ The input is always stored as list of tensors.
 ### `test_output`
 Relative file path to test output. `language` and the file extension define its memory representation.
 The input is always stored as list of tensors.
-
-### `thumbnail`
-Image that will be displayed on the Model Zoo website to represent this Model.
 
 ### `inputs`
 Describes the input tensors expected by this model.
