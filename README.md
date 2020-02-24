@@ -52,7 +52,7 @@ Programming language of the model definition. For now, we support `python` and `
 What about `javascript`?
 -->
 
-###  framework
+###  `framework`
 
 The deep learning framework for which this object has been implemented. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.
