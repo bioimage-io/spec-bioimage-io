@@ -38,7 +38,9 @@ Relative path to file with additional documentation in markdown.
 A list of tags.
 
 ### `covers`
-A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`. 
+A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.
+
+Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 
 ### `format_version`
 Version of this bioimage.io configuration specification.
