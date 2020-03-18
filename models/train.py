@@ -20,9 +20,9 @@ def apply_transforms(transforms, *tensors):
 def train(model, train_config, out_file):
     model.train()
 
-    optimizer_conf, loss = train_config['optimizer'], train_config['loss']
-    optimizer = optimizer_conf['class'](model.parameters(), **optimizer_conf['kwargs'])
-    preprocess = train_config['preprocess']
+    optimizer_conf, loss = train_config["optimizer"], train_config["loss"]
+    optimizer = optimizer_conf["class"](model.parameters(), **optimizer_conf["kwargs"])
+    preprocess = train_config["preprocess"]
 
     # TODO don't hardcode this, but load from config!
     ds = NucleiDataset()
@@ -73,18 +73,18 @@ def instantiate_from_config(name, kwargs={}, reference_path=None):
             file_path = os.path.join(reference_path, file_path)
         return instantiate_from_file(file_path, to_import, kwargs)
     else:
-        name_split = name.split('.')
+        name_split = name.split(".")
         to_import = name_split[-1]
-        module = '.'.join(name_split[:-1])
+        module = ".".join(name_split[:-1])
         return instantiate_from_module(module, to_import, kwargs)
 
 
 def parse_transform(trafo):
-    source = trafo['source']
-    kwargs = trafo.get('kwargs', {})
-    with open(source, 'r') as f:
+    source = trafo["source"]
+    kwargs = trafo.get("kwargs", {})
+    with open(source, "r") as f:
         trafo_config = yaml.load(f, Loader=yaml.SafeLoader)
-    trafo_source = trafo_config['source']
+    trafo_source = trafo_config["source"]
     # these are only here for reference
     # kwargs = trafo_config['kwargs']
     ref_path = os.path.split(source)[0]
@@ -92,37 +92,35 @@ def parse_transform(trafo):
 
 
 def parse_training_config(config_file):
-    with open(config_file, 'r') as f:
-        config = yaml.load(f, Loader=yaml.SafeLoader)['training']
+    with open(config_file, "r") as f:
+        config = yaml.load(f, Loader=yaml.SafeLoader)["training"]
 
     # parse the preprocess config
-    preprocess = config['preprocess']
+    preprocess = config["preprocess"]
     preprocess = [parse_transform(trafo) for trafo in preprocess]
 
     # parse the loss
-    loss = config['loss']
+    loss = config["loss"]
     loss = [parse_transform(trafo) for trafo in loss]
 
     # parse the optimizer
-    optimizer_conf = config['optimizer']
-    name_split = optimizer_conf['name'].split('.')
+    optimizer_conf = config["optimizer"]
+    name_split = optimizer_conf["name"].split(".")
     to_import = name_split[-1]
-    module = '.'.join(name_split[:-1])
+    module = ".".join(name_split[:-1])
     optimizer = class_from_module(module, to_import)
-    optimizer_kwargs = optimizer_conf.get('kwargs', {})
+    optimizer_kwargs = optimizer_conf.get("kwargs", {})
 
     # TODO parse the rest as well
-    return {'preprocess': preprocess,
-            'loss': loss,
-            'optimizer': {'class': optimizer, 'kwargs': optimizer_kwargs}}
+    return {"preprocess": preprocess, "loss": loss, "optimizer": {"class": optimizer, "kwargs": optimizer_kwargs}}
 
 
 def load_model(config_file):
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
 
-    source = config['source']
-    kwargs = config.get('kwargs', {})
+    source = config["source"]
+    kwargs = config.get("kwargs", {})
 
     file_path, to_import = source.split(":")
     return instantiate_from_file(file_path, to_import, kwargs)
@@ -134,5 +132,6 @@ def training(config, output):
     train(model, train_config, output)
 
 
-if __name__ == '__main__':
-    training('./UNet2dExample.model.yaml', 'unet2d_weights.torch')
+if __name__ == "__main__":
+    assert False, "deprecated. todo: use pybio.core and pybio.torch"
+    training("./UNet2dExample.model.yaml", "unet2d_weights.torch")
