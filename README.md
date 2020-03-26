@@ -114,12 +114,11 @@ Specification of a tensor.
 - `axes`: string of axes identifiers, e.g. btczyx
 - `data_type`: data type (e.g. float32)
 - `data_range`: tuple of (minimum, maximum)
-- `[shape]`: optional specification of tensor shape
-     - Either
-       - `min`: minimum shape with same length as `axes`.
-       - `step`: minimum shape change with same length as `axes`. 
-     - or
-       - `exact`: exact shape (or list thereof) with same lenght as `axes`
+- `shape`: specification of tensor shape
+  - Either
+    - `shape`: <exact shape with same length as `axes`>
+  - or
+    - `shape`: {`min`: <minimum shape with same length as `axes`>, `step`: <minimum shape change with same length as `axes`>} 
 
 ### `dependencies`
 
