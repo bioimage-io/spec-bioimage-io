@@ -205,7 +205,27 @@ Specification of training process used to obtain the model weights. Must contain
       - `source`: Implementation of the optimizer. As usual, either relative path or importable from dependencies.
       - `kwargs`: keyword arguments for the optimizer
 
+### `config`
+A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
 
+For example:
+```yaml
+config:
+  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+  deepimagej:
+    model_keys:
+    # In principle the tag "SERVING" is used in almost every tf model
+    model_tag: tf.saved_model.tag_constants.SERVING
+    # Signature definition to call the model. Again "SERVING" is the most general
+    signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    test_information:  
+      input_size: [2048x2048] # Size of the input images  
+      output_size: [1264x1264 ]# Size of all the outputs  
+      device: cpu # Device used. In principle either cpu or GPU  
+      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device  
+      runtime: 78.8s # Time it took to run the model
+      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+```
 ## Reader Specification
 
 A reader entry in the bioimage.io model zoo is defined by a configuration file `<reader name>.reader.yaml`.
