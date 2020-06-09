@@ -63,16 +63,14 @@ Can be `null` if the implementation is not framework specific.
 ### `model`
  - `source`: Language and framework specific implementation. This can either point to a local implementation:
   `<relative path to file>:<identifier of implementation within the source file>`
-
-  or the implementation in an available dependency:
-  <root-dependency>.<sub-dependency>.<identifier>
-
-  For example:
-  - ./my_function:MyImplementation
-  - core_library.some_module.some_function
-<!---
-java: <path-to-jar>:ClassName ?
--->
+  or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`. 
+  
+    For example:
+      - `./my_function:MyImplementation`
+      - `core_library.some_module.some_function`
+      <!---
+      java: <path-to-jar>:ClassName ?
+      -->
 
  - `kwargs`: Keyword arguments for the implementation specified by [`source`](#source).
 
@@ -90,7 +88,6 @@ java: <path-to-jar>:ClassName ?
   ```
 
   Or you can drag and drop your file to this [online tool](https://bioimage.io/sha256.html) to generate it in your browser.
-
 
 
 <!---
