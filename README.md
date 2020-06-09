@@ -61,9 +61,7 @@ The deep learning framework for which this object has been implemented. For now,
 Can be `null` if the implementation is not framework specific.
 
 ### `model`
-
-- `source`
-  Language and framework specific implementation. This can either point to a local implementation:
+ - `source`: Language and framework specific implementation. This can either point to a local implementation:
   `<relative path to file>:<identifier of implementation within the source file>`
 
   or the implementation in an available dependency:
@@ -75,8 +73,10 @@ Can be `null` if the implementation is not framework specific.
 <!---
 java: <path-to-jar>:ClassName ?
 -->
-- `sha256`
-  SHA256 checksum of the model file
+
+ - `kwargs`: Keyword arguments for the implementation specified by [`source`](#source).
+
+ - `sha256`: SHA256 checksum of the model file (for both serialized model file or source code).
 
   You can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, here is a codesnippet:
   ```python
@@ -91,8 +91,6 @@ java: <path-to-jar>:ClassName ?
 
   Or you can drag and drop your file to this [online tool](https://bioimage.io/sha256.html) to generate it in your browser.
 
-#### `kwargs`
-Keyword arguments for the implementation specified by [`source`](#source).
 
 
 <!---
