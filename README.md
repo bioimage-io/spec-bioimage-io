@@ -214,10 +214,10 @@ config:
   # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
   deepimagej:
     model_keys:
-    # In principle the tag "SERVING" is used in almost every tf model
-    model_tag: tf.saved_model.tag_constants.SERVING
-    # Signature definition to call the model. Again "SERVING" is the most general
-    signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+      # In principle the tag "SERVING" is used in almost every tf model
+      model_tag: tf.saved_model.tag_constants.SERVING
+      # Signature definition to call the model. Again "SERVING" is the most general
+      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
     test_information:  
       input_size: [2048x2048] # Size of the input images  
       output_size: [1264x1264 ]# Size of all the outputs  
