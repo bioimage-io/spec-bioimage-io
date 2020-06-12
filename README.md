@@ -60,28 +60,44 @@ What about `javascript`?
 The deep learning framework for which this object has been implemented. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.
 
-### `source`
+### `model`
+ - `source`: Language and framework specific implementation. This can either point to a local implementation:
+  `<relative path to file>:<identifier of implementation within the source file>`
+  or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`. 
+  
+    For example:
+      - `./my_function:MyImplementation`
+      - `core_library.some_module.some_function`
+      <!---
+      java: <path-to-jar>:ClassName ?
+      -->
 
-Language and framework specific implementation. This can either point to a local implementation:
-`<relative path to file>:<identifier of implementation within the source file>`
+ - `kwargs`: Keyword arguments for the implementation specified by [`source`](#source).
 
-or the implementation in an available dependency:
-<root-dependency>.<sub-dependency>.<identifier>
+ - `sha256`: SHA256 checksum of the model file (for both serialized model file or source code).
 
-For example:
-- ./my_function:MyImplementation
-- core_library.some_module.some_function
-<!---
-java: <path-to-jar>:ClassName ?
--->
+  You can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, here is a codesnippet:
+  ```python
+  import hashlib
+  
+  # set your actual file name below
+  with open(filename,"rb") as f:
+      bytes = f.read() # read entire file as bytes
+      readable_hash = hashlib.sha256(bytes).hexdigest();
+      print(readable_hash)
+  ```
 
-### `kwargs`
-Keyword arguments for the implementation specified by [`source`](#source).
+  Or you can drag and drop your file to this [online tool](https://bioimage.io/sha256.html) to generate it in your browser.
+
 
 <!---
 Do we want any positional arguments ? mandatory or optional?
 -->
 
+### `weights`
+A group of weights stored in key-value format, each weights definition contains the following fields:
+ - `source`: link to the model weight file. Preferably a zenode doi.
+ - `sha256`: SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
 
 ## Transformation Specification
 
@@ -162,9 +178,7 @@ Force this to be explicit, or also allow any, identity, same?
 
 ### `prediction`
 Specification of prediction for the model. Must cotain the following keys:
-- `weights`: model weights to load for prediction, that were obtained by the training processs described in [training](#training).
-  `source`: link to the model weight file. Preferably a zenode doi.
-  `hash`: hash of hash of the model weight file specified by `source`
+- `weights`: the default model weights used for prediction, it must be a key defined in the root node `weights`.
 - `preprocess`:  list of transformations applied before the model input. Can be null if no preprocsssing is necessary. List entries must adhere to the [transformation entry](#transformation-entry) format.
 - `postprocess`: list of transformations applied after the model input. Can be null if no preprocessing is necessary. List entries must adhere to the [transformation entry] format.
 - `dependencies`: dependencies required to run prediction. See [transformation config](#transformation-specification).
@@ -182,6 +196,7 @@ Specification of training process used to obtain the model weights. Must contain
 - `source`: Implementation of the training process. Can either be a relative file and 
 - `kwargs`: Keyword arguments for the training implementation, that are not part of `setup`.
 - `setup`: The training set-up that is instantiated by the training function. It must contain the keys listed belows (for which we will provide parser functions.) It can consist additional keys, which needs to be parsed separately and may be used to extend the core library.
+    - `weights`: pretrained weights loaded before training starts, must be a key specified in the root node `weights`.
     - `reader`: specification of a [reader config](#reader-specification).
     - `sampler`: specification of a [sampler config](#sampler-specification).
     - `preprocess`: list of [transformation entries](#transformation-entry) that are applied before tensors are fed to the model. 
@@ -190,7 +205,27 @@ Specification of training process used to obtain the model weights. Must contain
       - `source`: Implementation of the optimizer. As usual, either relative path or importable from dependencies.
       - `kwargs`: keyword arguments for the optimizer
 
+### `config`
+A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
 
+For example:
+```yaml
+config:
+  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+  deepimagej:
+    model_keys:
+      # In principle the tag "SERVING" is used in almost every tf model
+      model_tag: tf.saved_model.tag_constants.SERVING
+      # Signature definition to call the model. Again "SERVING" is the most general
+      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    test_information:  
+      input_size: [2048x2048] # Size of the input images  
+      output_size: [1264x1264 ]# Size of all the outputs  
+      device: cpu # Device used. In principle either cpu or GPU  
+      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device  
+      runtime: 78.8s # Time it took to run the model
+      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+```
 ## Reader Specification
 
 A reader entry in the bioimage.io model zoo is defined by a configuration file `<reader name>.reader.yaml`.
