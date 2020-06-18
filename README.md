@@ -46,7 +46,9 @@ A list of cover images provided by either a relative path to the model folder, o
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 
 ### `format_version`
-Version of this bioimage.io configuration specification.
+Version of this bioimage.io configuration specification. Consumer software can use this field to provide backward compatibility.
+
+Current version: `0.1.1`.
 
 ### `language`
 

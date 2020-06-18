@@ -16,7 +16,7 @@ documentation: ./unet2d.md
 tags: [unet2d, pytorch, nucleus-segmentation]
 covers: []
 
-format_version: 0.1.0
+format_version: 0.1.1
 language: python
 framework: pytorch
 
