@@ -10,7 +10,7 @@ The configurations are represented by a yaml file.
 
 To get a quick overview of the config file, see an example file [here](./models/UNet2dExample.model.yaml).
 
-## Current `format_version`: 0.1.0
+## Current `format_version`: 0.2.0
 
 ## Common keys
 
