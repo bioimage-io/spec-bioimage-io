@@ -48,7 +48,7 @@ Please use an image smaller than 500KB, aspect ratio width to height 2:1. The su
 ### `format_version`
 Version of this bioimage.io configuration specification. Consumer software can use this field to provide backward compatibility.
 
-Current version: `0.1.1`.
+Current version: `0.2.0`.
 
 ### `language`
 
