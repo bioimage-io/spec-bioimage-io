@@ -50,6 +50,7 @@ Please use an image smaller than 500KB, aspect ratio width to height 2:1. The su
 
 ### `format_version`
 Version of this bioimage.io configuration specification. This is mandatory, and important for the consumer software to verify before parsing the fields.
+
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
 ### `language`
