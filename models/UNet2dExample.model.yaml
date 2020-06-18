@@ -25,10 +25,18 @@ model:
     kwargs: {input_channels: 1, output_channels: 1}
 
 weights:
-    my_weights:
-        # TODO how do we make clear that this is a doi? doi:.... ?
-        source: 10.5281/zenodo.3446812
-        sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    - name: default
+      # TODO how do we make clear that this is a doi? doi:.... ?
+      source: 10.5281/zenodo.3446812
+      sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+      parent: null
+      description: "Weights from DataScienceBowl"
+      # These should be different they are not
+    - name: my_other_weights
+      source: 10.5281/zenodo.3446812
+      sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+      parent: null
+      description: "Weights from DataScienceBowl"
 
 test_input: my_test_input.npy  # language + extension defines memory representation
 test_output: my_test_output.npy
@@ -61,7 +69,7 @@ prediction:
           kwargs: {dtype: float32}
         - spec: https://github.com/bioimage-io/pytorch-bioimage-io/blob/8959dab1236a72593613a5c89ea973c2f5612aea/specs/transformations/NormalizeZeroMeanUnitVariance.transformation.yaml
           kwargs: {apply_to: [0]}
-    weights: my_weights
+    weights: default
     postprocess:
         - spec: https://github.com/bioimage-io/pytorch-bioimage-io/blob/8959dab1236a72593613a5c89ea973c2f5612aea/specs/transformations/Sigmoid.transformation.yaml
         - spec: https://github.com/bioimage-io/pytorch-bioimage-io/blob/8959dab1236a72593613a5c89ea973c2f5612aea/specs/transformations/EnsureNumpy.transformation.yaml
