@@ -40,6 +40,9 @@ A string can be seperated by `;` in order to identify multiple handles per autho
 ### `documentation`
 Relative path to file with additional documentation in markdown.
 
+### `git_repo`
+A url to the git repository, e.g. to Github or Gitlab. If the model is contained in a subfolder in a common git repo, then an url to the exact folder (which contains this yaml file) should be used.
+
 ### `tags`
 A list of tags.
 
