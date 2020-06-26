@@ -13,6 +13,7 @@ authors:
     - Constantin Pape;@constantinpape
     - Fynn Beutenmueller
 documentation: ./unet2d.md
+git_repo: https://github.com/bioimage-io/configuration/tree/master/models
 tags: [unet2d, pytorch, nucleus-segmentation]
 covers: []
 
