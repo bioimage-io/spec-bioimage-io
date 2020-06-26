@@ -10,7 +10,7 @@ The configurations are represented by a yaml file.
 
 To get a quick overview of the config file, see an example file [here](./models/UNet2dExample.model.yaml).
 
-## Current `format_version`: 0.1.0
+## Current `format_version`: 0.2.0
 
 ## Common keys
 
@@ -50,6 +50,7 @@ Please use an image smaller than 500KB, aspect ratio width to height 2:1. The su
 
 ### `format_version`
 Version of this bioimage.io configuration specification. This is mandatory, and important for the consumer software to verify before parsing the fields.
+
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
 ### `language`
