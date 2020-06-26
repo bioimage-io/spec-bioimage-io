@@ -8,6 +8,9 @@ The model zoo specification contains configuration definitions for the following
 
 The configurations are represented by a yaml file.
 
+To get a quick overview of the config file, see an example file [here](./models/UNet2dExample.model.yaml).
+
+## Current `format_version`: 0.1.0
 
 ## Common keys
 
@@ -46,7 +49,8 @@ A list of cover images provided by either a relative path to the model folder, o
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 
 ### `format_version`
-Version of this bioimage.io configuration specification.
+Version of this bioimage.io configuration specification. This is mandatory, and important for the consumer software to verify before parsing the fields.
+The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
 ### `language`
 
@@ -87,7 +91,7 @@ Can be `null` if the implementation is not framework specific.
       print(readable_hash)
   ```
 
-  Or you can drag and drop your file to this [online tool](https://bioimage.io/sha256.html) to generate it in your browser.
+  Or you can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.
 
 
 <!---
@@ -95,8 +99,13 @@ Do we want any positional arguments ? mandatory or optional?
 -->
 
 ### `weights`
-A group of weights stored in key-value format, each weights definition contains the following fields:
- - `source`: link to the model weight file. Preferably a zenode doi.
+A list of weights, each weights definition contains the following fields:
+ - `id`: an unique id which will be used to refer the weights, e.g. in `prediction` or `training`.
+ - `name`: the name of the weights for display, it should be a human-friendly name in title case
+ - `description`: description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
+ - `authors`: a list of authors. This field is optional, only required if the authors are different from the model.
+ - `covers`: a list of cover images. This is used for showing how the inputs and outputs looks like with this weights file.
+ - `source`: link to the weights file. Preferably an url to the weights file.
  - `sha256`: SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
 
 ## Transformation Specification
