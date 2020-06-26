@@ -25,18 +25,25 @@ model:
     kwargs: {input_channels: 1, output_channels: 1}
 
 weights:
-    - name: default
+    - id: default
+      name: Default Weights
       # TODO how do we make clear that this is a doi? doi:.... ?
       source: 10.5281/zenodo.3446812
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-      parent: null
+      timestamp: 2019-12-11T12:22:32.11
+      authors: ["author1", "author2"]
+      covers: []
       description: "Weights from DataScienceBowl"
       # These should be different they are not
-    - name: my_other_weights
+    - id: my_other_weights
+      name: My Other Weights
       source: 10.5281/zenodo.3446812
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-      parent: null
-      description: "Weights from DataScienceBowl"
+      parent: default
+      timestamp: 2019-12-14T21:59:43.10
+      authors: ["author2"]
+      covers: []
+      description: "Fine tuned weights based on DataScienceBowl"
 
 test_input: my_test_input.npy  # language + extension defines memory representation
 test_output: my_test_output.npy
