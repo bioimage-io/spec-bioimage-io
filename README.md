@@ -69,16 +69,17 @@ The deep learning framework for which this object has been implemented. For now,
 Can be `null` if the implementation is not framework specific.
 
 ### `model`
- - `source`: Language and framework specific implementation. This can either point to a local implementation:
-  `<relative path to file>:<identifier of implementation within the source file>`
-  or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`. 
+ - `source`: Language and framework specific implementation. This can either point to a local implementation:\
+   `<relative path to file>:<identifier of implementation within the source file>`\
+   or the implementation in an available dependency:\
+   `<root-dependency>.<sub-dependency>.<identifier>`
   
-    For example:
-      - `./my_function:MyImplementation`
-      - `core_library.some_module.some_function`
-      <!---
-      java: <path-to-jar>:ClassName ?
-      -->
+   For example:
+     - `./my_function:MyImplementation`
+     - `core_library.some_module.some_function`
+     <!---
+     java: <path-to-jar>:ClassName ?
+     -->
 
  - `kwargs`: Keyword arguments for the implementation specified by [`source`](#source).
 
@@ -160,6 +161,7 @@ For example:
 `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now
 <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt`
 -->
+
 
 
 ## Model Specification
