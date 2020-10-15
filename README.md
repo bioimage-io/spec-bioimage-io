@@ -204,19 +204,6 @@ Is this the correct URI format now?
 
 Can contain the key `kwargs`: instantiation of keyword arguments for this transformation.
 
-### `training`
-Specification of training process used to obtain the model weights. Must contain the following keys:
-- `source`: Implementation of the training process. Can either be a relative file and 
-- `kwargs`: Keyword arguments for the training implementation, that are not part of `setup`.
-- `setup`: The training set-up that is instantiated by the training function. It must contain the keys listed belows (for which we will provide parser functions.) It can consist additional keys, which needs to be parsed separately and may be used to extend the core library.
-    - `weights`: pretrained weights loaded before training starts, must be a key specified in the root node `weights`.
-    - `reader`: specification of a [reader config](#reader-specification).
-    - `sampler`: specification of a [sampler config](#sampler-specification).
-    - `preprocess`: list of [transformation entries](#transformation-entry) that are applied before tensors are fed to the model. 
-    - `loss`: transformations that are applied to model outputs and loss.  list of [transformation entries](#transformation-entries). Last entry must be the actual loss.
-    - `optimizer`: optimizer used in training. For now, we have no specification for this, but just use the framework specific implementation directly. We may want to change this.
-      - `source`: Implementation of the optimizer. As usual, either relative path or importable from dependencies.
-      - `kwargs`: keyword arguments for the optimizer
 
 ### `config`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
