@@ -58,10 +58,6 @@ If the model is contained in a subfolder of a git repository, then a url to the 
 - `tags`
 A list of tags.
 
-- `covers`
-A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
-Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
-
 - `inputs` <!-- Force this to be explicit, or also allow any? -->
 Describes the input tensors expected by this model.
 Must be a list of *tensor specification keys*.
@@ -80,7 +76,13 @@ Describes the output tensors from this model.
 Must be a list of *tensor specification*.
 <!--
 Force this to be explicit, or also allow any, identity, same?
+special case: dependency on input (with input not exactly specified)
+from example model config: 
+    reference_input: input
+    scale: [1, 1, 1, 1]
+    offset: [0, 0, 0, 0]
 -->
+
 
 - `test_inputs`
 Relative file path to test inputs. `language` and the file extension define its memory representation.
@@ -105,6 +107,10 @@ The test outputs are always stored as a list of tensors as described in `outputs
     -->
  
   - `kwargs` Keyword arguments for the implementation specified by [`source`](#source).
+
+  - `covers`
+    A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
+    Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 
   <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
   - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
@@ -135,7 +141,7 @@ A list of weights, each weights definition contains the following fields:
   - `name` the name of the weights for display, it should be a human-friendly name in title case
   - `description` description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
   - `authors` a list of authors. This field is optional, only required if the authors are different from the model.
-  - `covers` a list of cover images. This is used for showing how the inputs and outputs looks like with this weights file.
+  - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
   - `source` link to the weights file. Preferably an url to the weights file.
   - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
   - `framework` framework of this weight entry
