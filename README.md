@@ -53,7 +53,7 @@ Relative path to file with additional documentation in markdown.
 
 - `git_repo`
 A url to the git repository, e.g. to Github or Gitlab.\
-If the model is contained in a subfolder in a common git repo, then an url to the exact folder (which contains this yaml file) should be used.
+If the model is contained in a subfolder of a git repository, then a url to the exact folder (which contains the configuration yaml file) should be used.
 
 - `tags`
 A list of tags.
@@ -84,11 +84,11 @@ Force this to be explicit, or also allow any, identity, same?
 
 - `test_inputs`
 Relative file path to test inputs. `language` and the file extension define its memory representation.
-The test inputs are always stored as a list of tensors.
+The test inputs are always stored as a list of tensors as described in `inputs`.
 
 - `test_output`
 Relative file path to test outputs. `language` and the file extension define its memory representation.
-The test outputs are always stored as a list of tensors.
+The test outputs are always stored as a list of tensors as described in `outputs`.
 
 
 - `model`
