@@ -1,10 +1,7 @@
 # Bioimiage.io Configuration Specification
 
 The model zoo specification contains configuration definitions for the following categories:
-<!-- absorbed into model (for now): - `Transformation` configuration of a tensor to tensor transformation, that can be used for pre-processing operations (like normalization), post-processing, etc. -->
 - [`Model`](#model-specification): configuration of a trainable (deep-learning) model.
-- [`Reader`](#reader-specification): configuration of a data-source + how to read from it.
-- [`Sampler`](#sampler-specification): configuration of a sampling procedure given a [`Reader`](#reader-specification).
 
 The configurations are represented by a yaml file.
 
@@ -13,11 +10,11 @@ To get a quick overview of the config file, see an example file [here](./models/
 ## Current [`format_version`](#common-keys): 0.3.0
 
 
-## Common keys
-Each configuration must contain the following keys:
-<!---
-Do we have any optional config keys?
--->
+## Model Specification
+
+A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
+The configuration file must contain the following \[optional\] keys:
+
 
 - `language`
 Programming language of the source code. For now, we support `python` and `java`.
@@ -40,6 +37,10 @@ Name of the specification. This name should equal the name of any existing, logi
 - `description`
 A string containing a brief description. 
 
+- `authors`
+A list of author strings. 
+A string can be seperated by `;` in order to identify multiple handles per author.
+
 - `cite`
 A citation entry or list of citation entries.
 Each entry contains of a mandatory `text` field and either one or both of `doi` and `url`.
@@ -47,11 +48,7 @@ Each entry contains of a mandatory `text` field and either one or both of `doi` 
 - `license`
 A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
 
-- `authors`
-A list of author strings. 
-A string can be seperated by `;` in order to identify multiple handles per author.
-
--  `documentation`
+- `documentation`
 Relative path to file with additional documentation in markdown.
 
 - `git_repo`
@@ -64,47 +61,6 @@ A list of tags.
 - `covers`
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
-
-
-<!-- not in use atm
-## Transformation Specification
-
-A transformation describes a stateless operation that takes a list of input tensors and produces a list of output tensors.
-
-A confiuration entry in the bioimage.io model zoo is defined by a configuration file `<transformation name>.transformation.yaml`.
-The configuration file must contain the [common keys](#common-keys) and the keys `inputs`, `outputs`, `dependencies`, `source`, and optionally `kwargs`.
-
-### `inputs`
-Describes the input tensors expected by this transformation.
-Either a string from the following choices:
-  - any: any number/shape of input tensors is accepted/returned
-
-or a list of [tensor specifications](#common-keys).
-
-### `outputs`
-Either a string from the following choices:
-  - any: any number/shape of input tensors is accepted/returned
-  - identity: number/shape of output tensors is the same as input tensors
-  - same number: same number of tensors as given to input is returned (shape may differ)
-
-or a list of [tensor specifications](#common-keys).
---->
-
-
-
-## Model Specification
-
-
-A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
-The configuration file must contain the [common keys](#common-keys) and additionally the following keys:
-
-- `test_input`
-Relative file path to test input. `language` and the file extension define its memory representation.
-The input is always stored as list of tensors.
-
-- `test_output`
-Relative file path to test output. `language` and the file extension define its memory representation.
-The input is always stored as list of tensors.
 
 - `inputs` <!-- Force this to be explicit, or also allow any? -->
 Describes the input tensors expected by this model.
@@ -125,6 +81,14 @@ Must be a list of *tensor specification*.
 <!--
 Force this to be explicit, or also allow any, identity, same?
 -->
+
+- `test_inputs`
+Relative file path to test inputs. `language` and the file extension define its memory representation.
+The test inputs are always stored as a list of tensors.
+
+- `test_output`
+Relative file path to test outputs. `language` and the file extension define its memory representation.
+The test outputs are always stored as a list of tensors.
 
 
 - `model`
@@ -154,10 +118,10 @@ Force this to be explicit, or also allow any, identity, same?
 ```python
 import hashlib
 
-# set your actual file name below
-with open(filename,"rb") as f:
+filename = "your filename here"
+with open(filename, "rb") as f:
   bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest();
+  readable_hash = hashlib.sha256(bytes).hexdigest()
   print(readable_hash)
   ```
 
@@ -178,7 +142,7 @@ A list of weights, each weights definition contains the following fields:
   - `requires_model_source` boolean; defines if this weight entry can be loaded independently of the model source (it must contain the model architecture in this case) or not.
 
 
-- `config`
+- `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
 
 For example:
@@ -199,44 +163,15 @@ config:
       runtime: 78.8s # Time it took to run the model
       pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
 ```
-## Reader Specification
-
-A reader entry in the bioimage.io model zoo is defined by a configuration file `<reader name>.reader.yaml`.
-A reader implements access to data. A reader can read from one or multiple data-sets.
-It implements an interface that allows random access to arbitrary sub-tensors of the dataset.
-Data CAN be private!
-
-The reader config must contain the [common keys](#common-keys) and the key `dependencies` (see [model specification](#model-specification)).
-
-
-## Sampler Specification
-A sampler entry in the bioimage.io model zoo is defined by a configuration file `<sampler name>.sampler.yaml`.
-A sampler defines a sequence of batches over a reader. 
-
-The sampler config must contain the [common keys](#common-keys), as well as the keys `dependencies` and `outputs` (see [model specification](#model-specification)).
-
 
 # Example Configurations
 
-See examples for configuration specifications in the subfolders [models](./models), [readers](./readers), and [samplers](./samplers).
-
+See examples for model configurations in the subfolders [models](./models).
 
 <!--- The includes do not work
 ## Model
 
 ```yaml
 [!INCLUDE[model config](./models/Unet2dExample.model.yaml)]
-```
-
-##  Reader
-
-```yaml
-[!INCLUDE[reader config](./readers/nN5.reader.yaml)]
-```
-
-##  Sampler
-
-```yaml
-[!INCLUDE[sampler config](./samplers/RandomBatch.sampler.yaml)]
 ```
 -->
