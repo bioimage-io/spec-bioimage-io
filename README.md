@@ -16,20 +16,9 @@ A model entry in the bioimage.io model zoo is defined by a configuration file `<
 The configuration file must contain the following \[optional\] keys:
 
 
-- `language`
-Programming language of the source code. For now, we support `python` and `java`.
-<!---
-What about `javascript`?
--->
-
-- `framework`
-The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
-Can be `null` if the implementation is not framework specific.
-
 - `format_version`
 Version of this bioimage.io configuration specification. This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
-
 
 - `name`
 Name of the specification. This name should equal the name of any existing, logically equivalent object of the same category in another language/framework.
@@ -48,9 +37,6 @@ Each entry contains of a mandatory `text` field and either one or both of `doi` 
 - `license`
 A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
 
-- `documentation`
-Relative path to file with additional documentation in markdown.
-
 - `git_repo`
 A url to the git repository, e.g. to Github or Gitlab.\
 If the model is contained in a subfolder of a git repository, then a url to the exact folder (which contains the configuration yaml file) should be used.
@@ -58,7 +44,13 @@ If the model is contained in a subfolder of a git repository, then a url to the 
 - `tags`
 A list of tags.
 
-- `inputs` <!-- Force this to be explicit, or also allow any? -->
+- `documentation`
+Relative path to file with additional documentation in markdown.
+
+- `attachments`
+Dictionary of text keys and URI values to additional, relevant files.
+
+- `inputs`
 Describes the input tensors expected by this model.
 Must be a list of *tensor specification keys*.
 
@@ -83,70 +75,62 @@ from example model config:
     offset: [0, 0, 0, 0]
 -->
 
-
-- `test_inputs`
-Relative file path to test inputs. `language` and the file extension define its memory representation.
-The test inputs are always stored as a list of tensors as described in `inputs`.
-
-- `test_output`
-Relative file path to test outputs. `language` and the file extension define its memory representation.
-The test outputs are always stored as a list of tensors as described in `outputs`.
-
-
 - `model`
-  - `source` Language and framework specific implementation.\
-  This can either point to a local implementation:
-  `<relative path to file>:<identifier of implementation within the source file>`\
-  or the implementation in an available dependency:
-  `<root-dependency>.<sub-dependency>.<identifier>`\
-  For example:
+    - `language`
+    Programming language of the source code. For now, we support `python` and `java`.
+    <!---
+    What about `javascript`?
+    -->
+    - `framework`
+    The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
+    Can be `null` if the implementation is not framework specific.
+    - `source`
+    Language and framework specific implementation.\
+    This can either point to a local implementation:
+    `<relative path to file>:<identifier of implementation within the source file>`\
+    or the implementation in an available dependency:
+    `<root-dependency>.<sub-dependency>.<identifier>`\
+    For example:
     - `./my_function:MyImplementation`
     - `core_library.some_module.some_function`
     <!---
     java: <path-to-jar>:ClassName ?
     -->
- 
-  - `kwargs` Keyword arguments for the implementation specified by [`source`](#source).
-
-  - `covers`
+    - `sha256`
+    SHA256 checksum of the model file (for both serialized model file or source code).\
+    You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
+    Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
+    - `kwargs`
+    Keyword arguments for the implementation specified by [`source`](#source).
+    - `covers`
     A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
     Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
-
-  <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
-  - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
-  For example:
+    <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+    - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
+    For example:
       - conda:./environment.yaml
       - maven:./pom.xml
       - pip:./requirements.txt
-   - `sha256` SHA256 checksum of the model file (for both serialized model file or source code).\
-   You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
-   Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, here is a codesnippet:
-```python
-import hashlib
 
-filename = "your filename here"
-with open(filename, "rb") as f:
-  bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest()
-  print(readable_hash)
-  ```
-
-<!---
-Do we want any positional arguments ? mandatory or optional?
--->
 
 - `weights`
 A list of weights, each weights definition contains the following fields:
-  - `id` a unique id which will be used to refer to the weights. <!-- maybe with special values like 'default'? -->
-  - `name` the name of the weights for display, it should be a human-friendly name in title case
-  - `description` description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
-  - `authors` a list of authors. This field is optional, only required if the authors are different from the model.
-  - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
-  - `source` link to the weights file. Preferably an url to the weights file.
-  - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
-  - `framework` framework of this weight entry
-  - `requires_model_source` boolean; defines if this weight entry can be loaded independently of the model source (it must contain the model architecture in this case) or not.
-
+    - `id` a unique id which will be used to refer to the weights. <!-- maybe with special values like 'default'? -->
+    - `name` the name of the weights for display, it should be a human-friendly name in title case
+    - `description` description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
+    - `authors` a list of authors. This field is optional, only required if the authors are different from the model.
+    - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
+    - `source` link to the weights file. Preferably an url to the weights file.
+    - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
+    - `format` format of this weight entry
+    - `requires_model_source` boolean; defines if this weight entry can be loaded independently of the model source (it must contain the model architecture in this case) or not.
+    - `test_inputs` relative file path to test inputs. `language` and the file extension define its memory representation.
+    The test inputs are always stored as a list of tensors as described in `inputs`.
+    - `test_output` relative file path to test outputs. `language` and the file extension define its memory representation.
+    The test outputs are always stored as a list of tensors as described in `outputs`.
+    - `documentation` relative path to file with additional documentation in markdown.
+    - `attachments` text keys and URI values to additional, relevant files.
+    - `tags` a list of tags.
 
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
@@ -169,6 +153,18 @@ config:
       runtime: 78.8s # Time it took to run the model
       pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
 ```
+
+# Code snippet to compute SHA256 checksum
+
+```python
+import hashlib
+
+filename = "your filename here"
+with open(filename, "rb") as f:
+  bytes = f.read() # read entire file as bytes
+  readable_hash = hashlib.sha256(bytes).hexdigest()
+  print(readable_hash)
+  ```
 
 # Example Configurations
 
