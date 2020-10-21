@@ -88,6 +88,8 @@ The deep learning framework of the source code. For now, we support `pytorch` an
 Can be `null` if the implementation is not framework specific.\
 `language` and `framework` define which model runner can use this model for inference. 
 
+- `weight_format` format of all weight entries
+
 - `source`
 Language and framework specific implementation.\
 This can either point to a local implementation:
@@ -116,8 +118,6 @@ For example:
   - conda:./environment.yaml
   - maven:./pom.xml
   - pip:./requirements.txt
-
-`weight_format` format of all weight entries
 
 - `weights`
 A list of weights, each weights definition contains the following fields:

@@ -55,7 +55,7 @@ language: python
 framework: pytorch
 weights_format: with_source  # specifies how the weights are stored
 
-source: ./unet2d.py:UNet2d  # optional
+source: ./unet2d.py:UNet2d  # optional depending on weights_format
 sha256: d6e2e4cf0562237ed0f8fbc8a518fe7047e8e75a15a8a64437bc38d7458f3687   # optional
 kwargs: {input_channels: 1, output_channels: 1}
 dependencies: conda:./environment.yaml
