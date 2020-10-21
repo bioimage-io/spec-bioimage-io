@@ -1,8 +1,6 @@
 # TODO physical scale of the data
 # TODO discuss the depenendencies more closely
-language: python
-framework: pytorch
-format_version: 0.2.0
+format_version: 0.3.0
 
 name: UNet2dExample
 description: A 2d U-Net.
@@ -41,15 +39,13 @@ outputs:
         scale: [1, 1, 1, 1]
         offset: [0, 0, 0, 0]
 
-test_input: my_test_input.npy  # language + extension defines memory representation
-test_output: my_test_output.npy
-
-
 model:
     source: ./unet2d.py:UNet2d
     kwargs: {input_channels: 1, output_channels: 1}
     covers: []
     dependencies: conda:./environment.yaml
+    language: python
+    framework: pytorch
 
 weights:
     - id: default
@@ -62,6 +58,8 @@ weights:
       covers: []
       description: "Weights from DataScienceBowl"
       # These should be different they are not
+      test_inputs: my_default_test_input.npy  # language + extension defines memory representation
+      test_outputs: my_default_test_output.npy
     - id: my_other_weights
       name: My Other Weights
       source: 10.5281/zenodo.3446812
@@ -71,6 +69,8 @@ weights:
       authors: ["author2"]
       covers: []
       description: "Fine tuned weights based on DataScienceBowl"
+      test_inputs: my_other_test_input.npy  # language + extension defines memory representation
+      test_outputs: my_other_test_output.npy
 
 
 config: # optional
