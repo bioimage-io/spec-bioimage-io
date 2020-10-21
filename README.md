@@ -126,7 +126,7 @@ A list of weights, each weights definition contains the following fields:
     - `requires_model_source` boolean; defines if this weight entry can be loaded independently of the model source (it must contain the model architecture in this case) or not.
     - `test_inputs` relative file path to test inputs. `language` and the file extension define its memory representation.
     The test inputs are always stored as a list of tensors as described in `inputs`.
-    - `test_output` relative file path to test outputs. `language` and the file extension define its memory representation.
+    - `test_outputs` relative file path to test outputs. `language` and the file extension define its memory representation.
     The test outputs are always stored as a list of tensors as described in `outputs`.
     - `documentation` relative path to file with additional documentation in markdown.
     - `attachments` text keys and URI values to additional, relevant files.

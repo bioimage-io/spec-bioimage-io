@@ -1,8 +1,6 @@
 # TODO physical scale of the data
 # TODO discuss the depenendencies more closely
-language: python
-framework: pytorch
-format_version: 0.2.0
+format_version: 0.3.0
 
 name: UNet2dExample
 description: A 2d U-Net.
@@ -50,6 +48,8 @@ model:
     kwargs: {input_channels: 1, output_channels: 1}
     covers: []
     dependencies: conda:./environment.yaml
+    language: python
+    framework: pytorch
 
 weights:
     - id: default
