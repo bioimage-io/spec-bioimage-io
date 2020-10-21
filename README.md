@@ -26,6 +26,7 @@ Name of the specification. This name should equal the name of any existing, logi
 - `description`
 A string containing a brief description. 
 
+
 - `authors`
 A list of author strings. 
 A string can be seperated by `;` in order to identify multiple handles per author.
@@ -34,8 +35,6 @@ A string can be seperated by `;` in order to identify multiple handles per autho
 A citation entry or list of citation entries.
 Each entry contains of a mandatory `text` field and either one or both of `doi` and `url`.
 
-- `license`
-A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
 
 - `git_repo`
 A url to the git repository, e.g. to Github or Gitlab.\
@@ -43,6 +42,10 @@ If the model is contained in a subfolder of a git repository, then a url to the 
 
 - `tags`
 A list of tags.
+
+- `license`
+A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
+
 
 - `documentation`
 Relative path to file with additional documentation in markdown.
@@ -75,43 +78,46 @@ from example model config:
     offset: [0, 0, 0, 0]
 -->
 
-- `model`
-    - `language`
-    Programming language of the source code. For now, we support `python` and `java`.
-    <!---
-    What about `javascript`?
-    -->
-    - `framework`
-    The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
-    Can be `null` if the implementation is not framework specific.
-    - `source`
-    Language and framework specific implementation.\
-    This can either point to a local implementation:
-    `<relative path to file>:<identifier of implementation within the source file>`\
-    or the implementation in an available dependency:
-    `<root-dependency>.<sub-dependency>.<identifier>`\
-    For example:
-    - `./my_function:MyImplementation`
-    - `core_library.some_module.some_function`
-    <!---
-    java: <path-to-jar>:ClassName ?
-    -->
-    - `sha256`
-    SHA256 checksum of the model file (for both serialized model file or source code).\
-    You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
-    Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
-    - `kwargs`
-    Keyword arguments for the implementation specified by [`source`](#source).
-    - `covers`
-    A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
-    Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
-    <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
-    - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
-    For example:
-      - conda:./environment.yaml
-      - maven:./pom.xml
-      - pip:./requirements.txt
+- `language`
+Programming language of the source code. For now, we support `python` and `java`.
+<!---
+What about `javascript`?
+-->
+- `framework`
+The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
+Can be `null` if the implementation is not framework specific.\
+`language` and `framework` define which model runner can use this model for inference. 
 
+- `source`
+Language and framework specific implementation.\
+This can either point to a local implementation:
+`<relative path to file>:<identifier of implementation within the source file>`\
+or the implementation in an available dependency:
+`<root-dependency>.<sub-dependency>.<identifier>`\
+For example:
+- `./my_function:MyImplementation`
+- `core_library.some_module.some_function`
+<!---
+java: <path-to-jar>:ClassName ?
+-->
+As some weights contain the model architecture. The source is optional (depending on `weights_format`)
+- `sha256`
+SHA256 checksum of the model file (for both serialized model file or source code).\
+You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
+Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
+- `kwargs`
+Keyword arguments for the implementation specified by [`source`](#source).
+- `covers`
+A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
+Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
+<!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+- `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
+For example:
+  - conda:./environment.yaml
+  - maven:./pom.xml
+  - pip:./requirements.txt
+
+`weight_format` format of all weight entries
 
 - `weights`
 A list of weights, each weights definition contains the following fields:
@@ -122,15 +128,14 @@ A list of weights, each weights definition contains the following fields:
     - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
     - `source` link to the weights file. Preferably an url to the weights file.
     - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
-    - `format` format of this weight entry
-    - `requires_model_source` boolean; defines if this weight entry can be loaded independently of the model source (it must contain the model architecture in this case) or not.
+    - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
     - `test_inputs` relative file path to test inputs. `language` and the file extension define its memory representation.
     The test inputs are always stored as a list of tensors as described in `inputs`.
     - `test_outputs` relative file path to test outputs. `language` and the file extension define its memory representation.
     The test outputs are always stored as a list of tensors as described in `outputs`.
     - `documentation` relative path to file with additional documentation in markdown.
-    - `attachments` text keys and URI values to additional, relevant files.
     - `tags` a list of tags.
+    - `attachments` text keys and URI values to additional, relevant files.
 
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
