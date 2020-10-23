@@ -70,8 +70,10 @@ weights:
       source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
       timestamp: 2019-12-11T12:22:32Z  # ISO 8601
-      test_inputs: my_default_test_input.npy  # language + extension defines memory representation
-      test_outputs: my_default_test_output.npy
+      test_inputs:
+        - ./my_default_test_input.npy
+      test_outputs:
+        - ./my_default_test_output.npy
       documentation: weight specific documenation
       tags: [test, default]
       attachments: {}  # optional
@@ -83,8 +85,10 @@ weights:
       source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
       timestamp: 2019-12-14T21:59:43Z  # ISO 8601
-      test_inputs: my_other_test_input.npy  # language + extension defines memory representation
-      test_outputs: my_other_test_output.npy
+      test_inputs:
+        - my_other_test_input.npy
+      test_outputs:
+        - my_other_test_output.npy
       documentation: my_other_weights specific documenation
       tags: [test, default]
       attachments: {}  # optional
