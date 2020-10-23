@@ -35,12 +35,12 @@ inputs: # needs to become ordered dict (same for output) or list of dicts should
     data_type: float32
     data_range: [-inf, inf]
     shape: [1, 1, 512, 512]
-    normalization: zero_mean_unit_var
+    normalization: {name: zero_mean_unit_var}
 
 
 outputs:
-  - name: probability in [0,1]
-    description: network probabilities  # optional description
+  - name: probabilities
+    description: network probabilities in [0,1]  # optional description
     axes: bcyx
     data_type: float32
     data_range: [-inf, inf]
@@ -49,6 +49,7 @@ outputs:
         reference_input: input
         scale: [1, 1, 1, 1]
         offset: [0, 0, 0, 0]
+
 
 # language + framework specify runner
 language: python
