@@ -59,13 +59,21 @@ Must be a list of *tensor specification keys*.
 
   *tensor specification keys*:
   - `name` tensor name
-  - `axes` string of axes identifiers, e.g. btczyx
   - `data_type` data type (e.g. float32)
   - `data_range` tuple of (minimum, maximum)
+  - `axes` string of axes identifying characters from: btczyx
   - `shape` specification of tensor shape\
     Either as *exact shape with same length as `axes`*\
     or as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*} 
-    
+  - `normalization` optional description of how this input should be normalized
+    - `name` name of normalization (currently only 'zero_mean_unit_variance' is supported)
+    - `kwargs` key word arguments for `normalization`\
+        for 'zero_mean_unit_variance' these are:
+        - `mode` either 'fixed', 'per_dataset', or 'per_batch'
+        - `axes` subset of input `axes` to normalize independently (e.g. 'c')
+        - `mean` mean to normalize with (only applies for `mode` 'fixed'). This may be a (nested) list depending on `axes`, e.g. for `axes` 'c' a list of means for each channel; or for axes: 'cz' a list for each channel c of a nested list of means for each z position of that channel.
+        - `std` standard deviation to normalize with (only applies for `mode` 'fixed'). This may be a (nested) list depending on `axes` analogously to `mean`.
+
 - `outputs`
 Describes the output tensors from this model.
 Must be a list of *tensor specification*.

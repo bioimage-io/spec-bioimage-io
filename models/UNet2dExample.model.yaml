@@ -30,17 +30,17 @@ attachments: {}
 # TODO physical scale of the data
 inputs:
   - name: input
-    axes: bcyx  # letters in axes in btczyx   # todo: discussion about NTCHWD versus btczyx
     data_type: float32
     data_range: [-inf, inf]
-    shape: [1, 1, 512, 512]
+    axes: bcyx  # letters in axes in btczyx   # todo: discussion about NTCHWD versus btczyx
+    shape: [1, 2, 512, 512]
     normalization:  # optional description of expected normalization scheme of input
-      name: zero_mean_unit_var  # name of normalization. currently only zero_mean_unit_var is supported
-      kwargs:  # example kwargs for zero_mean_unit_var
-        mode: fixed  # mode in [fixed, per_dataset, per_batch]
-        mean: 129    # mean if mode == fixed
-        std: 23      # standard deviation if mode == fixed
-        axes: c      # subset of axes
+      name: zero_mean_unit_variance  # name of normalization. currently only zero_mean_unit_variance is supported
+      kwargs:  # example kwargs for zero_mean_unit_variance
+        mode: fixed           # mode in [fixed, per_dataset, per_batch]
+        mean: [129.1, 189.3]  # mean if mode == fixed. Here it is a list, because axes: 'c', for axes: '' this would be a float, for axes: 'cz', this would be a  list for each channel c of a nested list of means for each z position of that channel.
+        std: [23.3, 32.1]     # standard deviation if mode == fixed analogously to `mean`
+        axes: c               # subset of axes to normalize independently
 
 
 outputs:
