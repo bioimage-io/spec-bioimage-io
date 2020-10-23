@@ -53,7 +53,7 @@ outputs:
 # language + framework specify runner
 language: python
 framework: pytorch
-weights_format: with_source  # specifies how the weights are stored
+weights_format: pytorch  # specifies how the weights are stored
 
 source: ./unet2d.py:UNet2d  # optional depending on weights_format
 sha256: d6e2e4cf0562237ed0f8fbc8a518fe7047e8e75a15a8a64437bc38d7458f3687   # optional
@@ -66,7 +66,7 @@ weights:
       description: "Weights from DataScienceBowl"
       authors: ["author1", "author2"]
       covers: []
-      source: https://doi.org/10.5281/zenodo.3446812
+      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
       timestamp: 2019-12-11T12:22:32Z  # ISO 8601
       test_inputs: my_default_test_input.npy  # language + extension defines memory representation
@@ -79,7 +79,7 @@ weights:
       description: "Fine tuned weights based on DataScienceBowl"
       authors: ["author2"]
       covers: []
-      source: https://doi.org/10.5281/zenodo.3446812
+      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
       timestamp: 2019-12-14T21:59:43Z  # ISO 8601
       test_inputs: my_other_test_input.npy  # language + extension defines memory representation
