@@ -35,7 +35,7 @@ inputs: # needs to become ordered dict (same for output) or list of dicts should
     data_type: float32
     data_range: [-inf, inf]
     shape: [1, 1, 512, 512]
-    normalization: {name: zero_mean_unit_var}
+    normalization: {name: zero_mean_unit_var, kwargs: {mean: 129, std: 23}}
 
 
 outputs:
