@@ -65,9 +65,9 @@ Must be a list of *tensor specification keys*.
   - `shape` specification of tensor shape\
     Either as *exact shape with same length as `axes`*\
     or as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*} 
-  - `normalization` optional description of how this input should be normalized
-    - `name` name of normalization (currently only 'zero_mean_unit_variance' is supported)
-    - `kwargs` key word arguments for `normalization`\
+  - `preprocessing` optional description of how this input should be preprocessed
+    - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
+    - `kwargs` key word arguments for `preprocessing`\
         for 'zero_mean_unit_variance' these are:
         - `mode` either 'fixed', 'per_dataset', or 'per_batch'
         - `axes` subset of input `axes` to normalize independently (e.g. 'c')
