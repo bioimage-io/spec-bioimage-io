@@ -63,8 +63,8 @@ Must be a list of *tensor specification keys*.
   - `data_range` tuple of (minimum, maximum)
   - `axes` string of axes identifying characters from: btczyx
   - `shape` specification of tensor shape\
-    Either as *exact shape with same length as `axes`*\
-    or as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*} 
+    Either as *exact shape with same length as `axes`*,\
+    or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
   - `preprocessing` optional description of how this input should be preprocessed
     - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
     - `kwargs` key word arguments for `preprocessing`\
@@ -76,15 +76,8 @@ Must be a list of *tensor specification keys*.
 
 - `outputs`
 Describes the output tensors from this model.
-Must be a list of *tensor specification*.
-<!--
-Force this to be explicit, or also allow any, identity, same?
-special case: dependency on input (with input not exactly specified)
-from example model config: 
-    reference_input: input
-    scale: [1, 1, 1, 1]
-    offset: [0, 0, 0, 0]
--->
+Must be a list of *tensor specification*.    
+
 
 - `language`
 Programming language of the source code. For now, we support `python` and `java`.
