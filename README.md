@@ -65,6 +65,7 @@ Must be a list of *tensor specification keys*.
   - `shape` specification of tensor shape\
     Either as *exact shape with same length as `axes`*,\
     or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
+    or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
   - `preprocessing` optional description of how this input should be preprocessed
     - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
     - `kwargs` key word arguments for `preprocessing`\
