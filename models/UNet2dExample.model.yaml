@@ -70,9 +70,9 @@ weights:
       source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
       timestamp: 2019-12-11T12:22:32Z  # ISO 8601
-      test_inputs:
+      test_inputs:  # URI's to inputs (in order as specified in inputs) for a single test case
         - ./my_default_test_input.npy
-      test_outputs:
+      test_outputs:  # analog to test_inputs
         - ./my_default_test_output.npy
       documentation: weight specific documenation
       tags: [test, default]
