@@ -69,10 +69,10 @@ Must be a list of *tensor specification keys*.
     - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
     - `kwargs` key word arguments for `preprocessing`\
         for 'zero_mean_unit_variance' these are:
-        - `mode` either 'fixed', 'per_dataset', or 'per_batch'
-        - `axes` subset of input `axes` to normalize independently (e.g. 'c')
-        - `mean` mean to normalize with (only applies for `mode` 'fixed'). This may be a (nested) list depending on `axes`, e.g. for `axes` 'c' a list of means for each channel; or for axes: 'cz' a list for each channel c of a nested list of means for each z position of that channel.
-        - `std` standard deviation to normalize with (only applies for `mode` 'fixed'). This may be a (nested) list depending on `axes` analogously to `mean`.
+        - `mode`: either 'fixed', 'per_dataset', or 'per_sample'
+        - `axes`: subset of axes to normalize jointly, e.g. 'xy', batch ('b') is not a valid axis key here!
+        - `mean`: mean if mode == fixed, e.g. (with channel dimension of length c=3, and all axes 'cxy') [1.1, 2.2, 3.3]
+        - `std`: standard deviation if mode == fixed analogously to mean
 
 - `outputs`
 Describes the output tensors from this model.

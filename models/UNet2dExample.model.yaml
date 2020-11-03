@@ -37,10 +37,10 @@ inputs:
     preprocessing:  # optional description of the input's preprocessing
       name: zero_mean_unit_variance  # name of preprocessing. Currently only zero_mean_unit_variance is supported
       kwargs:  # example kwargs for zero_mean_unit_variance
-        mode: fixed           # mode in [fixed, per_dataset, per_batch]
-        mean: [129.1, 189.3]  # mean if mode == fixed. Here it is a list, because axes: 'c', for axes: '' this would be a float, for axes: 'cz', this would be a  list for each channel c of a nested list of means for each z position of that channel.
-        std: [23.3, 32.1]     # standard deviation if mode == fixed analogously to `mean`
-        axes: c               # subset of axes to normalize independently
+        mode: fixed           # mode in [fixed, per_dataset, per_sample]
+        axes: xy              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+        mean: [1.1, 2.2, 3.3] # mean if mode == fixed. Here it is a list (because in this example we assume a channel dimension of length c=2)
+        std: [0.1, 0.2, 0.3]  # standard deviation if mode == fixed analogously to mean
 
 
 outputs:
