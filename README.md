@@ -129,10 +129,8 @@ A list of weights, each weights definition contains the following fields:
     - `source` link to the weights file. Preferably an url to the weights file.
     - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
     - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
-    - `test_inputs` relative file path to test inputs. `language` and the file extension define its memory representation.
-    The test inputs are always stored as a list of tensors as described in `inputs`.
-    - `test_outputs` relative file path to test outputs. `language` and the file extension define its memory representation.
-    The test outputs are always stored as a list of tensors as described in `outputs`.
+    - `test_inputs` list of URIs to test inputs as described in `inputs` for a single test case. Supported file formats/extensions: `.npy`
+    - `test_outputs` analog to `test_inputs`.
     - `documentation` relative path to file with additional documentation in markdown.
     - `tags` a list of tags.
     - `attachments` text keys and URI values to additional, relevant files.
