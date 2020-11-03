@@ -59,13 +59,21 @@ Must be a list of *tensor specification keys*.
 
   *tensor specification keys*:
   - `name` tensor name
-  - `axes` string of axes identifiers, e.g. btczyx
   - `data_type` data type (e.g. float32)
   - `data_range` tuple of (minimum, maximum)
+  - `axes` string of axes identifying characters from: btczyx
   - `shape` specification of tensor shape\
     Either as *exact shape with same length as `axes`*\
     or as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*} 
-    
+  - `preprocessing` optional description of how this input should be preprocessed
+    - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
+    - `kwargs` key word arguments for `preprocessing`\
+        for 'zero_mean_unit_variance' these are:
+        - `mode`: either 'fixed', 'per_dataset', or 'per_sample'
+        - `axes`: subset of axes to normalize jointly, e.g. 'xy', batch ('b') is not a valid axis key here!
+        - `mean`: mean if mode == fixed, e.g. (with channel dimension of length c=3, and all axes 'cxy') [1.1, 2.2, 3.3]
+        - `std`: standard deviation if mode == fixed analogously to mean
+
 - `outputs`
 Describes the output tensors from this model.
 Must be a list of *tensor specification*.
