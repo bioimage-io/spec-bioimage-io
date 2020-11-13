@@ -5,7 +5,7 @@
 format_version: 0.3.0
 
 name: UNet2dExample
-description: A 2d U-Net.
+description: A 2d U-Net trained on the DSB nucleus segmentation challenge.
 authors:
     - Constantin Pape;@constantinpape
     - Fynn Beutenmueller
@@ -14,16 +14,16 @@ authors:
 cite:
     - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
       doi: https://doi.org/10.1007/978-3-319-24574-4_28
+    - text: "2018 Data Science Bowl"
+      doi: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/configuration/tree/master/models
-tags: [unet2d, pytorch, nucleus-segmentation]
+tags: [unet2d, pytorch, nucleus-segmentation, dsb]
 license: MIT
 
 documentation: ./unet2d.md
 covers: []
 attachments: {}
-
-
 
 ### model spec specific keys:
 
@@ -58,49 +58,27 @@ outputs:
 
 # language + framework specify runner
 language: python
-framework: pytorch
-weights_format: pytorch  # specifies how the weights are stored
 
 source: ./unet2d.py:UNet2d  # optional depending on weights_format
 sha256: d6e2e4cf0562237ed0f8fbc8a518fe7047e8e75a15a8a64437bc38d7458f3687   # optional
 kwargs: {input_channels: 1, output_channels: 1}
 dependencies: conda:./environment.yaml
 
-weights:
-    - id: default
-      name: Default Weights
-      description: "Weights from DataScienceBowl"
-      authors: ["author1", "author2"]
-      covers: []
-      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-      sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-      timestamp: 2019-12-11T12:22:32Z  # ISO 8601
-      test_inputs:  # URI's to inputs (in order as specified in inputs) for a single test case
-        - ./my_default_test_input.npy
-      test_outputs:  # analog to test_inputs
-        - ./my_default_test_output.npy
-      documentation: weight specific documenation
-      tags: [test, default]
-      attachments: {}  # optional
-    - id: my_other_weights
-      name: My Other Weights
-      description: "Fine tuned weights based on DataScienceBowl"
-      authors: ["author2"]
-      covers: []
-      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-      sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-      timestamp: 2019-12-14T21:59:43Z  # ISO 8601
-      test_inputs:
-        - my_other_test_input.npy
-      test_outputs:
-        - my_other_test_output.npy
-      documentation: my_other_weights specific documenation
-      tags: [test, default]
-      attachments: {}  # optional
+test_inputs:  # URI's to inputs (in order as specified in inputs) for a single test case
+  - ./my_default_test_input.npy
+test_outputs:  # analog to test_inputs
+  - ./my_default_test_output.npy
 
+weights:
+  pyorch_state_dict:
+    authors: ["author1", "author2"]  # only needs to be specified if the weight authors are different from the authors specified in the root
+    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    timestamp: 2019-12-11T12:22:32Z  # ISO 8601
+      
 
 config: # optional
   ilastik:
     only_ilastik_knows_about: lazyflow
-  deepimagej:
-    ij: deep-ij
+  # deepimagej:
+  #  ij: deep-ij
