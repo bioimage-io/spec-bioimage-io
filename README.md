@@ -94,27 +94,31 @@ Can be `null` if the implementation is not framework specific.\
 
 - `source`
 Language and framework specific implementation.\
+As some weights contain the model architecture. The source is optional (depending on `weights_format`)\
 This can either point to a local implementation:
 `<relative path to file>:<identifier of implementation within the source file>`\
 or the implementation in an available dependency:
 `<root-dependency>.<sub-dependency>.<identifier>`\
 For example:
-- `./my_function:MyImplementation`
-- `core_library.some_module.some_function`
+  - `./my_function:MyImplementation`
+  - `core_library.some_module.some_function`
 <!---
 java: <path-to-jar>:ClassName ?
 -->
-As some weights contain the model architecture. The source is optional (depending on `weights_format`)
+
 - `sha256`
 SHA256 checksum of the model file (for both serialized model file or source code).\
 You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
 Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
+
 - `kwargs`
 Keyword arguments for the implementation specified by [`source`](#source).
+
 - `covers`
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+
 - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
 For example:
   - conda:./environment.yaml
@@ -127,7 +131,7 @@ For example:
 - `test_outputs` analog to test_inputs.
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
-   - `weight_format_name` Format of this set of weights
+   - `weights_format` Format of this set of weights
         - `authors` a list of authors. This field is optional, only required if the authors are different from the authors specified in root.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
