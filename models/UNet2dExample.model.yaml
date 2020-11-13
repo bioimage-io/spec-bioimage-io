@@ -18,7 +18,7 @@ cite:
       doi: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/configuration/tree/master/models
-tags: [unet2d, pytorch, nucleus-segmentation, dsb]
+tags: [unet2d, pytorch, nucleus-segmentation, data-science-bowl-2018]
 license: MIT
 
 documentation: ./unet2d.md
@@ -58,6 +58,7 @@ outputs:
 
 # language + framework specify runner
 language: python
+framework: pytorch
 
 source: ./unet2d.py:UNet2d  # optional depending on weights_format
 sha256: d6e2e4cf0562237ed0f8fbc8a518fe7047e8e75a15a8a64437bc38d7458f3687   # optional
@@ -70,7 +71,7 @@ test_outputs:  # analog to test_inputs
   - ./my_default_test_output.npy
 
 weights:
-  pyorch_state_dict:
+  pytorch_state_dict:
     authors: ["author1", "author2"]  # only needs to be specified if the weight authors are different from the authors specified in the root
     source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
