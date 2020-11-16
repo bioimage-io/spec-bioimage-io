@@ -21,7 +21,7 @@ Version of this bioimage.io configuration specification. This is mandatory, and 
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
 - `name`
-Name of this specification.
+Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
 - `description`
 A string containing a brief description. 
@@ -125,10 +125,13 @@ For example:
   - maven:./pom.xml
   - pip:./requirements.txt
 
-- `attachments` Additional files for this specification; e.g. images that are necessary for the documentation.
+- `attachments` Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package. This field is optional.
 
 - `test_inputs` list of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: .npy
 - `test_outputs` analog to test_inputs.
+
+- `sample_inputs` list of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. This field is optional. 
+- `sample_outputs` list of URIs to sample outputs corresponding to the `sample_inputs`. This field is optional.
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
    - `weights_format` Format of this set of weights
@@ -136,6 +139,7 @@ For example:
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
         - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
+        - `attachments` weight specific attachments that will be included when generating the model package. This field is optional.
  
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
