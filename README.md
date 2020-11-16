@@ -95,9 +95,6 @@ What about `javascript`?
 The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.\
 `language` and `framework` define which model runner can use this model for inference. 
-
-- `weight_format` format of all weight entries
-
 - `source`
 Language and framework specific implementation.\
 This can either point to a local implementation:
@@ -121,6 +118,10 @@ Keyword arguments for the implementation specified by [`source`](#source).
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+- `test_inputs` list of URIs to test inputs as described in `inputs` for a single test case. Supported file formats/extensions: `.npy`
+- `test_outputs` analog to `test_inputs`.
+- `sample_inputs` list of URIs to sample inputs as described in `inputs` for a single sample case.
+- `sample_outputs` analog to `sample_inputs`.
 - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
 For example:
   - conda:./environment.yaml
@@ -129,19 +130,11 @@ For example:
 
 - `weights`
 A list of weights, each weights definition contains the following fields:
-    - `id` a unique id which will be used to refer to the weights. <!-- maybe with special values like 'default'? -->
-    - `name` the name of the weights for display, it should be a human-friendly name in title case
-    - `description` description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
+    - `weight_format` format of weight entry
     - `authors` a list of authors. This field is optional, only required if the authors are different from the model.
-    - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
     - `source` link to the weights file. Preferably an url to the weights file.
     - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
     - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
-    - `test_inputs` list of URIs to test inputs as described in `inputs` for a single test case. Supported file formats/extensions: `.npy`
-    - `test_outputs` analog to `test_inputs`.
-    - `documentation` relative path to file with additional documentation in markdown.
-    - `tags` a list of tags.
-    - `attachments` text keys and URI values to additional, relevant files.
 
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
