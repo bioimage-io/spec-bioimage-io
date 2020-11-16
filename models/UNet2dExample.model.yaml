@@ -18,7 +18,7 @@ cite:
       url: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/configuration/tree/master/models
-tags: [unet2d, pytorch, nucleus-segmentation, data-science-bowl-2018]
+tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 
 documentation: ./unet2d.md
