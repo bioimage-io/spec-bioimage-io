@@ -4,7 +4,7 @@
 
 format_version: 0.3.0
 
-name: UNet2dExample
+name: UNet2d-Example
 description: A 2d U-Net trained on the DSB nucleus segmentation challenge.
 authors:
     - Constantin Pape;@constantinpape
@@ -33,14 +33,14 @@ inputs:
     data_type: float32
     data_range: [-inf, inf]
     axes: bcyx  # letters in axes in btczyx   # todo: discussion about NTCHWD versus btczyx
-    shape: [1, 2, 512, 512]
+    shape: [1, 1, 512, 512]
     preprocessing:  # optional description of the input's preprocessing
       name: zero_mean_unit_variance  # name of preprocessing. Currently only zero_mean_unit_variance is supported
       kwargs:  # example kwargs for zero_mean_unit_variance
         mode: fixed           # mode in [fixed, per_dataset, per_sample]
         axes: xy              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
-        mean: [1.1, 2.2, 3.3] # mean if mode == fixed. Here it is a list (because in this example we assume a channel dimension of length c=2)
-        std: [0.1, 0.2, 0.3]  # standard deviation if mode == fixed analogously to mean
+        mean: [262.3] # mean if mode == fixed. Here it is a list (because in this example we assume a channel dimension of length c=2)
+        std: [220.2]  # standard deviation if mode == fixed analogously to mean
 
 
 outputs:
