@@ -134,7 +134,7 @@ For example:
 - `sample_outputs` list of URIs to sample outputs corresponding to the `sample_inputs`. This field is optional.
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
-   - `weights_format` Format of this set of weights
+   - `weights_format` Format of this set of weights. Weight formats can define additional (optional or required) fields.
         - `authors` a list of authors. This field is optional, only required if the authors are different from the authors specified in root.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
