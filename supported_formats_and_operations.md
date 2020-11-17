@@ -2,7 +2,7 @@
 
 The supported weight formats and their additional fields:
 
-- `keras_hdf5`: 
+- `keras_hdf5`: A hdf5 file containing weights for Keras.
 - `pytorch_script`: A torchscript file.
 - `pytorch_state_dict`: A file containg the state dict of a pytorch model.
 - `tensorflow_js`: A zip file containing a json file and a binary weights file.
