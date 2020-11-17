@@ -1,12 +1,14 @@
 # Weight Formats
 
-The supported weight formats:
+The supported weight formats and their additional fields:
 
 - `keras_hdf5`: 
 - `pytorch_script`: A torchscript file.
 - `pytorch_state_dict`: A file containg the state dict of a pytorch model.
 - `tensorflow_js`: A zip file containing a json file and a binary weights file.
-- `tensorflow_saved_model_bundle`: A zip file containing a `pb` file and `variables` folder.
+- `tensorflow_saved_model_bundle`: A zip file containing a `pb` file and `variables` folder. Additional fields are
+  - `tag`
+  - `tensorflow-version`
 
 ## Consumers
 
