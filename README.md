@@ -21,20 +21,20 @@ Version of this bioimage.io configuration specification. This is mandatory, and 
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
 - `name`
-Name of the specification. This name should equal the name of any existing, logically equivalent object of the same category in another language/framework.
+Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
 - `description`
 A string containing a brief description. 
 
-
 - `authors`
 A list of author strings. 
 A string can be seperated by `;` in order to identify multiple handles per author.
+The authors are the creators of the specifications and the primary points of contact.
 
 - `cite`
 A citation entry or list of citation entries.
 Each entry contains of a mandatory `text` field and either one or both of `doi` and `url`.
-
+E.g. the citation for the model architecture and/or the training data used.
 
 - `git_repo`
 A url to the git repository, e.g. to Github or Gitlab.\
@@ -45,7 +45,6 @@ A list of tags.
 
 - `license`
 A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
-
 
 - `documentation`
 Relative path to file with additional documentation in markdown.
@@ -63,9 +62,10 @@ Must be a list of *tensor specification keys*.
   - `data_range` tuple of (minimum, maximum)
   - `axes` string of axes identifying characters from: btczyx
   - `shape` specification of tensor shape\
-    Either as *exact shape with same length as `axes`*\
-    or as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*} 
-  - `preprocessing` optional description of how this input should be preprocessed
+    Either as *exact shape with same length as `axes`*,\
+    or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
+    or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
+  - `preprocessing` (only for input) optional description of how this input should be preprocessed
     - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
     - `kwargs` key word arguments for `preprocessing`\
         for 'zero_mean_unit_variance' these are:
@@ -73,76 +73,74 @@ Must be a list of *tensor specification keys*.
         - `axes`: subset of axes to normalize jointly, e.g. 'xy', batch ('b') is not a valid axis key here!
         - `mean`: mean if mode == fixed, e.g. (with channel dimension of length c=3, and all axes 'cxy') [1.1, 2.2, 3.3]
         - `std`: standard deviation if mode == fixed analogously to mean
+  - `postprocessing` (only for output) optional description of how this output should be postprocessed
+    - `name` name of the postprocessing operation
+    - `kwargs` key word arguments for `postprocessing`
 
 - `outputs`
 Describes the output tensors from this model.
 Must be a list of *tensor specification*.
-<!--
-Force this to be explicit, or also allow any, identity, same?
-special case: dependency on input (with input not exactly specified)
-from example model config: 
-    reference_input: input
-    scale: [1, 1, 1, 1]
-    offset: [0, 0, 0, 0]
--->
 
 - `language`
 Programming language of the source code. For now, we support `python` and `java`.
 <!---
 What about `javascript`?
 -->
+
 - `framework`
 The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.\
 `language` and `framework` define which model runner can use this model for inference. 
 
-- `weight_format` format of all weight entries
-
 - `source`
 Language and framework specific implementation.\
+As some weights contain the model architecture. The source is optional (depending on `weights_format`)\
 This can either point to a local implementation:
 `<relative path to file>:<identifier of implementation within the source file>`\
 or the implementation in an available dependency:
 `<root-dependency>.<sub-dependency>.<identifier>`\
 For example:
-- `./my_function:MyImplementation`
-- `core_library.some_module.some_function`
+  - `./my_function:MyImplementation`
+  - `core_library.some_module.some_function`
 <!---
 java: <path-to-jar>:ClassName ?
 -->
-As some weights contain the model architecture. The source is optional (depending on `weights_format`)
+
 - `sha256`
 SHA256 checksum of the model file (for both serialized model file or source code).\
 You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
 Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
+
 - `kwargs`
 Keyword arguments for the implementation specified by [`source`](#source).
+
 - `covers`
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
 <!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+
 - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
 For example:
   - conda:./environment.yaml
   - maven:./pom.xml
   - pip:./requirements.txt
 
-- `weights`
-A list of weights, each weights definition contains the following fields:
-    - `id` a unique id which will be used to refer to the weights. <!-- maybe with special values like 'default'? -->
-    - `name` the name of the weights for display, it should be a human-friendly name in title case
-    - `description` description about the weights, it is recommended to describe the how the weights is trained, and what's the dataset used for training.
-    - `authors` a list of authors. This field is optional, only required if the authors are different from the model.
-    - `covers` a list of cover images (see `model`:`covers`). This is used for showing how inputs and outputs look like with this weights file.
-    - `source` link to the weights file. Preferably an url to the weights file.
-    - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
-    - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
-    - `test_inputs` list of URIs to test inputs as described in `inputs` for a single test case. Supported file formats/extensions: `.npy`
-    - `test_outputs` analog to `test_inputs`.
-    - `documentation` relative path to file with additional documentation in markdown.
-    - `tags` a list of tags.
-    - `attachments` text keys and URI values to additional, relevant files.
+- `attachments` Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package. This field is optional.
 
+- `test_inputs` list of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: .npy
+- `test_outputs` analog to test_inputs.
+
+- `sample_inputs` list of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. This field is optional. 
+- `sample_outputs` list of URIs to sample outputs corresponding to the `sample_inputs`. This field is optional.
+
+- `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
+   - `weights_format` Format of this set of weights. Weight formats can define additional (optional or required) fields.
+        - `authors` a list of authors. This field is optional, only required if the authors are different from the authors specified in root.
+        - `source` link to the weights file. Preferably an url to the weights file.
+        - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
+        - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
+        - `attachments` weight specific attachments that will be included when generating the model package. This field is optional.
+ 
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
 
