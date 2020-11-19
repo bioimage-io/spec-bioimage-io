@@ -16,8 +16,8 @@ Which consumer software supports which format?
 
 | `weight_format`       | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
-|  `keras_hdf5`         | No      | ?          | ?    | 
-|  `pytorch_script`     | No      | ?          | No   |
+|  `keras_hdf5`         | No      | No         | ?    | 
+|  `pytorch_script`     | No      | Yes        | No   |
 |  `pytorch_state_dict` | Yes     | No         | No   |
 |  `tensorflow_js`      | No      | Yes        | No   |
 |  `tensorflow_saved_model_bundle` | No | Yes | Yes |
