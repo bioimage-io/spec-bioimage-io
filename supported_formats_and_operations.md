@@ -81,6 +81,7 @@ The supported postprocessing operations.
   - `kwargs`
     - `gain` multiplicative factor
     - `offset` additive factor
+    - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
 
 ## Consumers
