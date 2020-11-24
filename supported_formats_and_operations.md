@@ -34,11 +34,18 @@ The supported preprocessing operations.
   - `reference_implementation`
 - `min_max` normalize the tensor to range 0, 1
   - `kwargs`
+    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
 - `percentile` normalize the tensor with percentile normalization
+  - `kwargs`
+    - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset)
+    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
+    - `lower_percentile` the lower percentile
+    - `upper_percentile` the upper percentile
+  - `reference_implementaion`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
   - `kwargs`
-    - `mode` can be one of `fixed` (fixed values for mean and variance), `per_sample` (mean and variance are computed for each sample individually), `per_dataset` (mean and variance are calculated for the entire dataset)
+    - `mode` can be one of `fixed` (fixed values for mean and variance), `per_sample` (mean and variance are computed for each sample individually), `per_dataset` (mean and variance are computed for the entire dataset)
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
     - `mean` the mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image where the channels are not normalized jointly.
     - `std` the standard deviation values to use for `mode == fixed`. Analogous to `mean`.
@@ -60,6 +67,10 @@ Which consumer supports which preprocessing operation?
 
 The supported postprocessing operations.
 
+- `binarize` binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below the threshold to zero
+  - `kwargs`
+    - `threshold` the fixed threshold
+  - `reference_implemation`
 - `sigmoid` apply a sigmoid to the tensor.
   - `kwargs` None
   - `reference_implementation`
@@ -90,6 +101,7 @@ Which consumer supports which postprocessing operation?
 
 | preprocesing          | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
+|  `binarize`           | no      | ?          | ?    |
 |  `sigmoid`            | yes     | ?          | ?    | 
 |  `scale_mean_variance`| no      | ?          | yes  |
 |  `scale_min_max`      | no      | ?          | yes  |
