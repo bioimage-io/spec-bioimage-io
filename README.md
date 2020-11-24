@@ -23,6 +23,9 @@ The recommended behavior for the implementation is to keep backward compatibilit
 - `name`
 Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
+- `timestamp`
+Timestamp of the initial creation of this model according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
+
 - `description`
 A string containing a brief description. 
 
@@ -138,7 +141,6 @@ For example:
         - `authors` a list of authors. This field is optional, only required if the authors are different from the authors specified in root.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
-        - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
         - `attachments` weight specific attachments that will be included when generating the model package. This field is optional.
  
 - `[config]`
