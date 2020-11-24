@@ -40,8 +40,8 @@ The supported preprocessing operations.
   - `kwargs`
     - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset)
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
-    - `lower_percentile` the lower percentile
-    - `upper_percentile` the upper percentile
+    - `lower_percentile` the lower percentile, in range 0 to 100.
+    - `upper_percentile` the upper percentile, in range 0 to 100. Has to be bigger than `upper_percentile`.
   - `reference_implementaion`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
   - `kwargs`
