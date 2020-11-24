@@ -2,10 +2,10 @@
 
 The supported weight formats and their additional fields:
 
-- `keras_hdf5`: 
+- `keras_hdf5`: A hdf5 file containing weights for Keras.
 - `pytorch_script`: A torchscript file.
 - `pytorch_state_dict`: A file containg the state dict of a pytorch model.
-- `tensorflow_js`: A zip file containing a json file and a binary weights file.
+- `tensorflow_js`: A text JSON file named model.json, which carries the topology and reference to the weights files, used by tensorflow.js.
 - `tensorflow_saved_model_bundle`: A zip file containing a `pb` file and `variables` folder. Additional fields are
   - `tag`
   - `tensorflow-version`
@@ -16,8 +16,8 @@ Which consumer software supports which format?
 
 | `weight_format`       | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
-|  `keras_hdf5`         | No      | ?          | ?    | 
-|  `pytorch_script`     | No      | ?          | No   |
+|  `keras_hdf5`         | No      | No         | ?    | 
+|  `pytorch_script`     | No      | Yes        | No   |
 |  `pytorch_state_dict` | Yes     | No         | No   |
 |  `tensorflow_js`      | No      | Yes        | No   |
 |  `tensorflow_saved_model_bundle` | No | Yes | Yes |
@@ -81,6 +81,7 @@ The supported postprocessing operations.
   - `kwargs`
     - `gain` multiplicative factor
     - `offset` additive factor
+    - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
 
 ## Consumers
