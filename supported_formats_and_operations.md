@@ -56,12 +56,12 @@ The supported preprocessing operations.
 
 Which consumer supports which preprocessing operation?
 
-| preprocesing          | ilastik | deepImageJ | Fiji |
-| --------------------- | ------- | ---------- | ---- |
-|  `clip`               | ?       | ?          | ?    | 
-|  `min_max`            | ?       | ?          | ?    |
-|  `percentile`         | ?       | ?          | ?    |
-|  `zero_mean_unit_variance` | ?  | ?          | ?    |
+| preprocesing               | ilastik | deepImageJ | Fiji |
+| -------------------------- | ------- | ---------- | ---- |
+|  `clip`                    | ?       | ?          | ?    | 
+|  `min_max`                 | ?       | ?          | ?    |
+|  `percentile`              | ?       | ?          | ?    |
+|  `zero_mean_unit_variance` | ?       | ?          | ?    |
 
 
 # Postprocessing
