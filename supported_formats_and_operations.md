@@ -1,6 +1,6 @@
 # Weights Formats
 
-The supported weight formats and their additional fields:
+The supported weights formats and their additional fields:
 
 - `keras_hdf5`: A hdf5 file containing weights for Keras.
 - `pytorch_script`: A torchscript file.
