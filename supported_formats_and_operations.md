@@ -14,7 +14,7 @@ The supported weights formats and their additional fields:
 
 Which consumer software supports which format?
 
-| `weight_format`       | ilastik | deepImageJ | Fiji |
+| `weights_format`       | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
 |  `keras_hdf5`         | No      | No         | ?    | 
 |  `pytorch_script`     | No      | Yes        | No   |
