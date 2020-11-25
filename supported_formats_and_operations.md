@@ -1,4 +1,4 @@
-# Weight Formats
+# Weights Formats
 
 The supported weight formats and their additional fields:
 
