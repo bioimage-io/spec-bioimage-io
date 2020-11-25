@@ -65,12 +65,12 @@ Must be a list of *tensor specification keys*.
     Either as *exact shape with same length as `axes`*,\
     or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
     or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
-  - `[preprocessing]` (only for input) optional list of transformations describing how this input should be preprocessed. Each entry has these keys:
+  - `[preprocessing]` (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
     - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
-    - `[kwargs]` key word arguments for `preprocessing`. May be optional.
-  - `[postprocessing]` (only for output) optional list describing how this output should be postprocessed. Each entry has these keys:
-    - `name` name of the postprocessing operation (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for valid names).
-    - `[kwargs]` key word arguments for `postprocessing`. May be optional.
+    - `[kwargs]` key word arguments for `preprocessing`.
+  - `[postprocessing]` (only for output) list describing how this output should be postprocessed. Each entry has these keys:
+    - `name` name of the postprocessing (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for valid names).
+    - `[kwargs]` key word arguments for `postprocessing`.
 
 - `outputs`
 Describes the output tensors from this model.
