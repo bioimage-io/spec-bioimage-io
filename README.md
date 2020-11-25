@@ -65,17 +65,12 @@ Must be a list of *tensor specification keys*.
     Either as *exact shape with same length as `axes`*,\
     or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
     or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
-  - `[preprocessing]` (only for input) optional list of transformations describing how this input should be preprocessed. Each entry consists of these keys:
-    - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
-    - `[kwargs]` optional key word arguments for `preprocessing`\
-        for 'zero_mean_unit_variance' these are:
-        - `mode`: either 'fixed', 'per_dataset', or 'per_sample'
-        - `axes`: subset of axes to normalize jointly, e.g. 'xy', batch ('b') is not a valid axis key here!
-        - `mean`: mean if mode == fixed, e.g. (with channel dimension of length c=3, and all axes 'cxy') [1.1, 2.2, 3.3]
-        - `std`: standard deviation if mode == fixed analogously to mean
+  - `[preprocessing]` (only for input) optional list of transformations describing how this input should be preprocessed. Each entry has these keys:
+    - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
+    - `[kwargs]` key word arguments for `preprocessing`. May be optional.
   - `[postprocessing]` (only for output) optional list describing how this output should be postprocessed. Each entry has these keys:
-    - `name` name of the postprocessing operation
-    - `[kwargs]` optional key word arguments for `postprocessing`
+    - `name` name of the postprocessing operation (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for valid names).
+    - `[kwargs]` key word arguments for `postprocessing`. May be optional.
 
 - `outputs`
 Describes the output tensors from this model.
