@@ -8,7 +8,7 @@ The supported weight formats and their additional fields:
 - `tensorflow_js`: A text JSON file named model.json, which carries the topology and reference to the weights files, used by tensorflow.js.
 - `tensorflow_saved_model_bundle`: A zip file containing a `pb` file and `variables` folder. Additional fields are
   - `tag`
-  - `tensorflow-version`
+  - `tensorflow_version`
 
 ## Consumers
 
