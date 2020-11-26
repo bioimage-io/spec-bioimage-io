@@ -23,6 +23,9 @@ The recommended behavior for the implementation is to keep backward compatibilit
 - `name`
 Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
+- `timestamp`
+Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
+
 - `description`
 A string containing a brief description. 
 
@@ -129,11 +132,10 @@ For example:
 - `[sample_outputs]` list of URIs to sample outputs corresponding to the `sample_inputs`.
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
-   - `weights_format` Format of this set of weights. Weight formats can define additional (optional or required) fields.
+   - `weight_format` Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format)
         - `[authors]` a list of authors.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
-        - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
         - `[attachments]` weight specific attachments that will be included when generating the model package.
  
 - `[config]`

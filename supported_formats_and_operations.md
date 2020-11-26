@@ -1,6 +1,6 @@
-# Weights Formats
+# Weight Formats
 
-The supported weights formats and their additional fields:
+The supported weight formats and their additional fields:
 
 - `keras_hdf5`: A hdf5 file containing weights for Keras.
 - `pytorch_script`: A torchscript file.
@@ -14,7 +14,7 @@ The supported weights formats and their additional fields:
 
 Which consumer software supports which format?
 
-| `weights_format`       | ilastik | deepImageJ | Fiji |
+| `weight_format`       | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
 |  `keras_hdf5`         | No      | No         | ?    | 
 |  `pytorch_script`     | No      | Yes        | No   |
@@ -40,8 +40,8 @@ The supported preprocessing operations.
   - `kwargs`
     - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset)
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
-    - `lower_percentile` the lower percentile, in range 0 to 100.
-    - `upper_percentile` the upper percentile, in range 0 to 100. Has to be bigger than `upper_percentile`.
+    - `min_percentile` the lower percentile used for normalization, in range 0 to 100.
+    - `max_percentile` the upper percentile used for normalization, in range 0 to 100. Has to be bigger than `upper_percentile`.
   - `reference_implementaion`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
   - `kwargs`
@@ -61,7 +61,7 @@ Which consumer supports which preprocessing operation?
 |  `clip`                    | ?       | ?          | ?    | 
 |  `min_max`                 | ?       | ?          | ?    |
 |  `percentile`              | ?       | ?          | ?    |
-|  `zero_mean_unit_variance` | ?       | ?          | ?    |
+|  `zero_mean_unit_variance` | yes     | ?          | ?    |
 
 
 # Postprocessing
@@ -72,6 +72,7 @@ The supported postprocessing operations.
   - `kwargs`
     - `threshold` the fixed threshold
   - `reference_implemation`
+- `clip` clip the tensor, same as in [preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing).
 - `sigmoid` apply a sigmoid to the tensor.
   - `kwargs` None
   - `reference_implementation`
@@ -102,6 +103,7 @@ Which consumer supports which postprocessing operation?
 
 | preprocesing          | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
+|  `clip`               | no      | ?          | yes  |
 |  `binarize`           | no      | ?          | ?    |
 |  `sigmoid`            | yes     | ?          | ?    | 
 |  `scale_mean_variance`| no      | ?          | yes  |
