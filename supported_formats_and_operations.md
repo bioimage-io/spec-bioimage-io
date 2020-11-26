@@ -49,18 +49,19 @@ The supported preprocessing operations.
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
     - `mean` the mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image where the channels are not normalized jointly.
     - `std` the standard deviation values to use for `mode == fixed`. Analogous to `mean`.
+    - `[eps]` epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
   - `reference_implementation`
 
 ## Consumers
 
 Which consumer supports which preprocessing operation?
 
-| preprocesing          | ilastik | deepImageJ | Fiji |
-| --------------------- | ------- | ---------- | ---- |
-|  `clip`               | ?       | ?          | ?    | 
-|  `min_max`            | ?       | ?          | ?    |
-|  `percentile`         | ?       | ?          | ?    |
-|  `zero_mean_unit_variance` | ?  | ?          | ?    |
+| preprocesing               | ilastik | deepImageJ | Fiji |
+| -------------------------- | ------- | ---------- | ---- |
+|  `clip`                    | ?       | ?          | ?    | 
+|  `min_max`                 | ?       | ?          | ?    |
+|  `percentile`              | ?       | ?          | ?    |
+|  `zero_mean_unit_variance` | ?       | ?          | ?    |
 
 
 # Postprocessing

@@ -13,7 +13,7 @@ To get a quick overview of the config file, see an example file [here](./models/
 ## Model Specification
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
-The configuration file must contain the following \[optional\] keys:
+The configuration file must contain the following \[optional\]* keys (* denotes that the field is optional depending on input to another field):
 
 
 - `format_version`
@@ -65,17 +65,12 @@ Must be a list of *tensor specification keys*.
     Either as *exact shape with same length as `axes`*,\
     or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
     or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
-  - `[preprocessing]` (only for input) optional list of transformations describing how this input should be preprocessed. Each entry consists of these keys:
-    - `name` name of preprocessing (currently only 'zero_mean_unit_variance' is supported)
-    - `[kwargs]` optional key word arguments for `preprocessing`\
-        for 'zero_mean_unit_variance' these are:
-        - `mode`: either 'fixed', 'per_dataset', or 'per_sample'
-        - `axes`: subset of axes to normalize jointly, e.g. 'xy', batch ('b') is not a valid axis key here!
-        - `mean`: mean if mode == fixed, e.g. (with channel dimension of length c=3, and all axes 'cxy') [1.1, 2.2, 3.3]
-        - `std`: standard deviation if mode == fixed analogously to mean
-  - `[postprocessing]` (only for output) optional list describing how this output should be postprocessed. Each entry has these keys:
-    - `name` name of the postprocessing operation
-    - `[kwargs]` optional key word arguments for `postprocessing`
+  - `[preprocessing]` (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
+    - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
+    - `[kwargs]` key word arguments for `preprocessing`.
+  - `[postprocessing]` (only for output) list describing how this output should be postprocessed. Each entry has these keys:
+    - `name` name of the postprocessing (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for valid names).
+    - `[kwargs]` key word arguments for `postprocessing`.
 
 - `outputs`
 Describes the output tensors from this model.
@@ -92,9 +87,9 @@ The deep learning framework of the source code. For now, we support `pytorch` an
 Can be `null` if the implementation is not framework specific.\
 `language` and `framework` define which model runner can use this model for inference. 
 
-- `source`
+- `[source]*`
 Language and framework specific implementation.\
-As some weights contain the model architecture. The source is optional (depending on `weights_format`)\
+As some weights contain the model architecture, the source is optional depending on `weights_format`.\
 This can either point to a local implementation:
 `<relative path to file>:<identifier of implementation within the source file>`\
 or the implementation in an available dependency:
@@ -125,21 +120,21 @@ For example:
   - maven:./pom.xml
   - pip:./requirements.txt
 
-- `attachments` Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package. This field is optional.
+- `[attachments]` Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package.
 
 - `test_inputs` list of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: .npy
 - `test_outputs` analog to test_inputs.
 
-- `sample_inputs` list of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. This field is optional. 
-- `sample_outputs` list of URIs to sample outputs corresponding to the `sample_inputs`. This field is optional.
+- `[sample_inputs]` list of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images.
+- `[sample_outputs]` list of URIs to sample outputs corresponding to the `sample_inputs`.
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
    - `weights_format` Format of this set of weights. Weight formats can define additional (optional or required) fields.
-        - `authors` a list of authors. This field is optional, only required if the authors are different from the authors specified in root.
+        - `[authors]` a list of authors.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
         - `timestamp` timestamp according to [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601)
-        - `attachments` weight specific attachments that will be included when generating the model package. This field is optional.
+        - `[attachments]` weight specific attachments that will be included when generating the model package.
  
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
@@ -176,13 +171,5 @@ with open(filename, "rb") as f:
   ```
 
 # Example Configurations
-
-See examples for model configurations in the subfolders [models](./models).
-
-<!--- The includes do not work
-## Model
-
-```yaml
-[!INCLUDE[model config](./models/Unet2dExample.model.yaml)]
-```
--->
+## PyTorch
+ - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d/nuclei_broad/UNet2DNucleiBroad.model.yaml).
