@@ -171,13 +171,5 @@ with open(filename, "rb") as f:
   ```
 
 # Example Configurations
-
-See examples for model configurations in the subfolders [models](./models).
-
-<!--- The includes do not work
-## Model
-
-```yaml
-[!INCLUDE[model config](./models/Unet2dExample.model.yaml)]
-```
--->
+## PyTorch
+ - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d/nuclei_broad/UNet2DNucleiBroad.model.yaml).
