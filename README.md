@@ -13,7 +13,7 @@ To get a quick overview of the config file, see an example file [here](./models/
 ## Model Specification
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
-The configuration file must contain the following \[optional\] keys:
+The configuration file must contain the following \[optional\]* keys (* denotes that the field is optional depending on input to another field):
 
 
 - `format_version`
@@ -87,7 +87,7 @@ The deep learning framework of the source code. For now, we support `pytorch` an
 Can be `null` if the implementation is not framework specific.\
 `language` and `framework` define which model runner can use this model for inference. 
 
-- `[source]`
+- `[source]*`
 Language and framework specific implementation.\
 As some weights contain the model architecture, the source is optional depending on `weights_format`.\
 This can either point to a local implementation:
