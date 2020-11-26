@@ -79,20 +79,9 @@ Must be a list of *tensor specification keys*.
 Describes the output tensors from this model.
 Must be a list of *tensor specification*.
 
-- `language`
-Programming language of the source code. For now, we support `python` and `java`.
-<!---
-What about `javascript`?
--->
-
-- `framework`
-The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
-Can be `null` if the implementation is not framework specific.\
-`language` and `framework` define which model runner can use this model for inference. 
-
 - `[source]*`
 Language and framework specific implementation.\
-As some weights contain the model architecture, the source is optional depending on `weights_format`.\
+As some weights contain the model architecture, the source is optional depending on `weight_format`.\
 This can either point to a local implementation:
 `<relative path to file>:<identifier of implementation within the source file>`\
 or the implementation in an available dependency:
@@ -104,13 +93,27 @@ For example:
 java: <path-to-jar>:ClassName ?
 -->
 
-- `sha256`
+- `[language]*`
+Programming language of the source code. For now, we support `python` and `java`.
+This field is only required if the field `source` is present.
+
+<!---
+What about `javascript`?
+-->
+
+- `[framework]*`
+The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
+This field is only required if the field `source` is present.
+
+- `[sha256]*`
 SHA256 checksum of the model file (for both serialized model file or source code).\
 You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser.\
 Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python, [here is a codesnippet](#code-snippet-to-compute-sha256-checksum).
+This field is only required if the field source is present.
 
-- `kwargs`
+- `[kwargs]*`
 Keyword arguments for the implementation specified by [`source`](#source).
+This field is only required if the field `source` is present.
 
 - `covers`
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
