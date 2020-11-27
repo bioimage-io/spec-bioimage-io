@@ -1,2 +1,0 @@
-# Sigmoid documentation
-todo
