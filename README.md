@@ -12,7 +12,7 @@ To get a quick overview of the config file, see an example file [here](https://g
 
 ## Model Specification
 
-A model entry in the bioimage.io model zoo is defined by a configuration file `<model name>.model.yaml`.
+A model entry in the bioimage.io model zoo is defined by a configuration file `model.yaml`.
 The configuration file must contain the following \[optional\]* keys (* denotes that the field is optional depending on input to another field):
 
 
@@ -36,7 +36,7 @@ The authors are the creators of the specifications and the primary points of con
 
 - `cite`
 A citation entry or list of citation entries.
-Each entry contains of a mandatory `text` field and either one or both of `doi` and `url`.
+Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used.
 
 - `git_repo`
@@ -62,12 +62,22 @@ Must be a list of *tensor specification keys*.
   *tensor specification keys*:
   - `name` tensor name
   - `data_type` data type (e.g. float32)
-  - `data_range` tuple of (minimum, maximum)
-  - `axes` string of axes identifying characters from: btczyx
+  - `data_range` tuple of (minimum, maximum) (e.g. [-inf, inf])
+  - `axes` string of axes identifying characters from: btczyx. Same length and order as the axes in `shape`.
   - `shape` specification of tensor shape\
-    Either as *exact shape with same length as `axes`*,\
-    or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
-    or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*, `halo` *the halo to crop from the output tensor (for example to crop away boundary efects or for tiling)*}
+    Either as *fixed shape with same length as `axes`* (e.g. `shape`: [1, 512, 512, 1]),\
+    or (only for input) as\
+    `shape`
+    - `min` *minimum shape with same length as `axes`*
+    - `step` *minimum shape change with same length as `axes`*\
+    
+    or (only for output) as\
+    `shape`
+    - `reference_input` *input tensor name*
+    - `scale` *list of factors 'output_pix/input_pix' for each dimension*
+    - `offset` *position of origin wrt to input*
+    - `halo` *the halo to crop from the output tensor* (for example to crop away boundary effects or for tiling) (e.g. the valid domain of an output of `size = [256, 256]` and `halo = [32, 32]`, results in `output_shape = [256 - 2 * 32, 256 - 2 * 32] = [192, 192]`).\
+    The output shape is determined as `output_shape = reference_input_shape * scale + offset`.
   - `[preprocessing]` (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
     - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
     - `[kwargs]` key word arguments for `preprocessing`.
@@ -88,7 +98,7 @@ What about `javascript`?
 - `framework`
 The deep learning framework of the source code. For now, we support `pytorch` and `tensorflow`.
 Can be `null` if the implementation is not framework specific.\
-`language` and `framework` define which model runner can use this model for inference. 
+`language` and `framework` define which model runner can use this model for inference (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing)). 
 
 - `[source]*`
 Language and framework specific implementation.\
@@ -133,13 +143,13 @@ For example:
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
    - `weight_format` Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format)
-        - `[authors]` a list of authors.
+        - `[authors]` a list of authors, that refers to the ones who trained the model.
         - `source` link to the weights file. Preferably an url to the weights file.
-        - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
+        - `sha256` SHA256 checksum of the model weight file specified by `source` (see `sha256` section above for how to generate SHA256 checksum)
         - `[attachments]` weight specific attachments that will be included when generating the model package.
  
 - `[config]`
-A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
+A custom configuration field that can contain any other keys which are not defined above. It can be very specific to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
 
 For example:
 ```yaml
