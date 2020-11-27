@@ -5,7 +5,7 @@ The model zoo specification contains configuration definitions for the following
 
 The configurations are represented by a yaml file.
 
-To get a quick overview of the config file, see an example file [here](./models/UNet2dExample.model.yaml).
+To get a quick overview of the config file, see an example file [here](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d/nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
 ## Current `format_version`: 0.3.0
 
@@ -67,7 +67,7 @@ Must be a list of *tensor specification keys*.
   - `shape` specification of tensor shape\
     Either as *exact shape with same length as `axes`*,\
     or (only for input) as {`min` *minimum shape with same length as `axes`*, `step` *minimum shape change with same length as `axes`*},\
-    or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*}
+    or (only for output) as {`reference_input` *input tensor name*, `scale` *list of factors 'output_pix/input_pix' for each dimension*, `offset` *position of origin wrt to input*, `halo` *the halo to crop from the output tensor (for example to crop away boundary efects or for tiling)*}
   - `[preprocessing]` (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
     - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
     - `[kwargs]` key word arguments for `preprocessing`.
