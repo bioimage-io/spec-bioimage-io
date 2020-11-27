@@ -143,7 +143,7 @@ For example:
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent.
    - `weight_format` Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format)
-        - `[authors]` a list of authors, that refers to the ones who trained the model.
+        - `[authors]` a list of authors. It refers to the ones who trained the model.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `sha256` section above for how to generate SHA256 checksum)
         - `[attachments]` weight specific attachments that will be included when generating the model package.
