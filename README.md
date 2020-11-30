@@ -66,7 +66,7 @@ Must be a list of *tensor specification keys*.
   - `axes` string of axes identifying characters from: btczyx. Same length and order as the axes in `shape`.
   - `shape` specification of tensor shape\
     Either as *fixed shape with same length as `axes`* (e.g. `shape`: [1, 512, 512, 1]),\
-    or (only for input) as\
+    or (only for input) as
     `shape`
     - `min` *minimum shape with same length as `axes`*
     - `step` *minimum shape change with same length as `axes`*
