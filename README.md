@@ -69,7 +69,7 @@ Must be a list of *tensor specification keys*.
     or (only for input) as\
     `shape`
     - `min` *minimum shape with same length as `axes`*
-    - `step` *minimum shape change with same length as `axes`*\
+    - `step` *minimum shape change with same length as `axes`*
     
     or (only for output) as\
     `shape`
