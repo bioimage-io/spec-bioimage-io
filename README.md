@@ -138,9 +138,9 @@ For example:
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `models` section above for how to generate SHA256 checksum)
         - `[attachments]` weight specific attachments that will be included when generating the model package.
 
-- `[execution_model]` Custom mode for running prediction with this model. For more complex prediction procedures like test time data augmentation that cannot be expressed in the current model configuration. The different execution models should be listed in [supported_formats_and_operations.md#Execution Model](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#execution_model)
-  - `name` the name of the execution model
-  - `[kwargs]` keyword arguments for this execution model
+- `[run_mode]` Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run modes)
+  - `name` the name of the `run_mode`
+  - `[kwargs]` keyword arguments for this `run_mode`
  
 - `[config]`
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted defintions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
