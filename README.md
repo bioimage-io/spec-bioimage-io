@@ -55,6 +55,13 @@ Relative path to file with additional documentation in markdown.
 - `attachments`
 Dictionary of text keys and URI values to additional, relevant files.
 
+- [`pacakged_by`]
+The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
+
+- [`parent`] Parent model from which this model has been derived, e.g. by finetuning the weights of this model on a different dataset.
+  - `id` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. In addition to the 
+  - `hash` hash of the weights of the parent models
+
 - `inputs`
 Describes the input tensors expected by this model.
 Must be a list of *tensor specification keys*.
@@ -144,7 +151,8 @@ For example:
 
 - `weights` The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
    - `weight_format` Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format)
-        - `[authors]` a list of authors.
+        - `authors` a list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child wieght (it has a `parent` field): the person(s) who have converted the weights to this format.
+        - [`parent`]* the source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `sha256` section for how to generate the checksum)
         - `[attachments]` weight specific attachments that will be included when generating the model package.
