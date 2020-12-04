@@ -109,3 +109,11 @@ Which consumer supports which postprocessing operation?
 |  `scale_mean_variance`| no      | ?          | yes  |
 |  `scale_min_max`      | no      | ?          | yes  |
 |  `scale_linear`       | no      | ?          | ?    |
+
+
+# Run Modes
+
+Custom run modes to enable more complex prediction procedures.
+
+
+## Consumers
