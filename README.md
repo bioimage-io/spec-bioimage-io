@@ -78,7 +78,7 @@ Must be a list of *tensor specification keys*.
        - `min` the minimum input shape with same length as `axes`
        - `step` the minimum shape change with same length as `axes`
     3. (only for output) in reference to the shape of an input tensor.\
-       The shape of the output tensor is `shape = shape(input_tensor) * scale + offset`. Specified by the following fields:
+       The shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. Specified by the following fields:
        - `reference_input` name of the reference input tensor
        - `scale` list of factors 'output_pix/input_pix' for each dimension
        - `offset` position of origin wrt to input 
