@@ -82,7 +82,7 @@ Must be a list of *tensor specification keys*.
        - `reference_input` name of the reference input tensor
        - `scale` list of factors 'output_pix/input_pix' for each dimension
        - `offset` position of origin wrt to input 
-       - `halo` the halo to crop from the output tensor (for example to crop away boundary efects or for tiling). The halo should be croped from both size, i.e. `shape_after_crop = shape - 2 * halo`.
+       - `halo` the halo to crop from the output tensor (for example to crop away boundary efects or for tiling). The halo should be croped from both size, i.e. `shape_after_crop = shape - 2 * halo`. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. See `offset` for a 'halo' that is cropped by the model.
   - `[preprocessing]` (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
     - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
     - `[kwargs]` key word arguments for `preprocessing`.
