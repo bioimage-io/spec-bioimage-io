@@ -55,7 +55,7 @@ Relative path to file with additional documentation in markdown.
 - `attachments`
 Dictionary of text keys and URI values to additional, relevant files.
 
-- [`pacakged_by`]
+- [`packaged_by`]
 The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
 
 - [`parent`] Parent model from which this model has been derived, e.g. by finetuning the weights of this model on a different dataset.
