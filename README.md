@@ -60,7 +60,7 @@ The person(s) that have packaged and uploaded this model. Only needs to be speci
 
 - [`parent`] Parent model from which this model has been derived, e.g. by finetuning the weights of this model on a different dataset.
   - `uri` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file). 
-  - `hash` hash of the weights of the parent models
+  - `sha256` hash of the weights of the parent model.
 
 - `inputs`
 Describes the input tensors expected by this model.
@@ -68,8 +68,8 @@ Must be a list of *tensor specification keys*.
 
   *tensor specification keys*:
   - `name` tensor name
-  - `data_type` data type (e.g. float32)
-  - `data_range` tuple of (minimum, maximum), e.g. [0, 1]
+  - `data_type` the data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
+  - `[data_range]` tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
   - `axes` string of axes identifying characters from: btczyx. Same length and order as the axes in `shape`.
   - `shape` specification of tensor shape. It can be specified in three diffeent ways:
     1. as exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
