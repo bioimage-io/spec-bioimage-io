@@ -43,6 +43,12 @@ The supported preprocessing operations.
     - `min_percentile` the lower percentile used for normalization, in range 0 to 100.
     - `max_percentile` the upper percentile used for normalization, in range 0 to 100. Has to be bigger than `upper_percentile`.
   - `reference_implementaion`
+- `scale_linear` scale the tensor with a fixed multiplicative and additive factor
+  - `kwargs`
+    - `gain` multiplicative factor
+    - `offset` additive factor
+    - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
+  - `reference_implementation`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
   - `kwargs`
     - `mode` can be one of `fixed` (fixed values for mean and variance), `per_sample` (mean and variance are computed for each sample individually), `per_dataset` (mean and variance are computed for the entire dataset)
@@ -61,6 +67,7 @@ Which consumer supports which preprocessing operation?
 |  `clip`                    | ?       | ?          | ?    | 
 |  `min_max`                 | ?       | ?          | ?    |
 |  `percentile`              | ?       | ?          | ?    |
+| `scale_linear`             | ?       | ?          | ?    |
 |  `zero_mean_unit_variance` | yes     | ?          | ?    |
 
 
@@ -90,12 +97,7 @@ The supported postprocessing operations.
     - `max` (if `mode == fixed`) the fixed max value
     - `reference_input` name of the input tensor to use as reference
   - `reference_implementation`
-- `scale_linear` scale the tensor with a fixed multiplicative and additive factor
-  - `kwargs`
-    - `gain` multiplicative factor
-    - `offset` additive factor
-    - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
-  - `reference_implementation`
+- `scale_linear` scale the tensor with a fixed multiplicative and additive factor, sae as in [preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing).
 
 ## Consumers
 
