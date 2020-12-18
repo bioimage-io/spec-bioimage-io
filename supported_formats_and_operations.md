@@ -97,7 +97,7 @@ The supported postprocessing operations.
     - `max` (if `mode == fixed`) the fixed max value
     - `reference_input` name of the input tensor to use as reference
   - `reference_implementation`
-- `scale_linear` scale the tensor with a fixed multiplicative and additive factor, sae as in [preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing).
+- `scale_linear` scale the tensor with a fixed multiplicative and additive factor, same as in [preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing).
 
 ## Consumers
 
