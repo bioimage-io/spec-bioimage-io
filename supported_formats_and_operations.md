@@ -100,7 +100,7 @@ Additional postprocessing operations.
   - `reference_implementation`
 - `scale_mean_variance` scale the tensor s.t. its mean and variance match a reference tensor 
   - `kwargs`
-    - same as preprocessing
+    - `mode` one of `per_dataset` or `per_sample` (for fixed mean and variance use `scale_linear`)
     - `reference_tensor` name of tensor to match
   - `reference_implementation`
 
