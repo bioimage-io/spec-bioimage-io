@@ -42,19 +42,6 @@ The supported operations that are valid in pre- or postprocessing.
     - `offset` additive factor
     - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
-- `scale_mean_variance` scale the tensor s.t. its mean and variance match a reference tensor 
-  - `kwargs`
-    - `mode` one of `per_dataset` or `per_sample` (for fixed mean and variance use `scale_linear`)
-    - `reference_tensor` name of tensor to match
-  - `reference_implementation`
-- `scale_range` normalize the tensor with percentile normalization
-  - `kwargs`
-    - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset). For a fixed scaling use `scale linear`.
-    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
-    - `min_percentile` the lower percentile used for normalization, in range 0 to 100. Default value: 0.
-    - `max_percentile` the upper percentile used for normalization, in range 0 to 100. Has to be bigger than `upper_percentile`. Default value: 100.
-    - `reference_tensor` tensor name to compute the percentiles from. Default: The tensor itself. If `mode`==`per_dataset` this needs to be the name of an input tensor.
-  - `reference_implementaion`
 - `sigmoid` apply a sigmoid to the tensor.
   - `kwargs` None
   - `reference_implementation`
@@ -76,8 +63,6 @@ Which consumer supports which pre-/postprocessing operation?
 |  `binarize`                | no      | ?          | ?    |
 |  `clip`                    | ?       | ?          | ?    | 
 |  `scale_linear`            | ?       | ?          | ?    |
-|  `scale_mean`              | ?       | ?          | ?    |
-|  `scale_range`             | ?       | ?          | ?    |
 |  `sigmoid`                 | yes     | ?          | ?    |
 |  `zero_mean_unit_variance` | yes     | ?          | ?    |
 
@@ -86,29 +71,48 @@ Which consumer supports which pre-/postprocessing operation?
 
 Additional preprocessing operations.
 
- - ...
+- `scale_range` normalize the tensor with percentile normalization
+  - `kwargs`
+    - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset). For a fixed scaling use `scale linear`.
+    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
+    - `min_percentile` the lower percentile used for normalization, in range 0 to 100. Default value: 0.
+    - `max_percentile` the upper percentile used for normalization, in range 0 to 100. Has to be bigger than `upper_percentile`. Default value: 100.
+  - `reference_implementaion`
+
+
 ### Consumers
 
 Which consumer supports which preprocessing operation?
 
 | preprocesing               | ilastik | deepImageJ | Fiji |
 | -------------------------- | ------- | ---------- | ---- |
-|  `...` | ?     | ?          | ?    |
+|  `scale_range`             | ?       | ?          | ?    |
 
 
 ## Postprocessing
 
 Additional postprocessing operations.
 
- - ...
+- `scale_range` normalize the tensor with percentile normalization
+  - `kwargs`
+    - same as preprocessing
+    - `reference_tensor` tensor name to compute the percentiles from. Default: The tensor itself. If `mode`==`per_dataset` this needs to be the name of an input tensor.
+  - `reference_implementation`
+- `scale_mean_variance` scale the tensor s.t. its mean and variance match a reference tensor 
+  - `kwargs`
+    - `mode` one of `per_dataset` or `per_sample` (for fixed mean and variance use `scale_linear`)
+    - `reference_tensor` name of tensor to match
+  - `reference_implementation`
+
 
 ### Consumers
 
 Which consumer supports which postprocessing operation?
 
-| preprocesing          | ilastik | deepImageJ | Fiji |
+| postprocesing          | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
-|  `...`               | ?      | ?          | ?  |
+|  `scale_mean`              | ?       | ?          | ?    |
+|  `scale_range`             | ?       | ?          | ?    |
 
 
 # Run Modes
