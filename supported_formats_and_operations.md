@@ -51,7 +51,7 @@ The supported operations that are valid in pre- or postprocessing.
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
     - `mean` the mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image where the channels are not normalized jointly.
     - `std` the standard deviation values to use for `mode == fixed`. Analogous to `mean`.
-    - `[eps]` epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`. Default value: 10e-7.
+    - `[eps]` epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`. Default value: 10^-7.
   - `reference_implementation`
   
 ## Consumers
