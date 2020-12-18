@@ -58,7 +58,7 @@ Dictionary of text keys and URI values to additional, relevant files.
 - [`packaged_by`]
 The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
 
-- [`parent`] Parent model from which this model has been derived, e.g. by finetuning the weights of this model on a different dataset.
+- [`parent`] Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`.
   - `uri` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file). 
   - `sha256` hash of the weights of the parent model.
 
