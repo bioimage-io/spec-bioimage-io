@@ -111,8 +111,8 @@ Which consumer supports which postprocessing operation?
 
 | postprocesing          | ilastik | deepImageJ | Fiji |
 | --------------------- | ------- | ---------- | ---- |
-|  `scale_mean`              | ?       | ?          | ?    |
-|  `scale_range`             | ?       | ?          | ?    |
+| `scale_mean_variance` | ?       | ?          | ?    |
+| `scale_range`         | ?       | ?          | ?    |
 
 
 # Run Modes
