@@ -32,10 +32,6 @@ The supported preprocessing operations.
     - `min` minimum value for clipping
     - `max` maximum value for clipping
   - `reference_implementation`
-- `min_max` normalize the tensor to range 0, 1
-  - `kwargs`
-    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
-  - `reference_implementation`
 - `percentile` normalize the tensor with percentile normalization
   - `kwargs`
     - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset)
@@ -48,6 +44,10 @@ The supported preprocessing operations.
     - `gain` multiplicative factor
     - `offset` additive factor
     - `axes` the subset of axes to scale jointly. For example `xy` to scale the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
+  - `reference_implementation`
+- `scale_min_max` normalize the tensor to range 0, 1
+  - `kwargs`
+    - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
   - `kwargs`
