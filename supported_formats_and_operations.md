@@ -47,6 +47,7 @@ The supported preprocessing operations.
   - `reference_implementation`
 - `scale_min_max` normalize the tensor to range 0, 1
   - `kwargs`
+    - `mode` can be one of `per_sample` (min and max are computed for each sample individually), `per_dataset` (min and max are computed for the entire dataset)
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
   - `reference_implementation`
 - `zero_mean_unit_variance` normalize the tensor to have zero mean and unit variance
