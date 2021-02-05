@@ -1,6 +1,6 @@
 # Weight Formats
 
-The supported weight formats and their additional fields:
+The supported weight formats are listed below. In addition to `source` and `sha256` which will be required for all formats, some format may contain additional fields.
 
 - `keras_hdf5`: A hdf5 file containing weights for Keras.
 - `pytorch_script`: A torchscript file.
@@ -9,6 +9,8 @@ The supported weight formats and their additional fields:
 - `tensorflow_saved_model_bundle`: A zip file containing a `pb` file and `variables` folder. Additional fields are
   - `tag`
   - `tensorflow_version`
+- `onnx`: A Open Neural Network Exchange file
+  - `opset_version`
 
 ## Consumers
 
@@ -21,6 +23,7 @@ Which consumer software supports which format?
 |  `pytorch_state_dict` | Yes     | No         | No   |
 |  `tensorflow_js`      | No      | Yes        | No   |
 |  `tensorflow_saved_model_bundle` | No | Yes | Yes |
+|  `onnx` | ? | ? | ? |
 
 
 # Pre- and postprocessing
