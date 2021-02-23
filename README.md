@@ -5,7 +5,7 @@ The model zoo specification contains configuration definitions for the following
 
 The configurations are represented by a yaml file.
 
-To get a quick overview of the config file, see an example file [here](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d/nuclei_broad/UNet2DNucleiBroad.model.yaml).
+To get a quick overview of the config file, see an example file [here](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
 ## Current `format_version`: 0.3.0
 
