@@ -35,12 +35,12 @@ A list of author strings.
 A string can be seperated by `;` in order to identify multiple handles per author.
 The authors are the creators of the specifications and the primary points of contact.
 
-- `cite`
+- `cite` \[optional\]
 A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used.
 
-- `git_repo`
+- `git_repo` \[optional\]
 A url to the git repository, e.g. to Github or Gitlab.\
 If the model is contained in a subfolder of a git repository, then a url to the exact folder (which contains the configuration yaml file) should be used.
 
@@ -53,7 +53,7 @@ A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to th
 - `documentation`
 Relative path to file with additional documentation in markdown.
 
-- `attachments`
+- `attachments` \[optional\]
 Dictionary of text keys and URI values to additional, relevant files.
 
 - `packaged_by` \[optional\]
@@ -63,7 +63,7 @@ The person(s) that have packaged and uploaded this model. Only needs to be speci
   - `uri` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file). 
   - `sha256` hash of the weights of the parent model.
 
-- `inputs`
+- `inputs` 
 Describes the input tensors expected by this model.
 Must be a list of *tensor specification keys*.
 
