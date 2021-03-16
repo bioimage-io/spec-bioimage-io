@@ -53,8 +53,7 @@ A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to th
 - `documentation`
 Relative path to file with additional documentation in markdown.
 
-- `attachments` \[optional\]
-Dictionary of text keys and URI values to additional, relevant files.
+- `attachments` \[optional\] Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that are necessary for the documentation or for the model to run, these files will be included when generating the model package.
 
 - `packaged_by` \[optional\]
 The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
@@ -142,8 +141,6 @@ For example:
   - maven:./pom.xml
   - pip:./requirements.txt
 
-- `attachments` \[optional\] Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package.
-
 - `test_inputs` list of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: .npy
 - `test_outputs` analog to test_inputs.
 
@@ -156,7 +153,7 @@ For example:
         - `parent` \[optional\]* the source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
         - `source` link to the weights file. Preferably an url to the weights file.
         - `sha256` SHA256 checksum of the model weight file specified by `source` (see `sha256` section for how to generate the checksum)
-        - `attachments` \[optional\] weight specific attachments that will be included when generating the model package.
+        - `attachments` \[optional\] Dictionary of text keys and URI (or a list of URI) values to additional, relevant files that are specific to the current weight format. A list of URIs can be listed under the `files` key to included additional files for generating the model package.
 
 - `run_mode` \[optional\] Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).
   - `name` the name of the `run_mode`
