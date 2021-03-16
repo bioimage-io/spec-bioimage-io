@@ -1,16 +1,23 @@
-# Bioimiage.io Configuration Specification
+## BioImage.IO Model Description File Specification
 
-The model zoo specification contains configuration definitions for the following categories:
-- [`Model`](#model-specification): configuration of a trainable (deep-learning) model.
-
-The configurations are represented by a yaml file.
+This specification defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted in the [BioImage.IO](https://bioimage.io) model repository site.
 
 To get a quick overview of the config file, see an example file [here](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
+
+A BioImage.IO compatible model description file (MDF) must fulfill the following rules:
+ * must be a YAML file encoded as UTF-8
+ * file extension must be `.yaml` (instead of `.yml`)
+ * the contained fields must follow this specification
+
+It is recommended to:
+ * use the [model spec validator](https://github.com/bioimage-io/python-bioimage-io) to verify the format
+ * store the yaml file in a version controlled Git repository (e.g. Github or Gitlab).
+ * stored in a folder with a descriptive name for the model, and place the MDF inside the folder and name it as `model.yaml`.
+ * the model folder can be packaged into a zip file, and the package name should use a descriptive name + `.model.zip`.
+ * use or upgrade to the latest format version
+
 ## Current `format_version`: 0.3.0
-
-
-## Model Specification
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `model.yaml`.
 The configuration file must contain the following fields; optional fields are followed by \[optional\].
