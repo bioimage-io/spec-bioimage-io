@@ -53,9 +53,6 @@ A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to th
 - `documentation`
 Relative path to file with additional documentation in markdown.
 
-- `attachments` \[optional\]
-Dictionary of text keys and URI values to additional, relevant files.
-
 - `packaged_by` \[optional\]
 The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
 
@@ -143,6 +140,8 @@ For example:
   - pip:./requirements.txt
 
 - `attachments` \[optional\] Additional files for this specification; e.g. images that are necessary for the documentation. These files will be included when generating the model package.
+
+- `attachments` \[optional\] Dictionary of text keys and URI values to additional, relevant files.
 
 - `test_inputs` list of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: .npy
 - `test_outputs` analog to test_inputs.
