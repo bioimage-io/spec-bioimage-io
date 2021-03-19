@@ -1,4 +1,4 @@
-## BioImage.IO Model Description File Specification
+## Model Description File Specification
 
 This specification defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted in the [BioImage.IO](https://bioimage.io) model repository site.
 
