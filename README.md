@@ -35,10 +35,10 @@ Name of this model. The model name should be human readble and only contain lett
 Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
 
 - `description`
-A string containing a brief description. 
+A string containing a brief description.
 
 - `authors`
-A list of author strings. 
+A list of author strings.
 A string can be seperated by `;` in order to identify multiple handles per author.
 The authors are the creators of the specifications and the primary points of contact.
 
@@ -66,10 +66,10 @@ Relative path to file with additional documentation in markdown.
 The person(s) that have packaged and uploaded this model. Only needs to be specified if different from `authors` in the root weights`, see `weights` for more details.
 
 - `parent` \[optional\] Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`.
-  - `uri` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file). 
+  - `uri` Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
   - `sha256` hash of the weights of the parent model.
 
-- `inputs` 
+- `inputs`
 Describes the input tensors expected by this model.
 Must be a list of *tensor specification keys*.
 
@@ -77,18 +77,29 @@ Must be a list of *tensor specification keys*.
   - `name` tensor name
   - `data_type` the data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
   - `data_range` \[optional\] tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
-  - `axes` string of axes identifying characters from: btczyx. Same length and order as the axes in `shape`.
+  - `axes` string of axes identifying characters from: bitcdfzyx. Same length and order as the axes in `shape`.
+    | character | description |
+    | --- | --- |
+    |  b  |  batch (groups multiple samples) |
+    |  i  |  instance/index/element (in case one sample contains multiple elements, check if no other dimension applies instead)  |
+    |  t  |  time |
+    |  c  |  image channel |
+    |  d  |  class/category |
+    |  f  |  feature (not directly recorded, but computed in some way) |
+    |  z  |  spatial dimension z |
+    |  y  |  spatial dimension y |
+    |  x  |  spatial dimension x |
   - `shape` specification of tensor shape. It can be specified in three diffeent ways:
     1. as exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
     2. (only for input) as a sequence of valid shapes.\
-       The valid shapes are given by `shape = min + k * step for k in {0, 1, ...}`. Specified by the following fields: 
+       The valid shapes are given by `shape = min + k * step for k in {0, 1, ...}`. Specified by the following fields:
        - `min` the minimum input shape with same length as `axes`
        - `step` the minimum shape change with same length as `axes`
     3. (only for output) in reference to the shape of an input tensor.\
        The shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. Specified by the following fields:
        - `reference_input` name of the reference input tensor
        - `scale` list of factors 'output_pix/input_pix' for each dimension
-       - `offset` position of origin wrt to input 
+       - `offset` position of origin wrt to input
        - `halo` the halo to crop from the output tensor (for example to crop away boundary efects or for tiling). The halo should be croped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use `offset` if the model output itself is cropped.
   - `preprocessing` \[optional\] (only for input) list of transformations describing how this input should be preprocessed. Each entry has these keys:
     - `name` name of preprocessing (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for valid names).
@@ -140,7 +151,7 @@ This field is only required if the field `source` is present.
 - `covers`
 A list of cover images provided by either a relative path to the model folder, or a hyperlink starts with `https`.\
 Please use an image smaller than 500KB, aspect ratio width to height 2:1. The supported image formats are: `jpg`, `png`, `gif`.
-<!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->  
+<!--- `I am not quite sure what we decided on for the uri identifiers in the end, I am sticking with the simplest option for now <format>+<protocoll>://<path>`, e.g.: `conda+file://./req.txt` -->
 
 - `dependencies` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`\
 For example:
@@ -165,9 +176,9 @@ For example:
 - `run_mode` \[optional\] Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).
   - `name` the name of the `run_mode`
   - `kwargs` \[optional\] keyword arguments for this `run_mode`
- 
+
 - `config` \[optional\]
-A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name. 
+A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name.
 
 For example:
 ```yaml
@@ -179,11 +190,11 @@ config:
       model_tag: tf.saved_model.tag_constants.SERVING
       # Signature definition to call the model. Again "SERVING" is the most general
       signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-    test_information:  
-      input_size: [2048x2048] # Size of the input images  
-      output_size: [1264x1264 ]# Size of all the outputs  
-      device: cpu # Device used. In principle either cpu or GPU  
-      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device  
+    test_information:
+      input_size: [2048x2048] # Size of the input images
+      output_size: [1264x1264 ]# Size of all the outputs
+      device: cpu # Device used. In principle either cpu or GPU
+      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
       runtime: 78.8s # Time it took to run the model
       pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
 ```
