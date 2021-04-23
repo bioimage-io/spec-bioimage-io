@@ -79,7 +79,7 @@ Additional preprocessing operations.
     - `mode` can be one of `per_sample` (percentiles are computed for each sample individually), `per_dataset` (percentiles are computed for the entire dataset). For a fixed scaling use `scale linear`.
     - `axes` the subset of axes to normalize jointly. For example `xy` to normalize the two image axes for 2d data jointly. The batch axis (`b`) is not valid here.
     - `min_percentile` the lower percentile used for normalization, in range 0 to 100. Default value: 0.
-    - `max_percentile` the upper percentile used for normalization, in range 1 to 100. Has to be bigger than `upper_percentile`. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0
+    - `max_percentile` the upper percentile used for normalization, in range 1 to 100. Has to be bigger than `min_percentile`. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0
   - `reference_implementaion`
 
 
