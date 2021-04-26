@@ -78,6 +78,15 @@ Must be a list of *tensor specification keys*.
   - `data_type` the data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
   - `data_range` \[optional\] tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
   - `axes` string of axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
+    | character | description |
+    | --- | --- |
+    |  b  |  batch (groups multiple samples) |
+    |  i  |  instance/index/element |
+    |  t  |  time |
+    |  c  |  channel |
+    |  z  |  spatial dimension z |
+    |  y  |  spatial dimension y |
+    |  x  |  spatial dimension x |
   - `shape` specification of tensor shape. It can be specified in three diffeent ways:
     1. as exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
     2. (only for input) as a sequence of valid shapes.\
