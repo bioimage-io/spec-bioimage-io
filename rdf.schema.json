@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/master/rdf.schema.json",
+    "title": "bioimage.io-rdf-schema",
+    "description": "Resource Description File Schema",
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "unique identifier for the resource, you can also use a `doi` e.g. generated from [zenodo](https://zenodo.org/)"
+        },
+        "type": {
+            "type": "string",
+            "description": "type of the resource, e.g. `model`, `dataset`, `application` or `notebook`",
+            "enum": ["model", "dataset", "application", "notebook"]
+        },
+        "name": {
+            "type": "string",
+            "description": "name of the resource, a human-friendly name"
+        },
+        "source": {
+            "type": "string",
+            "description": "url to the source of the resource"
+        },
+        "download_url": {
+            "type": "string",
+            "description": "url to rhe zipped file if applicable"
+        },
+        "git_repo": {
+            "type": "string",
+            "description": "url to the git repo"
+        },
+        "license": {
+            "type": "string",
+            "description": "the license name for the resource, e.g. `MIT`"
+        },
+        "tags": {
+            "type": "array",
+            "description": "a list of tags"
+        },
+        "attachements": {
+            "type": "object",
+            "description": "a group of attachments, list of resources grouped by key"
+        },
+        "authors": {
+            "type": "array",
+            "description": "the full list of author names"
+        },
+        "badges": {
+            "type": "array",
+            "description": "a list of badges"
+        },
+        "cite": {
+            "type": "array",
+            "description": "how to cite the resource"
+        },
+        "documentation": {
+            "type": "string",
+            "description": "url to the documentation in markdown format"
+        },
+        "icon": {
+            "type": "string",
+            "description": "an icon for the resource"
+        },
+        "links": {
+            "type": "array",
+            "description": "a list of linked resources, an id to other resouorces"
+        },
+        "version": {
+            "type": "string",
+            "description": "the version number for the resource, starting from `0.1.0`"
+        }
+    },
+    "required": ["id", "type", "name", "description"],
+    "additionalProperties": true
+}
