@@ -35,7 +35,10 @@
         },
         "tags": {
             "type": "array",
-            "description": "a list of tags"
+            "description": "a list of tags",
+            "items": {
+                "type": "string"
+            }
         },
         "attachements": {
             "type": "object",
@@ -43,15 +46,24 @@
         },
         "authors": {
             "type": "array",
-            "description": "the full list of author names"
+            "description": "the full list of author names",
+            "items": {
+                "type": "string"
+            }
         },
         "badges": {
             "type": "array",
-            "description": "a list of badges"
+            "description": "a list of badges",
+            "items": {
+                "type": "string"
+            }
         },
         "cite": {
             "type": "array",
-            "description": "how to cite the resource"
+            "description": "how to cite the resource",
+            "items": {
+                "type": "string"
+            }
         },
         "documentation": {
             "type": "string",
@@ -63,7 +75,10 @@
         },
         "links": {
             "type": "array",
-            "description": "a list of linked resources, an id to other resouorces"
+            "description": "a list of linked resources, an id to other resouorces",
+            "items": {
+                "type": "string"
+            }
         },
         "version": {
             "type": "string",
