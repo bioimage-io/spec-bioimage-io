@@ -17,7 +17,7 @@ It is recommended to:
  * the model folder can be packaged into a zip file, and the package name should use a descriptive name + `.model.zip`.
  * use or upgrade to the latest format version
 
-## Current `format_version`: 0.3.2
+## Current `format_version`: 0.3.3
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `model.yaml`.
 The configuration file must contain the following fields; optional fields are followed by \[optional\].
@@ -215,4 +215,4 @@ with open(filename, "rb") as f:
 
 
 # Changelog
- * **0.3.2**: each author in `authors` can be a dictionary with `name` and `affiliation`.
+ * **0.3.3**: Each author in `authors` can be a dictionary with `name` and `affiliation` or a name string.
