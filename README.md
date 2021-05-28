@@ -42,8 +42,8 @@ A list of author strings.
 A string can be seperated by `;` in order to identify multiple handles per author.
 The authors are the creators of the specifications and the primary points of contact.
 
-- `doi` \[optional\]
-Digital Object Identifier of this model.
+- `id` \[optional\]
+Unique identifier of this model, it's recommended to use a `doi` as the model id, e.g. by uploading the weights file to Zenodo and get a `doi`.
 
 - `cite` \[optional\]
 A citation entry or list of citation entries.
