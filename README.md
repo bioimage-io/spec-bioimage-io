@@ -17,7 +17,7 @@ It is recommended to:
  * the model folder can be packaged into a zip file, and the package name should use a descriptive name + `.model.zip`.
  * use or upgrade to the latest format version
 
-## Current `format_version`: 0.3.1
+## Current `format_version`: 0.3.4
 
 A model entry in the bioimage.io model zoo is defined by a configuration file `model.yaml`.
 The configuration file must contain the following fields; optional fields are followed by \[optional\].
@@ -41,6 +41,9 @@ A string containing a brief description.
 A list of author strings. 
 A string can be seperated by `;` in order to identify multiple handles per author.
 The authors are the creators of the specifications and the primary points of contact.
+
+- `doi` \[optional\]
+Digital Object Identifier of this model.
 
 - `cite` \[optional\]
 A citation entry or list of citation entries.
@@ -212,3 +215,6 @@ with open(filename, "rb") as f:
 # Example Configurations
 ## PyTorch
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
+
+# Changelog
+ * **0.3.4**: Add `doi` key for the model
