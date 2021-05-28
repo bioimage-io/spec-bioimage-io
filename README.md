@@ -55,7 +55,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
 A list of tags.
 
 - `license`
-A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`) or a relative path to the license file.
+A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 
 - `documentation`
 Relative path to file with additional documentation in markdown.
