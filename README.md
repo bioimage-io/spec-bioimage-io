@@ -28,6 +28,9 @@ If a field is followed by \[optional\]\*, they are optional depending on another
 Version of this bioimage.io configuration specification. This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility, and throw error if the model yaml is in an unsupported format version.
 
+- `type`
+The value must be `model`, used to differentiate with other RDF types such as `dataset`, `application`.
+
 - `name`
 Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
