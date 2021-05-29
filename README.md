@@ -31,6 +31,9 @@ The recommended behavior for the implementation is to keep backward compatibilit
 - `type`
 The value must be `model`, used to differentiate with other RDF types such as `dataset`, `application`.
 
+- `version`
+The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
+
 - `name`
 Name of this model. The model name should be human readble and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 
