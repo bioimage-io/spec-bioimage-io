@@ -58,7 +58,7 @@ A list of tags.
 A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
 
 - `documentation`
-Relative path to file with additional documentation in markdown.
+Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
 
 - `attachments` \[optional\] Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that are necessary for the documentation or for the model to run, these files will be included when generating the model package.
 
