@@ -34,7 +34,7 @@ class ImportedSource:
 
 
 @dataclass
-class Spec(raw_nodes.Spec):
+class RDF(raw_nodes.RDF):
     documentation: Path
     covers: List[Path]
 

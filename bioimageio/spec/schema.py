@@ -43,7 +43,8 @@ class RunMode(PyBioSchema):
     kwargs = fields.Kwargs()
 
 
-class Spec(PyBioSchema):
+class RDF(PyBioSchema):
+    """not the reference for RDF; todo: match definition of rdf json schema"""
     format_version = fields.String(
         validate=validate.OneOf(raw_nodes.FormatVersion.__args__),
         required=True,
@@ -475,7 +476,7 @@ class ModelParent(PyBioSchema):
     sha256 = fields.SHA256(bioimageio_description="Hash of the weights of the parent model.")
 
 
-class Model(Spec):
+class Model(RDF):
     bioimageio_description = f"""# BioImage.IO Model Description File Specification {raw_nodes.FormatVersion.__args__[-1]}
 A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
 The configuration file must contain the following fields; optional fields are indicated by _optional_.

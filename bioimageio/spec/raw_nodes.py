@@ -96,11 +96,11 @@ class RunMode(Node):
 
 
 @dataclass
-class Spec(Node):
     format_version: FormatVersion = missing
     name: str = missing
     description: str = missing
 
+class RDF(Node):
     authors: List[str] = missing
     cite: List[CiteEntry] = missing
 
@@ -177,7 +177,7 @@ class OutputTensor:
 
 @dataclass
 class SpecURI(URI):
-    spec_schema: bioimageio.spec.schema.Spec = missing
+    spec_schema: bioimageio.spec.schema.RDF = missing
 
 
 @dataclass
@@ -201,7 +201,7 @@ class ModelParent(Node):
 
 
 @dataclass
-class Model(Spec):
+class Model(RDF):
     inputs: List[InputTensor] = missing
     kwargs: Dict[str, Any] = missing
     outputs: List[OutputTensor] = missing
