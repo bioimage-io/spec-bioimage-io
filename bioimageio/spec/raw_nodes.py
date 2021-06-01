@@ -48,6 +48,13 @@ class Node:
 
 
 @dataclass
+class Author(Node):
+    name: str = missing
+    affiliation: str = missing
+    ORCID: Optional[str] = missing
+
+
+@dataclass
 class ImportablePath(Node):
     filepath: Path = missing
     callable_name: str = missing
@@ -99,7 +106,7 @@ class RunMode(Node):
 @dataclass
 class RDF(Node):
     attachments: Dict[str, Any] = missing
-    authors: List[str] = missing
+    authors: List[Author] = missing
     cite: List[CiteEntry] = missing
     config: dict = missing
     covers: List[URI] = missing
@@ -181,7 +188,7 @@ class SpecURI(URI):
 
 @dataclass
 class WeightsEntry(Node):
-    authors: List[str] = missing
+    authors: List[Author] = missing
     attachments: Dict = missing
     parent: Optional[str] = missing
     # ONNX specific
@@ -204,7 +211,7 @@ class Model(RDF):
     inputs: List[InputTensor] = missing
     kwargs: Dict[str, Any] = missing
     outputs: List[OutputTensor] = missing
-    packaged_by: List[str] = missing
+    packaged_by: List[Author] = missing
     parent: ModelParent = missing
     sample_inputs: List[URI] = missing
     sample_outputs: List[URI] = missing

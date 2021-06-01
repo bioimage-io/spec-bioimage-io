@@ -27,6 +27,12 @@ class PyBioSchema(Schema):
             raise e
 
 
+class Author(PyBioSchema):
+    name = fields.String(required=True)
+    affiliation = fields.String(required=True)
+    ORCID = fields.String(validate=[], missing=None)
+
+
 class CiteEntry(PyBioSchema):
     text = fields.String(required=True)
     doi = fields.String(missing=None)
@@ -62,7 +68,7 @@ is in an unsupported format version. The current format version described here i
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
     authors = fields.List(
-        fields.String,
+        fields.Nested(Author),
         required=True,
         bioimageio_description="""A list of author strings.
 A string can be separated by `;` in order to identify multiple handles per author.
@@ -474,7 +480,7 @@ with open(filename, "rb") as f:
 
 class WeightsEntry(PyBioSchema):
     authors = fields.List(
-        fields.String,
+        fields.Nested(Author),
         missing=list,
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
         "person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) "
@@ -526,7 +532,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     packaged_by = fields.List(
-        fields.String,
+        fields.Nested(Author),
         missing=list,
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any {WeightsEntry.__name__}.",
@@ -721,7 +727,7 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
     description = fields.String(required=True)
 
     cite = fields.List(fields.Nested(CiteEntry), missing=list)
-    authors = fields.List(fields.String, required=True)
+    authors = fields.List(fields.Nested(Author), required=True)
     covers = fields.List(fields.URI, missing=list)
 
     badges = fields.List(fields.Nested(Badge), missing=list)
