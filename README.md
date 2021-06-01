@@ -48,3 +48,11 @@ or if the field `test_inputs` does not contain a list, it would print:
 # Example Configurations
 ## PyTorch
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
+
+# Changelog
+ * **0.3.2**: 
+    - Change `author` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary {name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}
+    - Add `type` field to comply with other bioimage.io RDFs. Only valid value is 'model'.
+    - Add optional `version` field (default 0.1.0) to keep track of model changes.
+    - Add optional `id` field as a unique identifier (the use of [doi](doi.org) is encouraged).
+    - Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/).
