@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
 # such that we only need to support the most up-to-date version.
-FormatVersion = Literal["0.3.0", "0.3.1"]  # newest format needs to be last (used in spec.__init__.py)
+FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
 
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
@@ -36,6 +36,7 @@ WeightsFormat = Literal[
     "tensorflow_saved_model_bundle",
     "onnx",
 ]
+Type = Literal["model"]
 
 Dependencies = NewType("Dependencies", str)
 Axes = NewType("Axes", str)
@@ -114,6 +115,8 @@ class RDF(Node):
     run_mode: Optional[RunMode] = missing
     tags: List[str] = missing
     timestamp: datetime = missing
+    type: Type = missing
+    version: distutils.version.StrictVersion = missing
 
 
 @dataclass

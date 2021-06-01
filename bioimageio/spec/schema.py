@@ -44,7 +44,8 @@ class RunMode(PyBioSchema):
 
 
 class RDF(PyBioSchema):
-    """not the reference for RDF; todo: match definition of rdf json schema"""
+    """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
+
     format_version = fields.String(
         validate=validate.OneOf(raw_nodes.FormatVersion.__args__),
         required=True,
@@ -140,6 +141,13 @@ documentation or for the model to run, these files will be included when generat
         required=True,
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
+    )
+    type = fields.String(validate=validate.OneOf(raw_nodes.Type.__args__))
+    version = fields.StrictVersion(
+        missing="0.1.0",
+        bioimageio_description="The version number of the model. The version number format must be a string in "
+        "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
+        "e.g. the initial version number should be `0.1.0`, which is also the default.",
     )
 
 

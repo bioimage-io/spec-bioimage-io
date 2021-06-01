@@ -1,25 +1,13 @@
 import copy
 import warnings
 from collections import defaultdict
-from typing import Dict
+from typing import Any, Dict
 
 from bioimageio.spec import schema_v0_1
 from bioimageio.spec.exceptions import PyBioUnconvertibleException
 
 
-def maybe_convert_to_v0_3(data: Dict) -> Dict:
-    format_version = data.get("format_verion", None)
-
-    if format_version is None:
-        warnings.warn("No spec format_version specified")
-        format_version = "0.1.0"
-    elif format_version == "0.3.0":
-        # no breaking change, bump to 0.3.1
-        data["format_version"] = "0.3.1"
-
-    if data["format_version"] != "0.1.0":
-        return data
-
+def convert_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
     schema_v0_1.Model().validate(data)
 
     data = copy.deepcopy(data)
@@ -135,3 +123,26 @@ def maybe_convert_to_v0_3(data: Dict) -> Dict:
         del config["future"]
 
     return data
+
+
+def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
+    data["type"] = "model"
+    data["format_version"] = "0.3.2"
+    return data
+
+
+def maybe_convert_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
+
+    if data.get("format_version", "0.1.0") == "0.1.0":
+        data = convert_from_v0_1(data)
+
+    if data["format_version"] == "0.3.0":
+        # no breaking change, bump to 0.3.1
+        data["format_version"] = "0.3.1"
+
+    if data["format_version"] == "0.3.1":
+        data = convert_v0_3_1_to_v0_3_2(data)
+
+    return data
+
+
