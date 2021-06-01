@@ -4,6 +4,7 @@ from dataclasses import asdict
 from pathlib import Path
 from pprint import pprint
 
+import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 from spdx_license_list import LICENSES
 
@@ -28,9 +29,20 @@ class PyBioSchema(Schema):
 
 
 class Author(PyBioSchema):
-    name = fields.String(required=True)
-    affiliation = fields.String(required=True)
-    ORCID = fields.String(validate=[], missing=None)
+    name = fields.String(required=True, bioimageio_description="Full name.")
+    affiliation = fields.String(required=True, bioimageio_description="Affiliation.")
+    orcid = fields.String(
+        validate=[
+            validate.Length(19),
+            lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
+            lambda oid: stdnum.iso7064.mod_11_2.is_valid(oid.replace("-", "")),
+        ],
+        missing=None,
+        bioimageio_description="[orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id "
+        "in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid]("
+        "https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier"
+        ") as per ISO 7064 11,2.)",
+    )
 
 
 class CiteEntry(PyBioSchema):
@@ -70,9 +82,8 @@ is in an unsupported format version. The current format version described here i
     authors = fields.List(
         fields.Nested(Author),
         required=True,
-        bioimageio_description="""A list of author strings.
-A string can be separated by `;` in order to identify multiple handles per author.
-The authors are the creators of the specifications and the primary points of contact.""",
+        bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
+        "points of contact.",
     )
     cite = fields.Nested(
         CiteEntry,

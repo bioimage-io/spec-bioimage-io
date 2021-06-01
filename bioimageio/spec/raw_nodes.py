@@ -51,7 +51,7 @@ class Node:
 class Author(Node):
     name: str = missing
     affiliation: str = missing
-    ORCID: Optional[str] = missing
+    orcid: Optional[str] = missing
 
 
 @dataclass
