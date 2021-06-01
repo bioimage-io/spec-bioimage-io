@@ -3,6 +3,8 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict
 
+from marshmallow import ValidationError
+
 from bioimageio.spec import schema_v0_1
 from bioimageio.spec.exceptions import PyBioUnconvertibleException
 
@@ -117,10 +119,6 @@ def convert_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
 
     del data["prediction"]
     del data["training"]
-    # remove 'future' from config if no other than the used future entries exist
-    config = data.get("config", {})
-    if config.get("future") == {}:
-        del config["future"]
 
     return data
 
@@ -128,6 +126,37 @@ def convert_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
 def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     data["type"] = "model"
     data["format_version"] = "0.3.2"
+    data["version"] = "0.1.0"
+    future = data.get("config", {}).get("future", {}).pop("0.3.2", {})
+
+    # authors
+    authors_update = future.get("authors")
+    data["authors"] = [{"name": name} for name in data["authors"]]
+    if authors_update is None:
+        authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
+
+    for a, u in zip(data["authors"], authors_update):
+        a.update(u)
+
+    # packaged_by
+    packaged_by_update = future.get("packaged_by")
+    data["packaged_by"] = [{"name": name} for name in data["packaged_by"]]
+    if packaged_by_update is None:
+        packaged_by_update = [{"affiliation": "<unknown>"}] * len(data["packaged_by"])
+
+    for a, u in zip(data["packaged_by"], packaged_by_update):
+        a.update(u)
+
+    # authors of weights
+    for weights_format, weights_entry in data["weights"].items():
+        weights_entry["authors"] = [{"name": name} for name in weights_entry["authors"]]
+        authors_update = future.get("weights", {}).get(weights_format, {}).get("authors")
+        if authors_update is None:
+            authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
+
+        for a, u in zip(weights_entry["authors"], authors_update):
+            a.update(u)
+
     return data
 
 
@@ -143,6 +172,9 @@ def maybe_convert_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
     if data["format_version"] == "0.3.1":
         data = convert_v0_3_1_to_v0_3_2(data)
 
+    # remove 'future' from config if no other than the used future entries exist
+    config = data.get("config", {})
+    if config.get("future") == {}:
+        del config["future"]
+
     return data
-
-
