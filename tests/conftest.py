@@ -24,3 +24,11 @@ rf_config_path = rf_config_path_v0_3_0
 @pytest.fixture
 def rf_resolved_spec(rf_config_path):
     return load_and_resolve_spec(rf_config_path)
+
+
+@pytest.fixture
+def UNet2DNucleiBroad_model_url():
+    return (
+        "https://raw.githubusercontent.com/bioimage-io/pytorch-bioimage-io/25f6bac5a22d8a76553bd4484a515f634bcb9ee2/"
+        "specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml"
+    )

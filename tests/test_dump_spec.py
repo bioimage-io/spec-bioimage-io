@@ -34,7 +34,6 @@ def test_spec_roundtrip(rf_config_path):
     serialized_wo_defaults["weights"]["pickle"].pop("opset_version")
     serialized_wo_defaults["weights"]["pickle"].pop("parent")
     serialized_wo_defaults["weights"]["pickle"].pop("tensorflow_version")
-    serialized_wo_defaults.pop("version")  # new in 0.3.2
 
     assert serialized_wo_defaults == data
 

@@ -43,13 +43,7 @@ def test_tensor_schema_preprocessing():
             "shape": [128, 128, 3],
             "preprocessing": [],
         },
-        {
-            "name": "input_1",
-            "description": "Input 1",
-            "data_type": "float32",
-            "axes": "xyc",
-            "shape": [128, 128, 3],
-        },
+        {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
     ],
 )
 def test_tensor_schema_no_preprocessing(data):
@@ -60,12 +54,7 @@ def test_tensor_schema_no_preprocessing(data):
 
 @pytest.mark.parametrize("schema_instance", [schema.InputTensor(), schema.OutputTensor()])
 def test_tensor_schema_optional_description(schema_instance):
-    data = {
-        "name": "input_1",
-        "data_type": "float32",
-        "axes": "xyc",
-        "shape": [128, 128, 3],
-    }
+    data = {"name": "input_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
     validated_data = schema_instance.load(data)
     assert validated_data.description is None
 
@@ -84,22 +73,14 @@ def model_dict():
         "git_repo": "https://github.com/bioimage-io/python-bioimage-io",
         "format_version": "0.3.0",
         "description": "description",
-        "authors": ["Author 1", "Author 2"],
-        "timestamp": datetime.now(),
-        "cite": [
-            {
-                "text": "Paper title",
-                "doi": "doi",
-            }
+        "authors": [
+            {"name": "Author 1", "affiliation": "Affiliation 1"},
+            {"name": "Author 2", "affiliation": "Affiliation 2"},
         ],
+        "timestamp": datetime.now(),
+        "cite": [{"text": "Paper title", "doi": "doi"}],
         "inputs": [
-            {
-                "name": "input_1",
-                "description": "Input 1",
-                "data_type": "float32",
-                "axes": "xyc",
-                "shape": [128, 128, 3],
-            }
+            {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
         ],
         "outputs": [
             {
