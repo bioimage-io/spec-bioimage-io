@@ -1,9 +1,11 @@
 import typing
+import warnings
 from dataclasses import asdict
 from pathlib import Path
 from pprint import pprint
 
-from marshmallow import Schema, ValidationError, post_load, validates_schema
+from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
+from spdx_license_list import LICENSES
 
 from bioimageio.spec import fields, raw_nodes, validate
 from bioimageio.spec.exceptions import PyBioValidationException
@@ -82,17 +84,27 @@ E.g. the citation for the model architecture and/or the training data used.""",
 If the model is contained in a subfolder of a git repository, then a url to the exact folder
 (which contains the configuration yaml file) should be used.""",
     )
-    id = fields.String(
-        missing=None,
-        bioimageio_description="Unique identifier of this model, it is recommended to use a DOI as the model id, "
-        "e.g. by uploading the weights file to zenodo.org and get a DOI."
-    ),
+    id = (
+        fields.String(
+            missing=None,
+            bioimageio_description="Unique identifier of this model, it is recommended to use a DOI as the model id, "
+            "e.g. by uploading the weights file to zenodo.org and get a DOI.",
+        ),
+    )
     tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
     license = fields.String(
+        validate=validate.OneOf(LICENSES),
         required=True,
-        bioimageio_description="A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the "
-        "license file.",
+        bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
+        "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
+        "an Github issue to discuss your intentions with the community.",
     )
+
+    @validates("license")
+    def warn_about_deprecated_spdx_license(self, value: str):
+        license_info = LICENSES[value]
+        if license_info["isDeprecatedLicenseId"]:
+            warnings.warn(f"{license_info['name']} is deprecated")
 
     documentation = fields.Path(
         validate=[

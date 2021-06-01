@@ -29,6 +29,7 @@ setup(
         "marshmallow_union",
         "requests",
         "ruamel.yaml",
+        "spdx-license-list",
         "typer",
         "typing-extensions",
     ],
