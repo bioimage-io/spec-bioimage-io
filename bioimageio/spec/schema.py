@@ -82,6 +82,11 @@ E.g. the citation for the model architecture and/or the training data used.""",
 If the model is contained in a subfolder of a git repository, then a url to the exact folder
 (which contains the configuration yaml file) should be used.""",
     )
+    id = fields.String(
+        missing=None,
+        bioimageio_description="Unique identifier of this model, it is recommended to use a DOI as the model id, "
+        "e.g. by uploading the weights file to zenodo.org and get a DOI."
+    ),
     tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
     license = fields.String(
         required=True,
