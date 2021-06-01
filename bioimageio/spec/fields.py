@@ -278,8 +278,7 @@ class Path(String):
         return pathlib.Path(path_str)
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        assert isinstance(value, pathlib.Path)
-        return value.as_posix()
+        return None if value is None else pathlib.Path(value).as_posix()
 
 
 class ProcMode(String):

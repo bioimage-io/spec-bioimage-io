@@ -3,9 +3,9 @@ from dataclasses import asdict
 from pathlib import Path
 from pprint import pprint
 
-from marshmallow import Schema, ValidationError, post_load, validate, validates_schema
+from marshmallow import Schema, ValidationError, post_load, validates_schema
 
-from bioimageio.spec import fields, raw_nodes
+from bioimageio.spec import fields, raw_nodes, validate
 from bioimageio.spec.exceptions import PyBioValidationException
 
 
@@ -89,8 +89,10 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         "license file.",
     )
 
-    documentation = fields.URI(
-        required=True, bioimageio_description="Relative path to file with additional documentation in markdown."
+    documentation = fields.Path(
+        validate=validate.is_relative_path,
+        required=True,
+        bioimageio_description="Relative path to file with additional documentation in markdown.",
     )
     covers = fields.List(
         fields.URI,
@@ -679,7 +681,7 @@ class Badge(PyBioSchema):
 class BioImageIoManifestNotebookEntry(PyBioSchema):
     id = fields.String(required=True)
     name = fields.String(required=True)
-    documentation = fields.String(required=True)
+    documentation = fields.Path(validate=validate.is_relative_path, required=True)
     description = fields.String(required=True)
 
     cite = fields.List(fields.Nested(CiteEntry), missing=list)
