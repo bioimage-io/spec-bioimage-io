@@ -139,13 +139,15 @@ def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
         a.update(u)
 
     # packaged_by
-    packaged_by_update = future.get("packaged_by")
-    data["packaged_by"] = [{"name": name} for name in data["packaged_by"]]
-    if packaged_by_update is None:
-        packaged_by_update = [{"affiliation": "<unknown>"}] * len(data["packaged_by"])
+    packaged_by = data.get("packaged_by")
+    if packaged_by is not None:
+        packaged_by_update = future.get("packaged_by")
+        data["packaged_by"] = [{"name": name} for name in data["packaged_by"]]
+        if packaged_by_update is None:
+            packaged_by_update = [{"affiliation": "<unknown>"}] * len(data["packaged_by"])
 
-    for a, u in zip(data["packaged_by"], packaged_by_update):
-        a.update(u)
+        for a, u in zip(data["packaged_by"], packaged_by_update):
+            a.update(u)
 
     # authors of weights
     for weights_format, weights_entry in data["weights"].items():
