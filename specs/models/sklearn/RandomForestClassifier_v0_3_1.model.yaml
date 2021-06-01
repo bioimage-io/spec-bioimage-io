@@ -72,3 +72,10 @@ weights:
   pickle:
     source: rf_v0.pickle
     sha256: abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
+
+config:
+  future:
+    0.3.2:
+      authors:
+        - affiliation: "EMBL Heidelberg"
+          orcid: "0000-0002-8567-6389"

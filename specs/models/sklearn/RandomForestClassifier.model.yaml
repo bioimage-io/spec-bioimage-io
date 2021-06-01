@@ -4,7 +4,7 @@ name: sklearnRandomForestClassifierBroadNucleusData
 description: Random Forest Classifier form scikit-learn
 
 authors:
-  - Fynn Beuttenmueller
+  - {name: "Fynn Beuttenmueller", affiliation: "EMBL Heidelberg", orcid: "0000-0002-8567-6389"}
 cite:
   - text: L. Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001
     url: https://scikit-learn.org/stable/modules/generated/sklearnbased.ensemble.RandomForestClassifier.html
@@ -74,3 +74,4 @@ weights:
     sha256: abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
 
 type: model
+version: "0.1"

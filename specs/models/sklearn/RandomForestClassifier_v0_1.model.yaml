@@ -94,3 +94,7 @@ config:
         tags: [toy example]
       timestamp: "2020-10-23T16:00:42+00:00"
       git_repo: "https://github.com/bioimage-io/python-bioimage-io/tree/master/specs/models/sklearnbased"
+    0.3.2:
+      authors:
+        - affiliation: "EMBL Heidelberg"
+          orcid: "0000-0002-8567-6389"
