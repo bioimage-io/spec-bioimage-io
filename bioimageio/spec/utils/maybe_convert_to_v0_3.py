@@ -151,6 +151,9 @@ def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
     # authors of weights
     for weights_format, weights_entry in data["weights"].items():
+        if "authors" not in weights_entry:
+            continue
+
         weights_entry["authors"] = [{"name": name} for name in weights_entry["authors"]]
         authors_update = future.get("weights", {}).get(weights_format, {}).get("authors")
         if authors_update is None:
