@@ -96,29 +96,24 @@ class RunMode(Node):
 
 
 @dataclass
-    format_version: FormatVersion = missing
-    name: str = missing
-    description: str = missing
-
 class RDF(Node):
+    attachments: Dict[str, Any] = missing
     authors: List[str] = missing
     cite: List[CiteEntry] = missing
-
-    git_repo: Optional[str] = missing
-    tags: List[str] = missing
-    license: str = missing
-
-    documentation: URI = missing
-    covers: List[URI] = missing
-    attachments: Dict[str, Any] = missing
-
-    language: Language = missing
-    framework: Framework = missing
-    dependencies: Optional[Dependencies] = missing
-    timestamp: datetime = missing
-
-    run_mode: Optional[RunMode] = missing
     config: dict = missing
+    covers: List[URI] = missing
+    dependencies: Optional[Dependencies] = missing
+    description: str = missing
+    documentation: URI = missing
+    format_version: FormatVersion = missing
+    framework: Framework = missing
+    git_repo: Optional[str] = missing
+    language: Language = missing
+    license: str = missing
+    name: str = missing
+    run_mode: Optional[RunMode] = missing
+    tags: List[str] = missing
+    timestamp: datetime = missing
 
 
 @dataclass
