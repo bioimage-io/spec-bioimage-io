@@ -167,12 +167,8 @@ def test_build_spec_keras(FruNet_model_url):
     source = yaml.load(Path(config_path))
 
     weight_source = "https://zenodo.org/record/4156050/files/fully_residual_dropout_segmentation.h5"
-    test_inputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"
-    ]
-    test_outputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"
-    ]
+    test_inputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"]
+    test_outputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"]
     cite = {entry["text"]: entry["doi"] if "doi" in entry else entry["url"] for entry in source["cite"]}
 
     raw_model = build_spec(
@@ -187,7 +183,7 @@ def test_build_spec_keras(FruNet_model_url):
         documentation=source["documentation"],
         covers=source["covers"],
         cite=cite,
-        tensorflow_version="1.12"
+        tensorflow_version="1.12",
     )
 
     serialized = schema.Model().dump(raw_model)
@@ -202,12 +198,8 @@ def test_build_spec_tf(FruNet_model_url):
     source = yaml.load(Path(config_path))
 
     weight_source = "https://zenodo.org/record/4156050/files/tensorflow_saved_model_bundle.zip"
-    test_inputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"
-    ]
-    test_outputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"
-    ]
+    test_inputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"]
+    test_outputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"]
     cite = {entry["text"]: entry["doi"] if "doi" in entry else entry["url"] for entry in source["cite"]}
 
     raw_model = build_spec(
@@ -222,7 +214,7 @@ def test_build_spec_tf(FruNet_model_url):
         documentation=source["documentation"],
         covers=source["covers"],
         cite=cite,
-        tensorflow_version="1.12"
+        tensorflow_version="1.12",
     )
 
     serialized = schema.Model().dump(raw_model)
@@ -236,14 +228,12 @@ def test_build_spec_tfjs(FruNet_model_url):
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
 
-    weight_source = ("https://raw.githubusercontent.com/deepimagej/tensorflow-js-models/main/"
-                     "fru-net_sev_segmentation_tf_js_model/model.json")
-    test_inputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"
-    ]
-    test_outputs = [
-        "https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"
-    ]
+    weight_source = (
+        "https://raw.githubusercontent.com/deepimagej/tensorflow-js-models/main/"
+        "fru-net_sev_segmentation_tf_js_model/model.json"
+    )
+    test_inputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"]
+    test_outputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/resultImage.npy"]
     cite = {entry["text"]: entry["doi"] if "doi" in entry else entry["url"] for entry in source["cite"]}
 
     raw_model = build_spec(
@@ -257,7 +247,7 @@ def test_build_spec_tfjs(FruNet_model_url):
         license=source["license"],
         documentation=source["documentation"],
         covers=source["covers"],
-        cite=cite
+        cite=cite,
     )
 
     serialized = schema.Model().dump(raw_model)

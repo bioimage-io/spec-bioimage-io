@@ -64,9 +64,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         source_hash = None
 
     if "weight_attachments" in kwargs:
-        attachments = {
-            "attachments": ["weight_attachments"]
-        }
+        attachments = {"attachments": ["weight_attachments"]}
     else:
         attachments = {}
 
@@ -74,39 +72,24 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     if weight_type == "pytorch_state_dict":
         # pytorch-state-dict -> we need a source
         assert source is not None
-        weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash,
-            **attachments
-        )
+        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = "python"
         framework = "pytorch"
 
     elif weight_type == "pickle":
-        weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash,
-            **attachments
-        )
+        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = "python"
         framework = "scikit-learn"
 
     elif weight_type == "onnx":
         weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash,
-            opset_version=kwargs.get("opset_version", 12),
-            **attachments
+            source=weight_uri, sha256=weight_hash, opset_version=kwargs.get("opset_version", 12), **attachments
         )
         language = None
         framework = None
 
     elif weight_type == "pytorch_script":
-        weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash,
-            **attachments
-        )
+        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         if source is None:
             language = None
             framework = None
@@ -119,7 +102,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
-            **attachments
+            **attachments,
         )
         language = "python"
         framework = "tensorflow"
@@ -129,17 +112,13 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
-            **attachments
+            **attachments,
         )
         language = "python"
         framework = "tensorflow"
 
     elif weight_type == "tensorflow_js":
-        weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash,
-            **attachments
-        )
+        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = None
         framework = None
 
@@ -172,7 +151,7 @@ def _get_data_range(data_range, dtype):
 def _get_axes(axes, ndim):
     if axes is None:
         assert ndim in (2, 4, 5)
-        default_axes = {2: 'bc', 4: 'bcyx', 5: 'bczyx'}
+        default_axes = {2: "bc", 4: "bcyx", 5: "bczyx"}
         axes = default_axes[ndim]
     return axes
 
@@ -183,33 +162,27 @@ def _get_input_tensor(test_in, name, step, min_shape, data_range, axes, preproce
         assert min_shape is None
         shape_description = shape
     else:
-        shape_description = {
-            'min': shape if min_shape is None else min_shape,
-            'step': step
-        }
+        shape_description = {"min": shape if min_shape is None else min_shape, "step": step}
 
     axes = _get_axes(axes, test_in.ndim)
     data_range = _get_data_range(data_range, test_in.dtype)
 
     kwargs = {}
     if preprocessing is not None:
-        kwargs['preprocessing'] = preprocessing
+        kwargs["preprocessing"] = preprocessing
 
     inputs = spec.raw_nodes.InputTensor(
-        name='input' if name is None else name,
+        name="input" if name is None else name,
         data_type=str(test_in.dtype),
         axes=axes,
         shape=shape_description,
         data_range=data_range,
-        **kwargs
+        **kwargs,
     )
     return inputs
 
 
-def _get_output_tensor(test_out, name,
-                       reference_input, scale, offset,
-                       axes, data_range,
-                       postprocessing, halo):
+def _get_output_tensor(test_out, name, reference_input, scale, offset, axes, data_range, postprocessing, halo):
     shape = test_out.shape
     if reference_input is None:
         assert scale is None
@@ -218,37 +191,31 @@ def _get_output_tensor(test_out, name,
     else:
         assert scale is not None
         assert offset is not None
-        shape_description = {
-            'reference_input': reference_input,
-            'scale': scale,
-            'offset': offset
-        }
+        shape_description = {"reference_input": reference_input, "scale": scale, "offset": offset}
 
     axes = _get_axes(axes, test_out.ndim)
     data_range = _get_data_range(data_range, test_out.dtype)
 
     kwargs = {}
     if postprocessing is not None:
-        kwargs['postprocessing'] = postprocessing
+        kwargs["postprocessing"] = postprocessing
     if halo is not None:
-        kwargs['halo'] = halo
+        kwargs["halo"] = halo
 
     outputs = spec.raw_nodes.OutputTensor(
-        name='output' if name is None else name,
+        name="output" if name is None else name,
         data_type=str(test_out.dtype),
         axes=axes,
         data_range=data_range,
         shape=shape_description,
-        **kwargs
+        **kwargs,
     )
     return outputs
 
 
 # TODO The citation entry should be improved so that we can properly derive doi vs. url
 def _build_cite(cite):
-    citation_list = [
-        spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()
-    ]
+    citation_list = [spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()]
     return citation_list
 
 
@@ -298,10 +265,9 @@ def build_spec(
     parent: Optional[str] = None,
     config: Optional[Dict[str, Any]] = None,
     dependencies: Optional[str] = None,
-    **weight_kwargs
+    **weight_kwargs,
 ):
-    """
-    """
+    """ """
     #
     # generate the model specific fields
     #
@@ -310,16 +276,22 @@ def build_spec(
     for test_in, test_out in zip(test_inputs, test_outputs):
         test_in, test_out = _get_local_path(test_in, root), _get_local_path(test_out, root)
         test_in, test_out = np.load(test_in), np.load(test_out)
-    inputs = _get_input_tensor(test_in, input_name, input_step, input_min_shape,
-                               input_axes, input_data_range, preprocessing)
-    outputs = _get_output_tensor(test_out, output_name,
-                                 output_reference, output_scale, output_offset,
-                                 output_axes, output_data_range,
-                                 postprocessing, halo)
+    inputs = _get_input_tensor(
+        test_in, input_name, input_step, input_min_shape, input_axes, input_data_range, preprocessing
+    )
+    outputs = _get_output_tensor(
+        test_out,
+        output_name,
+        output_reference,
+        output_scale,
+        output_offset,
+        output_axes,
+        output_data_range,
+        postprocessing,
+        halo,
+    )
 
-    (weights, language,
-     framework, source_hash) = _get_weights(weight_uri, weight_type,
-                                            source, root, **weight_kwargs)
+    (weights, language, framework, source_hash) = _get_weights(weight_uri, weight_type, source, root, **weight_kwargs)
 
     #
     # generate general fields
@@ -331,17 +303,23 @@ def build_spec(
         source = spec.fields.ImportableSource().deserialize(source)
 
     # optional kwargs, don't pass them if none
-    optional_kwargs = {"git_repo": git_repo, "attachments": attachments,
-                       "packaged_by": packaged_by, "parent": parent,
-                       "run_mode": run_mode, "config": config,
-                       "sample_inputs": sample_inputs,
-                       "sample_outputs": sample_outputs,
-                       "framework": framework, "language": language,
-                       "source": source, "sha256": source_hash,
-                       "kwargs": model_kwargs, "dependencies": dependencies}
-    kwargs = {
-        k: v for k, v in optional_kwargs.items() if v is not None
+    optional_kwargs = {
+        "git_repo": git_repo,
+        "attachments": attachments,
+        "packaged_by": packaged_by,
+        "parent": parent,
+        "run_mode": run_mode,
+        "config": config,
+        "sample_inputs": sample_inputs,
+        "sample_outputs": sample_outputs,
+        "framework": framework,
+        "language": language,
+        "source": source,
+        "sha256": source_hash,
+        "kwargs": model_kwargs,
+        "dependencies": dependencies,
     }
+    kwargs = {k: v for k, v in optional_kwargs.items() if v is not None}
 
     # build the citation object
     cite = _build_cite(cite)
@@ -362,7 +340,7 @@ def build_spec(
         outputs=[outputs],
         test_inputs=test_inputs,
         test_outputs=test_outputs,
-        **kwargs
+        **kwargs,
     )
 
     # serialize and deserialize the raw_nodes.Model to
