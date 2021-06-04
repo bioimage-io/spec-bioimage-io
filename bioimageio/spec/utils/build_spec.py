@@ -229,7 +229,7 @@ def build_spec(
     # general required
     name: str,
     description: str,
-    authors: List[str],
+    authors: List[Dict[str, str]],
     tags: List[str],
     license: str,
     documentation: str,
@@ -267,7 +267,70 @@ def build_spec(
     dependencies: Optional[str] = None,
     **weight_kwargs,
 ):
-    """ """
+    """Create a bioimageio.spec.schema.Model object that can be used to serialize a model.yaml in the bioimage.io format.
+
+    Example usage:
+    ```
+    import bioimageio.spec as spec
+    model_spec = spec.utils.build_spec(
+        weight_uri="test_weights.pt",
+        test_inputs=["./test_inputs"],
+        test_outputs=["./test_outputs"],
+        name="My Model",
+        description="My very fancy model.",
+        authors=[{"name": "John Doe", "affiliation": "My Institute"}],
+        tags=["segmentation", "light sheet data"],
+        license="CC-BY",
+        documentation="./documentation.md",
+        covers=["./my_cover.png"],
+        cite={"Architecture": "https://my_architecture.com"}
+    )
+    serialized = spec.schema.Model().dump(model_spec)
+    with open('model.yaml', 'w') as f:
+        spec.utils.yaml.dump(serialized, f)
+    ```
+
+    Args:
+        weight_uri: the url or relative local file path to the weight file for this model.
+        test_inputs: list of test input files stored in numpy format.
+        test_outputs: list of test outputs corresponding to test_inputs, stored in numpy format.
+        name: name of this model.
+        description: short description of this model.
+        authors: the authors of this model.
+        tags: list of tags for this model.
+        license: the license for this model.
+        documentation: relative file path to markdown documentation for this model.
+        covers: list of relative file paths for cover images.
+        cite: citations for this model.
+        root: root folder for arguments given as relative paths.
+        source: the file with the source code for the model architecture and the corresponding class.
+        model_kwargs: the keyword arguments for the model class.
+        weight_type: the type of the weights.
+        sample_inputs: list of sample inputs to demonstrate the model performance.
+        sample_outputs: list of sample outputs corresponding to sample_inputs.
+        input_name: name of the input tensor.
+        input_step: minimal valid increase of the input tensor shape.
+        input_min_shape: minimal input tensor shape.
+        input_axes: axes names for the input tensor.
+        input_data_range: valid data range for the input tensor.
+        output_name: name of the output tensor.
+        output_reference: name of the input reference tensor used to cimpute the output tensor shape.
+        output_scale: multiplicative factor to compute the output tensor shape.
+        output_offset: additive term to compute the output tensor shape.
+        output_axes: axes names of the output tensor.
+        output_data_range: valid data range for the output tensor.
+        halo: halo to be cropped from the output tensor.
+        preprocessing: list of preprocessing operations for the input.
+        postprocessing: list of postprocessing operations for the output.
+        git_repo: reference git repository for this model.
+        attachments: list of additional files to package with the model.
+        packaged_by: list of authors that have packaged this model.
+        run_mode: custom run mode for this model.
+        parent: id of the parent mode from which this model is derived.
+        config: custom configuration for this model.
+        dependencies: relative path to file with dependencies for this model.
+        weight_kwargs: keyword arguments for this weight type, e.g. "tensorflow_version".
+    """
     #
     # generate the model specific fields
     #
