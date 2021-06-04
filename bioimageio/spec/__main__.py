@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from pprint import pprint
 
@@ -6,7 +7,7 @@ import typer
 from marshmallow import ValidationError
 from ruamel.yaml import YAML
 
-from bioimageio.spec import schema
+from bioimageio.spec import maybe_convert_model, maybe_convert_manifest, schema
 
 yaml = YAML(typ="safe")
 
@@ -14,7 +15,7 @@ app = typer.Typer()  # https://typer.tiangolo.com/
 
 
 @app.command()
-def verify_spec(model_yaml: Path):
+def verify_spec(model_yaml: Path, auto_convert: bool = False):
     try:
         spec_data = yaml.load(model_yaml)
     except Exception as e:
@@ -22,6 +23,9 @@ def verify_spec(model_yaml: Path):
         code = 1
     else:
         try:
+            if auto_convert:
+                spec_data = maybe_convert_model(deepcopy(spec_data))
+
             verify_model_data(spec_data)
         except ValidationError as e:
             pprint(e.messages)
@@ -37,8 +41,11 @@ def verify_model_data(model_data: dict):
     schema.Model().load(model_data)
 
 
-def verify_bioimageio_manifest_data(manifest_data: dict):
+def verify_bioimageio_manifest_data(manifest_data: dict, auto_convert: bool = False):
     try:
+        if auto_convert:
+            manifest_data = maybe_convert_manifest(deepcopy(manifest_data))
+
         manifest = schema.BioImageIoManifest().load(manifest_data)
     except ValidationError as e:
         pprint(e.messages)
@@ -63,7 +70,7 @@ def verify_bioimageio_manifest_data(manifest_data: dict):
 
 
 @app.command()
-def verify_bioimageio_manifest(manifest_yaml: Path):
+def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
     try:
         manifest_data = yaml.load(manifest_yaml)
     except Exception as e:
@@ -71,7 +78,7 @@ def verify_bioimageio_manifest(manifest_yaml: Path):
         pprint(e)
         code = 1
     else:
-        code = verify_bioimageio_manifest_data(manifest_data)
+        code = verify_bioimageio_manifest_data(manifest_data, auto_convert=auto_convert)
         if code == 0:
             print(f"successfully verified manifest {manifest_yaml}")
 
