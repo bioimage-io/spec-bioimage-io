@@ -4,10 +4,6 @@
     "title": "BioImage.IO RDF Schema",
     "description": "Schema for the BioImage.IO Resource Description File Format",
     "properties": {
-        "id": {
-            "type": "string",
-            "description": "unique identifier for the resource, you can also use a `doi` e.g. generated from [zenodo](https://zenodo.org/)"
-        },
         "type": {
             "type": "string",
             "description": "type of the resource, e.g. `model`, `dataset`, `application` or `notebook`",
@@ -83,8 +79,12 @@
         "version": {
             "type": "string",
             "description": "the version number for the resource, starting from `0.1.0`"
+        },
+        "config": {
+            "type": "object",
+            "description": "custom properties for this resource, also contains bioimage.io related fields like the unique identifier used by the website."
         }
     },
-    "required": ["id", "type", "name", "description"],
-    "additionalProperties": true
+    "required": ["type", "name", "description"],
+    "additionalProperties": false
 }
