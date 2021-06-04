@@ -32,3 +32,8 @@ def UNet2DNucleiBroad_model_url():
         "https://raw.githubusercontent.com/bioimage-io/pytorch-bioimage-io/25f6bac5a22d8a76553bd4484a515f634bcb9ee2/"
         "specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml"
     )
+
+
+@pytest.fixture
+def FruNet_model_url():
+    return "https://raw.githubusercontent.com/deepimagej/models/master/fru-net_sev_segmentation/model.yaml"
