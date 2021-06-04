@@ -13,13 +13,15 @@ from urllib.request import url2pathname, urlretrieve
 
 from marshmallow import missing
 
-from bioimageio.core.cache import PYBIO_CACHE_PATH
 from bioimageio.spec import nodes, raw_nodes, schema
 from bioimageio.spec.exceptions import PyBioValidationException
 from bioimageio.spec.fields import URI
 from bioimageio.spec.nodes import ImportedSource
 from bioimageio.spec.utils.common import yaml
 from bioimageio.spec.utils.maybe_convert import maybe_convert
+
+
+PYBIO_CACHE_PATH = pathlib.Path(os.getenv("PYBIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
 
 
 @dataclasses.dataclass
