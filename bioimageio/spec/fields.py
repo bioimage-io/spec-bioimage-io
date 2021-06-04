@@ -95,7 +95,7 @@ class Dict(DocumentedField, marshmallow_fields.Dict):
         # add types of dict keys and values
         key = "Any" if self.key_field is None else self.key_field.type_name
         value = "Any" if self.value_field is None else self.value_field.type_name
-        self.type_name += f"\[{key}, {value}\]"
+        self.type_name += f"\\[{key}, {value}\\]"
 
 
 class Float(DocumentedField, marshmallow_fields.Float):
@@ -109,7 +109,7 @@ class Integer(DocumentedField, marshmallow_fields.Integer):
 class List(DocumentedField, marshmallow_fields.List):
     def __init__(self, *super_args, **super_kwargs):
         super().__init__(*super_args, **super_kwargs)
-        self.type_name += f"\[{self.inner.type_name}\]"  # add type of list elements
+        self.type_name += f"\\[{self.inner.type_name}\\]"  # add type of list elements
 
 
 class Number(DocumentedField, marshmallow_fields.Number):
@@ -122,7 +122,7 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
 
         self.type_name = self.schema.__class__.__name__
         if self.many:
-            self.type_name = f"List\[{self.type_name}\]"
+            self.type_name = f"List\\[{self.type_name}\\]"
 
         if not self.bioimageio_description:
             self.bioimageio_description = self.schema.bioimageio_description
@@ -151,7 +151,7 @@ class Tuple(DocumentedField, marshmallow_fields.Tuple):
 class Union(DocumentedField, marshmallow_union.Union):
     def __init__(self, *super_args, **super_kwargs):
         super().__init__(*super_args, **super_kwargs)
-        self.type_name += f"\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\]"  # add types of options
+        self.type_name += f"\\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\\]"  # add types of options
 
 
 #########################
