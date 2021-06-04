@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
 # such that we only need to support the most up-to-date version.
 FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
+ManifestFormatVersion = Literal["0.1.0", "0.2.0"]  # newest format expected to be last
 
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
@@ -220,3 +221,10 @@ class Model(RDF):
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
+
+
+# Manifest
+BioImageIoManifest = dict
+BioImageIoManifestModelEntry = dict
+BioImageIoManifestNotebookEntry = dict
+Badge = dict

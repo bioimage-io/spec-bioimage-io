@@ -708,6 +708,7 @@ config:
                 )
 
 
+# Manifest
 class BioImageIoManifestModelEntry(PyBioSchema):
     id = fields.String(required=True)
     source = fields.String(validate=validate.URL(schemes=["http", "https"]))
@@ -748,8 +749,8 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
 
 
 class BioImageIoManifest(PyBioSchema):
-    format_version = fields.String(validate=validate.OneOf(raw_nodes.FormatVersion.__args__), required=True)
-    config = fields.Dict()
+    format_version = fields.String(validate=validate.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True)
+    config = fields.Dict(missing=dict)
 
     application = fields.List(fields.Dict, missing=list)
     collection = fields.List(fields.Dict, missing=list)
