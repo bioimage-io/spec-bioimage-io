@@ -1,4 +1,4 @@
-# BioImage.IO Model Description File Specification 0.3.1
+# BioImage.IO Model Description File Specification 0.3.2
 A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
 The configuration file must contain the following fields; optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
@@ -7,10 +7,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.3.1
-* `authors` _List\[String\]_ A list of author strings.
-A string can be separated by `;` in order to identify multiple handles per author.
-The authors are the creators of the specifications and the primary points of contact.
+0.3.2
+* `authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
 * `cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used. is a Dict with the following keys:
@@ -18,8 +16,8 @@ E.g. the citation for the model architecture and/or the training data used. is a
   * `doi` _optional String_ 
   * `url` _optional String_ 
 * `description` _String_ A string containing a brief description.
-* `documentation` _URI→String_ Relative path to file with additional documentation in markdown.
-* `license` _String_ A string to a common license name (e.g. `MIT`, `APLv2`) or a relative path to the license file.
+* `documentation` _Path→String_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+* `license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * `name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 * `tags` _List\[String\]_ A list of tags.
 * `test_inputs` _List\[URI→String\]_ List of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: '.npy'
@@ -30,7 +28,7 @@ E.g. the citation for the model architecture and/or the training data used. is a
   1. _WeightsEntry_  is a Dict with the following keys:
     * `source` _URI→String_ Link to the source file. Preferably a url.
     * `attachments` _optional Dict\[Any, Any\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files that are specific to the current weight format. A list of URIs can be listed under the `files` key to included additional files for generating the model package.
-    * `authors` _optional List\[String\]_ A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
+    * `authors` _optional List\[Author\]_ A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
     * `opset_version` _optional Number_ 
     * `parent` _optional String_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
     * `sha256` _optional String_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
@@ -127,7 +125,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
   * `description` _optional String_ 
   * `halo` _optional List\[Integer\]_ The halo to crop from the output tensor (for example to crop away boundary effects or for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed.
   * `postprocessing` _optional List\[Postprocessing\]_ Description of how this output should be postprocessed.
-* `packaged_by` _optional List\[String\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any WeightsEntry.
+* `packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any WeightsEntry.
 * `parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. is a Dict with the following keys:
   * `sha256` _optional SHA256→String_ Hash of the weights of the parent model.
   * `uri` _optional URI→String_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
@@ -152,3 +150,5 @@ with open(filename, "rb") as f:
  This field is only required if the field source is present.
 * `source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
 For example: `./my_function:MyImplementation` or `core_library.some_module.some_function`.
+* `type` _optional String_ 
+* `version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`, which is also the default.
