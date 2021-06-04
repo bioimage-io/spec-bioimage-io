@@ -3,13 +3,11 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict
 
-from marshmallow import ValidationError
-
 from bioimageio.spec import schema_v0_1
 from bioimageio.spec.exceptions import PyBioUnconvertibleException
 
 
-def convert_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
+def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
     schema_v0_1.Model().validate(data)
 
     data = copy.deepcopy(data)
@@ -123,7 +121,7 @@ def convert_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
+def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     data["type"] = "model"
     data["format_version"] = "0.3.2"
     data["version"] = "0.1.0"
@@ -165,21 +163,16 @@ def convert_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
+def maybe_convert_model_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data.get("format_version", "0.1.0") == "0.1.0":
-        data = convert_from_v0_1(data)
+        data = convert_model_from_v0_1(data)
 
     if data["format_version"] == "0.3.0":
         # no breaking change, bump to 0.3.1
         data["format_version"] = "0.3.1"
 
     if data["format_version"] == "0.3.1":
-        data = convert_v0_3_1_to_v0_3_2(data)
-
-    # remove 'future' from config if no other than the used future entries exist
-    config = data.get("config", {})
-    if config.get("future") == {}:
-        del config["future"]
+        data = convert_model_v0_3_1_to_v0_3_2(data)
 
     return data

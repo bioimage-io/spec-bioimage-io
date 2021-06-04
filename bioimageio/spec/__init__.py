@@ -1,4 +1,4 @@
-from .utils import load_model_spec, load_spec, maybe_convert
+from .utils import load_model_spec, load_spec, maybe_convert_model
 from .utils.transformers import load_and_resolve_spec
 from . import nodes
 

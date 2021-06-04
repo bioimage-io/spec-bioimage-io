@@ -18,7 +18,7 @@ from bioimageio.spec.exceptions import PyBioValidationException
 from bioimageio.spec.fields import URI
 from bioimageio.spec.nodes import ImportedSource
 from bioimageio.spec.utils.common import yaml
-from bioimageio.spec.utils.maybe_convert import maybe_convert
+from bioimageio.spec.utils.maybe_convert import maybe_convert_model
 
 
 PYBIO_CACHE_PATH = pathlib.Path(os.getenv("PYBIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
@@ -313,7 +313,7 @@ def load_model_spec(data: dict, root_path: pathlib.Path) -> raw_nodes.Model:
     # apply raw transformers
     data: dict = UriTransformer(root_path=root_path).transform(data)
 
-    data: dict = maybe_convert(data)  # convert spec to current format
+    data: dict = maybe_convert_model(data)  # convert spec to current format
     tree: raw_nodes.Model = schema.Model().load(data)
 
     return tree
