@@ -25,19 +25,25 @@ def _get_local_path(uri, root=None):
 
 
 def _get_hash(path):
-    with open(path, 'rb') as f:
+    with open(path, "rb") as f:
         data = f.read()
         return hashlib.sha256(data).hexdigest()
 
 
 def _infer_weight_type(path):
     ext = os.path.splitext(path)[-1]
-    if ext in ('.pt', '.torch'):
-        return 'pytorch_state_dict'
-    elif ext in ('.pickle', '.pkl'):
-        return 'pickle'
-    elif ext == '.onnx':
-        return 'onnx'
+    if ext in (".pt", ".torch"):
+        return "pytorch_state_dict"
+    elif ext in (".pickle", ".pkl"):
+        return "pickle"
+    elif ext == ".onnx":
+        return "onnx"
+    elif ext in (".hdf", ".hdf5", ".h5"):
+        return "keras_hdf5"
+    elif ext == ".zip":
+        return "tensorflow_saved_modle_bundle"
+    elif ext == ".json":
+        return "tensorflow_js"
     else:
         raise ValueError(f"Could not infer weight type from extension {ext} for weight file {path}")
 
@@ -57,55 +63,92 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     else:
         source_hash = None
 
+    if "weight_attachments" in kwargs:
+        attachments = {
+            "attachments": ["weight_attachments"]
+        }
+    else:
+        attachments = {}
+
     weight_types = spec.raw_nodes.WeightsFormat
-    if weight_type == 'pytorch_state_dict':
+    if weight_type == "pytorch_state_dict":
         # pytorch-state-dict -> we need a source
         assert source is not None
         weights = spec.raw_nodes.WeightsEntry(
             source=weight_uri,
-            sha256=weight_hash
+            sha256=weight_hash,
+            **attachments
         )
-        weights = {'pytorch_state_dict': weights}
-        language = 'python'
-        framework = 'pytorch'
+        language = "python"
+        framework = "pytorch"
 
-    elif weight_type == 'pickle':
-        weights = spec.raw_nodes.WeightsEntry(
-            source=weight_uri,
-            sha256=weight_hash
-        )
-        weights = {'pickle': weights}
-        language = 'python'
-        framework = 'scikit-learn'
-
-    elif weight_type == 'onnx':
+    elif weight_type == "pickle":
         weights = spec.raw_nodes.WeightsEntry(
             source=weight_uri,
             sha256=weight_hash,
-            opset_version=kwargs.get('opset_version', 12)
+            **attachments
         )
-        weights = {'onnx': weights}
+        language = "python"
+        framework = "scikit-learn"
+
+    elif weight_type == "onnx":
+        weights = spec.raw_nodes.WeightsEntry(
+            source=weight_uri,
+            sha256=weight_hash,
+            opset_version=kwargs.get("opset_version", 12),
+            **attachments
+        )
         language = None
         framework = None
 
-    elif weight_type == 'pytorch_script':
+    elif weight_type == "pytorch_script":
         weights = spec.raw_nodes.WeightsEntry(
             source=weight_uri,
-            sha256=weight_hash
+            sha256=weight_hash,
+            **attachments
         )
-        weights = {'pytorch_script': weights}
         if source is None:
             language = None
             framework = None
         else:
-            language = 'python'
-            framework = 'pytorch'
+            language = "python"
+            framework = "pytorch"
+
+    elif weight_type == "keras_hdf5":
+        weights = spec.raw_nodes.WeightsEntry(
+            source=weight_uri,
+            sha256=weight_hash,
+            tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
+            **attachments
+        )
+        language = "python"
+        framework = "tensorflow"
+
+    elif weight_type == "tensorflow_saved_modle_bundle":
+        weights = spec.raw_nodes.WeightsEntry(
+            source=weight_uri,
+            sha256=weight_hash,
+            tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
+            **attachments
+        )
+        language = "python"
+        framework = "tensorflow"
+
+    elif weight_type == "tensorflow_js":
+        weights = spec.raw_nodes.WeightsEntry(
+            source=weight_uri,
+            sha256=weight_hash,
+            **attachments
+        )
+        language = None
+        framework = None
 
     elif weight_type in weight_types:
         raise ValueError(f"Weight type {weight_type} is not supported yet in 'build_spec'")
     else:
         raise ValueError(f"Invalid weight type {weight_type}, expect one of {weight_types}")
 
+    weights = {weight_type: weights}
     return weights, language, framework, source_hash
 
 
@@ -213,8 +256,6 @@ def _build_cite(cite):
 # to implement this we should wait for 0.4.0, see also
 # https://github.com/bioimage-io/spec-bioimage-io/issues/70#issuecomment-825737433
 def build_spec(
-    # model specific required
-    model_kwargs: Dict[str, Union[int, float, str]],
     weight_uri: str,
     test_inputs: List[str],
     test_outputs: List[str],
@@ -226,11 +267,11 @@ def build_spec(
     license: str,
     documentation: str,
     covers: List[str],
-    dependencies: str,
     cite: Dict[str, str],
     root: Optional[str] = None,
     # model specific optional
     source: Optional[str] = None,
+    model_kwargs: Optional[Dict[str, Union[int, float, str]]] = None,
     weight_type: Optional[str] = None,
     sample_inputs: Optional[str] = None,
     sample_outputs: Optional[str] = None,
@@ -256,6 +297,7 @@ def build_spec(
     run_mode: Optional[str] = None,
     parent: Optional[str] = None,
     config: Optional[Dict[str, Any]] = None,
+    dependencies: Optional[str] = None,
     **weight_kwargs
 ):
     """
@@ -289,13 +331,14 @@ def build_spec(
         source = spec.fields.ImportableSource().deserialize(source)
 
     # optional kwargs, don't pass them if none
-    optional_kwargs = {'git_repo': git_repo, 'attachments': attachments,
-                       'packaged_by': packaged_by, 'parent': parent,
-                       'run_mode': run_mode, 'config': config,
-                       'sample_inputs': sample_inputs,
-                       'sample_outputs': sample_outputs,
-                       'framework': framework, 'language': language,
-                       'source': source, 'sha256': source_hash}
+    optional_kwargs = {"git_repo": git_repo, "attachments": attachments,
+                       "packaged_by": packaged_by, "parent": parent,
+                       "run_mode": run_mode, "config": config,
+                       "sample_inputs": sample_inputs,
+                       "sample_outputs": sample_outputs,
+                       "framework": framework, "language": language,
+                       "source": source, "sha256": source_hash,
+                       "kwargs": model_kwargs, "dependencies": dependencies}
     kwargs = {
         k: v for k, v in optional_kwargs.items() if v is not None
     }
@@ -304,7 +347,6 @@ def build_spec(
     cite = _build_cite(cite)
 
     model = spec.raw_nodes.Model(
-        kwargs=model_kwargs,
         format_version=format_version,
         name=name,
         description=description,
@@ -314,7 +356,6 @@ def build_spec(
         license=license,
         documentation=documentation,
         covers=covers,
-        dependencies=dependencies,
         timestamp=timestamp,
         weights=weights,
         inputs=[inputs],
