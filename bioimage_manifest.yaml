@@ -1,15 +1,16 @@
 name: Example Models
-description: A repository for example models
+description: A repository with example models
 
 models:
   - models/UNet2dExample.model.yaml
 
-transformations:
-  - transformations/NormalizeZeroMeanUnitVariance.transform.yaml
-  - transformations/Sigmoid.transformation.yaml
-
-readers:
-  - nN5.reader.yaml
-
-samplers:
-  - RandomBatch.samplers.yaml
+# future ideas:
+#transformations:
+#  - transformations/NormalizeZeroMeanUnitVariance.transform.yaml
+#  - transformations/Sigmoid.transformation.yaml
+#
+#readers:
+#  - nN5.reader.yaml
+#
+#samplers:
+#  - RandomBatch.samplers.yaml
