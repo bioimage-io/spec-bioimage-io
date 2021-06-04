@@ -56,6 +56,9 @@ def verify_bioimageio_manifest_data(manifest_data: dict, auto_convert: bool = Fa
         try:
             response = requests.get(model["source"], stream=True)
             model_data = yaml.load(response.content)
+            if auto_convert:
+                model_data = maybe_convert_manifest(model_data)
+
             verify_model_data(model_data)
         except ValidationError as e:
             print("invalid model:", model["source"])

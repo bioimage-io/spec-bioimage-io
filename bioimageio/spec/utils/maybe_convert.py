@@ -13,7 +13,4 @@ def maybe_convert_model(data):
 
 
 def maybe_convert_manifest(data):
-    if "model" in data:
-        data["model"] = [maybe_convert_model(m) for m in data["model"]]
-
     return data
