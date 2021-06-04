@@ -149,6 +149,8 @@ class Tuple(DocumentedField, marshmallow_fields.Tuple):
 
 
 class Union(DocumentedField, marshmallow_union.Union):
+    _candidate_fields: typing.Iterable[typing.Union[DocumentedField, marshmallow_fields.Field]]
+
     def __init__(self, *super_args, **super_kwargs):
         super().__init__(*super_args, **super_kwargs)
         self.type_name += f"\\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\\]"  # add types of options
