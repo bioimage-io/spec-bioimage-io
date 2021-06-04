@@ -87,9 +87,7 @@ class TestShape:
         class MySchema(schema.Schema):
             shape = fields.InputShape()
 
-        data = {
-            "shape": [1, 2, 3],
-        }
+        data = {"shape": [1, 2, 3]}
         expected = data
         actual = MySchema().load(data)
         assert expected == actual

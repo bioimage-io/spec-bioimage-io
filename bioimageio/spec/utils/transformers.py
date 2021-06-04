@@ -21,7 +21,7 @@ from bioimageio.spec.utils.common import yaml
 from bioimageio.spec.utils.maybe_convert import maybe_convert_model
 
 
-PYBIO_CACHE_PATH = pathlib.Path(os.getenv("PYBIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
+BIOIMAGEIO_CACHE_PATH = pathlib.Path(os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
 
 
 @dataclasses.dataclass
@@ -275,7 +275,7 @@ def _(uri: raw_nodes.URI, root_path: pathlib.Path) -> pathlib.Path:
             # local_path = _download_uri_node_to_local_path(uri)
         elif blob_releases_archive == "blob":
             in_repo_path = "/".join(in_repo_path)
-            cached_repo_path = PYBIO_CACHE_PATH / orga / repo_name / commit_id
+            cached_repo_path = BIOIMAGEIO_CACHE_PATH / orga / repo_name / commit_id
             local_path = cached_repo_path / in_repo_path
             if not local_path.exists():
                 cached_repo_path = str(cached_repo_path.resolve())
@@ -296,7 +296,9 @@ def _(uri: raw_nodes.URI, root_path: pathlib.Path) -> pathlib.Path:
 
 
 def _download_uri_node_to_local_path(uri_node: raw_nodes.URI) -> pathlib.Path:
-    local_path = PYBIO_CACHE_PATH / uri_node.scheme / uri_node.authority / uri_node.path.strip("/") / uri_node.query
+    local_path = (
+        BIOIMAGEIO_CACHE_PATH / uri_node.scheme / uri_node.authority / uri_node.path.strip("/") / uri_node.query
+    )
     if not local_path.exists():
         local_path.parent.mkdir(parents=True, exist_ok=True)
         url_str = urlunparse([uri_node.scheme, uri_node.authority, uri_node.path, "", uri_node.query, ""])
@@ -348,7 +350,7 @@ def _(uri: str) -> LoadedSpec:
     else:
         raise ValueError(f"Invalid spec suffix: {spec_suffix}")
 
-    local_path = resolve_uri(uri, root_path=PYBIO_CACHE_PATH)
+    local_path = resolve_uri(uri, root_path=BIOIMAGEIO_CACHE_PATH)
     data = yaml.load(local_path)
     root_path = local_path.parent
     return LoadedSpec(load_spec_from_data(data, root_path=root_path), root_path)
@@ -376,7 +378,7 @@ def _(uri: os.PathLike) -> ResolvedSpec:
 
 # def cache_uri(uri_str: str, sha256: Optional[str] = None) -> pathlib.Path:
 #     file_node = schema.File().load({"source": uri_str, "sha256": sha256})
-#     uri_transformer = UriNodeTransformer(root_path=PYBIO_CACHE_PATH)
+#     uri_transformer = UriNodeTransformer(root_path=BIOIMAGEIO_CACHE_PATH)
 #     file_node = uri_transformer.transform(file_node)
 #     file_node = SourceNodeTransformer().transform(file_node)
 #     # todo: check hash
