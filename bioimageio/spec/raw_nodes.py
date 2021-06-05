@@ -117,7 +117,6 @@ class RDF(Node):
     format_version: FormatVersion = missing
     framework: Framework = missing
     git_repo: Optional[str] = missing
-    id: Optional[str] = missing
     language: Language = missing
     license: str = missing
     name: str = missing
