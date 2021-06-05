@@ -28,7 +28,7 @@ class Attribute(Validator):
             if self.is_getter_method:
                 attr = attr()
         except Exception as e:
-            raise ValidationError from e
+            raise ValidationError(str(e)) from e
 
         try:
             return all(validator(attr) for validator in self.validate)

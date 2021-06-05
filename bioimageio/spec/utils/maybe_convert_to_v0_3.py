@@ -3,8 +3,12 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict
 
-from bioimageio.spec import schema_v0_1
+from marshmallow import Schema, ValidationError
+
+from bioimageio.spec import schema, schema_v0_1
 from bioimageio.spec.exceptions import PyBioUnconvertibleException
+
+AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
 
 def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -152,6 +156,16 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
         if authors_update is not None:
             for a, u in zip(weights_entry["authors"], authors_update):
                 a.update(u)
+
+    # documentation (if not a local relative md file, pretend content is in local 'auto_converted_documentation.md')
+    class DocSchema(Schema):
+        doc = schema.Model.documentation
+
+    if DocSchema().validate({"doc": data["documentation"]}):
+        data["config"] = data.get("config", {})  # make sure config exists
+        if AUTO_CONVERTED_DOCUMENTATION_FILE_NAME not in data["config"]:
+            data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = data["documentation"]
+            data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
 
     return data
 
