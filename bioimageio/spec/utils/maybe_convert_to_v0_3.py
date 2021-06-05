@@ -124,7 +124,6 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
 def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     data["type"] = "model"
     data["format_version"] = "0.3.2"
-    data["version"] = "0.1.0"
     future = data.get("config", {}).get("future", {}).pop("0.3.2", {})
 
     # authors
