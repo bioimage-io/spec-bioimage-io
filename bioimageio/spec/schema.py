@@ -30,7 +30,7 @@ class PyBioSchema(Schema):
 
 class Author(PyBioSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
-    affiliation = fields.String(required=True, bioimageio_description="Affiliation.")
+    affiliation = fields.String(missing=None, bioimageio_description="Affiliation.")
     orcid = fields.String(
         validate=[
             validate.Length(19),

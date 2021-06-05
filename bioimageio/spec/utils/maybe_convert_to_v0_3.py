@@ -128,24 +128,20 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     future = data.get("config", {}).get("future", {}).pop("0.3.2", {})
 
     # authors
-    authors_update = future.get("authors")
     data["authors"] = [{"name": name} for name in data["authors"]]
-    if authors_update is None:
-        authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
-
-    for a, u in zip(data["authors"], authors_update):
-        a.update(u)
+    authors_update = future.get("authors")
+    if authors_update is not None:
+        for a, u in zip(data["authors"], authors_update):
+            a.update(u)
 
     # packaged_by
     packaged_by = data.get("packaged_by")
     if packaged_by is not None:
-        packaged_by_update = future.get("packaged_by")
         data["packaged_by"] = [{"name": name} for name in data["packaged_by"]]
-        if packaged_by_update is None:
-            packaged_by_update = [{"affiliation": "<unknown>"}] * len(data["packaged_by"])
-
-        for a, u in zip(data["packaged_by"], packaged_by_update):
-            a.update(u)
+        packaged_by_update = future.get("packaged_by")
+        if packaged_by_update is not None:
+            for a, u in zip(data["packaged_by"], packaged_by_update):
+                a.update(u)
 
     # authors of weights
     for weights_format, weights_entry in data["weights"].items():
@@ -154,11 +150,9 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
         weights_entry["authors"] = [{"name": name} for name in weights_entry["authors"]]
         authors_update = future.get("weights", {}).get(weights_format, {}).get("authors")
-        if authors_update is None:
-            authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
-
-        for a, u in zip(weights_entry["authors"], authors_update):
-            a.update(u)
+        if authors_update is not None:
+            for a, u in zip(weights_entry["authors"], authors_update):
+                a.update(u)
 
     return data
 
