@@ -124,7 +124,7 @@ class RDF(Node):
     tags: List[str] = missing
     timestamp: datetime = missing
     type: Type = missing
-    version: distutils.version.StrictVersion = missing
+    version: Optional[distutils.version.StrictVersion] = missing
 
 
 @dataclass

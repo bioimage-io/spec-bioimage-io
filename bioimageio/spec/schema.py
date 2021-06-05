@@ -182,10 +182,10 @@ documentation or for the model to run, these files will be included when generat
     )
     type = fields.String(validate=validate.OneOf(raw_nodes.Type.__args__))
     version = fields.StrictVersion(
-        missing="0.1.0",
+        missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
-        "e.g. the initial version number should be `0.1.0`, which is also the default.",
+        "e.g. the initial version number should be `0.1.0`.",
     )
 
 
