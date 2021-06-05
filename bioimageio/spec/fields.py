@@ -305,25 +305,21 @@ class RelativeLocalPath(Path):
             *super_args,
             validate=validate
             + [
-                spec_validate.Predicate(
-                    "is_absolute", invert_output=True, error="{!r} is invalid; expected relative path."
-                ),
+                spec_validate.Predicate("is_absolute", invert_output=True, error="expected relative path."),
                 spec_validate.Attribute(
                     "as_posix",
                     [
                         spec_validate.ContainsNoneOf(
-                            ":", error="{!r} is invalid; expected local, relative file path."
+                            ":", error="expected local, relative file path."
                         ),  # monkey patch to fail on urls
-                        spec_validate.ContainsNoneOf(
-                            "..", error="{!r} is invalid; expected relative file path within model package."
+                        spec_validate.Predicate(
+                            "count", "..", invert_output=True, error="expected relative file path within model package."
                         ),
                     ],
                     is_getter_method=True,
                 ),
                 spec_validate.Predicate(
-                    "is_reserved",
-                    invert_output=True,
-                    error="{!r} is an invalid filename as it is a reserved by the OS.",
+                    "is_reserved", invert_output=True, error="invalid filename as it is a reserved by the OS."
                 ),
             ],
             **super_kwargs,

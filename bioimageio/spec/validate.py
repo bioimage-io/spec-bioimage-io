@@ -33,7 +33,7 @@ class Attribute(Validator):
         try:
             return all(validator(attr) for validator in self.validate)
         except Exception as e:
-            raise ValidationError(f"Invalid {self.attribute}: {str(e)}") from e
+            raise ValidationError(f"Invalid {self.attribute} ({value}): {str(e)}") from e
 
 
 class Predicate(Predicate):
