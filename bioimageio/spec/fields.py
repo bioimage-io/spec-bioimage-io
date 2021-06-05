@@ -8,10 +8,10 @@ from urllib.parse import urlparse
 from urllib.request import url2pathname
 
 import numpy
-from marshmallow import ValidationError, fields as marshmallow_fields, validate as marshmallow_validate
+from marshmallow import ValidationError, fields as marshmallow_fields
 import marshmallow_union
 
-from bioimageio.spec import raw_nodes
+from bioimageio.spec import raw_nodes, validate as spec_validate
 from bioimageio.spec.exceptions import PyBioValidationException
 
 
@@ -283,6 +283,53 @@ class Path(String):
         return None if value is None else pathlib.Path(value).as_posix()
 
 
+class RelativeLocalPath(Path):
+    def __init__(
+        self,
+        *super_args,
+        validate: typing.Optional[
+            typing.Union[
+                typing.Callable[[typing.Any], typing.Any], typing.Iterable[typing.Callable[[typing.Any], typing.Any]]
+            ]
+        ] = None,
+        **super_kwargs,
+    ):
+        if validate is None:
+            validate = []
+        elif callable(validate):
+            validate = [validate]
+        else:
+            validate = list(validate)
+
+        super().__init__(
+            *super_args,
+            validate=validate
+            + [
+                spec_validate.Predicate(
+                    "is_absolute", invert_output=True, error="{!r} is invalid; expected relative path."
+                ),
+                spec_validate.Attribute(
+                    "as_posix",
+                    [
+                        spec_validate.ContainsNoneOf(
+                            ":", error="{!r} is invalid; expected local, relative file path."
+                        ),  # monkey patch to fail on urls
+                        spec_validate.ContainsNoneOf(
+                            "..", error="{!r} is invalid; expected relative file path within model package."
+                        ),
+                    ],
+                    is_getter_method=True,
+                ),
+                spec_validate.Predicate(
+                    "is_reserved",
+                    invert_output=True,
+                    error="{!r} is an invalid filename as it is a reserved by the OS.",
+                ),
+            ],
+            **super_kwargs,
+        )
+
+
 class ProcMode(String):
     all_modes = ("fixed", "per_dataset", "per_sample")
 
@@ -308,7 +355,7 @@ class ProcMode(String):
         else:
             validate = [validate]
 
-        validate.append(marshmallow_validate.OneOf(self.all_modes))
+        validate.append(spec_validate.OneOf(self.all_modes))
         super().__init__(validate=validate, required=required, **kwargs)
 
 

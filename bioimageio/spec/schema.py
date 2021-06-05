@@ -116,15 +116,10 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         if license_info["isDeprecatedLicenseId"]:
             warnings.warn(f"{license_info['name']} is deprecated")
 
-    documentation = fields.Path(
-        validate=[
-            validate.Predicate("is_absolute", invert_output=True),
-            validate.Attribute("suffix", validate.Equal(".md")),
-            validate.Attribute(
-                "as_posix", validate.ContainsNoneOf(":"), is_getter_method=True
-            ),  # monkey patch to fail on urls
-            validate.Predicate("is_reserved", invert_output=True),
-        ],
+    documentation = fields.RelativeLocalPath(
+        validate=validate.Attribute(
+            "suffix", validate.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension.")
+        ),
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
         "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
@@ -718,16 +713,11 @@ class Badge(PyBioSchema):
 class BioImageIoManifestNotebookEntry(PyBioSchema):
     id = fields.String(required=True)
     name = fields.String(required=True)
-    documentation = fields.Path(
-        validate=[
-            validate.Predicate("is_absolute", invert_output=True),
-            validate.Attribute("suffix", validate.Equal(".md")),
-            validate.Attribute(
-                "as_posix", validate.ContainsNoneOf(":"), is_getter_method=True
-            ),  # monkey patch to fail on urls
-            validate.Predicate("is_reserved", invert_output=True),
-        ],
+    documentation = fields.RelativeLocalPath(
         required=True,
+        validate=validate.Attribute(
+            "suffix", validate.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension.")
+        ),
     )
     description = fields.String(required=True)
 
