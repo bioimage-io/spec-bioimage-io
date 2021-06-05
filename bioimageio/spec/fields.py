@@ -24,12 +24,20 @@ class DocumentedField:
         bioimageio_description: str = "",
         bioimageio_description_order: typing.Optional[int] = None,
         bioimageio_maybe_required: bool = False,  # indicates that this field may be required, depending on other fields
+        bioimageio_examples_valid: typing.Optional[
+            typing.Sequence[typing.Any]
+        ] = None,  # valid examples to render in documentation
+        bioimageio_examples_invalid: typing.Optional[
+            typing.Sequence[typing.Any]
+        ] = None,  # invalid examples to render in documentation
         **super_kwargs,
     ):
         bases = [b.__name__ for b in self.__class__.__bases__ if issubclass(b, marshmallow_fields.Field)]
         if self.__class__.__name__ not in bases:
             bases.insert(0, self.__class__.__name__)
 
+        # if bioimageio_examples_valid is not None:
+        #     valid_examples =
         self.type_name = "→".join(bases)
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
