@@ -11,15 +11,13 @@ from typing import Any, NamedTuple, Type, TypeVar
 from urllib.parse import urlunparse
 from urllib.request import url2pathname, urlretrieve
 
-from marshmallow import missing
+from marshmallow import ValidationError, missing
 
 from bioimageio.spec import nodes, raw_nodes, schema
-from bioimageio.spec.exceptions import PyBioValidationException
 from bioimageio.spec.fields import URI
 from bioimageio.spec.nodes import ImportedSource
 from bioimageio.spec.utils.common import yaml
 from bioimageio.spec.utils.maybe_convert import maybe_convert_model
-
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
 
@@ -255,7 +253,7 @@ def _(uri: str, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
 def _(uri: raw_nodes.URI, root_path: pathlib.Path) -> pathlib.Path:
     if uri.scheme == "":  # relative path
         if uri.authority or uri.query or uri.fragment:
-            raise PyBioValidationException(f"Invalid Path/URI: {uri}")
+            raise ValidationError(f"Invalid Path/URI: {uri}")
 
         local_path = root_path / uri.path
     elif uri.scheme == "file":
@@ -265,7 +263,7 @@ def _(uri: raw_nodes.URI, root_path: pathlib.Path) -> pathlib.Path:
         local_path = pathlib.Path(url2pathname(uri.path))
     elif uri.authority == "github.com":
         if uri.query:
-            raise PyBioValidationException(f"Invalid github link: {uri}")
+            raise ValidationError(f"Invalid github link: {uri}")
 
         orga, repo_name, blob_releases_archive, commit_id, *in_repo_path = uri.path.strip("/").split("/")
         if blob_releases_archive == "releases":

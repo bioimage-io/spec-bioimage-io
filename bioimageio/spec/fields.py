@@ -7,12 +7,11 @@ import typing
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
+import marshmallow_union
 import numpy
 from marshmallow import ValidationError, fields as marshmallow_fields
-import marshmallow_union
 
 from bioimageio.spec import raw_nodes, validate as spec_validate
-from bioimageio.spec.exceptions import PyBioValidationException
 
 
 class DocumentedField:
@@ -79,7 +78,7 @@ class Array(DocumentedField, marshmallow_fields.Field):
             try:
                 return numpy.array(value, dtype=self.dtype)
             except ValueError as e:
-                raise PyBioValidationException(str(e)) from e
+                raise ValidationError(str(e)) from e
         else:
             return value
 
@@ -174,7 +173,7 @@ class Axes(String):
         axes_str = super()._deserialize(*args, **kwargs)
         valid_axes = self.metadata.get("valid_axes", "bitczyx")
         if any(a not in valid_axes for a in axes_str):
-            raise PyBioValidationException(f"Invalid axes! Valid axes consist of: {valid_axes}")
+            raise ValidationError(f"Invalid axes! Valid axes consist of: {valid_axes}")
 
         return axes_str
 
@@ -206,12 +205,12 @@ class ImportableSource(String):
             object_name = source_str[last_dot_idx + 1 :]
 
             if not module_name:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"Missing module name in importable source: {source_str}. Is it just missing a dot?"
                 )
 
             if not object_name:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"Missing object/callable name in importable source: {source_str}. Is it just missing a dot?"
                 )
 
@@ -374,11 +373,11 @@ class SpecURI(Nested):
         uri = urlparse(value)
 
         if uri.query:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support query: {uri.query}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support query: {uri.query}")
         if uri.fragment:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support fragment: {uri.fragment}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support fragment: {uri.fragment}")
         if uri.params:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support params: {uri.params}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support params: {uri.params}")
 
         if uri.scheme == "file":
             # account for leading '/' for windows paths, e.g. '/C:/folder'
@@ -409,9 +408,9 @@ class URI(String):
         uri = urlparse(uri_str)
 
         if uri.fragment:
-            raise PyBioValidationException(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
+            raise ValidationError(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
         if uri.params:
-            raise PyBioValidationException(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
+            raise ValidationError(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
 
         if uri.scheme == "file":
             # account for leading '/' for windows paths, e.g. '/C:/folder'

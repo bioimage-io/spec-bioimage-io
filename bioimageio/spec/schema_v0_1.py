@@ -1,7 +1,6 @@
 from marshmallow import Schema, ValidationError, validates_schema
 
 from bioimageio.spec import fields
-from bioimageio.spec.exceptions import PyBioValidationException
 
 
 class PyBioSchema(Schema):
@@ -57,9 +56,7 @@ class InputShape(PyBioSchema):
             return
 
         if len(min_) != len(step):
-            raise PyBioValidationException(
-                f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})"
-            )
+            raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
 
 
 class OutputShape(PyBioSchema):
@@ -72,7 +69,7 @@ class OutputShape(PyBioSchema):
         scale = data["scale"]
         offset = data["offset"]
         if len(scale) != len(offset):
-            raise PyBioValidationException(f"scale {scale} has to have same length as offset {offset}!")
+            raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
 
 class Array(PyBioSchema):

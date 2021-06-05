@@ -6,7 +6,7 @@ from typing import Any, Dict
 from marshmallow import Schema, ValidationError
 
 from bioimageio.spec import schema, schema_v0_1
-from bioimageio.spec.exceptions import PyBioUnconvertibleException
+from bioimageio.spec.exceptions import UnconvertibleError
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
@@ -117,7 +117,7 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
             }
 
         conversion_errors = as_nested_dict(conversion_errors)
-        raise PyBioUnconvertibleException(conversion_errors)
+        raise UnconvertibleError(conversion_errors)
 
     del data["prediction"]
     del data["training"]

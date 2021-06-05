@@ -9,7 +9,6 @@ from marshmallow import Schema, ValidationError, post_load, validates, validates
 from spdx_license_list import LICENSES
 
 from bioimageio.spec import fields, raw_nodes, validate
-from bioimageio.spec.exceptions import PyBioValidationException
 
 
 class PyBioSchema(Schema):
@@ -205,9 +204,7 @@ class ImplicitInputShape(PyBioSchema):
             return
 
         if len(min_) != len(step):
-            raise PyBioValidationException(
-                f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})"
-            )
+            raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
 
 
 class ImplicitOutputShape(PyBioSchema):
@@ -222,7 +219,7 @@ class ImplicitOutputShape(PyBioSchema):
         scale = data["scale"]
         offset = data["offset"]
         if len(scale) != len(offset):
-            raise PyBioValidationException(f"scale {scale} has to have same length as offset {offset}!")
+            raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
 
 class Tensor(PyBioSchema):
@@ -270,7 +267,7 @@ class Tensor(PyBioSchema):
             kwargs = processing.kwargs or {}
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
-                raise PyBioValidationException("`kwargs.axes` needs to be subset of axes")
+                raise ValidationError("`kwargs.axes` needs to be subset of axes")
 
 
 class Processing(PyBioSchema):
@@ -291,7 +288,7 @@ class Processing(PyBioSchema):
         @validates_schema
         def either_gain_or_offset(self, data, **kwargs):
             if data["gain"] == 1.0 and data["offset"] == 0:
-                raise PyBioValidationException("Specify gain!=1.0 or offset!=0.0")
+                raise ValidationError("Specify gain!=1.0 or offset!=0.0")
 
     @validates_schema
     def kwargs_match_selected_preprocessing_name(self, data, **kwargs):
@@ -306,7 +303,7 @@ class Processing(PyBioSchema):
 
         kwargs_validation_errors = schema_class().validate(data["kwargs"])
         if kwargs_validation_errors:
-            raise PyBioValidationException(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
+            raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
     class Sigmoid(PyBioSchema):
         pass
@@ -321,11 +318,11 @@ class Processing(PyBioSchema):
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
             if data["mode"] == "fixed" and (data["mean"] is None or data["std"] is None):
-                raise PyBioValidationException(
+                raise ValidationError(
                     "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional `kwargs`: `mean` and `std`."
                 )
             elif data["mode"] != "fixed" and (data.get("mean") is not None or data.get("std") is not None):
-                raise PyBioValidationException(
+                raise ValidationError(
                     "`kwargs`: `mean` and `std` for 'zero_mean_unit_variance' preprocessing are only valid for `mode` 'fixed'."
                 )
 
@@ -356,7 +353,7 @@ class Preprocessing(Processing):
             min_p = data["min_percentile"]
             max_p = data["max_percentile"]
             if min_p >= max_p:
-                raise PyBioValidationException(f"min_percentile {min_p} >= max_percentile {max_p}")
+                raise ValidationError(f"min_percentile {min_p} >= max_percentile {max_p}")
 
 
 class Postprocessing(Processing):
@@ -403,17 +400,17 @@ class InputTensor(Tensor):
         elif isinstance(shape, list):
             step = [0] * len(shape)
         else:
-            raise PyBioValidationException(f"Unknown shape type {type(shape)}")
+            raise ValidationError(f"Unknown shape type {type(shape)}")
 
         if step[bidx] != 0:
-            raise PyBioValidationException(
+            raise ValidationError(
                 "Input shape step has to be zero in the batch dimension (the batch dimension can always be "
                 "increased, but `step` should specify how to increase the minimal shape to find the largest "
                 "single batch shape)"
             )
 
         if shape[bidx] != 1:
-            raise PyBioValidationException("Input shape has to be 1 in the batch dimension b.")
+            raise ValidationError("Input shape has to be 1 in the batch dimension b.")
 
 
 class OutputTensor(Tensor):
@@ -441,7 +438,7 @@ class OutputTensor(Tensor):
             return
         elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
             if len(halo) != len(shape):
-                raise PyBioValidationException(f"halo {halo} has to have same length as shape {shape}!")
+                raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
             raise NotImplementedError(type(shape))
 
@@ -650,7 +647,7 @@ config:
 
         combination = tuple(data[name] for name in field_names)
         if combination not in valid_combinations:
-            raise PyBioValidationException(f"invalid combination of {dict(zip(field_names, combination))}")
+            raise ValidationError(f"invalid combination of {dict(zip(field_names, combination))}")
 
     @validates_schema
     def source_specified_if_required(self, data, **kwargs):
@@ -668,7 +665,7 @@ config:
         }
         require_source = {wf for wf in data["weights"] if weight_format_requires_source[wf]}
         if require_source:
-            raise PyBioValidationException(
+            raise ValidationError(
                 f"These specified weight formats require source code to be specified: {require_source}"
             )
 
@@ -679,19 +676,17 @@ config:
             for postpr in out.postprocessing:
                 ref_tensor = postpr.kwargs.get("reference_tensor", None)
                 if ref_tensor is not None and ref_tensor not in valid_input_tensor_references:
-                    raise PyBioValidationException(f"{ref_tensor} not found in inputs")
+                    raise ValidationError(f"{ref_tensor} not found in inputs")
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
         weights: typing.Dict[str, WeightsEntry] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if "tensorflow" not in weights_format and weights_entry.tensorflow_version is not None:
-                raise PyBioValidationException(
-                    f"invalid 'tensorflow_version' entry for weights format {weights_format}"
-                )
+                raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format != "onnx" and weights_entry.opset_version is not None:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
                 )
 
@@ -749,7 +744,7 @@ if __name__ == "__main__":
         model = load_model_config(
             (Path(__file__) / "../../../specs/models/sklearnbased/RandomForestClassifier.model.yaml").as_uri()
         )
-    except PyBioValidationException as e:
+    except ValidationError as e:
         pprint(e.normalized_messages(), width=280)
     else:
         pprint(asdict(model), width=280)
