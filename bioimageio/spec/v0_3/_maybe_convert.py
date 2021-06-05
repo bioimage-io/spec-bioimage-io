@@ -3,16 +3,18 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict
 
-from marshmallow import Schema, ValidationError
+from marshmallow import Schema
 
-from bioimageio.spec import schema, schema_v0_1
 from bioimageio.spec.exceptions import UnconvertibleError
+from . import schema
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
 
 def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
-    schema_v0_1.Model().validate(data)
+    from bioimageio.spec import v0_1
+
+    v0_1.schema.Model().validate(data)
 
     data = copy.deepcopy(data)
     data["format_version"] = "0.3.1"
@@ -170,7 +172,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_model_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
+def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
@@ -181,5 +183,10 @@ def maybe_convert_model_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data["format_version"] == "0.3.1":
         data = convert_model_v0_3_1_to_v0_3_2(data)
+
+    # remove 'future' from config if no other than the used future entries exist
+    config = data.get("config", {})
+    if config.get("future") == {}:
+        del config["future"]
 
     return data

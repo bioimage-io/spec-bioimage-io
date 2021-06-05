@@ -14,7 +14,7 @@ except ImportError:
     from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    import bioimageio.spec.schema
+    from . import schema
 
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
@@ -183,7 +183,7 @@ class OutputTensor:
 
 @dataclass
 class SpecURI(URI):
-    spec_schema: bioimageio.spec.schema.RDF = missing
+    spec_schema: schema.RDF = missing
 
 
 @dataclass

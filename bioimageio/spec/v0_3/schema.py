@@ -8,7 +8,8 @@ import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 from spdx_license_list import LICENSES
 
-from bioimageio.spec import fields, raw_nodes, validate
+from bioimageio.spec.common_utils import field_validators
+from . import fields, raw_nodes
 
 
 class PyBioSchema(Schema):
@@ -32,7 +33,7 @@ class Author(PyBioSchema):
     affiliation = fields.String(missing=None, bioimageio_description="Affiliation.")
     orcid = fields.String(
         validate=[
-            validate.Length(19),
+            field_validators.Length(19),
             lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
             lambda oid: stdnum.iso7064.mod_11_2.is_valid(oid.replace("-", "")),
         ],
@@ -66,7 +67,7 @@ class RDF(PyBioSchema):
     """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
 
     format_version = fields.String(
-        validate=validate.OneOf(raw_nodes.FormatVersion.__args__),
+        validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Description File Specification used.
@@ -94,7 +95,7 @@ E.g. the citation for the model architecture and/or the training data used.""",
     )
 
     git_repo = fields.String(
-        validate=validate.URL(schemes=["http", "https"]),
+        validate=field_validators.URL(schemes=["http", "https"]),
         missing=None,
         bioimageio_description="""A url to the git repository, e.g. to Github or Gitlab.
 If the model is contained in a subfolder of a git repository, then a url to the exact folder
@@ -102,7 +103,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
     )
     tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
     license = fields.String(
-        validate=validate.OneOf(LICENSES),
+        validate=field_validators.OneOf(LICENSES),
         required=True,
         bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
@@ -116,8 +117,9 @@ If the model is contained in a subfolder of a git repository, then a url to the 
             warnings.warn(f"{license_info['name']} is deprecated")
 
     documentation = fields.RelativeLocalPath(
-        validate=validate.Attribute(
-            "suffix", validate.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension.")
+        validate=field_validators.Attribute(
+            "suffix",
+            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
         ),
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
@@ -129,7 +131,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         missing=list,
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
-        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: validate image format
+        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
     )
     attachments = fields.Dict(
         fields.String,
@@ -152,14 +154,14 @@ documentation or for the model to run, these files will be included when generat
     config = fields.Dict(missing=dict)
 
     language = fields.String(
-        validate=validate.OneOf(raw_nodes.Language.__args__),
+        validate=field_validators.OneOf(raw_nodes.Language.__args__),
         missing=None,
         bioimageio_maybe_required=True,
         bioimageio_description=f"Programming language of the source code. One of: "
         f"{', '.join(raw_nodes.Language.__args__)}. This field is only required if the field `source` is present.",
     )
     framework = fields.String(
-        validate=validate.OneOf(raw_nodes.Framework.__args__),
+        validate=field_validators.OneOf(raw_nodes.Framework.__args__),
         missing=None,
         bioimageio_description=f"The deep learning framework of the source code. One of: "
         f"{', '.join(raw_nodes.Framework.__args__)}. This field is only required if the field `source` is present.",
@@ -174,7 +176,7 @@ documentation or for the model to run, these files will be included when generat
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
-    type = fields.String(validate=validate.OneOf(raw_nodes.Type.__args__))
+    type = fields.String(validate=field_validators.OneOf(raw_nodes.Type.__args__))
     version = fields.StrictVersion(
         missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
@@ -224,7 +226,7 @@ class ImplicitOutputShape(PyBioSchema):
 
 class Tensor(PyBioSchema):
     name = fields.String(
-        required=True, validate=validate.Predicate("isidentifier"), bioimageio_description="Tensor name."
+        required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
     )
     description = fields.String(missing=None)
     axes = fields.Axes(
@@ -330,7 +332,7 @@ class Processing(PyBioSchema):
 class Preprocessing(Processing):
     name = fields.String(
         required=True,
-        validate=validate.OneOf(raw_nodes.PreprocessingName.__args__),
+        validate=field_validators.OneOf(raw_nodes.PreprocessingName.__args__),
         bioimageio_description=f"Name of preprocessing. One of: {', '.join(raw_nodes.PreprocessingName.__args__)} "
         f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#preprocessing) "
@@ -342,10 +344,10 @@ class Preprocessing(Processing):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(required=True, valid_axes="czyx")
         min_percentile = fields.Float(
-            required=True, validate=validate.Range(0, 100, min_inclusive=True, max_inclusive=True)
+            required=True, validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=True)
         )
         max_percentile = fields.Float(
-            required=True, validate=validate.Range(1, 100, min_inclusive=False, max_inclusive=True)
+            required=True, validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True)
         )  # as a precaution 'max_percentile' needs to be greater than 1
 
         @validates_schema
@@ -358,7 +360,7 @@ class Preprocessing(Processing):
 
 class Postprocessing(Processing):
     name = fields.String(
-        validate=validate.OneOf(raw_nodes.PostprocessingName.__args__),
+        validate=field_validators.OneOf(raw_nodes.PostprocessingName.__args__),
         required=True,
         bioimageio_description=f"Name of postprocessing. One of: {', '.join(raw_nodes.PostprocessingName.__args__)} "
         f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
@@ -368,11 +370,11 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor: fields.String(required=True, validate=validate.Predicate("isidentifier"))
+        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
     class ScaleMeanVariance(PyBioSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor: fields.String(required=True, validate=validate.Predicate("isidentifier"))
+        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
 
 class InputTensor(Tensor):
@@ -497,7 +499,7 @@ class WeightsEntry(PyBioSchema):
     )
     opset_version = fields.Number(missing=None)  # ONNX Specific
     sha256 = fields.String(
-        validate=validate.Length(equal=64),
+        validate=field_validators.Length(equal=64),
         missing=None,
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
@@ -521,7 +523,7 @@ The configuration file must contain the following fields; optional fields are in
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
     name = fields.String(
-        # validate=validate.Length(max=36),  # todo: enforce in future version
+        # validate=field_validators.Length(max=36),  # todo: enforce in future version
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "`_`, `-` or spaces and not be longer than 36 characters.",
@@ -552,7 +554,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "`./my_function:MyImplementation` or `core_library.some_module.some_function`.",
     )
     sha256 = fields.String(
-        validate=validate.Length(equal=64),
+        validate=field_validators.Length(equal=64),
         missing=None,
         bioimageio_description="SHA256 checksum of the model source code file."
         + _common_sha256_hint
@@ -565,7 +567,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     weights = fields.Dict(
         fields.String(
-            validate=validate.OneOf(raw_nodes.WeightsFormat.__args__),
+            validate=field_validators.OneOf(raw_nodes.WeightsFormat.__args__),
             required=True,
             bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
             f"required) fields. See [supported_formats_and_operations.md#Weight Format]"
@@ -694,9 +696,9 @@ config:
 # Manifest
 class BioImageIoManifestModelEntry(PyBioSchema):
     id = fields.String(required=True)
-    source = fields.String(validate=validate.URL(schemes=["http", "https"]))
+    source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
     links = fields.List(fields.String, missing=list)
-    download_url = fields.String(validate=validate.URL(schemes=["http", "https"]))
+    download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
 class Badge(PyBioSchema):
@@ -710,8 +712,9 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
         required=True,
-        validate=validate.Attribute(
-            "suffix", validate.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension.")
+        validate=field_validators.Attribute(
+            "suffix",
+            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
         ),
     )
     description = fields.String(required=True)
@@ -727,7 +730,9 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
 
 
 class BioImageIoManifest(PyBioSchema):
-    format_version = fields.String(validate=validate.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True)
+    format_version = fields.String(
+        validate=field_validators.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True
+    )
     config = fields.Dict(missing=dict)
 
     application = fields.List(fields.Dict, missing=list)

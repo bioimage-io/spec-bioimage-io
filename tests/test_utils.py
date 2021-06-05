@@ -6,16 +6,7 @@ import pytest
 from marshmallow import post_load
 from ruamel.yaml import YAML
 
-from bioimageio.spec import fields, nodes, raw_nodes, schema
-from bioimageio.spec.utils import load_model_spec
-from bioimageio.spec.utils.transformers import (
-    ImportedSource,
-    NodeTransformer,
-    NodeVisitor,
-    SourceNodeTransformer,
-    UriNodeTransformer,
-    iter_fields,
-)
+from bioimageio.spec import fields, load_model_spec, nodes, raw_nodes, schema, utils
 
 yaml = YAML(typ="safe")
 
@@ -28,7 +19,7 @@ class MyNode(nodes.Node):
 
 def test_iter_fields():
     entry = MyNode("a", 42)
-    assert [("field_a", "a"), ("field_b", 42)] == list(iter_fields(entry))
+    assert [("field_a", "a"), ("field_b", 42)] == list(utils._iter_fields(entry))
 
 
 @dataclass
@@ -54,11 +45,11 @@ class TestNodeVisitor:
         )
 
     def test_node(self, tree):
-        visitor = NodeVisitor()
+        visitor = utils._NodeVisitor()
         visitor.visit(tree)
 
     def test_node_transform(self, tree):
-        class MyTransformer(NodeTransformer):
+        class MyTransformer(utils._NodeTransformer):
             def transform_URL(self, node):
                 return Content(f"content of url {node.url}")
 
@@ -95,7 +86,7 @@ class TestTraversingSpecURI:
     def test_resolve_spec(self):
         tree = Spec().load({"spec_uri_a": "https://example.com", "spec_uri_b": "../file.yml"})
 
-        class MyTransformer(NodeTransformer):
+        class MyTransformer(utils._NodeTransformer):
             def transform_SpecURI(self, node):
                 res = {"axes": "xyc"}
                 return node.spec_schema.load(res)
@@ -113,9 +104,9 @@ def test_resolve_import_path(tmpdir):
     filepath = tmpdir / "my_mod.py"
     filepath.write_text("class Foo: pass", encoding="utf8")
     node = raw_nodes.ImportablePath(filepath=filepath, callable_name="Foo")
-    uri_transformed = UriNodeTransformer(root_path=tmpdir).transform(node)
-    source_transformed = SourceNodeTransformer().transform(uri_transformed)
-    assert isinstance(source_transformed, ImportedSource)
+    uri_transformed = utils._UriNodeTransformer(root_path=tmpdir).transform(node)
+    source_transformed = utils._SourceNodeTransformer().transform(uri_transformed)
+    assert isinstance(source_transformed, nodes.ImportedSource)
     Foo = source_transformed.factory
     assert Foo.__name__ == "Foo"
     assert isinstance(Foo, type)
@@ -123,7 +114,7 @@ def test_resolve_import_path(tmpdir):
 
 def test_resolve_directory_uri(tmpdir):
     node = raw_nodes.URI(scheme="", authority="", path=str(tmpdir), query="", fragment="")
-    uri_transformed = UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
+    uri_transformed = utils._UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
     assert uri_transformed == Path(tmpdir)
 
 

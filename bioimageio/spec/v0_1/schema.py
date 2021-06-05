@@ -1,6 +1,6 @@
 from marshmallow import Schema, ValidationError, validates_schema
 
-from bioimageio.spec import fields
+from bioimageio.spec.v0_1 import fields
 
 
 class PyBioSchema(Schema):
