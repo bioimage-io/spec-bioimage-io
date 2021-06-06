@@ -3,10 +3,11 @@ from pathlib import Path
 
 from bioimageio.spec import maybe_convert_model, schema
 from bioimageio.spec.common_utils import yaml
-from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
 
 
 def test_build_spec_pickle(rf_config_path):
+    from bioimageio.spec.latest.build_spec import build_spec
+
     source = yaml.load(rf_config_path)
     source = maybe_convert_model(source)
 
@@ -48,6 +49,8 @@ def test_build_spec_pickle(rf_config_path):
 
 
 def test_build_spec_pytorch(UNet2DNucleiBroad_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(UNet2DNucleiBroad_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
@@ -84,6 +87,8 @@ def test_build_spec_pytorch(UNet2DNucleiBroad_model_url):
 
 
 def test_build_spec_onnx(UNet2DNucleiBroad_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(UNet2DNucleiBroad_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
@@ -121,6 +126,8 @@ def test_build_spec_onnx(UNet2DNucleiBroad_model_url):
 
 
 def test_build_spec_torchscript(UNet2DNucleiBroad_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(UNet2DNucleiBroad_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
@@ -158,6 +165,8 @@ def test_build_spec_torchscript(UNet2DNucleiBroad_model_url):
 
 
 def test_build_spec_keras(FruNet_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
@@ -188,6 +197,8 @@ def test_build_spec_keras(FruNet_model_url):
 
 
 def test_build_spec_tf(FruNet_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
@@ -218,6 +229,8 @@ def test_build_spec_tf(FruNet_model_url):
 
 
 def test_build_spec_tfjs(FruNet_model_url):
+    from bioimageio.spec.latest.build_spec import _get_local_path, build_spec
+
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
