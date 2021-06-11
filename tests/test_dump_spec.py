@@ -39,8 +39,8 @@ def test_spec_roundtrip(rf_config_path):
     assert not schema.Model().validate(serialized)
     assert not schema.Model().validate(serialized_wo_defaults)
 
-    raw_model_from_serialized = load_raw_model(serialized)
+    raw_model_from_serialized, _ = load_raw_model(serialized)
     assert raw_model_from_serialized == raw_model
 
-    raw_model_from_serialized_wo_defaults = load_raw_model(serialized)
+    raw_model_from_serialized_wo_defaults, _ = load_raw_model(serialized)
     assert raw_model_from_serialized_wo_defaults == raw_model
