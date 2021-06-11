@@ -55,15 +55,14 @@ class RDF(PyBioSchema):
     """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
 
     format_version = fields.String(
-        validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
+        validate=field_validators.OneOf(raw_nodes.RDF_FormatVersion.__args__),
         required=True,
         bioimageio_description_order=0,
-        bioimageio_description=f"""Version of the BioImage.IO Model Description File Specification used.
-This is mandatory, and important for the consumer software to verify before parsing the fields.
-The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
-is in an unsupported format version. The current format version described here is
-{raw_nodes.FormatVersion.__args__[-1]}""",
+        bioimageio_description=f"Version of the BioImage.IO Resource Description File Specification used. The current "
+        f"format version described here is {raw_nodes.RDF_FormatVersion.__args__[-1]}. Note that RDFs describing "
+        f"models have a different format version.",
     )
+
     name = fields.String(required=True)
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
@@ -471,6 +470,18 @@ class ModelParent(PyBioSchema):
 
 
 class Model(RDF):
+
+    format_version = fields.String(
+        validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
+        required=True,
+        bioimageio_description_order=0,
+        bioimageio_description=f"""Version of the BioImage.IO Model Description File Specification used.
+This is mandatory, and important for the consumer software to verify before parsing the fields.
+The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
+is in an unsupported format version. The current format version described here is
+{raw_nodes.FormatVersion.__args__[-1]}""",
+    )
+
     bioimageio_description = f"""# BioImage.IO Model Description File Specification {raw_nodes.FormatVersion.__args__[-1]}
 A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
 The configuration file must contain the following fields; optional fields are indicated by _optional_.
@@ -684,9 +695,7 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
 
 
 class BioImageIoManifest(PyBioSchema):
-    format_version = fields.String(
-        validate=field_validators.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True
-    )
+    format_version = fields.String(validate=field_validators.OneOf(raw_nodes.RDF_FormatVersion.__args__), required=True)
     config = fields.Dict(missing=dict)
 
     application = fields.List(fields.Dict, missing=list)
