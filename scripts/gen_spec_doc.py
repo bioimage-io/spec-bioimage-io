@@ -41,11 +41,11 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
     details = []
     sub_docs = []
     required = True
-    if inspect.isclass(obj) and issubclass(obj, schema.PyBioSchema):
+    if inspect.isclass(obj) and issubclass(obj, schema.SharedPyBioSchema):
 
         obj = obj()
 
-    if isinstance(obj, schema.PyBioSchema):
+    if isinstance(obj, schema.SharedPyBioSchema):
 
         def sort_key(name_and_nested_field):
             name, nested_field = name_and_nested_field
@@ -115,7 +115,7 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
     return f"{type_name}{doc.description}\n{sub_doc}"
 
 
-def markdown_from_schema(schema: schema.PyBioSchema) -> str:
+def markdown_from_schema(schema: schema.SharedPyBioSchema) -> str:
     doc = doc_from_schema(schema)
     return markdown_from_doc(doc)
 

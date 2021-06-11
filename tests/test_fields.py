@@ -4,7 +4,8 @@ from marshmallow import ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
-from bioimageio.spec import fields, raw_nodes, schema
+from bioimageio.spec import raw_nodes, schema
+from bioimageio.spec.shared import fields
 
 
 class TestArray:

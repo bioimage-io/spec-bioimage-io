@@ -1,3 +1,4 @@
+"""fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 from __future__ import annotations
 
 import datetime
@@ -11,7 +12,7 @@ import marshmallow_union
 import numpy
 from marshmallow import ValidationError, fields as marshmallow_fields
 
-from bioimageio.spec.common_utils import field_validators
+from bioimageio.spec.shared import field_validators
 from . import raw_nodes
 
 

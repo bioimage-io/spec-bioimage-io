@@ -2,30 +2,18 @@ import typing
 import warnings
 from dataclasses import asdict
 from pathlib import Path
-from pprint import pprint
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 from spdx_license_list import LICENSES
 
-from bioimageio.spec.common_utils import field_validators
-from . import fields, raw_nodes
+from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared.schema import SharedPyBioSchema
+from . import raw_nodes
 
 
-class PyBioSchema(Schema):
-    bioimageio_description: str = ""
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        if not data:
-            return None
-
-        this_type = getattr(raw_nodes, self.__class__.__name__)
-        try:
-            return this_type(**data)
-        except TypeError as e:
-            e.args += (f"when initializing {this_type} from {self}",)
-            raise e
+class PyBioSchema(SharedPyBioSchema):
+    raw_nodes = raw_nodes
 
 
 class Author(PyBioSchema):
@@ -188,40 +176,6 @@ documentation or for the model to run, these files will be included when generat
 class SpecWithKwargs(PyBioSchema):
     spec: fields.SpecURI
     kwargs = fields.Kwargs()
-
-
-class ImplicitInputShape(PyBioSchema):
-    min = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
-    )
-    step = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum shape change with same length as `axes`"
-    )
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        min_ = data["min"]
-        step = data["step"]
-        if min_ is None or step is None:
-            return
-
-        if len(min_) != len(step):
-            raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
-
-
-class ImplicitOutputShape(PyBioSchema):
-    reference_input = fields.String(required=True, bioimageio_description="Name of the reference input tensor.")
-    scale = fields.List(
-        fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
-    )
-    offset = fields.List(fields.Integer, required=True, bioimageio_description="Position of origin wrt to input.")
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        scale = data["scale"]
-        offset = data["offset"]
-        if len(scale) != len(offset):
-            raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
 
 class Tensor(PyBioSchema):
@@ -740,16 +694,3 @@ class BioImageIoManifest(PyBioSchema):
     model = fields.List(fields.Nested(BioImageIoManifestModelEntry), missing=list)
     dataset = fields.List(fields.Dict, missing=list)
     notebook = fields.List(fields.Nested(BioImageIoManifestNotebookEntry), missing=list)
-
-
-if __name__ == "__main__":
-    from bioimageio.spec import load_model_config
-
-    try:
-        model = load_model_config(
-            (Path(__file__) / "../../../specs/models/sklearnbased/RandomForestClassifier.model.yaml").as_uri()
-        )
-    except ValidationError as e:
-        pprint(e.normalized_messages(), width=280)
-    else:
-        pprint(asdict(model), width=280)

@@ -178,7 +178,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
-
+    """auto converts model 'data' to newest format"""
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
 
@@ -194,4 +194,9 @@ def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     if config.get("future") == {}:
         del config["future"]
 
+    return data
+
+
+def maybe_convert_manifest(data: Dict[str, Any]) -> Dict[str, Any]:
+    """auto converts manifest 'data' to newest format"""
     return data

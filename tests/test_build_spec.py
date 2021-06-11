@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from bioimageio.spec import maybe_convert_model, schema
-from bioimageio.spec.common_utils import yaml
+from bioimageio.spec.shared import yaml
 
 
 def test_build_spec_pickle(rf_config_path):
