@@ -63,15 +63,21 @@ class RDF(PyBioSchema):
         f"models have a different format version.",
     )
 
-    name = fields.String(required=True)
+    name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name.")
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
     authors = fields.List(
         fields.Nested(Author),
-        required=True,
+        missing=None,
         bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
         "points of contact.",
     )
+    source = fields.URI(
+        validate=field_validators.URL(schemes=["http", "https"]),
+        missing=None,
+        bioimageio_description="url to the source of the resource",
+    )
+
     cite = fields.Nested(
         CiteEntry,
         many=True,
@@ -163,7 +169,10 @@ documentation or for the model to run, these files will be included when generat
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
-    type = fields.String(validate=field_validators.OneOf(raw_nodes.Type.__args__))
+    type = fields.String(
+        validate=field_validators.OneOf(raw_nodes.Type.__args__),
+        bioimageio_description=f"type of the resource, one of {[f'`{t}`' for t in raw_nodes.Type.__args__]}",
+    )
     version = fields.StrictVersion(
         missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
@@ -470,6 +479,18 @@ class ModelParent(PyBioSchema):
 
 
 class Model(RDF):
+    bioimageio_description = f"""# BioImage.IO Model Description File Specification {raw_nodes.FormatVersion.__args__[-1]}
+A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
+The configuration file must contain the following fields; optional fields are indicated by _optional_.
+_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+"""
+
+    authors = fields.List(
+        fields.Nested(Author),
+        required=True,
+        bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
+        "points of contact.",
+    )
 
     format_version = fields.String(
         validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
@@ -482,11 +503,8 @@ is in an unsupported format version. The current format version described here i
 {raw_nodes.FormatVersion.__args__[-1]}""",
     )
 
-    bioimageio_description = f"""# BioImage.IO Model Description File Specification {raw_nodes.FormatVersion.__args__[-1]}
-A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
-The configuration file must contain the following fields; optional fields are indicated by _optional_.
-_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
-"""
+    type = fields.String(validate=field_validators.OneOf(["model"]))
+
     name = fields.String(
         # validate=field_validators.Length(max=36),  # todo: enforce in future version
         required=True,
