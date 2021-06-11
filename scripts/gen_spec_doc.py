@@ -3,8 +3,7 @@ import inspect
 import typing
 from pathlib import Path
 
-import bioimageio.spec.schema
-from bioimageio.spec.fields import Dict, DocumentedField, Nested, Union
+from bioimageio.spec import fields, schema
 
 
 @dataclasses.dataclass
@@ -26,7 +25,7 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
         return DocNode(
             type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
         )
-    elif isinstance(obj, Nested):
+    elif isinstance(obj, fields.Nested):
         type_name = obj.type_name
         many = obj.many
         description = obj.bioimageio_description
@@ -42,11 +41,11 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
     details = []
     sub_docs = []
     required = True
-    if inspect.isclass(obj) and issubclass(obj, bioimageio.spec.schema.PyBioSchema):
+    if inspect.isclass(obj) and issubclass(obj, schema.SharedPyBioSchema):
 
         obj = obj()
 
-    if isinstance(obj, bioimageio.spec.schema.PyBioSchema):
+    if isinstance(obj, schema.SharedPyBioSchema):
 
         def sort_key(name_and_nested_field):
             name, nested_field = name_and_nested_field
@@ -63,16 +62,16 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
         type_name += obj.type_name
         required = obj.required
         maybe_required = obj.bioimageio_maybe_required
-        if isinstance(obj, Union):
+        if isinstance(obj, fields.Union):
             details = [doc_from_schema(opt) for opt in obj._candidate_fields]
-        elif isinstance(obj, Dict):
+        elif isinstance(obj, fields.Dict):
             details = [
                 dict_descr
                 for dict_descr in [doc_from_schema(obj.key_field), doc_from_schema(obj.value_field)]
                 if dict_descr.description
             ]
         else:
-            assert isinstance(obj, DocumentedField), (type(obj), obj)
+            assert isinstance(obj, fields.DocumentedField), (type(obj), obj)
 
     return DocNode(
         type_name=type_name,
@@ -116,13 +115,13 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
     return f"{type_name}{doc.description}\n{sub_doc}"
 
 
-def markdown_from_schema(schema: bioimageio.spec.schema.PyBioSchema) -> str:
+def markdown_from_schema(schema: schema.SharedPyBioSchema) -> str:
     doc = doc_from_schema(schema)
     return markdown_from_doc(doc)
 
 
 def export_markdown_docs(folder: Path):
-    doc = markdown_from_schema(bioimageio.spec.schema.Model())
+    doc = markdown_from_schema(schema.Model())
     (folder / "bioimageio_model_spec.md").write_text(doc, encoding="utf-8")
 
 

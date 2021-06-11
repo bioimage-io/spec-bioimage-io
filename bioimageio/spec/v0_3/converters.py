@@ -3,12 +3,18 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict
 
-from bioimageio.spec import schema_v0_1
-from bioimageio.spec.exceptions import PyBioUnconvertibleException
+from marshmallow import Schema
+
+from bioimageio.spec.exceptions import UnconvertibleError
+from . import schema
+
+AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
 
 def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
-    schema_v0_1.Model().validate(data)
+    from bioimageio.spec import v0_1
+
+    v0_1.schema.Model().validate(data)
 
     data = copy.deepcopy(data)
     data["format_version"] = "0.3.1"
@@ -113,7 +119,7 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
             }
 
         conversion_errors = as_nested_dict(conversion_errors)
-        raise PyBioUnconvertibleException(conversion_errors)
+        raise UnconvertibleError(conversion_errors)
 
     del data["prediction"]
     del data["training"]
@@ -124,28 +130,23 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
 def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     data["type"] = "model"
     data["format_version"] = "0.3.2"
-    data["version"] = "0.1.0"
     future = data.get("config", {}).get("future", {}).pop("0.3.2", {})
 
     # authors
-    authors_update = future.get("authors")
     data["authors"] = [{"name": name} for name in data["authors"]]
-    if authors_update is None:
-        authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
-
-    for a, u in zip(data["authors"], authors_update):
-        a.update(u)
+    authors_update = future.get("authors")
+    if authors_update is not None:
+        for a, u in zip(data["authors"], authors_update):
+            a.update(u)
 
     # packaged_by
     packaged_by = data.get("packaged_by")
     if packaged_by is not None:
-        packaged_by_update = future.get("packaged_by")
         data["packaged_by"] = [{"name": name} for name in data["packaged_by"]]
-        if packaged_by_update is None:
-            packaged_by_update = [{"affiliation": "<unknown>"}] * len(data["packaged_by"])
-
-        for a, u in zip(data["packaged_by"], packaged_by_update):
-            a.update(u)
+        packaged_by_update = future.get("packaged_by")
+        if packaged_by_update is not None:
+            for a, u in zip(data["packaged_by"], packaged_by_update):
+                a.update(u)
 
     # authors of weights
     for weights_format, weights_entry in data["weights"].items():
@@ -154,17 +155,30 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
         weights_entry["authors"] = [{"name": name} for name in weights_entry["authors"]]
         authors_update = future.get("weights", {}).get(weights_format, {}).get("authors")
-        if authors_update is None:
-            authors_update = [{"affiliation": "<unknown>"}] * len(data["authors"])
+        if authors_update is not None:
+            for a, u in zip(weights_entry["authors"], authors_update):
+                a.update(u)
 
-        for a, u in zip(weights_entry["authors"], authors_update):
-            a.update(u)
+    # documentation: we now enforce `documentation` to be a local md file
+    class DocSchema(Schema):
+        doc = schema.Model.documentation
+
+    doc_errors = DocSchema().validate({"doc": data["documentation"]})
+    if doc_errors:
+        # data["documentation"] is not a local relative md file, so we replace it with a placeholder.
+        # Having access only to the raw data dict, we cannot write the AUTO_CONVERTED_DOCUMENTATION_FILE_NAME file, but
+        # save the original content of data["documentation"] in data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME]
+        # to be written to AUTO_CONVERTED_DOCUMENTATION_FILE_NAME at a later stage.
+        data["config"] = data.get("config", {})  # make sure config exists
+        if AUTO_CONVERTED_DOCUMENTATION_FILE_NAME not in data["config"]:
+            data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = data["documentation"]
+            data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
 
     return data
 
 
-def maybe_convert_model_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
-
+def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
+    """auto converts model 'data' to newest format"""
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
 
@@ -175,4 +189,14 @@ def maybe_convert_model_to_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
     if data["format_version"] == "0.3.1":
         data = convert_model_v0_3_1_to_v0_3_2(data)
 
+    # remove 'future' from config if no other than the used future entries exist
+    config = data.get("config", {})
+    if config.get("future") == {}:
+        del config["future"]
+
+    return data
+
+
+def maybe_convert_manifest(data: Dict[str, Any]) -> Dict[str, Any]:
+    """auto converts manifest 'data' to newest format"""
     return data

@@ -1,3 +1,4 @@
+"""fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 from __future__ import annotations
 
 import datetime
@@ -7,12 +8,12 @@ import typing
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
-import numpy
-from marshmallow import ValidationError, fields as marshmallow_fields, validate as marshmallow_validate
 import marshmallow_union
+import numpy
+from marshmallow import ValidationError, fields as marshmallow_fields
 
-from bioimageio.spec import raw_nodes
-from bioimageio.spec.exceptions import PyBioValidationException
+from bioimageio.spec.shared import field_validators
+from . import raw_nodes
 
 
 class DocumentedField:
@@ -24,12 +25,20 @@ class DocumentedField:
         bioimageio_description: str = "",
         bioimageio_description_order: typing.Optional[int] = None,
         bioimageio_maybe_required: bool = False,  # indicates that this field may be required, depending on other fields
+        bioimageio_examples_valid: typing.Optional[
+            typing.Sequence[typing.Any]
+        ] = None,  # valid examples to render in documentation
+        bioimageio_examples_invalid: typing.Optional[
+            typing.Sequence[typing.Any]
+        ] = None,  # invalid examples to render in documentation
         **super_kwargs,
     ):
         bases = [b.__name__ for b in self.__class__.__bases__ if issubclass(b, marshmallow_fields.Field)]
         if self.__class__.__name__ not in bases:
             bases.insert(0, self.__class__.__name__)
 
+        # if bioimageio_examples_valid is not None:
+        #     valid_examples =
         self.type_name = "→".join(bases)
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
@@ -71,7 +80,7 @@ class Array(DocumentedField, marshmallow_fields.Field):
             try:
                 return numpy.array(value, dtype=self.dtype)
             except ValueError as e:
-                raise PyBioValidationException(str(e)) from e
+                raise ValidationError(str(e)) from e
         else:
             return value
 
@@ -166,7 +175,7 @@ class Axes(String):
         axes_str = super()._deserialize(*args, **kwargs)
         valid_axes = self.metadata.get("valid_axes", "bitczyx")
         if any(a not in valid_axes for a in axes_str):
-            raise PyBioValidationException(f"Invalid axes! Valid axes consist of: {valid_axes}")
+            raise ValidationError(f"Invalid axes! Valid axes consist of: {valid_axes}")
 
         return axes_str
 
@@ -198,12 +207,12 @@ class ImportableSource(String):
             object_name = source_str[last_dot_idx + 1 :]
 
             if not module_name:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"Missing module name in importable source: {source_str}. Is it just missing a dot?"
                 )
 
             if not object_name:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"Missing object/callable name in importable source: {source_str}. Is it just missing a dot?"
                 )
 
@@ -236,7 +245,7 @@ class ImportableSource(String):
 
 class InputShape(Union):
     def __init__(self, **super_kwargs):
-        from bioimageio.spec.schema import ImplicitInputShape
+        from .schema import ImplicitInputShape
 
         super().__init__(
             fields=[
@@ -259,7 +268,7 @@ class Kwargs(Dict):
 
 class OutputShape(Union):
     def __init__(self, **super_kwargs):
-        from bioimageio.spec.schema import ImplicitOutputShape
+        from .schema import ImplicitOutputShape
 
         super().__init__(
             fields=[
@@ -281,6 +290,49 @@ class Path(String):
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
         return None if value is None else pathlib.Path(value).as_posix()
+
+
+class RelativeLocalPath(Path):
+    def __init__(
+        self,
+        *super_args,
+        validate: typing.Optional[
+            typing.Union[
+                typing.Callable[[typing.Any], typing.Any], typing.Iterable[typing.Callable[[typing.Any], typing.Any]]
+            ]
+        ] = None,
+        **super_kwargs,
+    ):
+        if validate is None:
+            validate = []
+        elif callable(validate):
+            validate = [validate]
+        else:
+            validate = list(validate)
+
+        super().__init__(
+            *super_args,
+            validate=validate
+            + [
+                field_validators.Predicate("is_absolute", invert_output=True, error="expected relative path."),
+                field_validators.Attribute(
+                    "as_posix",
+                    [
+                        field_validators.ContainsNoneOf(
+                            ":", error="expected local, relative file path."
+                        ),  # monkey patch to fail on urls
+                        field_validators.Predicate(
+                            "count", "..", invert_output=True, error="expected relative file path within model package."
+                        ),
+                    ],
+                    is_getter_method=True,
+                ),
+                field_validators.Predicate(
+                    "is_reserved", invert_output=True, error="invalid filename as it is a reserved by the OS."
+                ),
+            ],
+            **super_kwargs,
+        )
 
 
 class ProcMode(String):
@@ -308,7 +360,7 @@ class ProcMode(String):
         else:
             validate = [validate]
 
-        validate.append(marshmallow_validate.OneOf(self.all_modes))
+        validate.append(field_validators.OneOf(self.all_modes))
         super().__init__(validate=validate, required=required, **kwargs)
 
 
@@ -323,11 +375,11 @@ class SpecURI(Nested):
         uri = urlparse(value)
 
         if uri.query:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support query: {uri.query}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support query: {uri.query}")
         if uri.fragment:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support fragment: {uri.fragment}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support fragment: {uri.fragment}")
         if uri.params:
-            raise PyBioValidationException(f"Invalid URI: {value}. We do not support params: {uri.params}")
+            raise ValidationError(f"Invalid URI: {value}. We do not support params: {uri.params}")
 
         if uri.scheme == "file":
             # account for leading '/' for windows paths, e.g. '/C:/folder'
@@ -358,9 +410,9 @@ class URI(String):
         uri = urlparse(uri_str)
 
         if uri.fragment:
-            raise PyBioValidationException(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
+            raise ValidationError(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
         if uri.params:
-            raise PyBioValidationException(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
+            raise ValidationError(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
 
         if uri.scheme == "file":
             # account for leading '/' for windows paths, e.g. '/C:/folder'

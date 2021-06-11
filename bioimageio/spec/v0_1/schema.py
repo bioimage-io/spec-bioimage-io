@@ -1,7 +1,6 @@
 from marshmallow import Schema, ValidationError, validates_schema
 
-from bioimageio.spec import fields
-from bioimageio.spec.exceptions import PyBioValidationException
+from bioimageio.spec.shared import fields
 
 
 class PyBioSchema(Schema):
@@ -23,7 +22,7 @@ class BaseSpec(PyBioSchema):
     name = fields.String(required=True)
     format_version = fields.String(required=True)
     description = fields.String(required=True)
-    cite = fields.Nested(CiteEntry(), many=True, required=True)
+    cite = fields.Nested(CiteEntry(many=True), required=True)
     authors = fields.List(fields.String(required=True))
     documentation = fields.Path(required=True)
     tags = fields.List(fields.String, required=True)
@@ -57,9 +56,7 @@ class InputShape(PyBioSchema):
             return
 
         if len(min_) != len(step):
-            raise PyBioValidationException(
-                f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})"
-            )
+            raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
 
 
 class OutputShape(PyBioSchema):
@@ -72,7 +69,7 @@ class OutputShape(PyBioSchema):
         scale = data["scale"]
         offset = data["offset"]
         if len(scale) != len(offset):
-            raise PyBioValidationException(f"scale {scale} has to have same length as offset {offset}!")
+            raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
 
 class Array(PyBioSchema):
