@@ -19,7 +19,7 @@ The [`Model Resource Description File Specification`](./generated/bioimageio_mod
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
 
-## [Generic Resource Description File Specification](./generated/bioimageio_rdf_spec.md)
+## [Generic Resource Description File Specification](./bioimageio_rdf_spec.md)
 
 A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. 
 
