@@ -1,6 +1,6 @@
 from marshmallow import Schema, ValidationError, validates_schema
 
-from bioimageio.spec import fields
+from bioimageio.spec.shared import fields
 
 
 class PyBioSchema(Schema):
@@ -22,7 +22,7 @@ class BaseSpec(PyBioSchema):
     name = fields.String(required=True)
     format_version = fields.String(required=True)
     description = fields.String(required=True)
-    cite = fields.Nested(CiteEntry(), many=True, required=True)
+    cite = fields.Nested(CiteEntry(many=True), required=True)
     authors = fields.List(fields.String(required=True))
     documentation = fields.Path(required=True)
     tags = fields.List(fields.String, required=True)

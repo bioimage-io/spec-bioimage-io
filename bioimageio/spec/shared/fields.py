@@ -1,3 +1,4 @@
+"""fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 from __future__ import annotations
 
 import datetime
@@ -11,7 +12,8 @@ import marshmallow_union
 import numpy
 from marshmallow import ValidationError, fields as marshmallow_fields
 
-from bioimageio.spec import raw_nodes, validate as spec_validate
+from bioimageio.spec.shared import field_validators
+from . import raw_nodes
 
 
 class DocumentedField:
@@ -243,7 +245,7 @@ class ImportableSource(String):
 
 class InputShape(Union):
     def __init__(self, **super_kwargs):
-        from bioimageio.spec.schema import ImplicitInputShape
+        from .schema import ImplicitInputShape
 
         super().__init__(
             fields=[
@@ -266,7 +268,7 @@ class Kwargs(Dict):
 
 class OutputShape(Union):
     def __init__(self, **super_kwargs):
-        from bioimageio.spec.schema import ImplicitOutputShape
+        from .schema import ImplicitOutputShape
 
         super().__init__(
             fields=[
@@ -312,20 +314,20 @@ class RelativeLocalPath(Path):
             *super_args,
             validate=validate
             + [
-                spec_validate.Predicate("is_absolute", invert_output=True, error="expected relative path."),
-                spec_validate.Attribute(
+                field_validators.Predicate("is_absolute", invert_output=True, error="expected relative path."),
+                field_validators.Attribute(
                     "as_posix",
                     [
-                        spec_validate.ContainsNoneOf(
+                        field_validators.ContainsNoneOf(
                             ":", error="expected local, relative file path."
                         ),  # monkey patch to fail on urls
-                        spec_validate.Predicate(
+                        field_validators.Predicate(
                             "count", "..", invert_output=True, error="expected relative file path within model package."
                         ),
                     ],
                     is_getter_method=True,
                 ),
-                spec_validate.Predicate(
+                field_validators.Predicate(
                     "is_reserved", invert_output=True, error="invalid filename as it is a reserved by the OS."
                 ),
             ],
@@ -358,7 +360,7 @@ class ProcMode(String):
         else:
             validate = [validate]
 
-        validate.append(spec_validate.OneOf(self.all_modes))
+        validate.append(field_validators.OneOf(self.all_modes))
         super().__init__(validate=validate, required=required, **kwargs)
 
 

@@ -1,16 +1,9 @@
 from __future__ import annotations
 
-from typing import Callable
+from pathlib import Path
 
+from bioimageio.spec.shared.nodes import ImportedSource
 from .raw_nodes import *
-
-
-@dataclass
-class ImportedSource:
-    factory: Callable
-
-    def __call__(self, *args, **kwargs):
-        return self.factory(*args, **kwargs)
 
 
 @dataclass

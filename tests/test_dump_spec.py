@@ -1,14 +1,13 @@
 from copy import deepcopy
 
-from bioimageio.spec import load_spec, raw_nodes, schema
-from bioimageio.spec.utils import yaml
-from bioimageio.spec.utils.transformers import load_model_spec
+from bioimageio.spec import load_raw_model, raw_nodes, schema
+from bioimageio.spec.shared import yaml
 
 
 def test_spec_roundtrip(rf_config_path):
     data = yaml.load(rf_config_path)
 
-    raw_model, root = load_spec(rf_config_path)
+    raw_model, root = load_raw_model(rf_config_path)
     assert isinstance(raw_model, raw_nodes.Model)
 
     serialized = schema.Model().dump(raw_model)
@@ -40,8 +39,8 @@ def test_spec_roundtrip(rf_config_path):
     assert not schema.Model().validate(serialized)
     assert not schema.Model().validate(serialized_wo_defaults)
 
-    raw_model_from_serialized = load_model_spec(serialized, root_path=root)
+    raw_model_from_serialized, _ = load_raw_model(serialized)
     assert raw_model_from_serialized == raw_model
 
-    raw_model_from_serialized_wo_defaults = load_model_spec(serialized, root_path=root)
+    raw_model_from_serialized_wo_defaults, _ = load_raw_model(serialized)
     assert raw_model_from_serialized_wo_defaults == raw_model
