@@ -53,7 +53,7 @@ def _(source: str, root_path: Optional[pathlib.Path] = None) -> Tuple[raw_nodes.
 
 
 def load_model(source, root_path: Optional[pathlib.Path] = None):
-    return resolve_raw_node_to_node(*load_raw_model(source, root_path=root_path))
+    return resolve_raw_node_to_node(*load_raw_model(source, root_path=root_path), nodes_module=nodes)
 
 
 def get_nn_instance(
