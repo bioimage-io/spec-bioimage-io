@@ -7,8 +7,8 @@ All the BioImage.IO-compatible RDF must fulfill the following rules:
  * Must be a YAML file encoded as UTF-8;
  * The RDF file extension must be `.yaml` (instead of `.yml`)
  * The RDF file can be saved in a folder(or virtual folder) or in a zip package, the following additional rules must apply:
-   1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.bioimage.io.yaml`, for example `my-model.bioimage.io.yaml`.
-   2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.bioimage.io.yaml`.
+   1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
+   2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
 
 As a general guideline, please follow the model RDF spec to describe AI models and use the generic RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Vallidator against it.
 
