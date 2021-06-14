@@ -1,7 +1,5 @@
 import typing
 import warnings
-from dataclasses import asdict
-from pathlib import Path
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
@@ -10,6 +8,11 @@ from spdx_license_list import LICENSES
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.schema import SharedPyBioSchema
 from . import raw_nodes
+
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args
 
 
 class PyBioSchema(SharedPyBioSchema):
@@ -55,14 +58,14 @@ class RDF(PyBioSchema):
     """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
 
     format_version = fields.String(
-        validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
+        validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Description File Specification used.
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-{raw_nodes.FormatVersion.__args__[-1]}""",
+{get_args(raw_nodes.FormatVersion)[-1]}""",
     )
     name = fields.String(required=True)
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
@@ -142,17 +145,17 @@ documentation or for the model to run, these files will be included when generat
     config = fields.Dict(missing=dict)
 
     language = fields.String(
-        validate=field_validators.OneOf(raw_nodes.Language.__args__),
+        validate=field_validators.OneOf(get_args(raw_nodes.Language)),
         missing=None,
         bioimageio_maybe_required=True,
         bioimageio_description=f"Programming language of the source code. One of: "
-        f"{', '.join(raw_nodes.Language.__args__)}. This field is only required if the field `source` is present.",
+        f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
     )
     framework = fields.String(
-        validate=field_validators.OneOf(raw_nodes.Framework.__args__),
+        validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
         missing=None,
         bioimageio_description=f"The deep learning framework of the source code. One of: "
-        f"{', '.join(raw_nodes.Framework.__args__)}. This field is only required if the field `source` is present.",
+        f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
     )
     dependencies = fields.Dependencies(
         missing=None,
@@ -164,7 +167,7 @@ documentation or for the model to run, these files will be included when generat
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
-    type = fields.String(validate=field_validators.OneOf(raw_nodes.Type.__args__))
+    type = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.Type)))
     version = fields.StrictVersion(
         missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
@@ -286,8 +289,8 @@ class Processing(PyBioSchema):
 class Preprocessing(Processing):
     name = fields.String(
         required=True,
-        validate=field_validators.OneOf(raw_nodes.PreprocessingName.__args__),
-        bioimageio_description=f"Name of preprocessing. One of: {', '.join(raw_nodes.PreprocessingName.__args__)} "
+        validate=field_validators.OneOf(get_args(raw_nodes.PreprocessingName)),
+        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))} "
         f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#preprocessing) "
         f"for information on which transformations are supported by specific consumer software).",
@@ -314,9 +317,9 @@ class Preprocessing(Processing):
 
 class Postprocessing(Processing):
     name = fields.String(
-        validate=field_validators.OneOf(raw_nodes.PostprocessingName.__args__),
+        validate=field_validators.OneOf(get_args(raw_nodes.PostprocessingName)),
         required=True,
-        bioimageio_description=f"Name of postprocessing. One of: {', '.join(raw_nodes.PostprocessingName.__args__)} "
+        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))} "
         f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#postprocessing) "
         f"for information on which transformations are supported by specific consumer software).",
@@ -471,7 +474,7 @@ class ModelParent(PyBioSchema):
 
 
 class Model(RDF):
-    bioimageio_description = f"""# BioImage.IO Model Description File Specification {raw_nodes.FormatVersion.__args__[-1]}
+    bioimageio_description = f"""# BioImage.IO Model Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 A model entry in the bioimage.io model zoo is defined by a configuration file model.yaml.
 The configuration file must contain the following fields; optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
@@ -521,12 +524,12 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     weights = fields.Dict(
         fields.String(
-            validate=field_validators.OneOf(raw_nodes.WeightsFormat.__args__),
+            validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
             required=True,
             bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
             f"required) fields. See [supported_formats_and_operations.md#Weight Format]"
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
-            f"One of: {', '.join(raw_nodes.WeightsFormat.__args__)}",
+            f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
         fields.Nested(WeightsEntry),
         required=True,
@@ -695,7 +698,7 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
 
 class BioImageIoManifest(PyBioSchema):
     format_version = fields.String(
-        validate=field_validators.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True
+        validate=field_validators.OneOf(get_args(raw_nodes.ManifestFormatVersion)), required=True
     )
     config = fields.Dict(missing=dict)
 

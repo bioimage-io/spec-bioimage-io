@@ -1,4 +1,4 @@
 from . import v0_1, v0_3
 from .latest import *
 
-__version__ = FormatVersion.__args__[-1]
+__version__ = v0_3.schema.get_args(FormatVersion)[-1]
