@@ -1,4 +1,4 @@
-name: Test bioimageio.spec
+name: Test and Deploy bioimageio.spec
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test-and-deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,3 +25,12 @@ jobs:
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
+    - name: Generate Docs
+      run: python scripts/generate_docs.py
+    - name: Generate JSON Schema
+      run: python scripts/generate_json_specs.py
+    - name: Deploy Docs and Schema 🚀
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages
+        folder: generated
