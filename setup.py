@@ -21,7 +21,7 @@ setup(
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "PyYAML>=5.2",
-        "dataclasses; python_version>='3.7.2,<3.9'",
+        "dataclasses; python_version<'3.7'",
         "imageio>=2.5",
         "marshmallow>=3.6.0,<4.0",
         "marshmallow_jsonschema",
