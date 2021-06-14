@@ -15,18 +15,23 @@ app = typer.Typer()  # https://typer.tiangolo.com/
 
 
 @app.command()
+def package_model(model_yaml: Path, auto_convert: bool = False):
+    pass
+
+
+@app.command()
 def verify_spec(model_yaml: Path, auto_convert: bool = False):
     try:
-        spec_data = yaml.load(model_yaml)
+        model_data = yaml.load(model_yaml)
     except Exception as e:
         pprint(e)
         code = 1
     else:
         try:
             if auto_convert:
-                spec_data = maybe_convert_model(deepcopy(spec_data))
+                model_data = maybe_convert_model(deepcopy(model_data))
 
-            verify_model_data(spec_data)
+            verify_model_data(model_data)
         except ValidationError as e:
             pprint(e.messages)
             code = 1

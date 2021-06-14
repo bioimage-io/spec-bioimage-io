@@ -28,12 +28,12 @@ class Attribute(Validator):
             if self.is_getter_method:
                 attr = attr()
         except Exception as e:
-            raise ValidationError from e
+            raise ValidationError(str(e)) from e
 
         try:
             return all(validator(attr) for validator in self.validate)
         except Exception as e:
-            raise ValidationError(f"Invalid {self.attribute}: {str(e)}") from e
+            raise ValidationError(f"Invalid {self.attribute} ({value}): {str(e)}") from e
 
 
 class Predicate(Predicate):

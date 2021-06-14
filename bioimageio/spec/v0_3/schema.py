@@ -2,38 +2,26 @@ import typing
 import warnings
 from dataclasses import asdict
 from pathlib import Path
-from pprint import pprint
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 from spdx_license_list import LICENSES
 
-from bioimageio.spec import fields, raw_nodes, validate
-from bioimageio.spec.exceptions import PyBioValidationException
+from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared.schema import SharedPyBioSchema
+from . import raw_nodes
 
 
-class PyBioSchema(Schema):
-    bioimageio_description: str = ""
-
-    @post_load
-    def make_object(self, data, **kwargs):
-        if not data:
-            return None
-
-        this_type = getattr(raw_nodes, self.__class__.__name__)
-        try:
-            return this_type(**data)
-        except TypeError as e:
-            e.args += (f"when initializing {this_type} from {self}",)
-            raise e
+class PyBioSchema(SharedPyBioSchema):
+    raw_nodes = raw_nodes
 
 
 class Author(PyBioSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
-    affiliation = fields.String(required=True, bioimageio_description="Affiliation.")
+    affiliation = fields.String(missing=None, bioimageio_description="Affiliation.")
     orcid = fields.String(
         validate=[
-            validate.Length(19),
+            field_validators.Length(19),
             lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
             lambda oid: stdnum.iso7064.mod_11_2.is_valid(oid.replace("-", "")),
         ],
@@ -67,7 +55,7 @@ class RDF(PyBioSchema):
     """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
 
     format_version = fields.String(
-        validate=validate.OneOf(raw_nodes.FormatVersion.__args__),
+        validate=field_validators.OneOf(raw_nodes.FormatVersion.__args__),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Description File Specification used.
@@ -95,22 +83,15 @@ E.g. the citation for the model architecture and/or the training data used.""",
     )
 
     git_repo = fields.String(
-        validate=validate.URL(schemes=["http", "https"]),
+        validate=field_validators.URL(schemes=["http", "https"]),
         missing=None,
         bioimageio_description="""A url to the git repository, e.g. to Github or Gitlab.
 If the model is contained in a subfolder of a git repository, then a url to the exact folder
 (which contains the configuration yaml file) should be used.""",
     )
-    id = (
-        fields.String(
-            missing=None,
-            bioimageio_description="Unique identifier of this model, it is recommended to use a DOI as the model id, "
-            "e.g. by uploading the weights file to zenodo.org and get a DOI.",
-        ),
-    )
     tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
     license = fields.String(
-        validate=validate.OneOf(LICENSES),
+        validate=field_validators.OneOf(LICENSES),
         required=True,
         bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
@@ -123,15 +104,11 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         if license_info["isDeprecatedLicenseId"]:
             warnings.warn(f"{license_info['name']} is deprecated")
 
-    documentation = fields.Path(
-        validate=[
-            validate.Predicate("is_absolute", invert_output=True),
-            validate.Attribute("suffix", validate.Equal(".md")),
-            validate.Attribute(
-                "as_posix", validate.ContainsNoneOf(":"), is_getter_method=True
-            ),  # monkey patch to fail on urls
-            validate.Predicate("is_reserved", invert_output=True),
-        ],
+    documentation = fields.RelativeLocalPath(
+        validate=field_validators.Attribute(
+            "suffix",
+            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
+        ),
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
         "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
@@ -142,7 +119,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         missing=list,
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
-        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: validate image format
+        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
     )
     attachments = fields.Dict(
         fields.String,
@@ -165,14 +142,14 @@ documentation or for the model to run, these files will be included when generat
     config = fields.Dict(missing=dict)
 
     language = fields.String(
-        validate=validate.OneOf(raw_nodes.Language.__args__),
+        validate=field_validators.OneOf(raw_nodes.Language.__args__),
         missing=None,
         bioimageio_maybe_required=True,
         bioimageio_description=f"Programming language of the source code. One of: "
         f"{', '.join(raw_nodes.Language.__args__)}. This field is only required if the field `source` is present.",
     )
     framework = fields.String(
-        validate=validate.OneOf(raw_nodes.Framework.__args__),
+        validate=field_validators.OneOf(raw_nodes.Framework.__args__),
         missing=None,
         bioimageio_description=f"The deep learning framework of the source code. One of: "
         f"{', '.join(raw_nodes.Framework.__args__)}. This field is only required if the field `source` is present.",
@@ -187,12 +164,12 @@ documentation or for the model to run, these files will be included when generat
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
-    type = fields.String(validate=validate.OneOf(raw_nodes.Type.__args__))
+    type = fields.String(validate=field_validators.OneOf(raw_nodes.Type.__args__))
     version = fields.StrictVersion(
-        missing="0.1.0",
+        missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
-        "e.g. the initial version number should be `0.1.0`, which is also the default.",
+        "e.g. the initial version number should be `0.1.0`.",
     )
 
 
@@ -201,45 +178,9 @@ class SpecWithKwargs(PyBioSchema):
     kwargs = fields.Kwargs()
 
 
-class ImplicitInputShape(PyBioSchema):
-    min = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
-    )
-    step = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum shape change with same length as `axes`"
-    )
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        min_ = data["min"]
-        step = data["step"]
-        if min_ is None or step is None:
-            return
-
-        if len(min_) != len(step):
-            raise PyBioValidationException(
-                f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})"
-            )
-
-
-class ImplicitOutputShape(PyBioSchema):
-    reference_input = fields.String(required=True, bioimageio_description="Name of the reference input tensor.")
-    scale = fields.List(
-        fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
-    )
-    offset = fields.List(fields.Integer, required=True, bioimageio_description="Position of origin wrt to input.")
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        scale = data["scale"]
-        offset = data["offset"]
-        if len(scale) != len(offset):
-            raise PyBioValidationException(f"scale {scale} has to have same length as offset {offset}!")
-
-
 class Tensor(PyBioSchema):
     name = fields.String(
-        required=True, validate=validate.Predicate("isidentifier"), bioimageio_description="Tensor name."
+        required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
     )
     description = fields.String(missing=None)
     axes = fields.Axes(
@@ -282,7 +223,7 @@ class Tensor(PyBioSchema):
             kwargs = processing.kwargs or {}
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
-                raise PyBioValidationException("`kwargs.axes` needs to be subset of axes")
+                raise ValidationError("`kwargs.axes` needs to be subset of axes")
 
 
 class Processing(PyBioSchema):
@@ -303,7 +244,7 @@ class Processing(PyBioSchema):
         @validates_schema
         def either_gain_or_offset(self, data, **kwargs):
             if data["gain"] == 1.0 and data["offset"] == 0:
-                raise PyBioValidationException("Specify gain!=1.0 or offset!=0.0")
+                raise ValidationError("Specify gain!=1.0 or offset!=0.0")
 
     @validates_schema
     def kwargs_match_selected_preprocessing_name(self, data, **kwargs):
@@ -318,7 +259,7 @@ class Processing(PyBioSchema):
 
         kwargs_validation_errors = schema_class().validate(data["kwargs"])
         if kwargs_validation_errors:
-            raise PyBioValidationException(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
+            raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
     class Sigmoid(PyBioSchema):
         pass
@@ -333,11 +274,11 @@ class Processing(PyBioSchema):
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
             if data["mode"] == "fixed" and (data["mean"] is None or data["std"] is None):
-                raise PyBioValidationException(
+                raise ValidationError(
                     "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional `kwargs`: `mean` and `std`."
                 )
             elif data["mode"] != "fixed" and (data.get("mean") is not None or data.get("std") is not None):
-                raise PyBioValidationException(
+                raise ValidationError(
                     "`kwargs`: `mean` and `std` for 'zero_mean_unit_variance' preprocessing are only valid for `mode` 'fixed'."
                 )
 
@@ -345,7 +286,7 @@ class Processing(PyBioSchema):
 class Preprocessing(Processing):
     name = fields.String(
         required=True,
-        validate=validate.OneOf(raw_nodes.PreprocessingName.__args__),
+        validate=field_validators.OneOf(raw_nodes.PreprocessingName.__args__),
         bioimageio_description=f"Name of preprocessing. One of: {', '.join(raw_nodes.PreprocessingName.__args__)} "
         f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#preprocessing) "
@@ -357,10 +298,10 @@ class Preprocessing(Processing):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(required=True, valid_axes="czyx")
         min_percentile = fields.Float(
-            required=True, validate=validate.Range(0, 100, min_inclusive=True, max_inclusive=True)
+            required=True, validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=True)
         )
         max_percentile = fields.Float(
-            required=True, validate=validate.Range(1, 100, min_inclusive=False, max_inclusive=True)
+            required=True, validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True)
         )  # as a precaution 'max_percentile' needs to be greater than 1
 
         @validates_schema
@@ -368,12 +309,12 @@ class Preprocessing(Processing):
             min_p = data["min_percentile"]
             max_p = data["max_percentile"]
             if min_p >= max_p:
-                raise PyBioValidationException(f"min_percentile {min_p} >= max_percentile {max_p}")
+                raise ValidationError(f"min_percentile {min_p} >= max_percentile {max_p}")
 
 
 class Postprocessing(Processing):
     name = fields.String(
-        validate=validate.OneOf(raw_nodes.PostprocessingName.__args__),
+        validate=field_validators.OneOf(raw_nodes.PostprocessingName.__args__),
         required=True,
         bioimageio_description=f"Name of postprocessing. One of: {', '.join(raw_nodes.PostprocessingName.__args__)} "
         f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
@@ -383,11 +324,11 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor: fields.String(required=True, validate=validate.Predicate("isidentifier"))
+        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
     class ScaleMeanVariance(PyBioSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor: fields.String(required=True, validate=validate.Predicate("isidentifier"))
+        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
 
 class InputTensor(Tensor):
@@ -415,17 +356,17 @@ class InputTensor(Tensor):
         elif isinstance(shape, list):
             step = [0] * len(shape)
         else:
-            raise PyBioValidationException(f"Unknown shape type {type(shape)}")
+            raise ValidationError(f"Unknown shape type {type(shape)}")
 
         if step[bidx] != 0:
-            raise PyBioValidationException(
+            raise ValidationError(
                 "Input shape step has to be zero in the batch dimension (the batch dimension can always be "
                 "increased, but `step` should specify how to increase the minimal shape to find the largest "
                 "single batch shape)"
             )
 
         if shape[bidx] != 1:
-            raise PyBioValidationException("Input shape has to be 1 in the batch dimension b.")
+            raise ValidationError("Input shape has to be 1 in the batch dimension b.")
 
 
 class OutputTensor(Tensor):
@@ -453,7 +394,7 @@ class OutputTensor(Tensor):
             return
         elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
             if len(halo) != len(shape):
-                raise PyBioValidationException(f"halo {halo} has to have same length as shape {shape}!")
+                raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
             raise NotImplementedError(type(shape))
 
@@ -512,7 +453,7 @@ class WeightsEntry(PyBioSchema):
     )
     opset_version = fields.Number(missing=None)  # ONNX Specific
     sha256 = fields.String(
-        validate=validate.Length(equal=64),
+        validate=field_validators.Length(equal=64),
         missing=None,
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
@@ -536,7 +477,7 @@ The configuration file must contain the following fields; optional fields are in
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
     name = fields.String(
-        # validate=validate.Length(max=36),  # todo: enforce in future version
+        # validate=field_validators.Length(max=36),  # todo: enforce in future version
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "`_`, `-` or spaces and not be longer than 36 characters.",
@@ -567,7 +508,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "`./my_function:MyImplementation` or `core_library.some_module.some_function`.",
     )
     sha256 = fields.String(
-        validate=validate.Length(equal=64),
+        validate=field_validators.Length(equal=64),
         missing=None,
         bioimageio_description="SHA256 checksum of the model source code file."
         + _common_sha256_hint
@@ -580,7 +521,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     weights = fields.Dict(
         fields.String(
-            validate=validate.OneOf(raw_nodes.WeightsFormat.__args__),
+            validate=field_validators.OneOf(raw_nodes.WeightsFormat.__args__),
             required=True,
             bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
             f"required) fields. See [supported_formats_and_operations.md#Weight Format]"
@@ -662,7 +603,7 @@ config:
 
         combination = tuple(data[name] for name in field_names)
         if combination not in valid_combinations:
-            raise PyBioValidationException(f"invalid combination of {dict(zip(field_names, combination))}")
+            raise ValidationError(f"invalid combination of {dict(zip(field_names, combination))}")
 
     @validates_schema
     def source_specified_if_required(self, data, **kwargs):
@@ -680,7 +621,7 @@ config:
         }
         require_source = {wf for wf in data["weights"] if weight_format_requires_source[wf]}
         if require_source:
-            raise PyBioValidationException(
+            raise ValidationError(
                 f"These specified weight formats require source code to be specified: {require_source}"
             )
 
@@ -691,19 +632,17 @@ config:
             for postpr in out.postprocessing:
                 ref_tensor = postpr.kwargs.get("reference_tensor", None)
                 if ref_tensor is not None and ref_tensor not in valid_input_tensor_references:
-                    raise PyBioValidationException(f"{ref_tensor} not found in inputs")
+                    raise ValidationError(f"{ref_tensor} not found in inputs")
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
         weights: typing.Dict[str, WeightsEntry] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if "tensorflow" not in weights_format and weights_entry.tensorflow_version is not None:
-                raise PyBioValidationException(
-                    f"invalid 'tensorflow_version' entry for weights format {weights_format}"
-                )
+                raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format != "onnx" and weights_entry.opset_version is not None:
-                raise PyBioValidationException(
+                raise ValidationError(
                     f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
                 )
 
@@ -711,9 +650,9 @@ config:
 # Manifest
 class BioImageIoManifestModelEntry(PyBioSchema):
     id = fields.String(required=True)
-    source = fields.String(validate=validate.URL(schemes=["http", "https"]))
+    source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
     links = fields.List(fields.String, missing=list)
-    download_url = fields.String(validate=validate.URL(schemes=["http", "https"]))
+    download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
 class Badge(PyBioSchema):
@@ -725,16 +664,12 @@ class Badge(PyBioSchema):
 class BioImageIoManifestNotebookEntry(PyBioSchema):
     id = fields.String(required=True)
     name = fields.String(required=True)
-    documentation = fields.Path(
-        validate=[
-            validate.Predicate("is_absolute", invert_output=True),
-            validate.Attribute("suffix", validate.Equal(".md")),
-            validate.Attribute(
-                "as_posix", validate.ContainsNoneOf(":"), is_getter_method=True
-            ),  # monkey patch to fail on urls
-            validate.Predicate("is_reserved", invert_output=True),
-        ],
+    documentation = fields.RelativeLocalPath(
         required=True,
+        validate=field_validators.Attribute(
+            "suffix",
+            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
+        ),
     )
     description = fields.String(required=True)
 
@@ -749,7 +684,9 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
 
 
 class BioImageIoManifest(PyBioSchema):
-    format_version = fields.String(validate=validate.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True)
+    format_version = fields.String(
+        validate=field_validators.OneOf(raw_nodes.ManifestFormatVersion.__args__), required=True
+    )
     config = fields.Dict(missing=dict)
 
     application = fields.List(fields.Dict, missing=list)
@@ -757,16 +694,3 @@ class BioImageIoManifest(PyBioSchema):
     model = fields.List(fields.Nested(BioImageIoManifestModelEntry), missing=list)
     dataset = fields.List(fields.Dict, missing=list)
     notebook = fields.List(fields.Nested(BioImageIoManifestNotebookEntry), missing=list)
-
-
-if __name__ == "__main__":
-    from bioimageio.spec import load_model_config
-
-    try:
-        model = load_model_config(
-            (Path(__file__) / "../../../specs/models/sklearnbased/RandomForestClassifier.model.yaml").as_uri()
-        )
-    except PyBioValidationException as e:
-        pprint(e.normalized_messages(), width=280)
-    else:
-        pprint(asdict(model), width=280)
