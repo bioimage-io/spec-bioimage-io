@@ -32,14 +32,14 @@ jobs:
     # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7
     - name: Install dependencies
       run: |
         pip install .
-    - run: rm -rf bioimageio && mkdir ./dist
+    - run: mkdir ./dist
     - name: Generate Docs
       run: python scripts/generate_docs.py
     - name: Generate JSON Schema
