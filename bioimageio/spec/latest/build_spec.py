@@ -41,7 +41,7 @@ def _infer_weight_type(path):
     elif ext in (".hdf", ".hdf5", ".h5"):
         return "keras_hdf5"
     elif ext == ".zip":
-        return "tensorflow_saved_modle_bundle"
+        return "tensorflow_saved_model_bundle"
     elif ext == ".json":
         return "tensorflow_js"
     else:
@@ -107,7 +107,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         language = "python"
         framework = "tensorflow"
 
-    elif weight_type == "tensorflow_saved_modle_bundle":
+    elif weight_type == "tensorflow_saved_model_bundle":
         weights = spec.raw_nodes.WeightsEntry(
             source=weight_uri,
             sha256=weight_hash,

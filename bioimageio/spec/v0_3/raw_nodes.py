@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
@@ -17,16 +15,16 @@ from bioimageio.spec.shared.raw_nodes import (
 )
 
 try:
-    from typing import Literal
+    from typing import Literal, get_args
 except ImportError:
-    from typing_extensions import Literal
+    from typing_extensions import Literal, get_args
 
 
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
 # such that we only need to support the most up-to-date version.
 FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
-latest_version = FormatVersion.__args__[-1]  # todo: py 3.9: use typing.get_args
+latest_version = get_args(FormatVersion)[-1]
 ManifestFormatVersion = Literal["0.1.0", "0.2.0"]  # newest format expected to be last
 
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]

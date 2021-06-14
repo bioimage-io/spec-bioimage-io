@@ -10,6 +10,11 @@ from bioimageio.spec.shared.transformers import download_uri_to_local_path, reso
 from . import nodes, raw_nodes, schema
 from .converters import maybe_convert_model
 
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args
+
 download_uri_node_to_local_path = download_uri_to_local_path
 
 
@@ -57,7 +62,7 @@ def load_model(source, root_path: Optional[pathlib.Path] = None):
 
 
 def get_nn_instance(
-    node: nodes.Model, weight_order: Sequence[nodes.WeightsFormat] = nodes.WeightsFormat.__args__, **kwargs
+    node: nodes.Model, weight_order: Sequence[nodes.WeightsFormat] = get_args(nodes.WeightsFormat), **kwargs
 ):
     assert NotImplementedError("weight_order")
     if isinstance(node, nodes.Model):

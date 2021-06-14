@@ -1,6 +1,4 @@
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
-from __future__ import annotations
-
 import datetime
 import distutils.version
 import pathlib
