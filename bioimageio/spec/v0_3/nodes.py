@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 from bioimageio.spec.shared.nodes import ImportedSource

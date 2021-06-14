@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
