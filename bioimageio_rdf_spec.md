@@ -46,7 +46,7 @@ The common fields for all the resource description files are:
 
 ## Describing AI models
 
-In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](generated/bioimageio_model_spec.md) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](generated/bioimageio_model_spec.md), the generic RDF can be used for discribing AI models.
+In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md), the generic RDF can be used for discribing AI models.
 
 To do that, you need to first set the `type` filed to `model`.
 
