@@ -28,9 +28,27 @@ The common fields for all the resource description files are:
 | icon | optional | an icon for the resource  |
 | links | optional | a list of linked resources, an id to other resources|
 | version | optional | the version number for the resource, starting from `0.1.0`  |
+| config | optional | a dictionary/object contains vendor-specific or arbitrary custom fields, this is used for storing information which does not match other defined fields |
+
+***Note: we provide the `config` key for storing information with custom fields which is not defined in the RDF spec, please follow these guidelines when using it:***
+ * Store information in `config` only if the information you want to store is not defined in the spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
+ * You should store custom keys nested under the name or domain of the consumer, for example:
+   ```yaml
+   config:
+      bioimage_io:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+           nested: value
+      imagej:
+        macro_dir: /path/to/macro/file
+   ```
+ * If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for the keys used in `config`.
 
 ## Describing AI models
-You need to first set the `type` filed to `model`.
+
+In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](generated/bioimageio_model_spec.md) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](generated/bioimageio_model_spec.md), the generic RDF can be used for discribing AI models.
+
+To do that, you need to first set the `type` filed to `model`.
 
 A basic integration would be simply provide a `download_url` to a zip file (for example, with the model weights, source code or executable binary file) hosted on Github releases, Dropbox, Google Drive etc. For example: 
 ```yaml
@@ -72,29 +90,6 @@ covers:
   - https://raw.githubusercontent.com/CellProfiling/HPA-model-zoo/master/hpa_challenge_header.png
   - https://raw.githubusercontent.com/CellProfiling/HPA-competition-solutions/master/bestfitting/src/bestfitting-densenet-diagram.png
 ```
-
-If a model has multiple versions or associated with different weights, please use the `attachments` field, for example:
-```yaml
-attachments:
-  models:
-    - https://zenodo.org/record/xxxxxxx/model_version_1
-    - https://zenodo.org/record/xxxxxxx/model_version_2
-```
-
-```yaml
-attachments:
-  weights:
-    - https://zenodo.org/record/xxxxxxx/weight_version_1
-    - https://zenodo.org/record/xxxxxxx/weight_version_2
-```
-
-For more examples, see the [HPA repo](https://github.com/CellProfiling/HPA-model-zoo/blob/master/manifest.bioimage.io.yaml).
-
-If you would like to also support interoperability and reproducibility, we have been working on an extended version of RDF for models, please see the [BioImage.IO model description file specification](https://github.com/bioimage-io/spec-bioimage-io/).
-
-Here is an example: https://raw.githubusercontent.com/bioimage-io/pytorch-bioimage-io/v0.1.1/specs/models/unet2d/nuclei_broad/UNet2DNucleiBroad.model.yaml 
-
-For more examples, see the [Ilastik repo](https://github.com/ilastik/bioimage-io-models/blob/master/manifest.bioimage.io.yaml).
 
 ## Describing applications
 You need to first set the `type` filed to `application`.
