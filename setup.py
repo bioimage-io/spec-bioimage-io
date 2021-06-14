@@ -17,11 +17,11 @@ setup(
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "PyYAML>=5.2",
-        "dataclasses; python_version<'3.7'",
         "imageio>=2.5",
         "marshmallow>=3.6.0,<4.0",
         "marshmallow_jsonschema",
