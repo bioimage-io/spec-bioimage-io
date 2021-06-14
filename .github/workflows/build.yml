@@ -39,7 +39,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install .
-    - run: mkdir ./dist
+    - run: rm -rf bioimageio && mkdir ./dist
     - name: Generate Docs
       run: python scripts/generate_docs.py
     - name: Generate JSON Schema
