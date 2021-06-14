@@ -50,7 +50,7 @@ The common fields for all the resource description files are:
 ## Recommendations
 
  * Describing AI models in the model-specific spec (i.e. [model RDF](./generated/bioimageio_model_spec.md)) instead of the generic RDF. Only fallback to the generic RDF if writing model specific RDF is not possible for some reason.
- * The RDF or package file name should not space or special characters, it should be concise, descriptive, in kebab case or camel case.
+ * The RDF or package file name should not contain spaces or special characters, it should be concise, descriptive, in kebab case or camel case.
  * Due to the limitations of storage services such as Zenodo which does not support subfolders, it is recommended to place other files in the same directory level of the RDF file and try to avoid using subdirectories.
  * Use the [model spec validator](#model-specification-validator) to verify the format
  * Store the yaml file in a version controlled Git repository (e.g. Github or Gitlab)
