@@ -458,7 +458,7 @@ class WeightsEntry(PyBioSchema):
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion(missing=None)  # tensorflow_saved_model_bundle specific
+    tensorflow_version = fields.StrictVersion(missing=None)
 
 
 class ModelParent(PyBioSchema):
@@ -638,13 +638,23 @@ config:
     def weights_entries_match_weights_formats(self, data, **kwargs):
         weights: typing.Dict[str, WeightsEntry] = data["weights"]
         for weights_format, weights_entry in weights.items():
-            if "tensorflow" not in weights_format and weights_entry.tensorflow_version is not None:
-                raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
+            if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
+                if weights_entry.tensorflow_version is None:
+                    # todo: raise ValidationError (allow -> require)?
+                    warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
+            else:
+                if weights_entry.tensorflow_version is not None:
+                    raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
-            if weights_format != "onnx" and weights_entry.opset_version is not None:
-                raise ValidationError(
-                    f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
-                )
+            if weights_format == "onnx":
+                if weights_entry.opset_version is None:
+                    # todo: raise ValidationError?
+                    warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
+            else:
+                if weights_entry.opset_version is not None:
+                    raise ValidationError(
+                        f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
+                    )
 
 
 # Manifest
