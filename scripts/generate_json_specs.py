@@ -16,4 +16,4 @@ def export_json_model_spec(path: Path):
 
 
 if __name__ == "__main__":
-    export_json_model_spec(Path(__file__).parent / f"../generated/model_spec_{bioimageio.spec.__version__}.json")
+    export_json_model_spec(Path(__file__).parent / f"../dist/model_spec_{bioimageio.spec.__version__}.json")

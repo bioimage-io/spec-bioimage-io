@@ -126,4 +126,4 @@ def export_markdown_docs(folder: Path):
 
 
 if __name__ == "__main__":
-    export_markdown_docs(Path(__file__).parent / "../generated")
+    export_markdown_docs(Path(__file__).parent / "../dist")
