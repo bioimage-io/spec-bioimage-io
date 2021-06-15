@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import bioimageio.spec as spec
+from boltons.iterutils import remap
 
 #
 # utility functions to build the spec from python
@@ -415,7 +416,7 @@ def build_spec(
 
 
 def add_weights(
-    model: spec.raw_nodes.Model,
+    model,
     weight_uri: str,
     root: Optional[str] = None,
     weight_type: Optional[str] = None,
@@ -426,9 +427,17 @@ def add_weights(
     new_weights = _get_weights(weight_uri, weight_type, None, root, **weight_kwargs)[0]
     model.weights.update(new_weights)
 
-    # FIXME this fails with
-    # ImportedSource(factory=<class 'user_imports.5e008e787272408180a19fd72b83134b.UNet2d'>) has unexpected type <class 'bioimageio.spec.shared.nodes.ImportedSource'>
     serialized = spec.schema.Model().dump(model)
     model = spec.schema.Model().load(serialized)
 
     return model
+
+
+def serialize_spec(model, out_path, clear_defaults=True):
+    serialized = spec.schema.Model().dump(model)
+    # clear the default values using boltons remap
+    if clear_defaults:
+        defaults = ([], {}, None)
+        cleared = remap(serialized, visit=lambda p, k, v: v not in defaults)
+    with open(out_path, 'w') as f:
+        spec.utils.yaml.dump(cleared, f)

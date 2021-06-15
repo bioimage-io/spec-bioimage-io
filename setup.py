@@ -22,6 +22,7 @@ setup(
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "PyYAML>=5.2",
+        "boltons",
         "imageio>=2.5",
         "marshmallow>=3.6.0,<4.0",
         "marshmallow_jsonschema",
