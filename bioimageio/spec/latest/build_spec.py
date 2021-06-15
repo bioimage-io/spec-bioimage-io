@@ -48,7 +48,6 @@ def _infer_weight_type(path):
         raise ValueError(f"Could not infer weight type from extension {ext} for weight file {path}")
 
 
-# TODO extend supported weight types
 def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     weight_path = _get_local_path(weight_uri, root)
     if weight_type is None:
@@ -219,6 +218,7 @@ def _build_cite(cite):
     return citation_list
 
 
+# TODO we should make the name more specific: "build_model_spec"?
 # NOTE does not support multiple input / output tensors yet
 # to implement this we should wait for 0.4.0, see also
 # https://github.com/bioimage-io/spec-bioimage-io/issues/70#issuecomment-825737433
@@ -408,6 +408,26 @@ def build_spec(
 
     # serialize and deserialize the raw_nodes.Model to
     # check that all fields are well formed
+    serialized = spec.schema.Model().dump(model)
+    model = spec.schema.Model().load(serialized)
+
+    return model
+
+
+def add_weights(
+    model: spec.raw_nodes.Model,
+    weight_uri: str,
+    root: Optional[str] = None,
+    weight_type: Optional[str] = None,
+    **weight_kwargs
+):
+    """ Add weight entry to bioimage.io model.
+    """
+    new_weights = _get_weights(weight_uri, weight_type, None, root, **weight_kwargs)[0]
+    model.weights.update(new_weights)
+
+    # FIXME this fails with
+    # ImportedSource(factory=<class 'user_imports.5e008e787272408180a19fd72b83134b.UNet2d'>) has unexpected type <class 'bioimageio.spec.shared.nodes.ImportedSource'>
     serialized = spec.schema.Model().dump(model)
     model = spec.schema.Model().load(serialized)
 
