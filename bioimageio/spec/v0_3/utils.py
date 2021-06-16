@@ -36,8 +36,10 @@ def _(source: os.PathLike, root_path: Optional[pathlib.Path] = None) -> Tuple[ra
     source = pathlib.Path(source)
 
     suffixes = source.suffixes
-    if len(suffixes) < 2 or suffixes[-1] not in (".yml", ".yaml") or source.suffixes[-2] != ".model":
-        raise ValidationError(f"invalid suffixes {''.join(suffixes)} for source {source}")
+    # short path for flattened packaged models
+    if source.name not in ["model.yml", "model.yaml"]:
+        if len(suffixes) < 2 or suffixes[-1] not in (".yml", ".yaml") or source.suffixes[-2] != ".model":
+            raise ValidationError(f"invalid suffixes {''.join(suffixes)} for source {source}")
 
     data = yaml.load(source)
 
