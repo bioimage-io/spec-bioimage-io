@@ -6,6 +6,11 @@ from typing import List
 
 from marshmallow import missing
 
+try:
+    from typing import Literal, get_args
+except ImportError:
+    from typing_extensions import Literal, get_args  # noqa
+
 
 @dataclass
 class Node:
