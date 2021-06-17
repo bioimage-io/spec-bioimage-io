@@ -126,4 +126,6 @@ def export_markdown_docs(folder: Path):
 
 
 if __name__ == "__main__":
-    export_markdown_docs(Path(__file__).parent / "../dist")
+    dist = Path(__file__).parent / "../dist"
+    dist.mkdir(exist_ok=True)
+    export_markdown_docs(dist)
