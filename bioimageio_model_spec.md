@@ -16,8 +16,8 @@ is in an unsupported format version. The current format version described here i
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used. is a Dict with the following keys:
   * `text` _String_ 
-  * `doi` _optional String_ 
-  * `url` _optional String_ 
+  * `doi` _optional* String_ 
+  * `url` _optional* String_ 
 * `description` _String_ A string containing a brief description.
 * `documentation` _RelativeLocalPath→Path_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
 * `license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
@@ -26,6 +26,7 @@ E.g. the citation for the model architecture and/or the training data used. is a
 * `test_inputs` _List\[URI→String\]_ List of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: '.npy'
 * `test_outputs` _List\[URI→String\]_ Analog to to test_inputs.
 * `timestamp` _DateTime_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
+* `type` _String_ 
 * `weights` _Dict\[String, WeightsEntry\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
   1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pickle, pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
   1. _WeightsEntry_  is a Dict with the following keys:
@@ -153,5 +154,4 @@ with open(filename, "rb") as f:
  This field is only required if the field source is present.
 * `source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
 For example: `./my_function:MyImplementation` or `core_library.some_module.some_function`.
-* `type` _optional String_ 
 * `version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
