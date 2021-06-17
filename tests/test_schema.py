@@ -96,6 +96,7 @@ def model_dict():
         "weights": {},
         "test_inputs": [],
         "test_outputs": [],
+        "type": "model",
     }
 
 

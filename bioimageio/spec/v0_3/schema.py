@@ -159,7 +159,7 @@ documentation or for the model to run, these files will be included when generat
         bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
-    type = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.Type)))
+    type = fields.String(required=True, validate=field_validators.OneOf(get_args(raw_nodes.Type)))
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
