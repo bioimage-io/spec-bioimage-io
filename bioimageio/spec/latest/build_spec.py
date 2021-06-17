@@ -213,13 +213,18 @@ def _get_output_tensor(test_out, name, reference_input, scale, offset, axes, dat
     return outputs
 
 
+def _build_authors(authors: List[Dict[str, str]]):
+    return [spec.raw_nodes.Author(**a) for a in authors]
+
+
 # TODO The citation entry should be improved so that we can properly derive doi vs. url
-def _build_cite(cite):
+def _build_cite(cite: Dict[str, str]):
     citation_list = [spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()]
     return citation_list
 
 
 # TODO we should make the name more specific: "build_model_spec"?
+# TODO maybe "build_raw_model" as it return raw_nodes.Model
 # NOTE does not support multiple input / output tensors yet
 # to implement this we should wait for 0.4.0, see also
 # https://github.com/bioimage-io/spec-bioimage-io/issues/70#issuecomment-825737433
@@ -385,8 +390,13 @@ def build_spec(
     }
     kwargs = {k: v for k, v in optional_kwargs.items() if v is not None}
 
-    # build the citation object
+    # build raw_nodes objects
+    authors = _build_authors(authors)
     cite = _build_cite(cite)
+    documentation = spec.fields.URI().deserialize(documentation)
+    covers = [spec.fields.URI().deserialize(uri) for uri in covers]
+    test_inputs = [spec.fields.URI().deserialize(uri) for uri in test_inputs]
+    test_outputs = [spec.fields.URI().deserialize(uri) for uri in test_outputs]
 
     model = spec.raw_nodes.Model(
         format_version=format_version,
@@ -415,15 +425,8 @@ def build_spec(
     return model
 
 
-def add_weights(
-    model,
-    weight_uri: str,
-    root: Optional[str] = None,
-    weight_type: Optional[str] = None,
-    **weight_kwargs
-):
-    """ Add weight entry to bioimage.io model.
-    """
+def add_weights(model, weight_uri: str, root: Optional[str] = None, weight_type: Optional[str] = None, **weight_kwargs):
+    """Add weight entry to bioimage.io model."""
     new_weights = _get_weights(weight_uri, weight_type, None, root, **weight_kwargs)[0]
     model.weights.update(new_weights)
 
@@ -439,5 +442,5 @@ def serialize_spec(model, out_path, clear_defaults=True):
     if clear_defaults:
         defaults = ([], {}, None)
         cleared = remap(serialized, visit=lambda p, k, v: v not in defaults)
-    with open(out_path, 'w') as f:
+    with open(out_path, "w") as f:
         spec.utils.yaml.dump(cleared, f)
