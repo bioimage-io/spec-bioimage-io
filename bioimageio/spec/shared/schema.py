@@ -6,7 +6,7 @@ from bioimageio.spec.shared import fields
 from . import raw_nodes
 
 
-class SharedPyBioSchema(Schema):
+class SharedBioImageIOSchema(Schema):
     raw_nodes: ModuleType = raw_nodes  # should be overwritten in subclass by version specific raw nodes module
     bioimageio_description: str = ""
 
@@ -31,7 +31,7 @@ class SharedPyBioSchema(Schema):
             raise e
 
 
-class ImplicitInputShape(SharedPyBioSchema):
+class ImplicitInputShape(SharedBioImageIOSchema):
     min = fields.List(
         fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
     )
@@ -50,7 +50,7 @@ class ImplicitInputShape(SharedPyBioSchema):
             raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
 
 
-class ImplicitOutputShape(SharedPyBioSchema):
+class ImplicitOutputShape(SharedBioImageIOSchema):
     reference_input = fields.String(required=True, bioimageio_description="Name of the reference input tensor.")
     scale = fields.List(
         fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."

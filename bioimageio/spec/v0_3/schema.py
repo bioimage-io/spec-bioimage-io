@@ -6,7 +6,7 @@ from marshmallow import Schema, ValidationError, missing as missing_, post_load,
 from spdx_license_list import LICENSES
 
 from bioimageio.spec.shared import field_validators, fields
-from bioimageio.spec.shared.schema import SharedPyBioSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
 
 try:
@@ -15,11 +15,11 @@ except ImportError:
     from typing_extensions import get_args
 
 
-class PyBioSchema(SharedPyBioSchema):
+class BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Author(PyBioSchema):
+class Author(BioImageIOSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
     orcid = fields.String(
@@ -35,7 +35,7 @@ class Author(PyBioSchema):
     )
 
 
-class CiteEntry(PyBioSchema):
+class CiteEntry(BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String(bioimageio_maybe_required=True)
     url = fields.String(bioimageio_maybe_required=True)
@@ -46,14 +46,14 @@ class CiteEntry(PyBioSchema):
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
-class RunMode(PyBioSchema):
+class RunMode(BioImageIOSchema):
     name = fields.String(
         required=True, bioimageio_description="The name of the `run_mode`"
     )  # todo: limit valid run mode names
     kwargs = fields.Kwargs()
 
 
-class RDF(PyBioSchema):
+class RDF(BioImageIOSchema):
     """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
 
     format_version = fields.String(
@@ -167,12 +167,12 @@ documentation or for the model to run, these files will be included when generat
     )
 
 
-class SpecWithKwargs(PyBioSchema):
+class SpecWithKwargs(BioImageIOSchema):
     spec: fields.SpecURI
     kwargs = fields.Kwargs()
 
 
-class Tensor(PyBioSchema):
+class Tensor(BioImageIOSchema):
     name = fields.String(
         required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
     )
@@ -219,16 +219,16 @@ class Tensor(PyBioSchema):
                 raise ValidationError("`kwargs.axes` needs to be subset of axes")
 
 
-class Processing(PyBioSchema):
-    class Binarize(Schema):  # do not inherit from PyBioSchema, return only a validated dict, no specific node
+class Processing(BioImageIOSchema):
+    class Binarize(Schema):  # do not inherit from BioImageIOSchema, return only a validated dict, no specific node
         # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing
         threshold = fields.Float(required=True)
 
-    class Clip(PyBioSchema):
+    class Clip(BioImageIOSchema):
         min = fields.Float(required=True)
         max = fields.Float(required=True)
 
-    class ScaleLinear(PyBioSchema):
+    class ScaleLinear(BioImageIOSchema):
         axes = fields.Axes(required=True, valid_axes="czyx")
         gain = fields.Array(fields.Float(), missing=fields.Float(missing=1.0))  # todo: check if gain match input axes
         offset = fields.Array(
@@ -255,10 +255,10 @@ class Processing(PyBioSchema):
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
-    class Sigmoid(PyBioSchema):
+    class Sigmoid(BioImageIOSchema):
         pass
 
-    class ZeroMeanUnitVariance(PyBioSchema):
+    class ZeroMeanUnitVariance(BioImageIOSchema):
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(required=True, valid_axes="czyx")
         mean = fields.Array(fields.Float())  # todo: check if means match input axes (for mode 'fixed')
@@ -288,7 +288,7 @@ class Preprocessing(Processing):
     )
     kwargs = fields.Kwargs()
 
-    class ScaleRange(PyBioSchema):
+    class ScaleRange(BioImageIOSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(required=True, valid_axes="czyx")
         min_percentile = fields.Float(
@@ -320,7 +320,7 @@ class Postprocessing(Processing):
     class ScaleRange(Preprocessing.ScaleRange):
         reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
-    class ScaleMeanVariance(PyBioSchema):
+    class ScaleMeanVariance(BioImageIOSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
@@ -421,7 +421,7 @@ with open(filename, "rb") as f:
 )
 
 
-class WeightsEntry(PyBioSchema):
+class WeightsEntry(BioImageIOSchema):
     authors = fields.List(
         fields.Nested(Author),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
@@ -448,7 +448,7 @@ class WeightsEntry(PyBioSchema):
     tensorflow_version = fields.StrictVersion()
 
 
-class ModelParent(PyBioSchema):
+class ModelParent(BioImageIOSchema):
     uri = fields.URI(
         bioimageio_description="Url of another model available on bioimage.io or path to a local model in the "
         "bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the "
@@ -643,20 +643,20 @@ config:
 
 
 # Manifest
-class BioImageIoManifestModelEntry(PyBioSchema):
+class BioImageIoManifestModelEntry(BioImageIOSchema):
     id = fields.String(required=True)
     source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
     links = fields.List(fields.String)
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
-class Badge(PyBioSchema):
+class Badge(BioImageIOSchema):
     label = fields.String(required=True)
     icon = fields.URI()
     url = fields.URI()
 
 
-class BioImageIoManifestNotebookEntry(PyBioSchema):
+class BioImageIoManifestNotebookEntry(BioImageIOSchema):
     id = fields.String(required=True)
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
@@ -678,7 +678,7 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
     links = fields.List(fields.String)  # todo: make List[URI]?
 
 
-class BioImageIoManifest(PyBioSchema):
+class BioImageIoManifest(BioImageIOSchema):
     format_version = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.ManifestFormatVersion)), required=True
     )
