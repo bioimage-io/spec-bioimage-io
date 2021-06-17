@@ -677,9 +677,7 @@ class BioImageIoManifestNotebookEntry(BioImageIOSchema):
 
 
 class BioImageIoManifest(BioImageIOSchema):
-    format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.ManifestFormatVersion)), required=True
-    )
+    format_version = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)), required=True)
     config = fields.Dict()
 
     application = fields.List(fields.Dict)
