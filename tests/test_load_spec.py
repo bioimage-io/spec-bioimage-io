@@ -12,7 +12,7 @@ def test_load_non_existing_spec():
 
 
 def test_load_non_valid_spec_name():
-    spec_path = "some/none/existing/path/to/spec.not_valid.yaml"
+    spec_path = "some/none/existing/path/to/spec.not_valid_suffix"
 
     with pytest.raises(ValidationError):
         load_model(spec_path)

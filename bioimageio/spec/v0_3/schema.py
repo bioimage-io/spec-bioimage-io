@@ -2,7 +2,7 @@ import typing
 import warnings
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
+from marshmallow import Schema, ValidationError, missing as missing_, post_load, validates, validates_schema
 from spdx_license_list import LICENSES
 
 from bioimageio.spec.shared import field_validators, fields
@@ -21,14 +21,13 @@ class PyBioSchema(SharedPyBioSchema):
 
 class Author(PyBioSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
-    affiliation = fields.String(missing=None, bioimageio_description="Affiliation.")
+    affiliation = fields.String(bioimageio_description="Affiliation.")
     orcid = fields.String(
         validate=[
             field_validators.Length(19),
             lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
             lambda oid: stdnum.iso7064.mod_11_2.is_valid(oid.replace("-", "")),
         ],
-        missing=None,
         bioimageio_description="[orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id "
         "in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid]("
         "https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier"
@@ -38,12 +37,12 @@ class Author(PyBioSchema):
 
 class CiteEntry(PyBioSchema):
     text = fields.String(required=True)
-    doi = fields.String(missing=None)
-    url = fields.String(missing=None)
+    doi = fields.String(bioimageio_maybe_required=True)
+    url = fields.String(bioimageio_maybe_required=True)
 
     @validates_schema
     def doi_or_url(self, data, **kwargs):
-        if data["doi"] is None and data["url"] is None:
+        if data.get("doi") is None and data.get("url") is None:
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
@@ -87,7 +86,6 @@ E.g. the citation for the model architecture and/or the training data used.""",
 
     git_repo = fields.String(
         validate=field_validators.URL(schemes=["http", "https"]),
-        missing=None,
         bioimageio_description="""A url to the git repository, e.g. to Github or Gitlab.
 If the model is contained in a subfolder of a git repository, then a url to the exact folder
 (which contains the configuration yaml file) should be used.""",
@@ -119,7 +117,6 @@ If the model is contained in a subfolder of a git repository, then a url to the 
     )
     covers = fields.List(
         fields.URI,
-        missing=list,
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
@@ -127,7 +124,6 @@ If the model is contained in a subfolder of a git repository, then a url to the 
     attachments = fields.Dict(
         fields.String,
         fields.Union([fields.URI(), fields.List(fields.URI)]),
-        missing=dict,
         bioimageio_maybe_required=True,
         bioimageio_description="""Dictionary of text keys and URI (or a list of URI) values to additional, relevant
 files. E.g. we can place a list of URIs under the `files` to list images and other files that are necessary for the
@@ -136,31 +132,27 @@ documentation or for the model to run, these files will be included when generat
 
     run_mode = fields.Nested(
         RunMode,
-        missing=None,
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
         "listed in [supported_formats_and_operations.md#Run Modes]"
         "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
     )
-    config = fields.Dict(missing=dict)
+    config = fields.Dict()
 
     language = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.Language)),
-        missing=None,
         bioimageio_maybe_required=True,
         bioimageio_description=f"Programming language of the source code. One of: "
         f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
     )
     framework = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
-        missing=None,
         bioimageio_description=f"The deep learning framework of the source code. One of: "
         f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
     )
     dependencies = fields.Dependencies(
-        missing=None,
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
-        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'",
+        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
     )
     timestamp = fields.DateTime(
         required=True,
@@ -169,10 +161,9 @@ documentation or for the model to run, these files will be included when generat
     )
     type = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.Type)))
     version = fields.StrictVersion(
-        missing=None,
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
-        "e.g. the initial version number should be `0.1.0`.",
+        "e.g. the initial version number should be `0.1.0`."
     )
 
 
@@ -185,7 +176,7 @@ class Tensor(PyBioSchema):
     name = fields.String(
         required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
     )
-    description = fields.String(missing=None)
+    description = fields.String()
     axes = fields.Axes(
         required=True,
         bioimageio_description="""Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
@@ -209,7 +200,6 @@ class Tensor(PyBioSchema):
     )
     data_range = fields.Tuple(
         (fields.Float(allow_nan=True), fields.Float(allow_nan=True)),
-        missing=(None, None),
         bioimageio_description="Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. "
         "If not specified, the full data range that can be expressed in `data_type` is allowed.",
     )
@@ -231,6 +221,7 @@ class Tensor(PyBioSchema):
 
 class Processing(PyBioSchema):
     class Binarize(Schema):  # do not inherit from PyBioSchema, return only a validated dict, no specific node
+        # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing
         threshold = fields.Float(required=True)
 
     class Clip(PyBioSchema):
@@ -260,7 +251,7 @@ class Processing(PyBioSchema):
                 f"Schema {schema_name} for {data['name']} {self.__class__.__name__.lower()}"
             ) from missing_schema_error
 
-        kwargs_validation_errors = schema_class().validate(data["kwargs"])
+        kwargs_validation_errors = schema_class().validate(data.get("kwargs", {}))
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
@@ -270,17 +261,17 @@ class Processing(PyBioSchema):
     class ZeroMeanUnitVariance(PyBioSchema):
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(required=True, valid_axes="czyx")
-        mean = fields.Array(fields.Float(), missing=None)  # todo: check if means match input axes (for mode 'fixed')
-        std = fields.Array(fields.Float(), missing=None)
+        mean = fields.Array(fields.Float())  # todo: check if means match input axes (for mode 'fixed')
+        std = fields.Array(fields.Float())
         eps = fields.Float(missing=1e-6)
 
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
-            if data["mode"] == "fixed" and (data["mean"] is None or data["std"] is None):
+            if data["mode"] == "fixed" and (data["mean"] is missing_ or data["std"] is missing_):
                 raise ValidationError(
                     "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional `kwargs`: `mean` and `std`."
                 )
-            elif data["mode"] != "fixed" and (data.get("mean") is not None or data.get("std") is not None):
+            elif data["mode"] != "fixed" and (data.get("mean") is not missing_ or data.get("std") is not missing_):
                 raise ValidationError(
                     "`kwargs`: `mean` and `std` for 'zero_mean_unit_variance' preprocessing are only valid for `mode` 'fixed'."
                 )
@@ -338,7 +329,6 @@ class InputTensor(Tensor):
     shape = fields.InputShape(required=True, bioimageio_description="Specification of tensor shape.")
     preprocessing = fields.List(
         fields.Nested(Preprocessing),
-        missing=list,
         bioimageio_description="Description of how this input should be preprocessed.",
     )
     processing_name = "preprocessing"
@@ -376,7 +366,6 @@ class OutputTensor(Tensor):
     shape = fields.OutputShape(required=True)
     halo = fields.List(
         fields.Integer,
-        missing=None,
         bioimageio_description="The halo to crop from the output tensor (for example to crop away boundary effects or "
         "for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The "
         "`halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use "
@@ -384,7 +373,6 @@ class OutputTensor(Tensor):
     )
     postprocessing = fields.List(
         fields.Nested(Postprocessing),
-        missing=list,
         bioimageio_description="Description of how this output should be postprocessed.",
     )
     processing_name = "postprocessing"
@@ -392,7 +380,7 @@ class OutputTensor(Tensor):
     @validates_schema
     def matching_halo_length(self, data, **kwargs):
         shape = data["shape"]
-        halo = data["halo"]
+        halo = data.get("halo")
         if halo is None:
             return
         elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
@@ -401,14 +389,14 @@ class OutputTensor(Tensor):
         else:
             raise NotImplementedError(type(shape))
 
-    @post_load
-    def make_object(self, data, **kwargs):
-        shape = data["shape"]
-        halo = data["halo"]
-        if halo is None:
-            data["halo"] = [0] * len(shape)
-
-        return super().make_object(data, **kwargs)
+    # @post_load
+    # def make_object(self, data, **kwargs):
+    #     shape = data["shape"]
+    #     halo = data["halo"]
+    #     if halo is missing_:
+    #         data["halo"] = [0] * len(shape)
+    #
+    #     return super().make_object(data, **kwargs)
 
 
 _common_sha256_hint = (
@@ -436,32 +424,28 @@ with open(filename, "rb") as f:
 class WeightsEntry(PyBioSchema):
     authors = fields.List(
         fields.Nested(Author),
-        missing=list,
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
         "person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) "
         "who have converted the weights to this format.",
     )  # todo: copy root authors if missing
     attachments = fields.Dict(
-        missing=dict,
         bioimageio_description="Dictionary of text keys and URI (or a list of URI) values to additional, relevant "
         "files that are specific to the current weight format. A list of URIs can be listed under the `files` key to "
         "included additional files for generating the model package.",
     )
     parent = fields.String(
-        missing=None,
         bioimageio_description="The source weights used as input for converting the weights to this format. For "
         "example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent "
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
         "the model), need to have this field.",
     )
-    opset_version = fields.Number(missing=None)  # ONNX Specific
+    opset_version = fields.Number()  # ONNX Specific
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
-        missing=None,
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion(missing=None)
+    tensorflow_version = fields.StrictVersion()
 
 
 class ModelParent(PyBioSchema):
@@ -491,21 +475,18 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     packaged_by = fields.List(
         fields.Nested(Author),
-        missing=list,
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any {WeightsEntry.__name__}.",
     )
 
     parent = fields.Nested(
         ModelParent,
-        missing=None,
         bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
         "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
         "checkpoint, see `weights`.",
     )
 
     source = fields.ImportableSource(
-        missing=None,
         bioimageio_maybe_required=True,
         bioimageio_description="Language and framework specific implementation. As some weights contain the model "
         "architecture, the source is optional depending on the present weight formats. `source` can either point to a "
@@ -515,7 +496,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
-        missing=None,
         bioimageio_description="SHA256 checksum of the model source code file."
         + _common_sha256_hint
         + " This field is only required if the field source is present.",
@@ -557,18 +537,14 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     sample_inputs = fields.List(
         fields.URI,
-        missing=[],
         bioimageio_description="List of URIs to sample inputs to illustrate possible inputs for the model, for example "
         "stored as png or tif images.",
     )
     sample_outputs = fields.List(
-        fields.URI,
-        missing=[],
-        bioimageio_description="List of URIs to sample outputs corresponding to the `sample_inputs`.",
+        fields.URI, bioimageio_description="List of URIs to sample outputs corresponding to the `sample_inputs`."
     )
 
     config = fields.Dict(
-        missing=dict,
         bioimageio_description="""
 A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name.
 
@@ -590,34 +566,34 @@ config:
       runtime: 78.8s # Time it took to run the model
       pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
 ```
-""",
+"""
     )
 
     @validates_schema
     def language_and_framework_match(self, data, **kwargs):
         field_names = ("language", "framework")
         valid_combinations = [
-            ("python", "scikit-learn"),
+            ("python", "scikit-learn"),  # todo: remove
             ("python", "pytorch"),
             ("python", "tensorflow"),
             ("java", "tensorflow"),
         ]
-        if data["source"] is None:
-            valid_combinations.append((None, None))
-            valid_combinations.append(("python", None))  # todo: in py3.9 use typing.get_args(raw_nodes.Langauge)
-            valid_combinations.append(("java", None))
+        if "source" not in data:
+            valid_combinations.append((missing_, missing_))
+            valid_combinations.append(("python", missing_))
+            valid_combinations.append(("java", missing_))
 
-        combination = tuple(data[name] for name in field_names)
+        combination = tuple(data.get(name, missing_) for name in field_names)
         if combination not in valid_combinations:
             raise ValidationError(f"invalid combination of {dict(zip(field_names, combination))}")
 
     @validates_schema
     def source_specified_if_required(self, data, **kwargs):
-        if data["source"] is not None:
+        if "source" in data:
             return
 
         weight_format_requires_source = {
-            "pickle": True,
+            "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
             "keras_hdf5": False,
@@ -635,9 +611,12 @@ config:
     def validate_reference_tensor_names(self, data, **kwargs):
         valid_input_tensor_references = [ipt.name for ipt in data["inputs"]]
         for out in data["outputs"]:
+            if out.postprocessing is missing_:
+                continue
+
             for postpr in out.postprocessing:
-                ref_tensor = postpr.kwargs.get("reference_tensor", None)
-                if ref_tensor is not None and ref_tensor not in valid_input_tensor_references:
+                ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
+                if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
 
     @validates_schema
@@ -645,19 +624,19 @@ config:
         weights: typing.Dict[str, WeightsEntry] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
-                if weights_entry.tensorflow_version is None:
+                if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
                     warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
             else:
-                if weights_entry.tensorflow_version is not None:
+                if weights_entry.tensorflow_version is not missing_:
                     raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format == "onnx":
-                if weights_entry.opset_version is None:
+                if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
             else:
-                if weights_entry.opset_version is not None:
+                if weights_entry.opset_version is not missing_:
                     raise ValidationError(
                         f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
                     )
@@ -667,7 +646,7 @@ config:
 class BioImageIoManifestModelEntry(PyBioSchema):
     id = fields.String(required=True)
     source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
-    links = fields.List(fields.String, missing=list)
+    links = fields.List(fields.String)
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
@@ -689,24 +668,24 @@ class BioImageIoManifestNotebookEntry(PyBioSchema):
     )
     description = fields.String(required=True)
 
-    cite = fields.List(fields.Nested(CiteEntry), missing=list)
+    cite = fields.List(fields.Nested(CiteEntry))
     authors = fields.List(fields.Nested(Author), required=True)
-    covers = fields.List(fields.URI, missing=list)
+    covers = fields.List(fields.URI)
 
-    badges = fields.List(fields.Nested(Badge), missing=list)
-    tags = fields.List(fields.String, missing=list)
+    badges = fields.List(fields.Nested(Badge))
+    tags = fields.List(fields.String)
     source = fields.URI(required=True)
-    links = fields.List(fields.String, missing=list)  # todo: make List[URI]?
+    links = fields.List(fields.String)  # todo: make List[URI]?
 
 
 class BioImageIoManifest(PyBioSchema):
     format_version = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.ManifestFormatVersion)), required=True
     )
-    config = fields.Dict(missing=dict)
+    config = fields.Dict()
 
-    application = fields.List(fields.Dict, missing=list)
-    collection = fields.List(fields.Dict, missing=list)
-    model = fields.List(fields.Nested(BioImageIoManifestModelEntry), missing=list)
-    dataset = fields.List(fields.Dict, missing=list)
-    notebook = fields.List(fields.Nested(BioImageIoManifestNotebookEntry), missing=list)
+    application = fields.List(fields.Dict)
+    collection = fields.List(fields.Dict)
+    model = fields.List(fields.Nested(BioImageIoManifestModelEntry))
+    dataset = fields.List(fields.Dict)
+    notebook = fields.List(fields.Nested(BioImageIoManifestNotebookEntry))

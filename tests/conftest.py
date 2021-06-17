@@ -23,6 +23,11 @@ def rf_config_path_v0_3_2():
 
 
 @pytest.fixture
+def rf_config_path_v0_3(rf_config_path_v0_3_2):
+    return rf_config_path_v0_3_2
+
+
+@pytest.fixture
 def rf_config_path(rf_config_path_v0_3_2):
     return rf_config_path_v0_3_2
 
