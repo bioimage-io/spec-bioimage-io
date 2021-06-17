@@ -82,4 +82,4 @@ def test_resolve_directory_uri(tmpdir):
 
 def test_load_raw_model(rf_config_path):
     rf_model_data = yaml.load(rf_config_path)
-    load_raw_model(rf_model_data, rf_config_path)
+    load_raw_model(rf_model_data)
