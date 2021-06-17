@@ -2,7 +2,7 @@ import os
 import pathlib
 import warnings
 from functools import singledispatch
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 
 from marshmallow import ValidationError
 
@@ -60,7 +60,15 @@ def _(source: str) -> raw_nodes.Model:
     return load_raw_model(source)
 
 
-def load_model(source, root_path: Optional[pathlib.Path] = None):
+def load_model(source: Union[os.PathLike, str, dict], root_path: Optional[os.PathLike] = None):
+    if root_path is None:
+        if isinstance(source, os.PathLike):
+            root_path = pathlib.Path(source)
+        else:
+            raise TypeError("Require root_path or source to be os.PathLike")
+    else:
+        root_path = pathlib.Path(root_path)
+
     return resolve_raw_node_to_node(load_raw_model(source), root_path=root_path, nodes_module=nodes)
 
 
