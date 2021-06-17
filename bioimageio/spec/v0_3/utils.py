@@ -1,5 +1,6 @@
 import os
 import pathlib
+import warnings
 from functools import singledispatch
 from typing import Optional, Sequence, Tuple
 
@@ -37,6 +38,11 @@ def _(source: os.PathLike, root_path: Optional[pathlib.Path] = None) -> Tuple[ra
 
     if source.suffix not in (".yml", ".yaml"):
         raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
+    elif source.suffix == ".yml":
+        warnings.warn(
+            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
+            "(https://yaml.org/faq.html)"
+        )
 
     data = yaml.load(source)
 
