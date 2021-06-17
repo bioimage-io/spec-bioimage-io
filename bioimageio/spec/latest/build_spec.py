@@ -1,11 +1,12 @@
-import os
 import datetime
 import hashlib
+import os
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+
 import bioimageio.spec as spec
-from boltons.iterutils import remap
+
 
 #
 # utility functions to build the spec from python
@@ -436,11 +437,6 @@ def add_weights(model, weight_uri: str, root: Optional[str] = None, weight_type:
     return model
 
 
-def serialize_spec(model, out_path, clear_defaults=True):
+def serialize_spec(model, out_path):  # TODO change name to include model (see build_model_spec)
     serialized = spec.schema.Model().dump(model)
-    # clear the default values using boltons remap
-    if clear_defaults:
-        defaults = ([], {}, None)
-        cleared = remap(serialized, visit=lambda p, k, v: v not in defaults)
-    with open(out_path, "w") as f:
-        spec.utils.yaml.dump(cleared, f)
+    spec.utils.yaml.dump(serialized, out_path)
