@@ -163,6 +163,7 @@ class Model(RDF):
     source: Union[_Missing, ImportableSource] = missing
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
+    type: Type = "model"
     weights: Dict[WeightsFormat, WeightsEntry] = missing
 
 
