@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
@@ -394,7 +395,7 @@ def build_spec(
     # build raw_nodes objects
     authors = _build_authors(authors)
     cite = _build_cite(cite)
-    documentation = spec.fields.URI().deserialize(documentation)
+    documentation = Path(documentation)
     covers = [spec.fields.URI().deserialize(uri) for uri in covers]
     test_inputs = [spec.fields.URI().deserialize(uri) for uri in test_inputs]
     test_outputs = [spec.fields.URI().deserialize(uri) for uri in test_outputs]
