@@ -149,8 +149,10 @@ is in an unsupported format version. The current format version described here i
 
     @validates("license")
     def warn_about_deprecated_spdx_license(self, value: str):
-        license_info = LICENSES[value]
-        if license_info["isDeprecatedLicenseId"]:
+        license_info = LICENSES.get(value)
+        if license_info is None:
+            warnings.warn(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
+        elif license_info["isDeprecatedLicenseId"]:
             warnings.warn(f"{license_info['name']} is deprecated")
 
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
