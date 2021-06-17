@@ -328,8 +328,7 @@ class Postprocessing(Processing):
 class InputTensor(Tensor):
     shape = fields.InputShape(required=True, bioimageio_description="Specification of tensor shape.")
     preprocessing = fields.List(
-        fields.Nested(Preprocessing),
-        bioimageio_description="Description of how this input should be preprocessed.",
+        fields.Nested(Preprocessing), bioimageio_description="Description of how this input should be preprocessed."
     )
     processing_name = "preprocessing"
 
@@ -372,8 +371,7 @@ class OutputTensor(Tensor):
         "`shape:offset` if the model output itself is cropped and input and output shapes not fixed.",
     )
     postprocessing = fields.List(
-        fields.Nested(Postprocessing),
-        bioimageio_description="Description of how this output should be postprocessed.",
+        fields.Nested(Postprocessing), bioimageio_description="Description of how this output should be postprocessed."
     )
     processing_name = "postprocessing"
 
@@ -431,13 +429,13 @@ class WeightsEntry(BioImageIOSchema):
     attachments = fields.Dict(
         bioimageio_description="Dictionary of text keys and URI (or a list of URI) values to additional, relevant "
         "files that are specific to the current weight format. A list of URIs can be listed under the `files` key to "
-        "included additional files for generating the model package.",
+        "included additional files for generating the model package."
     )
     parent = fields.String(
         bioimageio_description="The source weights used as input for converting the weights to this format. For "
         "example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent "
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
-        "the model), need to have this field.",
+        "the model), need to have this field."
     )
     opset_version = fields.Number()  # ONNX Specific
     sha256 = fields.String(
