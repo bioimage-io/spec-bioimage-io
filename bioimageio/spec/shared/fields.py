@@ -260,8 +260,8 @@ class InputShape(Union):
 
 
 class Kwargs(Dict):
-    def __init__(self, keys=String, missing=dict, bioimageio_description="Key word arguments.", **super_kwargs):
-        super().__init__(keys, missing=missing, bioimageio_description=bioimageio_description, **super_kwargs)
+    def __init__(self, keys=String, bioimageio_description="Key word arguments.", **super_kwargs):
+        super().__init__(keys, bioimageio_description=bioimageio_description, **super_kwargs)
 
 
 class OutputShape(Union):

@@ -1,9 +1,10 @@
 import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union
+from typing import Any, Dict, List, NewType, Tuple, Union
 
 from marshmallow import missing
+from marshmallow.utils import _Missing
 
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
@@ -51,8 +52,8 @@ Axes = NewType("Axes", str)
 @dataclass
 class Author(Node):
     name: str = missing
-    affiliation: Optional[str] = missing
-    orcid: Optional[str] = missing
+    affiliation: Union[_Missing, str] = missing
+    orcid: Union[_Missing, str] = missing
 
 
 ImportableSource = Union[ImportableModule, ImportablePath]
@@ -61,37 +62,37 @@ ImportableSource = Union[ImportableModule, ImportablePath]
 @dataclass
 class CiteEntry(Node):
     text: str = missing
-    doi: Optional[str] = missing
-    url: Optional[str] = missing
+    doi: Union[_Missing, str] = missing
+    url: Union[_Missing, str] = missing
 
 
 @dataclass
 class RunMode(Node):
     name: str = missing
-    kwargs: Dict[str, Any] = missing
+    kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
 @dataclass
 class RDF(Node):
-    attachments: Dict[str, Any] = missing
+    attachments: Union[_Missing, Dict[str, Any]] = missing
     authors: List[Author] = missing
     cite: List[CiteEntry] = missing
-    config: dict = missing
-    covers: List[URI] = missing
-    dependencies: Optional[Dependencies] = missing
+    config: Union[_Missing, dict] = missing
+    covers: Union[_Missing, List[URI]] = missing
+    dependencies: Union[_Missing, Dependencies] = missing
     description: str = missing
     documentation: URI = missing
     format_version: FormatVersion = missing
-    framework: Framework = missing
-    git_repo: Optional[str] = missing
-    language: Language = missing
+    framework: Union[_Missing, Framework] = missing
+    git_repo: Union[_Missing, str] = missing
+    language: Union[_Missing, Language] = missing
     license: str = missing
     name: str = missing
-    run_mode: Optional[RunMode] = missing
+    run_mode: Union[_Missing, RunMode] = missing
     tags: List[str] = missing
     timestamp: datetime = missing
     type: Type = missing
-    version: Optional[distutils.version.StrictVersion] = missing
+    version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
@@ -112,9 +113,9 @@ class InputTensor:
     data_type: str = missing
     axes: Axes = missing
     shape: Union[List[int], ImplicitInputShape] = missing
-    preprocessing: List[Preprocessing] = missing
-    description: Optional[str] = missing
-    data_range: Tuple[float, float] = missing
+    preprocessing: Union[_Missing, List[Preprocessing]] = missing
+    description: Union[_Missing, str] = missing
+    data_range: Union[_Missing, Tuple[float, float]] = missing
 
 
 @dataclass
@@ -123,24 +124,24 @@ class OutputTensor:
     data_type: str = missing
     axes: Axes = missing
     shape: Union[List[int], ImplicitOutputShape] = missing
-    halo: List[int] = missing
-    postprocessing: List[Postprocessing] = missing
-    description: Optional[str] = missing
-    data_range: Tuple[float, float] = missing
+    halo: Union[_Missing, List[int]] = missing
+    postprocessing: Union[_Missing, List[Postprocessing]] = missing
+    description: Union[_Missing, str] = missing
+    data_range: Union[_Missing, Tuple[float, float]] = missing
 
 
 @dataclass
 class WeightsEntry(Node):
-    authors: List[Author] = missing
-    attachments: Dict = missing
-    parent: Optional[str] = missing
+    authors: Union[_Missing, List[Author]] = missing
+    attachments: Union[_Missing, Dict] = missing
+    parent: Union[_Missing, str] = missing
     # ONNX specific
-    opset_version: Optional[int] = missing
+    opset_version: Union[_Missing, int] = missing
     # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
     # todo: check schema. only valid for tensorflow_saved_model_bundle format
-    sha256: str = missing
+    sha256: Union[_Missing, str] = missing
     source: URI = missing
-    tensorflow_version: Optional[distutils.version.StrictVersion] = missing
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
@@ -152,16 +153,17 @@ class ModelParent(Node):
 @dataclass
 class Model(RDF):
     inputs: List[InputTensor] = missing
-    kwargs: Dict[str, Any] = missing
+    kwargs: Union[_Missing, Dict[str, Any]] = missing
     outputs: List[OutputTensor] = missing
-    packaged_by: List[Author] = missing
-    parent: ModelParent = missing
-    sample_inputs: List[URI] = missing
-    sample_outputs: List[URI] = missing
-    sha256: str = missing
-    source: Optional[ImportableSource] = missing
+    packaged_by: Union[_Missing, List[Author]] = missing
+    parent: Union[_Missing, ModelParent] = missing
+    sample_inputs: Union[_Missing, List[URI]] = missing
+    sample_outputs: Union[_Missing, List[URI]] = missing
+    sha256: Union[_Missing, str] = missing
+    source: Union[_Missing, ImportableSource] = missing
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
+    type: Type = "model"
     weights: Dict[WeightsFormat, WeightsEntry] = missing
 
 

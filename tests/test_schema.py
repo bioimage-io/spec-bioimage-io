@@ -1,6 +1,8 @@
 import pytest
 from datetime import datetime
 
+from marshmallow import missing
+
 from bioimageio.spec import nodes, schema
 
 
@@ -41,22 +43,20 @@ def test_tensor_schema_preprocessing():
             "data_type": "float32",
             "axes": "xyc",
             "shape": [128, 128, 3],
-            "preprocessing": [],
         },
         {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
     ],
 )
 def test_tensor_schema_no_preprocessing(data):
     validated_data = schema.InputTensor().load(data)
-    assert isinstance(validated_data.preprocessing, list)
-    assert len(validated_data.preprocessing) == 0
+    assert validated_data.preprocessing is missing
 
 
 @pytest.mark.parametrize("schema_instance", [schema.InputTensor(), schema.OutputTensor()])
 def test_tensor_schema_optional_description(schema_instance):
     data = {"name": "input_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
     validated_data = schema_instance.load(data)
-    assert validated_data.description is None
+    assert validated_data.description is missing
 
 
 @pytest.fixture
@@ -96,6 +96,7 @@ def model_dict():
         "weights": {},
         "test_inputs": [],
         "test_outputs": [],
+        "type": "model",
     }
 
 
