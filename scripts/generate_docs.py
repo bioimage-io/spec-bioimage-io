@@ -42,7 +42,6 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
     sub_docs = []
     required = True
     if inspect.isclass(obj) and issubclass(obj, schema.SharedBioImageIOSchema):
-
         obj = obj()
 
     if isinstance(obj, schema.SharedBioImageIOSchema):
@@ -121,8 +120,10 @@ def markdown_from_schema(schema: schema.SharedBioImageIOSchema) -> str:
 
 
 def export_markdown_docs(folder: Path):
-    doc = markdown_from_schema(schema.Model())
-    (folder / "bioimageio_model_spec.md").write_text(doc, encoding="utf-8")
+    model_doc = markdown_from_schema(schema.Model())
+    (folder / "bioimageio_model_spec.md").write_text(model_doc, encoding="utf-8")
+    rdf_doc = markdown_from_schema(schema.RDF())
+    (folder / "bioimageio_rdf_spec.md").write_text(rdf_doc, encoding="utf-8")
 
 
 if __name__ == "__main__":
