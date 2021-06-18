@@ -18,6 +18,6 @@ load_model = utils.load_model
 # autogen: stop
 
 # assuming schema will always be part of spec
-from . import schema
+from bioimageio.spec.shared.common import get_args
 from .raw_nodes import FormatVersion
-__version__ = schema.get_args(FormatVersion)[-1]
+__version__ = get_args(FormatVersion)[-1]
