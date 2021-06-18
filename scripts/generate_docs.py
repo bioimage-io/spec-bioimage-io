@@ -3,7 +3,7 @@ import inspect
 import typing
 from pathlib import Path
 
-from bioimageio.spec import fields, schema
+import bioimageio.spec
 
 
 @dataclasses.dataclass
@@ -20,12 +20,12 @@ class DocNode:
         assert not (self.sub_docs and self.details)
 
 
-def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
+def doc_from_schema(obj, spec=bioimageio.spec) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
     if obj is None:
         return DocNode(
             type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
         )
-    elif isinstance(obj, fields.Nested):
+    elif isinstance(obj, spec.fields.Nested):
         type_name = obj.type_name
         many = obj.many
         description = obj.bioimageio_description
@@ -41,10 +41,10 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
     details = []
     sub_docs = []
     required = True
-    if inspect.isclass(obj) and issubclass(obj, schema.SharedBioImageIOSchema):
+    if inspect.isclass(obj) and issubclass(obj, spec.schema.SharedBioImageIOSchema):
         obj = obj()
 
-    if isinstance(obj, schema.SharedBioImageIOSchema):
+    if isinstance(obj, spec.schema.SharedBioImageIOSchema):
 
         def sort_key(name_and_nested_field):
             name, nested_field = name_and_nested_field
@@ -61,16 +61,16 @@ def doc_from_schema(obj) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
         type_name += obj.type_name
         required = obj.required
         maybe_required = obj.bioimageio_maybe_required
-        if isinstance(obj, fields.Union):
+        if isinstance(obj, spec.fields.Union):
             details = [doc_from_schema(opt) for opt in obj._candidate_fields]
-        elif isinstance(obj, fields.Dict):
+        elif isinstance(obj, spec.fields.Dict):
             details = [
                 dict_descr
                 for dict_descr in [doc_from_schema(obj.key_field), doc_from_schema(obj.value_field)]
                 if dict_descr.description
             ]
         else:
-            assert isinstance(obj, fields.DocumentedField), (type(obj), obj)
+            assert isinstance(obj, spec.fields.DocumentedField), (type(obj), obj)
 
     return DocNode(
         type_name=type_name,
@@ -114,19 +114,25 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
     return f"{type_name}{doc.description}\n{sub_doc}"
 
 
-def markdown_from_schema(schema: schema.SharedBioImageIOSchema) -> str:
+def export_markdown_doc_from_schema(path: Path, schema: bioimageio.spec.schema.SharedBioImageIOSchema) -> None:
     doc = doc_from_schema(schema)
-    return markdown_from_doc(doc)
+    md_doc = markdown_from_doc(doc)
+    path.write_text(md_doc, encoding="utf-8")
 
 
-def export_markdown_docs(folder: Path):
-    model_doc = markdown_from_schema(schema.Model())
-    (folder / "bioimageio_model_spec.md").write_text(model_doc, encoding="utf-8")
-    rdf_doc = markdown_from_schema(schema.RDF())
-    (folder / "bioimageio_rdf_spec.md").write_text(rdf_doc, encoding="utf-8")
+def export_markdown_docs(folder: Path, spec=bioimageio.spec):
+    if spec == bioimageio.spec:
+        format_version_wo_patch = "latest"
+    else:
+        format_version_wo_patch = spec.__name__.split(".")[-1]
+
+    export_markdown_doc_from_schema(folder / f"model_spec_{format_version_wo_patch}.md", spec.schema.Model())
+    export_markdown_doc_from_schema(folder / f"rdf_spec_{format_version_wo_patch}.md", spec.schema.RDF())
 
 
 if __name__ == "__main__":
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
+
     export_markdown_docs(dist)
+    export_markdown_docs(dist, bioimageio.spec.v0_3)
