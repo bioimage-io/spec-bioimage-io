@@ -2,7 +2,6 @@ import dataclasses
 import importlib.util
 import logging
 import pathlib
-import subprocess
 import sys
 import typing
 import uuid
@@ -79,7 +78,7 @@ class NodeTransformer(Transformer):
 
 @dataclasses.dataclass
 class LocalImportableModule(raw_nodes.ImportableModule):
-    python_path: pathlib.Path = missing
+    root_path: pathlib.Path = missing
 
 
 @dataclasses.dataclass
@@ -90,7 +89,6 @@ class ResolvedImportablePath(raw_nodes.ImportablePath):
 class UriNodeTransformer(NodeTransformer):
     def __init__(self, *, root_path: pathlib.Path):
         self.root_path = root_path
-        self.python_path = self._guess_python_path_from_local_spec_path(root_path=root_path)
 
     def transform_URI(self, node: raw_nodes.URI) -> pathlib.Path:
         local_path = resolve_uri(node, root_path=self.root_path)
@@ -102,7 +100,7 @@ class UriNodeTransformer(NodeTransformer):
         )
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> LocalImportableModule:
-        return LocalImportableModule(**dataclasses.asdict(node), python_path=self.python_path)
+        return LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
 
     def _transform_Path(self, leaf: pathlib.Path):
         assert not leaf.is_absolute()
@@ -113,18 +111,6 @@ class UriNodeTransformer(NodeTransformer):
 
     def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> pathlib.Path:
         return self._transform_Path(leaf)
-
-    @staticmethod
-    def _guess_python_path_from_local_spec_path(root_path: pathlib.Path):
-        def potential_paths():
-            yield root_path
-            yield from root_path.parents
-
-        for path in potential_paths():
-            if (path / "manifest.yaml").exists() or (path / "manifest.yml").exists():
-                return path.resolve()
-
-        return root_path
 
 
 class SourceNodeTransformer(NodeTransformer):
@@ -144,7 +130,7 @@ class SourceNodeTransformer(NodeTransformer):
             sys.path.remove(self.path)
 
     def transform_LocalImportableModule(self, node: LocalImportableModule) -> nodes.ImportedSource:
-        with self.TemporaryInsertionIntoPythonPath(str(node.python_path)):
+        with self.TemporaryInsertionIntoPythonPath(str(node.root_path)):
             module = importlib.import_module(node.module_name)
 
         return nodes.ImportedSource(factory=getattr(module, node.callable_name))
@@ -190,7 +176,7 @@ class RawNodeTypeTransformer(NodeTransformer):
 
 
 @singledispatch
-def resolve_uri(uri, root_path: pathlib.Path = pathlib.Path()):
+def resolve_uri(uri, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
     raise TypeError(type(uri))
 
 
@@ -244,7 +230,9 @@ def _download_uri_to_local_path(uri: typing.Union[nodes.URI, raw_nodes.URI]) -> 
     return local_path
 
 
-def resolve_raw_node_to_node(raw_node: raw_nodes.Node, root_path: pathlib.Path, nodes_module: ModuleType) -> nodes.Node:
+def resolve_raw_node_to_node(
+    raw_node: GenericRawNode, root_path: pathlib.Path, nodes_module: ModuleType
+) -> GenericNode:
     """resolve all uris and sources"""
     node = UriNodeTransformer(root_path=root_path).transform(raw_node)
     node = SourceNodeTransformer().transform(node)

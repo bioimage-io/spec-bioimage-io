@@ -1,6 +1,7 @@
 import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, NewType, Tuple, Union
 
 from marshmallow import missing
@@ -77,7 +78,7 @@ class RDF(Node):
     covers: Union[_Missing, List[URI]] = missing
     dependencies: Union[_Missing, Dependencies] = missing
     description: str = missing
-    documentation: URI = missing
+    documentation: Path = missing
     format_version: FormatVersion = missing
     framework: Union[_Missing, Framework] = missing
     git_repo: Union[_Missing, str] = missing

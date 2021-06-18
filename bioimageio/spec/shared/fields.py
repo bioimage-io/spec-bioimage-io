@@ -332,6 +332,13 @@ class RelativeLocalPath(Path):
             **super_kwargs,
         )
 
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        if value is not None:
+            assert isinstance(value, pathlib.Path), value
+            assert not value.is_absolute(), value
+
+        return super()._serialize(value, attr, obj, **kwargs)
+
 
 class ProcMode(String):
     all_modes = ("fixed", "per_dataset", "per_sample")

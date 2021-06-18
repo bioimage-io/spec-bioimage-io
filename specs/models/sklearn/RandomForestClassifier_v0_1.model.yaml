@@ -13,7 +13,7 @@ format_version: 0.1.0
 language: python
 framework: scikit-learn
 
-source: bioimageio.sklearn.models.RandomForestClassifier
+source: rf.py::RandomForestClassifier
 optional_kwargs:
   n_estimators: 10
   criterion: gini

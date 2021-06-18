@@ -43,6 +43,7 @@ def test_build_spec_pickle(rf_config_path):
         output_reference="raw",
         output_scale=[1, 1],
         output_offset=[0, 0],
+        root=root,
     )
     serialized = schema.Model().dump(raw_model)
     assert type(serialized) == type(source)
