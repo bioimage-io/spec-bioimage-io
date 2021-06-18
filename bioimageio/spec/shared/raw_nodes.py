@@ -1,8 +1,13 @@
 """shared raw nodes that shared transformer act on"""
-
+import dataclasses
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Union
+
+try:
+    from typing import get_args, get_origin
+except ImportError:
+    from typing_extensions import get_args, get_origin
 
 from .common import get_args
 from marshmallow import missing
@@ -10,7 +15,12 @@ from marshmallow import missing
 
 @dataclass
 class Node:
-    pass
+    def __post_init__(self):
+        for f in dataclasses.fields(self):
+            if getattr(self, f.name) is missing and (
+                get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
+            ):
+                raise TypeError(f"{self.__class__}.__init__() missing required argument: '{f.name}'")
 
 
 @dataclass

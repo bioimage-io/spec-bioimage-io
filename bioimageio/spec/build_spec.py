@@ -1,10 +1,13 @@
-import os
 import datetime
 import hashlib
+import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+
 import bioimageio.spec as spec
+
 
 #
 # utility functions to build the spec from python
@@ -48,7 +51,6 @@ def _infer_weight_type(path):
         raise ValueError(f"Could not infer weight type from extension {ext} for weight file {path}")
 
 
-# TODO extend supported weight types
 def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     weight_path = _get_local_path(weight_uri, root)
     if weight_type is None:
@@ -213,12 +215,18 @@ def _get_output_tensor(test_out, name, reference_input, scale, offset, axes, dat
     return outputs
 
 
+def _build_authors(authors: List[Dict[str, str]]):
+    return [spec.raw_nodes.Author(**a) for a in authors]
+
+
 # TODO The citation entry should be improved so that we can properly derive doi vs. url
-def _build_cite(cite):
+def _build_cite(cite: Dict[str, str]):
     citation_list = [spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()]
     return citation_list
 
 
+# TODO we should make the name more specific: "build_model_spec"?
+# TODO maybe "build_raw_model" as it return raw_nodes.Model
 # NOTE does not support multiple input / output tensors yet
 # to implement this we should wait for 0.4.0, see also
 # https://github.com/bioimage-io/spec-bioimage-io/issues/70#issuecomment-825737433
@@ -384,8 +392,13 @@ def build_spec(
     }
     kwargs = {k: v for k, v in optional_kwargs.items() if v is not None}
 
-    # build the citation object
+    # build raw_nodes objects
+    authors = _build_authors(authors)
     cite = _build_cite(cite)
+    documentation = Path(documentation)
+    covers = [spec.fields.URI().deserialize(uri) for uri in covers]
+    test_inputs = [spec.fields.URI().deserialize(uri) for uri in test_inputs]
+    test_outputs = [spec.fields.URI().deserialize(uri) for uri in test_outputs]
 
     model = spec.raw_nodes.Model(
         format_version=format_version,
@@ -412,3 +425,19 @@ def build_spec(
     model = spec.schema.Model().load(serialized)
 
     return model
+
+
+def add_weights(model, weight_uri: str, root: Optional[str] = None, weight_type: Optional[str] = None, **weight_kwargs):
+    """Add weight entry to bioimage.io model."""
+    new_weights = _get_weights(weight_uri, weight_type, None, root, **weight_kwargs)[0]
+    model.weights.update(new_weights)
+
+    serialized = spec.schema.Model().dump(model)
+    model = spec.schema.Model().load(serialized)
+
+    return model
+
+
+def serialize_spec(model, out_path):  # TODO change name to include model (see build_model_spec)
+    serialized = spec.schema.Model().dump(model)
+    spec.utils.yaml.dump(serialized, out_path)

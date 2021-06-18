@@ -15,7 +15,6 @@ license: MIT
 
 documentation: sklearnbased.md
 covers: []
-attachments: {}
 
 inputs:
   - name: raw

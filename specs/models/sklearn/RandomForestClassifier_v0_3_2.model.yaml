@@ -15,7 +15,6 @@ license: MIT
 
 documentation: sklearnbased.md
 covers: []
-attachments: {}
 
 inputs:
   - name: raw
@@ -74,4 +73,3 @@ weights:
     sha256: abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
 
 type: model
-version: null

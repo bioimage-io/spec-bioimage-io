@@ -1,5 +1,6 @@
 import os
 import pathlib
+import warnings
 from functools import singledispatch
 from typing import Optional, Sequence, Tuple
 
@@ -32,11 +33,13 @@ def _(source: dict, root_path: Optional[pathlib.Path] = None) -> Tuple[raw_nodes
 def _(source: os.PathLike, root_path: Optional[pathlib.Path] = None) -> Tuple[raw_nodes.Model, pathlib.Path]:
     source = pathlib.Path(source)
 
-    suffixes = source.suffixes
-    # short path for flattened packaged models
-    if source.name not in ["model.yml", "model.yaml"]:
-        if len(suffixes) < 2 or suffixes[-1] not in (".yml", ".yaml") or source.suffixes[-2] != ".model":
-            raise ValidationError(f"invalid suffixes {''.join(suffixes)} for source {source}")
+    if source.suffix not in (".yml", ".yaml"):
+        raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
+    elif source.suffix == ".yml":
+        warnings.warn(
+            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
+            "(https://yaml.org/faq.html)"
+        )
 
     data = yaml.load(source)
 

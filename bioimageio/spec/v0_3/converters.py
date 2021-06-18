@@ -194,6 +194,10 @@ def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     if config.get("future") == {}:
         del config["future"]
 
+    # remove 'config' if now empty
+    if data.get("config") == {}:
+        del data["config"]
+
     return data
 
 

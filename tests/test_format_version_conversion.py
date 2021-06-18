@@ -8,9 +8,9 @@ from bioimageio.spec import schema, maybe_convert_model
 yaml = YAML(typ="safe")
 
 
-def test_model_nodes_format_0_1_to_0_3(rf_config_path_v0_1, rf_config_path):
+def test_model_nodes_format_0_1_to_0_3(rf_config_path_v0_1, rf_config_path_v0_3):
     rf_model_data_v0_1 = yaml.load(rf_config_path_v0_1)
-    rf_model_data = yaml.load(rf_config_path)
+    rf_model_data = yaml.load(rf_config_path_v0_3)
 
     expected = asdict(schema.Model().load(rf_model_data))
     converted_data = maybe_convert_model(rf_model_data_v0_1)
@@ -24,9 +24,9 @@ def test_model_nodes_format_0_1_to_0_3(rf_config_path_v0_1, rf_config_path):
         out["description"] = out["name"]
 
     for key, item in expected.items():
-        assert key in actual
-        assert actual[key] == item
+        assert key in actual, key
+        assert actual[key] == item, key
 
     for key, item in actual.items():
         assert key in expected
-        assert expected[key] == item
+        assert item == expected[key]
