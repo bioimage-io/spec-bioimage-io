@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 from ruamel.yaml import YAML
 
-from bioimageio.spec import load_raw_model, nodes, raw_nodes
+from bioimageio.spec import load_model, load_raw_model, nodes, raw_nodes
 from bioimageio.spec.shared import transformers
 
 yaml = YAML(typ="safe")
@@ -83,3 +83,9 @@ def test_resolve_directory_uri(tmpdir):
 def test_load_raw_model(rf_config_path):
     rf_model_data = yaml.load(rf_config_path)
     load_raw_model(rf_model_data)
+
+
+def test_load_model(UNet2DNucleiBroad_model_url):
+    model = load_model(UNet2DNucleiBroad_model_url)
+    assert len(model.inputs) == 1
+    assert len(model.outputs) == 1
