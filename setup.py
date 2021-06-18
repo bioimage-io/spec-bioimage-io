@@ -29,12 +29,11 @@ setup(
         "python-stdnum",
         "requests",
         "ruamel.yaml",
-        "scikit-learn",
         "spdx-license-list",
         "typer",
         "typing-extensions",
     ],
-    extras_require={"test": ["pytest", "tox"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "scikit-learn"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
     project_urls={  # Optional
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",
