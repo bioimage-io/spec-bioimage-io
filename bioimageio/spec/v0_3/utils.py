@@ -57,14 +57,25 @@ def _(source: str) -> raw_nodes.Model:
     return load_raw_model(source)
 
 
-def load_model(source: Union[os.PathLike, str, dict], root_path: Optional[os.PathLike] = None):
+def load_model(source: Union[os.PathLike, str, dict], root_path: Optional[os.PathLike] = None) -> nodes.Model:
     if root_path is None:
+        if isinstance(source, dict):
+            raise TypeError("Require root_path if source is dict to resolve relative paths")
+
+        if isinstance(source, str):
+            try:  # is source a path as a string?
+                if not pathlib.Path(source).exists():  # only assume source is a path if path exists
+                    raise FileNotFoundError(source)
+            except (TypeError, FileNotFoundError):
+                # assume source is uri
+                source = resolve_uri(source, root_path=BIOIMAGEIO_CACHE_PATH)
+
         if isinstance(source, os.PathLike):
-            root_path = pathlib.Path(source)
+            root_path = source
         else:
-            raise TypeError("Require root_path or source to be os.PathLike")
-    else:
-        root_path = pathlib.Path(root_path)
+            raise TypeError(f"Expected pathlib.Path, os.PathLike, str or dict, but got {type(source)}")
+
+    root_path = pathlib.Path(root_path)
 
     return resolve_raw_node_to_node(load_raw_model(source), root_path=root_path, nodes_module=nodes)
 
