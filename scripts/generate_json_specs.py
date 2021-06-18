@@ -18,7 +18,6 @@ def export_json_schemas(folder: Path, spec=bioimageio.spec):
     else:
         format_version_wo_patch = spec.__name__.split(".")[-1]
 
-    export_json_schema_from_schema(folder / f"debug_spec_{format_version_wo_patch}.json", spec.schema.Badge())
     export_json_schema_from_schema(folder / f"model_spec_{format_version_wo_patch}.json", spec.schema.Model())
     export_json_schema_from_schema(folder / f"rdf_spec_{format_version_wo_patch}.json", spec.schema.RDF())
 
