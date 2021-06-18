@@ -58,7 +58,8 @@ class RunMode(BioImageIOSchema):
 class RDF(BioImageIOSchema):
     bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a general BioImage.IO-complaint resource description file (`RDF`).
-An RDF is stored as a YAML file. 
+An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
+Note that models are described with an extended Model RDF specification.
 
 The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
