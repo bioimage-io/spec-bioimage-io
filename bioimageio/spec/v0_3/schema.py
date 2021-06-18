@@ -92,6 +92,27 @@ Each entry contains a mandatory `text` field and either one or both of `doi` and
 E.g. the citation for the model architecture and/or the training data used.""",
     )
 
+    config = fields.Dict(
+        bioimageio_description=(
+            "A custom configuration field that can contain any keys not present in the RDF spec. "
+            "This means you should not store, for example, github repo URL in `config` since we already have the "
+            "`git_repo` key defined in the spec.\n"
+            "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
+            "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
+            """for example:
+```yaml
+   config:
+      bioimage_io:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+           nested: value
+      imagej:
+        macro_dir: /path/to/macro/file
+```"""
+            "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
+        )
+    )
+
     covers = fields.List(
         fields.URI,
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
@@ -170,14 +191,6 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
         "e.g. the initial version number should be `0.1.0`."
-    )
-
-    config = fields.Dict(
-        bioimageio_description=(
-            "A custom configuration field that can contain any keys. It can be very specific to a framework or "
-            "specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field "
-            "named with the specific framework or tool name."
-        )
     )
 
 
