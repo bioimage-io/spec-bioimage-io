@@ -29,6 +29,7 @@ setup(
         "python-stdnum",
         "requests",
         "ruamel.yaml",
+        "scikit-learn",
         "spdx-license-list",
         "typer",
         "typing-extensions",
