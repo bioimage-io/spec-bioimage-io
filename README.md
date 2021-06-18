@@ -12,11 +12,11 @@ All the BioImage.IO-compatible RDF must fulfill the following rules:
 
 As a general guideline, please follow the model RDF spec to describe AI models and use the generic RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Validator against it.
 
-## [Resource Description File Specification](./bioimageio_rdf_spec.md)
+## [Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md)
 
 A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. You can find detailed field definitions and examples here in the [generic RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md).
 
-## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)
+## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
 
 Besides the generic RDF spec, the [`Model Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
 
@@ -26,7 +26,7 @@ Here is a list of model RDF Examples:
 
 ## Recommendations
 
- * For AI models, consider using the model-specific spec (i.e. [model RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)) instead of the generic RDF. Only fallback to the generic RDF if writing model specific RDF is not possible for some reason.
+ * For AI models, consider using the model-specific spec (i.e. [model RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the generic RDF. Only fallback to the generic RDF if writing model specific RDF is not possible for some reason.
  * The RDF or package file name should not contain spaces or special characters, it should be concise, descriptive, in kebab case or camel case.
  * Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the RDF file and try to avoid using subdirectories.
  * Use the [bioimage.io spec validator](#bioimageio-spec-validator) to verify your YAML file
@@ -46,7 +46,7 @@ TODO from pip/conda
 pip install git+https://github.com/bioimage-io/spec-bioimage-io
 ```
 
-To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md) using the following command:
+To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) using the following command:
 ```
 python -m bioimageio.spec verify-spec <MY-MODEL>.yaml
 ```
