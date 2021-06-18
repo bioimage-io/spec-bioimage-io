@@ -39,11 +39,10 @@ jobs:
     - name: Install dependencies
       run: |
         pip install .
-    - run: mkdir ./dist && cp ./bioimageio_rdf_spec.md ./dist # TODO: remove this when we generate the RDF docs
     - name: Generate Docs
       run: python scripts/generate_docs.py
-    # - name: Generate JSON Schema # TODO: fix this
-    #   run: python scripts/generate_json_specs.py
+    - name: Generate JSON Schema
+      run: python scripts/generate_json_specs.py
     - name: Deploy Docs and Schema 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
