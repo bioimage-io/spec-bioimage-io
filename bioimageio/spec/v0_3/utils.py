@@ -71,7 +71,7 @@ def load_model(source: Union[os.PathLike, str, dict], root_path: Optional[os.Pat
                 source = resolve_uri(source, root_path=BIOIMAGEIO_CACHE_PATH)
 
         if isinstance(source, os.PathLike):
-            root_path = source
+            root_path = pathlib.Path(source).parent
         else:
             raise TypeError(f"Expected pathlib.Path, os.PathLike, str or dict, but got {type(source)}")
 
