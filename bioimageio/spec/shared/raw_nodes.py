@@ -9,6 +9,7 @@ try:
 except ImportError:
     from typing_extensions import get_args, get_origin
 
+from .common import get_args
 from marshmallow import missing
 
 

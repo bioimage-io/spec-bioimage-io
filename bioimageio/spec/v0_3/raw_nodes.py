@@ -15,11 +15,7 @@ from bioimageio.spec.shared.raw_nodes import (
     URI,
 )
 
-try:
-    from typing import Literal, get_args
-except ImportError:
-    from typing_extensions import Literal, get_args
-
+from bioimageio.spec.shared.common import Literal, get_args
 
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,

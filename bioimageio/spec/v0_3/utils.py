@@ -7,14 +7,11 @@ from typing import Optional, Sequence, Tuple
 from marshmallow import ValidationError
 
 from bioimageio.spec.shared import BIOIMAGEIO_CACHE_PATH, yaml
+from bioimageio.spec.shared.common import get_args
 from bioimageio.spec.shared.transformers import download_uri_to_local_path, resolve_raw_node_to_node, resolve_uri
 from . import nodes, raw_nodes, schema
 from .converters import maybe_convert_model
 
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args
 
 download_uri_node_to_local_path = download_uri_to_local_path
 
