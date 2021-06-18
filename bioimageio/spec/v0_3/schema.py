@@ -6,13 +6,9 @@ from marshmallow import Schema, ValidationError, missing as missing_, post_load,
 from spdx_license_list import LICENSES
 
 from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared.common import get_args
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
-
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args
 
 
 class BioImageIOSchema(SharedBioImageIOSchema):

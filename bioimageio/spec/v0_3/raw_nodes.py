@@ -12,11 +12,11 @@ from bioimageio.spec.shared.raw_nodes import (
     ImplicitOutputShape,
     ImportableModule,
     ImportablePath,
-    Literal,
     Node,
     URI,
-    get_args,
 )
+
+from bioimageio.spec.shared.common import Literal, get_args
 
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
