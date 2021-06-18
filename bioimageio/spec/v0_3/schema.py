@@ -263,11 +263,11 @@ class Processing(BioImageIOSchema):
 
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
-            if data["mode"] == "fixed" and (data["mean"] is missing_ or data["std"] is missing_):
+            if data["mode"] == "fixed" and ("mean" not in data or "std" not in data):
                 raise ValidationError(
                     "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional `kwargs`: `mean` and `std`."
                 )
-            elif data["mode"] != "fixed" and (data.get("mean") is not missing_ or data.get("std") is not missing_):
+            elif data["mode"] != "fixed" and ("mean" in data or "std" in data):
                 raise ValidationError(
                     "`kwargs`: `mean` and `std` for 'zero_mean_unit_variance' preprocessing are only valid for `mode` 'fixed'."
                 )
