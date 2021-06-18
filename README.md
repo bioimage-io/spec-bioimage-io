@@ -5,16 +5,16 @@ This repository contains specifications defined by the BioImage.IO community. Th
 
 All the BioImage.IO-compatible RDF must fulfill the following rules:
  * Must be a YAML file encoded as UTF-8;
- * The RDF file extension must be `.yaml` (instead of `.yml`)
- * The RDF file can be saved in a folder(or virtual folder) or in a zip package, the following additional rules must apply:
+ * The RDF file extension must be `.yaml` (not `.yml`)
+ * The RDF file can be saved in a folder (or virtual folder) or in a zip package, the following additional rules must apply:
    1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
    2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
 
-As a general guideline, please follow the model RDF spec to describe AI models and use the generic RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Vallidator against it.
+As a general guideline, please follow the model RDF spec to describe AI models and use the generic RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Validator against it.
 
 ## [Resource Description File Specification](./bioimageio_rdf_spec.md)
 
-A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. You can find detaialed field definition and examples here in the [generic RDF spec](./bioimageio_rdf_spec.md).
+A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. You can find detailed field definitions and examples here in the [generic RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md).
 
 ## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)
 
@@ -48,7 +48,7 @@ pip install git+https://github.com/bioimage-io/spec-bioimage-io
 
 To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md) using the following command:
 ```
-python -m bioimageio.spec verify-spec <MY-MODEL>.model.yaml
+python -m bioimageio.spec verify-spec <MY-MODEL>.yaml
 ```
 The output of this command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
 ```
