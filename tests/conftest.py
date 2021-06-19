@@ -7,38 +7,52 @@ from ruamel.yaml import YAML
 yaml = YAML(typ="safe")
 
 
-@pytest.fixture
-def rf_config_path_v0_1():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_1.model.yaml"
-
-
-@pytest.fixture
-def rf_config_path_v0_3_1():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_3_1.model.yaml"
-
+#
+# pytorch unet2d model (broad nuclei model)
+# containse pytorch_saved_dict, pytoch_script and onnx weights
+#
+# version 0.1 model
 
 @pytest.fixture
-def rf_config_path_v0_3_2():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_3_2.model.yaml"
+def unet2d_pytorch_model_v01():
+    return Path(__file__).parent / "../specs/models/unet2d-pytorch/v01"
 
+
+# version 0.3 models
 
 @pytest.fixture
-def rf_config_path_v0_3(rf_config_path_v0_3_2):
-    return rf_config_path_v0_3_2
+def unet2d_pytorch_model_v030():
+    return Path(__file__).parent / "../specs/models/unet2d-pytorch/v030/UNet2DNucleiBroad.model.yaml"
 
 
 @pytest.fixture
-def rf_config_path(rf_config_path_v0_3_2):
-    return rf_config_path_v0_3_2
+def unet2d_pytorch_model_v031():
+    return Path(__file__).parent / "../specs/models/unet2d-pytorch/v031"
 
 
 @pytest.fixture
-def UNet2DNucleiBroad_model_url():
-    return (
-        "https://raw.githubusercontent.com/bioimage-io/pytorch-bioimage-io/25f6bac5a22d8a76553bd4484a515f634bcb9ee2/"
-        "specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml"
-    )
+def unet2d_pytorch_model_v032():
+    return Path(__file__).parent / "../specs/models/unet2d-pytorch/v032"
 
+
+# latest version
+
+@pytest.fixture
+def unet2d_pytorch_model(unet2d_pytorch_model_v030):
+    # return unet2d_pytorch_model_v032
+    return unet2d_pytorch_model_v030
+
+@pytest.fixture
+def default_model(unet2d_pytorch_model):
+    return unet2d_pytorch_model
+
+
+# move this model here as well?
+#
+# pytorch unet2d model (broad nuclei model)
+# contains tensorflow_model_bundle, keras_hdf and tensorflow_js weights
+# current version is 0.3.0
+#
 
 @pytest.fixture
 def FruNet_model_url():

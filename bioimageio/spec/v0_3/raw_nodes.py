@@ -30,9 +30,8 @@ PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
 Language = Literal["python", "java"]
-Framework = Literal["scikit-learn", "pytorch", "tensorflow"]
+Framework = Literal["pytorch", "tensorflow"]
 WeightsFormat = Literal[
-    "pickle",
     "pytorch_state_dict",
     "pytorch_script",
     "keras_hdf5",

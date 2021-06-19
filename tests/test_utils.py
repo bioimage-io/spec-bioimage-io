@@ -80,12 +80,12 @@ def test_resolve_directory_uri(tmpdir):
     assert uri_transformed == Path(tmpdir)
 
 
-def test_load_raw_model(rf_config_path):
-    rf_model_data = yaml.load(rf_config_path)
-    load_raw_model(rf_model_data)
+def test_load_raw_model(default_model):
+    model_data = yaml.load(default_model)
+    load_raw_model(model_data)
 
 
-def test_load_model(rf_config_path):
-    model = load_model(rf_config_path)
+def test_load_model(default_model):
+    model = load_model(default_model)
     assert len(model.inputs) == 1
     assert len(model.outputs) == 1

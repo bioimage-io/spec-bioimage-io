@@ -567,7 +567,6 @@ config:
     def language_and_framework_match(self, data, **kwargs):
         field_names = ("language", "framework")
         valid_combinations = [
-            ("python", "scikit-learn"),  # todo: remove
             ("python", "pytorch"),
             ("python", "tensorflow"),
             ("java", "tensorflow"),
@@ -587,7 +586,6 @@ config:
             return
 
         weight_format_requires_source = {
-            "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
             "keras_hdf5": False,

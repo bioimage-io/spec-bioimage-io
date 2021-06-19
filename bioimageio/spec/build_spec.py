@@ -37,8 +37,6 @@ def _infer_weight_type(path):
     ext = os.path.splitext(path)[-1]
     if ext in (".pt", ".torch"):
         return "pytorch_state_dict"
-    elif ext in (".pickle", ".pkl"):
-        return "pickle"
     elif ext == ".onnx":
         return "onnx"
     elif ext in (".hdf", ".hdf5", ".h5"):
@@ -77,11 +75,6 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = "python"
         framework = "pytorch"
-
-    elif weight_type == "pickle":
-        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
-        language = "python"
-        framework = "scikit-learn"
 
     elif weight_type == "onnx":
         weights = spec.raw_nodes.WeightsEntry(
