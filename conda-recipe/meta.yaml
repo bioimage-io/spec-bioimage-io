@@ -32,6 +32,7 @@ test:
     - bioimageio.spec
   source_files:
     - tests
+    - specs
   requires:
     {% for dep in setup_py_data['extras_require']['test'] %}
     - {{ dep.lower() }}
@@ -42,3 +43,5 @@ test:
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io
   summary: BioImage.IO Spec Validator and specifications package
+  license: MIT
+  license_file: LICENSE
