@@ -14,8 +14,40 @@ As a general guideline, please follow the model RDF spec to describe AI models a
 
 ## [Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md)
 
-A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. You can find detailed field definitions and examples here in the [generic RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md).
+A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. 
 
+You can find detailed field definitions here: 
+   - [generic RDF spec 0.3](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.md)
+
+The specifications are also available as json schemas: 
+   - [generic RDF spec 0.3 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.json)
+
+### Describing applications
+The RDF can be used to describe applications. To do so set the `type` field to `application`.\
+For regular software package with a downloadable file, you can set `download_url` to the downloadable file, for example, you can upload the executable files as Github release, deposit it on Zenodo, or even generate a sharable url from Dropbox/Google Drive.\
+For web application, set `source` to the url of the web application. Users can then click and redirect to your web application. However, simple integration will not support features such as opening dataset or models with your application.
+
+It is recommended to build BioEngine Apps such that users can directly try and use them in BioImage.IO. See [here](https://github.com/bioimage-io/bioimage.io/blob/master/docs/build-bioengine-apps.md) for more details.\
+Below is an example for [Kaibu](https://kaibu.org), which is a BioEngine/ImJoy compatible web application:
+```yaml
+id: kaibu
+name: Kaibu
+description: Kaibu--a web application for visualizing and annotating multi-dimensional images
+covers:
+ # use the `raw` url if you store the image on github
+ - https://raw.githubusercontent.com/imjoy-team/kaibu/master/public/static/img/kaibu-screenshot-1.png
+
+# source url to kaibu.org
+source: https://kaibu.org
+# add custom badge
+badge:
+ - icon: https://imjoy.io/static/badge/launch-imjoy-badge.svg
+   label: Launch ImJoy
+   url: https://imjoy.io/#/app?plugin=https://kaibu.org/#/app
+```
+For more application examples, see the [manifest for ImJoy](https://github.com/imjoy-team/bioimage-io-models/blob/master/manifest.bioimage.io.yaml).
+
+### Describing models with the unspecific RDF(not recommended, use the Model RDF instead)
 In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the generic RDF can be used for discribing AI models.
 To do that, you need to first set the `type` field to `model`.\
 A basic integration would be simply provide a `download_url` to a zip file (for example, with the model weights, source code or executable binary file) hosted on Github releases, Dropbox, Google Drive etc. For example: 

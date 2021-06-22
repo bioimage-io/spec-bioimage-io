@@ -1,33 +1,3 @@
-## Describing applications
-You need to first set the `type` filed to `application`.
-
-For regular software package with a downloadable file, you can set `download_url` to the downloadable file, for example, you can upload the executable files as Github release, deposit it on Zenodo, or even generate a sharable url from Dropbox/Google Drive.
-
-For web application, set `source` to the url of the web application. Users can then click and redirect to your web application. However, simple integration will not support features such as opening dataset or models with your application.
-
-It is recommended to build BioEngine Apps such that users can directly try and use them in BioImage.IO. See [here](https://github.com/bioimage-io/bioimage.io/blob/master/docs/build-bioengine-apps.md) for more details.
-
-
-Below is an example for [Kaibu](https://kaibu.org), which is a BioEngine/ImJoy compatible web application:
-```yaml
-id: kaibu
-name: Kaibu
-description: Kaibu--a web application for visualizing and annotating multi-dimensional images
-covers:
- # use the `raw` url if you store the image on github
- - https://raw.githubusercontent.com/imjoy-team/kaibu/master/public/static/img/kaibu-screenshot-1.png
-
-# source url to kaibu.org
-source: https://kaibu.org
-# add custom badge
-badge:
- - icon: https://imjoy.io/static/badge/launch-imjoy-badge.svg
-   label: Launch ImJoy
-   url: https://imjoy.io/#/app?plugin=https://kaibu.org/#/app
-```
-
-For more examples, see the [manifest for ImJoy](https://github.com/imjoy-team/bioimage-io-models/blob/master/manifest.bioimage.io.yaml).
-
 ## Describing datasets, notebooks and other types
 Similarily, for datasets (type=`dataset`), notebooks (type=`notebook`) and other potential resources, you can use set `source` and/or `download_url` to point to the resource, or use `attachments` to specify a list of associated files.
 
