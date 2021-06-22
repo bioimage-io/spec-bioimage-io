@@ -32,7 +32,7 @@ class Author(BioImageIOSchema):
 
 
 class Badge(BioImageIOSchema):
-    label = fields.String(required=True)
+    label = fields.String(required=True, bioimageio_description="badge label")
     icon = fields.String()
     url = fields.URI()
 
