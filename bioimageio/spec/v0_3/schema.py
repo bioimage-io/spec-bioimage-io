@@ -706,6 +706,9 @@ config:
                 continue
 
             for postpr in out.postprocessing:
+                if postpr.kwargs is missing_:
+                    continue
+
                 ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
                 if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
