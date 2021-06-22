@@ -1,0 +1,44 @@
+{% set setup_py_data = load_setup_py_data() %}
+
+package:
+  name: bioimageio.spec
+  version: {{ setup_py_data['version'] }}
+
+source:
+  path: ..
+
+requirements:
+  build:
+    - python >=3.7
+    - pip
+  run:
+    - python >=3.7
+    {% for dep in setup_py_data['install_requires'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+
+
+build:
+  noarch: python
+  entry_points:
+    {% for ep in setup_py_data['entry_points']['console_scripts'] %}
+    - {{ ep }}
+    {% endfor %}
+  script:
+        - python -m pip install --no-deps --ignore-installed .
+
+test:
+  imports:
+    - bioimageio.spec
+  source_files:
+    - tests
+  requires:
+    {% for dep in setup_py_data['extras_require']['test'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+  commands:
+    - pytest .
+
+about:
+  home: https://github.com/bioimage-io/spec-bioimage-io
+  summary: BioImage.IO Spec Validator and specifications package
