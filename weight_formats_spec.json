@@ -1,5 +1,6 @@
 {
-  "consumers": [{
+  "consumers": {
+    "ilastik": {
       "id": "ilastik",
       "name": "ilastik",
       "tags": [
@@ -19,7 +20,7 @@
       "default_type": "model",
       "url_root": "https://raw.githubusercontent.com/ilastik/bioimage-io-models/master"
     },
-    {
+    "zero": {
       "id": "zero",
       "name": "ZeroCostDL4Mic",
       "version": "1.7.1",
@@ -41,7 +42,7 @@
       "default_type": "notebook",
       "url_root": "https://raw.githubusercontent.com/oeway/ZeroCostDL4Mic/master"
     },
-    {
+    "imjoy": {
       "id": "imjoy",
       "name": "ImJoy",
       "tags": [
@@ -65,7 +66,7 @@
       "default_type": "application",
       "url_root": "https://raw.githubusercontent.com/imjoy-team/bioimage-io-models/master"
     },
-    {
+    "hpa": {
       "id": "hpa",
       "name": "HPA",
       "tags": [
@@ -85,7 +86,7 @@
       ],
       "default_type": "model"
     },
-    {
+    "fiji": {
       "id": "fiji",
       "name": "Fiji",
       "tags": [
@@ -104,7 +105,7 @@
       ],
       "url_root": "https://raw.githubusercontent.com/oeway/ZeroCostDL4Mic/master"
     },
-    {
+    "deepimagej": {
       "id": "deepimagej",
       "name": "DeepImageJ",
       "tags": [
@@ -123,37 +124,33 @@
         "application"
       ],
       "url_root": "https://raw.githubusercontent.com/deepimagej/models/master"
-    }],
-  "weight_formats": [
-    {
+    }
+  },
+  "weight_formats": {
+    "keras_hdf5": {
        "name": "Keras HDF5",
-       "key": "keras_hdf5",
        "description": "Weight formats for models generated from Keras in HDF5 format",
        "consumers": ["zero"]
     },
-   {
+    "pytorch_state_dict": {
        "name": "PyTorch",
-       "key": "pytorch_state_dict",
        "description": "Weight formats for PyTorch state dictionary",
        "consumers": ["ilastik"]
    },
-  {
+    "tensorflow_saved_model_bundle": {
        "name": "Tensorflow Saved Bundle",
-       "key": "tensorflow_saved_model_bundle",
        "description": "Weight formats for Tensorflow Saved Bundle",
        "consumers": ["deepimagej", "fiji"]
    },
-  {
+    "onnx": {
        "name": "ONNX",
-       "key": "onnx",
        "description": "Weight formats for ONNX",
        "consumers": []
    },
-  {
+   "tensorflow_js": {
        "name": "Tensorflow.js",
-       "key": "tensorflow_js",
        "description": "Weight formats for Tensorflow.js",
        "consumers": ["imjoy"]
    }
-  ]
+  }
 }
