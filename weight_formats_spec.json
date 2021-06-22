@@ -1,0 +1,159 @@
+{
+  "consumers": [{
+      "id": "ilastik",
+      "name": "ilastik",
+      "tags": [
+        "ilastik"
+      ],
+      "logo": "https://raw.githubusercontent.com/ilastik/bioimage-io-models/master/image/ilastik-fist-icon.png",
+      "icon": "https://raw.githubusercontent.com/ilastik/bioimage-io-models/master/image/ilastik-fist-icon.png",
+      "splash_title": "ilastik",
+      "splash_subtitle": "the interactive learning and segmentation toolkit",
+      "splash_feature_list": null,
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "model",
+        "application"
+      ],
+      "default_type": "model",
+      "url_root": "https://raw.githubusercontent.com/ilastik/bioimage-io-models/master"
+    },
+    {
+      "id": "zero",
+      "name": "ZeroCostDL4Mic",
+      "version": "1.7.1",
+      "tags": [
+        "ZeroCostDL4Mic"
+      ],
+      "logo": "https://raw.githubusercontent.com/HenriquesLab/ZeroCostDL4Mic/master/Wiki_files/ZeroCostLogo.png",
+      "icon": "https://raw.githubusercontent.com/HenriquesLab/ZeroCostDL4Mic/master/Wiki_files/ZeroCostLogo.png",
+      "splash_title": "ZeroCostDL4Mic",
+      "splash_subtitle": "A Google Colab based no-cost toolbox to explore Deep-Learning in Microscopy",
+      "splash_feature_list": [],
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "model",
+        "notebook",
+        "dataset"
+      ],
+      "default_type": "notebook",
+      "url_root": "https://raw.githubusercontent.com/oeway/ZeroCostDL4Mic/master"
+    },
+    {
+      "id": "imjoy",
+      "name": "ImJoy",
+      "tags": [
+        "imjoy"
+      ],
+      "logo": "https://imjoy.io/static/img/imjoy-icon.svg",
+      "icon": "https://imjoy.io/static/img/imjoy-icon.svg",
+      "splash_title": "ImJoy",
+      "splash_subtitle": "Deep Learning Made Easy!",
+      "splash_feature_list": [
+        "Minimal and flexible plugin powered web application",
+        "Server-less progressive web application with offline support",
+        "Rich and interactive user interface powered by web technologies"
+      ],
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "notebook",
+        "application"
+      ],
+      "default_type": "application",
+      "url_root": "https://raw.githubusercontent.com/imjoy-team/bioimage-io-models/master"
+    },
+    {
+      "id": "hpa",
+      "name": "HPA",
+      "tags": [
+        "hpa"
+      ],
+      "logo": "https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/apps/hpa-logo.gif",
+      "icon": "https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/apps/hpa-logo.gif",
+      "about_url": "https://www.proteinatlas.org/",
+      "splash_title": "The Human Protein Atlas",
+      "splash_subtitle": null,
+      "splash_feature_list": [],
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "model",
+        "application"
+      ],
+      "default_type": "model"
+    },
+    {
+      "id": "fiji",
+      "name": "Fiji",
+      "tags": [
+        "fiji"
+      ],
+      "logo": "https://fiji.sc/site/logo.png",
+      "icon": "https://fiji.sc/site/logo.png",
+      "splash_title": "Fiji",
+      "splash_subtitle": "Fiji is just ImageJ",
+      "splash_feature_list": [],
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "model",
+        "notebook"
+      ],
+      "url_root": "https://raw.githubusercontent.com/oeway/ZeroCostDL4Mic/master"
+    },
+    {
+      "id": "deepimagej",
+      "name": "DeepImageJ",
+      "tags": [
+        "deepimagej"
+      ],
+      "logo": "https://raw.githubusercontent.com/deepimagej/models/master/logos/logo.png",
+      "icon": "https://raw.githubusercontent.com/deepimagej/models/master/logos/icon.png",
+      "splash_title": "deepImageJ",
+      "splash_subtitle": "A user-friendly plugin to run deep learning models in ImageJ",
+      "splash_feature_list": null,
+      "explore_button_text": "Start Exploring",
+      "background_image": "static/img/zoo-background.svg",
+      "resource_types": [
+        "model",
+        "notebook",
+        "application"
+      ],
+      "url_root": "https://raw.githubusercontent.com/deepimagej/models/master"
+    }],
+  "weight_formats": [
+    {
+       "name": "Keras HDF5",
+       "key": "keras_hdf5",
+       "description": "Weight formats for models generated from Keras in HDF5 format",
+       "consumers": ["zero"]
+    },
+   {
+       "name": "PyTorch",
+       "key": "pytorch_state_dict",
+       "description": "Weight formats for PyTorch state dictionary",
+       "consumers": ["ilastik"]
+   },
+  {
+       "name": "Tensorflow Saved Bundle",
+       "key": "tensorflow_saved_model_bundle",
+       "description": "Weight formats for Tensorflow Saved Bundle",
+       "consumers": ["deepimagej", "fiji"]
+   },
+  {
+       "name": "ONNX",
+       "key": "onnx",
+       "description": "Weight formats for ONNX",
+       "consumers": []
+   },
+  {
+       "name": "Tensorflow.js",
+       "key": "tensorflow_js",
+       "description": "Weight formats for Tensorflow.js",
+       "consumers": ["imjoy"]
+   }
+  ]
+}
