@@ -108,7 +108,8 @@ E.g. the citation for the model architecture and/or the training data used.""",
            nested: value
       imagej:
         macro_dir: /path/to/macro/file
-```"""
+```
+"""
             "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
         )
     )
