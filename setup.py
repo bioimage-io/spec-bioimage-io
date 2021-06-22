@@ -24,8 +24,8 @@ setup(
         "PyYAML>=5.2",
         "imageio>=2.5",
         "marshmallow>=3.6.0,<4.0",
-        "marshmallow_jsonschema",
-        "marshmallow_union",
+        "marshmallow-jsonschema",
+        "marshmallow-union",
         "python-stdnum",
         "requests",
         "ruamel.yaml",
@@ -33,6 +33,7 @@ setup(
         "typer",
         "typing-extensions",
     ],
+    entry_points={"console_scripts": ["bioimageio = bioimageio.spec:main"]},
     extras_require={"test": ["pytest", "tox", "scikit-learn"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
     project_urls={  # Optional
