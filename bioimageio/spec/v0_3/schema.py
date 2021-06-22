@@ -32,9 +32,12 @@ class Author(BioImageIOSchema):
 
 
 class Badge(BioImageIOSchema):
-    label = fields.String(required=True, bioimageio_description="badge label")
-    icon = fields.String()
-    url = fields.URI()
+    bioimageio_description = "Custom badge"
+    label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
+    icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
+    url = fields.URI(
+        bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'"
+    )
 
 
 class CiteEntry(BioImageIOSchema):
