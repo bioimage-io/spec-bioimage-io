@@ -2,7 +2,7 @@ import typing
 import warnings
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, post_load, validates, validates_schema
+from marshmallow import Schema, ValidationError, missing as missing_, validates, validates_schema
 from spdx_license_list import LICENSES
 
 from bioimageio.spec.shared import field_validators, fields
@@ -417,15 +417,6 @@ class OutputTensor(Tensor):
                 raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
             raise NotImplementedError(type(shape))
-
-    # @post_load
-    # def make_object(self, data, **kwargs):
-    #     shape = data["shape"]
-    #     halo = data["halo"]
-    #     if halo is missing_:
-    #         data["halo"] = [0] * len(shape)
-    #
-    #     return super().make_object(data, **kwargs)
 
 
 _common_sha256_hint = (
