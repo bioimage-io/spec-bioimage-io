@@ -22,6 +22,7 @@ You can find detailed field definitions here:
 The specifications are also available as json schemas: 
    - [generic RDF spec 0.3 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.json)
 
+
 ### Describing applications
 The RDF can be used to describe applications. To do so set the `type` field to `application`.\
 For regular software package with a downloadable file, you can set `download_url` to the downloadable file, for example, you can upload the executable files as Github release, deposit it on Zenodo, or even generate a sharable url from Dropbox/Google Drive.\
@@ -46,6 +47,12 @@ badge:
    url: https://imjoy.io/#/app?plugin=https://kaibu.org/#/app
 ```
 For more application examples, see the [manifest for ImJoy](https://github.com/imjoy-team/bioimage-io-models/blob/master/manifest.bioimage.io.yaml).
+
+## Describing datasets, notebooks and other types
+The RDF allows for the description of datasets (type=`dataset`), notebooks (type=`notebook`) and other potential resources, you can use set `source` and/or `download_url` to point to the resource, or use `attachments` to specify a list of associated files.
+
+For examples, see entries `dataset`/`notebook` in the [ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic/blob/master/manifest.bioimage.io.yaml) collection.
+
 
 ### Describing models with the unspecific RDF(not recommended, use the Model RDF instead)
 In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the generic RDF can be used for discribing AI models.
