@@ -69,6 +69,10 @@ def doc_from_schema(obj, spec=bioimageio.spec) -> typing.Union[typing.Dict[str, 
                 for dict_descr in [doc_from_schema(obj.key_field), doc_from_schema(obj.value_field)]
                 if dict_descr.description
             ]
+        elif isinstance(obj, spec.fields.List):
+            inner_doc = doc_from_schema(obj.inner)
+            if inner_doc.description or inner_doc.sub_docs or inner_doc.details:
+                details = [inner_doc]
         else:
             assert isinstance(obj, spec.fields.DocumentedField), (type(obj), obj)
 
