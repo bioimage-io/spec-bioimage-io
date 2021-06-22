@@ -3,9 +3,8 @@ import warnings
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, missing as missing_, post_load, validates, validates_schema
-from spdx_license_list import LICENSES
 
-from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared import field_validators, fields, LICENSES
 from bioimageio.spec.shared.common import get_args
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
@@ -609,6 +608,9 @@ config:
                 continue
 
             for postpr in out.postprocessing:
+                if postpr.kwargs is missing_:
+                    continue
+
                 ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
                 if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")

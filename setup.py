@@ -36,6 +36,8 @@ setup(
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec:main"]},
     extras_require={"test": ["pytest", "tox", "scikit-learn"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
+    package_data={'': ['bioimageio/spec/static/licenses.json']},
+    include_package_data=True,
     project_urls={  # Optional
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",
         "Source": "https://github.com/bioimage-io/spec-bioimage-io",
