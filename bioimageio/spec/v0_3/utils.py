@@ -4,7 +4,7 @@ import warnings
 from functools import singledispatch
 from typing import Optional, Sequence, Union
 
-from marshmallow import ValidationError
+from marshmallow import ValidationError, missing
 
 from bioimageio.spec.shared import BIOIMAGEIO_CACHE_PATH, yaml
 from bioimageio.spec.shared.common import get_args
@@ -91,7 +91,7 @@ def get_nn_instance(
                 f"`get_nn_instance` requires _UriNodeTransformer and _SourceNodeTransformer to be applied beforehand."
             )
 
-        joined_kwargs = dict(node.kwargs)
+        joined_kwargs = {} if node.kwargs is missing else dict(node.kwargs)
         joined_kwargs.update(kwargs)
         return node.source(**joined_kwargs)
     else:
