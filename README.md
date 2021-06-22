@@ -16,6 +16,22 @@ As a general guideline, please follow the model RDF spec to describe AI models a
 
 A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. You can find detailed field definitions and examples here in the [generic RDF spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md).
 
+In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the generic RDF can be used for discribing AI models.
+To do that, you need to first set the `type` field to `model`.\
+A basic integration would be simply provide a `download_url` to a zip file (for example, with the model weights, source code or executable binary file) hosted on Github releases, Dropbox, Google Drive etc. For example: 
+```yaml
+download_url: https://zenodo.org/record/3446812/files/unet2d_weights.torch?download=1
+```
+
+If the model is available as a github repo, then provide the `git_repo` field:
+```yaml
+git_repo: https://github.com/my/model...
+```
+
+Here an example of a generic RDF describing a model (not recommended): 
+https://github.com/CellProfiling/HPA-model-zoo/blob/2f668d87defddc6c7cd156259a8be4146b665e72/manifest.bioimage.io.yaml#L33-L59 
+
+
 ## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
 
 Besides the generic RDF spec, the [`Model Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
