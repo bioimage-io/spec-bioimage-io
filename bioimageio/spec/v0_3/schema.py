@@ -459,13 +459,15 @@ class WeightsEntry(BioImageIOSchema):
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
         "the model), need to have this field."
     )
-    opset_version = fields.Number()  # ONNX Specific
+    opset_version = fields.Number(bioimageio_description="only for `onnx` weight format")
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion()
+    tensorflow_version = fields.StrictVersion(
+        bioimageio_description="only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format"
+    )
 
 
 class ModelParent(BioImageIOSchema):
