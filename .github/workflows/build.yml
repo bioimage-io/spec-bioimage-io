@@ -26,6 +26,26 @@ jobs:
     - name: Test with tox
       run: tox
 
+  conda-build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: setup conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        auto-activate-base: true
+        activate-environment: ""
+    - name: linux conda build
+      shell: bash -l {0}
+      run: |
+        conda install -n base -c conda-forge conda-build pip -y
+        conda build -c conda-forge conda-recipe
+
   deploy:
     runs-on: ubuntu-latest
     needs: test
