@@ -79,6 +79,25 @@ Here is a list of model RDF Examples:
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
 
+## Link between resource items (under development)
+
+You can use `links` which is a list of `id` to other resource items, for example, if you want to associate an applicaiton with a model, you can set the links field of the models like the following:
+```yaml
+application:
+  - id: HPA-Classification
+    source: https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/apps/HPA-Classification.imjoy.html
+
+model:
+  - id: HPAShuffleNetV2
+    source: https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/models/HPAShuffleNetV2/HPAShuffleNetV2.model.yaml
+    links:
+      - HPA-Classification
+```
+
+## Hosting the file (under development)
+It is recommended to host the resource description file on one of the public git repository website, including Github, Gitlab, Bitbucket, or Gist. A link can be submitted to BioImage.IO so we can keep track of the changes later.
+
+
 ## Recommendations
 
  * For AI models, consider using the model-specific spec (i.e. [model RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the generic RDF. Only fallback to the generic RDF if writing model specific RDF is not possible for some reason.
@@ -113,6 +132,8 @@ or if the field `test_inputs` does not contain a list, it would print:
 ```
 {'test_inputs': ['Not a valid list.']}.
 ```
+
+
 
 ## Changelog
  * **0.3.2**: 
