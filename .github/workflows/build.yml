@@ -69,3 +69,5 @@ jobs:
       with:
         branch: gh-pages
         folder: dist
+        clean-exclude: |
+          weight_formats_spec.json
