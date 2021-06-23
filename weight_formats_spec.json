@@ -137,6 +137,11 @@
        "description": "Weight formats for PyTorch state dictionary",
        "consumers": ["ilastik"]
    },
+    "pytorch_script: {
+       "name": "TorchScript",
+       "description": "Weight formats for PyTorch in TorchScript",
+       "consumers": ["ilastik", "deepimagej"]
+   },
     "tensorflow_saved_model_bundle": {
        "name": "Tensorflow Saved Bundle",
        "description": "Weight formats for Tensorflow Saved Bundle",
