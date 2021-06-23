@@ -137,7 +137,7 @@
        "description": "Weight formats for PyTorch state dictionary",
        "consumers": ["ilastik"]
    },
-    "pytorch_script: {
+    "pytorch_script": {
        "name": "TorchScript",
        "description": "Weight formats for PyTorch in TorchScript",
        "consumers": ["ilastik", "deepimagej"]
