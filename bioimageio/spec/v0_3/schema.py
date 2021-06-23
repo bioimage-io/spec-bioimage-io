@@ -3,9 +3,8 @@ import warnings
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, missing as missing_, validates, validates_schema
-from spdx_license_list import LICENSES
 
-from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared import field_validators, fields, LICENSES
 from bioimageio.spec.shared.common import get_args
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
