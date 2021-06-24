@@ -109,7 +109,7 @@ def parse_args():
             "-through, via `from .vX_Y import *"
         )
     )
-    p.add_argument("command", choices=["check", "generate"], nargs="?", default="check")
+    p.add_argument("command", choices=["check", "generate"])
     p.add_argument(
         "--target-version",
         default="latest",
