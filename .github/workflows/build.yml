@@ -25,6 +25,8 @@ jobs:
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
+    - name: Check passthrough models
+      run: python scripts/generate_passthrough_modules.py check
 
   deploy:
     runs-on: ubuntu-latest
