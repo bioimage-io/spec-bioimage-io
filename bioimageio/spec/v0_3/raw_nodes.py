@@ -2,7 +2,7 @@ import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, NewType, Tuple, Union
+from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
@@ -138,53 +138,60 @@ class OutputTensor:
 
 @dataclass
 class WeightsEntryBase(Node):
+    weights_format_name: ClassVar[str]  # human readable
     weights_format: str = missing
     authors: Union[_Missing, List[Author]] = missing
     attachments: Union[_Missing, Dict] = missing
     parent: Union[_Missing, str] = missing
-    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
-    # todo: check schema. only valid for tensorflow_saved_model_bundle format
     sha256: Union[_Missing, str] = missing
     source: URI = missing
 
 
 @dataclass
-class PickleWeightsEntry(WeightsEntryBase):
-    weights_format: Literal["pickle"] = missing
-
-
-@dataclass
-class PytorchStateDictWeightsEntry(WeightsEntryBase):
-    weights_format: Literal["pytorch_state_dict"] = missing
-
-
-@dataclass
-class PytorchScriptWeightsEntry(WeightsEntryBase):
-    weights_format: Literal["pytorch_script"] = missing
-
-
-@dataclass
 class KerasHdf5WeightsEntry(WeightsEntryBase):
+    weights_format_name = "Keras HDF5"
     weights_format: Literal["keras_hdf5"] = missing
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
+class OnnxWeightsEntry(WeightsEntryBase):
+    weights_format_name = "ONNX"
+    weights_format: Literal["onnx"] = missing
+    opset_version: Union[_Missing, int] = missing
+
+
+@dataclass
+class PickleWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Pickle"
+    weights_format: Literal["pickle"] = missing
+
+
+@dataclass
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Pytorch State Dict"
+    weights_format: Literal["pytorch_state_dict"] = missing
+
+
+@dataclass
+class PytorchScriptWeightsEntry(WeightsEntryBase):
+    weights_format_name = "TorchScript"
+    weights_format: Literal["pytorch_script"] = missing
+
+
+@dataclass
 class TensorflowJsWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Tensorflow.js"
     weights_format: Literal["tensorflow_js"] = missing
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
 class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Tensorflow Saved Model"
     weights_format: Literal["tensorflow_saved_model_bundle"] = missing
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
-
-
-@dataclass
-class OnnxWeightsEntry(WeightsEntryBase):
-    weights_format: Literal["onnx"] = missing
-    opset_version: Union[_Missing, int] = missing
+    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
 
 
 WeightsEntry = Union[

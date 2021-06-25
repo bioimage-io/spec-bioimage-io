@@ -11,6 +11,16 @@ class RDF(RDF):
 
 
 @dataclass
+class KerasHdf5WeightsEntry(KerasHdf5WeightsEntry):
+    source: Path = missing
+
+
+@dataclass
+class OnnxWeightsEntry(OnnxWeightsEntry):
+    source: Path = missing
+
+
+@dataclass
 class PickleWeightsEntry(PickleWeightsEntry):
     source: Path = missing
 
@@ -26,11 +36,6 @@ class PytorchScriptWeightsEntry(PytorchScriptWeightsEntry):
 
 
 @dataclass
-class KerasHdf5WeightsEntry(KerasHdf5WeightsEntry):
-    source: Path = missing
-
-
-@dataclass
 class TensorflowJsWeightsEntry(TensorflowJsWeightsEntry):
     source: Path = missing
 
@@ -40,19 +45,14 @@ class TensorflowSavedModelBundleWeightsEntry(TensorflowSavedModelBundleWeightsEn
     source: Path = missing
 
 
-@dataclass
-class OnnxWeightsEntry(OnnxWeightsEntry):
-    source: Path = missing
-
-
 WeightsEntry = Union[
-    PickleWeightsEntry,
-    PytorchStateDictWeightsEntry,
-    PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
+    OnnxWeightsEntry,
+    PickleWeightsEntry,
+    PytorchScriptWeightsEntry,
+    PytorchStateDictWeightsEntry,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    OnnxWeightsEntry,
 ]
 
 
