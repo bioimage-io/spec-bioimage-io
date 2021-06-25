@@ -796,14 +796,18 @@ config:
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 assert isinstance(
                     weights_entry,
-                    (KerasHdf5WeightsEntry, TensorflowJsWeightsEntry, TensorflowSavedModelBundleWeightsEntry),
+                    (
+                        raw_nodes.KerasHdf5WeightsEntry,
+                        raw_nodes.TensorflowJsWeightsEntry,
+                        raw_nodes.TensorflowSavedModelBundleWeightsEntry,
+                    ),
                 )
                 if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
                     warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format == "onnx":
-                assert isinstance(weights_entry, OnnxWeightsEntry)
+                assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
