@@ -176,6 +176,8 @@ is in an unsupported format version. The current format version described here i
         elif license_info["isDeprecatedLicenseId"]:
             warnings.warn(f"{license_info['name']} is deprecated")
 
+    links = fields.List(fields.String, bioimageio_description="links to other bioimage.io resources")
+
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     source = fields.URI(bioimageio_description="url to the source of the resource")

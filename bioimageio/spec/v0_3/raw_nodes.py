@@ -87,6 +87,7 @@ class RDF(Node):
     format_version: FormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
+    links: List[str] = missing
     name: str = missing
     tags: List[str] = missing
     type: Type = missing
