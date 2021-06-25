@@ -2,9 +2,9 @@ import typing
 import warnings
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, pre_load, validates, validates_schema
+from marshmallow import Schema, ValidationError, missing as missing_, post_load, pre_load, validates, validates_schema
 
-from bioimageio.spec.shared import field_validators, fields, LICENSES
+from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
@@ -470,6 +470,11 @@ class WeightsEntryBase(BioImageIOSchema):
         validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
     )
 
+    @post_load
+    def make_object(self, data, **kwargs):
+        data.pop("weights_format")  # weights_format was only used to identify correct WeightsEntry schema
+        return super().make_object(data, **kwargs)
+
 
 class KerasHdf5WeightsEntry(WeightsEntryBase):
     bioimageio_description = "Keras HDF5 weights format"
@@ -789,22 +794,19 @@ config:
         weights: typing.Dict[str, WeightsEntryBase] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
+                assert isinstance(
+                    weights_entry,
+                    (KerasHdf5WeightsEntry, TensorflowJsWeightsEntry, TensorflowSavedModelBundleWeightsEntry),
+                )
                 if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
                     warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
-            else:
-                if weights_entry.tensorflow_version is not missing_:
-                    raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format == "onnx":
+                assert isinstance(weights_entry, OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
-            else:
-                if weights_entry.opset_version is not missing_:
-                    raise ValidationError(
-                        f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
-                    )
 
 
 # Manifest
