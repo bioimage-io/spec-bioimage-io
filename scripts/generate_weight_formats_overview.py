@@ -3,9 +3,9 @@ import json
 import sys
 from pathlib import Path
 
-from bioimageio.spec import download_uri_to_local_path, schema
+from bioimageio.spec import download_uri_to_local_path, raw_nodes, schema
 from bioimageio.spec.shared.common import get_args, yaml
-from bioimageio.spec.raw_nodes import WeightsEntry
+from bioimageio.spec.raw_nodes import WeightsFormat
 
 MANIFEST_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage-io-models/gh-pages/manifest.bioimage.io.json"
 
@@ -35,18 +35,20 @@ def main():
 
         raise NotImplementedError(entry_class)
 
+    weights_format_ids = get_args(WeightsFormat)
+    weights_format_class_names = [wf.title().replace("_", "") + "WeightsEntry" for wf in weights_format_ids]
+
     weights_formats = {
-        get_weights_format_from_entry_class(entry): {
-            "name": entry.weights_format_name,
-            "description": getattr(schema, entry.__name__).bioimageio_description,
+        wfcn: {
+            "name": getattr(raw_nodes, wfcn).weights_format_name,
+            "description": getattr(schema, wfcn).bioimageio_description,
             "consumers": [
                 cname
                 for cname, c in consumers.items()
-                if get_weights_format_from_entry_class(entry)
-                in c.get("supported_weights_formats", consumer_defaults.get(cname, []))
+                if wf in c.get("supported_weights_formats", consumer_defaults.get(cname, []))
             ],
         }
-        for entry in get_args(WeightsEntry)
+        for wf, wfcn in zip(weights_format_ids, weights_format_class_names)
     }
 
     overview = {"consumers": consumers, "weight_formats": weights_formats}  # todo: weight_formats -> weights_formats
