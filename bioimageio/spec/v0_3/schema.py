@@ -2,7 +2,7 @@ import typing
 import warnings
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, validates, validates_schema
+from marshmallow import Schema, ValidationError, missing as missing_, pre_load, validates, validates_schema
 
 from bioimageio.spec.shared import field_validators, fields, LICENSES
 from bioimageio.spec.shared.common import get_args
@@ -442,7 +442,8 @@ with open(filename, "rb") as f:
 )
 
 
-class WeightsEntry(BioImageIOSchema):
+class WeightsEntryBase(BioImageIOSchema):
+    weights_format: fields.String
     authors = fields.List(
         fields.Nested(Author),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
@@ -460,15 +461,57 @@ class WeightsEntry(BioImageIOSchema):
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
         "the model), need to have this field."
     )
-    opset_version = fields.Number(bioimageio_description="only for `onnx` weight format")
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion(
-        bioimageio_description="only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format"
+    weights_format = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
     )
+
+
+class PickleWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("pickle"))
+
+
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"))
+
+
+class PytorchScriptWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_script"))
+
+
+class KerasHdf5WeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"))
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+class TensorflowJsWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"))
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("tensorflow_saved_model_bundle"))
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+class OnnxWeightsEntry(WeightsEntryBase):
+    weights_format = fields.String(validate=field_validators.Equal("onnx"))
+    opset_version = fields.Number()  # todo: required=True
+
+
+WeightsEntry = typing.Union[
+    PickleWeightsEntry,
+    PytorchStateDictWeightsEntry,
+    PytorchScriptWeightsEntry,
+    KerasHdf5WeightsEntry,
+    TensorflowJsWeightsEntry,
+    TensorflowSavedModelBundleWeightsEntry,
+    OnnxWeightsEntry,
+]
 
 
 class ModelParent(BioImageIOSchema):
@@ -564,7 +607,7 @@ is in an unsupported format version. The current format version described here i
     packaged_by = fields.List(
         fields.Nested(Author),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
-        f"different from `authors` in root or any {WeightsEntry.__name__}.",
+        f"different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
@@ -613,11 +656,24 @@ is in an unsupported format version. The current format version described here i
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Nested(WeightsEntry),
+        fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
         "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
     )
+
+    @pre_load
+    def add_weight_format_key_to_weights_entry_value(self, data: dict, many=False, partial=False, **kwargs):
+        if many or partial:
+            raise NotImplementedError
+
+        for weights_format, weights_entry in data.get("weights", {}).items():
+            if "weights_format" in weights_entry:
+                raise ValidationError(f"Got unexpected key 'weights_format' in weights entry {weights_format}")
+
+            weights_entry["weights_format"] = weights_format
+
+        return data
 
     inputs = fields.Nested(
         InputTensor, many=True, bioimageio_description="Describes the input tensors expected by this model."
@@ -723,7 +779,7 @@ config:
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
-        weights: typing.Dict[str, WeightsEntry] = data["weights"]
+        weights: typing.Dict[str, WeightsEntryBase] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 if weights_entry.tensorflow_version is missing_:

@@ -137,17 +137,65 @@ class OutputTensor:
 
 
 @dataclass
-class WeightsEntry(Node):
+class WeightsEntryBase(Node):
+    weights_format: str = missing
     authors: Union[_Missing, List[Author]] = missing
     attachments: Union[_Missing, Dict] = missing
     parent: Union[_Missing, str] = missing
-    # ONNX specific
-    opset_version: Union[_Missing, int] = missing
     # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
     # todo: check schema. only valid for tensorflow_saved_model_bundle format
     sha256: Union[_Missing, str] = missing
     source: URI = missing
+
+
+@dataclass
+class PickleWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["pickle"] = missing
+
+
+@dataclass
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["pytorch_state_dict"] = missing
+
+
+@dataclass
+class PytorchScriptWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["pytorch_script"] = missing
+
+
+@dataclass
+class KerasHdf5WeightsEntry(WeightsEntryBase):
+    weights_format: Literal["keras_hdf5"] = missing
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+
+@dataclass
+class TensorflowJsWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["tensorflow_js"] = missing
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+
+@dataclass
+class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["tensorflow_saved_model_bundle"] = missing
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+
+@dataclass
+class OnnxWeightsEntry(WeightsEntryBase):
+    weights_format: Literal["onnx"] = missing
+    opset_version: Union[_Missing, int] = missing
+
+
+WeightsEntry = Union[
+    PickleWeightsEntry,
+    PytorchStateDictWeightsEntry,
+    PytorchScriptWeightsEntry,
+    KerasHdf5WeightsEntry,
+    TensorflowJsWeightsEntry,
+    TensorflowSavedModelBundleWeightsEntry,
+    OnnxWeightsEntry,
+]
 
 
 @dataclass
