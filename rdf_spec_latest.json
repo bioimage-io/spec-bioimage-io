@@ -1,0 +1,205 @@
+{
+    "$ref": "#/definitions/RDF",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Author": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "title": "affiliation",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "orcid": {
+                    "minLength": 19,
+                    "title": "orcid",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "Badge": {
+            "additionalProperties": false,
+            "properties": {
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "label": {
+                    "title": "label",
+                    "type": "string"
+                },
+                "url": {
+                    "title": "url",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "type": "object"
+        },
+        "CiteEntry": {
+            "additionalProperties": false,
+            "properties": {
+                "doi": {
+                    "title": "doi",
+                    "type": "string"
+                },
+                "text": {
+                    "title": "text",
+                    "type": "string"
+                },
+                "url": {
+                    "title": "url",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "type": "object"
+        },
+        "RDF": {
+            "additionalProperties": false,
+            "properties": {
+                "attachments": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "title": "",
+                                "type": "string"
+                            },
+                            {
+                                "items": {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                "title": "",
+                                "type": "array"
+                            }
+                        ]
+                    },
+                    "title": "attachments",
+                    "type": "object"
+                },
+                "authors": {
+                    "items": {
+                        "$ref": "#/definitions/Author",
+                        "type": "object"
+                    },
+                    "title": "authors",
+                    "type": "array"
+                },
+                "badges": {
+                    "items": {
+                        "$ref": "#/definitions/Badge",
+                        "type": "object"
+                    },
+                    "title": "badges",
+                    "type": "array"
+                },
+                "cite": {
+                    "items": {
+                        "$ref": "#/definitions/CiteEntry",
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "config": {
+                    "additionalProperties": {},
+                    "title": "config",
+                    "type": "object"
+                },
+                "covers": {
+                    "items": {
+                        "title": "covers",
+                        "type": "string"
+                    },
+                    "title": "covers",
+                    "type": "array"
+                },
+                "description": {
+                    "title": "description",
+                    "type": "string"
+                },
+                "documentation": {
+                    "title": "documentation",
+                    "type": "string"
+                },
+                "download_url": {
+                    "title": "download_url",
+                    "type": "string"
+                },
+                "format_version": {
+                    "enum": [
+                        "0.2.0"
+                    ],
+                    "enumNames": [],
+                    "title": "format_version",
+                    "type": "string"
+                },
+                "git_repo": {
+                    "title": "git_repo",
+                    "type": "string"
+                },
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "license": {
+                    "title": "license",
+                    "type": "string"
+                },
+                "links": {
+                    "items": {
+                        "title": "links",
+                        "type": "string"
+                    },
+                    "title": "links",
+                    "type": "array"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "source": {
+                    "title": "source",
+                    "type": "string"
+                },
+                "tags": {
+                    "items": {
+                        "title": "tags",
+                        "type": "string"
+                    },
+                    "title": "tags",
+                    "type": "array"
+                },
+                "type": {
+                    "title": "type",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cite",
+                "description",
+                "documentation",
+                "format_version",
+                "name",
+                "tags",
+                "type"
+            ],
+            "type": "object"
+        }
+    }
+}

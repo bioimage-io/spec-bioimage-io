@@ -12,9 +12,13 @@ The recommended behavior for the implementation is to keep backward compatibilit
 is in an unsupported format version. The current format version described here is
 0.3.2
 * `authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
+  1. _Author_   is a Dict with the following keys:
+    * `name` _String_ Full name.
+    * `affiliation` _optional String_ Affiliation.
+    * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * `cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used. is a Dict with the following keys:
+E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys: List\[CiteEntry\] is a Dict with the following keys:
   * `text` _String_ 
   * `doi` _optional* String_ 
   * `url` _optional* String_ 
@@ -29,11 +33,15 @@ E.g. the citation for the model architecture and/or the training data used. is a
 * `type` _String_ 
 * `weights` _Dict\[String, WeightsEntry\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
   1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pickle, pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
-  1. _WeightsEntry_  is a Dict with the following keys:
+  1. _WeightsEntry_   is a Dict with the following keys:
     * `source` _URI→String_ Link to the source file. Preferably a url.
     * `attachments` _optional Dict\[Any, Any\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files that are specific to the current weight format. A list of URIs can be listed under the `files` key to included additional files for generating the model package.
     * `authors` _optional List\[Author\]_ A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
-    * `opset_version` _optional Number_ 
+      1. _Author_   is a Dict with the following keys:
+        * `name` _String_ Full name.
+        * `affiliation` _optional String_ Affiliation.
+        * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
+    * `opset_version` _optional Number_ only for `onnx` weight format
     * `parent` _optional String_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
     * `sha256` _optional String_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
 Code snippet to compute SHA256 checksum
@@ -49,12 +57,25 @@ with open(filename, "rb") as f:
   ```
 
 
-    * `tensorflow_version` _optional StrictVersion→String_ 
-* `attachments` _optional* Dict\[String, Union\[URI→String | List\[URI→String\]\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant
-files. E.g. we can place a list of URIs under the `files` to list images and other files that are necessary for the
-documentation or for the model to run, these files will be included when generating the model package.
-* `config` _optional Dict\[Any, Any\]_ 
-A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name.
+    * `tensorflow_version` _optional StrictVersion→String_ only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format
+* `attachments` _optional* Dict\[String, Union\[URI→String | List\[URI→String\]\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+* `badges` _optional List\[Badge\]_ a list of badges
+  1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
+    * `label` _String_ e.g. 'Open in Colab'
+    * `icon` _optional String_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
+    * `url` _optional URI→String_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+* `config` _optional Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
+Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
+```yaml
+   config:
+      bioimage_io:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+           nested: value
+      imagej:
+        macro_dir: /path/to/macro/file
+```
+If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
 
 For example:
 ```yaml
@@ -77,11 +98,11 @@ config:
 
 * `covers` _optional List\[URI→String\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * `dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
+* `download_url` _optional String_ recommended url to the zipped file if applicable
 * `framework` _optional String_ The deep learning framework of the source code. One of: scikit-learn, pytorch, tensorflow. This field is only required if the field `source` is present.
-* `git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.
-If the model is contained in a subfolder of a git repository, then a url to the exact folder
-(which contains the configuration yaml file) should be used.
-* `inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model. is a Dict with the following keys:
+* `git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
+* `icon` _optional String_ an icon for the resource
+* `inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model. List\[InputTensor\] is a Dict with the following keys:
   * `axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
     | character | description |
@@ -97,15 +118,19 @@ If the model is contained in a subfolder of a git repository, then a url to the 
   * `name` _String_ Tensor name.
   * `shape` _InputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitInputShape\]_ Specification of tensor shape.
     1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
-    1. _ImplicitInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. is a Dict with the following keys:
+    1. _ImplicitInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ImplicitInputShape is a Dict with the following keys:
       * `min` _List\[Integer\]_ The minimum input shape with same length as `axes`
       * `step` _List\[Integer\]_ The minimum shape change with same length as `axes`
   * `data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
   * `description` _optional String_ 
   * `preprocessing` _optional List\[Preprocessing\]_ Description of how this input should be preprocessed.
+    1. _Preprocessing_   is a Dict with the following keys:
+      * `name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for information on which transformations are supported by specific consumer software).
+      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
 * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Keyword arguments for the implementation specified by `source`. This field is only required if the field `source` is present.
 * `language` _optional* String_ Programming language of the source code. One of: python, java. This field is only required if the field `source` is present.
-* `outputs` _List\[OutputTensor\]_ Describes the output tensors from this model. is a Dict with the following keys:
+* `links` _optional List\[String\]_ links to other bioimage.io resources
+* `outputs` _List\[OutputTensor\]_ Describes the output tensors from this model. List\[OutputTensor\] is a Dict with the following keys:
   * `axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
     | character | description |
@@ -121,7 +146,7 @@ If the model is contained in a subfolder of a git repository, then a url to the 
   * `name` _String_ Tensor name.
   * `shape` _OutputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
     1. _optional ExplicitShape→List\[Integer\]_ 
-    1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. is a Dict with the following keys:
+    1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. ImplicitOutputShape is a Dict with the following keys:
       * `offset` _List\[Integer\]_ Position of origin wrt to input.
       * `reference_input` _String_ Name of the reference input tensor.
       * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
@@ -129,11 +154,18 @@ If the model is contained in a subfolder of a git repository, then a url to the 
   * `description` _optional String_ 
   * `halo` _optional List\[Integer\]_ The halo to crop from the output tensor (for example to crop away boundary effects or for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed.
   * `postprocessing` _optional List\[Postprocessing\]_ Description of how this output should be postprocessed.
+    1. _Postprocessing_   is a Dict with the following keys:
+      * `name` _String_ Name of postprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range, scale_mean_variance (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for information on which transformations are supported by specific consumer software).
+      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
 * `packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any WeightsEntry.
-* `parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. is a Dict with the following keys:
+  1. _Author_   is a Dict with the following keys:
+    * `name` _String_ Full name.
+    * `affiliation` _optional String_ Affiliation.
+    * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
+* `parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
   * `sha256` _optional SHA256→String_ Hash of the weights of the parent model.
   * `uri` _optional URI→String_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
-* `run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes). is a Dict with the following keys:
+* `run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes). RunMode is a Dict with the following keys:
   * `name` _String_ The name of the `run_mode`
   * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
 * `sample_inputs` _optional List\[URI→String\]_ List of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images.
