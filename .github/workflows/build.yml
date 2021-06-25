@@ -65,10 +65,10 @@ jobs:
       run: python scripts/generate_docs.py
     - name: Generate JSON Schema
       run: python scripts/generate_json_specs.py
+    - name: Check weights format overview
+      run: python scripts/generate_weights_formats_overview.py generate
     - name: Deploy Docs and Schema 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
         branch: gh-pages
         folder: dist
-        clean-exclude: |
-          weight_formats_spec.json
