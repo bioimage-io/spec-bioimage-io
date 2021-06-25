@@ -478,40 +478,42 @@ class WeightsEntryBase(BioImageIOSchema):
 
 class KerasHdf5WeightsEntry(WeightsEntryBase):
     bioimageio_description = "Keras HDF5 weights format"
-    weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"))
+    weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"), required=True, load_only=True)
     tensorflow_version = fields.StrictVersion()  # todo: required=True
 
 
 class OnnxWeightsEntry(WeightsEntryBase):
     bioimageio_description = "ONNX weights format"
-    weights_format = fields.String(validate=field_validators.Equal("onnx"))
+    weights_format = fields.String(validate=field_validators.Equal("onnx"), required=True, load_only=True)
     opset_version = fields.Number()  # todo: required=True
 
 
 class PickleWeightsEntry(WeightsEntryBase):
     bioimageio_description = "Pickle weights format"
-    weights_format = fields.String(validate=field_validators.Equal("pickle"))
+    weights_format = fields.String(validate=field_validators.Equal("pickle"), required=True, load_only=True)
 
 
 class PytorchStateDictWeightsEntry(WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
-    weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"))
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
 
 
 class PytorchScriptWeightsEntry(WeightsEntryBase):
     bioimageio_description = "Torch Script weights format"
-    weights_format = fields.String(validate=field_validators.Equal("pytorch_script"))
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_script"), required=True, load_only=True)
 
 
 class TensorflowJsWeightsEntry(WeightsEntryBase):
     bioimageio_description = "Tensorflow Javascript weights format"
-    weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"))
+    weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"), required=True, load_only=True)
     tensorflow_version = fields.StrictVersion()  # todo: required=True
 
 
 class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
     bioimageio_description = "Tensorflow Saved Model Bundle weights format"
-    weights_format = fields.String(validate=field_validators.Equal("tensorflow_saved_model_bundle"))
+    weights_format = fields.String(
+        validate=field_validators.Equal("tensorflow_saved_model_bundle"), required=True, load_only=True
+    )
     tensorflow_version = fields.StrictVersion()  # todo: required=True
 
 
