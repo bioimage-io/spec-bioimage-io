@@ -58,7 +58,7 @@ class RunMode(BioImageIOSchema):
 
 
 class RDF(BioImageIOSchema):
-    bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
+    bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
 This specification defines the fields used in a general BioImage.IO-complaint resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
@@ -142,14 +142,14 @@ E.g. the citation for the model architecture and/or the training data used.""",
     )
 
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)),
+        validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)),
         required=True,
         bioimageio_description_order=0,
-        bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
-This is mandatory, and important for the consumer software to verify before parsing the fields.
-The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
-is in an unsupported format version. The current format version described here is
-{get_args(raw_nodes.FormatVersion)[-1]}""",
+        bioimageio_description=(
+            "Version of the BioImage.IO General Resource Description File Specification used."
+            f"The current format version described here is {get_args(raw_nodes.GeneralFormatVersion)[-1]}. "
+            "Note: The general RDF format version is not to be confused with the Model RDF format version."
+        ),
     )
 
     git_repo = fields.String(
@@ -481,7 +481,7 @@ class ModelParent(BioImageIOSchema):
 
 
 class Model(RDF):
-    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
+    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-complaint resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -508,6 +508,17 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     dependencies = fields.Dependencies(
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
+    )
+
+    format_version = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.ModelFormatVersion)),
+        required=True,
+        bioimageio_description_order=0,
+        bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
+This is mandatory, and important for the consumer software to verify before parsing the fields.
+The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
+is in an unsupported format version. The current format version described here is
+{get_args(raw_nodes.ModelFormatVersion)[-1]}""",
     )
 
     framework = fields.String(
@@ -741,7 +752,7 @@ class BioImageIoManifestModelEntry(BioImageIOSchema):
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
-class BioImageIoManifestNotebookEntry(BioImageIOSchema):
+class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
     id = fields.String(required=True)
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
@@ -763,8 +774,10 @@ class BioImageIoManifestNotebookEntry(BioImageIOSchema):
     links = fields.List(fields.String)  # todo: make List[URI]?
 
 
-class BioImageIoManifest(BioImageIOSchema):
-    format_version = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)), required=True)
+class BioImageIoManifest(BioImageIOSchema):  # todo: update to 'Collection' or remove
+    format_version = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)), required=True
+    )
     config = fields.Dict()
 
     application = fields.List(fields.Dict)

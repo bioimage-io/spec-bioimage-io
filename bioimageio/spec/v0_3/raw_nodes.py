@@ -21,8 +21,9 @@ from bioimageio.spec.shared.common import Literal, get_args
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
 # such that we only need to support the most up-to-date version.
-FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
-latest_version = get_args(FormatVersion)[-1]
+GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
+ModelFormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
+latest_version = get_args(ModelFormatVersion)[-1]
 
 Axes = NewType("Axes", str)
 Dependencies = NewType("Dependencies", str)
@@ -84,7 +85,7 @@ class RDF(Node):
     covers: Union[_Missing, List[URI]] = missing
     description: str = missing
     documentation: Path = missing
-    format_version: FormatVersion = missing
+    format_version: ModelFormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
     links: List[str] = missing

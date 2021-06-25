@@ -1,7 +1,7 @@
 from bioimageio.spec.shared import fields
 from . import nodes, raw_nodes, schema, utils
 from .converters import maybe_convert_manifest, maybe_convert_model
-from .raw_nodes import FormatVersion
+from .raw_nodes import ModelFormatVersion
 
 fields = fields
 
