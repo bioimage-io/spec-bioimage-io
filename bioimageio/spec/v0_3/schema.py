@@ -763,7 +763,7 @@ config:
         if "source" in data:
             return
 
-        weight_format_requires_source = {
+        weights_format_requires_source = {
             "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
@@ -772,7 +772,7 @@ config:
             "tensorflow_saved_model_bundle": False,
             "onnx": False,
         }
-        require_source = {wf for wf in data["weights"] if weight_format_requires_source[wf]}
+        require_source = {wf for wf in data["weights"] if weights_format_requires_source[wf]}
         if require_source:
             raise ValidationError(
                 f"These specified weight formats require source code to be specified: {require_source}"
