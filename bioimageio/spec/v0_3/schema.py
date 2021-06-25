@@ -1,5 +1,6 @@
 import typing
 import warnings
+from copy import deepcopy
 
 import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, missing as missing_, post_load, pre_load, validates, validates_schema
@@ -678,6 +679,7 @@ is in an unsupported format version. The current format version described here i
 
     @pre_load
     def add_weight_format_key_to_weights_entry_value(self, data: dict, many=False, partial=False, **kwargs):
+        data = deepcopy(data)  # Schema.validate() calls pre_load methods, thus we should not modify the input data
         if many or partial:
             raise NotImplementedError
 
