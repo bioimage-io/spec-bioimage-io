@@ -74,24 +74,24 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     if weight_type == "pytorch_state_dict":
         # pytorch-state-dict -> we need a source
         assert source is not None
-        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = spec.raw_nodes.PytorchStateDictWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = "python"
         framework = "pytorch"
 
     elif weight_type == "pickle":
-        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = spec.raw_nodes.PickleWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = "python"
         framework = "scikit-learn"
 
     elif weight_type == "onnx":
-        weights = spec.raw_nodes.WeightsEntry(
+        weights = spec.raw_nodes.OnnxWeightsEntry(
             source=weight_uri, sha256=weight_hash, opset_version=kwargs.get("opset_version", 12), **attachments
         )
         language = None
         framework = None
 
     elif weight_type == "pytorch_script":
-        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = spec.raw_nodes.PytorchScriptWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         if source is None:
             language = None
             framework = None
@@ -100,7 +100,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
             framework = "pytorch"
 
     elif weight_type == "keras_hdf5":
-        weights = spec.raw_nodes.WeightsEntry(
+        weights = spec.raw_nodes.KerasHdf5WeightsEntry(
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
@@ -110,7 +110,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         framework = "tensorflow"
 
     elif weight_type == "tensorflow_saved_model_bundle":
-        weights = spec.raw_nodes.WeightsEntry(
+        weights = spec.raw_nodes.TensorflowSavedModelBundleWeightsEntry(
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
@@ -120,7 +120,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         framework = "tensorflow"
 
     elif weight_type == "tensorflow_js":
-        weights = spec.raw_nodes.WeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = spec.raw_nodes.TensorflowJsWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = None
         framework = None
 
