@@ -2,7 +2,7 @@ import typing
 import warnings
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, post_load, validates, validates_schema
+from marshmallow import Schema, ValidationError, missing as missing_, validates, validates_schema
 
 from bioimageio.spec.shared import field_validators, fields, LICENSES
 from bioimageio.spec.shared.common import get_args
@@ -30,6 +30,15 @@ class Author(BioImageIOSchema):
     )
 
 
+class Badge(BioImageIOSchema):
+    bioimageio_description = "Custom badge"
+    label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
+    icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
+    url = fields.URI(
+        bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'"
+    )
+
+
 class CiteEntry(BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String(bioimageio_maybe_required=True)
@@ -49,27 +58,33 @@ class RunMode(BioImageIOSchema):
 
 
 class RDF(BioImageIOSchema):
-    """not the reference for RDF; todo: match definition of rdf json schema; move other fields to Model"""
+    bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
+This specification defines the fields used in a general BioImage.IO-complaint resource description file (`RDF`).
+An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
+Note that models are described with an extended Model RDF specification.
 
-    format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)),
-        required=True,
-        bioimageio_description_order=0,
-        bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
-This is mandatory, and important for the consumer software to verify before parsing the fields.
-The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
-is in an unsupported format version. The current format version described here is
-{get_args(raw_nodes.FormatVersion)[-1]}""",
+The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
+_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+"""
+
+    attachments = fields.Dict(
+        fields.String,
+        fields.Union([fields.URI(), fields.List(fields.URI)]),
+        bioimageio_maybe_required=True,
+        bioimageio_description=(
+            "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
+            "place a list of URIs under the `files` to list images and other files that this resource depends on."
+        ),  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
     )
-    name = fields.String(required=True)
-    description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
     authors = fields.List(
         fields.Nested(Author),
-        required=True,
         bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
         "points of contact.",
     )
+
+    badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
+
     cite = fields.Nested(
         CiteEntry,
         many=True,
@@ -79,26 +94,36 @@ Each entry contains a mandatory `text` field and either one or both of `doi` and
 E.g. the citation for the model architecture and/or the training data used.""",
     )
 
-    git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="""A url to the git repository, e.g. to Github or Gitlab.
-If the model is contained in a subfolder of a git repository, then a url to the exact folder
-(which contains the configuration yaml file) should be used.""",
-    )
-    tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
-    license = fields.String(
-        validate=field_validators.OneOf(LICENSES),
-        required=True,
-        bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
-        "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
-        "an Github issue to discuss your intentions with the community.",
+    config = fields.Dict(
+        bioimageio_description=(
+            "A custom configuration field that can contain any keys not present in the RDF spec. "
+            "This means you should not store, for example, github repo URL in `config` since we already have the "
+            "`git_repo` key defined in the spec.\n"
+            "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
+            "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
+            """for example:
+```yaml
+   config:
+      bioimage_io:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+           nested: value
+      imagej:
+        macro_dir: /path/to/macro/file
+```
+"""
+            "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
+        )
     )
 
-    @validates("license")
-    def warn_about_deprecated_spdx_license(self, value: str):
-        license_info = LICENSES[value]
-        if license_info["isDeprecatedLicenseId"]:
-            warnings.warn(f"{license_info['name']} is deprecated")
+    covers = fields.List(
+        fields.URI,
+        bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
+        "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
+        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
+    )
+
+    description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
     documentation = fields.RelativeLocalPath(
         validate=field_validators.Attribute(
@@ -110,51 +135,63 @@ If the model is contained in a subfolder of a git repository, then a url to the 
         "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
         "not allowed. It is recommended to use `README.md` as the documentation name.",
     )
-    covers = fields.List(
-        fields.URI,
-        bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
-        "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
-        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
-    )
-    attachments = fields.Dict(
-        fields.String,
-        fields.Union([fields.URI(), fields.List(fields.URI)]),
-        bioimageio_maybe_required=True,
-        bioimageio_description="""Dictionary of text keys and URI (or a list of URI) values to additional, relevant
-files. E.g. we can place a list of URIs under the `files` to list images and other files that are necessary for the
-documentation or for the model to run, these files will be included when generating the model package.""",
+
+    download_url = fields.String(
+        validate=field_validators.URL(schemes=["http", "https"]),
+        bioimageio_description="recommended url to the zipped file if applicable",
     )
 
-    run_mode = fields.Nested(
-        RunMode,
-        bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
-        "listed in [supported_formats_and_operations.md#Run Modes]"
-        "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
-    )
-    config = fields.Dict()
-
-    language = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.Language)),
-        bioimageio_maybe_required=True,
-        bioimageio_description=f"Programming language of the source code. One of: "
-        f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
-    )
-    framework = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
-        bioimageio_description=f"The deep learning framework of the source code. One of: "
-        f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
-    )
-    dependencies = fields.Dependencies(
-        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
-        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
-    )
-    timestamp = fields.DateTime(
+    format_version = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)),
         required=True,
-        bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
-        "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
+        bioimageio_description_order=0,
+        bioimageio_description=(
+            "Version of the BioImage.IO General Resource Description File Specification used."
+            f"The current format version described here is {get_args(raw_nodes.GeneralFormatVersion)[-1]}. "
+            "Note: The general RDF format version is not to be confused with the Model RDF format version."
+        ),
     )
-    type = fields.String(required=True, validate=field_validators.OneOf(get_args(raw_nodes.Type)))
+
+    git_repo = fields.String(
+        validate=field_validators.URL(schemes=["http", "https"]),
+        bioimageio_description="A url to the git repository, e.g. to Github or Gitlab.",
+    )
+
+    icon = fields.String(
+        bioimageio_description="an icon for the resource"
+    )  # todo: limit length? validate=field_validators.Length(max=1)
+
+    license = fields.String(
+        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: Maybe we should allow for the full name as well?
+        bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
+        "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
+        "an Github issue to discuss your intentions with the community."
+    )
+
+    @validates("license")
+    def warn_about_deprecated_spdx_license(self, value: str):
+        license_info = LICENSES.get(value)
+        if license_info is None:
+            warnings.warn(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
+        elif license_info["isDeprecatedLicenseId"]:
+            warnings.warn(f"{license_info['name']} is deprecated")
+
+    links = fields.List(fields.String, bioimageio_description="links to other bioimage.io resources")
+
+    name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+
+    source = fields.URI(bioimageio_description="url to the source of the resource")
+
+    tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
+
+    type = fields.String(required=True)
+
+    @validates("type")
+    def validate_type(self, value):
+        schema_type = self.__class__.__name__.lower()
+        if value != schema_type:
+            raise ValidationError(f"type must be {schema_type}. Are you using the correct validator?")
+
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
@@ -382,15 +419,6 @@ class OutputTensor(Tensor):
         else:
             raise NotImplementedError(type(shape))
 
-    # @post_load
-    # def make_object(self, data, **kwargs):
-    #     shape = data["shape"]
-    #     halo = data["halo"]
-    #     if halo is missing_:
-    #         data["halo"] = [0] * len(shape)
-    #
-    #     return super().make_object(data, **kwargs)
-
 
 _common_sha256_hint = (
     "You can drag and drop your file to this [online tool]"
@@ -432,13 +460,15 @@ class WeightsEntry(BioImageIOSchema):
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
         "the model), need to have this field."
     )
-    opset_version = fields.Number()  # ONNX Specific
+    opset_version = fields.Number(bioimageio_description="only for `onnx` weight format")
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion()
+    tensorflow_version = fields.StrictVersion(
+        bioimageio_description="only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format"
+    )
 
 
 class ModelParent(BioImageIOSchema):
@@ -451,7 +481,7 @@ class ModelParent(BioImageIOSchema):
 
 
 class Model(RDF):
-    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
+    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-complaint resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -459,8 +489,73 @@ The model RDFs can be downloaded or uploaded to the bioimage.io website, produce
 The model RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
+    authors = fields.List(
+        RDF.authors.inner,
+        required=True,  # todo: unify authors with RDF (optional or required?)
+        bioimageio_description=RDF.authors.bioimageio_description,
+    )
+
+    badges = missing_  # todo: allow badges for Model (RDF has it)
+    cite = fields.Nested(
+        RDF.cite.schema,
+        many=RDF.cite.many,
+        required=True,  # todo: unify authors with RDF (optional or required?)
+        bioimageio_description=RDF.cite.bioimageio_description,
+    )
+
+    download_url = missing_  # todo: allow download_url for Model (RDF has it)
+
+    dependencies = fields.Dependencies(
+        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
+        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
+    )
+
+    format_version = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.ModelFormatVersion)),
+        required=True,
+        bioimageio_description_order=0,
+        bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
+This is mandatory, and important for the consumer software to verify before parsing the fields.
+The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
+is in an unsupported format version. The current format version described here is
+{get_args(raw_nodes.ModelFormatVersion)[-1]}""",
+    )
+
+    framework = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
+        bioimageio_description=f"The deep learning framework of the source code. One of: "
+        f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
+    )
+
+    git_repo = fields.String(
+        validate=RDF.git_repo.validate,
+        bioimageio_description=RDF.git_repo.bioimageio_description
+        + "If the model is contained in a subfolder of a git repository, then a url to the exact folder"
+        + "(which contains the configuration yaml file) should be used.",
+    )
+
+    icon = missing_  # todo: allow icon for Model (RDF has it)
+
+    kwargs = fields.Kwargs(
+        bioimageio_description="Keyword arguments for the implementation specified by `source`. "
+        "This field is only required if the field `source` is present."
+    )
+
+    language = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.Language)),
+        bioimageio_maybe_required=True,
+        bioimageio_description=f"Programming language of the source code. One of: "
+        f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
+    )
+
+    license = fields.String(
+        validate=RDF.license.validate,
+        required=True,  # todo: unify license with RDF (optional or required?)
+        bioimageio_description=RDF.license.bioimageio_description,
+    )
+
     name = fields.String(
-        # validate=field_validators.Length(max=36),  # todo: enforce in future version
+        # validate=field_validators.Length(max=36),  # todo: enforce in future version (0.4.0?)
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "`_`, `-` or spaces and not be longer than 36 characters.",
@@ -479,6 +574,21 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "checkpoint, see `weights`.",
     )
 
+    run_mode = fields.Nested(
+        RunMode,
+        bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
+        "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
+        "listed in [supported_formats_and_operations.md#Run Modes]"
+        "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
+    )
+
+    sha256 = fields.String(
+        validate=field_validators.Length(equal=64),
+        bioimageio_description="SHA256 checksum of the model source code file."
+        + _common_sha256_hint
+        + " This field is only required if the field source is present.",
+    )
+
     source = fields.ImportableSource(
         bioimageio_maybe_required=True,
         bioimageio_description="Language and framework specific implementation. As some weights contain the model "
@@ -487,15 +597,11 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
         "`./my_function:MyImplementation` or `core_library.some_module.some_function`.",
     )
-    sha256 = fields.String(
-        validate=field_validators.Length(equal=64),
-        bioimageio_description="SHA256 checksum of the model source code file."
-        + _common_sha256_hint
-        + " This field is only required if the field source is present.",
-    )
-    kwargs = fields.Kwargs(
-        bioimageio_description="Keyword arguments for the implementation specified by `source`. "
-        "This field is only required if the field `source` is present."
+
+    timestamp = fields.DateTime(
+        required=True,
+        bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
+        "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
 
     weights = fields.Dict(
@@ -538,8 +644,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     config = fields.Dict(
-        bioimageio_description="""
-A custom configuration field that can contain any other keys which are not defined above. It can be very specifc to a framework or specific tool. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific framework or tool name.
+        bioimageio_description=RDF.config.bioimageio_description
+        + """
 
 For example:
 ```yaml
@@ -646,13 +752,7 @@ class BioImageIoManifestModelEntry(BioImageIOSchema):
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
-class Badge(BioImageIOSchema):
-    label = fields.String(required=True)
-    icon = fields.URI()
-    url = fields.URI()
-
-
-class BioImageIoManifestNotebookEntry(BioImageIOSchema):
+class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
     id = fields.String(required=True)
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
@@ -674,9 +774,9 @@ class BioImageIoManifestNotebookEntry(BioImageIOSchema):
     links = fields.List(fields.String)  # todo: make List[URI]?
 
 
-class BioImageIoManifest(BioImageIOSchema):
+class BioImageIoManifest(BioImageIOSchema):  # todo: update to 'Collection' or remove
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.ManifestFormatVersion)), required=True
+        validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)), required=True
     )
     config = fields.Dict()
 

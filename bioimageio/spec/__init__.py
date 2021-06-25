@@ -5,7 +5,7 @@ from .build_spec import build_spec
 from bioimageio.spec.shared import fields
 from . import nodes, raw_nodes, schema, utils
 from .converters import maybe_convert_manifest, maybe_convert_model
-from .raw_nodes import FormatVersion
+from .raw_nodes import ModelFormatVersion
 
 fields = fields
 
@@ -19,5 +19,6 @@ load_model = utils.load_model
 
 # assuming schema will always be part of spec
 from bioimageio.spec.shared.common import get_args
-from .raw_nodes import FormatVersion
-__version__ = get_args(FormatVersion)[-1]
+from .raw_nodes import ModelFormatVersion
+
+__version__ = get_args(ModelFormatVersion)[-1]

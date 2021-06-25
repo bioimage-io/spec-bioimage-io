@@ -134,7 +134,8 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
         if not self.bioimageio_description:
             self.bioimageio_description = self.schema.bioimageio_description
 
-        self.bioimageio_description += f" is a Dict with the following keys:"
+        repeat_type_name = self.type_name if self.bioimageio_description else ""
+        self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"
 
 
 class String(DocumentedField, marshmallow_fields.String):

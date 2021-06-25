@@ -11,3 +11,19 @@ repos:
       language: system
       always_run: true
       pass_filenames: false
+  - repo: local
+    hooks:
+    - id: generate json schemas
+      name: generate json schemas
+      entry: python scripts/generate_json_specs.py
+      language: system
+      always_run: true
+      pass_filenames: false
+  - repo: local
+    hooks:
+    - id: generate passthrough modules
+      name: generate passthrough modules
+      entry: python scripts/generate_passthrough_modules.py check
+      language: system
+      always_run: true
+      pass_filenames: false

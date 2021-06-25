@@ -1,6 +1,6 @@
 from bioimageio.spec.shared import fields
 from . import nodes, raw_nodes, schema
-from .raw_nodes import FormatVersion
+from .raw_nodes import ModelFormatVersion
 
 fields = fields
 

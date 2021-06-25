@@ -21,16 +21,19 @@ from bioimageio.spec.shared.common import Literal, get_args
 # Ideally only the current format version is valid.
 # Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
 # such that we only need to support the most up-to-date version.
-FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
-latest_version = get_args(FormatVersion)[-1]
-ManifestFormatVersion = Literal["0.1.0", "0.2.0"]  # newest format expected to be last
+GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
+ModelFormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
+latest_version = get_args(ModelFormatVersion)[-1]
 
+Axes = NewType("Axes", str)
+Dependencies = NewType("Dependencies", str)
+Framework = Literal["scikit-learn", "pytorch", "tensorflow"]
+Language = Literal["python", "java"]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
-Language = Literal["python", "java"]
-Framework = Literal["scikit-learn", "pytorch", "tensorflow"]
+Type = Literal["model", "dataset", "application", "notebook"]
 WeightsFormat = Literal[
     "pickle",
     "pytorch_state_dict",
@@ -40,10 +43,6 @@ WeightsFormat = Literal[
     "tensorflow_saved_model_bundle",
     "onnx",
 ]
-Type = Literal["model"]
-
-Dependencies = NewType("Dependencies", str)
-Axes = NewType("Axes", str)
 
 
 @dataclass
@@ -53,7 +52,11 @@ class Author(Node):
     orcid: Union[_Missing, str] = missing
 
 
-ImportableSource = Union[ImportableModule, ImportablePath]
+@dataclass
+class Badge(Node):
+    label: str = missing
+    icon: Union[_Missing, str] = missing
+    url: Union[_Missing, URI] = missing
 
 
 @dataclass
@@ -61,6 +64,9 @@ class CiteEntry(Node):
     text: str = missing
     doi: Union[_Missing, str] = missing
     url: Union[_Missing, str] = missing
+
+
+ImportableSource = Union[ImportableModule, ImportablePath]
 
 
 @dataclass
@@ -73,23 +79,26 @@ class RunMode(Node):
 class RDF(Node):
     attachments: Union[_Missing, Dict[str, Any]] = missing
     authors: List[Author] = missing
+    badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
     config: Union[_Missing, dict] = missing
     covers: Union[_Missing, List[URI]] = missing
-    dependencies: Union[_Missing, Dependencies] = missing
     description: str = missing
     documentation: Path = missing
-    format_version: FormatVersion = missing
-    framework: Union[_Missing, Framework] = missing
+    format_version: ModelFormatVersion = missing
     git_repo: Union[_Missing, str] = missing
-    language: Union[_Missing, Language] = missing
-    license: str = missing
+    license: Union[_Missing, str] = missing
+    links: List[str] = missing
     name: str = missing
-    run_mode: Union[_Missing, RunMode] = missing
     tags: List[str] = missing
-    timestamp: datetime = missing
     type: Type = missing
     version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+    def __post_init__(self):
+        if self.type is missing:
+            self.type = self.__class__.__name__.lower()  # noqa
+
+        assert self.type in get_args(Type)
 
 
 @dataclass
@@ -149,18 +158,23 @@ class ModelParent(Node):
 
 @dataclass
 class Model(RDF):
+    dependencies: Union[_Missing, Dependencies] = missing
+    framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
+    language: Union[_Missing, Language] = missing
+    license: str = missing
     outputs: List[OutputTensor] = missing
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing
+    run_mode: Union[_Missing, RunMode] = missing
     sample_inputs: Union[_Missing, List[URI]] = missing
     sample_outputs: Union[_Missing, List[URI]] = missing
     sha256: Union[_Missing, str] = missing
     source: Union[_Missing, ImportableSource] = missing
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
-    type: Type = "model"
+    timestamp: datetime = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
 
 
