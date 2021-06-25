@@ -9,6 +9,9 @@ from bioimageio.spec.shared.common import get_args, yaml
 from bioimageio.spec.raw_nodes import WeightsFormat
 
 MANIFEST_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage-io-models/gh-pages/manifest.bioimage.io.json"
+WEIGHTS_FORMATS_OVERVIEW_PATH = (
+    Path(__file__).parent / "../dist" / "weight_formats_spec.json"
+)  # todo: weight_formats -> weights_formats
 
 # defaults for transition period
 consumer_defaults = {
@@ -56,10 +59,10 @@ def main(args):
     overview = {"consumers": consumers, "weight_formats": weights_formats}  # todo: weight_formats -> weights_formats
 
     if args.command == "generate":
-        with (Path(__file__).parent / "../dist" / "weight_formats_spec.json").open("w") as f:
+        with WEIGHTS_FORMATS_OVERVIEW_PATH.open("w") as f:
             json.dump(overview, f, indent=4, sort_keys=True)
     elif args.command == "check":
-        with (Path(__file__).parent / "../dist" / "weight_formats_spec.json").open() as f:
+        with WEIGHTS_FORMATS_OVERVIEW_PATH.open() as f:
             found = json.load(f)
 
         if found != overview:
