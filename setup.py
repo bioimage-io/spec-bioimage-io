@@ -33,9 +33,9 @@ setup(
         "typing-extensions",
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec:main"]},
-    extras_require={"test": ["pytest", "tox", "scikit-learn"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "pytorch>=1.6", "numpy>=1.17"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
-    package_data={'bioimageio.spec': ['static/licenses.json']},
+    package_data={"bioimageio.spec": ["static/licenses.json"]},
     include_package_data=True,
     project_urls={  # Optional
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",

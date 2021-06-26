@@ -1,10 +1,15 @@
-format_version: 0.3.1
+# TODO physical scale of the data
+format_version: 0.3.2
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-  - "Constantin Pape;@bioimage-io"
-  - "Fynn Beuttenmueller"
+  - name: "Constantin Pape;@bioimage-io"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0001-6562-7187"
+  - name: "Fynn Beuttenmueller"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0002-8567-6389"
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
@@ -13,7 +18,7 @@ cite:
   - text: "2018 Data Science Bowl"
     url: https://www.kaggle.com/c/data-science-bowl-2018
 
-git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/master/specs/models/unet2d_nuclei_broad
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/master/example_specs/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 
@@ -77,12 +82,5 @@ weights:
    source: ./weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
-config:
-  future:
-    0.3.2:
-      authors:
-        - affiliation: "EMBL Heidelberg"
-          orcid: "0000-0001-6562-7187"
-        - affiliation: "EMBL Heidelberg"
-          orcid: "0000-0002-8567-6389"
-      version: 0.1.2
+type: model
+version: 0.1.2
