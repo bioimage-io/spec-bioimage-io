@@ -45,7 +45,7 @@ def get_unet2d_nuclei_broad_path(version: str):
     if version == spec.__version__:
         version = ""  # latest version without specifier
     else:
-        version = "_" + version.replace(".", "_")
+        version = "_v" + version.replace(".", "_")
 
     return Path(__file__).parent / f"../example_specs/models/unet2d_nuclei_broad/rdf{version}.yaml"
 
