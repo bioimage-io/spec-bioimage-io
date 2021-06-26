@@ -28,7 +28,7 @@ def pytest_generate_tests(metafunc):
     # generate
     #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}]_path
     #   - unet2d_nuclei_broad_[before_]latest_path
-    #   - unet2d_nuclei_broad_any_path
+    #   - unet2d_nuclei_broad_any[_minor]_path
     all_format_versions = [fv for mfv in get_args(cummulative.ModelFormatVersion) for fv in get_args(mfv)]
     for fixture_name in metafunc.fixturenames:
         m = re.fullmatch(
@@ -36,7 +36,7 @@ def pytest_generate_tests(metafunc):
                 r"unet2d_nuclei_broad_("
                 r"((?P<before>before_)?((v(?P<major>\d+)_(?P<minor>\d+)(_(?P<patch>\d+))?)|(?P<latest>latest)))"
                 r"|"
-                r"(?P<any>any)"
+                r"(?P<any>any)(?P<any_minor>_minor)"
                 r")_path"
             ),
             fixture_name,
@@ -46,6 +46,15 @@ def pytest_generate_tests(metafunc):
 
         if m["any"]:
             vs = all_format_versions
+            if m["any_minor"]:  # skip all patched versions
+                vs_patched = {}
+                for v in vs:
+                    v_tuple = tuple(v.split("."))
+                    v_minor = v_tuple[:2]
+                    if v_minor > vs_patched.get(v_minor, tuple()):
+                        vs_patched[v_minor] = v_tuple
+
+                vs = [".".join(v) for v in vs_patched.values()]
         else:
             if m["latest"]:
                 v = spec.__version__
