@@ -19,11 +19,13 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `tags` _List\[String\]_ A list of tags.
 * `type` _String_ 
 * `attachments` _optional* Dict\[String, Union\[URI→String | List\[URI→String\]\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
-* `authors` _optional List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
-  1. _Author_   is a Dict with the following keys:
-    * `name` _String_ Full name.
-    * `affiliation` _optional String_ Affiliation.
-    * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
+* `authors` _optional List\[Union\[Author | String\]\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
+  1. _optional Union\[Author | String\]_ 
+    1. _Author_   is a Dict with the following keys:
+      * `name` _String_ Full name.
+      * `affiliation` _optional String_ Affiliation.
+      * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
+    1. _optional String_ 
 * `badges` _optional List\[Badge\]_ a list of badges
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
     * `label` _String_ e.g. 'Open in Colab'
