@@ -9,12 +9,12 @@ class PyBioSchema(Schema):
 
 class CiteEntry(PyBioSchema):
     text = fields.String(required=True)
-    doi = fields.String(missing=None)
-    url = fields.String(missing=None)
+    doi = fields.String()
+    url = fields.String()
 
     @validates_schema
     def doi_or_url(self, data, **kwargs):
-        if data["doi"] is None and data["url"] is None:
+        if "doi" not in data and "url" not in data:
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
@@ -29,19 +29,19 @@ class BaseSpec(PyBioSchema):
     license = fields.String(required=True)
 
     language = fields.String(required=True)
-    framework = fields.String(missing=None)
+    framework = fields.String()
     source = fields.String(required=True)
-    required_kwargs = fields.List(fields.String, missing=list)
-    optional_kwargs = fields.Dict(fields.String, missing=dict)
+    required_kwargs = fields.List(fields.String)
+    optional_kwargs = fields.Dict(fields.String)
 
-    test_input = fields.Path(missing=None)
-    test_output = fields.Path(missing=None)
-    covers = fields.List(fields.Path, missing=list)
+    test_input = fields.Path()
+    test_output = fields.Path()
+    covers = fields.List(fields.Path)
 
 
 class SpecWithKwargs(PyBioSchema):
     spec: fields.SpecURI
-    kwargs = fields.Dict(missing=dict)
+    kwargs = fields.Dict()
 
 
 class InputShape(PyBioSchema):
@@ -60,7 +60,7 @@ class InputShape(PyBioSchema):
 
 
 class OutputShape(PyBioSchema):
-    reference_input = fields.String(missing=None)
+    reference_input = fields.String()
     scale = fields.List(fields.Float, required=True)
     offset = fields.List(fields.Integer, required=True)
 
@@ -74,7 +74,7 @@ class OutputShape(PyBioSchema):
 
 class Array(PyBioSchema):
     name = fields.String(required=True)
-    axes = fields.Axes(missing=None)
+    axes = fields.Axes()
     data_type = fields.String(required=True)
     data_range = fields.Tuple((fields.Float(allow_nan=True), fields.Float(allow_nan=True)))
 
@@ -87,7 +87,7 @@ class InputArray(Array):
 
 class OutputArray(Array):
     shape = fields.Union([fields.ExplicitShape(), fields.Nested(OutputShape)], required=True)
-    halo = fields.List(fields.Integer, missing=None)
+    halo = fields.List(fields.Integer)
 
 
 class TransformationSpec(BaseSpec):
@@ -106,25 +106,25 @@ class Weights(PyBioSchema):
 
 
 class Prediction(PyBioSchema):
-    weights = fields.Nested(Weights, missing=None)
-    dependencies = fields.Dependencies(missing=None)
-    preprocess = fields.Nested(Transformation, many=True, missing=list)
-    postprocess = fields.Nested(Transformation, many=True, missing=list)
+    weights = fields.Nested(Weights)
+    dependencies = fields.Dependencies()
+    preprocess = fields.Nested(Transformation, many=True)
+    postprocess = fields.Nested(Transformation, many=True)
 
 
 class ReaderSpec(BaseSpec):
-    dependencies = fields.Dependencies(missing=None)
+    dependencies = fields.Dependencies()
     outputs = fields.Nested(OutputArray, required=True)
 
 
 class Reader(SpecWithKwargs):
     spec = fields.SpecURI(ReaderSpec)
-    transformations = fields.List(fields.Nested(Transformation), missing=list)
+    transformations = fields.List(fields.Nested(Transformation))
 
 
 class SamplerSpec(BaseSpec):
-    dependencies = fields.Dependencies(missing=None)
-    outputs = fields.Nested(OutputArray, missing=None)
+    dependencies = fields.Dependencies()
+    outputs = fields.Nested(OutputArray)
 
 
 class Sampler(SpecWithKwargs):
@@ -134,22 +134,22 @@ class Sampler(SpecWithKwargs):
 
 class Optimizer(PyBioSchema):
     source = fields.String(required=True)
-    required_kwargs = fields.List(fields.String, missing=list)
-    optional_kwargs = fields.Dict(fields.String, missing=dict)
+    required_kwargs = fields.List(fields.String)
+    optional_kwargs = fields.Dict(fields.String)
 
 
 class Setup(PyBioSchema):
     samplers = fields.List(fields.Nested(Sampler, required=True), required=True)
-    preprocess = fields.Nested(Transformation, many=True, missing=list)
-    postprocess = fields.Nested(Transformation, many=True, missing=list)
-    losses = fields.Nested(Transformation, many=True, missing=list)
-    optimizer = fields.Nested(Optimizer, missing=None)
+    preprocess = fields.Nested(Transformation, many=True)
+    postprocess = fields.Nested(Transformation, many=True)
+    losses = fields.Nested(Transformation, many=True)
+    optimizer = fields.Nested(Optimizer)
 
 
 class Model(BaseSpec):
     prediction = fields.Nested(Prediction)
     inputs = fields.Nested(InputArray, many=True)
     outputs = fields.Nested(OutputArray, many=True)
-    training = fields.Dict(missing=None)
+    training = fields.Dict()
 
-    config = fields.Dict(missing=dict)
+    config = fields.Dict()

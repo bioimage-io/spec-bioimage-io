@@ -127,7 +127,8 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         raise UnconvertibleError(conversion_errors)
 
     del data["prediction"]
-    del data["training"]
+    if "training" in data:
+        del data["training"]
 
     return data
 
