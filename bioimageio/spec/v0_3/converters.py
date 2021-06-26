@@ -63,6 +63,10 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         conversion_errors["config"]["future"]["weights_format"] = missing
         weights_format = missing
 
+    additional_weights = future.pop("additional_weights", {})
+    if not isinstance(additional_weights, dict):
+        conversion_errors["config"]["future"]["additional_weights"] = "expected dict"
+
     try:
         source = data["prediction"]["weights"].pop("source")
     except KeyError:
@@ -110,6 +114,7 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
     }
 
     data["weights"] = {weights_format: weights_entry}
+    data["weights"].update(additional_weights)
 
     if conversion_errors:
 

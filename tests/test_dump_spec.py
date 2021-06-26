@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from bioimageio.spec import load_raw_model, raw_nodes, schema
 from bioimageio.spec.shared import yaml
 

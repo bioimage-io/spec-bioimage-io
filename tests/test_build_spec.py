@@ -49,10 +49,10 @@ def test_build_spec_pickle(rf_config_path):
     assert type(serialized) == type(source)
 
 
-def test_build_spec_pytorch(UNet2DNucleiBroad_model_url):
-    from bioimageio.spec.build_spec import _get_local_path, build_spec
+def test_build_spec_pytorch(unet2d_nuclei_broad_latest_path):
+    from bioimageio.spec.build_spec import build_spec
 
-    config_path = _get_local_path(UNet2DNucleiBroad_model_url)
+    config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
     source = maybe_convert_model(source)
@@ -87,10 +87,10 @@ def test_build_spec_pytorch(UNet2DNucleiBroad_model_url):
     assert type(serialized) == type(source)
 
 
-def test_build_spec_onnx(UNet2DNucleiBroad_model_url):
-    from bioimageio.spec.build_spec import _get_local_path, build_spec
+def test_build_spec_onnx(unet2d_nuclei_broad_latest_path):
+    from bioimageio.spec.build_spec import build_spec
 
-    config_path = _get_local_path(UNet2DNucleiBroad_model_url)
+    config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
     source = maybe_convert_model(source)
@@ -126,10 +126,10 @@ def test_build_spec_onnx(UNet2DNucleiBroad_model_url):
     assert type(serialized) == type(source)
 
 
-def test_build_spec_torchscript(UNet2DNucleiBroad_model_url):
-    from bioimageio.spec.build_spec import _get_local_path, build_spec
+def test_build_spec_torchscript(unet2d_nuclei_broad_latest_path):
+    from bioimageio.spec.build_spec import build_spec
 
-    config_path = _get_local_path(UNet2DNucleiBroad_model_url)
+    config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
     source = maybe_convert_model(source)
