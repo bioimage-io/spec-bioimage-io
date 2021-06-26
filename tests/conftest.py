@@ -15,17 +15,17 @@ yaml = YAML(typ="safe")
 
 @pytest.fixture
 def rf_config_path_v0_1():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_1.model.yaml"
+    return Path(__file__).parent / "../example_specs/models/sklearn/RandomForestClassifier_v0_1.model.yaml"
 
 
 @pytest.fixture
 def rf_config_path_v0_3_1():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_3_1.model.yaml"
+    return Path(__file__).parent / "../example_specs/models/sklearn/RandomForestClassifier_v0_3_1.model.yaml"
 
 
 @pytest.fixture
 def rf_config_path_v0_3_2():
-    return Path(__file__).parent / "../specs/models/sklearn/RandomForestClassifier_v0_3_2.model.yaml"
+    return Path(__file__).parent / "../example_specs/models/sklearn/RandomForestClassifier_v0_3_2.model.yaml"
 
 
 @pytest.fixture
@@ -47,7 +47,7 @@ def get_unet2d_nuclei_broad_path(version: str):
     else:
         version = "_" + version.replace(".", "_")
 
-    return Path(__file__).parent / f"../specs/models/unet2d_nuclei_broad/rdf{version}.yaml"
+    return Path(__file__).parent / f"../example_specs/models/unet2d_nuclei_broad/rdf{version}.yaml"
 
 
 def pytest_generate_tests(metafunc):
