@@ -79,7 +79,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     authors = fields.List(
-        fields.Nested(Author),
+        fields.Union([fields.Nested(Author), fields.String()]),
         bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
         "points of contact.",
     )
@@ -547,9 +547,10 @@ The model RDFs can be downloaded or uploaded to the bioimage.io website, produce
 The model RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
+    # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        RDF.authors.inner,
-        required=True,  # todo: unify authors with RDF (optional or required?)
+        fields.Nested(Author),
+        required=True,
         bioimageio_description=RDF.authors.bioimageio_description,
     )
 
