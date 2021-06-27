@@ -489,11 +489,6 @@ class OnnxWeightsEntry(WeightsEntryBase):
     opset_version = fields.Number()  # todo: required=True
 
 
-class PickleWeightsEntry(WeightsEntryBase):
-    bioimageio_description = "Pickle weights format"
-    weights_format = fields.String(validate=field_validators.Equal("pickle"), required=True, load_only=True)
-
-
 class PytorchStateDictWeightsEntry(WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
@@ -519,7 +514,6 @@ class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
 
 
 WeightsEntry = typing.Union[
-    PickleWeightsEntry,
     PytorchStateDictWeightsEntry,
     PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
