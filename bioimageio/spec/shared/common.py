@@ -3,10 +3,24 @@ import pathlib
 
 from ruamel.yaml import YAML
 
+from typing import Generic
+
 try:
-    from typing import Literal, get_args
+    from typing import Literal, get_args, get_origin, Protocol
 except ImportError:
-    from typing_extensions import Literal, get_args  # noqa
+    from typing_extensions import Literal, get_args, get_origin, Protocol
+
+
+def get_args_flat(tp):
+    flat_args = []
+    for a in get_args(tp):
+        orig = get_origin(a)
+        if orig is Literal or orig is Generic:
+            flat_args += list(get_args(a))
+        else:
+            flat_args.append(a)
+
+    return tuple(flat_args)
 
 
 yaml = YAML(typ="safe")

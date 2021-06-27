@@ -18,11 +18,10 @@ from bioimageio.spec.shared.raw_nodes import (
 
 from bioimageio.spec.shared.common import Literal, get_args
 
-# Ideally only the current format version is valid.
-# Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
-# such that we only need to support the most up-to-date version.
 GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
-ModelFormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
+ModelFormatVersion = Literal[
+    v0_1.ModelFormatVersion, "0.3.0", "0.3.1", "0.3.2"  # newest format needs to be last (used in spec.__init__.py)
+]
 latest_version = get_args(ModelFormatVersion)[-1]
 
 Axes = NewType("Axes", str)

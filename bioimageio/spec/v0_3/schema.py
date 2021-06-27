@@ -6,7 +6,7 @@ import stdnum.iso7064.mod_11_2
 from marshmallow import Schema, ValidationError, missing as missing_, post_load, pre_load, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
-from bioimageio.spec.shared.common import get_args
+from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
 
@@ -569,7 +569,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.ModelFormatVersion)),
+        validate=field_validators.OneOf(get_args_flat(raw_nodes.ModelFormatVersion)),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
