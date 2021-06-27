@@ -21,14 +21,14 @@ GenericNode = typing.TypeVar("GenericNode", bound=raw_nodes.Node)
 
 
 class Transformer:
-    def transform(self, node: GenericNode) -> GenericNode:
+    def transform(self, node: typing.Any) -> typing.Any:
         method = "transform_" + node.__class__.__name__
 
         transformer = getattr(self, method, self.generic_transformer)
 
         return transformer(node)
 
-    def generic_transformer(self, node: GenericNode) -> GenericNode:
+    def generic_transformer(self, node: typing.Any) -> typing.Any:
         return node
 
     def transform_list(self, node: list) -> list:
@@ -70,10 +70,7 @@ class NodeVisitor:
 class NodeTransformer(Transformer):
     def generic_transformer(self, node: GenericNode) -> GenericNode:
         if isinstance(node, raw_nodes.Node):
-            return dataclasses.replace(
-                node,
-                **{field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)},  # noqa
-            )
+            return dataclasses.replace(node, **{name: self.transform(value) for name, value in iter_fields(node)})
         else:
             return super().generic_transformer(node)
 
