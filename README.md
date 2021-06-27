@@ -48,7 +48,7 @@ badge:
 ```
 For more application examples, see the [manifest for ImJoy](https://github.com/imjoy-team/bioimage-io-models/blob/master/manifest.bioimage.io.yaml).
 
-## Describing datasets, notebooks and other types
+### Describing datasets, notebooks and other types
 The RDF allows for the description of datasets (type=`dataset`), notebooks (type=`notebook`) and other potential resources, you can use set `source` and/or `download_url` to point to the resource, or use `attachments` to specify a list of associated files.
 
 For examples, see entries `dataset`/`notebook` in the [ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic/blob/master/manifest.bioimage.io.yaml) collection.
