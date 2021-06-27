@@ -9,6 +9,7 @@ from marshmallow import ValidationError
 from . import get_dict_and_root_path_from_yaml_source
 from .common import Literal, Protocol, get_args
 from . import raw_nodes, nodes
+from .raw_nodes import Node
 from .schema import SharedBioImageIOSchema
 from .utils import resolve_raw_node_to_node
 
@@ -122,25 +123,32 @@ class ModelLoaderBase:
     @classmethod
     def load_model(
         cls,
-        source: typing.Union[os.PathLike, str, dict],
+        source: typing.Union[RawModelNode, os.PathLike, str, dict],
         root_path: typing.Optional[os.PathLike] = None,
         update_to_current_format: bool = True,
     ):
-        data, root_path_from_source = get_dict_and_root_path_from_yaml_source(source)
-        if root_path is None:
-            root_path = root_path_from_source
-        elif root_path_from_source is not None and pathlib.Path(root_path).resolve() != root_path_from_source.resolve():
-            raise ValueError(
-                f"root_path does not match source: {root_path} != {root_path_from_source}. (Leave out root_path!)"
-            )
+        if isinstance(source, (os.PathLike, str, dict)):
+            data, root_path_from_source = get_dict_and_root_path_from_yaml_source(source)
+            if root_path is None:
+                root_path = root_path_from_source
+            elif (
+                root_path_from_source is not None
+                and pathlib.Path(root_path).resolve() != root_path_from_source.resolve()
+            ):
+                raise ValueError(
+                    f"root_path does not match source: {root_path} != {root_path_from_source}. (Leave out root_path!)"
+                )
+
+            raw_model = (cls.load_raw_model(data, update_to_current_format),)
+        else:
+            assert isinstance(source, Node)
+            raw_model = source
 
         if root_path is None:
-            raise TypeError("Require root_path if source is dict to resolve relative file paths.")
+            raise TypeError("Require root_path if source is dict or raw_nodes.Model to resolve relative file paths.")
 
         model: cls.nodes.Model = resolve_raw_node_to_node(
-            cls.load_raw_model(data, update_to_current_format),
-            root_path=pathlib.Path(root_path),
-            nodes_module=cls.nodes,
+            raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
         )
         assert isinstance(model, cls.nodes.Model)
         return model
