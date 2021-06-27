@@ -23,7 +23,7 @@ def _get_local_path(uri, root=None):
             is_local_path = True
     if not is_local_path:
         uri = spec.fields.URI().deserialize(uri)
-        uri = spec.download_uri_to_local_path(uri).as_posix()
+        uri = spec.shared.download_uri_to_local_path(uri).as_posix()
     return uri
 
 
