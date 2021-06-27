@@ -1,13 +1,15 @@
-from marshmallow import Schema, ValidationError, validates_schema
+from marshmallow import ValidationError, validates_schema
 
 from bioimageio.spec.shared import fields
+from bioimageio.spec.shared.schema import ImplicitInputShape, ImplicitOutputShape, SharedBioImageIOSchema
+from . import raw_nodes
 
 
-class PyBioSchema(Schema):
-    bioimageio_description: str = ""
+class BioImageIOSchema(SharedBioImageIOSchema):
+    raw_nodes = raw_nodes
 
 
-class CiteEntry(PyBioSchema):
+class CiteEntry(BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String()
     url = fields.String()
@@ -18,13 +20,13 @@ class CiteEntry(PyBioSchema):
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
-class BaseSpec(PyBioSchema):
+class BaseSpec(BioImageIOSchema):
     name = fields.String(required=True)
     format_version = fields.String(required=True)
     description = fields.String(required=True)
     cite = fields.Nested(CiteEntry(many=True), required=True)
     authors = fields.List(fields.String(required=True))
-    documentation = fields.Path(required=True)
+    documentation = fields.RelativeLocalPath(required=True)
     tags = fields.List(fields.String, required=True)
     license = fields.String(required=True)
 
@@ -34,59 +36,31 @@ class BaseSpec(PyBioSchema):
     required_kwargs = fields.List(fields.String)
     optional_kwargs = fields.Dict(fields.String)
 
-    test_input = fields.Path()
-    test_output = fields.Path()
-    covers = fields.List(fields.Path)
+    test_input = fields.RelativeLocalPath()
+    test_output = fields.RelativeLocalPath()
+    covers = fields.List(fields.RelativeLocalPath)
 
 
-class SpecWithKwargs(PyBioSchema):
+class SpecWithKwargs(BioImageIOSchema):
     spec: fields.SpecURI
     kwargs = fields.Dict()
 
 
-class InputShape(PyBioSchema):
-    min = fields.List(fields.Integer, required=True)
-    step = fields.List(fields.Integer, required=True)
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        min_ = data["min"]
-        step = data["step"]
-        if min_ is None or step is None:
-            return
-
-        if len(min_) != len(step):
-            raise ValidationError(f"'min' and 'step' have to have the same length! (min: {min_}, step: {step})")
-
-
-class OutputShape(PyBioSchema):
-    reference_input = fields.String()
-    scale = fields.List(fields.Float, required=True)
-    offset = fields.List(fields.Integer, required=True)
-
-    @validates_schema
-    def matching_lengths(self, data, **kwargs):
-        scale = data["scale"]
-        offset = data["offset"]
-        if len(scale) != len(offset):
-            raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
-
-
-class Array(PyBioSchema):
+class Array(BioImageIOSchema):
     name = fields.String(required=True)
     axes = fields.Axes()
     data_type = fields.String(required=True)
     data_range = fields.Tuple((fields.Float(allow_nan=True), fields.Float(allow_nan=True)))
 
-    shape: fields.Nested
+    shape: fields.Union
 
 
 class InputArray(Array):
-    shape = fields.Union([fields.ExplicitShape(), fields.Nested(InputShape)], required=True)
+    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitInputShape)], required=True)
 
 
 class OutputArray(Array):
-    shape = fields.Union([fields.ExplicitShape(), fields.Nested(OutputShape)], required=True)
+    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitOutputShape)], required=True)
     halo = fields.List(fields.Integer)
 
 
@@ -100,12 +74,12 @@ class Transformation(SpecWithKwargs):
     spec = fields.SpecURI(TransformationSpec, required=True)
 
 
-class Weights(PyBioSchema):
+class Weights(BioImageIOSchema):
     source = fields.URI(required=True)
     hash = fields.Dict()
 
 
-class Prediction(PyBioSchema):
+class Prediction(BioImageIOSchema):
     weights = fields.Nested(Weights)
     dependencies = fields.Dependencies()
     preprocess = fields.Nested(Transformation, many=True)
@@ -132,13 +106,13 @@ class Sampler(SpecWithKwargs):
     readers = fields.List(fields.Nested(Reader, required=True), required=True)
 
 
-class Optimizer(PyBioSchema):
+class Optimizer(BioImageIOSchema):
     source = fields.String(required=True)
     required_kwargs = fields.List(fields.String)
     optional_kwargs = fields.Dict(fields.String)
 
 
-class Setup(PyBioSchema):
+class Setup(BioImageIOSchema):
     samplers = fields.List(fields.Nested(Sampler, required=True), required=True)
     preprocess = fields.Nested(Transformation, many=True)
     postprocess = fields.Nested(Transformation, many=True)
@@ -147,9 +121,9 @@ class Setup(PyBioSchema):
 
 
 class Model(BaseSpec):
-    prediction = fields.Nested(Prediction)
-    inputs = fields.Nested(InputArray, many=True)
-    outputs = fields.Nested(OutputArray, many=True)
+    prediction = fields.Nested(Prediction, required=True)
+    inputs = fields.Nested(InputArray, many=True, required=True)
+    outputs = fields.Nested(OutputArray, many=True, required=True)
     training = fields.Dict()
 
     config = fields.Dict()

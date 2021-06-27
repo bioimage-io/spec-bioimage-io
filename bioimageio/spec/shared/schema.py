@@ -1,4 +1,5 @@
 from types import ModuleType
+from typing import ClassVar
 
 from marshmallow import Schema, ValidationError, post_load, validates_schema
 
@@ -7,7 +8,7 @@ from . import raw_nodes
 
 
 class SharedBioImageIOSchema(Schema):
-    raw_nodes: ModuleType = raw_nodes  # should be overwritten in subclass by version specific raw nodes module
+    raw_nodes: ClassVar[ModuleType] = raw_nodes  # to be overwritten in subclass by version specific raw_nodes module
     bioimageio_description: str = ""
 
     @post_load
