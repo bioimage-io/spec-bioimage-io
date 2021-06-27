@@ -16,10 +16,6 @@ class ModelLoader(ModelLoaderBase):
     nodes = nodes
 
 
-load_raw_model = ModelLoader.load_raw_model
-load_model = ModelLoader.load_model
-
-
 def get_nn_instance(
     node: nodes.Model, weight_order: Sequence[nodes.WeightsFormat] = get_args(nodes.WeightsFormat), **kwargs
 ):

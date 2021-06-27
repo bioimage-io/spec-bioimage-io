@@ -8,7 +8,3 @@ class ModelLoader(ModelLoaderBase):
     schema = schema
     raw_nodes = raw_nodes
     nodes = nodes
-
-
-load_raw_model = ModelLoader.load_raw_model
-load_model = ModelLoader.load_model

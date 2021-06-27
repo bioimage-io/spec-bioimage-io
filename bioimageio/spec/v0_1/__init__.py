@@ -6,5 +6,7 @@ fields = fields
 
 __version__ = _get_args(ModelFormatVersion)[-1]
 
-load_raw_model = utils.load_raw_model
-load_model = utils.load_model
+load_raw_model = utils.ModelLoader.load_raw_model
+load_model = utils.ModelLoader.load_model
+save_raw_model = utils.ModelLoader.save_raw_model
+serialize_raw_model = utils.ModelLoader.serialize_raw_model

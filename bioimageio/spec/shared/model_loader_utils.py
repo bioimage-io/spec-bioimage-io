@@ -3,12 +3,12 @@ from __future__ import annotations
 import os
 import pathlib
 import typing
+import warnings
 
-from marshmallow import ValidationError
+from marshmallow import ValidationError, missing
 
-from . import get_dict_and_root_path_from_yaml_source
-from .common import Literal, Protocol, get_args
-from . import raw_nodes, nodes
+from . import get_dict_and_root_path_from_yaml_source, nodes, raw_nodes
+from .common import Literal, Protocol, get_args, yaml
 from .raw_nodes import Node
 from .schema import SharedBioImageIOSchema
 from .utils import resolve_raw_node_to_node
@@ -95,18 +95,14 @@ class ModelLoaderBase:
         if format_version is None:
             raise ValidationError("missing 'format_version'")
 
-        try:
-            data_version_wo_patch = cls.get_version_tuple_wo_patch(format_version)
-        except Exception:
-            raise ValidationError(f"invalid 'format_version' {format_version}")
-
-        implemented_format_version_wo_patch = cls.get_implemented_format_version_wo_patch()
-        if data_version_wo_patch > implemented_format_version_wo_patch:
+        data_version_wo_patch = cls.get_version_tuple_wo_patch(format_version)
+        current_version_wo_patch = cls.get_current_format_version_wo_patch()
+        if data_version_wo_patch > current_version_wo_patch:
             raise ValueError(
                 f"You are attempting to load a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the model spec {'.'.join(map(str, implemented_format_version_wo_patch))}"
+                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
             )
-        elif data_version_wo_patch == implemented_format_version_wo_patch or update_to_current_format:
+        elif data_version_wo_patch == current_version_wo_patch or update_to_current_format:
             if update_to_current_format:
                 data = cls.maybe_update_model_minor(data)
 
@@ -119,6 +115,37 @@ class ModelLoaderBase:
             raw_model = cls.preceding_model_loader.load_raw_model(data)
 
         return raw_model
+
+    @classmethod
+    def serialize_raw_model(cls, raw_model: RawModelNode) -> dict:
+        if raw_model.format_version is missing:
+            raise ValidationError("missing 'format_version'")
+
+        data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
+        current_version_wo_patch = cls.get_current_format_version_wo_patch()
+        if data_version_wo_patch > current_version_wo_patch:
+            raise ValueError(
+                f"You are attempting to save a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
+                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
+            )
+        elif data_version_wo_patch == current_version_wo_patch:
+            serialized = cls.schema.Model().dump(raw_model)
+            assert isinstance(serialized, dict)
+        elif cls.preceding_model_loader is None:
+            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
+        else:
+            serialized = cls.preceding_model_loader.serialize_raw_model(raw_model)
+
+        return serialized
+
+    @classmethod
+    def save_raw_model(cls, raw_model: RawModelNode, path: pathlib.Path):
+        warnings.warn("only saving serialized rdf, no associated resources.")
+        if path.suffix != ".yaml":
+            warnings.warn("saving with '.yaml' suffix is strongly encouraged.")
+
+        serialized = cls.serialize_raw_model(raw_model)
+        yaml.dump(serialized, path)
 
     @classmethod
     def load_model(
@@ -173,9 +200,12 @@ class ModelLoaderBase:
 
     @staticmethod
     def get_version_tuple_wo_patch(version: str):
-        fvs = version.split(".")
-        return int(fvs[0]), int(fvs[1])
+        try:
+            fvs = version.split(".")
+            return int(fvs[0]), int(fvs[1])
+        except Exception:
+            raise ValidationError(f"invalid format_version '{version}'")
 
     @classmethod
-    def get_implemented_format_version_wo_patch(cls):
+    def get_current_format_version_wo_patch(cls):
         return cls.get_version_tuple_wo_patch(get_args(cls.raw_nodes.ModelFormatVersion)[-1])
