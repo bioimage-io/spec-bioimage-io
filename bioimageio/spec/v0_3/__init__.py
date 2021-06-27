@@ -7,7 +7,6 @@ fields = fields
 
 
 get_nn_instance = utils.get_nn_instance
-download_uri_to_local_path = utils.download_uri_to_local_path
 load_raw_model = utils.load_raw_model
 load_model = utils.load_model
 
