@@ -7,6 +7,8 @@ from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
+from bioimageio.spec import v0_1
+from bioimageio.spec.shared.common import Literal, get_args
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
@@ -16,17 +18,15 @@ from bioimageio.spec.shared.raw_nodes import (
     URI,
 )
 
-from bioimageio.spec.shared.common import Literal, get_args
-
 GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
 ModelFormatVersion = Literal[
     v0_1.ModelFormatVersion, "0.3.0", "0.3.1", "0.3.2"  # newest format needs to be last (used in spec.__init__.py)
 ]
 latest_version = get_args(ModelFormatVersion)[-1]
 
-Axes = NewType("Axes", str)
+
 Dependencies = NewType("Dependencies", str)
-Framework = Literal["scikit-learn", "pytorch", "tensorflow"]
+Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
@@ -36,6 +36,9 @@ Type = Literal["model", "dataset", "application", "notebook"]
 WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
+
+Axes = v0_1.raw_nodes.Axes
+CiteEntry = v0_1.raw_nodes.CiteEntry
 
 
 @dataclass
@@ -50,13 +53,6 @@ class Badge(Node):
     label: str = missing
     icon: Union[_Missing, str] = missing
     url: Union[_Missing, URI] = missing
-
-
-@dataclass
-class CiteEntry(Node):
-    text: str = missing
-    doi: Union[_Missing, str] = missing
-    url: Union[_Missing, str] = missing
 
 
 ImportableSource = Union[ImportableModule, ImportablePath]
