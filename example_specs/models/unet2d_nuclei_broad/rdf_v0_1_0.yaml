@@ -46,6 +46,7 @@ test_input: test_input.npy
 test_output: test_output.npy
 
 prediction:
+  dependencies: conda:../environment.yaml
   weights:
      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
      hash: {sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2}
@@ -55,9 +56,7 @@ config:
     0.3.0:
       sample_inputs: [sample_input.npy]
       sample_outputs: [sample_output.npy]
-
       attachments: {}
-      dependencies: conda:../environment.yaml
       git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/master/specs/models/unet2d_nuclei_broad
       inputs:
         - description: raw input

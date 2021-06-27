@@ -21,11 +21,6 @@ class OnnxWeightsEntry(OnnxWeightsEntry):
 
 
 @dataclass
-class PickleWeightsEntry(PickleWeightsEntry):
-    source: Path = missing
-
-
-@dataclass
 class PytorchStateDictWeightsEntry(PytorchStateDictWeightsEntry):
     source: Path = missing
 
@@ -48,7 +43,6 @@ class TensorflowSavedModelBundleWeightsEntry(TensorflowSavedModelBundleWeightsEn
 WeightsEntry = Union[
     KerasHdf5WeightsEntry,
     OnnxWeightsEntry,
-    PickleWeightsEntry,
     PytorchScriptWeightsEntry,
     PytorchStateDictWeightsEntry,
     TensorflowJsWeightsEntry,

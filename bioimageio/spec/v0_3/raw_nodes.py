@@ -34,13 +34,7 @@ PostprocessingName = Literal[
 ]
 Type = Literal["model", "dataset", "application", "notebook"]
 WeightsFormat = Literal[
-    "pickle",
-    "pytorch_state_dict",
-    "pytorch_script",
-    "keras_hdf5",
-    "tensorflow_js",
-    "tensorflow_saved_model_bundle",
-    "onnx",
+    "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
 
 
@@ -158,11 +152,6 @@ class OnnxWeightsEntry(WeightsEntryBase):
 
 
 @dataclass
-class PickleWeightsEntry(WeightsEntryBase):
-    weights_format_name = "Pickle"
-
-
-@dataclass
 class PytorchStateDictWeightsEntry(WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
 
@@ -186,7 +175,6 @@ class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
 
 
 WeightsEntry = Union[
-    PickleWeightsEntry,
     PytorchStateDictWeightsEntry,
     PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
