@@ -1,12 +1,11 @@
-import dataclasses
 import json
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from bioimageio.spec import download_uri_to_local_path, raw_nodes, schema
-from bioimageio.spec.shared.common import get_args, yaml
+from bioimageio.spec import raw_nodes, schema
 from bioimageio.spec.raw_nodes import WeightsFormat
+from bioimageio.spec.shared import download_uri_to_local_path, get_args
 
 MANIFEST_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage-io-models/gh-pages/manifest.bioimage.io.json"
 WEIGHTS_FORMATS_OVERVIEW_PATH = (
