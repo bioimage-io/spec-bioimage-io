@@ -2,7 +2,7 @@
 import dataclasses
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Union
+from typing import List, TYPE_CHECKING, Union
 
 try:
     from typing import get_args, get_origin
@@ -11,6 +11,9 @@ except ImportError:
 
 from .common import get_args
 from marshmallow import missing
+
+if TYPE_CHECKING:
+    from .schema import SharedBioImageIOSchema
 
 
 @dataclass
@@ -42,6 +45,11 @@ class URI(Node):
             + ("?" + self.query if self.query else "")
             + ("#" + self.fragment if self.fragment else "")
         )
+
+
+@dataclass
+class SpecURI(URI):
+    spec_schema: "SharedBioImageIOSchema" = missing
 
 
 @dataclass

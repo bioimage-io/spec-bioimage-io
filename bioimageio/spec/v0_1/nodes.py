@@ -1,2 +1,4 @@
-from bioimageio.spec.v0_3.nodes import *  # noqa
-from .raw_nodes import ModelFormatVersion  # noqa
+"""
+nodes 0.1 only implements the Model class (and its requirements) and not other aspects of the deprecated 0.1 spec
+"""
+from .raw_nodes import *
