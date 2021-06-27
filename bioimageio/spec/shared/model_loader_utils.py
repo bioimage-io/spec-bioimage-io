@@ -147,12 +147,14 @@ class ModelLoaderBase:
 
     @classmethod
     def maybe_update_model_minor(cls, data: dict):
-        data = cls.preceding_model_loader.maybe_update_model_minor(data)
+        if cls.preceding_model_loader is not None:
+            data = cls.preceding_model_loader.maybe_update_model_minor(data)
+            data = cls.preceding_model_loader.maybe_update_model_patch(data)
+
         return cls.converters.maybe_update_model_minor(data)
 
     @classmethod
     def maybe_update_model_patch(cls, data: dict):
-        data = cls.preceding_model_loader.maybe_update_model_patch(data)
         return cls.converters.maybe_update_model_patch(data)
 
     @classmethod

@@ -183,11 +183,14 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
-    """auto converts model 'data' to newest format"""
+def maybe_update_model_minor(data: Dict[str, Any]) -> Dict[str, Any]:
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
 
+    return data
+
+
+def maybe_update_model_patch(data: Dict[str, Any]) -> Dict[str, Any]:
     if data["format_version"] == "0.3.0":
         # no breaking change, bump to 0.3.1
         data["format_version"] = "0.3.1"
@@ -205,6 +208,18 @@ def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
         del data["config"]
 
     return data
+
+
+def maybe_update_model(data: Dict[str, Any]) -> Dict[str, Any]:
+    data = maybe_update_model_minor(data)
+    data = maybe_update_model_patch(data)
+    return data
+
+
+def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
+    """auto converts model 'data' to newest format"""
+    warnings.warn("'maybe_convert_model' is deprecated in favor of 'maybe_update_model'")
+    return maybe_update_model(data)
 
 
 def maybe_convert_manifest(data: Dict[str, Any]) -> Dict[str, Any]:

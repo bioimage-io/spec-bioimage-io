@@ -6,7 +6,7 @@ import pytest
 from ruamel.yaml import YAML
 
 from bioimageio import spec
-from bioimageio.spec.utils import get_args
+from bioimageio.spec.shared.common import get_args_flat
 
 yaml = YAML(typ="safe")
 
@@ -28,7 +28,7 @@ def pytest_generate_tests(metafunc):
     #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}]_path
     #   - unet2d_nuclei_broad_[before_]latest_path
     #   - unet2d_nuclei_broad_any[_minor]_path
-    all_format_versions = [fv for mfv in get_args(spec.ModelFormatVersion) for fv in get_args(mfv)]
+    all_format_versions = get_args_flat(spec.ModelFormatVersion)
     for fixture_name in metafunc.fixturenames:
         m = re.fullmatch(
             (
