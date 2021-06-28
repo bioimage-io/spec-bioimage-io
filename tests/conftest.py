@@ -35,7 +35,7 @@ def pytest_generate_tests(metafunc):
                 r"unet2d_nuclei_broad_("
                 r"((?P<before>before_)?((v(?P<major>\d+)_(?P<minor>\d+)(_(?P<patch>\d+))?)|(?P<latest>latest)))"
                 r"|"
-                r"(?P<any>any)(?P<any_minor>_minor)"
+                r"(?P<any>any)(?P<any_minor>_minor)?"
                 r")_path"
             ),
             fixture_name,
