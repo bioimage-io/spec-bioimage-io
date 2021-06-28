@@ -486,7 +486,7 @@ class KerasHdf5WeightsEntry(WeightsEntryBase):
 class OnnxWeightsEntry(WeightsEntryBase):
     bioimageio_description = "ONNX weights format"
     weights_format = fields.String(validate=field_validators.Equal("onnx"), required=True, load_only=True)
-    opset_version = fields.Number()  # todo: required=True
+    opset_version = fields.Integer()  # todo: required=True
 
 
 class PytorchStateDictWeightsEntry(WeightsEntryBase):
