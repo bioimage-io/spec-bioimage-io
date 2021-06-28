@@ -3,7 +3,16 @@ import warnings
 from copy import deepcopy
 
 import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, post_load, pre_load, validates, validates_schema
+from marshmallow import (
+    Schema,
+    ValidationError,
+    missing as missing_,
+    post_load,
+    pre_dump,
+    pre_load,
+    validates,
+    validates_schema,
+)
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
@@ -476,6 +485,19 @@ class WeightsEntryBase(BioImageIOSchema):
         data.pop("weights_format")  # weights_format was only used to identify correct WeightsEntry schema
         return super().make_object(data, **kwargs)
 
+    @pre_dump
+    def raise_on_weights_format_mismatch(self, raw_node, **kwargs):
+        """
+        ensures to serialize a raw_node.<Special>WeightsEntry with the corresponding schema.<Special>WeightsEntry
+
+        This check is required, because no validation is performed by marshmallow on serialization,
+        which disables the Union field to select the appropriate nested schema for serialization.
+        """
+        if self.__class__.__name__ != raw_node.__class__.__name__:
+            raise TypeError(f"Cannot serialize {raw_node} with {self}")
+
+        return raw_node
+
 
 class KerasHdf5WeightsEntry(WeightsEntryBase):
     bioimageio_description = "Keras HDF5 weights format"
@@ -543,9 +565,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author),
-        required=True,
-        bioimageio_description=RDF.authors.bioimageio_description,
+        fields.Nested(Author), required=True, bioimageio_description=RDF.authors.bioimageio_description
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)

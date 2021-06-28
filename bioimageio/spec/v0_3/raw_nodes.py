@@ -67,7 +67,7 @@ class RunMode(Node):
 @dataclass
 class RDF(Node):
     attachments: Union[_Missing, Dict[str, Any]] = missing
-    authors: List[Author] = missing
+    authors: List[Union[str, Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
     config: Union[_Missing, dict] = missing
@@ -188,6 +188,7 @@ class ModelParent(Node):
 
 @dataclass
 class Model(RDF):
+    authors: List[Author] = missing
     dependencies: Union[_Missing, Dependencies] = missing
     framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
