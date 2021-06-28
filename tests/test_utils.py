@@ -5,8 +5,8 @@ from typing import Any
 import pytest
 from ruamel.yaml import YAML
 
-from bioimageio.spec import load_model, load_raw_model, nodes, raw_nodes
-from bioimageio.spec.shared import transformers
+from bioimageio.spec import load_model, load_raw_model, nodes, raw_nodes, utils
+from bioimageio.spec.shared import utils
 
 yaml = YAML(typ="safe")
 
@@ -19,7 +19,7 @@ class MyNode(nodes.Node):
 
 def test_iter_fields():
     entry = MyNode("a", 42)
-    assert [("field_a", "a"), ("field_b", 42)] == list(transformers.iter_fields(entry))
+    assert [("field_a", "a"), ("field_b", 42)] == list(utils.iter_fields(entry))
 
 
 @dataclass
@@ -45,11 +45,11 @@ class TestNodeVisitor:
         )
 
     def test_node(self, tree):
-        visitor = transformers.NodeVisitor()
+        visitor = utils.NodeVisitor()
         visitor.visit(tree)
 
     def test_node_transform(self, tree):
-        class MyTransformer(transformers.NodeTransformer):
+        class MyTransformer(utils.NodeTransformer):
             def transform_URL(self, node):
                 return Content(f"content of url {node.url}")
 
@@ -66,8 +66,8 @@ def test_resolve_import_path(tmpdir):
     filepath = tmpdir / "my_mod.py"
     filepath.write_text("class Foo: pass", encoding="utf8")
     node = raw_nodes.ImportablePath(filepath=filepath, callable_name="Foo")
-    uri_transformed = transformers.UriNodeTransformer(root_path=tmpdir).transform(node)
-    source_transformed = transformers.SourceNodeTransformer().transform(uri_transformed)
+    uri_transformed = utils.UriNodeTransformer(root_path=tmpdir).transform(node)
+    source_transformed = utils.SourceNodeTransformer().transform(uri_transformed)
     assert isinstance(source_transformed, nodes.ImportedSource)
     Foo = source_transformed.factory
     assert Foo.__name__ == "Foo"
@@ -76,16 +76,15 @@ def test_resolve_import_path(tmpdir):
 
 def test_resolve_directory_uri(tmpdir):
     node = raw_nodes.URI(scheme="", authority="", path=str(tmpdir), query="", fragment="")
-    uri_transformed = transformers.UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
+    uri_transformed = utils.UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
     assert uri_transformed == Path(tmpdir)
 
 
-def test_load_raw_model(rf_config_path):
-    rf_model_data = yaml.load(rf_config_path)
-    load_raw_model(rf_model_data)
+def test_load_raw_model(unet2d_nuclei_broad_any_path):
+    raw_model = load_raw_model(unet2d_nuclei_broad_any_path)
+    assert raw_model
 
 
-def test_load_model(rf_config_path):
-    model = load_model(rf_config_path)
-    assert len(model.inputs) == 1
-    assert len(model.outputs) == 1
+def test_load_model(unet2d_nuclei_broad_any_path):
+    model = load_model(unet2d_nuclei_broad_any_path)
+    assert model

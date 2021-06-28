@@ -4,8 +4,8 @@ from marshmallow import missing
 
 from bioimageio.spec import v0_1
 from bioimageio.spec.shared.common import get_args
+from bioimageio.spec.shared.model_loader_utils import ModelLoaderBase
 from . import converters, nodes, raw_nodes, schema
-from ..shared.model_loader_utils import ModelLoaderBase
 
 
 class ModelLoader(ModelLoaderBase):
