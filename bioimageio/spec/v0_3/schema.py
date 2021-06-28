@@ -666,9 +666,9 @@ is in an unsupported format version. The current format version described here i
         bioimageio_maybe_required=True,
         bioimageio_description="Language and framework specific implementation. As some weights contain the model "
         "architecture, the source is optional depending on the present weight formats. `source` can either point to a "
-        "local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the "
+        "local implementation: `<relative path to file>::<identifier of implementation within the source file>` or the "
         "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
-        "`./my_function:MyImplementation` or `core_library.some_module.some_function`.",
+        "`my_function.py::MyImplementation` or `core_library.some_module.some_function`.",
     )
 
     timestamp = fields.DateTime(
