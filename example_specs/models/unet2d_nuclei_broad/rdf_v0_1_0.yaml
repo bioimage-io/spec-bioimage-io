@@ -23,18 +23,18 @@ inputs:
   - name: raw
     axes: bcyx  # letters of axes in btczyx
     data_type: float32
-    data_range: [-inf, inf]
+    data_range: [-.inf, .inf]
     shape: [1, 1, 512, 512]
 
 outputs:
   - name: probability
     axes: bcyx
     data_type: float32
-    data_range: [-inf, inf]
+    data_range: [-.inf, .inf]
     halo: [0, 0, 32, 32]
     shape:
       reference_input: raw
-      scale: [1, 1, 1, 1]
+      scale: [1.0, 1.0, 1.0, 1.0]
       offset: [0, 0, 0, 0]
 
 language: python
@@ -91,4 +91,4 @@ config:
           orcid: "0000-0001-6562-7187"
         - affiliation: "EMBL Heidelberg"
           orcid: "0000-0002-8567-6389"
-      version: 0.1.2
+      version: 0.1.3

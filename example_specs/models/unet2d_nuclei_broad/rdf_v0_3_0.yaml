@@ -1,15 +1,10 @@
-# TODO physical scale of the data
-format_version: 0.3.2
+format_version: 0.3.0
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-  - name: "Constantin Pape;@bioimage-io"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0001-6562-7187"
-  - name: "Fynn Beuttenmueller"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0002-8567-6389"
+  - "Constantin Pape;@bioimage-io"
+  - "Fynn Beuttenmueller"
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
@@ -67,9 +62,7 @@ sample_outputs: [sample_output.npy]
 weights:
  pytorch_state_dict:
    authors:
-     - name: "Constantin Pape;@bioimage-io"
-       affiliation: "EMBL Heidelberg"
-       orcid: "0000-0001-6562-7187"
+     - "Constantin Pape;@bioimage-io"
    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
  onnx:
@@ -82,5 +75,17 @@ weights:
    source: ./weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
-type: model
-version: 0.1.3
+config:
+  future:
+    0.3.2:
+      authors:
+        - affiliation: "EMBL Heidelberg"
+          orcid: "0000-0001-6562-7187"
+        - affiliation: "EMBL Heidelberg"
+          orcid: "0000-0002-8567-6389"
+      weights:
+        pytorch_state_dict:
+            authors:
+              - affiliation: "EMBL Heidelberg"
+                orcid: "0000-0001-6562-7187"
+      version: 0.1.3

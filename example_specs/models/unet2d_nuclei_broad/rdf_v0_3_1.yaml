@@ -27,7 +27,7 @@ inputs:
     description: raw input
     axes: bcyx  # letters of axes in btczyx
     data_type: float32
-    data_range: [-inf, inf]
+    data_range: [-.inf, .inf]
     shape: [1, 1, 512, 512]
     preprocessing:  # list of preprocessing steps
       - name: zero_mean_unit_variance  # name of preprocessing step
@@ -40,11 +40,11 @@ outputs:
     description: probability in [0,1]
     axes: bcyx
     data_type: float32
-    data_range: [-inf, inf]
+    data_range: [-.inf, .inf]
     halo: [0, 0, 32, 32]
     shape:
       reference_input: raw
-      scale: [1, 1, 1, 1]
+      scale: [1.0, 1.0, 1.0, 1.0]
       offset: [0, 0, 0, 0]
 
 language: python
@@ -62,9 +62,7 @@ sample_outputs: [sample_output.npy]
 weights:
  pytorch_state_dict:
    authors:
-     - name: "Constantin Pape;@bioimage-io"
-       affiliation: "EMBL Heidelberg"
-       orcid: "0000-0001-6562-7187"
+     - "Constantin Pape;@bioimage-io"
    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
  onnx:
@@ -85,4 +83,9 @@ config:
           orcid: "0000-0001-6562-7187"
         - affiliation: "EMBL Heidelberg"
           orcid: "0000-0002-8567-6389"
-      version: 0.1.2
+      weights:
+        pytorch_state_dict:
+            authors:
+              - affiliation: "EMBL Heidelberg"
+                orcid: "0000-0001-6562-7187"
+      version: 0.1.3
