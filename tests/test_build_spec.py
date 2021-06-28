@@ -38,6 +38,7 @@ def test_build_spec_pytorch(unet2d_nuclei_broad_latest_path):
         covers=source["covers"],
         dependencies=source["dependencies"],
         cite=cite,
+        root=config_path.parent,
     )
     serialized = schema.Model().dump(raw_model)
     assert type(serialized) == type(source)
