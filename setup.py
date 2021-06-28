@@ -33,7 +33,7 @@ setup(
         "typing-extensions",
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec:main"]},
-    extras_require={"test": ["pytest", "tox", "pytorch>=1.6", "numpy>=1.17"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "pytorch", "numpy"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
     package_data={"bioimageio.spec": ["static/licenses.json"]},
     include_package_data=True,
