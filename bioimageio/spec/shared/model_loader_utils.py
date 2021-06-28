@@ -166,7 +166,7 @@ class ModelLoaderBase:
                     f"root_path does not match source: {root_path} != {root_path_from_source}. (Leave out root_path!)"
                 )
 
-            raw_model = (cls.load_raw_model(data, update_to_current_format),)
+            raw_model = cls.load_raw_model(data, update_to_current_format)
         else:
             assert isinstance(source, Node)
             raw_model = source
@@ -174,10 +174,23 @@ class ModelLoaderBase:
         if root_path is None:
             raise TypeError("Require root_path if source is dict or raw_nodes.Model to resolve relative file paths.")
 
-        model: cls.nodes.Model = resolve_raw_node_to_node(
-            raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
-        )
-        assert isinstance(model, cls.nodes.Model)
+        data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
+        current_version_wo_patch = cls.get_current_format_version_wo_patch()
+        if data_version_wo_patch > current_version_wo_patch:
+            raise ValueError(
+                f"You are attempting to load a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
+                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
+            )
+        elif data_version_wo_patch == current_version_wo_patch:
+            model: cls.nodes.Model = resolve_raw_node_to_node(
+                raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
+            )
+            assert isinstance(model, cls.nodes.Model)
+        elif cls.preceding_model_loader is None:
+            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
+        else:
+            model = cls.preceding_model_loader.load_model(raw_model)
+
         return model
 
     @classmethod
