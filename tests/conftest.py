@@ -48,10 +48,9 @@ def pytest_generate_tests(metafunc):
             if m["any_minor"]:  # skip all patched versions
                 vs_patched = {}
                 for v in vs:
-                    v_tuple = tuple(v.split("."))
-                    v_minor = v_tuple[:2]
-                    if v_minor > vs_patched.get(v_minor, tuple()):
-                        vs_patched[v_minor] = v_tuple
+                    v_patched = tuple(v.split("."))
+                    if v_patched > vs_patched.get(v_patched[:2], tuple()):
+                        vs_patched[v_patched[:2]] = v_patched
 
                 vs = [".".join(v) for v in vs_patched.values()]
         else:
