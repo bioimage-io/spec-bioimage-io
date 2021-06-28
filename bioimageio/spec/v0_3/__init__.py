@@ -1,6 +1,6 @@
 from bioimageio.spec.shared import fields, get_args as _get_args
 from . import nodes, raw_nodes, schema, utils
-from .converters import maybe_convert_manifest, maybe_convert_model
+from .converters import maybe_convert_manifest, maybe_convert_model, maybe_update_model
 from .raw_nodes import ModelFormatVersion
 
 fields = fields

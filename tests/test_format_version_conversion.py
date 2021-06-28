@@ -2,18 +2,18 @@ from dataclasses import asdict
 
 from ruamel.yaml import YAML
 
-from bioimageio.spec import schema, maybe_convert_model
+from bioimageio.spec import schema, maybe_update_model
 
 
 yaml = YAML(typ="safe")
 
 
-def test_model_format_version_conversion(rf_config_path_v0_1, rf_config_path_v0_3):
-    rf_model_data_v0_1 = yaml.load(rf_config_path_v0_1)
-    rf_model_data = yaml.load(rf_config_path_v0_3)
+def test_model_format_version_conversion(unet2d_nuclei_broad_v0_1_0_path, unet2d_nuclei_broad_latest_path):
+    model_data_v0_1 = yaml.load(unet2d_nuclei_broad_v0_1_0_path)
+    model_data = yaml.load(unet2d_nuclei_broad_latest_path)
 
-    expected = asdict(schema.Model().load(rf_model_data))
-    converted_data = maybe_convert_model(rf_model_data_v0_1)
+    expected = asdict(schema.Model().load(model_data))
+    converted_data = maybe_update_model(model_data_v0_1)
     actual = asdict(schema.Model().load(converted_data))
 
     # expect converted description

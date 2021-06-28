@@ -102,19 +102,47 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         "test_input and test_output need to be converted manually, "
         "as they are split up into files for each individual tensor"
     )
-    weights_future = future.pop("weights", {})
     weights_entry = {
         # "id": weights_future.pop("id", "default"),
         # "name": weights_future.pop("name", "default weights"),
         # "description": weights_future.pop("description", "description"),
-        # "authors": data["authors"],
         "source": source,
         "sha256": sha256,
         # "tags": weights_future.pop("tags", []),
     }
+    weights_future = future.pop("weights", {})
+    weights_authors = weights_future.get("authors")
+    if weights_authors is not None:
+        weights_entry["authors"] = weights_authors
 
     data["weights"] = {weights_format: weights_entry}
     data["weights"].update(additional_weights)
+
+    if "attachments" in future:
+        data["attachments"] = future.pop("attachments")
+
+    if "version" in future:
+        data["version"] = future.pop("version")
+
+    for ipt, ipt_fut in zip(data["inputs"], future.get("inputs", [])):
+        preprocessing = ipt_fut.get("preprocessing")
+        if preprocessing is not None:
+            assert "preprocessing" not in ipt
+            ipt["preprocessing"] = preprocessing
+
+    for out, out_fut in zip(data["outputs"], future.get("outputs", [])):
+        postprocessing = out_fut.get("postprocessing")
+        if postprocessing is not None:
+            assert "postprocessing" not in out
+            out["postprocessing"] = postprocessing
+
+    sample_inputs = future.get("sample_inputs")
+    if sample_inputs is not None:
+        data["sample_inputs"] = sample_inputs
+
+    sample_outputs = future.get("sample_outputs")
+    if sample_outputs is not None:
+        data["sample_outputs"] = sample_outputs
 
     if conversion_errors:
 
