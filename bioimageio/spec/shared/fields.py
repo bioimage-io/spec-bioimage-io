@@ -41,7 +41,7 @@ class DocumentedField:
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
         self.bioimageio_maybe_required = bioimageio_maybe_required
-        super().__init__(*super_args, **super_kwargs)
+        super().__init__(*super_args, **super_kwargs)  # type: ignore
 
 
 #################################################
@@ -361,7 +361,7 @@ class ProcMode(String):
         if validate is None:
             validate = []
 
-        if isinstance(validate, (list, tuple)):
+        if isinstance(validate, typing.Iterable):
             validate = list(validate)
         else:
             validate = [validate]

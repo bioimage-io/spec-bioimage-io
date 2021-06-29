@@ -1,9 +1,8 @@
 import os
 import pathlib
+from typing import Generic
 
 from ruamel.yaml import YAML
-
-from typing import Generic
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -29,7 +28,7 @@ BIOIMAGEIO_CACHE_PATH = pathlib.Path(os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.
 
 
 class Singleton(type):
-    _instances = {}
+    _instances: dict = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

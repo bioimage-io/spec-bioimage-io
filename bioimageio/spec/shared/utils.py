@@ -38,7 +38,7 @@ class Transformer:
         return {key: self.transform(value) for key, value in node.items()}
 
 
-def iter_fields(node: dataclasses.dataclass):
+def iter_fields(node: GenericNode):
     for field in dataclasses.fields(node):
         yield field.name, getattr(node, field.name)
 
@@ -143,8 +143,9 @@ class SourceNodeTransformer(NodeTransformer):
     @staticmethod
     def transform_ResolvedImportablePath(node: ResolvedImportablePath) -> nodes.ImportedSource:
         importlib_spec = importlib.util.spec_from_file_location(f"user_imports.{uuid.uuid4().hex}", node.filepath)
+        assert importlib_spec is not None
         dep = importlib.util.module_from_spec(importlib_spec)
-        importlib_spec.loader.exec_module(dep)
+        importlib_spec.loader.exec_module(dep)  # type: ignore  # todo: possible to use "loader.load_module"?
         return nodes.ImportedSource(factory=getattr(dep, node.callable_name))
 
     @staticmethod
@@ -169,7 +170,7 @@ class RawNodeTypeTransformer(NodeTransformer):
                 field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
             }
             resolved_node_type: typing.Type[GenericResolvedNode] = getattr(self.nodes, node.__class__.__name__)
-            return resolved_node_type(**resolved_data)
+            return resolved_node_type(**resolved_data)  # type: ignore
         else:
             return super().generic_transformer(node)
 
@@ -180,7 +181,7 @@ def resolve_uri(uri, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
 
 
 @resolve_uri.register
-def _(uri: raw_nodes.URI, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
+def _resolve_uri_uri_node(uri: raw_nodes.URI, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
     if uri.scheme == "":  # relative path
         if uri.authority or uri.query or uri.fragment:
             raise ValidationError(f"Invalid Path/URI: {uri}")
@@ -200,12 +201,12 @@ def _(uri: raw_nodes.URI, root_path: pathlib.Path = pathlib.Path()) -> pathlib.P
 
 
 @resolve_uri.register
-def _(uri: str, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
+def _resolve_uri_str(uri: str, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
     return resolve_uri(fields.URI().deserialize(uri), root_path)
 
 
 @resolve_uri.register
-def _(uri: pathlib.Path, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
+def _resolve_uri_path(uri: pathlib.Path, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
     return resolve_uri(uri.as_uri(), root_path)
 
 
@@ -241,7 +242,7 @@ def resolve_raw_node_to_node(
 
 def get_dict_and_root_path_from_yaml_source(
     source: typing.Union[os.PathLike, str, dict]
-) -> typing.Tuple[dict, pathlib.Path]:
+) -> typing.Tuple[dict, typing.Optional[pathlib.Path]]:
     if isinstance(source, str):
         if pathlib.Path(source).exists():
             # assume source is file path
@@ -261,7 +262,7 @@ def get_dict_and_root_path_from_yaml_source(
                 "(https://yaml.org/faq.html)"
             )
 
-        root_path = source.parent
+        root_path: typing.Optional[pathlib.Path] = source.parent
         source = yaml.load(source)
     elif isinstance(source, dict):
         root_path = None
