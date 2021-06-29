@@ -207,7 +207,24 @@ def _resolve_uri_str(uri: str, root_path: pathlib.Path = pathlib.Path()) -> path
 
 @resolve_uri.register
 def _resolve_uri_path(uri: pathlib.Path, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
+    if not uri.is_absolute():
+        uri = root_path / uri
+
     return resolve_uri(uri.as_uri(), root_path)
+
+
+@resolve_uri.register
+def _resolve_uri_resolved_importable_path(
+    uri: ResolvedImportablePath, root_path: pathlib.Path = pathlib.Path()
+) -> pathlib.Path:
+    return resolve_uri(uri.filepath, root_path)
+
+
+@resolve_uri.register
+def _resolve_uri_importable_path(
+    uri: raw_nodes.ImportablePath, root_path: pathlib.Path = pathlib.Path()
+) -> pathlib.Path:
+    return resolve_uri(uri.filepath, root_path)
 
 
 def download_uri_to_local_path(uri: typing.Union[raw_nodes.URI, str]) -> pathlib.Path:
