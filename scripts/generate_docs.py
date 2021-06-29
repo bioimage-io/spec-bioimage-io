@@ -20,7 +20,7 @@ class DocNode:
         assert not (self.sub_docs and self.details)
 
 
-def doc_from_schema(obj, spec=bioimageio.spec) -> typing.Union[typing.Dict[str, DocNode], DocNode]:
+def doc_from_schema(obj, spec=bioimageio.spec) -> DocNode:
     if obj is None:
         return DocNode(
             type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
@@ -90,7 +90,7 @@ def doc_from_schema(obj, spec=bioimageio.spec) -> typing.Union[typing.Dict[str, 
 def markdown_from_doc(doc: DocNode, indent: int = 0):
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
-        enumerate_symbol = "*"
+        enumerate_symbol: typing.Optional[str] = "*"
     elif doc.details:
         sub_docs = [("", sdn) for sdn in doc.details]
         enumerate_symbol = "1."
