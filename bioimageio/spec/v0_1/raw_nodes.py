@@ -7,8 +7,13 @@ from typing import Any, Dict, List, NewType, Tuple, Union
 
 from marshmallow.utils import _Missing, missing
 
-from bioimageio.spec.shared.common import Literal
 from bioimageio.spec.shared.raw_nodes import ImplicitInputShape, ImplicitOutputShape, Node, SpecURI, URI
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal  # type: ignore
+
 
 ModelFormatVersion = Literal["0.1.0"]
 

@@ -7,7 +7,7 @@ from ruamel.yaml import YAML
 try:
     from typing import Literal, get_args, get_origin, Protocol
 except ImportError:
-    from typing_extensions import Literal, get_args, get_origin, Protocol
+    from typing_extensions import Literal, get_args, get_origin, Protocol  # type: ignore
 
 
 def get_args_flat(tp):
