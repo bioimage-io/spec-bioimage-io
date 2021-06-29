@@ -27,6 +27,8 @@ jobs:
       run: tox
     - name: Check passthrough models
       run: python scripts/generate_passthrough_modules.py check
+    - name: Mypy
+      run: mypy .
 
   conda-build:
     runs-on: ubuntu-latest
