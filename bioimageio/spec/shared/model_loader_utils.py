@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import os
 import pathlib
-import typing
 import warnings
+from types import ModuleType
+from typing import Any, ClassVar, Generic, Optional, TYPE_CHECKING, Type, TypeVar, Union
 
 from marshmallow import ValidationError, missing
 
@@ -14,9 +15,9 @@ from .schema import SharedBioImageIOSchema
 from .utils import resolve_raw_node_to_node
 
 # placeholders for versioned classes
-ModelSchema = typing.TypeVar("ModelSchema", bound=SharedBioImageIOSchema)
-RawModelNode = typing.TypeVar("RawModelNode", bound=raw_nodes.Node)
-ModelNode = typing.TypeVar("ModelNode", bound=nodes.Node)
+ModelSchema = TypeVar("ModelSchema", bound=SharedBioImageIOSchema)
+RawModelNode = TypeVar("RawModelNode", bound=raw_nodes.Node)
+ModelNode = TypeVar("ModelNode", bound=nodes.Node)
 
 
 # placeholders for versioned modules
@@ -29,16 +30,16 @@ class ConvertersModule(Protocol):
 
 
 class RawNodesModule(Protocol):
-    ModelFormatVersion: typing.Type[Literal]
-    Model: typing.Type[RawModelNode]
+    ModelFormatVersion: Any
+    Model: Type[RawModelNode]
 
 
 class NodesModule(Protocol):
-    Model: typing.Type[RawModelNode]
+    Model: Type[RawModelNode]
 
 
 class SchemaModule(Protocol):
-    Model: typing.Type[ModelSchema]
+    Model: Type[ModelSchema]
 
 
 # an alternative meta class approach to describe the class properties:
@@ -78,16 +79,16 @@ class SchemaModule(Protocol):
 
 # class ModelLoaderBase(metaclass=ModelLoaderBaseMeta):
 class ModelLoaderBase:
-    preceding_model_loader: typing.ClassVar[typing.Optional[ModelLoaderBase]]
-    converters: typing.ClassVar[ConvertersModule]
-    schema: typing.ClassVar[SchemaModule]
-    raw_nodes: typing.ClassVar[RawNodesModule]
-    nodes: typing.ClassVar[RawNodesModule]
+    preceding_model_loader: ClassVar[Optional[ModelLoaderBase]]
+    converters: ClassVar[ConvertersModule]
+    schema: ClassVar[SchemaModule]
+    raw_nodes: ClassVar[RawNodesModule]
+    nodes: ClassVar[RawNodesModule]
 
     @classmethod
     def load_raw_model(
-        cls, source: typing.Union[os.PathLike, str, dict], update_to_current_format: bool = False
-    ) -> RawNodesModule.Model:
+        cls, source: Union[os.PathLike, str, dict], update_to_current_format: bool = False
+    ) -> RawModelNode:
         data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
         format_version = data.get("format_version")
@@ -107,7 +108,7 @@ class ModelLoaderBase:
                 data = cls.maybe_update_model_minor(data)
 
             data = cls.converters.maybe_update_model_patch(data)
-            raw_model = cls.load_raw_model_from_dict(data)
+            raw_model: RawModelNode = cls.load_raw_model_from_dict(data)
             assert isinstance(raw_model, cls.raw_nodes.Model)
         elif cls.preceding_model_loader is None:
             raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
@@ -150,8 +151,8 @@ class ModelLoaderBase:
     @classmethod
     def load_model(
         cls,
-        source: typing.Union[RawModelNode, os.PathLike, str, dict],
-        root_path: typing.Optional[os.PathLike] = None,
+        source: Union[RawModelNode, os.PathLike, str, dict],
+        root_path: Optional[os.PathLike] = None,
         update_to_current_format: bool = True,
     ):
         if isinstance(source, (os.PathLike, str, dict)):
@@ -182,7 +183,7 @@ class ModelLoaderBase:
                 f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
             )
         elif data_version_wo_patch == current_version_wo_patch:
-            model: cls.nodes.Model = resolve_raw_node_to_node(
+            model: ModelNode = resolve_raw_node_to_node(
                 raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
             )
             assert isinstance(model, cls.nodes.Model)
