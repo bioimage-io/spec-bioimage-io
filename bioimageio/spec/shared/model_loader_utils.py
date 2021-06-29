@@ -119,7 +119,7 @@ class ModelLoaderBase:
         return raw_model
 
     @classmethod
-    def serialize_raw_model(cls, raw_model: RawModelNode) -> dict:
+    def serialize_raw_model_to_dict(cls, raw_model: RawModelNode) -> dict:
         if raw_model.format_version is missing:
             raise ValidationError("missing 'format_version'")
 
@@ -136,7 +136,7 @@ class ModelLoaderBase:
         elif cls.preceding_model_loader is None:
             raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
         else:
-            serialized = cls.preceding_model_loader.serialize_raw_model(raw_model)
+            serialized = cls.preceding_model_loader.serialize_raw_model_to_dict(raw_model)
 
         return serialized
 
@@ -146,7 +146,7 @@ class ModelLoaderBase:
         if path.suffix != ".yaml":
             warnings.warn("saving with '.yaml' suffix is strongly encouraged.")
 
-        serialized = cls.serialize_raw_model(raw_model)
+        serialized = cls.serialize_raw_model_to_dict(raw_model)
         yaml.dump(serialized, path)
 
     @classmethod
