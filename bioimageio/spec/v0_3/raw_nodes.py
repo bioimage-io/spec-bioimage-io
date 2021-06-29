@@ -8,7 +8,6 @@ from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from bioimageio.spec import v0_1
-from bioimageio.spec.shared.common import Literal, get_args
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
@@ -18,8 +17,14 @@ from bioimageio.spec.shared.raw_nodes import (
     URI,
 )
 
+try:
+    from typing import Literal, get_args
+except ImportError:
+    from typing_extensions import Literal, get_args  # type: ignore
+
+
 GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
-ModelFormatVersion = Literal[
+ModelFormatVersion = Literal[  # type: ignore  # Param 1 of Literal cannot be of type "Any"
     v0_1.ModelFormatVersion, "0.3.0", "0.3.1", "0.3.2"  # newest format needs to be last (used in spec.__init__.py)
 ]
 latest_version = get_args(ModelFormatVersion)[-1]
@@ -37,8 +42,13 @@ WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
 
-Axes = v0_1.raw_nodes.Axes
-CiteEntry = v0_1.raw_nodes.CiteEntry
+
+Axes = NewType("Axes", str)
+
+
+@dataclass
+class CiteEntry(v0_1.raw_nodes.CiteEntry):
+    pass
 
 
 @dataclass
@@ -188,7 +198,7 @@ class ModelParent(Node):
 
 @dataclass
 class Model(RDF):
-    authors: List[Author] = missing
+    authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
     framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
@@ -213,4 +223,3 @@ class Model(RDF):
 BioImageIoManifest = dict
 BioImageIoManifestModelEntry = dict
 BioImageIoManifestNotebookEntry = dict
-Badge = dict

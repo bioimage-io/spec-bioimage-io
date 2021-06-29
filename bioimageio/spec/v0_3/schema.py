@@ -360,11 +360,11 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
     class ScaleMeanVariance(BioImageIOSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
 
 class InputTensor(Tensor):

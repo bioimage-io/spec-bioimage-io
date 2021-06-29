@@ -1,3 +1,4 @@
+# type: ignore  # all sorts of unbound types :)
 from __future__ import annotations
 
 import os

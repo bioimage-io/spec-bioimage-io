@@ -1,5 +1,7 @@
-from pathlib import Path
-
+# type: ignore
+# errors like:
+# Name "RDF" already defined (possibly by an import)
+# todo: get rid of * import
 from bioimageio.spec.shared.nodes import ImportedSource
 from .raw_nodes import *
 

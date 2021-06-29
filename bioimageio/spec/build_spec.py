@@ -233,7 +233,7 @@ def build_spec(
     authors: List[Dict[str, str]],
     tags: List[str],
     license: str,
-    documentation: str,
+    documentation: Union[str, Path],
     covers: List[str],
     cite: Dict[str, str],
     root: Optional[str] = None,
