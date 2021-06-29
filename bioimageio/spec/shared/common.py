@@ -1,5 +1,6 @@
 import os
 import pathlib
+import tempfile
 from typing import Generic
 
 from ruamel.yaml import YAML
@@ -24,7 +25,9 @@ def get_args_flat(tp):
 
 yaml = YAML(typ="safe")
 
-BIOIMAGEIO_CACHE_PATH = pathlib.Path(os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path.home() / "bioimageio_cache"))
+BIOIMAGEIO_CACHE_PATH = pathlib.Path(
+    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
+)
 
 
 class Singleton(type):
