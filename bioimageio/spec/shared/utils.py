@@ -176,7 +176,7 @@ class RawNodeTypeTransformer(NodeTransformer):
 
 
 @singledispatch
-def resolve_uri(uri, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
+def resolve_uri(uri, root_path=pathlib.Path()):
     raise TypeError(type(uri))
 
 
@@ -216,15 +216,20 @@ def _resolve_uri_path(uri: pathlib.Path, root_path: pathlib.Path = pathlib.Path(
 @resolve_uri.register
 def _resolve_uri_resolved_importable_path(
     uri: ResolvedImportablePath, root_path: pathlib.Path = pathlib.Path()
-) -> pathlib.Path:
-    return resolve_uri(uri.filepath, root_path)
+) -> ResolvedImportablePath:
+    return ResolvedImportablePath(resolve_uri(uri.filepath, root_path), uri.callable_name)
 
 
 @resolve_uri.register
 def _resolve_uri_importable_path(
     uri: raw_nodes.ImportablePath, root_path: pathlib.Path = pathlib.Path()
-) -> pathlib.Path:
-    return resolve_uri(uri.filepath, root_path)
+) -> ResolvedImportablePath:
+    return ResolvedImportablePath(resolve_uri(uri.filepath, root_path), uri.callable_name)
+
+
+@resolve_uri.register
+def _resolve_uri_list(uri: list, root_path: pathlib.Path = pathlib.Path()) -> typing.List[pathlib.Path]:
+    return [resolve_uri(el, root_path) for el in uri]
 
 
 def download_uri_to_local_path(uri: typing.Union[raw_nodes.URI, str]) -> pathlib.Path:
