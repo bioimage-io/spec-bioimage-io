@@ -207,6 +207,7 @@ class ModelLoaderBase:
 
         package_file_name = package_file_name.replace(" ", "_").replace(".", "_")
 
+        BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
         package_path = (BIOIMAGEIO_CACHE_PATH / package_file_name).with_suffix(".zip")
         max_cached_packages_with_same_name = 100
         for p in range(max_cached_packages_with_same_name):
