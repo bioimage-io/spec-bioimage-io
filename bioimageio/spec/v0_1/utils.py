@@ -1,8 +1,8 @@
-from bioimageio.spec.shared.model_loader_utils import ModelLoaderBase
+from bioimageio.spec.shared.io import IO_Base
 from . import converters, nodes, raw_nodes, schema
 
 
-class ModelLoader(ModelLoaderBase):
+class IO(IO_Base):
     preceding_model_loader = None
     converters = converters
     schema = schema

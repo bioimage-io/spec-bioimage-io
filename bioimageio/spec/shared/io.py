@@ -7,18 +7,16 @@ import pathlib
 import warnings
 from copy import deepcopy
 from io import StringIO
-from types import ModuleType
-from typing import Any, ClassVar, Dict, Generic, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Type, TypeVar, Union
 from zipfile import ZipFile
 
 from marshmallow import ValidationError, missing
 
 from . import get_dict_and_root_path_from_yaml_source, nodes, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, Literal, Protocol, NoOverridesDict, get_args, yaml
-from .raw_nodes import ImportablePath, Node, URI
+from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, yaml
+from .raw_nodes import ImportablePath, Node
 from .schema import SharedBioImageIOSchema
 from .utils import GenericNode, resolve_raw_node_to_node, resolve_uri
-
 
 if TYPE_CHECKING:
     import bioimageio.spec as current_spec
@@ -54,7 +52,7 @@ class SchemaModule(Protocol):
 # an alternative meta class approach to describe the class properties:
 # class ModelLoaderBaseMeta(ABCMeta):
 #     """
-#     defines abstract class properties for ModelLoaderBase
+#     defines abstract class properties for IO_Base
 #
 #     note: as derived classes may be defined and instantiated without setting these abstract class properties they raise
 #     NotImplementedError.
@@ -62,7 +60,7 @@ class SchemaModule(Protocol):
 #
 #     @property
 #     @abstractmethod
-#     def preceding_model_loader(self) -> typing.Optional[ModelLoaderBase]:
+#     def preceding_model_loader(self) -> typing.Optional[IO_Base]:
 #         raise NotImplementedError(f"{self}.preceding_model_loader")
 #
 #     @property
@@ -86,9 +84,9 @@ class SchemaModule(Protocol):
 #         raise NotImplementedError(f"{self}.nodes")
 
 
-# class ModelLoaderBase(metaclass=ModelLoaderBaseMeta):
-class ModelLoaderBase:
-    preceding_model_loader: ClassVar[Optional[ModelLoaderBase]]
+# class IO_Base(metaclass=ModelLoaderBaseMeta):
+class IO_Base:
+    preceding_model_loader: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
     schema: ClassVar[SchemaModule]
     raw_nodes: ClassVar[RawNodesModule]

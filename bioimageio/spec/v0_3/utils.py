@@ -4,12 +4,12 @@ from marshmallow import missing
 
 from bioimageio.spec import v0_1
 from bioimageio.spec.shared.common import get_args
-from bioimageio.spec.shared.model_loader_utils import ModelLoaderBase
+from bioimageio.spec.shared.io import IO_Base
 from . import converters, nodes, raw_nodes, schema
 
 
-class ModelLoader(ModelLoaderBase):
-    preceding_model_loader = v0_1.utils.ModelLoader
+class IO(IO_Base):
+    preceding_model_loader = v0_1.utils.IO
     converters = converters
     schema = schema
     raw_nodes = raw_nodes
