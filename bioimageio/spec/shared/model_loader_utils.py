@@ -178,6 +178,9 @@ class ModelLoaderBase:
         weights_formats_priorities: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
+        if isinstance(source, str) and source.startswith("http"):
+            raise ValueError("Cannot export package for remote source")
+
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
         data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
         current_version_wo_patch = cls.get_current_format_version_wo_patch()
