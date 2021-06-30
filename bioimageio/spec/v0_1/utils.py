@@ -3,7 +3,7 @@ from . import converters, nodes, raw_nodes, schema
 
 
 class IO(IO_Base):
-    preceding_model_loader = None
+    preceding_io_class = None
     converters = converters
     schema = schema
     raw_nodes = raw_nodes

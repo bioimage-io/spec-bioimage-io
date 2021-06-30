@@ -60,8 +60,8 @@ class SchemaModule(Protocol):
 #
 #     @property
 #     @abstractmethod
-#     def preceding_model_loader(self) -> typing.Optional[IO_Base]:
-#         raise NotImplementedError(f"{self}.preceding_model_loader")
+#     def preceding_io_class(self) -> typing.Optional[IO_Base]:
+#         raise NotImplementedError(f"{self}.preceding_io_class")
 #
 #     @property
 #     @abstractmethod
@@ -86,7 +86,7 @@ class SchemaModule(Protocol):
 
 # class IO_Base(metaclass=ModelLoaderBaseMeta):
 class IO_Base:
-    preceding_model_loader: ClassVar[Optional[IO_Base]]
+    preceding_io_class: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
     schema: ClassVar[SchemaModule]
     raw_nodes: ClassVar[RawNodesModule]
@@ -98,52 +98,23 @@ class IO_Base:
     ) -> RawModelNode:
         data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
-        format_version = data.get("format_version")
-
-        if format_version is None:
-            raise ValidationError("missing 'format_version'")
-
-        data_version_wo_patch = cls.get_version_tuple_wo_patch(format_version)
-        current_version_wo_patch = cls.get_current_format_version_wo_patch()
-        if data_version_wo_patch > current_version_wo_patch:
-            raise ValueError(
-                f"You are attempting to load a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
-            )
-        elif data_version_wo_patch == current_version_wo_patch or update_to_current_format:
-            if update_to_current_format:
-                data = cls.maybe_update_model_minor(data)
-
-            data = cls.converters.maybe_update_model_patch(data)
-            raw_model: RawModelNode = cls.load_raw_model_from_dict(data)
-            assert isinstance(raw_model, cls.raw_nodes.Model)
-        elif cls.preceding_model_loader is None:
-            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
+        if update_to_current_format:
+            data = cls.maybe_update_model_minor(data)
+            io_cls = cls
         else:
-            raw_model = cls.preceding_model_loader.load_raw_model(data)
+            io_cls = cls.get_matching_io_class(data.get("format_version"), "load")
+
+        data = io_cls.converters.maybe_update_model_patch(data)
+        raw_model: RawModelNode = io_cls.load_raw_model_from_dict(data)
+        assert isinstance(raw_model, io_cls.raw_nodes.Model)
 
         return raw_model
 
     @classmethod
     def serialize_raw_model_to_dict(cls, raw_model: RawModelNode) -> dict:
-        if raw_model.format_version is missing:
-            raise ValidationError("missing 'format_version'")
-
-        data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
-        current_version_wo_patch = cls.get_current_format_version_wo_patch()
-        if data_version_wo_patch > current_version_wo_patch:
-            raise ValueError(
-                f"You are attempting to save a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
-            )
-        elif data_version_wo_patch == current_version_wo_patch:
-            serialized = cls.schema.Model().dump(raw_model)
-            assert isinstance(serialized, dict)
-        elif cls.preceding_model_loader is None:
-            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
-        else:
-            serialized = cls.preceding_model_loader.serialize_raw_model_to_dict(raw_model)
-
+        io_cls = cls.get_matching_io_class(raw_model.format_version, "serialize")
+        serialized = io_cls.schema.Model().dump(raw_model)
+        assert isinstance(serialized, dict)
         return serialized
 
     @classmethod
@@ -165,6 +136,24 @@ class IO_Base:
             return stream.getvalue()
 
     @classmethod
+    def load_model(
+        cls,
+        source: Union[RawModelNode, os.PathLike, str, dict],
+        root_path: Optional[os.PathLike] = None,
+        update_to_current_format: bool = True,
+    ):
+        raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
+
+        matching_cls = cls.get_matching_io_class(raw_model.format_version, "load")
+
+        model: ModelNode = resolve_raw_node_to_node(
+            raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=matching_cls.nodes
+        )
+        assert isinstance(model, matching_cls.nodes.Model)
+
+        return model
+
+    @classmethod
     def export_package(
         cls,
         source: Union[RawModelNode, os.PathLike, str, dict],
@@ -180,22 +169,10 @@ class IO_Base:
             raise ValueError("Cannot export package for remote source")
 
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
-        data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
-        current_version_wo_patch = cls.get_current_format_version_wo_patch()
-        if data_version_wo_patch > current_version_wo_patch:
-            raise ValueError(
-                f"You are attempting to package a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
-            )
-        elif data_version_wo_patch == current_version_wo_patch:
-            package_path = cls._make_package_wo_conversions(
-                raw_model, root_path, weights_formats_priorities=weights_formats_priorities
-            )
-        elif cls.preceding_model_loader is None:
-            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
-        else:
-            package_path = cls.preceding_model_loader.export_package(raw_model, root_path, update_to_current_format)
-
+        io_cls = cls.get_matching_io_class(raw_model.format_version, "export")
+        package_path = io_cls._make_package_wo_conversions(
+            raw_model, root_path, weights_formats_priorities=weights_formats_priorities
+        )
         return package_path
 
     @classmethod
@@ -313,6 +290,25 @@ class IO_Base:
         return dict(package)
 
     @classmethod
+    def get_matching_io_class(cls, data_version: str, action_descr: str):
+        if not isinstance(data_version, str):
+            raise TypeError("missing or invalid 'format_version'")
+
+        data_version_wo_patch = cls.get_version_tuple_wo_patch(data_version)
+        current_version_wo_patch = cls.get_current_format_version_wo_patch()
+        if data_version_wo_patch > current_version_wo_patch:
+            raise ValueError(
+                f"You are attempting to {action_descr} an RDF in format version {'.'.join(map(str, data_version_wo_patch))}.x "
+                f"with the RDF spec {'.'.join(map(str, current_version_wo_patch))}"
+            )
+        elif data_version_wo_patch == current_version_wo_patch:
+            return cls
+        elif cls.preceding_io_class is None:
+            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
+        else:
+            return cls.preceding_io_class
+
+    @classmethod
     def make_zip(cls, path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]]):
         with ZipFile(path, "w") as myzip:
             for arc_name, file_or_str_content in content.items():
@@ -320,33 +316,6 @@ class IO_Base:
                     myzip.writestr(arc_name, file_or_str_content)
                 else:
                     myzip.write(file_or_str_content, arcname=arc_name)
-
-    @classmethod
-    def load_model(
-        cls,
-        source: Union[RawModelNode, os.PathLike, str, dict],
-        root_path: Optional[os.PathLike] = None,
-        update_to_current_format: bool = True,
-    ):
-        raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
-        data_version_wo_patch = cls.get_version_tuple_wo_patch(raw_model.format_version)
-        current_version_wo_patch = cls.get_current_format_version_wo_patch()
-        if data_version_wo_patch > current_version_wo_patch:
-            raise ValueError(
-                f"You are attempting to load a model in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the model spec {'.'.join(map(str, current_version_wo_patch))}"
-            )
-        elif data_version_wo_patch == current_version_wo_patch:
-            model: ModelNode = resolve_raw_node_to_node(
-                raw_node=raw_model, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
-            )
-            assert isinstance(model, cls.nodes.Model)
-        elif cls.preceding_model_loader is None:
-            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
-        else:
-            model = cls.preceding_model_loader.load_model(raw_model, root_path, update_to_current_format)
-
-        return model
 
     @classmethod
     def ensure_raw_model(cls, raw_model, root_path: Optional[os.PathLike], update_to_current_format: bool):
@@ -374,9 +343,9 @@ class IO_Base:
 
     @classmethod
     def maybe_update_model_minor(cls, data: dict):
-        if cls.preceding_model_loader is not None:
-            data = cls.preceding_model_loader.maybe_update_model_minor(data)
-            data = cls.preceding_model_loader.maybe_update_model_patch(data)
+        if cls.preceding_io_class is not None:
+            data = cls.preceding_io_class.maybe_update_model_minor(data)
+            data = cls.preceding_io_class.maybe_update_model_patch(data)
 
         return cls.converters.maybe_update_model_minor(data)
 

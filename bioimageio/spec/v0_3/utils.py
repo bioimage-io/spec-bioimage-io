@@ -9,7 +9,7 @@ from . import converters, nodes, raw_nodes, schema
 
 
 class IO(IO_Base):
-    preceding_model_loader = v0_1.utils.IO
+    preceding_io_class = v0_1.utils.IO
     converters = converters
     schema = schema
     raw_nodes = raw_nodes
