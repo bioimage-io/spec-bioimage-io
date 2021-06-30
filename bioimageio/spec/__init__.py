@@ -10,7 +10,7 @@ from .raw_nodes import ModelFormatVersion
 fields = fields
 
 
-get_nn_instance = utils.get_nn_instance
+get_nn_instance_from_source = utils.get_nn_instance_from_source
 load_raw_model = utils.IO.load_raw_model
 load_model = utils.IO.load_model
 save_raw_model = utils.IO.save_raw_model
