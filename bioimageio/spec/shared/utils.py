@@ -276,13 +276,13 @@ def get_dict_and_root_path_from_yaml_source(
     if isinstance(source, os.PathLike):
         source = pathlib.Path(source)
 
-        if source.suffix not in (".yml", ".yaml"):
-            raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
-        elif source.suffix == ".yml":
+        if source.suffix == ".yml":
             warnings.warn(
                 "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
                 "(https://yaml.org/faq.html)"
             )
+        elif source.suffix != ".yaml":
+            raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
 
         root_path: typing.Optional[pathlib.Path] = source.parent
         source = yaml.load(source)

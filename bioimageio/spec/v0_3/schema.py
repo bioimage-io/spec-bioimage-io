@@ -578,7 +578,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     download_url = missing_  # todo: allow download_url for Model (RDF has it)
 
-    dependencies = fields.Dependencies(
+    dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
     )
