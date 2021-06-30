@@ -3,11 +3,12 @@ from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
 
-def test_export(unet2d_nuclei_broad_v0_3_path):
+def test_export_package(unet2d_nuclei_broad_v0_3_path):
     from bioimageio.spec import export_package
 
     package_path = export_package(unet2d_nuclei_broad_v0_3_path, weights_formats_priorities=["onnx"])
-    assert isinstance(package_path, Path)
+    assert isinstance(package_path, Path), package_path
+    assert package_path.exists(), package_path
 
     from bioimageio.spec import load_raw_model
 
