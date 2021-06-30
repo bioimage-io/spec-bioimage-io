@@ -1,7 +1,8 @@
 import os
 import pathlib
 import tempfile
-from typing import Generic
+from collections import UserDict
+from typing import Generic, Optional
 
 from ruamel.yaml import YAML
 
@@ -37,3 +38,18 @@ class Singleton(type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
+
+class NoOverridesDict(UserDict):
+    def __init__(self, *args, key_exists_error_msg: Optional[str] = None, allow_if_same_value: bool = True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.key_exists_error_message = (
+            "key {key} already exists!" if key_exists_error_msg is None else key_exists_error_msg
+        )
+        self.allow_if_same_value = allow_if_same_value
+
+    def __setitem__(self, key, value):
+        if key in self and (not self.allow_if_same_value or value != self[key]):
+            raise ValueError(self.key_exists_error_message.format(key=key, value=value))
+
+        super().__setitem__(key, value)
