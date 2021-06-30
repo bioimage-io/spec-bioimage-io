@@ -72,7 +72,7 @@ class Prediction(Node):
     postprocess: Union[_Missing, List[Transformation]] = missing
 
 
-Axes = NewType("Axes", str)
+Axes = str
 
 
 @dataclass

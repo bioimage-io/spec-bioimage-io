@@ -30,7 +30,7 @@ ModelFormatVersion = Literal[  # type: ignore  # Param 1 of Literal cannot be of
 latest_version = get_args(ModelFormatVersion)[-1]
 
 
-Dependencies = NewType("Dependencies", str)
+Dependencies = str
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
@@ -43,7 +43,7 @@ WeightsFormat = Literal[
 ]
 
 
-Axes = NewType("Axes", str)
+Axes = str
 
 
 @dataclass
