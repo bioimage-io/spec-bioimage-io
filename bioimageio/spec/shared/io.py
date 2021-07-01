@@ -29,10 +29,7 @@ ModelNode = TypeVar("ModelNode", bound=nodes.Node)
 
 # placeholders for versioned modules
 class ConvertersModule(Protocol):
-    def maybe_update_model_minor(self, data: dict) -> dict:
-        raise NotImplementedError
-
-    def maybe_update_model_patch(self, data: dict) -> dict:
+    def maybe_convert_model(self, data: dict) -> dict:
         raise NotImplementedError
 
 
@@ -63,15 +60,13 @@ class IO_Base:
         data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
         if update_to_current_format:
-            data = cls.maybe_update_model_minor(data)
             io_cls = cls
         else:
             io_cls = cls.get_matching_io_class(data.get("format_version"), "load")
 
-        data = io_cls.converters.maybe_update_model_patch(data)
+        data = io_cls.maybe_convert_model(data)
         raw_model: RawModelNode = io_cls._load_raw_model_from_dict_wo_conversions(data)
         assert isinstance(raw_model, io_cls.raw_nodes.Model)
-
         return raw_model
 
     @classmethod
@@ -328,20 +323,11 @@ class IO_Base:
         return raw_model, root_path
 
     @classmethod
-    def maybe_update_model_minor(cls, data: dict):
+    def maybe_convert_model(cls, data: dict):
         if cls.preceding_io_class is not None:
-            data = cls.preceding_io_class.maybe_update_model_minor(data)
-            data = cls.preceding_io_class.maybe_update_model_patch(data)
+            data = cls.preceding_io_class.maybe_convert_model(data)
 
-        return cls.converters.maybe_update_model_minor(data)
-
-    @classmethod
-    def maybe_update_model_patch(cls, data: dict):
-        if cls.preceding_io_class is not None:
-            data = cls.preceding_io_class.maybe_update_model_minor(data)
-            data = cls.preceding_io_class.maybe_update_model_patch(data)
-
-        return cls.converters.maybe_update_model_patch(data)
+        return cls.converters.maybe_convert_model(data)
 
     @classmethod
     def _load_raw_model_from_dict_wo_conversions(cls, data: dict):

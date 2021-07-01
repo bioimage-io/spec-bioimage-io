@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 from ruamel.yaml import YAML
 
-from bioimageio.spec import schema, maybe_update_model
+from bioimageio.spec import schema, maybe_convert_model
 
 
 yaml = YAML(typ="safe")
@@ -13,7 +13,7 @@ def test_model_format_version_conversion(unet2d_nuclei_broad_v0_1_0_path, unet2d
     model_data = yaml.load(unet2d_nuclei_broad_latest_path)
 
     expected = asdict(schema.Model().load(model_data))
-    converted_data = maybe_update_model(model_data_v0_1)
+    converted_data = maybe_convert_model(model_data_v0_1)
     actual = asdict(schema.Model().load(converted_data))
 
     # expect converted description

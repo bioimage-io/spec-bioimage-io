@@ -1,8 +1,4 @@
-def maybe_update_model_minor(data):
-    return data
-
-
-def maybe_update_model_patch(data):
+def maybe_convert_model(data):
     return data
 
 
