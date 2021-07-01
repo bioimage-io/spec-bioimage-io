@@ -174,7 +174,7 @@ class SourceNodeTransformer(NodeTransformer):
         )
 
     @staticmethod
-    def transform_ResolvedImportablePath(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
+    def transform_ResolvedImportableSourceFile(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
         importlib_spec = importlib.util.spec_from_file_location(
             f"user_imports.{uuid.uuid4().hex}", resolve_uri(node.source_file)
         )
