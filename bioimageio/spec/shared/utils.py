@@ -12,7 +12,8 @@ from types import ModuleType
 from urllib.parse import urlunparse
 from urllib.request import url2pathname, urlretrieve
 
-from marshmallow import ValidationError, missing
+import requests
+from marshmallow import ValidationError
 
 from . import fields, nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, yaml
@@ -76,7 +77,13 @@ class NodeTransformer(Transformer):
             return super().generic_transformer(node)
 
 
+class UriNodeChecker(NodeVisitor):
+    def __init__(self, *, root_path: pathlib.Path):
+        self.root_path = root_path
 
+    def visit_URI(self, node: raw_nodes.URI):
+        if not uri_available(node, self.root_path):
+            raise FileNotFoundError(str(node))
 
 
 class UriNodeTransformer(NodeTransformer):
@@ -103,6 +110,38 @@ class UriNodeTransformer(NodeTransformer):
         return self._transform_Path(leaf)
 
     def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> pathlib.Path:
+        return self._transform_Path(leaf)
+
+
+class PathToRemoteUriTransformer(NodeTransformer):
+    def __init__(self, *, remote_source: raw_nodes.URI):
+        remote_path = pathlib.Path(remote_source.path).parent
+        assert not remote_path.is_absolute()
+        self.remote_root = dataclasses.replace(remote_source, path=remote_path.as_posix())
+
+    def transform_URI(self, node: raw_nodes.URI) -> raw_nodes.URI:
+        if node.scheme == "file":
+            raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
+
+        if node.scheme == "":
+            # make local realtive path remote
+            assert not node.authority
+            assert not node.query
+            assert not node.fragment
+
+            path = pathlib.Path(self.remote_root.path) / node.path
+            node = dataclasses.replace(self.remote_root, path=path.as_posix())
+
+        return node
+
+    def _transform_Path(self, leaf: pathlib.Path):
+        assert not leaf.is_absolute()
+        return self.transform_URI(raw_nodes.URI(path=leaf.as_posix()))
+
+    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> raw_nodes.URI:
+        return self._transform_Path(leaf)
+
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> raw_nodes.URI:
         return self._transform_Path(leaf)
 
 
@@ -178,20 +217,13 @@ def resolve_uri(uri, root_path=pathlib.Path()):
 
 @resolve_uri.register
 def _resolve_uri_uri_node(uri: raw_nodes.URI, root_path: pathlib.Path = pathlib.Path()) -> pathlib.Path:
-    if uri.scheme == "":  # relative path
-        if uri.authority or uri.query or uri.fragment:
-            raise ValidationError(f"Invalid Path/URI: {uri}")
-
-        local_path = root_path / uri.path
-    elif uri.scheme == "file":
-        if uri.authority or uri.query or uri.fragment:
-            raise NotImplementedError(uri)
-
-        local_path = pathlib.Path(url2pathname(uri.path))
-    elif uri.scheme == "https":
-        local_path = _download_uri_to_local_path(uri)
+    path_or_remote_uri = resolve_local_uri(uri, root_path)
+    if isinstance(path_or_remote_uri, raw_nodes.URI):
+        local_path = _download_uri_to_local_path(path_or_remote_uri)
+    elif isinstance(path_or_remote_uri, pathlib.Path):
+        local_path = path_or_remote_uri
     else:
-        raise ValueError(f"Unknown uri scheme {uri.scheme}")
+        raise TypeError(path_or_remote_uri)
 
     return local_path
 
@@ -228,6 +260,47 @@ def _resolve_uri_list(uri: list, root_path: pathlib.Path = pathlib.Path()) -> ty
     return [resolve_uri(el, root_path) for el in uri]
 
 
+def resolve_local_uri(
+    uri: typing.Union[str, os.PathLike, raw_nodes.URI], root_path: os.PathLike
+) -> typing.Union[pathlib.Path, raw_nodes.URI]:
+    if isinstance(uri, os.PathLike):
+        return pathlib.Path(uri)
+
+    if isinstance(uri, str):
+        uri = fields.URI().deserialize(uri)
+
+    assert isinstance(uri, raw_nodes.URI)
+    if not uri.scheme:  # relative path
+        if uri.authority or uri.query or uri.fragment:
+            raise ValidationError(f"Invalid Path/URI: {uri}")
+
+        local_path_or_remote_uri: typing.Union[pathlib.Path, raw_nodes.URI] = pathlib.Path(root_path) / uri.path
+    elif uri.scheme == "file":
+        if uri.authority or uri.query or uri.fragment:
+            raise NotImplementedError(uri)
+
+        local_path_or_remote_uri = pathlib.Path(url2pathname(uri.path))
+    elif uri.scheme in ("https", "https"):
+        local_path_or_remote_uri = uri
+    else:
+        raise ValueError(f"Unknown uri scheme {uri.scheme}")
+
+    return local_path_or_remote_uri
+
+
+def uri_available(uri: raw_nodes.URI, root_path: pathlib.Path) -> bool:
+    local_path_or_remote_uri = resolve_local_uri(uri, root_path)
+    if isinstance(local_path_or_remote_uri, raw_nodes.URI):
+        response = requests.head(str(raw_nodes.URI))
+        available = response.status_code == 200
+    elif isinstance(local_path_or_remote_uri, pathlib.Path):
+        available = local_path_or_remote_uri.exists()
+    else:
+        raise TypeError(local_path_or_remote_uri)
+
+    return available
+
+
 def download_uri_to_local_path(uri: typing.Union[raw_nodes.URI, str]) -> pathlib.Path:
     return resolve_uri(uri)
 
@@ -259,33 +332,31 @@ def resolve_raw_node_to_node(
 
 
 def get_dict_and_root_path_from_yaml_source(
-    source: typing.Union[os.PathLike, str, dict]
+    source: typing.Union[os.PathLike, str, raw_nodes.URI, dict]
 ) -> typing.Tuple[dict, typing.Optional[pathlib.Path]]:
-    if isinstance(source, str):
-        if pathlib.Path(source).exists():
-            # assume source is file path
-            source = pathlib.Path(source)
-        else:
-            # assume source is uri
-            source = resolve_uri(source, root_path=BIOIMAGEIO_CACHE_PATH)
-
-    if isinstance(source, os.PathLike):
-        source = pathlib.Path(source)
-
-        if source.suffix == ".yml":
-            warnings.warn(
-                "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
-                "(https://yaml.org/faq.html)"
-            )
-        elif source.suffix != ".yaml":
-            raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
-
-        root_path: typing.Optional[pathlib.Path] = source.parent
-        source = yaml.load(source)
-    elif isinstance(source, dict):
-        root_path = None
+    if isinstance(source, dict):
+        return source, None
+    elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
+        source = resolve_local_uri(source, pathlib.Path())
     else:
-        raise TypeError(f"Expected pathlib.Path, os.PathLike, str or dict, but got {type(source)}")
+        raise TypeError(source)
 
-    assert isinstance(source, dict)
-    return source, root_path
+    if isinstance(source, raw_nodes.URI):  # remote uri
+        local_source = _download_uri_to_local_path(source)
+        root_path: typing.Optional[pathlib.Path] = None
+    else:
+        local_source = source
+        root_path = source.parent
+
+    assert isinstance(source, pathlib.Path)
+    if source.suffix == ".yml":
+        warnings.warn(
+            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
+            "(https://yaml.org/faq.html)"
+        )
+    elif source.suffix != ".yaml":
+        raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
+
+    data = yaml.load(local_source)
+    assert isinstance(data, dict)
+    return data, root_path
