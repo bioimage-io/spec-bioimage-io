@@ -191,11 +191,11 @@ class ExplicitShape(List):
 class ImportableSource(String):
     @staticmethod
     def _is_import(path):
-        return "::" not in path
+        return ":" not in path
 
     @staticmethod
     def _is_filepath(path):
-        return "::" in path
+        return ":" in path
 
     def _deserialize(self, *args, **kwargs) -> typing.Any:
         source_str: str = super()._deserialize(*args, **kwargs)
@@ -221,7 +221,7 @@ class ImportableSource(String):
             if source_str.startswith("/"):
                 raise ValidationError("Only relative paths are allowed")
 
-            parts = source_str.split("::")
+            parts = source_str.replace("::", ":").split(":")
             if len(parts) != 2:
                 raise ValidationError("Incorrect source_file format, expected example.py::ClassName")
 
