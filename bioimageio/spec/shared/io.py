@@ -49,42 +49,6 @@ class SchemaModule(Protocol):
     Model: Type[ModelSchema]
 
 
-# an alternative meta class approach to describe the class properties:
-# class ModelLoaderBaseMeta(ABCMeta):
-#     """
-#     defines abstract class properties for IO_Base
-#
-#     note: as derived classes may be defined and instantiated without setting these abstract class properties they raise
-#     NotImplementedError.
-#     """
-#
-#     @property
-#     @abstractmethod
-#     def preceding_io_class(self) -> typing.Optional[IO_Base]:
-#         raise NotImplementedError(f"{self}.preceding_io_class")
-#
-#     @property
-#     @abstractmethod
-#     def converters(self) -> ConvertersModule:
-#         raise NotImplementedError(f"{self}.converters")
-#
-#     @property
-#     @abstractmethod
-#     def schema(self) -> SchemaModule:
-#         raise NotImplementedError(f"{self}.schema")
-#
-#     @property
-#     @abstractmethod
-#     def raw_nodes(self) -> RawNodesModule:
-#         raise NotImplementedError(f"{self}.raw_nodes")
-#
-#     @property
-#     @abstractmethod
-#     def nodes(self) -> RawNodesModule:
-#         raise NotImplementedError(f"{self}.nodes")
-
-
-# class IO_Base(metaclass=ModelLoaderBaseMeta):
 class IO_Base:
     preceding_io_class: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
