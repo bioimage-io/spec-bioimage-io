@@ -69,7 +69,7 @@ class IO_Base:
             io_cls = cls.get_matching_io_class(data.get("format_version"), "load")
 
         data = io_cls.converters.maybe_update_model_patch(data)
-        raw_model: RawModelNode = io_cls.load_raw_model_from_dict(data)
+        raw_model: RawModelNode = io_cls._load_raw_model_from_dict_wo_conversions(data)
         assert isinstance(raw_model, io_cls.raw_nodes.Model)
 
         return raw_model
@@ -340,7 +340,7 @@ class IO_Base:
         return cls.converters.maybe_update_model_patch(data)
 
     @classmethod
-    def load_raw_model_from_dict(cls, data: dict):
+    def _load_raw_model_from_dict_wo_conversions(cls, data: dict):
         raw_model: cls.raw_nodes.Model = cls.schema.Model().load(data)
         assert isinstance(raw_model, cls.raw_nodes.Model)
         return raw_model
