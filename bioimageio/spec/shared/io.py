@@ -129,8 +129,8 @@ class IO_Base:
         weights_formats_priorities: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
-        if isinstance(source, str) and source.startswith("http"):
-            raise ValueError("Cannot export package for remote source")
+        if isinstance(source, str) and source.startswith("http"):  # todo: improve remote source check
+            raise ValueError("Cannot export package from remote source")
 
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_model.format_version, "export")
@@ -161,7 +161,7 @@ class IO_Base:
             raise FileExistsError(
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
-        package_content = cls.get_package_content(
+        package_content = cls._get_package_content_wo_conversions(
             deepcopy(raw_model), root_path=root_path, weights_formats_priorities=weights_formats_priorities
         )
         cls.make_zip(package_path, package_content)
@@ -169,6 +169,28 @@ class IO_Base:
 
     @classmethod
     def get_package_content(
+        cls,
+        source: Union[RawModelNode, os.PathLike, str, dict],
+        root_path: pathlib.Path,
+        update_to_current_format: bool = False,
+        weights_formats_priorities: Optional[Sequence[str]] = None,
+    ) -> Dict[str, Union[str, pathlib.Path]]:
+        """
+        weights_formats_priorities: If given only the first weights format present in the model is included.
+                                    If none of the prioritized weights formats is found all are included.
+        """
+        if isinstance(source, str) and source.startswith("http"):  # todo: improve remote source check
+            raise ValueError("Cannot get package content from remote source")
+
+        raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
+        io_cls = cls.get_matching_io_class(raw_model.format_version, "get the package content of")
+        package_content = io_cls._get_package_content_wo_conversions(
+            deepcopy(raw_model), root_path=root_path, weights_formats_priorities=weights_formats_priorities
+        )
+        return package_content
+
+    @classmethod
+    def _get_package_content_wo_conversions(
         cls,
         raw_model: current_spec.raw_nodes.Model,
         root_path: pathlib.Path,
