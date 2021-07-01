@@ -28,7 +28,7 @@ class Node:
 
 @dataclass
 class URI(Node):
-    """URI as  scheme:[//authority]path[?query][#fragment]"""
+    """URI as scheme:[//authority]path[?query][#fragment] or relative path"""
 
     scheme: str = missing
     authority: str = missing
@@ -37,7 +37,7 @@ class URI(Node):
     fragment: str = missing
 
     def __str__(self):
-        """scheme:[//authority]path[?query][#fragment]"""
+        """[scheme:][//authority]path[?query][#fragment]"""
         return (
             (self.scheme + ":" if self.scheme else "")
             + ("//" + self.authority if self.authority else "")
@@ -46,6 +46,10 @@ class URI(Node):
             + ("#" + self.fragment if self.fragment else "")
         )
 
+    def __post_init__(self):
+        if not self.scheme and any([self.authority, self.query, self.fragment]):
+            raise ValueError("Invalid URI (or relative path)")
+
 
 @dataclass
 class SpecURI(URI):
@@ -53,8 +57,8 @@ class SpecURI(URI):
 
 
 @dataclass
-class ImportablePath(Node):
-    filepath: Path = missing
+class ImportableSourceFile(Node):
+    source_file: URI = missing
     callable_name: str = missing
 
 

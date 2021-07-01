@@ -223,11 +223,11 @@ class ImportableSource(String):
 
             parts = source_str.split("::")
             if len(parts) != 2:
-                raise ValidationError("Incorrect filepath format, expected example.py::ClassName")
+                raise ValidationError("Incorrect source_file format, expected example.py::ClassName")
 
-            module_path, object_name = parts
+            module_uri, object_name = parts
 
-            return raw_nodes.ImportablePath(callable_name=object_name, filepath=pathlib.Path(module_path))
+            return raw_nodes.ImportableSourceFile(callable_name=object_name, source_file=URI().deserialize(module_uri))
         else:
             raise ValidationError(source_str)
 
@@ -235,9 +235,9 @@ class ImportableSource(String):
         if value is None:
             return None
         elif isinstance(value, raw_nodes.ImportableModule):
-            return value.module_name + "." + value.callable_name
-        elif isinstance(value, raw_nodes.ImportablePath):
-            return value.filepath.as_posix() + "::" + value.callable_name
+            return f"{value.module_name}.{value.callable_name}"
+        elif isinstance(value, raw_nodes.ImportableSourceFile):
+            return f"{value.source_file}::{value.callable_name}"
         else:
             raise TypeError(f"{value} has unexpected type {type(value)}")
 

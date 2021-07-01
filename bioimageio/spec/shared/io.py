@@ -14,7 +14,7 @@ from marshmallow import ValidationError, missing
 
 from . import get_dict_and_root_path_from_yaml_source, nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, yaml
-from .raw_nodes import ImportablePath, Node
+from .raw_nodes import ImportableSourceFile, Node
 from .schema import SharedBioImageIOSchema
 from .utils import GenericNode, resolve_raw_node_to_node, resolve_uri
 
@@ -226,8 +226,8 @@ class IO_Base:
             package[fp.name] = fp
             raw_model = dataclasses.replace(raw_model, dependencies=f"{manager}:{fp.name}")
 
-        if isinstance(raw_model.source, ImportablePath):
-            source = incl_as_local(raw_model.source, "filepath")
+        if isinstance(raw_model.source, ImportableSourceFile):
+            source = incl_as_local(raw_model.source, "source_file")
             raw_model = dataclasses.replace(raw_model, source=source)
 
         # filter weights

@@ -16,6 +16,7 @@ from marshmallow import ValidationError, missing
 
 from . import fields, nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, yaml
+from .nodes import LocalImportableModule, ResolvedImportableSourceFile
 
 GenericNode = typing.TypeVar("GenericNode", bound=raw_nodes.Node)
 
@@ -75,14 +76,7 @@ class NodeTransformer(Transformer):
             return super().generic_transformer(node)
 
 
-@dataclasses.dataclass
-class LocalImportableModule(raw_nodes.ImportableModule):
-    root_path: pathlib.Path = missing
 
-
-@dataclasses.dataclass
-class ResolvedImportablePath(raw_nodes.ImportablePath):
-    pass
 
 
 class UriNodeTransformer(NodeTransformer):
@@ -93,9 +87,9 @@ class UriNodeTransformer(NodeTransformer):
         local_path = resolve_uri(node, root_path=self.root_path)
         return local_path
 
-    def transform_ImportablePath(self, node: raw_nodes.ImportablePath) -> ResolvedImportablePath:
-        return ResolvedImportablePath(
-            filepath=(self.root_path / node.filepath).resolve(), callable_name=node.callable_name
+    def transform_ImportableSourceFile(self, node: raw_nodes.ImportableSourceFile) -> ResolvedImportableSourceFile:
+        return ResolvedImportableSourceFile(
+            source_file=resolve_uri(node.source_file, self.root_path), callable_name=node.callable_name
         )
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> LocalImportableModule:
@@ -141,8 +135,10 @@ class SourceNodeTransformer(NodeTransformer):
         )
 
     @staticmethod
-    def transform_ResolvedImportablePath(node: ResolvedImportablePath) -> nodes.ImportedSource:
-        importlib_spec = importlib.util.spec_from_file_location(f"user_imports.{uuid.uuid4().hex}", node.filepath)
+    def transform_ResolvedImportablePath(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
+        importlib_spec = importlib.util.spec_from_file_location(
+            f"user_imports.{uuid.uuid4().hex}", resolve_uri(node.source_file)
+        )
         assert importlib_spec is not None
         dep = importlib.util.module_from_spec(importlib_spec)
         importlib_spec.loader.exec_module(dep)  # type: ignore  # todo: possible to use "loader.load_module"?
@@ -151,7 +147,7 @@ class SourceNodeTransformer(NodeTransformer):
     @staticmethod
     def transform_ImportablePath(node):
         raise RuntimeError(
-            "Encountered raw_nodes.ImportablePath in _SourceNodeTransformer. Apply _UriNodeTransformer first!"
+            "Encountered raw_nodes.ImportableSourceFile in _SourceNodeTransformer. Apply _UriNodeTransformer first!"
         )
 
 
@@ -215,16 +211,16 @@ def _resolve_uri_path(uri: pathlib.Path, root_path: pathlib.Path = pathlib.Path(
 
 @resolve_uri.register
 def _resolve_uri_resolved_importable_path(
-    uri: ResolvedImportablePath, root_path: pathlib.Path = pathlib.Path()
-) -> ResolvedImportablePath:
-    return ResolvedImportablePath(resolve_uri(uri.filepath, root_path), uri.callable_name)
+    uri: ResolvedImportableSourceFile, root_path: pathlib.Path = pathlib.Path()
+) -> ResolvedImportableSourceFile:
+    return ResolvedImportableSourceFile(resolve_uri(uri.source_file, root_path), uri.callable_name)
 
 
 @resolve_uri.register
 def _resolve_uri_importable_path(
-    uri: raw_nodes.ImportablePath, root_path: pathlib.Path = pathlib.Path()
-) -> ResolvedImportablePath:
-    return ResolvedImportablePath(resolve_uri(uri.filepath, root_path), uri.callable_name)
+    uri: raw_nodes.ImportableSourceFile, root_path: pathlib.Path = pathlib.Path()
+) -> ResolvedImportableSourceFile:
+    return ResolvedImportableSourceFile(resolve_uri(uri.source_file, root_path), uri.callable_name)
 
 
 @resolve_uri.register

@@ -63,9 +63,9 @@ def test_resolve_import_path(tmpdir):
     tmpdir = Path(tmpdir)
     manifest_path = tmpdir / "manifest.yaml"
     manifest_path.touch()
-    filepath = tmpdir / "my_mod.py"
-    filepath.write_text("class Foo: pass", encoding="utf8")
-    node = raw_nodes.ImportablePath(filepath=filepath, callable_name="Foo")
+    source_file = raw_nodes.URI(path="my_mod.py")
+    (tmpdir / str(source_file)).write_text("class Foo: pass", encoding="utf8")
+    node = raw_nodes.ImportableSourceFile(source_file=source_file, callable_name="Foo")
     uri_transformed = utils.UriNodeTransformer(root_path=tmpdir).transform(node)
     source_transformed = utils.SourceNodeTransformer().transform(uri_transformed)
     assert isinstance(source_transformed, nodes.ImportedSource)
