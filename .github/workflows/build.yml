@@ -28,7 +28,7 @@ jobs:
     - name: Check passthrough models
       run: python scripts/generate_passthrough_modules.py check
     - name: Mypy
-      run: mypy .
+      run: mypy --install-types --non-interactive .
 
   conda-build:
     runs-on: ubuntu-latest
