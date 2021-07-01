@@ -337,6 +337,10 @@ class IO_Base:
 
     @classmethod
     def maybe_update_model_patch(cls, data: dict):
+        if cls.preceding_io_class is not None:
+            data = cls.preceding_io_class.maybe_update_model_minor(data)
+            data = cls.preceding_io_class.maybe_update_model_patch(data)
+
         return cls.converters.maybe_update_model_patch(data)
 
     @classmethod
