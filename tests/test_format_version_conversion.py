@@ -2,7 +2,8 @@ from dataclasses import asdict
 
 from ruamel.yaml import YAML
 
-from bioimageio.spec import schema, maybe_convert_model
+from bioimageio.spec import schema
+from bioimageio.spec.converters import maybe_convert_model
 
 
 yaml = YAML(typ="safe")
