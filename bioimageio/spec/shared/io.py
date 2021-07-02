@@ -144,7 +144,7 @@ class IO_Base:
 
     @classmethod
     def _make_package_wo_format_conv(
-        cls, raw_model: RawModelNode, root_path: pathlib.Path, weights_formats_priorities: Optional[Sequence[str]]
+        cls, raw_model: RawModelNode, root_path: os.PathLike, weights_formats_priorities: Optional[Sequence[str]]
     ):
         package_file_name = raw_model.name
         if raw_model.version is not missing:
@@ -196,7 +196,7 @@ class IO_Base:
     def _get_package_content_wo_format_conv(
         cls,
         raw_model: current_spec.raw_nodes.Model,
-        root_path: pathlib.Path,
+        root_path: os.PathLike,
         weights_formats_priorities: Optional[Sequence[str]],
     ) -> Dict[str, Union[str, pathlib.Path]]:
         package = NoOverridesDict(
@@ -322,6 +322,7 @@ class IO_Base:
             if isinstance(source, raw_nodes.URI):
                 # for a remote source root path points to a directory in cache;
                 # replace all relative file paths in source with URLs
+                # note: this raw model does not comply with the spec as some fields are expected to be relative paths
                 raw_model = PathToRemoteUriTransformer(remote_source=source).transform(raw_model)
         else:
             assert isinstance(raw_model, Node)
