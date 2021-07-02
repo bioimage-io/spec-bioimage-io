@@ -121,7 +121,7 @@ class IO_Base:
         weights_formats_priorities: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
     ) -> pathlib.Path:
         """
-        weights_formats_priorities: If given only the first weights format present in the model is included.
+        weights_formats_priorities: If given only the first matching weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
         if isinstance(source, str) and source.startswith("http"):  # todo: improve remote source check
