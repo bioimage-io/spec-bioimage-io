@@ -340,8 +340,8 @@ class IO_Base:
         try:
             fvs = version.split(".")
             return int(fvs[0]), int(fvs[1])
-        except Exception:
-            raise ValidationError(f"invalid format_version '{version}'")
+        except Exception as e:
+            raise ValidationError(f"invalid format_version '{version}' error: {e}")
 
     @classmethod
     def get_current_format_version_wo_patch(cls):
