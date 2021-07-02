@@ -1,5 +1,5 @@
 """shared nodes that shared transformer act on"""
-from collections import Callable
+from collections.abc import Callable
 
 from .raw_nodes import *
 
