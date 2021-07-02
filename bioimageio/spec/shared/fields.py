@@ -411,20 +411,5 @@ class StrictVersion(String):
 
 
 class URI(String):
-    def _deserialize(self, *args, **kwargs) -> raw_nodes.URI:
-        uri_str = super()._deserialize(*args, **kwargs)
-        uri = urlparse(uri_str)
-
-        if uri.fragment:
-            raise ValidationError(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
-        if uri.params:
-            raise ValidationError(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
-
-        if uri.scheme == "file":
-            # account for leading '/' for windows paths, e.g. '/C:/folder'
-            # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
-            path = url2pathname(uri.path)
-        else:
-            path = uri.path
-
-        return raw_nodes.URI(scheme=uri.scheme, authority=uri.netloc, path=path, query=uri.query, fragment=uri.fragment)
+    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
+        return raw_nodes.URI(value)
