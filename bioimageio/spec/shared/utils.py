@@ -236,7 +236,7 @@ def _resolve_uri_str(uri: str, root_path: os.PathLike = pathlib.Path()) -> pathl
 @resolve_uri.register
 def _resolve_uri_path(uri: pathlib.Path, root_path: os.PathLike = pathlib.Path()) -> pathlib.Path:
     if not uri.is_absolute():
-        uri = pathlib.Path(root_path) / uri
+        uri = pathlib.Path(root_path).absolute() / uri
 
     return resolve_uri(uri.as_uri(), root_path)
 
@@ -269,7 +269,7 @@ def resolve_local_uri(
     if isinstance(uri, str):
         uri = fields.URI().deserialize(uri)
 
-    assert isinstance(uri, raw_nodes.URI)
+    assert isinstance(uri, raw_nodes.URI), uri
     if not uri.scheme:  # relative path
         if uri.authority or uri.query or uri.fragment:
             raise ValidationError(f"Invalid Path/URI: {uri}")
@@ -331,9 +331,9 @@ def resolve_raw_node_to_node(raw_node: GenericRawNode, root_path: os.PathLike, n
 
 def get_dict_and_root_path_from_yaml_source(
     source: typing.Union[os.PathLike, str, raw_nodes.URI, dict]
-) -> typing.Tuple[dict, typing.Optional[pathlib.Path]]:
+) -> typing.Tuple[dict, pathlib.Path]:
     if isinstance(source, dict):
-        return source, None
+        return source, pathlib.Path()
     elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
         source = resolve_local_uri(source, pathlib.Path())
     else:
@@ -341,7 +341,7 @@ def get_dict_and_root_path_from_yaml_source(
 
     if isinstance(source, raw_nodes.URI):  # remote uri
         local_source = _download_uri_to_local_path(source)
-        root_path: typing.Optional[pathlib.Path] = None
+        root_path = pathlib.Path()
     else:
         local_source = source
         root_path = source.parent
