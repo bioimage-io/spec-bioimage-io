@@ -49,7 +49,7 @@ outputs:
 
 language: python
 framework: pytorch
-source: unet2d.py::UNet2d
+source: unet2d.py:UNet2d
 kwargs: {input_channels: 1, output_channels: 1}
 dependencies: conda:./environment.yaml
 
