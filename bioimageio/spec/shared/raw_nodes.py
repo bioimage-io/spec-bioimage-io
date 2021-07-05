@@ -73,10 +73,11 @@ class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] in
             self.fragment = uri.fragment
 
         # no scheme := relative path
-        # note1: Path.resolve() turns unix style abs paths into abs paths on windows: /lala -> C:/lala
-        # note2: PurePosixPath interprets windows paths as relative due to missing leading slash:
-        # PurePosixPath("C:/lala").is_absolute() == False
-        if not self.scheme and pathlib.Path(self.path).resolve().is_absolute():
+        # also check for absolute paths in posix style (even on windows, as '/lala' is resolved to absolute Path
+        # 'C:/lala' on windows, while '/lala' is a relative path on windows
+        if not self.scheme and (
+            pathlib.Path(self.path).is_absolute() or pathlib.PurePosixPath(self.path).is_absolute()
+        ):
             raise ValueError("Invalid URI or relative path. (use URI with scheme 'file' for absolute file paths)")
 
         super().__post_init__()
