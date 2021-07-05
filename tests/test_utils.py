@@ -75,7 +75,7 @@ def test_resolve_import_path(tmpdir):
 
 
 def test_resolve_directory_uri(tmpdir):
-    node = raw_nodes.URI(scheme="", authority="", path=str(tmpdir), query="", fragment="")
+    node = raw_nodes.URI(Path(tmpdir).as_uri())
     uri_transformed = utils.UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
     assert uri_transformed == Path(tmpdir)
 
