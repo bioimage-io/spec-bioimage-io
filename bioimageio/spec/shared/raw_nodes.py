@@ -1,8 +1,12 @@
 """shared raw nodes that shared transformer act on"""
 import dataclasses
+import pathlib
 from dataclasses import dataclass
-from pathlib import Path
-from typing import List, TYPE_CHECKING, Union
+from typing import List, Optional, TYPE_CHECKING, Union
+from urllib.parse import urlparse
+from urllib.request import url2pathname
+
+from marshmallow.utils import _Missing
 
 try:
     from typing import get_args, get_origin
@@ -27,24 +31,56 @@ class Node:
 
 
 @dataclass
-class URI(Node):
-    """URI as  scheme:[//authority]path[?query][#fragment]"""
+class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] instead
+    """URI as scheme:[//authority]path[?query][#fragment] or relative path (only path is set)"""
 
-    scheme: str = missing
-    authority: str = missing
+    uri_string: dataclasses.InitVar[Optional[str]] = None  # for convenience: init from string
+    scheme: str = ""
+    authority: str = ""
     path: str = missing
-    query: str = missing
-    fragment: str = missing
+    query: str = ""
+    fragment: str = ""
 
     def __str__(self):
-        """scheme:[//authority]path[?query][#fragment]"""
+        """[scheme:][//authority]path[?query][#fragment]"""
         return (
             (self.scheme + ":" if self.scheme else "")
             + ("//" + self.authority if self.authority else "")
-            + self.path
+            + (self.path if self.path else "")
             + ("?" + self.query if self.query else "")
             + ("#" + self.fragment if self.fragment else "")
         )
+
+    def __post_init__(self, uri_string):
+        if uri_string is None:
+            if self.path is missing or (not self.scheme and any([self.authority, self.query, self.fragment])):
+                raise ValueError("Invalid URI or relative path")
+        elif str(self):
+            raise ValueError(f"Either specify uri_string(={uri_string}) or uri components (={str(self)})")
+        else:
+            uri = urlparse(uri_string)
+            if uri.scheme == "file":
+                # account for leading '/' for windows paths, e.g. '/C:/folder'
+                # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
+                path = url2pathname(uri.path)
+            else:
+                path = uri.path
+
+            self.scheme = uri.scheme
+            self.authority = uri.netloc
+            self.path = path
+            self.query = uri.query
+            self.fragment = uri.fragment
+
+        # no scheme := relative path
+        # also check for absolute paths in posix style (even on windows, as '/lala' is resolved to absolute Path
+        # 'C:/lala' on windows, while '/lala' is a relative path on windows
+        if not self.scheme and (
+            pathlib.Path(self.path).is_absolute() or pathlib.PurePosixPath(self.path).is_absolute()
+        ):
+            raise ValueError("Invalid URI or relative path. (use URI with scheme 'file' for absolute file paths)")
+
+        super().__post_init__()
 
 
 @dataclass
@@ -53,8 +89,8 @@ class SpecURI(URI):
 
 
 @dataclass
-class ImportablePath(Node):
-    filepath: Path = missing
+class ImportableSourceFile(Node):
+    source_file: URI = missing
     callable_name: str = missing
 
 

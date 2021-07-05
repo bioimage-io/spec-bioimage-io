@@ -7,16 +7,24 @@ import pathlib
 import warnings
 from copy import deepcopy
 from io import StringIO
-from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 from zipfile import ZipFile
 
 from marshmallow import ValidationError, missing
 
-from . import get_dict_and_root_path_from_yaml_source, nodes, raw_nodes
+from . import nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, yaml
-from .raw_nodes import ImportablePath, Node
+from .raw_nodes import ImportableSourceFile, Node
 from .schema import SharedBioImageIOSchema
-from .utils import GenericNode, resolve_raw_node_to_node, resolve_uri
+from .utils import (
+    GenericNode,
+    PathToRemoteUriTransformer,
+    download_uri_to_local_path,
+    resolve_local_uri,
+    resolve_raw_node_to_node,
+    resolve_uri,
+    get_dict_and_root_path_from_yaml_source,
+)
 
 if TYPE_CHECKING:
     import bioimageio.spec as current_spec
@@ -55,9 +63,13 @@ class IO_Base:
 
     @classmethod
     def load_raw_model(
-        cls, source: Union[os.PathLike, str, dict], update_to_current_format: bool = False
+        cls, source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
     ) -> RawModelNode:
-        data, root_path = get_dict_and_root_path_from_yaml_source(source)
+        if isinstance(source, dict):
+            data = source
+        else:
+            source = resolve_local_uri(source, pathlib.Path())
+            data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
         if update_to_current_format:
             io_cls = cls
@@ -65,7 +77,16 @@ class IO_Base:
             io_cls = cls.get_matching_io_class(data.get("format_version"), "load")
 
         data = io_cls.maybe_convert_model(data)
-        raw_model: RawModelNode = io_cls._load_raw_model_from_dict_wo_conversions(data)
+        raw_model: RawModelNode = io_cls._load_raw_model_from_dict_wo_format_conv(data)
+
+        if isinstance(source, raw_nodes.URI):
+            # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
+            warnings.warn(
+                f"changing file paths in model RDF to URIs due to a remote {source.scheme} source "
+                "(may result in invalid model)"
+            )
+            raw_model = PathToRemoteUriTransformer(remote_source=source).transform(raw_model)
+
         assert isinstance(raw_model, io_cls.raw_nodes.Model)
         return raw_model
 
@@ -97,8 +118,8 @@ class IO_Base:
     @classmethod
     def load_model(
         cls,
-        source: Union[RawModelNode, os.PathLike, str, dict],
-        root_path: Optional[os.PathLike] = None,
+        source: Union[RawModelNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
         update_to_current_format: bool = True,
     ):
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
@@ -115,8 +136,8 @@ class IO_Base:
     @classmethod
     def export_package(
         cls,
-        source: Union[RawModelNode, os.PathLike, str, dict],
-        root_path: Optional[os.PathLike] = None,
+        source: Union[RawModelNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
         update_to_current_format: bool = False,
         weights_formats_priorities: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
     ) -> pathlib.Path:
@@ -124,19 +145,16 @@ class IO_Base:
         weights_formats_priorities: If given only the first matching weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
-        if isinstance(source, str) and source.startswith("http"):  # todo: improve remote source check
-            raise ValueError("Cannot export package from remote source")
-
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_model.format_version, "export")
-        package_path = io_cls._make_package_wo_conversions(
+        package_path = io_cls._make_package_wo_format_conv(
             raw_model, root_path, weights_formats_priorities=weights_formats_priorities
         )
         return package_path
 
     @classmethod
-    def _make_package_wo_conversions(
-        cls, raw_model: RawModelNode, root_path: pathlib.Path, weights_formats_priorities: Optional[Sequence[str]]
+    def _make_package_wo_format_conv(
+        cls, raw_model: RawModelNode, root_path: os.PathLike, weights_formats_priorities: Optional[Sequence[str]]
     ):
         package_file_name = raw_model.name
         if raw_model.version is not missing:
@@ -156,7 +174,7 @@ class IO_Base:
             raise FileExistsError(
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
-        package_content = cls._get_package_content_wo_conversions(
+        package_content = cls._get_package_content_wo_format_conv(
             deepcopy(raw_model), root_path=root_path, weights_formats_priorities=weights_formats_priorities
         )
         cls.make_zip(package_path, package_content)
@@ -174,21 +192,18 @@ class IO_Base:
         weights_formats_priorities: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
-        if isinstance(source, str) and source.startswith("http"):  # todo: improve remote source check
-            raise ValueError("Cannot get package content from remote source")
-
         raw_model, root_path = cls.ensure_raw_model(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_model.format_version, "get the package content of")
-        package_content = io_cls._get_package_content_wo_conversions(
+        package_content = io_cls._get_package_content_wo_format_conv(
             deepcopy(raw_model), root_path=root_path, weights_formats_priorities=weights_formats_priorities
         )
         return package_content
 
     @classmethod
-    def _get_package_content_wo_conversions(
+    def _get_package_content_wo_format_conv(
         cls,
         raw_model: current_spec.raw_nodes.Model,
-        root_path: pathlib.Path,
+        root_path: os.PathLike,
         weights_formats_priorities: Optional[Sequence[str]],
     ) -> Dict[str, Union[str, pathlib.Path]]:
         package = NoOverridesDict(
@@ -226,8 +241,8 @@ class IO_Base:
             package[fp.name] = fp
             raw_model = dataclasses.replace(raw_model, dependencies=f"{manager}:{fp.name}")
 
-        if isinstance(raw_model.source, ImportablePath):
-            source = incl_as_local(raw_model.source, "filepath")
+        if isinstance(raw_model.source, ImportableSourceFile):
+            source = incl_as_local(raw_model.source, "source_file")
             raw_model = dataclasses.replace(raw_model, source=source)
 
         # filter weights
@@ -299,27 +314,29 @@ class IO_Base:
                     myzip.write(file_or_str_content, arcname=arc_name)
 
     @classmethod
-    def ensure_raw_model(cls, raw_model, root_path: Optional[os.PathLike], update_to_current_format: bool):
-        if isinstance(raw_model, (os.PathLike, str, dict)):
-            data, root_path_from_source = get_dict_and_root_path_from_yaml_source(raw_model)
-            if root_path is None:
-                root_path = root_path_from_source
-            elif (
-                root_path_from_source is not None
-                and pathlib.Path(root_path).resolve() != root_path_from_source.resolve()
-            ):
-                raise ValueError(
-                    f"root_path does not match source: {root_path} != {root_path_from_source}. (Leave out root_path!)"
-                )
+    def ensure_raw_model(
+        cls,
+        raw_model: Union[str, dict, os.PathLike, raw_nodes.URI, RawModelNode],
+        root_path: os.PathLike,
+        update_to_current_format: bool,
+    ):
+        if isinstance(raw_model, cls.raw_nodes.Model):
+            return raw_model, root_path
 
-            raw_model = cls.load_raw_model(data, update_to_current_format)
+        if isinstance(raw_model, Node):
+            # might be an older raw_model.Model
+            # round trip to ensure correct raw model
+            raw_model = cls.serialize_raw_model_to_dict(raw_model)
+        elif isinstance(raw_model, dict):
+            pass
+        elif isinstance(raw_model, (str, os.PathLike, raw_nodes.URI)):
+            raw_model = resolve_local_uri(raw_model, pathlib.Path())
+            if isinstance(raw_model, pathlib.Path):
+                root_path = raw_model.parent
         else:
-            assert isinstance(raw_model, Node)
-            raw_model = raw_model
+            raise TypeError(raw_model)
 
-        if root_path is None:
-            raise TypeError("Require root_path if source is dict or raw_nodes.Model to resolve relative file paths.")
-
+        raw_model = cls.load_raw_model(raw_model, update_to_current_format)
         return raw_model, root_path
 
     @classmethod
@@ -330,7 +347,7 @@ class IO_Base:
         return cls.converters.maybe_convert_model(data)
 
     @classmethod
-    def _load_raw_model_from_dict_wo_conversions(cls, data: dict):
+    def _load_raw_model_from_dict_wo_format_conv(cls, data: dict):
         raw_model: cls.raw_nodes.Model = cls.schema.Model().load(data)
         assert isinstance(raw_model, cls.raw_nodes.Model)
         return raw_model

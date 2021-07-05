@@ -12,7 +12,7 @@ from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
     ImportableModule,
-    ImportablePath,
+    ImportableSourceFile,
     Node,
     URI,
 )
@@ -65,7 +65,7 @@ class Badge(Node):
     url: Union[_Missing, URI] = missing
 
 
-ImportableSource = Union[ImportableModule, ImportablePath]
+ImportableSource = Union[ImportableModule, ImportableSourceFile]
 
 
 @dataclass

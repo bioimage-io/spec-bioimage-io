@@ -63,9 +63,9 @@ def test_resolve_import_path(tmpdir):
     tmpdir = Path(tmpdir)
     manifest_path = tmpdir / "manifest.yaml"
     manifest_path.touch()
-    filepath = tmpdir / "my_mod.py"
-    filepath.write_text("class Foo: pass", encoding="utf8")
-    node = raw_nodes.ImportablePath(filepath=filepath, callable_name="Foo")
+    source_file = raw_nodes.URI(path="my_mod.py")
+    (tmpdir / str(source_file)).write_text("class Foo: pass", encoding="utf8")
+    node = raw_nodes.ImportableSourceFile(source_file=source_file, callable_name="Foo")
     uri_transformed = utils.UriNodeTransformer(root_path=tmpdir).transform(node)
     source_transformed = utils.SourceNodeTransformer().transform(uri_transformed)
     assert isinstance(source_transformed, nodes.ImportedSource)
@@ -75,7 +75,7 @@ def test_resolve_import_path(tmpdir):
 
 
 def test_resolve_directory_uri(tmpdir):
-    node = raw_nodes.URI(scheme="", authority="", path=str(tmpdir), query="", fragment="")
+    node = raw_nodes.URI(Path(tmpdir).as_uri())
     uri_transformed = utils.UriNodeTransformer(root_path=Path(tmpdir)).transform(node)
     assert uri_transformed == Path(tmpdir)
 
@@ -88,3 +88,17 @@ def test_load_raw_model(unet2d_nuclei_broad_any_path):
 def test_load_model(unet2d_nuclei_broad_any_path):
     model = load_model(unet2d_nuclei_broad_any_path)
     assert model
+
+
+def test_uri_available():
+    from bioimageio.spec.shared.utils import uri_available
+
+
+def test_all_uris_available():
+    from bioimageio.spec.shared.utils import all_uris_available
+
+    not_available = {
+        "uri": raw_nodes.URI(path="non_existing_file_in/non_existing_dir/ftw"),
+        "uri_exists": raw_nodes.URI(path="."),
+    }
+    assert not all_uris_available(not_available)
