@@ -117,7 +117,7 @@ To install the spec validator, please run the following command:
 TODO from pip/conda
 -->
 ```
-pip install git+https://github.com/bioimage-io/spec-bioimage-io
+pip install -U bioimageio.spec
 ```
 
 To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) using the following command:
