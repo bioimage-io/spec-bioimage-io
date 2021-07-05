@@ -88,3 +88,17 @@ def test_load_raw_model(unet2d_nuclei_broad_any_path):
 def test_load_model(unet2d_nuclei_broad_any_path):
     model = load_model(unet2d_nuclei_broad_any_path)
     assert model
+
+
+def test_uri_available():
+    from bioimageio.spec.shared.utils import uri_available
+
+
+def test_all_uris_available():
+    from bioimageio.spec.shared.utils import all_uris_available
+
+    not_available = {
+        "uri": raw_nodes.URI(path="non_existing_file_in/non_existing_dir/ftw"),
+        "uri_exists": raw_nodes.URI(path="."),
+    }
+    assert not all_uris_available(not_available)

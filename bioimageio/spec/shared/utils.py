@@ -22,24 +22,6 @@ from .nodes import LocalImportableModule, ResolvedImportableSourceFile
 GenericNode = typing.TypeVar("GenericNode", bound=raw_nodes.Node)
 
 
-class Transformer:
-    def transform(self, node: typing.Any) -> typing.Any:
-        method = "transform_" + node.__class__.__name__
-
-        transformer = getattr(self, method, self.generic_transformer)
-
-        return transformer(node)
-
-    def generic_transformer(self, node: typing.Any) -> typing.Any:
-        return node
-
-    def transform_list(self, node: list) -> list:
-        return [self.transform(subnode) for subnode in node]
-
-    def transform_dict(self, node: dict) -> dict:
-        return {key: self.transform(value) for key, value in node.items()}
-
-
 def iter_fields(node: GenericNode):
     for field in dataclasses.fields(node):
         yield field.name, getattr(node, field.name)
@@ -58,15 +40,49 @@ class NodeVisitor:
         if isinstance(node, raw_nodes.Node):
             for field, value in iter_fields(node):
                 self.visit(value)
-        elif isinstance(node, list):
-            [self.visit(subnode) for subnode in node]
         elif isinstance(node, dict):
             [self.visit(subnode) for subnode in node.values()]
-        elif isinstance(node, tuple):
-            assert not any(
-                isinstance(subnode, raw_nodes.Node) or isinstance(subnode, list) or isinstance(subnode, dict)
-                for subnode in node
-            )
+        elif isinstance(node, (tuple, list)):
+            [self.visit(subnode) for subnode in node]
+
+
+class UriNodeChecker(NodeVisitor):
+    """raises FileNotFoundError for unavailable URIs and paths"""
+
+    def __init__(self, *, root_path: os.PathLike):
+        self.root_path = pathlib.Path(root_path)
+
+    def visit_URI(self, node: raw_nodes.URI):
+        if not uri_available(node, self.root_path):
+            raise FileNotFoundError(node)
+
+    def _visit_Path(self, leaf: pathlib.Path):
+        if not leaf.exists():
+            raise FileNotFoundError(leaf)
+
+    def visit_PosixPath(self, leaf: pathlib.PosixPath):
+        self._visit_Path(leaf)
+
+    def visit_WindowsPath(self, leaf: pathlib.WindowsPath):
+        self._visit_Path(leaf)
+
+
+class Transformer:
+    def transform(self, node: typing.Any) -> typing.Any:
+        method = "transform_" + node.__class__.__name__
+
+        transformer = getattr(self, method, self.generic_transformer)
+
+        return transformer(node)
+
+    def generic_transformer(self, node: typing.Any) -> typing.Any:
+        return node
+
+    def transform_list(self, node: list) -> list:
+        return [self.transform(subnode) for subnode in node]
+
+    def transform_dict(self, node: dict) -> dict:
+        return {key: self.transform(value) for key, value in node.items()}
 
 
 class NodeTransformer(Transformer):
@@ -75,15 +91,6 @@ class NodeTransformer(Transformer):
             return dataclasses.replace(node, **{name: self.transform(value) for name, value in iter_fields(node)})
         else:
             return super().generic_transformer(node)
-
-
-class UriNodeChecker(NodeVisitor):
-    def __init__(self, *, root_path: pathlib.Path):
-        self.root_path = root_path
-
-    def visit_URI(self, node: raw_nodes.URI):
-        if not uri_available(node, self.root_path):
-            raise FileNotFoundError(str(node))
 
 
 class UriNodeTransformer(NodeTransformer):
@@ -299,6 +306,17 @@ def uri_available(uri: raw_nodes.URI, root_path: pathlib.Path) -> bool:
         raise TypeError(local_path_or_remote_uri)
 
     return available
+
+
+def all_uris_available(
+    node: typing.Union[GenericNode, list, tuple, dict], root_path: os.PathLike = pathlib.Path()
+) -> bool:
+    try:
+        UriNodeChecker(root_path=root_path).visit(node)
+    except FileNotFoundError:
+        return False
+    else:
+        return True
 
 
 def download_uri_to_local_path(uri: typing.Union[raw_nodes.URI, str]) -> pathlib.Path:
