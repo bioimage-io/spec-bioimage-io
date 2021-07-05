@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from bioimageio.spec import schema
-from bioimageio.spec.converters import maybe_convert_model
+from bioimageio.spec.converters import maybe_convert
 from bioimageio.spec.shared import yaml
 
 
@@ -12,7 +12,7 @@ def test_build_spec_pytorch(unet2d_nuclei_broad_latest_path):
     config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = source["weights"]["pytorch_state_dict"]["source"]
     test_inputs = [
@@ -51,7 +51,7 @@ def test_build_spec_onnx(unet2d_nuclei_broad_latest_path):
     config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = (
         "https://github.com/bioimage-io/pytorch-bioimage-io/raw/master/specs/models/"
@@ -90,7 +90,7 @@ def test_build_spec_torchscript(unet2d_nuclei_broad_latest_path):
     config_path = unet2d_nuclei_broad_latest_path
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = (
         "https://github.com/bioimage-io/pytorch-bioimage-io/raw/master/specs/models/" + "unet2d_nuclei_broad/weights.pt"
@@ -129,7 +129,7 @@ def test_build_spec_keras(FruNet_model_url):
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = "https://zenodo.org/record/4156050/files/fully_residual_dropout_segmentation.h5"
     test_inputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"]
@@ -161,7 +161,7 @@ def test_build_spec_tf(FruNet_model_url):
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = "https://zenodo.org/record/4156050/files/tensorflow_saved_model_bundle.zip"
     test_inputs = ["https://github.com/deepimagej/models/raw/master/fru-net_sev_segmentation/exampleImage.npy"]
@@ -193,7 +193,7 @@ def test_build_spec_tfjs(FruNet_model_url):
     config_path = _get_local_path(FruNet_model_url)
     assert os.path.exists(config_path), config_path
     source = yaml.load(Path(config_path))
-    source = maybe_convert_model(source)
+    source = maybe_convert(source)
 
     weight_source = (
         "https://raw.githubusercontent.com/deepimagej/tensorflow-js-models/main/"

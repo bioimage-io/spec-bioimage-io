@@ -832,7 +832,28 @@ config:
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
 
 
-# Manifest
+# Collection
+class CollectionEntry(BioImageIOSchema):
+    """instead of nesting RDFs, RDFs can be pointed to"""
+
+    source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
+    id = fields.String(required=True)
+    links = fields.List(fields.String())
+
+
+class ModelCollectionEntry(CollectionEntry):
+    download_url = fields.URI(validate=field_validators.URL(schemes=["http", "https"]))
+
+
+class Collection(RDF):
+    application = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    collection = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    model = fields.List(fields.Nested(ModelCollectionEntry))
+    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+
+
+# deprecated manifest draft:  # todo: remove
 class BioImageIoManifestModelEntry(BioImageIOSchema):
     id = fields.String(required=True)
     source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
@@ -840,7 +861,7 @@ class BioImageIoManifestModelEntry(BioImageIOSchema):
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
-class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
+class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: remove  # todo: add notebook RDF??
     id = fields.String(required=True)
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
@@ -862,7 +883,7 @@ class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
     links = fields.List(fields.String)  # todo: make List[URI]?
 
 
-class BioImageIoManifest(BioImageIOSchema):  # todo: update to 'Collection' or remove
+class BioImageIoManifest(BioImageIOSchema):  # todo: remove
     format_version = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)), required=True
     )

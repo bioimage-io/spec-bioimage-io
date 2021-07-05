@@ -219,7 +219,28 @@ class Model(RDF):
     weights: Dict[WeightsFormat, WeightsEntry] = missing
 
 
-# Manifest
+@dataclass
+class CollectionEntry(Node):
+    source: URI
+    id: str
+    links: Union[_Missing, List[str]] = missing
+
+
+@dataclass
+class ModelCollectionEntry(CollectionEntry):
+    download_url: URI = missing
+
+
+@dataclass
+class Collection(RDF):
+    application: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    collection: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    model: Union[_Missing, List[ModelCollectionEntry]] = missing
+    dataset: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    notebook: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+
+
+# deprecated Manifest  # todo: remove
 BioImageIoManifest = dict
 BioImageIoManifestModelEntry = dict
 BioImageIoManifestNotebookEntry = dict

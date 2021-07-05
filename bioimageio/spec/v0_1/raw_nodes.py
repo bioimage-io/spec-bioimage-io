@@ -3,7 +3,7 @@ raw_nodes 0.1 only implements the Model class (and its requirements) and not oth
 """
 import pathlib
 from dataclasses import dataclass
-from typing import Any, Dict, List, NewType, Tuple, Union
+from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
 
 from marshmallow.utils import _Missing, missing
 
@@ -96,6 +96,7 @@ class OutputArray(Array):
 
 @dataclass
 class Model(BaseSpec):
+    type: ClassVar[str] = "model"
     config: Union[_Missing, dict] = missing
     inputs: List[InputArray] = missing
     outputs: List[OutputArray] = missing
