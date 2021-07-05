@@ -1,3 +1,5 @@
+![License](https://img.shields.io/github/license/bioimage-io/spec-bioimage-io.svg)
+![PyPI](https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout)
 # Specifications for BioImage.IO
 
 This repository contains specifications defined by the BioImage.IO community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a generic RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
