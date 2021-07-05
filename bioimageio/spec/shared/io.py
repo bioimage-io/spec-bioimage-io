@@ -5,9 +5,10 @@ import dataclasses
 import os
 import pathlib
 import warnings
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
-from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Type, TypeVar, Union
 from zipfile import ZipFile
 
 from marshmallow import ValidationError, missing
@@ -19,11 +20,10 @@ from .schema import SharedBioImageIOSchema
 from .utils import (
     GenericNode,
     PathToRemoteUriTransformer,
-    download_uri_to_local_path,
+    get_dict_and_root_path_from_yaml_source,
     resolve_local_uri,
     resolve_raw_node_to_node,
     resolve_uri,
-    get_dict_and_root_path_from_yaml_source,
 )
 
 if TYPE_CHECKING:
@@ -54,13 +54,146 @@ class SchemaModule(Protocol):
     Model: Type[ModelSchema]
 
 
-class IO_Base:
+# class IO_Meta(ABCMeta):
+#     """
+#     defines abstract class properties for IO_Interface
+#     """
+#
+#     @property
+#     @abstractmethod
+#     def preceding_io_class(self) -> IO_Base:
+#         raise NotImplementedError
+
+
+# IO interface to clarify intention of IO classes
+# class IO_Interface(metaclass=IO_Meta):
+class IO_Interface(ABC):
+    """
+    bioimageio.spec has submodules for each minor format version to validate and work with previously released
+    format versions. To share io code across versions the IO_Base class implements format version independent io
+    utilities.
+    """
+
+    # modules with format version specific implementations of schema, nodes, etc.
+    # todo: 'real' abstract class properties for IO_Interface. see IO_Meta draft above
     preceding_io_class: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
     schema: ClassVar[SchemaModule]
     raw_nodes: ClassVar[RawNodesModule]
     nodes: ClassVar[RawNodesModule]
 
+    #
+    # delegate format version
+    #
+    @classmethod
+    def get_matching_io_class(cls, data_version: str, action_descr: str):
+        """
+        traverses preceding io classes to find IO class that matches 'data_version'.
+        This function allows to select the appropriate format specific implementation for a given source.
+        IO classes are not aware of any future format versions, only the one preceding itself.
+        See IO_Base.load_raw_model() for example use.
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def get_version_tuple_wo_patch(version: str):
+        """Extract (MAJOR, MINOR) from strict version string 'MARJO.MINOR.PATCH'."""
+        raise NotImplementedError
+
+    @classmethod
+    def get_current_format_version_wo_patch(cls):
+        """Return (MAJOR, MINOR) of IO 'cls'."""
+        raise NotImplementedError
+
+    #
+    # io for model RDFs
+    #   raw model
+    #
+    @classmethod
+    @abstractmethod
+    def load_raw_model(
+        cls, source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
+    ) -> RawModelNode:
+        raise NotImplementedError
+
+    @classmethod
+    def ensure_raw_model(
+        cls,
+        raw_model: Union[str, dict, os.PathLike, raw_nodes.URI, RawModelNode],
+        root_path: os.PathLike,
+        update_to_current_format: bool,
+    ):
+        raise NotImplementedError
+
+    @classmethod
+    def maybe_convert_model(cls, data: dict):
+        """
+        If model 'data' is specified in a preceding format this function converts it to the 'current' format of this
+        IO class. Note: In an IO class of a previous format version, this is not the overall latest format version.
+        The 'current' format version is determined by IO_Base.get_matching_io_class() and may be overwritten if
+        'update_to_current_format'--an argument used in several IO methods--is True.
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def serialize_raw_model_to_dict(cls, raw_model: RawModelNode) -> dict:
+        """Serialize a `raw_nodes.Model` object with marshmallow to a plain dict with only basic data types"""
+        raise NotImplementedError
+
+    @classmethod
+    def serialize_raw_model(cls, raw_model: Union[dict, RawModelNode]) -> str:
+        """Serialize a raw model to a yaml string"""
+        raise NotImplementedError
+
+    @classmethod
+    def save_raw_model(cls, raw_model: RawModelNode, path: pathlib.Path) -> None:
+        """Serialize a raw model to a new yaml file at 'path'"""
+        raise NotImplementedError
+
+    #
+    #   (evaluated) model
+    #
+    @classmethod
+    def load_model(
+        cls,
+        source: Union[RawModelNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        update_to_current_format: bool = True,
+    ) -> ModelNode:
+        """
+        Load a `nodes.Model` object from a model RDF 'source'.
+        nodes.Model objects hold all model RDF information as ready-to-use python objects,
+        e.g. with locally available weights files and imported source code identifiers
+        """
+        raise NotImplementedError
+
+    #
+    # packaging
+    #
+    @classmethod
+    def get_package_content(
+        cls,
+        source: Union[RawModelNode, os.PathLike, str, dict],
+        root_path: pathlib.Path,
+        update_to_current_format: bool = False,
+        weights_formats_priorities: Optional[Sequence[str]] = None,
+    ) -> Dict[str, Union[str, pathlib.Path]]:
+        """Gather content required for exporting a bioimage.io package from an RDF source."""
+        raise NotImplementedError
+
+    @classmethod
+    def export_package(
+        cls,
+        source: Union[RawModelNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        update_to_current_format: bool = False,
+        weights_formats_priorities: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
+    ) -> pathlib.Path:
+        """Export a bioimage.io package from an RDF source."""
+        raise NotImplementedError
+
+
+class IO_Base(IO_Interface):
     @classmethod
     def load_raw_model(
         cls, source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
@@ -304,8 +437,8 @@ class IO_Base:
         else:
             return cls.preceding_io_class
 
-    @classmethod
-    def make_zip(cls, path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]]):
+    @staticmethod
+    def make_zip(path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]]):
         with ZipFile(path, "w") as myzip:
             for arc_name, file_or_str_content in content.items():
                 if isinstance(file_or_str_content, str):
