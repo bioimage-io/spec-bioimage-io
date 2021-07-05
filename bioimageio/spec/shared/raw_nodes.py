@@ -73,7 +73,7 @@ class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] in
             self.fragment = uri.fragment
 
         # no scheme := relative path
-        if not self.scheme and pathlib.Path(str(self)).is_absolute():
+        if not self.scheme and pathlib.PurePosixPath(self.path).is_absolute():
             raise ValueError("Invalid URI or relative path. (use URI with scheme 'file' for absolute file paths)")
 
         super().__post_init__()
