@@ -1,13 +1,11 @@
-from copy import deepcopy
+import warnings
 from pathlib import Path
 from pprint import pprint
 
-import requests
 import typer
-from marshmallow import ValidationError
 from ruamel.yaml import YAML
 
-from bioimageio.spec import maybe_convert_model, maybe_convert_manifest, schema
+from bioimageio.spec import load_raw_node
 
 yaml = YAML(typ="safe")
 
@@ -15,82 +13,52 @@ app = typer.Typer()  # https://typer.tiangolo.com/
 
 
 @app.command()
-def package_model(model_yaml: Path, auto_convert: bool = False):
-    pass
+def package(rdf_source: str, auto_convert: bool = False):
+    raise NotImplementedError
 
 
 @app.command()
-def verify_spec(model_yaml: Path, auto_convert: bool = False):
+def verify(rdf_source: str, auto_convert: bool = False, auto_convert_inner: bool = None):
+    if auto_convert_inner is None:
+        auto_convert_inner = auto_convert
+
+    raise typer.Exit(code=_verify(rdf_source, auto_convert, auto_convert_inner))
+
+
+def _verify(rdf_source: str, auto_convert: bool, auto_convert_inner: bool) -> int:
     try:
-        model_data = yaml.load(model_yaml)
+        raw_node = load_raw_node(rdf_source, update_to_current_format=auto_convert)
     except Exception as e:
+        print(f"Could not verify {rdf_source}:")
         pprint(e)
-        code = 1
-    else:
-        try:
-            if auto_convert:
-                model_data = maybe_convert_model(deepcopy(model_data))
-
-            verify_model_data(model_data)
-        except ValidationError as e:
-            pprint(e.messages)
-            code = 1
-        else:
-            code = 0
-            print(f"successfully verified model {model_yaml}")
-
-    raise typer.Exit(code=code)
-
-
-def verify_model_data(model_data: dict):
-    schema.Model().load(model_data)
-
-
-def verify_bioimageio_manifest_data(manifest_data: dict, auto_convert: bool = False):
-    try:
-        if auto_convert:
-            manifest_data = maybe_convert_manifest(deepcopy(manifest_data))
-
-        manifest = schema.BioImageIoManifest().load(manifest_data)
-    except ValidationError as e:
-        pprint(e.messages)
         return 1
+    else:
+        ret = 0
+        print(f"successfully verified {raw_node.type} {rdf_source}")
+        if raw_node.type == "collection":
+            for inner_category in ["application", "collection", "dataset", "model", "notebook"]:
+                for inner in getattr(raw_node, inner_category) or []:
+                    try:
+                        inner_source = inner.source
+                    except Exception as e:
+                        pprint(e)
+                        ret += 1
+                    else:
+                        ret += _verify(inner_source, auto_convert_inner, auto_convert_inner)
 
-    code = 0
-    for model in manifest["model"]:
-        try:
-            response = requests.get(model["source"], stream=True)
-            model_data = yaml.load(response.content)
-            if auto_convert:
-                model_data = maybe_convert_model(model_data)
+        return ret
 
-            verify_model_data(model_data)
-        except ValidationError as e:
-            print("invalid model:", model["source"])
-            pprint(e.messages)
-            code = 1
-        except Exception as e:
-            print("invalid model:", model["source"])
-            pprint(e)
-            code = 1
 
-    return code
+@app.command()
+def verify_spec(model_yaml: str, auto_convert: bool = False):
+    warnings.warn("'verify_spec' is deprecated in favor of 'verify'")
+    return verify(model_yaml, auto_convert)
 
 
 @app.command()
 def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
-    try:
-        manifest_data = yaml.load(manifest_yaml)
-    except Exception as e:
-        print("invalid manifest", manifest_yaml)
-        pprint(e)
-        code = 1
-    else:
-        code = verify_bioimageio_manifest_data(manifest_data, auto_convert=auto_convert)
-        if code == 0:
-            print(f"successfully verified manifest {manifest_yaml}")
-
-    raise typer.Exit(code=code)
+    warnings.warn("'verify_bioimageio_manifest' is deprecated in favor of 'verify'")
+    return verify(manifest_yaml.absolute().as_uri(), auto_convert)
 
 
 if __name__ == "__main__":
