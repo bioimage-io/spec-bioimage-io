@@ -1,6 +1,6 @@
 # Specifications for BioImage.IO
 
-This repository contains specifications defined by the BioImage.IO community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a generic RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
+This repository contains specifications defined by the BioImage.IO community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a general RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
 
 
 All the BioImage.IO-compatible RDF must fulfill the following rules:
@@ -10,17 +10,17 @@ All the BioImage.IO-compatible RDF must fulfill the following rules:
    1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
    2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
 
-As a general guideline, please follow the model RDF spec to describe AI models and use the generic RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Validator against it.
+As a general guideline, please follow the model RDF spec to describe AI models and use the general RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-complaint is to run the BioImage.IO Validator against it.
 
 ## [Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md)
 
 A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. 
 
 You can find detailed field definitions here: 
-   - [generic RDF spec 0.3](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.md)
+   - [general RDF spec 0.3](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.md)
 
 The specifications are also available as json schemas: 
-   - [generic RDF spec 0.3 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.json)
+   - [general RDF spec 0.3 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_3.json)
 
 
 ### Describing applications
@@ -55,7 +55,7 @@ For examples, see entries `dataset`/`notebook` in the [ZeroCostDL4Mic](https://g
 
 
 ### Describing models with the unspecific RDF(not recommended, use the Model RDF instead)
-In general, it is discouraged to use the generic RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the generic RDF can be used for discribing AI models.
+In general, it is discouraged to use the general RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the general RDF can be used for discribing AI models.
 To do that, you need to first set the `type` field to `model`.\
 A basic integration would be simply provide a `download_url` to a zip file (for example, with the model weights, source code or executable binary file) hosted on Github releases, Dropbox, Google Drive etc. For example: 
 ```yaml
@@ -67,13 +67,13 @@ If the model is available as a github repo, then provide the `git_repo` field:
 git_repo: https://github.com/my/model...
 ```
 
-Here an example of a generic RDF describing a model (not recommended): 
+Here an example of a general RDF describing a model (not recommended): 
 https://github.com/CellProfiling/HPA-model-zoo/blob/2f668d87defddc6c7cd156259a8be4146b665e72/manifest.bioimage.io.yaml#L33-L59 
 
 
 ## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
 
-Besides the generic RDF spec, the [`Model Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
+Besides the general RDF spec, the [`Model Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_model_spec.md)(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
 
 Here is a list of model RDF Examples:
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
@@ -100,7 +100,7 @@ It is recommended to host the resource description file on one of the public git
 
 ## Recommendations
 
- * For AI models, consider using the model-specific spec (i.e. [model RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the generic RDF. Only fallback to the generic RDF if writing model specific RDF is not possible for some reason.
+ * For AI models, consider using the model-specific spec (i.e. [model RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the general RDF. Only fallback to the general RDF if writing model specific RDF is not possible for some reason.
  * The RDF or package file name should not contain spaces or special characters, it should be concise, descriptive, in kebab case or camel case.
  * Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the RDF file and try to avoid using subdirectories.
  * Use the [bioimage.io spec validator](#bioimageio-spec-validator) to verify your YAML file

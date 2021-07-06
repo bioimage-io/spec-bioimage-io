@@ -362,7 +362,8 @@ class IO_Base(IO_Interface):
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
         )  # todo: add check in model validation
-        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)
+        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)  
+        # todo: .txt -> .yaml once 'rdf.yaml' is only valid rdf file name in package
 
         def incl_as_local(node: GenericNode, field_name: str) -> GenericNode:
             value = getattr(node, field_name)
