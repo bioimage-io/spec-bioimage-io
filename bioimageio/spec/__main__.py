@@ -21,7 +21,7 @@ def package(
     path: Path = typer.Argument(Path() / "{src_name}-package.zip", help="Save package as"),
     update_format: bool = typer.Option(
         False,
-        help="Update format version to the latest (might fail even if source adheres to an old format version). "
+        help="Update format version to the latest version (might fail even if source adheres to an old format version). "
         "To inform the format update the source may specify fields of future versions in "
         "config:future:<future version>.",  # todo: add future documentation
     ),
