@@ -177,7 +177,7 @@ class IO_Interface(ABC):
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
         update_to_current_format: bool = False,
-        weights_formats_priorities: Optional[Sequence[str]] = None,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
         """Gather content required for exporting a bioimage.io package from an RDF source."""
         raise NotImplementedError
@@ -188,7 +188,7 @@ class IO_Interface(ABC):
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         update_to_current_format: bool = False,
-        weights_formats_priorities: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
+        weights_priority_order: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
     ) -> pathlib.Path:
         """Export a bioimage.io package from an RDF source."""
         raise NotImplementedError
@@ -279,23 +279,23 @@ class IO_Base(IO_Interface):
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         update_to_current_format: bool = False,
-        weights_formats_priorities: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
+        weights_priority_order: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
     ) -> pathlib.Path:
         """
-        weights_formats_priorities: Only used for model RDFs.
+        weights_priority_order: Only used for model RDFs.
                                     If given only the first matching weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "export")
         package_path = io_cls._make_package_wo_format_conv(
-            raw_node, root_path, weights_formats_priorities=weights_formats_priorities
+            raw_node, root_path, weights_priority_order=weights_priority_order
         )
         return package_path
 
     @classmethod
     def _make_package_wo_format_conv(
-        cls, raw_node: RawNode, root_path: os.PathLike, weights_formats_priorities: Optional[Sequence[str]]
+        cls, raw_node: RawNode, root_path: os.PathLike, weights_priority_order: Optional[Sequence[str]]
     ):
         package_file_name = raw_node.name
         if raw_node.version is not missing:
@@ -316,7 +316,7 @@ class IO_Base(IO_Interface):
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
         package_content = cls._get_package_content_wo_format_conv(
-            deepcopy(raw_node), root_path=root_path, weights_formats_priorities=weights_formats_priorities
+            deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
         )
         cls.make_zip(package_path, package_content)
         return package_path
@@ -327,16 +327,16 @@ class IO_Base(IO_Interface):
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
         update_to_current_format: bool = False,
-        weights_formats_priorities: Optional[Sequence[str]] = None,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
         """
-        weights_formats_priorities: If given only the first weights format present in the model is included.
+        weights_priority_order: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "get the package content of")
         package_content = io_cls._get_package_content_wo_format_conv(
-            deepcopy(raw_node), root_path=root_path, weights_formats_priorities=weights_formats_priorities
+            deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
         )
         return package_content
 
@@ -345,10 +345,10 @@ class IO_Base(IO_Interface):
         cls,
         raw_node: current_spec.raw_nodes.Model,
         root_path: os.PathLike,
-        weights_formats_priorities: Optional[Sequence[str]],
+        weights_priority_order: Optional[Sequence[str]],
     ) -> Dict[str, Union[str, pathlib.Path]]:
         if isinstance(raw_node, cls.raw_nodes.Model):
-            return cls._get_model_package_content_wo_format_conv(raw_node, root_path, weights_formats_priorities)
+            return cls._get_model_package_content_wo_format_conv(raw_node, root_path, weights_priority_order)
         else:
             raise NotImplementedError(raw_node)
 
@@ -357,7 +357,7 @@ class IO_Base(IO_Interface):
         cls,
         raw_node: current_spec.raw_nodes.Model,
         root_path: os.PathLike,
-        weights_formats_priorities: Optional[Sequence[str]],
+        weights_priority_order: Optional[Sequence[str]],
     ) -> Dict[str, Union[str, pathlib.Path]]:
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
@@ -400,7 +400,7 @@ class IO_Base(IO_Interface):
             raw_node = dataclasses.replace(raw_node, source=source)
 
         # filter weights
-        for wfp in weights_formats_priorities or []:
+        for wfp in weights_priority_order or []:
             if wfp in raw_node.weights:
                 weights = {wfp: raw_node.weights[wfp]}
                 break
