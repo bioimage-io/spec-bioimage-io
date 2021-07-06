@@ -18,7 +18,16 @@ def package(rdf_source: str, auto_convert: bool = False):
 
 
 @app.command()
-def validate(rdf_source: str, auto_convert: bool = False, auto_convert_inner: bool = None):
+def validate(
+    rdf_source: str = typer.Argument(..., help="RDF source as relative file path or URI"),
+    auto_convert: bool = typer.Option(
+        False,
+        help="Convert format version to the latest (might fail even if source adheres to an old format version). "
+        "To convert breaking changes a source may specify fields of future versions in config:future:<future version>.",
+    ),
+    auto_convert_inner: bool = typer.Option(None, help="For collection RDFs only. Defaults to value of AUTO_CONVERT."),
+):
+    """Validate the BioImage.IO Resource Description File (RDF)"""
     if auto_convert_inner is None:
         auto_convert_inner = auto_convert
 
@@ -51,12 +60,14 @@ def _validate(rdf_source: str, auto_convert: bool, auto_convert_inner: bool) -> 
 
 @app.command()
 def verify_spec(model_yaml: str, auto_convert: bool = False):
+    """'verify-spec' is deprecated in favor of 'validate'"""
     warnings.warn("'verify_spec' is deprecated in favor of 'validate'")
     return validate(model_yaml, auto_convert)
 
 
 @app.command()
 def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
+    """'verify-bioimageio-manifest' is deprecated in favor of 'validate'"""
     warnings.warn("'verify_bioimageio_manifest' is deprecated in favor of 'validate'")
     return validate(manifest_yaml.absolute().as_uri(), auto_convert)
 
