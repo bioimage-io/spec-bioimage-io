@@ -29,7 +29,7 @@ def package(
         None,
         "-wpo",
         help="For model packages only. "
-        "If given only the first matching weights format present in the model is included. "
+        "If given only the first weights matching the given weight formats are included. "
         "Defaults to include all weights present in source.",
         show_default=False,
     ),
