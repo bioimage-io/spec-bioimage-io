@@ -28,6 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install wheel
           pip install tox tox-gh-actions
 
       - name: Test with tox
