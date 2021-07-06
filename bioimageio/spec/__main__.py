@@ -20,23 +20,26 @@ def package(rdf_source: str, auto_convert: bool = False):
 @app.command()
 def validate(
     rdf_source: str = typer.Argument(..., help="RDF source as relative file path or URI"),
-    auto_convert: bool = typer.Option(
+    update_format: bool = typer.Option(
         False,
-        help="Convert format version to the latest (might fail even if source adheres to an old format version). "
-        "To convert breaking changes a source may specify fields of future versions in config:future:<future version>.",
+        help="Update format version to the latest (might fail even if source adheres to an old format version). "
+        "To inform the format update the source may specify fields of future versions in "
+        "config:future:<future version>.",  # todo: add future documentation
     ),
-    auto_convert_inner: bool = typer.Option(None, help="For collection RDFs only. Defaults to value of AUTO_CONVERT."),
+    update_format_inner: bool = typer.Option(
+        None, help="For collection RDFs only. Defaults to value of 'update-format'."
+    ),
 ):
     """Validate the BioImage.IO Resource Description File (RDF)"""
-    if auto_convert_inner is None:
-        auto_convert_inner = auto_convert
+    if update_format_inner is None:
+        update_format_inner = update_format
 
-    raise typer.Exit(code=_validate(rdf_source, auto_convert, auto_convert_inner))
+    raise typer.Exit(code=_validate(rdf_source, update_format, update_format_inner))
 
 
-def _validate(rdf_source: str, auto_convert: bool, auto_convert_inner: bool) -> int:
+def _validate(rdf_source: str, update_format: bool, update_format_inner: bool) -> int:
     try:
-        raw_node = load_raw_node(rdf_source, update_to_current_format=auto_convert)
+        raw_node = load_raw_node(rdf_source, update_to_current_format=update_format)
     except Exception as e:
         print(f"Could not validate {rdf_source}:")
         pprint(e)
@@ -53,7 +56,7 @@ def _validate(rdf_source: str, auto_convert: bool, auto_convert_inner: bool) -> 
                         pprint(e)
                         ret += 1
                     else:
-                        ret += _validate(inner_source, auto_convert_inner, auto_convert_inner)
+                        ret += _validate(inner_source, update_format_inner, update_format_inner)
 
         return ret
 
