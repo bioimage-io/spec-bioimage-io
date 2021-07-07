@@ -64,7 +64,7 @@ def validate(
         raw_node = load_raw_node(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
         print(f"Invalid {source_name}:")
-        pprint(e)
+        pprint(e.normalized_messages())
         return 1
     except Exception as e:
         print(f"Could not validate {source_name}:")
