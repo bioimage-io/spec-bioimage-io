@@ -27,8 +27,9 @@ def package(
         "Defaults to include all weights present in source.",
         show_default=False,
     ),
+    verbose: bool = typer.Option(False, help="show traceback of exceptions"),
 ) -> int:
-    return commands.package(rdf_source, path, update_format, weights_priority_order)
+    return commands.package(rdf_source, path, update_format, weights_priority_order, verbose)
 
 
 package.__doc__ = commands.package.__doc__
@@ -46,8 +47,9 @@ def validate(
     update_format_inner: bool = typer.Option(
         None, help="For collection RDFs only. Defaults to value of 'update-format'."
     ),
+    verbose: bool = typer.Option(False, help="show traceback of exceptions"),
 ) -> int:
-    return commands.validate(rdf_source, update_format, update_format_inner)
+    return commands.validate(rdf_source, update_format, update_format_inner, verbose)
 
 
 validate.__doc__ = commands.validate.__doc__
