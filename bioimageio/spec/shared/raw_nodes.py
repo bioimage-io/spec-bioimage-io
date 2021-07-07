@@ -57,7 +57,7 @@ class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] in
                 raise ValueError("Invalid URI or relative path")
         elif str(self):
             raise ValueError(f"Either specify uri_string(={uri_string}) or uri components (={str(self)})")
-        else:
+        elif isinstance(uri_string, str):
             uri = urlparse(uri_string)
             if uri.scheme == "file":
                 # account for leading '/' for windows paths, e.g. '/C:/folder'
@@ -71,7 +71,8 @@ class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] in
             self.path = path
             self.query = uri.query
             self.fragment = uri.fragment
-
+        else:
+            raise TypeError(uri_string)
         # no scheme := relative path
         # also check for absolute paths in posix style (even on windows, as '/lala' is resolved to absolute Path
         # 'C:/lala' on windows, while '/lala' is a relative path on windows
