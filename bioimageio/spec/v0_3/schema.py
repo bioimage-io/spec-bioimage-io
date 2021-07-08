@@ -778,7 +778,6 @@ config:
             return
 
         weights_format_requires_source = {
-            "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
             "keras_hdf5": False,
