@@ -41,7 +41,7 @@ class DocumentedField:
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
         self.bioimageio_maybe_required = bioimageio_maybe_required
-        super().__init__(*super_args, **super_kwargs)
+        super().__init__(*super_args, **super_kwargs)  # type: ignore
 
 
 #################################################
@@ -191,11 +191,11 @@ class ExplicitShape(List):
 class ImportableSource(String):
     @staticmethod
     def _is_import(path):
-        return "::" not in path
+        return ":" not in path
 
     @staticmethod
     def _is_filepath(path):
-        return "::" in path
+        return ":" in path
 
     def _deserialize(self, *args, **kwargs) -> typing.Any:
         source_str: str = super()._deserialize(*args, **kwargs)
@@ -221,13 +221,13 @@ class ImportableSource(String):
             if source_str.startswith("/"):
                 raise ValidationError("Only relative paths are allowed")
 
-            parts = source_str.split("::")
+            parts = source_str.replace("::", ":").split(":")
             if len(parts) != 2:
-                raise ValidationError("Incorrect filepath format, expected example.py::ClassName")
+                raise ValidationError("Incorrect source_file format, expected example.py:ClassName")
 
-            module_path, object_name = parts
+            module_uri, object_name = parts
 
-            return raw_nodes.ImportablePath(callable_name=object_name, filepath=pathlib.Path(module_path))
+            return raw_nodes.ImportableSourceFile(callable_name=object_name, source_file=URI().deserialize(module_uri))
         else:
             raise ValidationError(source_str)
 
@@ -235,9 +235,9 @@ class ImportableSource(String):
         if value is None:
             return None
         elif isinstance(value, raw_nodes.ImportableModule):
-            return value.module_name + "." + value.callable_name
-        elif isinstance(value, raw_nodes.ImportablePath):
-            return value.filepath.as_posix() + "::" + value.callable_name
+            return f"{value.module_name}.{value.callable_name}"
+        elif isinstance(value, raw_nodes.ImportableSourceFile):
+            return f"{value.source_file}:{value.callable_name}"
         else:
             raise TypeError(f"{value} has unexpected type {type(value)}")
 
@@ -361,7 +361,7 @@ class ProcMode(String):
         if validate is None:
             validate = []
 
-        if isinstance(validate, (list, tuple)):
+        if isinstance(validate, typing.Iterable):
             validate = list(validate)
         else:
             validate = [validate]
@@ -411,20 +411,8 @@ class StrictVersion(String):
 
 
 class URI(String):
-    def _deserialize(self, *args, **kwargs) -> raw_nodes.URI:
-        uri_str = super()._deserialize(*args, **kwargs)
-        uri = urlparse(uri_str)
-
-        if uri.fragment:
-            raise ValidationError(f"Invalid URI: {uri_str}. We do not support fragment: {uri.fragment}")
-        if uri.params:
-            raise ValidationError(f"Invalid URI: {uri_str}. We do not support params: {uri.params}")
-
-        if uri.scheme == "file":
-            # account for leading '/' for windows paths, e.g. '/C:/folder'
-            # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
-            path = url2pathname(uri.path)
-        else:
-            path = uri.path
-
-        return raw_nodes.URI(scheme=uri.scheme, authority=uri.netloc, path=path, query=uri.query, fragment=uri.fragment)
+    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
+        try:
+            return raw_nodes.URI(uri_string=value)
+        except Exception as e:
+            raise ValidationError(value) from e

@@ -1,4 +1,16 @@
-from marshmallow.validate import *
+import typing
+
+from marshmallow.validate import (
+    ContainsNoneOf,
+    Equal,
+    Length,
+    OneOf,
+    Predicate as MarshmallowPredicate,
+    Range,
+    URL,
+    ValidationError,
+    Validator,
+)
 
 
 class Attribute(Validator):
@@ -36,7 +48,7 @@ class Attribute(Validator):
             raise ValidationError(f"Invalid {self.attribute} ({value}): {str(e)}") from e
 
 
-class Predicate(Predicate):
+class Predicate(MarshmallowPredicate):
     """extends marshmallow.Predicate by accepting *args and 'invert_output' .
     Call the specified ``method`` of the ``value`` object. The
     validator succeeds if the invoked method returns an object that

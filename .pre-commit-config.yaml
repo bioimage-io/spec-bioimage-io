@@ -3,6 +3,11 @@ repos:
     rev: stable
     hooks:
     - id: black
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.910
+    hooks:
+      - id: mypy
+        args: [--install-types, --non-interactive]
   - repo: local
     hooks:
     - id: generate docs
@@ -23,7 +28,15 @@ repos:
     hooks:
     - id: generate passthrough modules
       name: generate passthrough modules
-      entry: python scripts/generate_passthrough_modules.py check
+      entry: python scripts/generate_passthrough_modules.py generate
+      language: system
+      always_run: true
+      pass_filenames: false
+  - repo: local
+    hooks:
+    - id: generate_weights_formats_overview
+      name: generate_weights_formats_overview
+      entry: python scripts/generate_weights_formats_overview.py generate
       language: system
       always_run: true
       pass_filenames: false

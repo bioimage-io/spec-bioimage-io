@@ -2,32 +2,36 @@ import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, NewType, Tuple, Union
+from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
+from bioimageio.spec import v0_1
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
     ImportableModule,
-    ImportablePath,
+    ImportableSourceFile,
     Node,
     URI,
 )
 
-from bioimageio.spec.shared.common import Literal, get_args
+try:
+    from typing import Literal, get_args
+except ImportError:
+    from typing_extensions import Literal, get_args  # type: ignore
 
-# Ideally only the current format version is valid.
-# Older formats may be converter through `bioimageio.spec.utils.maybe_convert`,
-# such that we only need to support the most up-to-date version.
+
 GeneralFormatVersion = Literal["0.2.0"]  # newest format needs to be last (used in spec.__init__.py)
-ModelFormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in spec.__init__.py)
+ModelFormatVersion = Literal[  # type: ignore  # Param 1 of Literal cannot be of type "Any"
+    v0_1.ModelFormatVersion, "0.3.0", "0.3.1", "0.3.2"  # newest format needs to be last (used in spec.__init__.py)
+]
 latest_version = get_args(ModelFormatVersion)[-1]
 
-Axes = NewType("Axes", str)
-Dependencies = NewType("Dependencies", str)
-Framework = Literal["scikit-learn", "pytorch", "tensorflow"]
+
+Dependencies = str
+Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
@@ -35,14 +39,16 @@ PostprocessingName = Literal[
 ]
 Type = Literal["model", "dataset", "application", "notebook"]
 WeightsFormat = Literal[
-    "pickle",
-    "pytorch_state_dict",
-    "pytorch_script",
-    "keras_hdf5",
-    "tensorflow_js",
-    "tensorflow_saved_model_bundle",
-    "onnx",
+    "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
+
+
+Axes = str
+
+
+@dataclass
+class CiteEntry(v0_1.raw_nodes.CiteEntry):
+    pass
 
 
 @dataclass
@@ -59,14 +65,7 @@ class Badge(Node):
     url: Union[_Missing, URI] = missing
 
 
-@dataclass
-class CiteEntry(Node):
-    text: str = missing
-    doi: Union[_Missing, str] = missing
-    url: Union[_Missing, str] = missing
-
-
-ImportableSource = Union[ImportableModule, ImportablePath]
+ImportableSource = Union[ImportableModule, ImportableSourceFile]
 
 
 @dataclass
@@ -78,7 +77,7 @@ class RunMode(Node):
 @dataclass
 class RDF(Node):
     attachments: Union[_Missing, Dict[str, Any]] = missing
-    authors: List[Author] = missing
+    authors: List[Union[str, Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
     config: Union[_Missing, dict] = missing
@@ -137,17 +136,58 @@ class OutputTensor:
 
 
 @dataclass
-class WeightsEntry(Node):
+class WeightsEntryBase(Node):
+    weights_format_name: ClassVar[str]  # human readable
     authors: Union[_Missing, List[Author]] = missing
     attachments: Union[_Missing, Dict] = missing
     parent: Union[_Missing, str] = missing
-    # ONNX specific
-    opset_version: Union[_Missing, int] = missing
-    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
-    # todo: check schema. only valid for tensorflow_saved_model_bundle format
     sha256: Union[_Missing, str] = missing
     source: URI = missing
+
+
+@dataclass
+class KerasHdf5WeightsEntry(WeightsEntryBase):
+    weights_format_name = "Keras HDF5"
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+
+@dataclass
+class OnnxWeightsEntry(WeightsEntryBase):
+    weights_format_name = "ONNX"
+    opset_version: Union[_Missing, int] = missing
+
+
+@dataclass
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Pytorch State Dict"
+
+
+@dataclass
+class PytorchScriptWeightsEntry(WeightsEntryBase):
+    weights_format_name = "TorchScript"
+
+
+@dataclass
+class TensorflowJsWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Tensorflow.js"
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+
+@dataclass
+class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+    weights_format_name = "Tensorflow Saved Model"
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
+
+
+WeightsEntry = Union[
+    PytorchStateDictWeightsEntry,
+    PytorchScriptWeightsEntry,
+    KerasHdf5WeightsEntry,
+    TensorflowJsWeightsEntry,
+    TensorflowSavedModelBundleWeightsEntry,
+    OnnxWeightsEntry,
+]
 
 
 @dataclass
@@ -158,6 +198,7 @@ class ModelParent(Node):
 
 @dataclass
 class Model(RDF):
+    authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
     framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
@@ -178,8 +219,28 @@ class Model(RDF):
     weights: Dict[WeightsFormat, WeightsEntry] = missing
 
 
-# Manifest
+@dataclass
+class CollectionEntry(Node):
+    source: URI
+    id: str
+    links: Union[_Missing, List[str]] = missing
+
+
+@dataclass
+class ModelCollectionEntry(CollectionEntry):
+    download_url: URI = missing
+
+
+@dataclass
+class Collection(RDF):
+    application: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    collection: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    model: Union[_Missing, List[ModelCollectionEntry]] = missing
+    dataset: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+    notebook: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
+
+
+# deprecated Manifest  # todo: remove
 BioImageIoManifest = dict
 BioImageIoManifestModelEntry = dict
 BioImageIoManifestNotebookEntry = dict
-Badge = dict

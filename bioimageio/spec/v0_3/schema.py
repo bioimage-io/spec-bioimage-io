@@ -1,11 +1,21 @@
 import typing
 import warnings
+from copy import deepcopy
 
-import stdnum.iso7064.mod_11_2
-from marshmallow import Schema, ValidationError, missing as missing_, validates, validates_schema
+import stdnum.iso7064.mod_11_2  # todo: remove
+from marshmallow import (
+    Schema,
+    ValidationError,
+    missing as missing_,
+    post_load,
+    pre_dump,
+    pre_load,
+    validates,
+    validates_schema,
+)
 
-from bioimageio.spec.shared import field_validators, fields, LICENSES
-from bioimageio.spec.shared.common import get_args
+from bioimageio.spec.shared import LICENSES, field_validators, fields
+from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
 
@@ -67,14 +77,16 @@ The RDF contains mandatory and optional fields. In the following description, op
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
 
+    authors_bioimageio_description = (
+        "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
+        "place a list of URIs under the `files` to list images and other files that this resource depends on."
+    )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
+
     attachments = fields.Dict(
         fields.String,
         fields.Union([fields.URI(), fields.List(fields.URI)]),
         bioimageio_maybe_required=True,
-        bioimageio_description=(
-            "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
-            "place a list of URIs under the `files` to list images and other files that this resource depends on."
-        ),  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
+        bioimageio_description=authors_bioimageio_description,
     )
 
     authors = fields.List(
@@ -85,23 +97,18 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
 
-    cite = fields.Nested(
-        CiteEntry,
-        many=True,
-        required=True,
-        bioimageio_description="""A citation entry or list of citation entries.
+    cite_bioimageio_description = """A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used.""",
-    )
+E.g. the citation for the model architecture and/or the training data used."""
+    cite = fields.Nested(CiteEntry, many=True, required=True, bioimageio_description=cite_bioimageio_description)
 
-    config = fields.Dict(
-        bioimageio_description=(
-            "A custom configuration field that can contain any keys not present in the RDF spec. "
-            "This means you should not store, for example, github repo URL in `config` since we already have the "
-            "`git_repo` key defined in the spec.\n"
-            "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
-            "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
-            """for example:
+    config_bioimageio_description = (
+        "A custom configuration field that can contain any keys not present in the RDF spec. "
+        "This means you should not store, for example, github repo URL in `config` since we already have the "
+        "`git_repo` key defined in the spec.\n"
+        "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
+        "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
+        """for example:
 ```yaml
    config:
       bioimage_io:  # here is the domain name
@@ -112,9 +119,9 @@ E.g. the citation for the model architecture and/or the training data used.""",
         macro_dir: /path/to/macro/file
 ```
 """
-            "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
-        )
+        "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
+    config = fields.Dict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
         fields.URI,
@@ -152,20 +159,23 @@ E.g. the citation for the model architecture and/or the training data used.""",
         ),
     )
 
+    git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
     git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="A url to the git repository, e.g. to Github or Gitlab.",
+        validate=field_validators.URL(schemes=["http", "https"]), bioimageio_description=git_repo_bioimageio_description
     )
 
     icon = fields.String(
         bioimageio_description="an icon for the resource"
     )  # todo: limit length? validate=field_validators.Length(max=1)
 
-    license = fields.String(
-        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: Maybe we should allow for the full name as well?
-        bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
+    license_bioimageio_description = (
+        "A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
         "an Github issue to discuss your intentions with the community."
+    )
+    license = fields.String(
+        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: enforce in 0.4.0
+        bioimageio_description=license_bioimageio_description
     )
 
     @validates("license")
@@ -350,11 +360,11 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
     class ScaleMeanVariance(BioImageIOSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor: fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
 
 
 class InputTensor(Tensor):
@@ -442,7 +452,8 @@ with open(filename, "rb") as f:
 )
 
 
-class WeightsEntry(BioImageIOSchema):
+class WeightsEntryBase(BioImageIOSchema):
+    weights_format: fields.String
     authors = fields.List(
         fields.Nested(Author),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
@@ -460,15 +471,78 @@ class WeightsEntry(BioImageIOSchema):
         "is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training "
         "the model), need to have this field."
     )
-    opset_version = fields.Number(bioimageio_description="only for `onnx` weight format")
     sha256 = fields.String(
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
-    tensorflow_version = fields.StrictVersion(
-        bioimageio_description="only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format"
+    weights_format = fields.String(
+        validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
     )
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        data.pop("weights_format")  # weights_format was only used to identify correct WeightsEntry schema
+        return super().make_object(data, **kwargs)
+
+    @pre_dump
+    def raise_on_weights_format_mismatch(self, raw_node, **kwargs):
+        """
+        ensures to serialize a raw_node.<Special>WeightsEntry with the corresponding schema.<Special>WeightsEntry
+
+        This check is required, because no validation is performed by marshmallow on serialization,
+        which disables the Union field to select the appropriate nested schema for serialization.
+        """
+        if self.__class__.__name__ != raw_node.__class__.__name__:
+            raise TypeError(f"Cannot serialize {raw_node} with {self}")
+
+        return raw_node
+
+
+class KerasHdf5WeightsEntry(WeightsEntryBase):
+    bioimageio_description = "Keras HDF5 weights format"
+    weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"), required=True, load_only=True)
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+class OnnxWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "ONNX weights format"
+    weights_format = fields.String(validate=field_validators.Equal("onnx"), required=True, load_only=True)
+    opset_version = fields.Integer()  # todo: required=True
+
+
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "PyTorch state dictionary weights format"
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
+
+
+class PytorchScriptWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "Torch Script weights format"
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_script"), required=True, load_only=True)
+
+
+class TensorflowJsWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "Tensorflow Javascript weights format"
+    weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"), required=True, load_only=True)
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "Tensorflow Saved Model Bundle weights format"
+    weights_format = fields.String(
+        validate=field_validators.Equal("tensorflow_saved_model_bundle"), required=True, load_only=True
+    )
+    tensorflow_version = fields.StrictVersion()  # todo: required=True
+
+
+WeightsEntry = typing.Union[
+    PytorchStateDictWeightsEntry,
+    PytorchScriptWeightsEntry,
+    KerasHdf5WeightsEntry,
+    TensorflowJsWeightsEntry,
+    TensorflowSavedModelBundleWeightsEntry,
+    OnnxWeightsEntry,
+]
 
 
 class ModelParent(BioImageIOSchema):
@@ -491,28 +565,26 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author),
-        required=True,
-        bioimageio_description=RDF.authors.bioimageio_description,
+        fields.Nested(Author), required=True, bioimageio_description=RDF.authors_bioimageio_description
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.Nested(
-        RDF.cite.schema,
-        many=RDF.cite.many,
+        CiteEntry,
+        many=True,
         required=True,  # todo: unify authors with RDF (optional or required?)
-        bioimageio_description=RDF.cite.bioimageio_description,
+        bioimageio_description=RDF.cite_bioimageio_description,
     )
 
     download_url = missing_  # todo: allow download_url for Model (RDF has it)
 
-    dependencies = fields.Dependencies(
+    dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
     )
 
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.ModelFormatVersion)),
+        validate=field_validators.OneOf(get_args_flat(raw_nodes.ModelFormatVersion)),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
@@ -529,8 +601,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     git_repo = fields.String(
-        validate=RDF.git_repo.validate,
-        bioimageio_description=RDF.git_repo.bioimageio_description
+        validate=field_validators.URL(schemes=["http", "https"]),
+        bioimageio_description=RDF.git_repo_bioimageio_description
         + "If the model is contained in a subfolder of a git repository, then a url to the exact folder"
         + "(which contains the configuration yaml file) should be used.",
     )
@@ -550,9 +622,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     license = fields.String(
-        validate=RDF.license.validate,
         required=True,  # todo: unify license with RDF (optional or required?)
-        bioimageio_description=RDF.license.bioimageio_description,
+        bioimageio_description=RDF.license_bioimageio_description,
     )
 
     name = fields.String(
@@ -565,7 +636,7 @@ is in an unsupported format version. The current format version described here i
     packaged_by = fields.List(
         fields.Nested(Author),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
-        f"different from `authors` in root or any {WeightsEntry.__name__}.",
+        f"different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
@@ -596,7 +667,7 @@ is in an unsupported format version. The current format version described here i
         "architecture, the source is optional depending on the present weight formats. `source` can either point to a "
         "local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the "
         "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
-        "`./my_function:MyImplementation` or `core_library.some_module.some_function`.",
+        "`my_function.py:MyImplementation` or `core_library.some_module.some_function`.",
     )
 
     timestamp = fields.DateTime(
@@ -614,11 +685,25 @@ is in an unsupported format version. The current format version described here i
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Nested(WeightsEntry),
+        fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
         "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
     )
+
+    @pre_load
+    def add_weights_format_key_to_weights_entry_value(self, data: dict, many=False, partial=False, **kwargs):
+        data = deepcopy(data)  # Schema.validate() calls pre_load methods, thus we should not modify the input data
+        if many or partial:
+            raise NotImplementedError
+
+        for weights_format, weights_entry in data.get("weights", {}).items():
+            if "weights_format" in weights_entry:
+                raise ValidationError(f"Got unexpected key 'weights_format' in weights entry {weights_format}")
+
+            weights_entry["weights_format"] = weights_format
+
+        return data
 
     inputs = fields.Nested(
         InputTensor, many=True, bioimageio_description="Describes the input tensors expected by this model."
@@ -645,7 +730,7 @@ is in an unsupported format version. The current format version described here i
     )
 
     config = fields.Dict(
-        bioimageio_description=RDF.config.bioimageio_description
+        bioimageio_description=RDF.config_bioimageio_description
         + """
 
 For example:
@@ -692,7 +777,7 @@ config:
         if "source" in data:
             return
 
-        weight_format_requires_source = {
+        weights_format_requires_source = {
             "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
@@ -701,7 +786,7 @@ config:
             "tensorflow_saved_model_bundle": False,
             "onnx": False,
         }
-        require_source = {wf for wf in data["weights"] if weight_format_requires_source[wf]}
+        require_source = {wf for wf in data["weights"] if weights_format_requires_source[wf]}
         if require_source:
             raise ValidationError(
                 f"These specified weight formats require source code to be specified: {require_source}"
@@ -724,28 +809,50 @@ config:
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
-        weights: typing.Dict[str, WeightsEntry] = data["weights"]
+        weights: typing.Dict[str, WeightsEntryBase] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
+                assert isinstance(
+                    weights_entry,
+                    (
+                        raw_nodes.KerasHdf5WeightsEntry,
+                        raw_nodes.TensorflowJsWeightsEntry,
+                        raw_nodes.TensorflowSavedModelBundleWeightsEntry,
+                    ),
+                )
                 if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
                     warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
-            else:
-                if weights_entry.tensorflow_version is not missing_:
-                    raise ValidationError(f"invalid 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format == "onnx":
+                assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
-            else:
-                if weights_entry.opset_version is not missing_:
-                    raise ValidationError(
-                        f"invalid 'opset_version' entry for weights format {weights_format} (only valid for onnx)"
-                    )
 
 
-# Manifest
+# Collection
+class CollectionEntry(BioImageIOSchema):
+    """instead of nesting RDFs, RDFs can be pointed to"""
+
+    source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
+    id = fields.String(required=True)
+    links = fields.List(fields.String())
+
+
+class ModelCollectionEntry(CollectionEntry):
+    download_url = fields.URI(validate=field_validators.URL(schemes=["http", "https"]))
+
+
+class Collection(RDF):
+    application = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    collection = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    model = fields.List(fields.Nested(ModelCollectionEntry))
+    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+
+
+# deprecated manifest draft:  # todo: remove
 class BioImageIoManifestModelEntry(BioImageIOSchema):
     id = fields.String(required=True)
     source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
@@ -753,7 +860,7 @@ class BioImageIoManifestModelEntry(BioImageIOSchema):
     download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
 
 
-class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
+class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: remove  # todo: add notebook RDF??
     id = fields.String(required=True)
     name = fields.String(required=True)
     documentation = fields.RelativeLocalPath(
@@ -775,7 +882,7 @@ class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: update/remove
     links = fields.List(fields.String)  # todo: make List[URI]?
 
 
-class BioImageIoManifest(BioImageIOSchema):  # todo: update to 'Collection' or remove
+class BioImageIoManifest(BioImageIOSchema):  # todo: remove
     format_version = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)), required=True
     )

@@ -110,7 +110,6 @@ def test_model_schema_accepts_run_mode(model_dict):
 @pytest.mark.parametrize(
     "format",
     [
-        "pickle",
         "pytorch_state_dict",
         "pytorch_script",
         "keras_hdf5",

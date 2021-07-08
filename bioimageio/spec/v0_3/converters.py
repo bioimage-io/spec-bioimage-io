@@ -63,6 +63,10 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         conversion_errors["config"]["future"]["weights_format"] = missing
         weights_format = missing
 
+    additional_weights = future.pop("additional_weights", {})
+    if not isinstance(additional_weights, dict):
+        conversion_errors["config"]["future"]["additional_weights"] = "expected dict"
+
     try:
         source = data["prediction"]["weights"].pop("source")
     except KeyError:
@@ -98,18 +102,47 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         "test_input and test_output need to be converted manually, "
         "as they are split up into files for each individual tensor"
     )
-    weights_future = future.pop("weights", {})
     weights_entry = {
         # "id": weights_future.pop("id", "default"),
         # "name": weights_future.pop("name", "default weights"),
         # "description": weights_future.pop("description", "description"),
-        # "authors": data["authors"],
         "source": source,
         "sha256": sha256,
         # "tags": weights_future.pop("tags", []),
     }
+    weights_future = future.pop("weights", {})
+    weights_authors = weights_future.get("authors")
+    if weights_authors is not None:
+        weights_entry["authors"] = weights_authors
 
     data["weights"] = {weights_format: weights_entry}
+    data["weights"].update(additional_weights)
+
+    if "attachments" in future:
+        data["attachments"] = future.pop("attachments")
+
+    if "version" in future:
+        data["version"] = future.pop("version")
+
+    for ipt, ipt_fut in zip(data["inputs"], future.get("inputs", [])):
+        preprocessing = ipt_fut.get("preprocessing")
+        if preprocessing is not None:
+            assert "preprocessing" not in ipt
+            ipt["preprocessing"] = preprocessing
+
+    for out, out_fut in zip(data["outputs"], future.get("outputs", [])):
+        postprocessing = out_fut.get("postprocessing")
+        if postprocessing is not None:
+            assert "postprocessing" not in out
+            out["postprocessing"] = postprocessing
+
+    sample_inputs = future.get("sample_inputs")
+    if sample_inputs is not None:
+        data["sample_inputs"] = sample_inputs
+
+    sample_outputs = future.get("sample_outputs")
+    if sample_outputs is not None:
+        data["sample_outputs"] = sample_outputs
 
     if conversion_errors:
 
@@ -122,7 +155,8 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         raise UnconvertibleError(conversion_errors)
 
     del data["prediction"]
-    del data["training"]
+    if "training" in data:
+        del data["training"]
 
     return data
 
@@ -161,7 +195,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
     # documentation: we now enforce `documentation` to be a local md file
     class DocSchema(Schema):
-        doc = schema.Model.documentation
+        doc = schema.Model().fields["documentation"]
 
     doc_errors = DocSchema().validate({"doc": data["documentation"]})
     if doc_errors:
@@ -177,7 +211,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
+def _maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
@@ -201,6 +235,9 @@ def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_manifest(data: Dict[str, Any]) -> Dict[str, Any]:
-    """auto converts manifest 'data' to newest format"""
-    return data
+def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
+    type_ = data.get("type") or data.get("config", {}).get("future", {}).get("type", "model")
+    if type_ == "model":
+        return _maybe_convert_model(data)
+    else:
+        return data

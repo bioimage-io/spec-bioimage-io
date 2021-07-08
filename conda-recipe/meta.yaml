@@ -32,10 +32,10 @@ test:
     - bioimageio.spec
   source_files:
     - tests
-    - specs
+    - example_specs
   requires:
     {% for dep in setup_py_data['extras_require']['test'] %}
-    - {{ dep.lower() }}
+    - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
   commands:
     - pytest .
