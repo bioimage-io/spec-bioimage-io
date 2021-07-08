@@ -195,7 +195,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
     # documentation: we now enforce `documentation` to be a local md file
     class DocSchema(Schema):
-        doc = schema.Model.documentation
+        doc = schema.Model().fields["documentation"]
 
     doc_errors = DocSchema().validate({"doc": data["documentation"]})
     if doc_errors:
