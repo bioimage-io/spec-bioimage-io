@@ -77,14 +77,16 @@ The RDF contains mandatory and optional fields. In the following description, op
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
 
+    authors_bioimageio_description = (
+        "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
+        "place a list of URIs under the `files` to list images and other files that this resource depends on."
+    )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
+
     attachments = fields.Dict(
         fields.String,
         fields.Union([fields.URI(), fields.List(fields.URI)]),
         bioimageio_maybe_required=True,
-        bioimageio_description=(
-            "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
-            "place a list of URIs under the `files` to list images and other files that this resource depends on."
-        ),  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
+        bioimageio_description=authors_bioimageio_description,
     )
 
     authors = fields.List(
@@ -95,23 +97,18 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
 
-    cite = fields.Nested(
-        CiteEntry,
-        many=True,
-        required=True,
-        bioimageio_description="""A citation entry or list of citation entries.
+    cite_bioimageio_description = """A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used.""",
-    )
+E.g. the citation for the model architecture and/or the training data used."""
+    cite = fields.Nested(CiteEntry, many=True, required=True, bioimageio_description=cite_bioimageio_description)
 
-    config = fields.Dict(
-        bioimageio_description=(
-            "A custom configuration field that can contain any keys not present in the RDF spec. "
-            "This means you should not store, for example, github repo URL in `config` since we already have the "
-            "`git_repo` key defined in the spec.\n"
-            "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
-            "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
-            """for example:
+    config_bioimageio_description = (
+        "A custom configuration field that can contain any keys not present in the RDF spec. "
+        "This means you should not store, for example, github repo URL in `config` since we already have the "
+        "`git_repo` key defined in the spec.\n"
+        "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
+        "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
+        """for example:
 ```yaml
    config:
       bioimage_io:  # here is the domain name
@@ -122,9 +119,9 @@ E.g. the citation for the model architecture and/or the training data used.""",
         macro_dir: /path/to/macro/file
 ```
 """
-            "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
-        )
+        "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
+    config = fields.Dict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
         fields.URI,
@@ -162,20 +159,23 @@ E.g. the citation for the model architecture and/or the training data used.""",
         ),
     )
 
+    git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
     git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="A url to the git repository, e.g. to Github or Gitlab.",
+        validate=field_validators.URL(schemes=["http", "https"]), bioimageio_description=git_repo_bioimageio_description
     )
 
     icon = fields.String(
         bioimageio_description="an icon for the resource"
     )  # todo: limit length? validate=field_validators.Length(max=1)
 
-    license = fields.String(
-        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: Maybe we should allow for the full name as well?
-        bioimageio_description="A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
+    license_bioimageio_description = (
+        "A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
         "an Github issue to discuss your intentions with the community."
+    )
+    license = fields.String(
+        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: enforce in 0.4.0
+        bioimageio_description=license_bioimageio_description
     )
 
     @validates("license")
@@ -565,15 +565,15 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author), required=True, bioimageio_description=RDF.authors.bioimageio_description
+        fields.Nested(Author), required=True, bioimageio_description=RDF.authors_bioimageio_description
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.Nested(
-        RDF.cite.schema,
-        many=RDF.cite.many,
+        CiteEntry,
+        many=True,
         required=True,  # todo: unify authors with RDF (optional or required?)
-        bioimageio_description=RDF.cite.bioimageio_description,
+        bioimageio_description=RDF.cite_bioimageio_description,
     )
 
     download_url = missing_  # todo: allow download_url for Model (RDF has it)
@@ -601,8 +601,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     git_repo = fields.String(
-        validate=RDF.git_repo.validate,
-        bioimageio_description=RDF.git_repo.bioimageio_description
+        validate=field_validators.URL(schemes=["http", "https"]),
+        bioimageio_description=RDF.git_repo_bioimageio_description
         + "If the model is contained in a subfolder of a git repository, then a url to the exact folder"
         + "(which contains the configuration yaml file) should be used.",
     )
@@ -622,9 +622,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     license = fields.String(
-        validate=RDF.license.validate,
         required=True,  # todo: unify license with RDF (optional or required?)
-        bioimageio_description=RDF.license.bioimageio_description,
+        bioimageio_description=RDF.license_bioimageio_description,
     )
 
     name = fields.String(
@@ -731,7 +730,7 @@ is in an unsupported format version. The current format version described here i
     )
 
     config = fields.Dict(
-        bioimageio_description=RDF.config.bioimageio_description
+        bioimageio_description=RDF.config_bioimageio_description
         + """
 
 For example:
