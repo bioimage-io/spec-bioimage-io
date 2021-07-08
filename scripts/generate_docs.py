@@ -5,6 +5,11 @@ from pathlib import Path
 
 import bioimageio.spec
 
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args  # type: ignore
+
 
 @dataclasses.dataclass
 class DocNode:
@@ -126,12 +131,14 @@ def export_markdown_doc_from_schema(path: Path, schema: bioimageio.spec.schema.S
 
 def export_markdown_docs(folder: Path, spec=bioimageio.spec):
     if spec == bioimageio.spec:
-        format_version_wo_patch = "latest"
+        model_format_version_wo_patch = "latest"
+        general_format_version = "latest"
     else:
-        format_version_wo_patch = spec.__name__.split(".")[-1]
+        model_format_version_wo_patch = spec.__name__.split(".")[-1]
+        general_format_version = "v" + get_args(spec.raw_nodes.GeneralFormatVersion)[-1].replace(".", "_")
 
-    export_markdown_doc_from_schema(folder / f"model_spec_{format_version_wo_patch}.md", spec.schema.Model())
-    export_markdown_doc_from_schema(folder / f"rdf_spec_{format_version_wo_patch}.md", spec.schema.RDF())
+    export_markdown_doc_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.md", spec.schema.Model())
+    export_markdown_doc_from_schema(folder / f"rdf_spec_{general_format_version}.md", spec.schema.RDF())
 
 
 if __name__ == "__main__":
