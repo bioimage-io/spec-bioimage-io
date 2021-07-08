@@ -11,14 +11,14 @@ This is mandatory, and important for the consumer software to verify before pars
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
 0.3.2
-* `authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
+* `authors` _List\[Author\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
   1. _Author_   is a Dict with the following keys:
     * `name` _String_ Full name.
     * `affiliation` _optional String_ Affiliation.
     * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * `cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys: List\[CiteEntry\] is a Dict with the following keys:
+E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys:
   * `text` _String_ 
   * `doi` _optional* String_ 
   * `url` _optional* String_ 
@@ -31,33 +31,8 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `test_outputs` _List\[URI→String\]_ Analog to to test_inputs.
 * `timestamp` _DateTime_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
 * `type` _String_ 
-* `weights` _Dict\[String, WeightsEntry\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
-  1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pickle, pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
-  1. _WeightsEntry_   is a Dict with the following keys:
-    * `source` _URI→String_ Link to the source file. Preferably a url.
-    * `attachments` _optional Dict\[Any, Any\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files that are specific to the current weight format. A list of URIs can be listed under the `files` key to included additional files for generating the model package.
-    * `authors` _optional List\[Author\]_ A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
-      1. _Author_   is a Dict with the following keys:
-        * `name` _String_ Full name.
-        * `affiliation` _optional String_ Affiliation.
-        * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
-    * `opset_version` _optional Number_ only for `onnx` weight format
-    * `parent` _optional String_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
-    * `sha256` _optional String_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-Code snippet to compute SHA256 checksum
-
-```python
-import hashlib
-
-filename = "your filename here"
-with open(filename, "rb") as f:
-  bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest()
-  print(readable_hash)
-  ```
-
-
-    * `tensorflow_version` _optional StrictVersion→String_ only for 'keras_hdf5', 'tensorflow_js' and 'tensorflow_saved_model_bundle' weight format
+* `weights` _Dict\[String, Union\[PytorchStateDictWeightsEntry | PytorchScriptWeightsEntry | KerasHdf5WeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | OnnxWeightsEntry\]\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
+  1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
 * `attachments` _optional* Dict\[String, Union\[URI→String | List\[URI→String\]\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
 * `badges` _optional List\[Badge\]_ a list of badges
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
@@ -99,7 +74,7 @@ config:
 * `covers` _optional List\[URI→String\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * `dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
 * `download_url` _optional String_ recommended url to the zipped file if applicable
-* `framework` _optional String_ The deep learning framework of the source code. One of: scikit-learn, pytorch, tensorflow. This field is only required if the field `source` is present.
+* `framework` _optional String_ The deep learning framework of the source code. One of: pytorch, tensorflow. This field is only required if the field `source` is present.
 * `git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * `icon` _optional String_ an icon for the resource
 * `inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model. List\[InputTensor\] is a Dict with the following keys:
@@ -157,7 +132,7 @@ config:
     1. _Postprocessing_   is a Dict with the following keys:
       * `name` _String_ Name of postprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range, scale_mean_variance (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for information on which transformations are supported by specific consumer software).
       * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
-* `packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any WeightsEntry.
+* `packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any entry in `weights`.
   1. _Author_   is a Dict with the following keys:
     * `name` _String_ Full name.
     * `affiliation` _optional String_ Affiliation.
@@ -185,5 +160,5 @@ with open(filename, "rb") as f:
 
  This field is only required if the field source is present.
 * `source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
-For example: `./my_function:MyImplementation` or `core_library.some_module.some_function`.
+For example: `my_function.py:MyImplementation` or `core_library.some_module.some_function`.
 * `version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.

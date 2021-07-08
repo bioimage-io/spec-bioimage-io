@@ -31,18 +31,7 @@ E.g. the citation for the model architecture and/or the training data used. List
     * `label` _String_ e.g. 'Open in Colab'
     * `icon` _optional String_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
     * `url` _optional URI→String_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
-* `config` _optional Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
-Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
-```yaml
-   config:
-      bioimage_io:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-           nested: value
-      imagej:
-        macro_dir: /path/to/macro/file
-```
-If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+* `config` _optional Dict\[Any, Any\]_ 
 * `covers` _optional List\[URI→String\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * `download_url` _optional String_ recommended url to the zipped file if applicable
 * `git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.
