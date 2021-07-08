@@ -37,7 +37,7 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
-Type = Literal["model", "dataset", "application", "notebook"]
+Type = NewType("Type", str)
 WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
