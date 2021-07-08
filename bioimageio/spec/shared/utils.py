@@ -122,7 +122,7 @@ class UriNodeTransformer(NodeTransformer):
 
 class PathToRemoteUriTransformer(NodeTransformer):
     def __init__(self, *, remote_source: raw_nodes.URI):
-        remote_path = pathlib.PurePosixPath(remote_source.path).parent
+        remote_path = pathlib.PurePosixPath(remote_source.path.strip("/")).parent
         assert not remote_path.is_absolute()
         self.remote_root = dataclasses.replace(remote_source, path=remote_path.as_posix())
 
@@ -270,7 +270,7 @@ def _resolve_uri_list(uri: list, root_path: os.PathLike = pathlib.Path()) -> typ
 def resolve_local_uri(
     uri: typing.Union[str, os.PathLike, raw_nodes.URI], root_path: os.PathLike
 ) -> typing.Union[pathlib.Path, raw_nodes.URI]:
-    if isinstance(uri, os.PathLike):
+    if isinstance(uri, os.PathLike) or (isinstance(uri, str) and pathlib.Path(uri).exists()):
         return pathlib.Path(uri)
 
     if isinstance(uri, str):
@@ -364,14 +364,14 @@ def get_dict_and_root_path_from_yaml_source(
         local_source = source
         root_path = source.parent
 
-    assert isinstance(source, pathlib.Path)
-    if source.suffix == ".yml":
+    assert isinstance(local_source, pathlib.Path)
+    if local_source.suffix == ".yml":
         warnings.warn(
             "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
             "(https://yaml.org/faq.html)"
         )
-    elif source.suffix != ".yaml":
-        raise ValidationError(f"invalid suffix {source.suffix} for source {source}")
+    elif local_source.suffix != ".yaml":
+        raise ValidationError(f"invalid suffix {local_source.suffix} for source {source}")
 
     data = yaml.load(local_source)
     assert isinstance(data, dict)

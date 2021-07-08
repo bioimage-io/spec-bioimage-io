@@ -412,4 +412,7 @@ class StrictVersion(String):
 
 class URI(String):
     def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
-        return raw_nodes.URI(value)
+        try:
+            return raw_nodes.URI(uri_string=value)
+        except Exception as e:
+            raise ValidationError(value) from e

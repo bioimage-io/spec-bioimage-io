@@ -1,6 +1,2 @@
-def maybe_convert_model(data):
-    return data
-
-
-def maybe_convert_manifest(data):
+def maybe_convert(data):
     return data

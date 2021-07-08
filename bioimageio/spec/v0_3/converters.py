@@ -195,7 +195,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
 
     # documentation: we now enforce `documentation` to be a local md file
     class DocSchema(Schema):
-        doc = schema.Model.documentation
+        doc = schema.Model().fields["documentation"]
 
     doc_errors = DocSchema().validate({"doc": data["documentation"]})
     if doc_errors:
@@ -211,7 +211,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
+def _maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     if data.get("format_version", "0.1.0") == "0.1.0":
         data = convert_model_from_v0_1(data)
@@ -235,6 +235,9 @@ def maybe_convert_model(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def maybe_convert_manifest(data: Dict[str, Any]) -> Dict[str, Any]:
-    """auto converts manifest 'data' to newest format"""
-    return data
+def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
+    type_ = data.get("type") or data.get("config", {}).get("future", {}).get("type", "model")
+    if type_ == "model":
+        return _maybe_convert_model(data)
+    else:
+        return data

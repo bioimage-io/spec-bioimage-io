@@ -14,5 +14,5 @@ def test_weights_formats_have_raw_nodes():
 
     # every WeightEntry schema needs to validate its corresponding weights_format
     for wf, wecn in zip(weights_formats, weights_entry_class_names):
-        comparable = getattr(schema, wecn).weights_format.validate.comparable
+        comparable = getattr(schema, wecn)().fields["weights_format"].validate.comparable
         assert comparable == wf, (comparable, wf)
