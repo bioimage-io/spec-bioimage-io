@@ -1,5 +1,5 @@
 # BioImage.IO Model Resource Description File Specification 0.3.2
-This specification defines the fields used in a BioImage.IO-complaint resource description file (`RDF`) for describing AI models with pretrained weights.
+This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
 

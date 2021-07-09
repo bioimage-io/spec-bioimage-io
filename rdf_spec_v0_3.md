@@ -1,5 +1,5 @@
 # BioImage.IO Resource Description File Specification 0.3.2
-This specification defines the fields used in a general BioImage.IO-complaint resource description file (`RDF`).
+This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
 
