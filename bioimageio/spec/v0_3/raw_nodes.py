@@ -97,8 +97,6 @@ class RDF(Node):
         if self.type is missing:
             self.type = self.__class__.__name__.lower()  # noqa
 
-        assert self.type in get_args(Type)
-
 
 @dataclass
 class Preprocessing:
