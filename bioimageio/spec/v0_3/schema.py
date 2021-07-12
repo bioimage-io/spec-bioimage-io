@@ -69,7 +69,7 @@ class RunMode(BioImageIOSchema):
 
 class RDF(BioImageIOSchema):
     bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.GeneralFormatVersion)[-1]}
-This specification defines the fields used in a general BioImage.IO-complaint resource description file (`RDF`).
+This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
 
@@ -556,7 +556,7 @@ class ModelParent(BioImageIOSchema):
 
 class Model(RDF):
     bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
-This specification defines the fields used in a BioImage.IO-complaint resource description file (`RDF`) for describing AI models with pretrained weights.
+This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
 
@@ -778,7 +778,6 @@ config:
             return
 
         weights_format_requires_source = {
-            "pickle": True,  # todo: remove
             "pytorch_state_dict": True,
             "pytorch_script": False,
             "keras_hdf5": False,

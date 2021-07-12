@@ -43,7 +43,7 @@ def main(args):
     weights_format_class_names = [wf.title().replace("_", "") + "WeightsEntry" for wf in weights_format_ids]
 
     weights_formats = {
-        wfcn: {
+        wf: {
             "name": getattr(raw_nodes, wfcn).weights_format_name,
             "description": getattr(schema, wfcn).bioimageio_description,
             "consumers": [

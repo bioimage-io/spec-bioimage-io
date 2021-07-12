@@ -37,10 +37,9 @@ setup(
         "typer",
         "typing-extensions",
     ],
-    entry_points={"console_scripts": ["bioimageio = bioimageio.spec:main"]},
+    entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
     extras_require={"test": ["pytest", "tox", "torch", "numpy", "mypy"], "dev": ["pre-commit"]},
     scripts=["scripts/generate_docs.py"],
-    package_data={"bioimageio.spec": ["static/licenses.json"]},
     include_package_data=True,
     project_urls={  # Optional
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",
