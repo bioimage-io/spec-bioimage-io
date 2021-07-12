@@ -1,5 +1,6 @@
 ![License](https://img.shields.io/github/license/bioimage-io/spec-bioimage-io.svg)
 ![PyPI](https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout)
+![conda-version](https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg)
 # Specifications for BioImage.IO
 
 This repository contains specifications defined by the BioImage.IO community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a general RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
@@ -114,17 +115,21 @@ It is recommended to host the resource description file on one of the public git
 
 It is recommended to use our validator to verify your models when you write it manually or develop tools for generating RDF/MDF files.
 
-To install the spec validator, please run the following command:
-<!--
-TODO from pip/conda
--->
+The spec validator can be installed either with `pip`, or `conda`:
 ```
+# pip
 pip install -U bioimageio.spec
+
+# conda
+conda install -c conda-forge bioimageio.spec
 ```
 
 To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) using the following command:
 ```
-python -m bioimageio.spec verify-spec <MY-MODEL>.yaml
+python -m bioimageio.spec validate <MY-MODEL>.yaml
+
+# alternatively using the entry-point:
+bioimageio validate <MY-MODEL>.yaml
 ```
 The output of this command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
 ```
