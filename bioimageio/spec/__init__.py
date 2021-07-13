@@ -1,9 +1,8 @@
+import json
 import pathlib
 
 from . import v0_1, v0_3
 from .build_spec import build_spec
-
-from bioimageio.spec.shared import yaml
 
 # autogen: start
 from bioimageio.spec.shared import fields
@@ -22,4 +21,5 @@ serialize_raw_node_to_dict = utils.IO.serialize_raw_node_to_dict
 
 # autogen: stop
 
-__version__ = yaml.load(pathlib.Path(__file__).parent / "VERSION")["version"]
+with (pathlib.Path(__file__).parent / "VERSION").open() as f:
+    __version__ = json.load(f)["version"]
