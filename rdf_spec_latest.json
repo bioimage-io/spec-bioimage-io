@@ -71,20 +71,12 @@
             "properties": {
                 "attachments": {
                     "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "title": "",
-                                "type": "string"
-                            },
-                            {
-                                "items": {
-                                    "title": "",
-                                    "type": "string"
-                                },
-                                "title": "",
-                                "type": "array"
-                            }
-                        ]
+                        "items": {
+                            "title": "attachments",
+                            "type": "string"
+                        },
+                        "title": "attachments",
+                        "type": "array"
                     },
                     "title": "attachments",
                     "type": "object"

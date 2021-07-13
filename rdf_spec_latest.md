@@ -18,7 +18,7 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `name` _String_ name of the resource, a human-friendly name
 * `tags` _List\[String\]_ A list of tags.
 * `type` _String_ 
-* `attachments` _optional* Dict\[String, Union\[URI→String | List\[URI→String\]\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+* `attachments` _optional* Dict\[String, List\[Raw\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
 * `authors` _optional List\[Union\[Author | String\]\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _optional Union\[Author | String\]_ 
     1. _Author_   is a Dict with the following keys:
