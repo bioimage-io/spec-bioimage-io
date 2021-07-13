@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import typer
 
-from bioimageio.spec import commands
+from bioimageio.spec import __version__, commands
 
 app = typer.Typer()  # https://typer.tiangolo.com/
 
@@ -70,4 +70,5 @@ def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
 
 
 if __name__ == "__main__":
+    print(f"bioimageio.spec package version {__version__}")
     app()
