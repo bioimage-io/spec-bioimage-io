@@ -138,6 +138,10 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
         self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"
 
 
+class Raw(DocumentedField, marshmallow_fields.Raw):
+    pass
+
+
 class String(DocumentedField, marshmallow_fields.String):
     pass
 

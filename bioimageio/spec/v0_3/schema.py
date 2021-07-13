@@ -84,7 +84,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     attachments = fields.Dict(
         fields.String,
-        fields.Union([fields.URI(), fields.List(fields.URI)]),
+        fields.List(fields.Raw),
         bioimageio_maybe_required=True,
         bioimageio_description=authors_bioimageio_description,
     )
@@ -462,9 +462,9 @@ class WeightsEntryBase(BioImageIOSchema):
         "who have converted the weights to this format.",
     )  # todo: copy root authors if missing
     attachments = fields.Dict(
-        bioimageio_description="Dictionary of text keys and URI (or a list of URI) values to additional, relevant "
-        "files that are specific to the current weight format. A list of URIs can be listed under the `files` key to "
-        "included additional files for generating the model package."
+        bioimageio_description="Dictionary of text keys and list values (that may contain any valid yaml) to "
+        "additional, relevant files that are specific to the current weight format. A list of URIs can be listed under"
+        " the `files` key to included additional files for generating the model package."
     )
     parent = fields.String(
         bioimageio_description="The source weights used as input for converting the weights to this format. For "
