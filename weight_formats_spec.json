@@ -2,6 +2,12 @@
     "consumers": {
         "deepimagej": {
             "background_image": "static/img/zoo-background.svg",
+            "config": {
+                "supported_weight_formats": [
+                    "pytorch_script",
+                    "tensorflow_saved_model_bundle"
+                ]
+            },
             "explore_button_text": "Start Exploring",
             "icon": "https://raw.githubusercontent.com/deepimagej/models/master/logos/icon.png",
             "id": "deepimagej",
@@ -22,6 +28,11 @@
         },
         "fiji": {
             "background_image": "static/img/zoo-background.svg",
+            "config": {
+                "supported_weight_formats": [
+                    "tensorflow_saved_model_bundle"
+                ]
+            },
             "explore_button_text": "Start Exploring",
             "icon": "https://fiji.sc/site/logo.png",
             "id": "fiji",
@@ -61,6 +72,13 @@
         },
         "ilastik": {
             "background_image": "static/img/zoo-background.svg",
+            "config": {
+                "supported_weight_formats": [
+                    "pytorch_script",
+                    "onnx",
+                    "pytorch_state_dict"
+                ]
+            },
             "default_type": "model",
             "explore_button_text": "Start Exploring",
             "icon": "https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/image/ilastik-fist-icon.png",
@@ -81,6 +99,11 @@
         },
         "imjoy": {
             "background_image": "static/img/zoo-background.svg",
+            "config": {
+                "supported_weight_formats": [
+                    "onnx"
+                ]
+            },
             "default_type": "application",
             "explore_button_text": "Start Exploring",
             "icon": "https://imjoy.io/static/img/imjoy-icon.svg",
@@ -105,6 +128,11 @@
         },
         "zero": {
             "background_image": "static/img/zoo-background.svg",
+            "config": {
+                "supported_weight_formats": [
+                    "keras_hdf5"
+                ]
+            },
             "default_type": "notebook",
             "explore_button_text": "Start Exploring",
             "icon": "https://raw.githubusercontent.com/HenriquesLab/ZeroCostDL4Mic/master/Wiki_files/ZeroCostLogo.png",
