@@ -8,6 +8,11 @@ from ruamel.yaml import YAML
 from bioimageio import spec
 from bioimageio.spec.shared.common import get_args_flat
 
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args  # type: ignore
+
 yaml = YAML(typ="safe")
 
 
@@ -15,7 +20,7 @@ def get_unet2d_nuclei_broad_path(version: str):
     assert isinstance(version, str), version
     assert "_" not in version, version
     assert "." in version, version
-    if version == spec.__version__:
+    if version == get_args(spec.raw_nodes.ModelFormatVersion)[-1]:
         version = ""  # latest version without specifier
     else:
         version = "_v" + version.replace(".", "_")
