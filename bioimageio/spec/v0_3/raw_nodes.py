@@ -84,7 +84,7 @@ class RDF(Node):
     covers: Union[_Missing, List[URI]] = missing
     description: str = missing
     documentation: Path = missing
-    format_version: ModelFormatVersion = missing
+    format_version: GeneralFormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
     links: List[str] = missing
@@ -198,6 +198,7 @@ class ModelParent(Node):
 class Model(RDF):
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
+    format_version: ModelFormatVersion = missing
     framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
