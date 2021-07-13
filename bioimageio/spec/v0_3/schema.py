@@ -84,7 +84,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     attachments = fields.Dict(
         fields.String,
-        fields.List(),
+        fields.List(fields.Raw),
         bioimageio_maybe_required=True,
         bioimageio_description=authors_bioimageio_description,
     )
