@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import typer
 
-from bioimageio.spec import commands
+from bioimageio.spec import __version__, commands
 
 app = typer.Typer()  # https://typer.tiangolo.com/
 
@@ -62,6 +62,9 @@ def verify_spec(model_yaml: str, auto_convert: bool = False):
     return validate(model_yaml, auto_convert)
 
 
+verify_spec.__doc__ = verify_spec.__doc__ + "\n\n" + validate.__doc__
+
+
 @app.command()
 def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
     """'verify-bioimageio-manifest' is deprecated in favor of 'validate'"""
@@ -69,5 +72,9 @@ def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
     return validate(manifest_yaml.absolute().as_uri(), auto_convert)
 
 
+verify_bioimageio_manifest.__doc__ = verify_bioimageio_manifest.__doc__ + "\n\n" + validate.__doc__
+
+
 if __name__ == "__main__":
+    print(f"bioimageio.spec package version {__version__}")
     app()

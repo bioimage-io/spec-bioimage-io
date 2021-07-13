@@ -8,6 +8,10 @@ import numpy as np
 
 import bioimageio.spec as spec
 
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args  # type: ignore
 
 #
 # utility functions to build the spec from python
@@ -360,7 +364,7 @@ def build_spec(
     #
     # generate general fields
     #
-    format_version = spec.__version__
+    format_version = get_args(spec.raw_nodes.ModelFormatVersion)[-1]
     timestamp = datetime.datetime.now()
 
     if source is not None:
