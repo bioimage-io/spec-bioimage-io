@@ -2,7 +2,7 @@ import json
 import pathlib
 
 from . import v0_1, v0_3
-from .build_spec import build_spec
+from .build_spec import add_weights, build_spec, serialize_spec
 
 # autogen: start
 from bioimageio.spec.shared import fields

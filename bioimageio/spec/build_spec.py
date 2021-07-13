@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+from ruamel.yaml import YAML
 
 import bioimageio.spec as spec
 
@@ -270,6 +271,7 @@ def build_spec(
     parent: Optional[str] = None,
     config: Optional[Dict[str, Any]] = None,
     dependencies: Optional[str] = None,
+    links: Optional[List[str]] = None,
     **weight_kwargs,
 ):
     """Create a bioimageio.spec.schema.Model object that can be used to serialize a model.yaml in the bioimage.io format.
@@ -277,7 +279,7 @@ def build_spec(
     Example usage:
     ```
     import bioimageio.spec as spec
-    model_spec = spec.utils.build_spec(
+    model_spec = spec.build_spec(
         weight_uri="test_weights.pt",
         test_inputs=["./test_inputs"],
         test_outputs=["./test_outputs"],
@@ -290,9 +292,7 @@ def build_spec(
         covers=["./my_cover.png"],
         cite={"Architecture": "https://my_architecture.com"}
     )
-    serialized = spec.schema.Model().dump(model_spec)
-    with open('model.yaml', 'w') as f:
-        spec.utils.yaml.dump(serialized, f)
+    spec.serialize_pec(model_spec, "model.yaml")
     ```
 
     Args:
@@ -386,6 +386,7 @@ def build_spec(
         "sha256": source_hash,
         "kwargs": model_kwargs,
         "dependencies": dependencies,
+        "links": links
     }
     kwargs = {k: v for k, v in optional_kwargs.items() if v is not None}
 
@@ -436,5 +437,7 @@ def add_weights(model, weight_uri: str, root: Optional[str] = None, weight_type:
 
 
 def serialize_spec(model, out_path):  # TODO change name to include model (see build_model_spec)
+    yaml = YAML(typ="safe")
     serialized = spec.schema.Model().dump(model)
-    spec.utils.yaml.dump(serialized, out_path)
+    with open(out_path, "w") as f:
+        yaml.dump(serialized, f)
