@@ -76,7 +76,7 @@ class RunMode(Node):
 
 @dataclass
 class RDF(Node):
-    attachments: Union[_Missing, Dict[str, Any]] = missing
+    attachments: Union[_Missing, Dict[str, list]] = missing
     authors: List[Union[str, Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
