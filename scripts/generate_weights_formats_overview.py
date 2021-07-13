@@ -38,6 +38,10 @@ def main(args):
     collection = collection["collections"]
 
     consumers = {c["id"]: c for c in collection}
+    for consumer in consumers.values():
+        if consumer["id"] in consumer_defaults:
+            consumer["config"] = consumer.get("config", {})
+            consumer["config"]["supported_weight_formats"] = consumer_defaults[consumer["id"]]
 
     weights_format_ids = get_args(WeightsFormat)
     weights_format_class_names = [wf.title().replace("_", "") + "WeightsEntry" for wf in weights_format_ids]
