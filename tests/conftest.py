@@ -60,13 +60,14 @@ def pytest_generate_tests(metafunc):
                 vs = [".".join(v) for v in vs_patched.values()]
         else:
             if m["latest"]:
-                v = spec.__version__
+                v = get_args(spec.raw_nodes.ModelFormatVersion)[-1]
             else:
                 major = m["major"]
                 minor = m["minor"]
                 patch = m["patch"]
                 if patch is None:  # default to latest patch
-                    patch = getattr(spec, f"v{major}_{minor}").__version__.split(".")[-1]
+                    patched_version = get_args(getattr(spec, f"v{major}_{minor}").raw_nodes.ModelFormatVersion)[-1]
+                    patch = patched_version.split(".")[-1]
 
                 v = ".".join([major, minor, patch])
 
