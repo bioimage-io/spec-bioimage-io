@@ -84,7 +84,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     attachments = fields.Dict(
         fields.String,
-        # fields.Union([fields.URI(), fields.List(fields.URI)]),  # do not validate attachment values; todo: clean up
+        fields.List(),
         bioimageio_maybe_required=True,
         bioimageio_description=authors_bioimageio_description,
     )
