@@ -20,7 +20,7 @@ As a general guideline, please follow the model RDF spec to describe AI models a
 A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. 
 
 You can find detailed field definitions here: 
-   - [general RDF spec 0.2.0](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2_0.md)
+   - [general RDF spec 0.2.x](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2.md)
 
 The specifications are also available as json schemas: 
    - [general RDF spec 0.2.0 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2_0.json)
