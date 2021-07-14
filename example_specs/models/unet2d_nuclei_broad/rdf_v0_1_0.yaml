@@ -58,7 +58,7 @@ config:
       sample_inputs: [test_input.npy]
       sample_outputs: [test_output.npy]
       attachments: {}
-      git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/master/example_specs/models/unet2d_nuclei_broad
+      git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
       inputs:
         - description: raw input
           preprocessing:  # list of preprocessing steps
