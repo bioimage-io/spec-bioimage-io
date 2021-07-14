@@ -3,8 +3,10 @@ This specification defines the fields used in a general BioImage.IO-compliant re
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
 
-The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
-_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by 
+_optional_. _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+If no specialized RDF exists for the specified type (like model RDF for type='model') additional fields may be 
+specified.
 
 * `format_version` _String_ Version of the BioImage.IO General Resource Description File Specification used.The current format version described here is 0.2.0. Note: The general RDF format version is not to be confused with the Model RDF format version.
 * `cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
