@@ -74,9 +74,9 @@
             "background_image": "static/img/zoo-background.svg",
             "config": {
                 "supported_weight_formats": [
-                    "pytorch_script",
+                    "pytorch_state_dict",
                     "onnx",
-                    "pytorch_state_dict"
+                    "pytorch_script"
                 ]
             },
             "default_type": "model",
