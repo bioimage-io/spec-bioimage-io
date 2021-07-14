@@ -23,7 +23,7 @@ You can find detailed field definitions here:
    - [general RDF spec 0.2.x](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2.md)
 
 The specifications are also available as json schemas: 
-   - [general RDF spec 0.2.0 (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2_0.json)
+   - [general RDF spec 0.2.x (json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_v0_2.json)
 
 
 ### Describing applications
