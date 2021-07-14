@@ -301,6 +301,18 @@ class IO_Base(IO_Interface):
         if raw_node.version is not missing:
             package_file_name += f"_{raw_node.version}"
 
+        if weights_priority_order is not None:
+            # add weights format to package file name
+            for wf in weights_priority_order:
+                if wf in raw_node.weights:
+                    package_file_name += f"_{wf}"
+                    break
+            else:
+                raise ValueError(
+                    f"None of the requested weights ({weights_priority_order}) "
+                    f"found in model weights ({raw_node.weights.keys()})"
+                )
+
         package_file_name = package_file_name.replace(" ", "_").replace(".", "_")
 
         BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
@@ -315,6 +327,7 @@ class IO_Base(IO_Interface):
             raise FileExistsError(
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
+
         package_content = cls._get_package_content_wo_format_conv(
             deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
         )
@@ -362,7 +375,7 @@ class IO_Base(IO_Interface):
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
         )  # todo: add check in model validation
-        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)  
+        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)
         # todo: .txt -> .yaml once 'rdf.yaml' is only valid rdf file name in package
 
         def incl_as_local(node: GenericNode, field_name: str) -> GenericNode:
