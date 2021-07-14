@@ -5,6 +5,11 @@ from marshmallow_jsonschema import JSONSchema
 
 import bioimageio.spec
 
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args  # type: ignore
+
 
 def export_json_schema_from_schema(path: Path, schema: bioimageio.spec.schema.SharedBioImageIOSchema):
     with path.open("w") as f:
@@ -14,12 +19,14 @@ def export_json_schema_from_schema(path: Path, schema: bioimageio.spec.schema.Sh
 
 def export_json_schemas(folder: Path, spec=bioimageio.spec):
     if spec == bioimageio.spec:
-        format_version_wo_patch = "latest"
+        model_format_version_wo_patch = "latest"
+        general_format_version_wo_patch = "latest"
     else:
-        format_version_wo_patch = spec.__name__.split(".")[-1]
+        model_format_version_wo_patch = spec.__name__.split(".")[-1]
+        general_format_version_wo_patch = ".".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:2])
 
-    export_json_schema_from_schema(folder / f"model_spec_{format_version_wo_patch}.json", spec.schema.Model())
-    export_json_schema_from_schema(folder / f"rdf_spec_{format_version_wo_patch}.json", spec.schema.RDF())
+    export_json_schema_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.json", spec.schema.Model())
+    export_json_schema_from_schema(folder / f"rdf_spec_{general_format_version_wo_patch}.json", spec.schema.RDF())
 
 
 if __name__ == "__main__":
