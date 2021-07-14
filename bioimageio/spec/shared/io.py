@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
 from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Type, TypeVar, Union
-from zipfile import ZipFile
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from marshmallow import ValidationError, missing
 
@@ -28,6 +28,7 @@ from .utils import (
 
 if TYPE_CHECKING:
     import bioimageio.spec as current_spec
+
 
 # placeholders for versioned classes
 Schema = TypeVar("Schema", bound=SharedBioImageIOSchema)
@@ -280,6 +281,9 @@ class IO_Base(IO_Interface):
         root_path: os.PathLike = pathlib.Path(),
         update_to_current_format: bool = False,
         weights_priority_order: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
+        *,
+        compression: int = ZIP_DEFLATED,
+        compression_level: int = 1,
     ) -> pathlib.Path:
         """
         weights_priority_order: Only used for model RDFs.
@@ -289,13 +293,23 @@ class IO_Base(IO_Interface):
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
         io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "export")
         package_path = io_cls._make_package_wo_format_conv(
-            raw_node, root_path, weights_priority_order=weights_priority_order
+            raw_node,
+            root_path,
+            weights_priority_order=weights_priority_order,
+            compression=compression,
+            compression_level=compression_level,
         )
         return package_path
 
     @classmethod
     def _make_package_wo_format_conv(
-        cls, raw_node: RawNode, root_path: os.PathLike, weights_priority_order: Optional[Sequence[str]]
+        cls,
+        raw_node: RawNode,
+        root_path: os.PathLike,
+        *,
+        weights_priority_order: Optional[Sequence[str]],
+        compression: int,
+        compression_level: int,
     ):
         package_file_name = raw_node.name
         if raw_node.version is not missing:
@@ -318,7 +332,7 @@ class IO_Base(IO_Interface):
         package_content = cls._get_package_content_wo_format_conv(
             deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
         )
-        cls.make_zip(package_path, package_content)
+        cls.make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
         return package_path
 
     @classmethod
@@ -362,7 +376,7 @@ class IO_Base(IO_Interface):
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
         )  # todo: add check in model validation
-        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)  
+        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)
         # todo: .txt -> .yaml once 'rdf.yaml' is only valid rdf file name in package
 
         def incl_as_local(node: GenericNode, field_name: str) -> GenericNode:
@@ -460,8 +474,10 @@ class IO_Base(IO_Interface):
             return cls.preceding_io_class
 
     @staticmethod
-    def make_zip(path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]]):
-        with ZipFile(path, "w") as myzip:
+    def make_zip(
+        path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
+    ):
+        with ZipFile(path, "w", compression=compression, compresslevel=compression_level) as myzip:
             for arc_name, file_or_str_content in content.items():
                 if isinstance(file_or_str_content, str):
                     myzip.writestr(arc_name, file_or_str_content)
