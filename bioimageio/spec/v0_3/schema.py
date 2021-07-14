@@ -4,6 +4,8 @@ from copy import deepcopy
 
 import stdnum.iso7064.mod_11_2  # todo: remove
 from marshmallow import (
+    EXCLUDE,
+    RAISE,
     Schema,
     ValidationError,
     missing as missing_,
@@ -68,13 +70,18 @@ class RunMode(BioImageIOSchema):
 
 
 class RDF(BioImageIOSchema):
+    class Meta:
+        unknown = EXCLUDE
+
     bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.GeneralFormatVersion)[-1]}
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
 
-The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
-_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by 
+_optional_. _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
+If no specialized RDF exists for the specified type (like model RDF for type='model') additional fields may be 
+specified.
 """
 
     authors_bioimageio_description = (
@@ -149,7 +156,6 @@ E.g. the citation for the model architecture and/or the training data used."""
     )
 
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.GeneralFormatVersion)),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=(
@@ -158,6 +164,17 @@ E.g. the citation for the model architecture and/or the training data used."""
             "Note: The general RDF format version is not to be confused with the Model RDF format version."
         ),
     )
+
+    @validates_schema
+    def format_version_matches_type(self, data, **kwargs):
+        type_ = data["type"]
+        format_version = data["format_version"]
+        if type_ == "model" and format_version in get_args(raw_nodes.ModelFormatVersion):
+            pass
+        elif format_version in get_args(raw_nodes.GeneralFormatVersion):
+            pass
+        else:
+            raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}")
 
     git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
     git_repo = fields.String(
@@ -556,6 +573,9 @@ class ModelParent(BioImageIOSchema):
 
 
 class Model(RDF):
+    class Meta:
+        unknown = RAISE
+
     bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.ModelFormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.

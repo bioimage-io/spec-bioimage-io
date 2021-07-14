@@ -1,4 +1,6 @@
+import dataclasses
 import distutils.version
+import warnings
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -92,6 +94,14 @@ class RDF(Node):
     tags: List[str] = missing
     type: Type = missing
     version: Union[_Missing, distutils.version.StrictVersion] = missing
+
+    def __init__(self, **kwargs):  # todo: improve signature
+        field_names = set(f.name for f in dataclasses.fields(self))
+        known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
+        for k, v in known_kwargs.items():
+            setattr(self, k, v)
+        unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
+        warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
 
     def __post_init__(self):
         if self.type is missing:
