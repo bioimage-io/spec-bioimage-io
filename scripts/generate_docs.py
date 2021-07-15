@@ -132,13 +132,13 @@ def export_markdown_doc_from_schema(path: Path, schema: bioimageio.spec.schema.S
 def export_markdown_docs(folder: Path, spec=bioimageio.spec):
     if spec == bioimageio.spec:
         model_format_version_wo_patch = "latest"
-        general_format_version = "latest"
+        general_format_version_wo_patch = "latest"
     else:
         model_format_version_wo_patch = spec.__name__.split(".")[-1]
-        general_format_version = "v" + get_args(spec.raw_nodes.GeneralFormatVersion)[-1].replace(".", "_")
+        general_format_version_wo_patch = "v" + "_".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:-1])
 
     export_markdown_doc_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.md", spec.schema.Model())
-    export_markdown_doc_from_schema(folder / f"rdf_spec_{general_format_version}.md", spec.schema.RDF())
+    export_markdown_doc_from_schema(folder / f"rdf_spec_{general_format_version_wo_patch}.md", spec.schema.RDF())
 
 
 if __name__ == "__main__":
