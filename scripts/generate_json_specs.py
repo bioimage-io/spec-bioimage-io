@@ -23,7 +23,7 @@ def export_json_schemas(folder: Path, spec=bioimageio.spec):
         general_format_version_wo_patch = "latest"
     else:
         model_format_version_wo_patch = spec.__name__.split(".")[-1]
-        general_format_version_wo_patch = ".".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:2])
+        general_format_version_wo_patch = "v" + "_".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:2])
 
     export_json_schema_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.json", spec.schema.Model())
     export_json_schema_from_schema(folder / f"rdf_spec_{general_format_version_wo_patch}.json", spec.schema.RDF())
