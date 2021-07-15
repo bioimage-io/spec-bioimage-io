@@ -144,8 +144,11 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 ## Changelog
  * **0.3.2**: 
-    - Change `author` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary {name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}
-    - Add `type` field to comply with other bioimage.io RDFs. Only valid value is 'model'.
-    - Add optional `version` field (default 0.1.0) to keep track of model changes.
-    - Add optional `id` field as a unique identifier (the use of [doi](doi.org) is encouraged).
-    - Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/).
+    - Breaking changes
+      - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
+      - Change `authors` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary `{name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}`;
+      - Add a mandatory `type` field to comply with the general RDF. Only valid value is 'model' for model RDF;
+      - Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/);
+    - Other changes
+      - Add optional `version` field (default 0.1.0) to keep track of model changes;
+      - Allow the values in the `attachments` list to be any values besides URI;
