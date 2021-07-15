@@ -58,7 +58,7 @@ For examples, see entries `dataset`/`notebook` in the [ZeroCostDL4Mic](https://g
 
 
 ### Describing models with the unspecific RDF(not recommended, use the Model RDF instead)
-In general, it is discouraged to use the general RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specificationhttpsgithubcombioimage-iospec-bioimage-ioblobgh-pagesmodel_spec_latestmd), the general RDF can be used for discribing AI models.
+In general, it is discouraged to use the general RDF to describe AI models and we recommend to follow the [model RDF spec](#model-resource-description-file-specification) instead. However, in some cases, it is not possible to provide detailed fields defined in the [model RDF spec](#model-resource-description-file-specification), the general RDF can be used for discribing AI models.
 To do that, you need to first set the `type` field to `model`.\
 A basic integration would be simply provide a `download_url` to a zip file (for example, with the model weights, source code or executable binary file) hosted on Github releases, Dropbox, Google Drive etc. For example: 
 ```yaml
