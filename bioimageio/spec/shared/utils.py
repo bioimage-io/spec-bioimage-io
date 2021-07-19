@@ -5,7 +5,6 @@ import os
 import pathlib
 import sys
 import typing
-import uuid
 import warnings
 from functools import singledispatch
 from types import ModuleType
@@ -182,8 +181,10 @@ class SourceNodeTransformer(NodeTransformer):
 
     @staticmethod
     def transform_ResolvedImportableSourceFile(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
+        module_path = resolve_uri(node.source_file)
+        module_name = os.path.splitext(os.path.split(module_path)[1])[0]
         importlib_spec = importlib.util.spec_from_file_location(
-            f"user_imports.{uuid.uuid4().hex}", resolve_uri(node.source_file)
+            module_name, module_path
         )
         assert importlib_spec is not None
         dep = importlib.util.module_from_spec(importlib_spec)
