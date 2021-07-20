@@ -133,7 +133,7 @@
                     "keras_hdf5"
                 ]
             },
-            "default_type": "notebook",
+            "default_type": "application",
             "explore_button_text": "Start Exploring",
             "icon": "https://raw.githubusercontent.com/HenriquesLab/ZeroCostDL4Mic/master/Wiki_files/ZeroCostLogo.png",
             "id": "zero",
@@ -141,7 +141,7 @@
             "name": "ZeroCostDL4Mic",
             "resource_types": [
                 "model",
-                "notebook",
+                "application",
                 "dataset"
             ],
             "splash_feature_list": [],
