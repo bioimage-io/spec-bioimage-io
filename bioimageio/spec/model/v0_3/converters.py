@@ -12,7 +12,7 @@ AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
 
 def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
-    from bioimageio.spec import v0_1
+    from bioimageio.spec.model import v0_1
 
     v0_1.schema.Model().validate(data)
 

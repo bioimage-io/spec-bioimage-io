@@ -1,6 +1,6 @@
-from bioimageio.spec import v0_1
 from bioimageio.spec.shared.io import IO_Base
 from . import converters, nodes, raw_nodes, schema
+from .. import v0_1
 
 
 class IO(IO_Base):

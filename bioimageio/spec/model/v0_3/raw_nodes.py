@@ -4,12 +4,12 @@ import warnings
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Tuple, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec import v0_1
+from bioimageio.spec.model import v0_1
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
