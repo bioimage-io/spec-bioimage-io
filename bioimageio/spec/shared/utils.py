@@ -182,7 +182,7 @@ class SourceNodeTransformer(NodeTransformer):
     @staticmethod
     def transform_ResolvedImportableSourceFile(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
         module_path = resolve_uri(node.source_file)
-        module_name = os.path.splitext(os.path.split(module_path)[1])[0]
+        module_name = f"module_from_source.{module_path.stem}"
         importlib_spec = importlib.util.spec_from_file_location(
             module_name, module_path
         )
