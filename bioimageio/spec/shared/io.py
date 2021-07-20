@@ -43,8 +43,8 @@ class ConvertersModule(Protocol):
 
 
 class RawNodesModule(Protocol):
-    ModelFormatVersion: Any
-    GeneralFormatVersion: Any
+    FormatVersion: Any
+    FormatVersion: Any
     Model: Type[RawNode]
     Collection: Type[RawNode]
 
@@ -79,7 +79,7 @@ class IO_Interface(ABC):
 
     # modules with format version specific implementations of schema, nodes, etc.
     # todo: 'real' abstract class properties for IO_Interface. see IO_Meta draft above
-    preceding_io_class: ClassVar[Optional[IO_Base]]
+    preceding_io_class: ClassVar[Optional[Dict[str, IO_Base]]]
     converters: ClassVar[ConvertersModule]
     schema: ClassVar[SchemaModule]
     raw_nodes: ClassVar[RawNodesModule]
@@ -89,9 +89,9 @@ class IO_Interface(ABC):
     # delegate format version
     #
     @classmethod
-    def get_matching_io_class(cls, data_version: str, type_: str, action_descr: str):
+    def get_matching_io_class(cls, type_: str, data_version: str, action_descr: str):
         """
-        traverses preceding io classes to find IO class that matches 'data_version'.
+        traverses preceding io classes to find IO class that matches 'type_' and 'data_version'.
         This function allows to select the appropriate format specific implementation for a given source.
         IO classes are not aware of any future format versions, only the one preceding itself.
         See IO_Base.load_raw_node() for example use.
@@ -210,7 +210,7 @@ class IO_Base(IO_Interface):
         if update_to_current_format:
             io_cls = cls
         else:
-            io_cls = cls.get_matching_io_class(data.get("format_version"), type_, "load")
+            io_cls = cls.get_matching_io_class(type_, data.get("format_version"), "load")
 
         data = io_cls.maybe_convert(data)
         raw_node: RawNode = io_cls._load_raw_node_from_dict_wo_format_conv(data, type_)
@@ -229,7 +229,7 @@ class IO_Base(IO_Interface):
 
     @classmethod
     def serialize_raw_node_to_dict(cls, raw_node: RawNode) -> dict:
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "serialize")
+        io_cls = cls.get_matching_io_class(raw_node.type, raw_node.format_version, "serialize")
         schema_class = getattr(io_cls.schema, raw_node.type.title())
         if schema_class is None:
             raise NotImplementedError(f"{raw_node.type.title()} schema")
@@ -265,7 +265,7 @@ class IO_Base(IO_Interface):
     ):
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
 
-        matching_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "load")
+        matching_cls = cls.get_matching_io_class(raw_node.type, raw_node.format_version, "load")
 
         node: Node = resolve_raw_node_to_node(
             raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=matching_cls.nodes
@@ -291,7 +291,7 @@ class IO_Base(IO_Interface):
                                     If none of the prioritized weights formats is found all are included.
         """
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "export")
+        io_cls = cls.get_matching_io_class(raw_node.type, raw_node.format_version, "export")
         package_path = io_cls._make_package_wo_format_conv(
             raw_node,
             root_path,
@@ -361,7 +361,7 @@ class IO_Base(IO_Interface):
                                     If none of the prioritized weights formats is found all are included.
         """
         raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "get the package content of")
+        io_cls = cls.get_matching_io_class(raw_node.type, raw_node.format_version, "get the package content of")
         package_content = io_cls._get_package_content_wo_format_conv(
             deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
         )
@@ -467,7 +467,7 @@ class IO_Base(IO_Interface):
         return dict(package)
 
     @classmethod
-    def get_matching_io_class(cls, data_version: str, type_: str, action_descr: str):
+    def get_matching_io_class(cls, type_: str, data_version: str, action_descr: str):
         if not isinstance(data_version, str):
             raise TypeError("missing or invalid 'format_version'")
 
@@ -481,10 +481,10 @@ class IO_Base(IO_Interface):
             )
         elif data_version_wo_patch == current_version_wo_patch:
             return cls
-        elif cls.preceding_io_class is None:
+        elif cls.preceding_io_class is None or type_ not in cls.preceding_io_class:
             raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
         else:
-            return cls.preceding_io_class
+            return cls.preceding_io_class[type_]
 
     @staticmethod
     def make_zip(
@@ -525,7 +525,8 @@ class IO_Base(IO_Interface):
     @classmethod
     def maybe_convert(cls, data: dict):
         if cls.preceding_io_class is not None:
-            data = cls.preceding_io_class.maybe_convert(data)
+            type_ = data.get("type") or data.get("config", {}).get("future", {}).get("type", "model")
+            data = cls.preceding_io_class[type_].maybe_convert(data)
 
         return cls.converters.maybe_convert(data)
 
@@ -554,9 +555,9 @@ class IO_Base(IO_Interface):
     @classmethod
     def get_current_format_version_wo_patch(cls, type_: str):
         if type_ == "model":
-            version_string = get_args(cls.raw_nodes.ModelFormatVersion)[-1]
+            version_string = get_args(cls.raw_nodes.FormatVersion)[-1]
         elif type_ == "collection":
-            version_string = get_args(cls.raw_nodes.GeneralFormatVersion)[-1]
+            version_string = get_args(cls.raw_nodes.FormatVersion)[-1]
         else:
             raise NotImplementedError(type_)
 

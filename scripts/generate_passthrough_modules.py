@@ -4,6 +4,7 @@ import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Iterable
 
 _script_path = Path(__file__).parent
 
@@ -113,7 +114,7 @@ def parse_args():
         )
     )
     p.add_argument("command", choices=["check", "generate"])
-    target_choices = ["general", "model"]
+    target_choices = ["rdf", "model"]
     p.add_argument(
         "--target-rdf",
         choices=target_choices,
@@ -128,12 +129,15 @@ def parse_args():
 
 
 def get_ordered_version_submodules(target_rdf: str):
-    matches = [
-        re.fullmatch(version_module_pattern, f.name)
-        for f in os.scandir(_script_path.parent / "bioimageio" / "spec" / target_rdf)
-        if f.is_dir()
-    ]
-    matches = sorted(filter(None, matches), key=lambda m: (m["major"], m["minor"]))
+    matches: Iterable[re.Match] = filter(
+        None,
+        [
+            re.fullmatch(version_module_pattern, f.name)
+            for f in os.scandir(_script_path.parent / "bioimageio" / "spec" / target_rdf)
+            if f.is_dir()
+        ],
+    )
+    matches = sorted(matches, key=lambda m: (m["major"], m["minor"]))
     return [m.string for m in matches]
 
 

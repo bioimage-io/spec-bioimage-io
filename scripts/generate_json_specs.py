@@ -11,27 +11,37 @@ except ImportError:
     from typing_extensions import get_args  # type: ignore
 
 
-def export_json_schema_from_schema(path: Path, schema: bioimageio.spec.schema.SharedBioImageIOSchema):
-    with path.open("w") as f:
-        json_schema = JSONSchema().dump(schema)
-        json.dump(json_schema, f, indent=4, sort_keys=True)
-
-
-def export_json_schemas(folder: Path, spec=bioimageio.spec):
-    if spec == bioimageio.spec:
-        model_format_version_wo_patch = "latest"
-        general_format_version_wo_patch = "latest"
+def export_json_schema_from_schema(folder: Path, spec):
+    type_or_version = spec.__name__.split(".")[-1]
+    format_version_wo_patch = "_".join(spec.format_version.split(".")[:2])
+    if type_or_version[1:] == format_version_wo_patch:
+        type_ = spec.__name__.split(".")[-2]
     else:
-        model_format_version_wo_patch = "_".join(get_args(spec.raw_nodes.ModelFormatVersion)[-1].split(".")[:2])
-        general_format_version_wo_patch = "_".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:2])
+        format_version_wo_patch = "latest"
+        type_ = type_or_version
 
-    export_json_schema_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.json", spec.schema.Model())
-    export_json_schema_from_schema(folder / f"rdf_spec_{general_format_version_wo_patch}.json", spec.schema.RDF())
+    path = folder / f"{type_}_spec_{format_version_wo_patch}.json"
+
+    if type_ == "rdf":
+        type_ = "RDF"
+    else:
+        type_ = type_.title()
+
+    with path.open("w") as f:
+        json_schema = JSONSchema().dump(getattr(spec.schema, type_)())
+        json.dump(json_schema, f, indent=4, sort_keys=True)
 
 
 if __name__ == "__main__":
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
-    export_json_schemas(dist)
-    export_json_schemas(dist, bioimageio.spec.v0_3)
+    import bioimageio.spec.rdf.v0_2
+    import bioimageio.spec.model.v0_1
+    import bioimageio.spec.model.v0_3
+
+    export_json_schema_from_schema(dist, bioimageio.spec.rdf)
+    export_json_schema_from_schema(dist, bioimageio.spec.rdf.v0_2)
+    export_json_schema_from_schema(dist, bioimageio.spec.model)
+    export_json_schema_from_schema(dist, bioimageio.spec.model.v0_1)
+    export_json_schema_from_schema(dist, bioimageio.spec.model.v0_3)

@@ -3,10 +3,11 @@ raw_nodes 0.1 only implements the Model class (and its requirements) and not oth
 """
 import pathlib
 from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, List, NewType, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Tuple, Union
 
 from marshmallow.utils import _Missing, missing
 
+from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry
 from bioimageio.spec.shared.raw_nodes import ImplicitInputShape, ImplicitOutputShape, Node, SpecURI, URI
 
 try:
@@ -15,20 +16,13 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 
-ModelFormatVersion = Literal["0.1.0"]
-
-
-@dataclass
-class CiteEntry(Node):
-    text: str = missing
-    doi: Union[_Missing, str] = missing
-    url: Union[_Missing, str] = missing
+FormatVersion = Literal["0.1.0"]
 
 
 @dataclass
 class BaseSpec(Node):
     name: str = missing
-    format_version: ModelFormatVersion = missing
+    format_version: FormatVersion = missing
     description: str = missing
     cite: List[CiteEntry] = missing
     authors: List[str] = missing

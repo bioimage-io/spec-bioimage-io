@@ -364,7 +364,7 @@ def build_spec(
     #
     # generate general fields
     #
-    format_version = get_args(spec.raw_nodes.ModelFormatVersion)[-1]
+    format_version = get_args(spec.raw_nodes.FormatVersion)[-1]
     timestamp = datetime.datetime.now()
 
     if source is not None:
@@ -386,7 +386,7 @@ def build_spec(
         "sha256": source_hash,
         "kwargs": model_kwargs,
         "dependencies": dependencies,
-        "links": links
+        "links": links,
     }
     kwargs = {k: v for k, v in optional_kwargs.items() if v is not None}
 

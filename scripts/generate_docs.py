@@ -3,7 +3,7 @@ import inspect
 import typing
 from pathlib import Path
 
-import bioimageio.spec
+import bioimageio.spec.rdf
 
 try:
     from typing import get_args
@@ -25,7 +25,7 @@ class DocNode:
         assert not (self.sub_docs and self.details)
 
 
-def doc_from_schema(obj, spec=bioimageio.spec) -> DocNode:
+def doc_from_schema(obj, spec) -> DocNode:
     if obj is None:
         return DocNode(
             type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
@@ -61,21 +61,21 @@ def doc_from_schema(obj, spec=bioimageio.spec) -> DocNode:
             return f"{manual_order}{int(not nested_field.required)}{name}"
 
         sub_fields = sorted(obj.fields.items(), key=sort_key)
-        sub_docs = [(name, doc_from_schema(nested_field)) for name, nested_field in sub_fields]
+        sub_docs = [(name, doc_from_schema(nested_field, spec)) for name, nested_field in sub_fields]
     else:
         type_name += obj.type_name
         required = obj.required
         maybe_required = obj.bioimageio_maybe_required
         if isinstance(obj, spec.fields.Union):
-            details = [doc_from_schema(opt) for opt in obj._candidate_fields]
+            details = [doc_from_schema(opt, spec) for opt in obj._candidate_fields]
         elif isinstance(obj, spec.fields.Dict):
             details = [
                 dict_descr
-                for dict_descr in [doc_from_schema(obj.key_field), doc_from_schema(obj.value_field)]
+                for dict_descr in [doc_from_schema(obj.key_field, spec), doc_from_schema(obj.value_field, spec)]
                 if dict_descr.description
             ]
         elif isinstance(obj, spec.fields.List):
-            inner_doc = doc_from_schema(obj.inner)
+            inner_doc = doc_from_schema(obj.inner, spec)
             if inner_doc.description or inner_doc.sub_docs or inner_doc.details:
                 details = [inner_doc]
         else:
@@ -123,27 +123,37 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
     return f"{type_name}{doc.description}\n{sub_doc}"
 
 
-def export_markdown_doc_from_schema(path: Path, schema: bioimageio.spec.schema.SharedBioImageIOSchema) -> None:
-    doc = doc_from_schema(schema)
+def export_markdown_doc(folder: Path, spec) -> None:
+    type_or_version = spec.__name__.split(".")[-1]
+    format_version_wo_patch = "_".join(spec.format_version.split(".")[:2])
+    if type_or_version[1:] == format_version_wo_patch:
+        type_ = spec.__name__.split(".")[-2]
+    else:
+        format_version_wo_patch = "latest"
+        type_ = type_or_version
+
+    path = folder / f"{type_}_spec_{format_version_wo_patch}.md"
+
+    if type_ == "rdf":
+        type_ = "RDF"
+    else:
+        type_ = type_.title()
+
+    doc = doc_from_schema(getattr(spec.schema, type_)(), spec)
     md_doc = markdown_from_doc(doc)
     path.write_text(md_doc, encoding="utf-8")
 
 
-def export_markdown_docs(folder: Path, spec=bioimageio.spec):
-    if spec == bioimageio.spec:
-        model_format_version_wo_patch = "latest"
-        general_format_version_wo_patch = "latest"
-    else:
-        model_format_version_wo_patch = "_".join(get_args(spec.raw_nodes.ModelFormatVersion)[-1].split(".")[:2])
-        general_format_version_wo_patch = "_".join(get_args(spec.raw_nodes.GeneralFormatVersion)[-1].split(".")[:2])
-
-    export_markdown_doc_from_schema(folder / f"model_spec_{model_format_version_wo_patch}.md", spec.schema.Model())
-    export_markdown_doc_from_schema(folder / f"rdf_spec_{general_format_version_wo_patch}.md", spec.schema.RDF())
-
-
 if __name__ == "__main__":
+    import bioimageio.spec.model.v0_1
+    import bioimageio.spec.model.v0_3
+    import bioimageio.spec.rdf.v0_2
+
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
-    export_markdown_docs(dist)
-    export_markdown_docs(dist, bioimageio.spec.v0_3)
+    export_markdown_doc(dist, bioimageio.spec.model)
+    export_markdown_doc(dist, bioimageio.spec.model.v0_1)
+    export_markdown_doc(dist, bioimageio.spec.model.v0_3)
+    export_markdown_doc(dist, bioimageio.spec.rdf)
+    export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)
