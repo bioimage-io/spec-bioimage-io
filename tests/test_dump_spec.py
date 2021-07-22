@@ -1,7 +1,7 @@
 from bioimageio.spec.shared import yaml
 
 
-def test_spec_roundtrip(unet2d_nuclei_broad_any_minor_path):
+def test_spec_round_trip(unet2d_nuclei_broad_any_minor_path):
     from bioimageio.spec import load_raw_node, serialize_raw_node_to_dict
 
     data = yaml.load(unet2d_nuclei_broad_any_minor_path)
