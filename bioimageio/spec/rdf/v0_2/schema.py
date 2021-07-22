@@ -1,11 +1,11 @@
 import warnings
 
-import stdnum.iso7064.mod_11_2  # todo: remove
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
-from bioimageio.spec.shared.common import get_args, get_args_flat, get_patched_format_version
+from bioimageio.spec.shared.common import get_args, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 
 
@@ -20,7 +20,7 @@ class Author(BioImageIOSchema):
         validate=[
             field_validators.Length(19),
             lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
-            lambda oid: stdnum.iso7064.mod_11_2.is_valid(oid.replace("-", "")),
+            lambda oid: is_valid_orcid_id(oid.replace("-", "")),
         ],
         bioimageio_description="[orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id "
         "in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid]("

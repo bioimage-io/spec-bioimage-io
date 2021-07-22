@@ -31,7 +31,6 @@ setup(
         "marshmallow>=3.6.0,<4.0",
         "marshmallow-jsonschema",
         "marshmallow-union",
-        "python-stdnum",
         "requests",
         "ruamel.yaml",
         "typer",
