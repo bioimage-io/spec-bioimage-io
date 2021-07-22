@@ -1,6 +1,6 @@
 import pytest
 
-from bioimageio.spec import raw_nodes
+from bioimageio.spec.shared import raw_nodes
 
 
 def test_uri():

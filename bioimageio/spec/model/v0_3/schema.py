@@ -380,6 +380,8 @@ class ModelParent(BioImageIOSchema):
 
 
 class Model(rdf.schema.RDF):
+    raw_nodes = raw_nodes
+
     class Meta:
         unknown = RAISE
 

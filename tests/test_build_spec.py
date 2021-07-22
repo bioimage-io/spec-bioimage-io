@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from bioimageio.spec import schema
-from bioimageio.spec.converters import maybe_convert
+from bioimageio.spec.model import schema
+from bioimageio.spec.model.converters import maybe_convert
 from bioimageio.spec.shared import yaml
 
 

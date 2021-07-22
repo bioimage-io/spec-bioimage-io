@@ -8,6 +8,7 @@ import numpy as np
 from ruamel.yaml import YAML
 
 import bioimageio.spec as spec
+import bioimageio.spec.model as model_spec
 
 try:
     from typing import get_args
@@ -27,7 +28,7 @@ def _get_local_path(uri, root=None):
             uri = uri2
             is_local_path = True
     if not is_local_path:
-        uri = spec.fields.URI().deserialize(uri)
+        uri = spec.shared.fields.URI().deserialize(uri)
         uri = spec.shared.download_uri_to_local_path(uri).as_posix()
     return uri
 
@@ -73,23 +74,25 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
     else:
         attachments = {}
 
-    weight_types = spec.raw_nodes.WeightsFormat
+    weight_types = model_spec.raw_nodes.WeightsFormat
     if weight_type == "pytorch_state_dict":
         # pytorch-state-dict -> we need a source
         assert source is not None
-        weights = spec.raw_nodes.PytorchStateDictWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = model_spec.raw_nodes.PytorchStateDictWeightsEntry(
+            source=weight_uri, sha256=weight_hash, **attachments
+        )
         language = "python"
         framework = "pytorch"
 
     elif weight_type == "onnx":
-        weights = spec.raw_nodes.OnnxWeightsEntry(
+        weights = model_spec.raw_nodes.OnnxWeightsEntry(
             source=weight_uri, sha256=weight_hash, opset_version=kwargs.get("opset_version", 12), **attachments
         )
         language = None
         framework = None
 
     elif weight_type == "pytorch_script":
-        weights = spec.raw_nodes.PytorchScriptWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = model_spec.raw_nodes.PytorchScriptWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         if source is None:
             language = None
             framework = None
@@ -98,7 +101,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
             framework = "pytorch"
 
     elif weight_type == "keras_hdf5":
-        weights = spec.raw_nodes.KerasHdf5WeightsEntry(
+        weights = model_spec.raw_nodes.KerasHdf5WeightsEntry(
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
@@ -108,7 +111,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         framework = "tensorflow"
 
     elif weight_type == "tensorflow_saved_model_bundle":
-        weights = spec.raw_nodes.TensorflowSavedModelBundleWeightsEntry(
+        weights = model_spec.raw_nodes.TensorflowSavedModelBundleWeightsEntry(
             source=weight_uri,
             sha256=weight_hash,
             tensorflow_version=kwargs.get("tensorflow_version", "1.15"),
@@ -118,7 +121,7 @@ def _get_weights(weight_uri, weight_type, source, root, **kwargs):
         framework = "tensorflow"
 
     elif weight_type == "tensorflow_js":
-        weights = spec.raw_nodes.TensorflowJsWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
+        weights = model_spec.raw_nodes.TensorflowJsWeightsEntry(source=weight_uri, sha256=weight_hash, **attachments)
         language = None
         framework = None
 
@@ -171,7 +174,7 @@ def _get_input_tensor(test_in, name, step, min_shape, data_range, axes, preproce
     if preprocessing is not None:
         kwargs["preprocessing"] = preprocessing
 
-    inputs = spec.raw_nodes.InputTensor(
+    inputs = model_spec.raw_nodes.InputTensor(
         name="input" if name is None else name,
         data_type=str(test_in.dtype),
         axes=axes,
@@ -202,7 +205,7 @@ def _get_output_tensor(test_out, name, reference_input, scale, offset, axes, dat
     if halo is not None:
         kwargs["halo"] = halo
 
-    outputs = spec.raw_nodes.OutputTensor(
+    outputs = model_spec.raw_nodes.OutputTensor(
         name="output" if name is None else name,
         data_type=str(test_out.dtype),
         axes=axes,
@@ -214,12 +217,12 @@ def _get_output_tensor(test_out, name, reference_input, scale, offset, axes, dat
 
 
 def _build_authors(authors: List[Dict[str, str]]):
-    return [spec.raw_nodes.Author(**a) for a in authors]
+    return [model_spec.raw_nodes.Author(**a) for a in authors]
 
 
 # TODO The citation entry should be improved so that we can properly derive doi vs. url
 def _build_cite(cite: Dict[str, str]):
-    citation_list = [spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()]
+    citation_list = [model_spec.raw_nodes.CiteEntry(text=k, url=v) for k, v in cite.items()]
     return citation_list
 
 
@@ -274,7 +277,8 @@ def build_spec(
     links: Optional[List[str]] = None,
     **weight_kwargs,
 ):
-    """Create a bioimageio.spec.schema.Model object that can be used to serialize a model.yaml in the bioimage.io format.
+    """Create a bioimageio.spec.model.raw_nodes.Model object that can be used to serialize a model.yaml
+    in the bioimage.io format.
 
     Example usage:
     ```
@@ -364,11 +368,11 @@ def build_spec(
     #
     # generate general fields
     #
-    format_version = get_args(spec.raw_nodes.FormatVersion)[-1]
+    format_version = get_args(model_spec.raw_nodes.FormatVersion)[-1]
     timestamp = datetime.datetime.now()
 
     if source is not None:
-        source = spec.fields.ImportableSource().deserialize(source)
+        source = spec.shared.fields.ImportableSource().deserialize(source)
 
     # optional kwargs, don't pass them if none
     optional_kwargs = {
@@ -394,11 +398,11 @@ def build_spec(
     authors = _build_authors(authors)
     cite = _build_cite(cite)
     documentation = Path(documentation)
-    covers = [spec.fields.URI().deserialize(uri) for uri in covers]
-    test_inputs = [spec.fields.URI().deserialize(uri) for uri in test_inputs]
-    test_outputs = [spec.fields.URI().deserialize(uri) for uri in test_outputs]
+    covers = [spec.shared.fields.URI().deserialize(uri) for uri in covers]
+    test_inputs = [spec.shared.fields.URI().deserialize(uri) for uri in test_inputs]
+    test_outputs = [spec.shared.fields.URI().deserialize(uri) for uri in test_outputs]
 
-    model = spec.raw_nodes.Model(
+    model = model_spec.raw_nodes.Model(
         format_version=format_version,
         name=name,
         description=description,
@@ -419,8 +423,8 @@ def build_spec(
 
     # serialize and deserialize the raw_nodes.Model to
     # check that all fields are well formed
-    serialized = spec.schema.Model().dump(model)
-    model = spec.schema.Model().load(serialized)
+    serialized = model_spec.schema.Model().dump(model)
+    model = model_spec.schema.Model().load(serialized)
 
     return model
 
@@ -430,14 +434,14 @@ def add_weights(model, weight_uri: str, root: Optional[str] = None, weight_type:
     new_weights = _get_weights(weight_uri, weight_type, None, root, **weight_kwargs)[0]
     model.weights.update(new_weights)
 
-    serialized = spec.schema.Model().dump(model)
-    model = spec.schema.Model().load(serialized)
+    serialized = model_spec.schema.Model().dump(model)
+    model = model_spec.schema.Model().load(serialized)
 
     return model
 
 
 def serialize_spec(model, out_path):  # TODO change name to include model (see build_model_spec)
     yaml = YAML(typ="safe")
-    serialized = spec.schema.Model().dump(model)
+    serialized = model_spec.schema.Model().dump(model)
     with open(out_path, "w") as f:
         yaml.dump(serialized, f)

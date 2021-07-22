@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from marshmallow import ValidationError
 
-from bioimageio.spec import load_node
+from bioimageio.spec.model import load_node
 
 
 def test_load_non_existing_spec():

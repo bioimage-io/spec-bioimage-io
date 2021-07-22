@@ -1,3 +1,5 @@
+from . import v0_2
+
 # autogen: start
 from bioimageio.spec.shared import fields
 from . import nodes, raw_nodes, schema, utils

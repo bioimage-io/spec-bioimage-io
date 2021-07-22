@@ -1,4 +1,4 @@
-from bioimageio.spec import nodes, raw_nodes, schema
+from bioimageio.spec.model import nodes, raw_nodes, schema
 from bioimageio.spec.shared.common import get_args
 
 
