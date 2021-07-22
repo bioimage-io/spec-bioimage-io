@@ -6,8 +6,8 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.model import v0_1
 from bioimageio.spec.rdf import v0_2 as rdf
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
@@ -23,47 +23,28 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 
-FormatVersion = Literal[  # type: ignore  # Param 1 of Literal cannot be of type "Any"
-    v0_1.raw_nodes.FormatVersion, "0.3.0", "0.3.1", "0.3.2"  # newest format needs to be last (used in __init__.py)
-]
+FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in __init__.py)
+
+# same as general RDF
+Badge = Badge
+CiteEntry = CiteEntry
 
 
-Dependencies = str
+# overwritten general RDF
+Type = Literal["model"]
+
+# model specific
+Axes = str
 Framework = Literal["pytorch", "tensorflow"]
+ImportableSource = Union[ImportableModule, ImportableSourceFile]
 Language = Literal["python", "java"]
-PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
-Type = str
+PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
-
-
-Axes = str
-
-
-@dataclass
-class CiteEntry(v0_1.raw_nodes.CiteEntry):
-    pass
-
-
-@dataclass
-class Author(Node):
-    name: str = missing
-    affiliation: Union[_Missing, str] = missing
-    orcid: Union[_Missing, str] = missing
-
-
-@dataclass
-class Badge(Node):
-    label: str = missing
-    icon: Union[_Missing, str] = missing
-    url: Union[_Missing, URI] = missing
-
-
-ImportableSource = Union[ImportableModule, ImportableSourceFile]
 
 
 @dataclass

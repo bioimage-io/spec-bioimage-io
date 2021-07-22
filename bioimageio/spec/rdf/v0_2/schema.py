@@ -4,7 +4,7 @@ import stdnum.iso7064.mod_11_2  # todo: remove
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
-from bioimageio.spec.shared.common import get_args, get_args_flat
+from bioimageio.spec.shared.common import get_args, get_args_flat, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
 
@@ -154,15 +154,14 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     @validates_schema
     def format_version_matches_type(self, data, **kwargs):
-        import bioimageio.spec
-
         format_version = data["format_version"]
         type_ = data["type"]
         try:
-            version_mod_name = "v" + "_".join(format_version.split(".")[:2])
-            latest_format_version = getattr(getattr(bioimageio.spec, type_), version_mod_name).format_version
-            if format_version.split(".") > latest_format_version:
-                raise ValueError(f"Unknown format_version {format_version} (latest: {latest_format_version})")
+            patched_format_version = get_patched_format_version(type_, format_version)
+            if format_version.split(".") > patched_format_version.split("."):
+                raise ValueError(
+                    f"Unknown format_version {format_version} (latest patch: {patched_format_version}; latest format version: )"
+                )
         except Exception as e:
             raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}. (error: {e})")
 

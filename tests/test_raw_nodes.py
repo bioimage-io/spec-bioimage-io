@@ -36,13 +36,13 @@ def test_uri_is_absolute_path():
 
 
 def test_general_rdf_accepts_unknown_fields():
-    from bioimageio.spec.raw_nodes import RDF
+    from bioimageio.spec.rdf.raw_nodes import RDF
 
     RDF(unknown_weird_test_field="shouldn't be here")
 
 
 def test_model_does_not_accept_unknown_fields():
-    from bioimageio.spec.raw_nodes import Model
+    from bioimageio.spec.model.raw_nodes import Model
 
     with pytest.raises(TypeError):
-        Model(unknown_weird_test_field="shouldn't be here")
+        Model(unknown_weird_test_field="shouldn't be here")  # noqa

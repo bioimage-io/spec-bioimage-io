@@ -5,7 +5,7 @@ from marshmallow import Schema, ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
-from bioimageio.spec.model.raw_nodes import OutputTensor
+from bioimageio.spec.model import schema
 from bioimageio.spec.shared import fields, raw_nodes
 
 
@@ -72,7 +72,7 @@ class TestShape:
     def test_explicit_output_shape(self):
         data = [1, 2, 3]
         expected = data
-        actual = OutputTensor().fields["shape"].deserialize(data)
+        actual = schema.OutputTensor().fields["shape"].deserialize(data)
         assert expected == actual
 
     def test_min_step_input_shape(self):

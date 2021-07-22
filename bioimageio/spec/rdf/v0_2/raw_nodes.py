@@ -31,9 +31,6 @@ WeightsFormat = Literal[
 ]
 
 
-Axes = str
-
-
 @dataclass
 class CiteEntry(Node):
     text: str = missing
