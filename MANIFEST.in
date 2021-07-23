@@ -1,4 +1,0 @@
-include bioimageio/spec/VERSION
-include README.md
-include LICENSE
-include bioimageio/spec/static/licenses.json

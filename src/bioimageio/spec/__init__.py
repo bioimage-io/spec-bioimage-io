@@ -1,5 +1,4 @@
-import json
-import pathlib
+import importlib_metadata
 
 from . import model, rdf, shared
 from .build_spec import add_weights, build_spec, serialize_spec
@@ -14,5 +13,4 @@ from .delegator import (
     serialize_raw_node_to_dict,
 )
 
-with (pathlib.Path(__file__).parent / "VERSION").open() as f:
-    __version__ = json.load(f)["version"]
+__version__ = importlib_metadata.version(__package__)

@@ -2,10 +2,11 @@
 
 package:
   name: bioimageio.spec
-  version: {{ setup_py_data['version'] }}
+  version: {{ GIT_DESCRIBE_TAG }}
 
 source:
   path: ..
+  git_url: ..
 
 requirements:
   build:
@@ -19,6 +20,7 @@ requirements:
 
 
 build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
   noarch: python
   entry_points:
     {% for ep in setup_py_data['entry_points']['console_scripts'] %}

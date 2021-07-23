@@ -1,3 +1,21 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 line-length = 120
-target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pylint]
+max-line-length = 120
+
+[tool.pytest.ini_options]
+addopts = "--capture=no --doctest-modules"
+testpaths = ["tests"]
+
+[tool.setuptools_scm]
