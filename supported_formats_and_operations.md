@@ -28,7 +28,7 @@ Which consumer software supports which format?
 
 # Pre- and postprocessing
 
-The supported operations that are valid in pre- or postprocessing. IMPORTANT: these operations should always return float32 tensors, so that their output can be consumed by the models.
+The supported operations that are valid in pre- or postprocessing. IMPORTANT: these operations must return float32 tensors, so that their output can be consumed by the models.
 
 - `binarize` binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below the threshold to zero
   - `kwargs`
@@ -72,7 +72,7 @@ Which consumer supports which pre-/postprocessing operation?
 
 ## Preprocessing
 
-Additional preprocessing operations. IMPORTANT: these operations should always return float32 tensors, so that their output can be consumed by the models.
+Additional preprocessing operations. IMPORTANT: these operations must return float32 tensors, so that their output can be consumed by the models.
 
 - `scale_range` normalize the tensor with percentile normalization
   - `kwargs`
