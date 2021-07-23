@@ -33,6 +33,9 @@ def _get_matching_io_class(type_: str, data_version: str = "latest") -> IO_Inter
 def load_raw_node(
     source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
 ) -> RawNode:
+    """load a raw python representation from a BioImage.IO resource description file (RDF).
+    Use `load_node` for a more convenient representation.
+    """
     data, type_ = resolve_rdf_source_and_type(source)
     io_cls = _get_matching_io_class(
         type_, "latest" if update_to_current_format else data.get("format_version", "latest")
@@ -91,6 +94,10 @@ def load_node(
     root_path: os.PathLike = pathlib.Path(),
     update_to_current_format: bool = True,
 ) -> Node:
+    """load a BioImage.IO resource description file (RDF).
+    This includes some transformations for convenience, e.g. importing `source`.
+    Use `load_raw_node` to obtain a raw representation instead.
+    """
     raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
 
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
@@ -107,9 +114,15 @@ def export_package(
     compression_level: int = 1,
 ) -> pathlib.Path:
     """
-    weights_priority_order: Only used for model RDFs.
-                                If given only the first matching weights format present in the model is included.
+    Args:
+        source: raw node, path, URI or raw data as dict
+        root_path:  for relative paths (only used if source is RawNode or dict)
+        update_to_current_format: Convert not only the patch version, but also the major and minor version.
+        weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+
+    Returns:
+        path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
     """
     raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
@@ -130,8 +143,15 @@ def get_package_content(
     weights_priority_order: Optional[Sequence[str]] = None,
 ) -> Dict[str, Union[str, pathlib.Path]]:
     """
-    weights_priority_order: If given only the first weights format present in the model is included.
+    Args:
+        source: raw node, path, URI or raw data as dict
+        root_path:  for relative paths (only used if source is RawNode or dict)
+        update_to_current_format: Convert not only the patch version, but also the major and minor version.
+        weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+
+    Returns:
+        Package content of local file paths or text content keyed by file names.
     """
     raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
@@ -141,16 +161,21 @@ def get_package_content(
 def import_package_as_raw_node(
     source: Union[os.PathLike, str, raw_nodes.URI], update_to_current_format: bool = False
 ) -> RawNode:
-    rdf_path = extract_package(source)
+    """import a bioimage.io package (a zip file with an rdf.yaml and therein referenced files) as a raw node
+    (e.g. a raw model node).
+    """
+    rdf_path = extract_zip(source)
     return load_raw_node(rdf_path, update_to_current_format=update_to_current_format)
 
 
 def import_package(source: Union[os.PathLike, str, raw_nodes.URI], update_to_current_format: bool = False) -> Node:
-    rdf_path = extract_package(source)
+    """import a bioimage.io package (a zip file with an rdf.yaml and therein referenced files) (e.g. as a model node)"""
+    rdf_path = extract_zip(source)
     return load_node(rdf_path, update_to_current_format=update_to_current_format)
 
 
-def extract_package(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+    """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
     BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
