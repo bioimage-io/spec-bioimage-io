@@ -7,6 +7,8 @@ from .delegator import (
     ensure_raw_node,
     export_package,
     get_package_content,
+    import_package,
+    import_package_as_raw_node,
     load_node,
     load_raw_node,
     save_raw_node,
