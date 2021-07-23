@@ -124,7 +124,11 @@ class IO_Interface(ABC):
     # RDF|raw node -> (evaluated) node
     @classmethod
     def load_node(
-        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
+        cls,
+        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        *,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Node:
         """
         Load a node object from a [model] RDF 'source'.
@@ -239,9 +243,21 @@ class IO_Base(IO_Interface):
 
     @classmethod
     def load_node(
-        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
+        cls,
+        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        *,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ):
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
+
+        if weights_priority_order is not None:
+            for wf in weights_priority_order:
+                if wf in raw_node.weights:
+                    raw_node.weights = {wf: raw_node.weights[wf]}
+                    break
+            else:
+                raise ValueError(f"Not found any of the specified weights formats ({weights_priority_order})")
 
         node: Node = resolve_raw_node_to_node(
             raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
