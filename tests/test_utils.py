@@ -5,8 +5,7 @@ from typing import Any
 import pytest
 from ruamel.yaml import YAML
 
-from bioimageio.spec import load_node, load_raw_node, nodes, raw_nodes, utils
-from bioimageio.spec.shared import utils
+from bioimageio.spec.shared import nodes, raw_nodes, utils
 
 yaml = YAML(typ="safe")
 
@@ -81,17 +80,21 @@ def test_resolve_directory_uri(tmpdir):
 
 
 def test_load_raw_model(unet2d_nuclei_broad_any_path):
+    from bioimageio.spec import load_raw_node
+
     raw_model = load_raw_node(unet2d_nuclei_broad_any_path)
     assert raw_model
 
 
 def test_load_model(unet2d_nuclei_broad_any_path):
+    from bioimageio.spec import load_node
+
     model = load_node(unet2d_nuclei_broad_any_path)
     assert model
 
 
 def test_uri_available():
-    from bioimageio.spec.shared.utils import uri_available
+    pass
 
 
 def test_all_uris_available():

@@ -2,7 +2,9 @@ import os
 import re
 import sys
 from argparse import ArgumentParser
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Iterable
 
 _script_path = Path(__file__).parent
 
@@ -12,16 +14,22 @@ autogen_text = autogen_header + "from .{spec_version}.{stem} import *\n"
 version_module_pattern = r"v(?P<major>\d+)_(?P<minor>\d+)"
 
 
-def get_config(args):
-    return {
-        "main_module_path": (_script_path.parent / "bioimageio" / "spec").resolve(),
-        "versioned_module_path": (_script_path.parent / "bioimageio" / "spec" / args.target_version).resolve(),
-        "target_version": args.target_version,
-    }
+@dataclass
+class Config:
+    target_rdf: str
+    target_version: str
+    main_module_path: Path = field(init=False)
+    versioned_module_path: Path = field(init=False)
+
+    def __post_init__(self):
+        self.main_module_path = (_script_path.parent / "bioimageio" / "spec" / self.target_rdf).resolve()
+        self.versioned_module_path = (
+            _script_path.parent / "bioimageio" / "spec" / self.target_rdf / self.target_version
+        ).resolve()
 
 
-def remove_autogen_mods(config):
-    for f in config["main_module_path"].glob("*.py"):
+def remove_autogen_mods(config: Config):
+    for f in config.main_module_path.glob("*.py"):
         mod_txt = f.read_text()
         m = re.match(autogen_header + rf"from \.{version_module_pattern}\.", mod_txt)
         if m:
@@ -29,13 +37,13 @@ def remove_autogen_mods(config):
             f.unlink()
 
 
-def updated_init_content(config) -> str:
+def updated_init_content(config: Config) -> str:
     restr = "# autogen: start\n.*# autogen: stop"
 
-    init_file = config["main_module_path"] / "__init__.py"
+    init_file = config.main_module_path / "__init__.py"
     assert init_file.exists()
-    versioned_init = config["versioned_module_path"] / "__init__.py"
-    module_init = config["main_module_path"] / "__init__.py"
+    versioned_init = config.versioned_module_path / "__init__.py"
+    module_init = config.main_module_path / "__init__.py"
     vx_init = module_init.read_text()
     if not re.findall(restr, vx_init, flags=re.DOTALL):
         raise RuntimeError(
@@ -44,18 +52,18 @@ def updated_init_content(config) -> str:
     return re.sub(restr, f"# autogen: start\n{versioned_init.read_text()}\n# autogen: stop", vx_init, flags=re.DOTALL)
 
 
-def update_init(config):
-    module_init = config["main_module_path"] / "__init__.py"
+def update_init(config: Config):
+    module_init = config.main_module_path / "__init__.py"
     module_init.write_text(updated_init_content(config))
 
 
-def add_autogen_mods(config):
-    for f in config["versioned_module_path"].glob("*.py"):
+def add_autogen_mods(config: Config):
+    for f in config.versioned_module_path.glob("*.py"):
         if f.name.startswith("__"):
             continue
 
-        tmp = config["main_module_path"] / f.name
-        tmp.write_text(autogen_text.format(spec_version=config["target_version"], stem=f.stem))
+        tmp = config.main_module_path / f.name
+        tmp.write_text(autogen_text.format(spec_version=config.target_version, stem=f.stem))
 
 
 def is_valid_generated_module(module_file: Path, spec_version: str):
@@ -66,22 +74,19 @@ def is_valid_generated_module(module_file: Path, spec_version: str):
     return False
 
 
-def check_main(args) -> int:
-    print(f"Checking `bioimageio.spec` modules to link against {args.target_version}.")
-    config = get_config(args)
-    print(
-        f"Assuming module location {config['main_module_path']}, with target spec in {config['versioned_module_path']}."
-    )
+def check_main(config) -> int:
+    print(f"Checking `bioimageio.spec` modules to link against {config.target_version}.")
+    print(f"Assuming module location {config.main_module_path}, with target spec in {config.versioned_module_path}.")
 
     ret = 0
-    for f in config["versioned_module_path"].glob("*.py"):
+    for f in config.versioned_module_path.glob("*.py"):
         if f.name == "__init__.py":
             continue
-        if not (config["main_module_path"] / f.name).exists() or not is_valid_generated_module(
-            config["main_module_path"] / f.name, config["target_version"]
+        if not (config.main_module_path / f.name).exists() or not is_valid_generated_module(
+            config.main_module_path / f.name, config.target_version
         ):
             ret += 1
-            print(f"Could not find {config['main_module_path'] / f.name}")
+            print(f"Could not find {config.main_module_path / f.name}")
 
     if ret == 0:
         print("All seems fine.")
@@ -90,10 +95,9 @@ def check_main(args) -> int:
     return ret
 
 
-def generate_main(args) -> int:
-    print(f"Generating `bioimageio.spec` modules to link against {args.target_version}.")
+def generate_main(config: Config) -> int:
+    print(f"Generating `bioimageio.spec` modules to link against {config.target_version}.")
 
-    config = get_config(args)
     remove_autogen_mods(config)
     add_autogen_mods(config)
     update_init(config)
@@ -110,45 +114,46 @@ def parse_args():
         )
     )
     p.add_argument("command", choices=["check", "generate"])
+    target_choices = ["rdf", "model"]
     p.add_argument(
-        "--target-version",
-        default="latest",
-        help=(
-            "Name of the version submodule. This submodule will be made available in `bioimageio.spec`. Example 'v0_3'."
-        ),
+        "--target-rdf",
+        choices=target_choices,
+        default=list(target_choices),
+        help="RDF submodules for which the latest format version is made available in `bioimageio.spec.<target-rdf>`.",
         type=str,
+        action="append",
     )
 
     args = p.parse_args()
     return args
 
 
-def get_ordered_version_submodules():
-    matches = [
-        re.fullmatch(version_module_pattern, f.name)
-        for f in os.scandir(_script_path.parent / "bioimageio" / "spec")
-        if f.is_dir()
-    ]
-    matches = sorted(filter(None, matches), key=lambda m: (m["major"], m["minor"]))
+def get_ordered_version_submodules(target_rdf: str):
+    matches: Iterable[re.Match] = filter(
+        None,
+        [
+            re.fullmatch(version_module_pattern, f.name)
+            for f in os.scandir(_script_path.parent / "bioimageio" / "spec" / target_rdf)
+            if f.is_dir()
+        ],
+    )
+    matches = sorted(matches, key=lambda m: (m["major"], m["minor"]))
     return [m.string for m in matches]
-
-
-def resolve_latest_target_version(args):
-    if args.target_version == "latest":
-        args.target_version = get_ordered_version_submodules()[-1]
-
-    return args
 
 
 def main():
     args = parse_args()
-    args = resolve_latest_target_version(args)
-    if args.command == "check":
-        return check_main(args)
-    elif args.command == "generate":
-        return generate_main(args)
-    else:
-        raise NotImplementedError(args.command)
+    code = 0
+    for target_rdf in args.target_rdf:
+        config = Config(target_rdf=target_rdf, target_version=get_ordered_version_submodules(target_rdf)[-1])
+        if args.command == "check":
+            code += check_main(config)
+        elif args.command == "generate":
+            code += generate_main(config)
+        else:
+            raise NotImplementedError(args.command)
+
+    return code
 
 
 if __name__ == "__main__":

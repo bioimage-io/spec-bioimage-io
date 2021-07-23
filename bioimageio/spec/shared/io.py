@@ -8,13 +8,13 @@ import warnings
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
-from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from marshmallow import ValidationError, missing
 
 from . import nodes, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, yaml
+from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, get_class_name_from_type, yaml
 from .raw_nodes import ImportableSourceFile
 from .schema import SharedBioImageIOSchema
 from .utils import (
@@ -27,7 +27,7 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-    import bioimageio.spec as current_spec
+    import bioimageio.spec.model
 
 
 # placeholders for versioned classes
@@ -43,8 +43,8 @@ class ConvertersModule(Protocol):
 
 
 class RawNodesModule(Protocol):
-    ModelFormatVersion: Any
-    GeneralFormatVersion: Any
+    FormatVersion: Any
+    FormatVersion: Any
     Model: Type[RawNode]
     Collection: Type[RawNode]
 
@@ -72,9 +72,9 @@ class SchemaModule(Protocol):
 # class IO_Interface(metaclass=IO_Meta):
 class IO_Interface(ABC):
     """
-    bioimageio.spec has submodules for each minor format version to validate and work with previously released
-    format versions. To share io code across versions the IO_Base class implements format version independent io
-    utilities.
+    each bioimageio.spec type submodule has submodules for released minor format versions to validate and work with
+    previously released format versions. Each version submodule implements its own IO class. The IO_Base class is used
+    to share generic io code across types and versions (see below).
     """
 
     # modules with format version specific implementations of schema, nodes, etc.
@@ -85,46 +85,14 @@ class IO_Interface(ABC):
     raw_nodes: ClassVar[RawNodesModule]
     nodes: ClassVar[RawNodesModule]
 
-    #
-    # delegate format version
-    #
-    @classmethod
-    def get_matching_io_class(cls, data_version: str, type_: str, action_descr: str):
-        """
-        traverses preceding io classes to find IO class that matches 'data_version'.
-        This function allows to select the appropriate format specific implementation for a given source.
-        IO classes are not aware of any future format versions, only the one preceding itself.
-        See IO_Base.load_raw_node() for example use.
-        """
-        raise NotImplementedError
-
-    @staticmethod
-    def get_version_tuple_wo_patch(version: str):
-        """Extract (MAJOR, MINOR) from strict version string 'MARJO.MINOR.PATCH'."""
-        raise NotImplementedError
-
-    @classmethod
-    def get_current_format_version_wo_patch(cls, type_: str):
-        """Return (MAJOR, MINOR) of IO 'cls' format version for type 'type_'."""
-        raise NotImplementedError
-
-    #
-    # RDF <-> raw node
-    #
+    # RDF -> raw node
     @classmethod
     @abstractmethod
-    def load_raw_node(
-        cls, source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
-    ) -> RawNode:
+    def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
         raise NotImplementedError
 
     @classmethod
-    def ensure_raw_node(
-        cls,
-        raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode],
-        root_path: os.PathLike,
-        update_to_current_format: bool,
-    ):
+    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
         raise NotImplementedError
 
     @classmethod
@@ -137,6 +105,7 @@ class IO_Interface(ABC):
         """
         raise NotImplementedError
 
+    # raw node -> RDF
     @classmethod
     def serialize_raw_node_to_dict(cls, raw_node: RawNode) -> dict:
         """Serialize a `raw_nodes.<Model|Collection|...>` object with marshmallow to a plain dict with only basic data types"""
@@ -152,15 +121,10 @@ class IO_Interface(ABC):
         """Serialize a raw model to a new yaml file at 'path'"""
         raise NotImplementedError
 
-    #
-    # RDF|raw node <-> (evaluated) node
-    #
+    # RDF|raw node -> (evaluated) node
     @classmethod
     def load_node(
-        cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
-        root_path: os.PathLike = pathlib.Path(),
-        update_to_current_format: bool = True,
+        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
     ) -> Node:
         """
         Load a node object from a [model] RDF 'source'.
@@ -169,9 +133,7 @@ class IO_Interface(ABC):
         """
         raise NotImplementedError
 
-    #
-    # RDF|raw node|node <-> package
-    #
+    # RDF|raw node -> package
     @classmethod
     def get_package_content(
         cls,
@@ -188,8 +150,10 @@ class IO_Interface(ABC):
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
-        update_to_current_format: bool = False,
-        weights_priority_order: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
+        *,
+        weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
+        compression: int = ZIP_DEFLATED,
+        compression_level: int = 1,
     ) -> pathlib.Path:
         """Export a bioimage.io package from an RDF source."""
         raise NotImplementedError
@@ -197,23 +161,21 @@ class IO_Interface(ABC):
 
 class IO_Base(IO_Interface):
     @classmethod
-    def load_raw_node(
-        cls, source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
-    ) -> RawNode:
-        if isinstance(source, dict):
-            data = source
-        else:
-            source = resolve_local_uri(source, pathlib.Path())
-            data, root_path = get_dict_and_root_path_from_yaml_source(source)
+    def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
+        data, type_ = resolve_rdf_source_and_type(source)
+        data = cls.maybe_convert(data)
 
-        type_ = data.get("type", "model")  # todo: remove default 'model' type
-        if update_to_current_format:
-            io_cls = cls
-        else:
-            io_cls = cls.get_matching_io_class(data.get("format_version"), type_, "load")
+        schema_class_name = get_class_name_from_type(type_)
+        schema_class = getattr(cls.schema, schema_class_name)
+        if schema_class is None:
+            raise ValueError(f"not a valid schema: {type_.title()}")
 
-        data = io_cls.maybe_convert(data)
-        raw_node: RawNode = io_cls._load_raw_node_from_dict_wo_format_conv(data, type_)
+        raw_node_class = getattr(cls.raw_nodes, type_.title())
+        if raw_node_class is None:
+            raise NotImplementedError(f"missing implementation of raw node: {type_.title()}")
+
+        raw_node = schema_class().load(data)
+        assert isinstance(raw_node, raw_node_class)
 
         if isinstance(source, raw_nodes.URI):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
@@ -223,16 +185,15 @@ class IO_Base(IO_Interface):
             )
             raw_node = PathToRemoteUriTransformer(remote_source=source).transform(raw_node)
 
-        expected_raw_node_class = getattr(io_cls.raw_nodes, type_.title())
-        assert isinstance(raw_node, expected_raw_node_class)
+        assert isinstance(raw_node, raw_node_class)
         return raw_node
 
     @classmethod
     def serialize_raw_node_to_dict(cls, raw_node: RawNode) -> dict:
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "serialize")
-        schema_class = getattr(io_cls.schema, raw_node.type.title())
+        schema_class_name = get_class_name_from_type(raw_node.type)
+        schema_class = getattr(cls.schema, schema_class_name)
         if schema_class is None:
-            raise NotImplementedError(f"{raw_node.type.title()} schema")
+            raise NotImplementedError(f"{schema_class_name} schema")
 
         serialized = schema_class().dump(raw_node)
         assert isinstance(serialized, dict)
@@ -257,20 +218,35 @@ class IO_Base(IO_Interface):
             return stream.getvalue()
 
     @classmethod
-    def load_node(
-        cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
-        root_path: os.PathLike = pathlib.Path(),
-        update_to_current_format: bool = True,
-    ):
-        raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
+    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
+        if isinstance(raw_node, cls.raw_nodes.Model):
+            return raw_node, root_path
 
-        matching_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "load")
+        if isinstance(raw_node, raw_nodes.Node):
+            # might be an older raw node; round trip to ensure correct raw node
+            raw_node = cls.serialize_raw_node_to_dict(raw_node)
+        elif isinstance(raw_node, dict):
+            pass
+        elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
+            raw_node = resolve_local_uri(raw_node, pathlib.Path())
+            if isinstance(raw_node, pathlib.Path):
+                root_path = raw_node.parent
+        else:
+            raise TypeError(raw_node)
+
+        raw_node = cls.load_raw_node(raw_node)
+        return raw_node, root_path
+
+    @classmethod
+    def load_node(
+        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
+    ):
+        raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
         node: Node = resolve_raw_node_to_node(
-            raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=matching_cls.nodes
+            raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
         )
-        assert isinstance(node, matching_cls.nodes.Model)
+        assert isinstance(node, cls.nodes.Model)
 
         return node
 
@@ -279,9 +255,8 @@ class IO_Base(IO_Interface):
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
-        update_to_current_format: bool = False,
-        weights_priority_order: Optional[Sequence[current_spec.raw_nodes.WeightsFormat]] = None,
         *,
+        weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
@@ -289,28 +264,9 @@ class IO_Base(IO_Interface):
         weights_priority_order: Only used for model RDFs.
                                     If given only the first matching weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
-        """
-        raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "export")
-        package_path = io_cls._make_package_wo_format_conv(
-            raw_node,
-            root_path,
-            weights_priority_order=weights_priority_order,
-            compression=compression,
-            compression_level=compression_level,
-        )
-        return package_path
+        """  # todo: document args
+        raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
-    @classmethod
-    def _make_package_wo_format_conv(
-        cls,
-        raw_node: RawNode,
-        root_path: os.PathLike,
-        *,
-        weights_priority_order: Optional[Sequence[str]],
-        compression: int,
-        compression_level: int,
-    ):
         package_file_name = raw_node.name
         if raw_node.version is not missing:
             package_file_name += f"_{raw_node.version}"
@@ -342,8 +298,8 @@ class IO_Base(IO_Interface):
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
 
-        package_content = cls._get_package_content_wo_format_conv(
-            deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
+        package_content = cls.get_package_content(
+            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
         )
         cls.make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
         return package_path
@@ -360,32 +316,11 @@ class IO_Base(IO_Interface):
         weights_priority_order: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
         """
-        raw_node, root_path = cls.ensure_raw_node(source, root_path, update_to_current_format)
-        io_cls = cls.get_matching_io_class(raw_node.format_version, raw_node.type, "get the package content of")
-        package_content = io_cls._get_package_content_wo_format_conv(
-            deepcopy(raw_node), root_path=root_path, weights_priority_order=weights_priority_order
-        )
-        return package_content
+        raw_node, root_path = cls.ensure_raw_node(source, root_path)
+        assert isinstance(raw_node, cls.raw_nodes.Model)
 
-    @classmethod
-    def _get_package_content_wo_format_conv(
-        cls,
-        raw_node: current_spec.raw_nodes.Model,
-        root_path: os.PathLike,
-        weights_priority_order: Optional[Sequence[str]],
-    ) -> Dict[str, Union[str, pathlib.Path]]:
-        if isinstance(raw_node, cls.raw_nodes.Model):
-            return cls._get_model_package_content_wo_format_conv(raw_node, root_path, weights_priority_order)
-        else:
-            raise NotImplementedError(raw_node)
+        raw_node = deepcopy(raw_node)
 
-    @classmethod
-    def _get_model_package_content_wo_format_conv(
-        cls,
-        raw_node: current_spec.raw_nodes.Model,
-        root_path: os.PathLike,
-        weights_priority_order: Optional[Sequence[str]],
-    ) -> Dict[str, Union[str, pathlib.Path]]:
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
         )  # todo: add check in model validation
@@ -466,26 +401,6 @@ class IO_Base(IO_Interface):
         package["rdf.yaml"] = cls.serialize_raw_node(raw_node)
         return dict(package)
 
-    @classmethod
-    def get_matching_io_class(cls, data_version: str, type_: str, action_descr: str):
-        if not isinstance(data_version, str):
-            raise TypeError("missing or invalid 'format_version'")
-
-        data_version_wo_patch = cls.get_version_tuple_wo_patch(data_version)
-        current_version_wo_patch = cls.get_current_format_version_wo_patch(type_)
-
-        if data_version_wo_patch > current_version_wo_patch:
-            raise ValueError(
-                f"You are attempting to {action_descr} an RDF in format version {'.'.join(map(str, data_version_wo_patch))}.x "
-                f"with the RDF spec {'.'.join(map(str, current_version_wo_patch))}"
-            )
-        elif data_version_wo_patch == current_version_wo_patch:
-            return cls
-        elif cls.preceding_io_class is None:
-            raise NotImplementedError(f"format version {'.'.join(map(str, data_version_wo_patch))}")
-        else:
-            return cls.preceding_io_class
-
     @staticmethod
     def make_zip(
         path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
@@ -498,66 +413,20 @@ class IO_Base(IO_Interface):
                     myzip.write(file_or_str_content, arcname=arc_name)
 
     @classmethod
-    def ensure_raw_node(
-        cls,
-        raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode],
-        root_path: os.PathLike,
-        update_to_current_format: bool,
-    ):
-        if isinstance(raw_node, cls.raw_nodes.Model):
-            return raw_node, root_path
-
-        if isinstance(raw_node, raw_nodes.Node):
-            # might be an older raw node; round trip to ensure correct raw node
-            raw_node = cls.serialize_raw_node_to_dict(raw_node)
-        elif isinstance(raw_node, dict):
-            pass
-        elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
-            raw_node = resolve_local_uri(raw_node, pathlib.Path())
-            if isinstance(raw_node, pathlib.Path):
-                root_path = raw_node.parent
-        else:
-            raise TypeError(raw_node)
-
-        raw_node = cls.load_raw_node(raw_node, update_to_current_format)
-        return raw_node, root_path
-
-    @classmethod
     def maybe_convert(cls, data: dict):
         if cls.preceding_io_class is not None:
             data = cls.preceding_io_class.maybe_convert(data)
 
         return cls.converters.maybe_convert(data)
 
-    @classmethod
-    def _load_raw_node_from_dict_wo_format_conv(cls, data: dict, type_: str):
-        schema_class = getattr(cls.schema, type_.title())
-        if schema_class is None:
-            raise ValueError(f"not a valid schema: {type_.title()}")
 
-        raw_node_class = getattr(cls.raw_nodes, type_.title())
-        if raw_node_class is None:
-            raise ValueError(f"not a valid raw node: {type_.title()}")
+def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> Tuple[dict, str]:
+    if isinstance(source, dict):
+        data = source
+    else:
+        source = resolve_local_uri(source, pathlib.Path())
+        data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
-        raw = schema_class().load(data)
-        assert isinstance(raw, raw_node_class)
-        return raw
+    type_ = data.get("type", "model")  # todo: remove default 'model' type
 
-    @staticmethod
-    def get_version_tuple_wo_patch(version: str):
-        try:
-            fvs = version.split(".")
-            return int(fvs[0]), int(fvs[1])
-        except Exception as e:
-            raise ValidationError(f"invalid format_version '{version}' error: {e}")
-
-    @classmethod
-    def get_current_format_version_wo_patch(cls, type_: str):
-        if type_ == "model":
-            version_string = get_args(cls.raw_nodes.ModelFormatVersion)[-1]
-        elif type_ == "collection":
-            version_string = get_args(cls.raw_nodes.GeneralFormatVersion)[-1]
-        else:
-            raise NotImplementedError(type_)
-
-        return cls.get_version_tuple_wo_patch(version_string)
+    return data, type_

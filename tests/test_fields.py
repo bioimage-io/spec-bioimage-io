@@ -1,11 +1,12 @@
-import numpy
 from datetime import datetime, timezone
-from marshmallow import ValidationError
+
+import numpy
+from marshmallow import Schema, ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
-from bioimageio.spec import raw_nodes, schema
-from bioimageio.spec.shared import fields
+from bioimageio.spec.model import schema
+from bioimageio.spec.shared import fields, raw_nodes
 
 
 class TestArray:
@@ -85,7 +86,7 @@ class TestShape:
         pass
 
     def test_explicit_input_shape_schema(self):
-        class MySchema(schema.Schema):
+        class MySchema(Schema):
             shape = fields.InputShape()
 
         data = {"shape": [1, 2, 3]}

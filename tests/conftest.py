@@ -20,7 +20,7 @@ def get_unet2d_nuclei_broad_path(version: str):
     assert isinstance(version, str), version
     assert "_" not in version, version
     assert "." in version, version
-    if version == get_args(spec.raw_nodes.ModelFormatVersion)[-1]:
+    if version == spec.model.format_version:
         version = ""  # latest version without specifier
     else:
         version = "_v" + version.replace(".", "_")
@@ -33,7 +33,7 @@ def pytest_generate_tests(metafunc):
     #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}]_path
     #   - unet2d_nuclei_broad_[before_]latest_path
     #   - unet2d_nuclei_broad_any[_minor]_path
-    all_format_versions = get_args_flat(spec.ModelFormatVersion)
+    all_format_versions = get_args_flat(spec.model.raw_nodes.FormatVersion)
     for fixture_name in metafunc.fixturenames:
         m = re.fullmatch(
             (
@@ -60,13 +60,13 @@ def pytest_generate_tests(metafunc):
                 vs = [".".join(v) for v in vs_patched.values()]
         else:
             if m["latest"]:
-                v = get_args(spec.raw_nodes.ModelFormatVersion)[-1]
+                v = spec.model.format_version
             else:
                 major = m["major"]
                 minor = m["minor"]
                 patch = m["patch"]
                 if patch is None:  # default to latest patch
-                    patched_version = get_args(getattr(spec, f"v{major}_{minor}").raw_nodes.ModelFormatVersion)[-1]
+                    patched_version = get_args(getattr(spec.model, f"v{major}_{minor}").raw_nodes.FormatVersion)[-1]
                     patch = patched_version.split(".")[-1]
 
                 v = ".".join([major, minor, patch])

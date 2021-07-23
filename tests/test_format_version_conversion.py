@@ -2,14 +2,14 @@ from dataclasses import asdict
 
 from ruamel.yaml import YAML
 
-from bioimageio.spec import schema
-from bioimageio.spec.converters import maybe_convert
-
+from bioimageio.spec.model import schema
 
 yaml = YAML(typ="safe")
 
 
 def test_model_format_version_conversion(unet2d_nuclei_broad_v0_1_0_path, unet2d_nuclei_broad_latest_path):
+    from bioimageio.spec.model.converters import maybe_convert
+
     model_data_v0_1 = yaml.load(unet2d_nuclei_broad_v0_1_0_path)
     model_data = yaml.load(unet2d_nuclei_broad_latest_path)
 

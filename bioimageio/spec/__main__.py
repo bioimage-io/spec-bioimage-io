@@ -62,7 +62,7 @@ def verify_spec(model_yaml: str, auto_convert: bool = False):
     return validate(model_yaml, auto_convert)
 
 
-verify_spec.__doc__ = verify_spec.__doc__ + "\n\n" + validate.__doc__
+verify_spec.__doc__ = f"{verify_spec.__doc__}\n\n{validate.__doc__}"
 
 
 @app.command()
@@ -72,7 +72,7 @@ def verify_bioimageio_manifest(manifest_yaml: Path, auto_convert: bool = False):
     return validate(manifest_yaml.absolute().as_uri(), auto_convert)
 
 
-verify_bioimageio_manifest.__doc__ = verify_bioimageio_manifest.__doc__ + "\n\n" + validate.__doc__
+verify_bioimageio_manifest.__doc__ = f"{verify_bioimageio_manifest.__doc__}\n\n{validate.__doc__}"
 
 
 if __name__ == "__main__":
