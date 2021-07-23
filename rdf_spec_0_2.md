@@ -8,7 +8,7 @@ _optional_. _optional*_ with an asterisk indicates the field is optional dependi
 If no specialized RDF exists for the specified type (like model RDF for type='model') additional fields may be 
 specified.
 
-* `format_version` _String_ Version of the BioImage.IO General Resource Description File Specification used.The current format version described here is 0.2.0. Note: The general RDF format version is not to be confused with the Model RDF format version.
+* `format_version` _String_ Version of the BioImage.IO Resource Description File Specification used.The current general format version described here is 0.2.0. Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format.
 * `cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys:
