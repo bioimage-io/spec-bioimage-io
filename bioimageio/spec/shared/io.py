@@ -11,10 +11,10 @@ from io import StringIO
 from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from marshmallow import ValidationError, missing
+from marshmallow import missing
 
 from . import nodes, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, get_class_name_from_type, yaml
+from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_class_name_from_type, yaml
 from .raw_nodes import ImportableSourceFile
 from .schema import SharedBioImageIOSchema
 from .utils import (
