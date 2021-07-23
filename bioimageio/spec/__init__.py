@@ -2,7 +2,6 @@ import json
 import pathlib
 
 from . import model, rdf, shared
-from .build_spec import add_weights, build_spec, serialize_spec
 from .delegator import (
     ensure_raw_node,
     export_package,
