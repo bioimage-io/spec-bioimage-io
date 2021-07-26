@@ -89,6 +89,15 @@ class IO_Interface(ABC):
     @classmethod
     @abstractmethod
     def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
+        """load a raw python representation from a BioImage.IO resource description file (RDF).
+        Use `load_node` for a more convenient representation.
+
+        Args:
+            source: resource description file (RDF)
+
+        Returns:
+            raw BioImage.IO resource
+        """
         raise NotImplementedError
 
     @classmethod
@@ -130,10 +139,16 @@ class IO_Interface(ABC):
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Node:
-        """
-        Load a node object from a [model] RDF 'source'.
-        node objects hold all [model] RDF information as ready-to-use python objects,
-        e.g. a nodes.Model with locally available weights files and imported source code identifiers
+        """load a BioImage.IO resource description file (RDF).
+        This includes some transformations for convenience, e.g. importing `source`.
+        Use `load_raw_node` to obtain a raw representation instead.
+
+        Args:
+            source: resource description file (RDF) or raw BioImage.IO resource
+            root_path: to resolve relative paths in the RDF (ignored if source is path/URI)
+            weights_priority_order: If given only the first weights format present in the model resource is included
+        Returns:
+            BioImage.IO resource
         """
         raise NotImplementedError
 
@@ -146,7 +161,18 @@ class IO_Interface(ABC):
         update_to_current_format: bool = False,
         weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
-        """Gather content required for exporting a bioimage.io package from an RDF source."""
+        """Gather content required for exporting a bioimage.io package from an RDF source.
+
+        Args:
+            source: raw node, path, URI or raw data as dict
+            root_path:  for relative paths (only used if source is RawNode or dict)
+            update_to_current_format: Convert not only the patch version, but also the major and minor version.
+            weights_priority_order: If given only the first weights format present in the model is included.
+                                    If none of the prioritized weights formats is found all are included.
+
+        Returns:
+            Package content of local file paths or text content keyed by file names.
+        """
         raise NotImplementedError
 
     @classmethod
@@ -159,7 +185,20 @@ class IO_Interface(ABC):
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
-        """Export a bioimage.io package from an RDF source."""
+        """Package a BioImage.IO resource as a zip file.
+
+        Args:
+            source: raw node, path, URI or raw data as dict
+            root_path:  for relative paths (only used if source is RawNode or dict)
+            weights_priority_order: If given only the first weights format present in the model is included.
+                                    If none of the prioritized weights formats is found all are included.
+            compression: The numeric constant of compression method.
+            compression_level: Compression level to use when writing files to the archive.
+                               See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
+
+        Returns:
+            path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
+        """
         raise NotImplementedError
 
 
@@ -276,11 +315,6 @@ class IO_Base(IO_Interface):
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
-        """
-        weights_priority_order: Only used for model RDFs.
-                                    If given only the first matching weights format present in the model is included.
-                                    If none of the prioritized weights formats is found all are included.
-        """  # todo: document args
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
         package_file_name = raw_node.name
@@ -328,10 +362,6 @@ class IO_Base(IO_Interface):
         update_to_current_format: bool = False,
         weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
-        """
-        weights_priority_order: If given only the first weights format present in the model is included.
-                                    If none of the prioritized weights formats is found all are included.
-        """
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
         assert isinstance(raw_node, cls.raw_nodes.Model)
 
