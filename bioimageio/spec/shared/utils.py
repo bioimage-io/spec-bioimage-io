@@ -269,8 +269,17 @@ def _resolve_uri_list(uri: list, root_path: os.PathLike = pathlib.Path()) -> typ
 def resolve_local_uri(
     uri: typing.Union[str, os.PathLike, raw_nodes.URI], root_path: os.PathLike
 ) -> typing.Union[pathlib.Path, raw_nodes.URI]:
-    if isinstance(uri, os.PathLike) or (isinstance(uri, str) and pathlib.Path(uri).exists()):
-        return pathlib.Path(uri)
+    if isinstance(uri, os.PathLike) or isinstance(uri, str):
+        if isinstance(uri, str):
+            try:
+                is_path = pathlib.Path(uri).exists()
+            except OSError:
+                is_path = False
+        else:
+            is_path = True
+
+        if is_path:
+            return pathlib.Path(uri)
 
     if isinstance(uri, str):
         uri = fields.URI().deserialize(uri)
