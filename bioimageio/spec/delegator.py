@@ -35,6 +35,13 @@ def load_raw_node(
 ) -> RawNode:
     """load a raw python representation from a BioImage.IO resource description file (RDF).
     Use `load_node` for a more convenient representation.
+
+    Args:
+        source: resource description file (RDF)
+        update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
+
+    Returns:
+        raw BioImage.IO resource
     """
     data, type_ = resolve_rdf_source_and_type(source)
     io_cls = _get_matching_io_class(
@@ -97,6 +104,14 @@ def load_node(
     """load a BioImage.IO resource description file (RDF).
     This includes some transformations for convenience, e.g. importing `source`.
     Use `load_raw_node` to obtain a raw representation instead.
+
+    Args:
+        source: resource description file (RDF) or raw BioImage.IO resource
+        root_path: to resolve relative paths in the RDF (ignored if source is path/URI)
+        update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
+
+    Returns:
+        BioImage.IO resource
     """
     raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
 
