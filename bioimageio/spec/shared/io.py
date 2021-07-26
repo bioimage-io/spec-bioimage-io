@@ -8,6 +8,7 @@ import warnings
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
+from types import ModuleType
 from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -44,17 +45,10 @@ class ConvertersModule(Protocol):
 
 class RawNodesModule(Protocol):
     FormatVersion: Any
-    FormatVersion: Any
-    Model: Type[RawNode]
-    Collection: Type[RawNode]
 
 
 class NodesModule(Protocol):
-    Model: Type[RawNode]
-
-
-class SchemaModule(Protocol):
-    Model: Type[Schema]
+    FormatVersion: Any
 
 
 # class IO_Meta(ABCMeta):
@@ -81,9 +75,9 @@ class IO_Interface(ABC):
     # todo: 'real' abstract class properties for IO_Interface. see IO_Meta draft above
     preceding_io_class: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
-    schema: ClassVar[SchemaModule]
+    schema: ClassVar[ModuleType]
     raw_nodes: ClassVar[RawNodesModule]
-    nodes: ClassVar[RawNodesModule]
+    nodes: ClassVar[NodesModule]
 
     # RDF -> raw node
     @classmethod
@@ -261,12 +255,8 @@ class IO_Base(IO_Interface):
 
     @classmethod
     def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
-        if isinstance(raw_node, cls.raw_nodes.Model):
-            return raw_node, root_path
-
         if isinstance(raw_node, raw_nodes.Node):
-            # might be an older raw node; round trip to ensure correct raw node
-            raw_node = cls.serialize_raw_node_to_dict(raw_node)
+            return raw_node, root_path
         elif isinstance(raw_node, dict):
             pass
         elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
@@ -407,10 +397,10 @@ class IO_Base(IO_Interface):
 
         # todo: improve dependency handling
         if raw_node.dependencies is not missing:
-            manager, fp = raw_node.dependencies.split(":")
-            fp = resolve_uri(fp, root_path=root_path)
-            package[fp.name] = fp
-            raw_node = dataclasses.replace(raw_node, dependencies=f"{manager}:{fp.name}")
+            manager, f_p = raw_node.dependencies.split(":")
+            f_p = resolve_uri(f_p, root_path=root_path)
+            package[f_p.name] = f_p
+            raw_node = dataclasses.replace(raw_node, dependencies=f"{manager}:{f_p.name}")
 
         if isinstance(raw_node.source, ImportableSourceFile):
             source = incl_as_local(raw_node.source, "source_file")
