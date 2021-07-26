@@ -183,9 +183,7 @@ class SourceNodeTransformer(NodeTransformer):
     def transform_ResolvedImportableSourceFile(node: ResolvedImportableSourceFile) -> nodes.ImportedSource:
         module_path = resolve_uri(node.source_file)
         module_name = f"module_from_source.{module_path.stem}"
-        importlib_spec = importlib.util.spec_from_file_location(
-            module_name, module_path
-        )
+        importlib_spec = importlib.util.spec_from_file_location(module_name, module_path)
         assert importlib_spec is not None
         dep = importlib.util.module_from_spec(importlib_spec)
         importlib_spec.loader.exec_module(dep)  # type: ignore  # todo: possible to use "loader.load_module"?
@@ -346,37 +344,6 @@ def resolve_raw_node_to_node(raw_node: GenericRawNode, root_path: os.PathLike, n
     node = SourceNodeTransformer().transform(node)
     node = RawNodeTypeTransformer(nodes_module).transform(node)
     return node
-
-
-def get_dict_and_root_path_from_yaml_source(
-    source: typing.Union[os.PathLike, str, raw_nodes.URI, dict]
-) -> typing.Tuple[dict, pathlib.Path]:
-    if isinstance(source, dict):
-        return source, pathlib.Path()
-    elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
-        source = resolve_local_uri(source, pathlib.Path())
-    else:
-        raise TypeError(source)
-
-    if isinstance(source, raw_nodes.URI):  # remote uri
-        local_source = _download_uri_to_local_path(source)
-        root_path = pathlib.Path()
-    else:
-        local_source = source
-        root_path = source.parent
-
-    assert isinstance(local_source, pathlib.Path)
-    if local_source.suffix == ".yml":
-        warnings.warn(
-            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
-            "(https://yaml.org/faq.html)"
-        )
-    elif local_source.suffix != ".yaml":
-        raise ValidationError(f"invalid suffix {local_source.suffix} for source {source}")
-
-    data = yaml.load(local_source)
-    assert isinstance(data, dict)
-    return data, root_path
 
 
 def is_valid_orcid_id(orcid_id: str):

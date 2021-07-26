@@ -9,10 +9,10 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
 from types import ModuleType
-from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, TypeVar, Union
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from marshmallow import missing
+from marshmallow import ValidationError, missing
 
 from . import nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_class_name_from_type, yaml
@@ -21,7 +21,7 @@ from .schema import SharedBioImageIOSchema
 from .utils import (
     GenericNode,
     PathToRemoteUriTransformer,
-    get_dict_and_root_path_from_yaml_source,
+    _download_uri_to_local_path,
     resolve_local_uri,
     resolve_raw_node_to_node,
     resolve_uri,
@@ -492,11 +492,42 @@ def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.
         data = source
     else:
         source = resolve_local_uri(source, pathlib.Path())
-        if source.suffix == ".zip":
-            source = extract_zip(source)
-
         data, root_path = get_dict_and_root_path_from_yaml_source(source)
 
     type_ = data.get("type", "model")  # todo: remove default 'model' type
 
     return data, type_
+
+
+def get_dict_and_root_path_from_yaml_source(
+    source: Union[os.PathLike, str, raw_nodes.URI, dict]
+) -> Tuple[dict, pathlib.Path]:
+    if isinstance(source, dict):
+        return source, pathlib.Path()
+    elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
+        source = resolve_local_uri(source, pathlib.Path())
+    else:
+        raise TypeError(source)
+
+    if isinstance(source, raw_nodes.URI):  # remote uri
+        local_source = _download_uri_to_local_path(source)
+        root_path = pathlib.Path()
+    else:
+        local_source = source
+        root_path = source.parent
+
+    assert isinstance(local_source, pathlib.Path)
+    if local_source.suffix == ".zip":
+        local_source = extract_zip(local_source)
+
+    if local_source.suffix == ".yml":
+        warnings.warn(
+            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
+            "(https://yaml.org/faq.html)"
+        )
+    elif local_source.suffix != ".yaml":
+        raise ValidationError(f"invalid suffix {local_source.suffix} for source {source}")
+
+    data = yaml.load(local_source)
+    assert isinstance(data, dict)
+    return data, root_path

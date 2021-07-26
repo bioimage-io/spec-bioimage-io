@@ -2,7 +2,7 @@ import pytest
 from marshmallow import ValidationError
 from pytest import raises
 
-from bioimageio.spec.shared import get_dict_and_root_path_from_yaml_source
+from bioimageio.spec.shared.io import get_dict_and_root_path_from_yaml_source
 
 
 class TestPreprocessing:
