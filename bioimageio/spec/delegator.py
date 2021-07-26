@@ -3,16 +3,11 @@ from __future__ import annotations
 import os
 import pathlib
 from typing import Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Union
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED
 
 from bioimageio.spec.shared import raw_nodes
-from bioimageio.spec.shared.common import (
-    BIOIMAGEIO_CACHE_PATH,
-    get_format_version_module,
-    get_latest_format_version_module,
-)
+from bioimageio.spec.shared.common import get_format_version_module, get_latest_format_version_module
 from bioimageio.spec.shared.io import IO_Interface, Node, RawNode, resolve_rdf_source_and_type
-from bioimageio.spec.shared.utils import resolve_uri
 
 if TYPE_CHECKING:
     import bioimageio.spec.model
@@ -177,38 +172,3 @@ def get_package_content(
     raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.get_package_content(raw_node, root_path, weights_priority_order=weights_priority_order)
-
-
-def import_package_as_raw_node(
-    source: Union[os.PathLike, str, raw_nodes.URI], update_to_current_format: bool = False
-) -> RawNode:
-    """import a bioimage.io package (a zip file with an rdf.yaml and therein referenced files) as a raw node
-    (e.g. a raw model node).
-    """
-    rdf_path = extract_zip(source)
-    return load_raw_node(rdf_path, update_to_current_format=update_to_current_format)
-
-
-def import_package(source: Union[os.PathLike, str, raw_nodes.URI], update_to_current_format: bool = False) -> Node:
-    """import a bioimage.io package (a zip file with an rdf.yaml and therein referenced files) (e.g. as a model node)"""
-    rdf_path = extract_zip(source)
-    return load_node(rdf_path, update_to_current_format=update_to_current_format)
-
-
-def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
-    """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
-    local_source = resolve_uri(source)
-    assert isinstance(local_source, pathlib.Path)
-    BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
-    package_path = BIOIMAGEIO_CACHE_PATH / local_source.stem + "_unzipped"
-    with ZipFile(local_source) as zf:
-        zf.extractall(package_path)
-
-    for rdf_name in ["rdf.yaml", "model.yaml", "rdf.yml", "model.yml"]:
-        rdf_path = package_path / rdf_name
-        if rdf_path.exists():
-            break
-    else:
-        raise FileNotFoundError(local_source / "rdf.yaml")
-
-    return rdf_path
