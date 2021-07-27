@@ -452,7 +452,7 @@ def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
     BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
-    package_path = BIOIMAGEIO_CACHE_PATH / local_source.stem + "_unzipped"
+    package_path = BIOIMAGEIO_CACHE_PATH / f"{local_source.stem}_unzipped"
     with ZipFile(local_source) as zf:
         zf.extractall(package_path)
 
