@@ -123,7 +123,7 @@ class PathToRemoteUriTransformer(NodeTransformer):
     def __init__(self, *, remote_source: raw_nodes.URI):
         remote_path = pathlib.PurePosixPath(remote_source.path.strip("/")).parent
         assert not remote_path.is_absolute()
-        self.remote_root = dataclasses.replace(remote_source, path=remote_path.as_posix())
+        self.remote_root = dataclasses.replace(remote_source, path=remote_path.as_posix(), uri_string=None)
 
     def transform_URI(self, node: raw_nodes.URI) -> raw_nodes.URI:
         if node.scheme == "file":
@@ -136,7 +136,7 @@ class PathToRemoteUriTransformer(NodeTransformer):
             assert not node.fragment
 
             path = pathlib.PurePosixPath(self.remote_root.path) / node.path
-            node = dataclasses.replace(self.remote_root, path=path.as_posix())
+            node = dataclasses.replace(self.remote_root, path=path.as_posix(), uri_string=None)
 
         return node
 
@@ -269,8 +269,17 @@ def _resolve_uri_list(uri: list, root_path: os.PathLike = pathlib.Path()) -> typ
 def resolve_local_uri(
     uri: typing.Union[str, os.PathLike, raw_nodes.URI], root_path: os.PathLike
 ) -> typing.Union[pathlib.Path, raw_nodes.URI]:
-    if isinstance(uri, os.PathLike) or (isinstance(uri, str) and pathlib.Path(uri).exists()):
-        return pathlib.Path(uri)
+    if isinstance(uri, os.PathLike) or isinstance(uri, str):
+        if isinstance(uri, str):
+            try:
+                is_path = pathlib.Path(uri).exists()
+            except OSError:
+                is_path = False
+        else:
+            is_path = True
+
+        if is_path:
+            return pathlib.Path(uri)
 
     if isinstance(uri, str):
         uri = fields.URI().deserialize(uri)
