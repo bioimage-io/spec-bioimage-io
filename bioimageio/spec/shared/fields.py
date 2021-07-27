@@ -11,8 +11,7 @@ import marshmallow_union
 import numpy
 from marshmallow import ValidationError, fields as marshmallow_fields
 
-from bioimageio.spec.shared import field_validators
-from . import raw_nodes
+from . import field_validators, raw_nodes
 
 logger = logging.getLogger(__name__)
 
@@ -188,10 +187,12 @@ class Axes(String):
 
 class Dependencies(String):  # todo: check format of dependency string
     def _deserialize(self, *args, **kwargs) -> raw_nodes.Dependencies:
+        from . import schema
+
         dep_str = super()._deserialize(*args, **kwargs)
         try:
-            manager, file = dep_str.split(":")
-            ret = raw_nodes.Dependencies(manager=manager, file=file)
+            data = dict(zip(["manager", "file"], dep_str.split(":")))
+            ret = schema.Dependencies().load(data)
         except Exception as e:
             raise ValidationError(f"Invalid dependency: {dep_str} ({e})")
 
