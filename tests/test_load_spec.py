@@ -4,7 +4,7 @@ import pytest
 from marshmallow import ValidationError
 
 
-def test_load_non_existing_spec():
+def test_load_non_existing_rdf():
     from bioimageio.spec import load_node
 
     spec_path = Path("some/none/existing/path/to/spec.model.yaml")
@@ -13,10 +13,25 @@ def test_load_non_existing_spec():
         load_node(spec_path)
 
 
-def test_load_non_valid_spec_name():
+def test_load_non_valid_rdf_name():
     from bioimageio.spec import load_node
 
     spec_path = Path("some/none/existing/path/to/spec.not_valid_suffix")
 
     with pytest.raises(ValidationError):
         load_node(spec_path)
+
+
+def test_load_raw_model(unet2d_nuclei_broad_any_path):
+    from bioimageio.spec import load_raw_node
+
+    raw_model = load_raw_node(unet2d_nuclei_broad_any_path)
+    assert raw_model
+
+
+def test_load_model(unet2d_nuclei_broad_any_path):
+    from bioimageio.spec import load_node
+
+    model = load_node(unet2d_nuclei_broad_any_path)
+    assert model
+
