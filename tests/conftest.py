@@ -6,6 +6,7 @@ import pytest
 from ruamel.yaml import YAML
 
 from bioimageio import spec
+from bioimageio.spec import export_package
 from bioimageio.spec.shared.common import get_args_flat
 
 try:
@@ -28,11 +29,15 @@ def get_unet2d_nuclei_broad_path(version: str):
     return Path(__file__).parent / f"../example_specs/models/unet2d_nuclei_broad/rdf{version}.yaml"
 
 
+def get_package_from_rdf_path(rdf_path: Path):
+    return export_package(rdf_path)
+
+
 def pytest_generate_tests(metafunc):
     # generate
-    #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}]_path
-    #   - unet2d_nuclei_broad_[before_]latest_path
-    #   - unet2d_nuclei_broad_any[_minor]_path
+    #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}][_package]_path
+    #   - unet2d_nuclei_broad_[before_]latest[_package]_path
+    #   - unet2d_nuclei_broad_any[_minor][_package]_path
     all_format_versions = get_args_flat(spec.model.raw_nodes.FormatVersion)
     for fixture_name in metafunc.fixturenames:
         m = re.fullmatch(
@@ -41,7 +46,7 @@ def pytest_generate_tests(metafunc):
                 r"((?P<before>before_)?((v(?P<major>\d+)_(?P<minor>\d+)(_(?P<patch>\d+))?)|(?P<latest>latest)))"
                 r"|"
                 r"(?P<any>any)(?P<any_minor>_minor)?"
-                r")_path"
+                r")(?P<package>_package)?_path"
             ),
             fixture_name,
         )
@@ -76,7 +81,11 @@ def pytest_generate_tests(metafunc):
             else:
                 vs = [v]
 
-        metafunc.parametrize(fixture_name, map(get_unet2d_nuclei_broad_path, vs))
+        vals = map(get_unet2d_nuclei_broad_path, vs)
+        if m["package"]:
+            vals = map(get_package_from_rdf_path, vals)
+
+        metafunc.parametrize(fixture_name, vals)
 
 
 @pytest.fixture
