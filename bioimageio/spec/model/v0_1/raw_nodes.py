@@ -19,6 +19,7 @@ except ImportError:
 FormatVersion = Literal["0.1.0"]
 
 
+# reassign to use imported classes
 Dependencies = Dependencies
 
 

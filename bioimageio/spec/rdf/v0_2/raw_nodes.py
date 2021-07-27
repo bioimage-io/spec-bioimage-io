@@ -29,6 +29,7 @@ WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
 
+# reassign to use imported classes
 Dependencies = Dependencies
 
 

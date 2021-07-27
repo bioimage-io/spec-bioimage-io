@@ -25,7 +25,7 @@ except ImportError:
 
 FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in __init__.py)
 
-# same as general RDF
+# same as general RDF; reassign to use imported classes
 Badge = Badge
 CiteEntry = CiteEntry
 Dependencies = Dependencies
