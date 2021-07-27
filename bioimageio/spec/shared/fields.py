@@ -1,6 +1,7 @@
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 import datetime
 import distutils.version
+import logging
 import pathlib
 import typing
 from urllib.parse import urlparse
@@ -12,6 +13,8 @@ from marshmallow import ValidationError, fields as marshmallow_fields
 
 from bioimageio.spec.shared import field_validators
 from . import raw_nodes
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentedField:
@@ -184,7 +187,15 @@ class Axes(String):
 
 
 class Dependencies(String):  # todo: check format of dependency string
-    pass
+    def _deserialize(self, *args, **kwargs) -> raw_nodes.Dependencies:
+        dep_str = super()._deserialize(*args, **kwargs)
+        try:
+            manager, file = dep_str.split(":")
+            ret = raw_nodes.Dependencies(manager=manager, file=file)
+        except Exception as e:
+            raise ValidationError(f"Invalid dependency: {dep_str} ({e})")
+
+        return ret
 
 
 class ExplicitShape(List):
@@ -292,7 +303,10 @@ class Path(String):
         return pathlib.Path(path_str)
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        return None if value is None else pathlib.Path(value).as_posix()
+        if isinstance(value, pathlib.PurePath):
+            value = value.as_posix()
+
+        return super()._serialize(value, attr, obj, **kwargs)
 
 
 class RelativeLocalPath(Path):
@@ -338,9 +352,8 @@ class RelativeLocalPath(Path):
         )
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        if value is not None:
-            assert isinstance(value, pathlib.Path), value
-            assert not value.is_absolute(), value
+        if value is not None and (not isinstance(value, pathlib.Path) or not value.is_absolute()):
+            logger.warning(f"invalid local relative path: {value}")
 
         return super()._serialize(value, attr, obj, **kwargs)
 

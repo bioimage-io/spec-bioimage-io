@@ -397,10 +397,8 @@ class IO_Base(IO_Interface):
 
         # todo: improve dependency handling
         if raw_node.dependencies is not missing:
-            manager, f_p = raw_node.dependencies.split(":")
-            f_p = resolve_uri(f_p, root_path=root_path)
-            package[f_p.name] = f_p
-            raw_node = dataclasses.replace(raw_node, dependencies=f"{manager}:{f_p.name}")
+            dep = incl_as_local(raw_node.dependencies, "file")
+            raw_node = dataclasses.replace(raw_node, dependencies=dep)
 
         if isinstance(raw_node.source, ImportableSourceFile):
             source = incl_as_local(raw_node.source, "source_file")
