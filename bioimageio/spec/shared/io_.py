@@ -213,8 +213,11 @@ class IO_Base(IO_Interface):
         raw_node = schema_class().load(data)
         assert isinstance(raw_node, raw_node_class)
 
-        if isinstance(source, raw_nodes.URI):
+        if isinstance(source, raw_nodes.URI) or isinstance(source, str) and source.startswith("http"):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
+            if isinstance(source, str):
+                source = raw_nodes.URI(source)
+
             warnings.warn(
                 f"changing file paths in RDF to URIs due to a remote {source.scheme} source "
                 "(may result in an invalid node)"
@@ -260,17 +263,16 @@ class IO_Base(IO_Interface):
         elif isinstance(raw_node, dict):
             pass
         elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
-            raw_node = resolve_local_uri(raw_node, pathlib.Path())
-            if isinstance(raw_node, pathlib.Path):
-                if raw_node.suffix == ".zip":
-                    raw_node = extract_zip(raw_node)
+            local_raw_node = resolve_uri(raw_node, root_path)
+            if local_raw_node.suffix == ".zip":
+                local_raw_node = extract_zip(local_raw_node)
+                raw_node = local_raw_node  # zip package contains everything. ok to 'forget' that source was remote
 
-                root_path = raw_node.parent
+            root_path = local_raw_node.parent
         else:
             raise TypeError(raw_node)
 
-        raw_node = cls.load_raw_node(raw_node)
-        return raw_node, root_path
+        return cls.load_raw_node(raw_node), root_path
 
     @classmethod
     def maybe_convert(cls, data: dict):

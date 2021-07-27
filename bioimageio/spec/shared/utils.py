@@ -130,7 +130,7 @@ class PathToRemoteUriTransformer(NodeTransformer):
             raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
 
         if node.scheme == "":
-            # make local realtive path remote
+            # make local relative path remote
             assert not node.authority
             assert not node.query
             assert not node.fragment

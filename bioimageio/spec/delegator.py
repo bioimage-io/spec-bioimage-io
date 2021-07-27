@@ -43,11 +43,8 @@ def load_raw_node(
         type_, "latest" if update_to_current_format else data.get("format_version", "latest")
     )
 
-    if isinstance(source, raw_nodes.URI):
-        # not using data here, because a remote source differs from a local source
-        return io_cls.load_raw_node(source=source)
-    else:
-        return io_cls.load_raw_node(source=data)
+    # not using data here, because a remote source differs from a local source
+    return io_cls.load_raw_node(source=source)
 
 
 def serialize_raw_node_to_dict(raw_node: RawNode) -> dict:
@@ -110,10 +107,10 @@ def load_node(
     Returns:
         BioImage.IO resource
     """
-    raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
 
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.load_node(raw_node, root_path, weights_priority_order=weights_priority_order)
+    return io_cls.load_node(source, root_path, weights_priority_order=weights_priority_order)
 
 
 def export_package(
@@ -140,10 +137,10 @@ def export_package(
     Returns:
         path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
     """
-    raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.export_package(
-        raw_node,
+        source,
         root_path,
         weights_priority_order=weights_priority_order,
         compression=compression,
@@ -169,6 +166,6 @@ def get_package_content(
     Returns:
         Package content of local file paths or text content keyed by file names.
     """
-    raw_node, root_path = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.get_package_content(raw_node, root_path, weights_priority_order=weights_priority_order)
+    return io_cls.get_package_content(source, root_path, weights_priority_order=weights_priority_order)
