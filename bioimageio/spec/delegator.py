@@ -7,7 +7,7 @@ from zipfile import ZIP_DEFLATED
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import get_format_version_module, get_latest_format_version_module
-from bioimageio.spec.shared.io import IO_Interface, Node, RawNode, resolve_rdf_source_and_type
+from bioimageio.spec.shared.io_ import IO_Interface, Node, RawNode, resolve_rdf_source_and_type
 
 if TYPE_CHECKING:
     import bioimageio.spec.model
