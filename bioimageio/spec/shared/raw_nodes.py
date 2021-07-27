@@ -6,8 +6,6 @@ from typing import List, Optional, TYPE_CHECKING, Union
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
-from marshmallow.utils import _Missing
-
 try:
     from typing import get_args, get_origin
 except ImportError:
@@ -87,6 +85,18 @@ class URI(Node):  # todo: do not allow relative path and use Union[Path, URI] in
 @dataclass
 class SpecURI(URI):
     spec_schema: "SharedBioImageIOSchema" = missing
+
+
+@dataclass
+class Dependencies(Node):
+    manager: str = missing
+    file: Union[URI, pathlib.Path] = missing
+
+    def __str__(self):
+        if isinstance(self.file, pathlib.Path):
+            assert not self.file.is_absolute(), self.file
+
+        return f"{self.manager}:{self.file}"
 
 
 @dataclass

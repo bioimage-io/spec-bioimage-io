@@ -14,6 +14,11 @@ ImplicitOutputShape = raw_nodes.ImplicitOutputShape
 
 
 @dataclass
+class Dependencies(raw_nodes.Dependencies):
+    file: pathlib.Path = missing
+
+
+@dataclass
 class LocalImportableModule(raw_nodes.ImportableModule):
     """intermediate between raw_nodes.ImportableModule and nodes.ImportedSource. Used by SourceNodeTransformer"""
 

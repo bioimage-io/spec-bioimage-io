@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared.raw_nodes import Node, URI
+from bioimageio.spec.shared.raw_nodes import Dependencies, Node, URI
 
 try:
     from typing import Literal, get_args
@@ -18,7 +18,6 @@ except ImportError:
 
 FormatVersion = Literal["0.2.0"]  # newest format needs to be last (used to determine latest format version)
 
-Dependencies = str
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
@@ -29,6 +28,8 @@ Type = str
 WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
+
+Dependencies = Dependencies
 
 
 @dataclass
