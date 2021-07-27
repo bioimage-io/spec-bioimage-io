@@ -28,6 +28,7 @@ FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be 
 # same as general RDF
 Badge = Badge
 CiteEntry = CiteEntry
+Dependencies = Dependencies
 
 
 # overwritten general RDF
