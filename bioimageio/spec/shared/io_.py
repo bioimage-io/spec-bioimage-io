@@ -16,7 +16,7 @@ from marshmallow import ValidationError, missing
 
 from . import nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_class_name_from_type, yaml
-from .raw_nodes import ImportableSourceFile
+from .raw_nodes import ImportableSourceFile, URI
 from .schema import SharedBioImageIOSchema
 from .utils import (
     GenericNode,
@@ -82,7 +82,7 @@ class IO_Interface(ABC):
     # RDF -> raw node
     @classmethod
     @abstractmethod
-    def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
+    def load_raw_node(cls, source: Union[os.PathLike, str, dict, URI]) -> RawNode:
         """load a raw python representation from a BioImage.IO resource description file (RDF).
         Use `load_node` for a more convenient representation.
 
@@ -95,7 +95,7 @@ class IO_Interface(ABC):
         raise NotImplementedError
 
     @classmethod
-    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
+    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, URI, RawNode], root_path: os.PathLike):
         raise NotImplementedError
 
     @classmethod
@@ -127,7 +127,7 @@ class IO_Interface(ABC):
     @classmethod
     def load_node(
         cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        source: Union[RawNode, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
@@ -171,7 +171,7 @@ class IO_Interface(ABC):
     @classmethod
     def export_resource_package(
         cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        source: Union[RawNode, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
         output_path: Optional[os.PathLike] = None,
@@ -199,7 +199,7 @@ class IO_Interface(ABC):
 
 class IO_Base(IO_Interface):
     @classmethod
-    def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
+    def load_raw_node(cls, source: Union[os.PathLike, str, dict, URI]) -> RawNode:
         data, type_ = resolve_rdf_source_and_type(source)
         data = cls.maybe_convert(data)
 
@@ -215,10 +215,10 @@ class IO_Base(IO_Interface):
         raw_node = schema_class().load(data)
         assert isinstance(raw_node, raw_node_class)
 
-        if isinstance(source, raw_nodes.URI) or isinstance(source, str) and source.startswith("http"):
+        if isinstance(source, URI) or isinstance(source, str) and source.startswith("http"):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
             if isinstance(source, str):
-                source = raw_nodes.URI(source)
+                source = URI(source)
 
             warnings.warn(
                 f"changing file paths in RDF to URIs due to a remote {source.scheme} source "
@@ -259,12 +259,12 @@ class IO_Base(IO_Interface):
             return stream.getvalue()
 
     @classmethod
-    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
+    def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, URI, RawNode], root_path: os.PathLike):
         if isinstance(raw_node, raw_nodes.Node):
             return raw_node, root_path
         elif isinstance(raw_node, dict):
             pass
-        elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
+        elif isinstance(raw_node, (str, os.PathLike, URI)):
             local_raw_node = resolve_uri(raw_node, root_path)
             if local_raw_node.suffix == ".zip":
                 local_raw_node = extract_resource_package(local_raw_node)
@@ -286,7 +286,7 @@ class IO_Base(IO_Interface):
     @classmethod
     def load_node(
         cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        source: Union[RawNode, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
@@ -309,7 +309,7 @@ class IO_Base(IO_Interface):
     @classmethod
     def export_resource_package(
         cls,
-        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        source: Union[RawNode, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
         output_path: Optional[os.PathLike] = None,
@@ -459,7 +459,7 @@ class IO_Base(IO_Interface):
         return dict(package)
 
 
-def extract_resource_package(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+def extract_resource_package(source: Union[os.PathLike, str, URI]) -> pathlib.Path:
     """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
@@ -499,7 +499,7 @@ def make_zip(
                 myzip.write(file_or_str_content, arcname=arc_name)
 
 
-def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> Tuple[dict, str]:
+def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, URI]) -> Tuple[dict, str]:
     if isinstance(source, dict):
         data = source
     else:
@@ -511,17 +511,15 @@ def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.
     return data, type_
 
 
-def get_dict_and_root_path_from_yaml_source(
-    source: Union[os.PathLike, str, raw_nodes.URI, dict]
-) -> Tuple[dict, pathlib.Path]:
+def get_dict_and_root_path_from_yaml_source(source: Union[os.PathLike, str, URI, dict]) -> Tuple[dict, pathlib.Path]:
     if isinstance(source, dict):
         return source, pathlib.Path()
-    elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
+    elif isinstance(source, (str, os.PathLike, URI)):
         source = resolve_local_uri(source, pathlib.Path())
     else:
         raise TypeError(source)
 
-    if isinstance(source, raw_nodes.URI):  # remote uri
+    if isinstance(source, URI):  # remote uri
         local_source = _download_uri_to_local_path(source)
         root_path = pathlib.Path()
     else:
