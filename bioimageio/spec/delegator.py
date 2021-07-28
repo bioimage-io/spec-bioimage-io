@@ -7,7 +7,7 @@ from zipfile import ZIP_DEFLATED
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import get_format_version_module, get_latest_format_version_module
-from bioimageio.spec.shared.io_ import IO_Interface, Node, RawNode, resolve_rdf_source_and_type
+from bioimageio.spec.shared.io_ import IO_Interface, ResourceNode, RawResourceNode, resolve_rdf_source_and_type
 
 if TYPE_CHECKING:
     import bioimageio.spec.model
@@ -27,7 +27,7 @@ def _get_matching_io_class(type_: str, data_version: str = "latest") -> IO_Inter
 
 def load_raw_resource_description(
     source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
-) -> RawNode:
+) -> RawResourceNode:
     """load a raw python representation from a BioImage.IO resource description file (RDF).
     Use `load_resource_description` for a more convenient representation.
 
@@ -47,17 +47,17 @@ def load_raw_resource_description(
     return io_cls.load_raw_node(source=source)
 
 
-def serialize_raw_resource_description_to_dict(raw_node: RawNode) -> dict:
+def serialize_raw_resource_description_to_dict(raw_node: RawResourceNode) -> dict:
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.serialize_raw_node_to_dict(raw_node)
 
 
-def save_raw_resource_description(res_desc: RawNode, path: pathlib.Path):
+def save_raw_resource_description(res_desc: RawResourceNode, path: pathlib.Path):
     io_cls = _get_matching_io_class(res_desc.type, res_desc.format_version)
     return io_cls.save_raw_node(res_desc, path)
 
 
-def serialize_raw_resource_description(res_desc: Union[dict, RawNode]) -> str:
+def serialize_raw_resource_description(res_desc: Union[dict, RawResourceNode]) -> str:
     if isinstance(res_desc, raw_nodes.Node):
         assert hasattr(res_desc, "type")
         type_ = res_desc.type  # noqa
@@ -74,10 +74,10 @@ def serialize_raw_resource_description(res_desc: Union[dict, RawNode]) -> str:
 
 
 def ensure_raw_resource_description(
-    raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode],
+    raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawResourceNode],
     root_path: os.PathLike,
     update_to_current_format: bool,
-) -> Tuple[RawNode, pathlib.Path]:
+) -> Tuple[RawResourceNode, pathlib.Path]:
     if isinstance(raw_node, raw_nodes.Node) and not isinstance(raw_node, raw_nodes.URI):
         return raw_node, pathlib.Path(root_path)
 
@@ -89,12 +89,12 @@ def ensure_raw_resource_description(
 
 
 def load_resource_description(
-    source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+    source: Union[RawResourceNode, os.PathLike, str, dict, raw_nodes.URI],
     root_path: os.PathLike = pathlib.Path(),
     *,
     update_to_current_format: bool = True,
     weights_priority_order: Optional[Sequence[str]] = None,
-) -> Node:
+) -> ResourceNode:
     """load a BioImage.IO resource description file (RDF).
     This includes some transformations for convenience, e.g. importing `source`.
     Use `load_raw_resource_description` to obtain a raw representation instead.
@@ -114,7 +114,7 @@ def load_resource_description(
 
 
 def export_resource_package(
-    source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+    source: Union[RawResourceNode, os.PathLike, str, dict, raw_nodes.URI],
     root_path: os.PathLike = pathlib.Path(),
     *,
     output_path: Optional[os.PathLike] = None,
@@ -127,7 +127,7 @@ def export_resource_package(
 
     Args:
         source: raw node, path, URI or raw data as dict
-        root_path: for relative paths (only used if source is RawNode or dict)
+        root_path: for relative paths (only used if source is RawResourceNode or dict)
         output_path: file path to write package to
         update_to_current_format: Convert not only the patch version, but also the major and minor version.
         weights_priority_order: If given only the first weights format present in the model is included.
@@ -152,7 +152,7 @@ def export_resource_package(
 
 
 def get_resource_package_content(
-    source: Union[RawNode, os.PathLike, str, dict],
+    source: Union[RawResourceNode, os.PathLike, str, dict],
     root_path: pathlib.Path,
     update_to_current_format: bool = False,
     *,
@@ -161,7 +161,7 @@ def get_resource_package_content(
     """
     Args:
         source: raw node, path, URI or raw data as dict
-        root_path:  for relative paths (only used if source is RawNode or dict)
+        root_path:  for relative paths (only used if source is RawResourceNode or dict)
         update_to_current_format: Convert not only the patch version, but also the major and minor version.
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
