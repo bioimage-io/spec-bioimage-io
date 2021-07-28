@@ -25,11 +25,11 @@ def _get_matching_io_class(type_: str, data_version: str = "latest") -> IO_Inter
     return v_mod.utils.IO
 
 
-def load_raw_node(
+def load_raw_resource_description(
     source: Union[os.PathLike, str, dict, raw_nodes.URI], update_to_current_format: bool = False
 ) -> RawNode:
     """load a raw python representation from a BioImage.IO resource description file (RDF).
-    Use `load_node` for a more convenient representation.
+    Use `load_resource_description` for a more convenient representation.
 
     Args:
         source: resource description file (RDF)
@@ -47,33 +47,33 @@ def load_raw_node(
     return io_cls.load_raw_node(source=source)
 
 
-def serialize_raw_node_to_dict(raw_node: RawNode) -> dict:
+def serialize_raw_resource_description_to_dict(raw_node: RawNode) -> dict:
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.serialize_raw_node_to_dict(raw_node)
 
 
-def save_raw_node(raw_node: RawNode, path: pathlib.Path):
-    io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.save_raw_node(raw_node, path)
+def save_raw_resource_description(res_desc: RawNode, path: pathlib.Path):
+    io_cls = _get_matching_io_class(res_desc.type, res_desc.format_version)
+    return io_cls.save_raw_node(res_desc, path)
 
 
-def serialize_raw_node(raw_node: Union[dict, RawNode]) -> str:
-    if isinstance(raw_node, raw_nodes.Node):
-        assert hasattr(raw_node, "type")
-        type_ = raw_node.type  # noqa
-        assert hasattr(raw_node, "format_version")
-        format_version = raw_node.format_version  # noqa
+def serialize_raw_resource_description(res_desc: Union[dict, RawNode]) -> str:
+    if isinstance(res_desc, raw_nodes.Node):
+        assert hasattr(res_desc, "type")
+        type_ = res_desc.type  # noqa
+        assert hasattr(res_desc, "format_version")
+        format_version = res_desc.format_version  # noqa
     else:
-        assert "type" in raw_node
-        type_ = raw_node["type"]
-        assert "format_version" in raw_node
-        format_version = raw_node["format_version"]
+        assert "type" in res_desc
+        type_ = res_desc["type"]
+        assert "format_version" in res_desc
+        format_version = res_desc["format_version"]
 
     io_cls = _get_matching_io_class(type_, format_version)
-    return io_cls.serialize_raw_node(raw_node)
+    return io_cls.serialize_raw_node(res_desc)
 
 
-def ensure_raw_node(
+def ensure_raw_resource_description(
     raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode],
     root_path: os.PathLike,
     update_to_current_format: bool,
@@ -88,7 +88,7 @@ def ensure_raw_node(
     return io_cls.ensure_raw_node(raw_node, root_path)
 
 
-def load_node(
+def load_resource_description(
     source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
     root_path: os.PathLike = pathlib.Path(),
     *,
@@ -97,7 +97,7 @@ def load_node(
 ) -> Node:
     """load a BioImage.IO resource description file (RDF).
     This includes some transformations for convenience, e.g. importing `source`.
-    Use `load_raw_node` to obtain a raw representation instead.
+    Use `load_raw_resource_description` to obtain a raw representation instead.
 
     Args:
         source: resource description file (RDF) or raw BioImage.IO resource
@@ -107,7 +107,7 @@ def load_node(
     Returns:
         BioImage.IO resource
     """
-    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
 
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.load_node(source, root_path, weights_priority_order=weights_priority_order)
@@ -137,7 +137,7 @@ def export_package(
     Returns:
         path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
     """
-    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.export_package(
         source,
@@ -166,6 +166,6 @@ def get_package_content(
     Returns:
         Package content of local file paths or text content keyed by file names.
     """
-    raw_node, _ = ensure_raw_node(source, root_path, update_to_current_format)
+    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
     return io_cls.get_package_content(source, root_path, weights_priority_order=weights_priority_order)

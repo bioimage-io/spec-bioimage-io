@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 
 from marshmallow import ValidationError
 
-from bioimageio.spec import export_package, load_raw_node
+from bioimageio.spec import export_package, load_raw_resource_description
 from bioimageio.spec.shared.raw_nodes import URI
 from bioimageio.spec.shared.utils import resolve_uri
 
@@ -61,7 +61,7 @@ def validate(
 
     source_name = rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source
     try:
-        raw_node = load_raw_node(rdf_source, update_to_current_format=update_format)
+        raw_node = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
         print(f"Invalid {source_name}:")
         pprint(e.normalized_messages())
