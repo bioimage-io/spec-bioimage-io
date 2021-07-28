@@ -267,7 +267,7 @@ class IO_Base(IO_Interface):
         elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
             local_raw_node = resolve_uri(raw_node, root_path)
             if local_raw_node.suffix == ".zip":
-                local_raw_node = extract_zip(local_raw_node)
+                local_raw_node = extract_resource_package(local_raw_node)
                 raw_node = local_raw_node  # zip package contains everything. ok to 'forget' that source was remote
 
             root_path = local_raw_node.parent
@@ -459,7 +459,7 @@ class IO_Base(IO_Interface):
         return dict(package)
 
 
-def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+def extract_resource_package(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
     """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
@@ -530,7 +530,7 @@ def get_dict_and_root_path_from_yaml_source(
 
     assert isinstance(local_source, pathlib.Path)
     if local_source.suffix == ".zip":
-        local_source = extract_zip(local_source)
+        local_source = extract_resource_package(local_source)
 
     if local_source.suffix == ".yml":
         warnings.warn(
