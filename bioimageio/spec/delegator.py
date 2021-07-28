@@ -113,10 +113,11 @@ def load_resource_description(
     return io_cls.load_node(source, root_path, weights_priority_order=weights_priority_order)
 
 
-def export_package(
+def export_resource_package(
     source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
     root_path: os.PathLike = pathlib.Path(),
     *,
+    output_path: Optional[os.PathLike] = None,
     update_to_current_format: bool = False,
     weights_priority_order: Optional[Sequence[Union[bioimageio.spec.model.raw_nodes.WeightsFormat]]] = None,
     compression: int = ZIP_DEFLATED,
@@ -126,7 +127,8 @@ def export_package(
 
     Args:
         source: raw node, path, URI or raw data as dict
-        root_path:  for relative paths (only used if source is RawNode or dict)
+        root_path: for relative paths (only used if source is RawNode or dict)
+        output_path: file path to write package to
         update_to_current_format: Convert not only the patch version, but also the major and minor version.
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
@@ -135,20 +137,21 @@ def export_package(
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
 
     Returns:
-        path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
+        path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH or 'output_path'
     """
     raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.export_package(
+    return io_cls.export_resource_package(
         source,
         root_path,
+        output_path=output_path,
         weights_priority_order=weights_priority_order,
         compression=compression,
         compression_level=compression_level,
     )
 
 
-def get_package_content(
+def get_resource_package_content(
     source: Union[RawNode, os.PathLike, str, dict],
     root_path: pathlib.Path,
     update_to_current_format: bool = False,
@@ -168,4 +171,4 @@ def get_package_content(
     """
     raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.get_package_content(source, root_path, weights_priority_order=weights_priority_order)
+    return io_cls.get_resource_package_content(source, root_path, weights_priority_order=weights_priority_order)

@@ -147,7 +147,7 @@ class IO_Interface(ABC):
 
     # RDF|raw node -> package
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
@@ -169,11 +169,12 @@ class IO_Interface(ABC):
         raise NotImplementedError
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
+        output_path: Optional[os.PathLike] = None,
         weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
@@ -183,6 +184,7 @@ class IO_Interface(ABC):
         Args:
             source: raw node, path, URI or raw data as dict
             root_path:  for relative paths (only used if source is RawNode or dict)
+            output_path: file path to write package to
             weights_priority_order: If given only the first weights format present in the model is included.
                                     If none of the prioritized weights formats is found all are included.
             compression: The numeric constant of compression method.
@@ -265,7 +267,7 @@ class IO_Base(IO_Interface):
         elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
             local_raw_node = resolve_uri(raw_node, root_path)
             if local_raw_node.suffix == ".zip":
-                local_raw_node = extract_zip(local_raw_node)
+                local_raw_node = extract_resource_package(local_raw_node)
                 raw_node = local_raw_node  # zip package contains everything. ok to 'forget' that source was remote
 
             root_path = local_raw_node.parent
@@ -305,17 +307,33 @@ class IO_Base(IO_Interface):
         return node
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
+        output_path: Optional[os.PathLike] = None,
         weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
+        if output_path is None:
+            package_path = cls._get_tmp_package_path(raw_node, weights_priority_order)
+        else:
+            package_path = output_path
+
+        package_content = cls.get_resource_package_content(
+            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
+        )
+        make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
+        return package_path
+
+    @staticmethod
+    def _get_tmp_package_path(
+        raw_node: RawNode, weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]]
+    ):
         package_file_name = raw_node.name
         if raw_node.version is not missing:
             package_file_name += f"_{raw_node.version}"
@@ -347,14 +365,10 @@ class IO_Base(IO_Interface):
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
 
-        package_content = cls.get_package_content(
-            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
-        )
-        make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
         return package_path
 
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
@@ -445,7 +459,7 @@ class IO_Base(IO_Interface):
         return dict(package)
 
 
-def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+def extract_resource_package(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
     """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
@@ -465,7 +479,7 @@ def extract_zip(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
 
 
 def make_zip(
-    path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
+    path: os.PathLike, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
 ) -> None:
     """Write a zip archive.
 
@@ -516,7 +530,7 @@ def get_dict_and_root_path_from_yaml_source(
 
     assert isinstance(local_source, pathlib.Path)
     if local_source.suffix == ".zip":
-        local_source = extract_zip(local_source)
+        local_source = extract_resource_package(local_source)
 
     if local_source.suffix == ".yml":
         warnings.warn(

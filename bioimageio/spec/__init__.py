@@ -5,8 +5,8 @@ from . import model, rdf, shared
 from .build_spec import add_weights, build_spec, serialize_spec
 from .delegator import (
     ensure_raw_resource_description,
-    export_package,
-    get_package_content,
+    export_resource_package,
+    get_resource_package_content,
     load_raw_resource_description,
     load_resource_description,
     save_raw_resource_description,

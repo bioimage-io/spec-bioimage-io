@@ -8,8 +8,8 @@ except ImportError:
 
 fields = fields
 
-export_package = utils.IO.export_package
-get_package_content = utils.IO.get_package_content
+export_package = utils.IO.export_resource_package
+get_package_content = utils.IO.get_resource_package_content
 load_node = utils.IO.load_node
 load_raw_node = utils.IO.load_raw_node
 save_raw_node = utils.IO.save_raw_node
