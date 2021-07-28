@@ -37,13 +37,7 @@ def test_tensor_schema_preprocessing():
 @pytest.mark.parametrize(
     "data",
     [
-        {
-            "name": "input_1",
-            "description": "Input 1",
-            "data_type": "float32",
-            "axes": "xyc",
-            "shape": [128, 128, 3],
-        },
+        {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
         {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
     ],
 )
@@ -109,14 +103,7 @@ def test_model_schema_accepts_run_mode(model_dict):
 
 @pytest.mark.parametrize(
     "format",
-    [
-        "pytorch_state_dict",
-        "pytorch_script",
-        "keras_hdf5",
-        "tensorflow_js",
-        "tensorflow_saved_model_bundle",
-        "onnx",
-    ],
+    ["pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"],
 )
 def test_model_schema_accepts_valid_weight_formats(model_dict, format):
     model_schema = schema.Model()
