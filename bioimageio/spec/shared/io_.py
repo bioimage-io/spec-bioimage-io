@@ -23,7 +23,7 @@ from .utils import (
     PathToRemoteUriTransformer,
     _download_uri_to_local_path,
     resolve_local_uri,
-    resolve_raw_node_to_node,
+    resolve_raw_node,
     resolve_uri,
 )
 
@@ -299,9 +299,7 @@ class IO_Base(IO_Interface):
             else:
                 raise ValueError(f"Not found any of the specified weights formats ({weights_priority_order})")
 
-        node: Node = resolve_raw_node_to_node(
-            raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
-        )
+        node: Node = resolve_raw_node(raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes)
         assert isinstance(node, cls.nodes.Model)
 
         return node

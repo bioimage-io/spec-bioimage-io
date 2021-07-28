@@ -347,7 +347,7 @@ def _download_uri_to_local_path(uri: typing.Union[nodes.URI, raw_nodes.URI]) -> 
     return local_path
 
 
-def resolve_raw_node_to_node(raw_node: GenericRawNode, root_path: os.PathLike, nodes_module: ModuleType) -> GenericNode:
+def resolve_raw_node(raw_node: GenericRawNode, root_path: os.PathLike, nodes_module: ModuleType) -> GenericNode:
     """resolve all uris and sources"""
     node = UriNodeTransformer(root_path=root_path).transform(raw_node)
     node = SourceNodeTransformer().transform(node)
