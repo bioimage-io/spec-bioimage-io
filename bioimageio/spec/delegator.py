@@ -113,7 +113,7 @@ def load_resource_description(
     return io_cls.load_node(source, root_path, weights_priority_order=weights_priority_order)
 
 
-def export_package(
+def export_resource_package(
     source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
     root_path: os.PathLike = pathlib.Path(),
     *,
@@ -141,7 +141,7 @@ def export_package(
     """
     raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.export_package(
+    return io_cls.export_resource_package(
         source,
         root_path,
         output_path=output_path,
@@ -151,7 +151,7 @@ def export_package(
     )
 
 
-def get_package_content(
+def get_resource_package_content(
     source: Union[RawNode, os.PathLike, str, dict],
     root_path: pathlib.Path,
     update_to_current_format: bool = False,
@@ -171,4 +171,4 @@ def get_package_content(
     """
     raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
     io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.get_package_content(source, root_path, weights_priority_order=weights_priority_order)
+    return io_cls.get_resource_package_content(source, root_path, weights_priority_order=weights_priority_order)

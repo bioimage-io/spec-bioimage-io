@@ -6,7 +6,7 @@ import pytest
 from ruamel.yaml import YAML
 
 from bioimageio import spec
-from bioimageio.spec import export_package
+from bioimageio.spec import export_resource_package
 from bioimageio.spec.shared.common import get_args_flat
 
 try:
@@ -30,7 +30,7 @@ def get_unet2d_nuclei_broad_path(version: str):
 
 
 def get_package_from_rdf_path(rdf_path: Path):
-    return export_package(rdf_path)
+    return export_resource_package(rdf_path)
 
 
 def pytest_generate_tests(metafunc):

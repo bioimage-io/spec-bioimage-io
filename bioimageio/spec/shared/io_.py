@@ -147,7 +147,7 @@ class IO_Interface(ABC):
 
     # RDF|raw node -> package
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
@@ -169,7 +169,7 @@ class IO_Interface(ABC):
         raise NotImplementedError
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
@@ -307,7 +307,7 @@ class IO_Base(IO_Interface):
         return node
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
@@ -324,7 +324,7 @@ class IO_Base(IO_Interface):
         else:
             package_path = output_path
 
-        package_content = cls.get_package_content(
+        package_content = cls.get_resource_package_content(
             raw_node, root_path=root_path, weights_priority_order=weights_priority_order
         )
         make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
@@ -368,7 +368,7 @@ class IO_Base(IO_Interface):
         return package_path
 
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,

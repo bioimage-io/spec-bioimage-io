@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 
 from marshmallow import ValidationError
 
-from bioimageio.spec import export_package, load_raw_resource_description
+from bioimageio.spec import export_resource_package, load_raw_resource_description
 from bioimageio.spec.shared.raw_nodes import URI
 from bioimageio.spec.shared.utils import resolve_uri
 
@@ -26,7 +26,7 @@ def package(
         return code
 
     try:
-        tmp_package_path = export_package(
+        tmp_package_path = export_resource_package(
             rdf_source, update_to_current_format=update_format, weights_priority_order=weights_priority_order
         )
     except Exception as e:
