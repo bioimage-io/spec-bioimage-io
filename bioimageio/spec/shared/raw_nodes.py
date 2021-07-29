@@ -8,11 +8,12 @@ from marshmallow import missing
 from . import base_nodes
 
 
+@dataclass(init=False)
 class RawNode(base_nodes.NodeBase):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class ResourceDescription(RawNode, base_nodes.ResourceDescription):
     pass
 

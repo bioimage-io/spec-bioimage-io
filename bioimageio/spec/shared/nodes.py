@@ -13,11 +13,12 @@ except ImportError:
     from typing_extensions import get_args, get_origin
 
 
+@dataclass(init=False)
 class Node(base_nodes.NodeBase):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class ResourceDescription(Node, base_nodes.ResourceDescription):
     pass
 

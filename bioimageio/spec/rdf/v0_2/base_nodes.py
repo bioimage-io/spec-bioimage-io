@@ -56,7 +56,7 @@ class Badge(NodeBase):
 # to pass mypy:
 # separate dataclass and abstract class as a workaround for abstract dataclasses
 # from https://github.com/python/mypy/issues/5374#issuecomment-650656381
-@dataclass
+@dataclass(init=False)  # to allow for additional unknown kwargs
 class _RDF(ResourceDescription):
     attachments: Union[_Missing, Dict[str, Any]] = missing
     authors: List[Union[str, Author]] = missing
@@ -77,15 +77,6 @@ class RDF(_RDF, ABC):
     @abstractmethod
     def covers(self):
         raise NotImplementedError
-
-    # allow for additional unknown kwargs
-    def __init__(self, **kwargs):  # todo: improve signature
-        field_names = set(f.name for f in dataclasses.fields(self))
-        known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
-        for k, v in known_kwargs.items():
-            setattr(self, k, v)
-        unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
-        warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
 
     def __post_init__(self):
         if self.type is missing:

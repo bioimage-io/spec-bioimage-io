@@ -29,11 +29,12 @@ class Badge(RawNode, base_nodes.Badge):
 # to pass mypy:
 # separate dataclass and abstract class as a workaround for abstract dataclasses
 # from https://github.com/python/mypy/issues/5374#issuecomment-650656381
-@dataclass(init=False)  # use super init to allow for additional unknown kwargs
+@dataclass(init=False)  # to allow for additional unknown kwargs
 class _RDF(ResourceDescription, base_nodes._RDF):
     covers: Union[_Missing, List[URI]] = missing
 
 
+@dataclass(init=False)
 class RDF(_RDF, base_nodes.RDF):
     pass
 
