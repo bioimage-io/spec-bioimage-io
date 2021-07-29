@@ -69,14 +69,14 @@ class _RDF(ResourceDescription):
     links: List[str] = missing
     tags: List[str] = missing
 
-
-class RDF(_RDF, ABC):
     def __post_init__(self):
         if self.type is missing:
             self.type = self.__class__.__name__.lower()
 
         super().__post_init__()
 
+
+class RDF(_RDF, ABC):
     @property
     @abstractmethod
     def covers(self):
