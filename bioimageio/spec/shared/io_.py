@@ -20,7 +20,7 @@ from .utils import (
     PathToRemoteUriTransformer,
     _download_uri_to_local_path,
     resolve_local_uri,
-    resolve_raw_node,
+    resolve_raw_resource_description,
     resolve_uri,
 )
 
@@ -70,9 +70,9 @@ class IO_Interface(ABC):
     # RDF -> raw node
     @classmethod
     @abstractmethod
-    def load_raw_node(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
+    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
         """load a raw python representation from a BioImage.IO resource description file (RDF).
-        Use `load_node` for a more convenient representation.
+        Use `load_resource_description` for a more convenient representation.
 
         Args:
             source: resource description file (RDF)
@@ -83,9 +83,9 @@ class IO_Interface(ABC):
         raise NotImplementedError
 
     @classmethod
-    def ensure_raw_node(
+    def ensure_raw_rd(
         cls, raw_node: Union[str, dict, os.PathLike, URI, RawResourceDescription], root_path: os.PathLike
-    ) -> RawResourceDescription:
+    ) -> Tuple[RawResourceDescription, pathlib.Path]:
         raise NotImplementedError
 
     @classmethod
@@ -99,23 +99,23 @@ class IO_Interface(ABC):
 
     # raw node -> RDF
     @classmethod
-    def serialize_raw_node_to_dict(cls, raw_node: RawResourceDescription) -> dict:
+    def serialize_raw_resource_description_to_dict(cls, raw_node: RawResourceDescription) -> dict:
         """Serialize a `raw_nodes.<Model|Collection|...>` object with marshmallow to a plain dict with only basic data types"""
         raise NotImplementedError
 
     @classmethod
-    def serialize_raw_node(cls, raw_node: Union[dict, RawResourceDescription]) -> str:
+    def serialize_raw_resource_description(cls, raw_node: Union[dict, RawResourceDescription]) -> str:
         """Serialize a raw model to a yaml string"""
         raise NotImplementedError
 
     @classmethod
-    def save_raw_node(cls, raw_node: RawResourceDescription, path: pathlib.Path) -> None:
+    def save_raw_resource_description(cls, raw_node: RawResourceDescription, path: pathlib.Path) -> None:
         """Serialize a raw model to a new yaml file at 'path'"""
         raise NotImplementedError
 
     # RDF|raw resource description (raw rd)-> (evaluated) resource description (rd)
     @classmethod
-    def load_node(
+    def load_resource_description(
         cls,
         source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
@@ -124,7 +124,7 @@ class IO_Interface(ABC):
     ) -> ResourceDescription:
         """load a BioImage.IO resource description file (RDF).
         This includes some transformations for convenience, e.g. importing `source`.
-        Use `load_raw_node` to obtain a raw representation instead.
+        Use `load_raw_resource_description` to obtain a raw representation instead.
 
         Args:
             source: resource description file (RDF) or raw BioImage.IO resource
@@ -190,7 +190,7 @@ class IO_Interface(ABC):
 
 class IO_Base(IO_Interface):
     @classmethod
-    def load_raw_node(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
+    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
         data, type_ = resolve_rdf_source_and_type(source)
         data = cls.maybe_convert(data)
 
@@ -221,54 +221,52 @@ class IO_Base(IO_Interface):
         return raw_node
 
     @classmethod
-    def serialize_raw_node_to_dict(cls, raw_node: RawResourceDescription) -> dict:
-        schema_class_name = get_class_name_from_type(raw_node.type)
+    def serialize_raw_resource_description_to_dict(cls, raw_rd: RawResourceDescription) -> dict:
+        schema_class_name = get_class_name_from_type(raw_rd.type)
         schema_class = getattr(cls.schema, schema_class_name)
         if schema_class is None:
             raise NotImplementedError(f"{schema_class_name} schema")
 
-        serialized = schema_class().dump(raw_node)
+        serialized = schema_class().dump(raw_rd)
         assert isinstance(serialized, dict)
         return serialized
 
     @classmethod
-    def save_raw_node(cls, raw_node: RawResourceDescription, path: pathlib.Path):
+    def save_raw_resource_description(cls, raw_rd: RawResourceDescription, path: pathlib.Path):
         warnings.warn("only saving serialized rdf, no associated resources.")
         if path.suffix != ".yaml":
             warnings.warn("saving with '.yaml' suffix is strongly encouraged.")
 
-        serialized = cls.serialize_raw_node_to_dict(raw_node)
+        serialized = cls.serialize_raw_resource_description_to_dict(raw_rd)
         yaml.dump(serialized, path)
 
     @classmethod
-    def serialize_raw_node(cls, raw_node: Union[dict, RawResourceDescription]) -> str:
-        if not isinstance(raw_node, dict):
-            raw_node = cls.serialize_raw_node_to_dict(raw_node)
+    def serialize_raw_resource_description(cls, raw_rd: Union[dict, RawResourceDescription]) -> str:
+        if not isinstance(raw_rd, dict):
+            raw_rd = cls.serialize_raw_resource_description_to_dict(raw_rd)
 
         with StringIO() as stream:
-            yaml.dump(raw_node, stream)
+            yaml.dump(raw_rd, stream)
             return stream.getvalue()
 
     @classmethod
-    def ensure_raw_node(
-        cls, raw_node: Union[str, dict, os.PathLike, URI, RawResourceDescription], root_path: os.PathLike
-    ):
-        if isinstance(raw_node, raw_nodes.RawNode):
-            return raw_node, root_path
-        elif isinstance(raw_node, dict):
+    def ensure_raw_rd(cls, raw_rd: Union[str, dict, os.PathLike, URI, RawResourceDescription], root_path: os.PathLike):
+        if isinstance(raw_rd, raw_nodes.RawNode):
+            return raw_rd, root_path
+        elif isinstance(raw_rd, dict):
             pass
-        elif isinstance(raw_node, (str, os.PathLike, URI)):
-            local_raw_node = resolve_uri(raw_node, root_path)
-            if local_raw_node.suffix == ".zip":
-                local_raw_node = extract_resource_package(local_raw_node)
-                raw_node = local_raw_node  # zip package contains everything. ok to 'forget' that source was remote
+        elif isinstance(raw_rd, (str, os.PathLike, URI)):
+            local_raw_rd = resolve_uri(raw_rd, root_path)
+            if local_raw_rd.suffix == ".zip":
+                local_raw_rd = extract_resource_package(local_raw_rd)
+                raw_rd = local_raw_rd  # zip package contains everything. ok to 'forget' that source was remote
 
-            root_path = local_raw_node.parent
+            root_path = local_raw_rd.parent
         else:
-            raise TypeError(raw_node)
+            raise TypeError(raw_rd)
 
-        assert not isinstance(raw_node, RawResourceDescription)
-        return cls.load_raw_node(raw_node), root_path
+        assert not isinstance(raw_rd, RawResourceDescription)
+        return cls.load_raw_resource_description(raw_rd), root_path
 
     @classmethod
     def maybe_convert(cls, data: dict):
@@ -278,29 +276,29 @@ class IO_Base(IO_Interface):
         return cls.converters.maybe_convert(data)
 
     @classmethod
-    def load_node(
+    def load_resource_description(
         cls,
         source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
     ):
-        raw_node, root_path = cls.ensure_raw_node(source, root_path)
+        raw_rd, root_path = cls.ensure_raw_rd(source, root_path)
 
         if weights_priority_order is not None:
             for wf in weights_priority_order:
-                if wf in raw_node.weights:
-                    raw_node.weights = {wf: raw_node.weights[wf]}
+                if wf in raw_rd.weights:
+                    raw_rd.weights = {wf: raw_rd.weights[wf]}
                     break
             else:
                 raise ValueError(f"Not found any of the specified weights formats ({weights_priority_order})")
 
-        node: ResourceDescription = resolve_raw_node(
-            raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
+        rd: ResourceDescription = resolve_raw_resource_description(
+            raw_rd=raw_rd, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
         )
-        assert isinstance(node, getattr(cls.nodes, get_class_name_from_type(raw_node.type)))
+        assert isinstance(rd, getattr(cls.nodes, get_class_name_from_type(raw_rd.type)))
 
-        return node
+        return rd
 
     @classmethod
     def export_resource_package(
@@ -313,34 +311,34 @@ class IO_Base(IO_Interface):
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
-        raw_node, root_path = cls.ensure_raw_node(source, root_path)
+        raw_rd, root_path = cls.ensure_raw_rd(source, root_path)
 
         if output_path is None:
-            package_path = cls._get_tmp_package_path(raw_node, weights_priority_order)
+            package_path = cls._get_tmp_package_path(raw_rd, weights_priority_order)
         else:
             package_path = output_path
 
         package_content = cls.get_resource_package_content(
-            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
+            raw_rd, root_path=root_path, weights_priority_order=weights_priority_order
         )
         make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
         return package_path
 
     @classmethod
     def _get_package_base_name(
-        cls, raw_node: RawResourceDescription, weights_priority_order: Optional[Sequence[str]]
+        cls, raw_rd: RawResourceDescription, weights_priority_order: Optional[Sequence[str]]
     ) -> str:
-        package_file_name = raw_node.name
-        if raw_node.version is not missing:
-            package_file_name += f"_{raw_node.version}"
+        package_file_name = raw_rd.name
+        if raw_rd.version is not missing:
+            package_file_name += f"_{raw_rd.version}"
 
         package_file_name = package_file_name.replace(" ", "_").replace(".", "_")
 
         return package_file_name
 
     @classmethod
-    def _get_tmp_package_path(cls, raw_node: RawResourceDescription, weights_priority_order: Optional[Sequence[str]]):
-        package_file_name = cls._get_package_base_name(raw_node, weights_priority_order)
+    def _get_tmp_package_path(cls, raw_rd: RawResourceDescription, weights_priority_order: Optional[Sequence[str]]):
+        package_file_name = cls._get_package_base_name(raw_rd, weights_priority_order)
 
         BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
         package_path = (BIOIMAGEIO_CACHE_PATH / package_file_name).with_suffix(".zip")

@@ -19,6 +19,7 @@ from .common import BIOIMAGEIO_CACHE_PATH
 from .nodes import LocalImportableModule, ResolvedImportableSourceFile
 
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
+GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
 # GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
 GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
@@ -357,12 +358,14 @@ def _download_uri_to_local_path(uri: typing.Union[nodes.URI, base_nodes.URI]) ->
     return local_path
 
 
-def resolve_raw_node(raw_node: GenericRawNode, root_path: os.PathLike, nodes_module: typing.Any) -> GenericNode:
+def resolve_raw_resource_description(
+    raw_rd: GenericRawRD, root_path: os.PathLike, nodes_module: typing.Any
+) -> GenericResolvedNode:
     """resolve all uris and sources"""
-    node = UriNodeTransformer(root_path=root_path).transform(raw_node)
-    node = SourceNodeTransformer().transform(node)
-    node = RawNodeTypeTransformer(nodes_module).transform(node)
-    return node
+    rd = UriNodeTransformer(root_path=root_path).transform(raw_rd)
+    rd = SourceNodeTransformer().transform(rd)
+    rd = RawNodeTypeTransformer(nodes_module).transform(rd)
+    return rd
 
 
 def is_valid_orcid_id(orcid_id: str):

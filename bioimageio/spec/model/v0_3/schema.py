@@ -313,7 +313,7 @@ class WeightsEntryBase(BioImageIOSchema):
     @pre_dump
     def raise_on_weights_format_mismatch(self, raw_node, **kwargs):
         """
-        ensures to serialize a raw_node.<Special>WeightsEntry with the corresponding schema.<Special>WeightsEntry
+        ensures to serialize a raw_nodes.<Special>WeightsEntry with the corresponding schema.<Special>WeightsEntry
 
         This check is required, because no validation is performed by marshmallow on serialization,
         which disables the Union field to select the appropriate nested schema for serialization.

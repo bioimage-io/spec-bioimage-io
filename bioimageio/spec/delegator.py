@@ -47,48 +47,48 @@ def load_raw_resource_description(
     )
 
     # not using data here, because a remote source differs from a local source
-    return io_cls.load_raw_node(source=source)
+    return io_cls.load_raw_resource_description(source=source)
 
 
-def serialize_raw_resource_description_to_dict(raw_node: RawResourceDescription) -> dict:
-    io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.serialize_raw_node_to_dict(raw_node)
+def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -> dict:
+    io_cls = _get_matching_io_class(raw_rd.type, raw_rd.format_version)
+    return io_cls.serialize_raw_resource_description_to_dict(raw_rd)
 
 
-def save_raw_resource_description(res_desc: RawResourceDescription, path: pathlib.Path):
-    io_cls = _get_matching_io_class(res_desc.type, res_desc.format_version)
-    return io_cls.save_raw_node(res_desc, path)
+def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.Path):
+    io_cls = _get_matching_io_class(raw_rd.type, raw_rd.format_version)
+    return io_cls.save_raw_resource_description(raw_rd, path)
 
 
-def serialize_raw_resource_description(res_desc: Union[dict, RawResourceDescription]) -> str:
-    if isinstance(res_desc, raw_nodes.RawNode):
-        assert hasattr(res_desc, "type")
-        type_ = res_desc.type  # noqa
-        assert hasattr(res_desc, "format_version")
-        format_version = res_desc.format_version  # noqa
+def serialize_raw_resource_description(raw_rd: Union[dict, RawResourceDescription]) -> str:
+    if isinstance(raw_rd, raw_nodes.RawNode):
+        assert hasattr(raw_rd, "type")
+        type_ = raw_rd.type  # noqa
+        assert hasattr(raw_rd, "format_version")
+        format_version = raw_rd.format_version  # noqa
     else:
-        assert "type" in res_desc
-        type_ = res_desc["type"]
-        assert "format_version" in res_desc
-        format_version = res_desc["format_version"]
+        assert "type" in raw_rd
+        type_ = raw_rd["type"]
+        assert "format_version" in raw_rd
+        format_version = raw_rd["format_version"]
 
     io_cls = _get_matching_io_class(type_, format_version)
-    return io_cls.serialize_raw_node(res_desc)
+    return io_cls.serialize_raw_resource_description(raw_rd)
 
 
 def ensure_raw_resource_description(
-    raw_node: Union[str, dict, os.PathLike, URI, RawResourceDescription],
+    raw_rd: Union[str, dict, os.PathLike, URI, RawResourceDescription],
     root_path: os.PathLike,
     update_to_current_format: bool,
 ) -> Tuple[RawResourceDescription, pathlib.Path]:
-    if isinstance(raw_node, raw_nodes.RawNode) and not isinstance(raw_node, URI):
-        return raw_node, pathlib.Path(root_path)
+    if isinstance(raw_rd, raw_nodes.ResourceDescription) and not isinstance(raw_rd, URI):
+        return raw_rd, pathlib.Path(root_path)
 
-    data, type_ = resolve_rdf_source_and_type(raw_node)
+    data, type_ = resolve_rdf_source_and_type(raw_rd)
     format_version = "latest" if update_to_current_format else data.get("format_version", "latest")
     io_cls = _get_matching_io_class(type_, format_version)
 
-    return io_cls.ensure_raw_node(raw_node, root_path)
+    return io_cls.ensure_raw_rd(raw_rd, root_path)
 
 
 def load_resource_description(
@@ -110,10 +110,10 @@ def load_resource_description(
     Returns:
         BioImage.IO resource
     """
-    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
+    raw_rd, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
 
-    io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
-    return io_cls.load_node(source, root_path, weights_priority_order=weights_priority_order)
+    io_cls = _get_matching_io_class(raw_rd.type, raw_rd.format_version)
+    return io_cls.load_resource_description(source, root_path, weights_priority_order=weights_priority_order)
 
 
 def export_resource_package(
@@ -122,14 +122,14 @@ def export_resource_package(
     *,
     output_path: Optional[os.PathLike] = None,
     update_to_current_format: bool = False,
-    weights_priority_order: Optional[Sequence[Union[bioimageio.spec.model.raw_nodes.WeightsFormat]]] = None,
+    weights_priority_order: Optional[Sequence[Union[bioimageio.spec.model.v0_3.base_nodes.WeightsFormat]]] = None,
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
 ) -> pathlib.Path:
     """Package a BioImage.IO resource as a zip file.
 
     Args:
-        source: raw node, path, URI or raw data as dict
+        source: raw resource description, path, URI or raw data as dict
         root_path: for relative paths (only used if source is RawResourceDescription or dict)
         output_path: file path to write package to
         update_to_current_format: Convert not only the patch version, but also the major and minor version.
@@ -142,8 +142,8 @@ def export_resource_package(
     Returns:
         path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH or 'output_path'
     """
-    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
-    io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
+    raw_rd, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
+    io_cls = _get_matching_io_class(raw_rd.type, raw_rd.format_version)
     return io_cls.export_resource_package(
         source,
         root_path,
@@ -163,7 +163,7 @@ def get_resource_package_content(
 ) -> Dict[str, Union[str, pathlib.Path]]:
     """
     Args:
-        source: raw node, path, URI or raw data as dict
+        source: raw resource description, path, URI or raw data as dict
         root_path:  for relative paths (only used if source is RawResourceDescription or dict)
         update_to_current_format: Convert not only the patch version, but also the major and minor version.
         weights_priority_order: If given only the first weights format present in the model is included.
@@ -172,6 +172,6 @@ def get_resource_package_content(
     Returns:
         Package content of local file paths or text content keyed by file names.
     """
-    raw_node, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
-    io_cls = _get_matching_io_class(raw_node.type, raw_node.format_version)
+    raw_rd, _ = ensure_raw_resource_description(source, root_path, update_to_current_format)
+    io_cls = _get_matching_io_class(raw_rd.type, raw_rd.format_version)
     return io_cls.get_resource_package_content(source, root_path, weights_priority_order=weights_priority_order)

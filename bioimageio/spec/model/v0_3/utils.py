@@ -22,19 +22,19 @@ class IO(IO_Base):
 
     @classmethod
     def _get_package_base_name(
-        cls, raw_node: raw_nodes.Model, weights_priority_order: Optional[Sequence[base_nodes.WeightsFormat]]
+        cls, raw_rd: raw_nodes.Model, weights_priority_order: Optional[Sequence[base_nodes.WeightsFormat]]
     ) -> str:
-        package_base_name = super()._get_package_base_name(raw_node, weights_priority_order)
+        package_base_name = super()._get_package_base_name(raw_rd, weights_priority_order)
         if weights_priority_order is not None:
             # add weights format to package file name
             for wf in weights_priority_order:
-                if wf in raw_node.weights:
+                if wf in raw_rd.weights:
                     package_base_name += f"_{wf}"
                     break
             else:
                 raise ValueError(
                     f"None of the requested weights ({weights_priority_order}) "
-                    f"found in model weights ({raw_node.weights.keys()})"
+                    f"found in model weights ({raw_rd.weights.keys()})"
                 )
 
         return package_base_name
@@ -49,15 +49,15 @@ class IO(IO_Base):
         weights_priority_order: Optional[Sequence[base_nodes.WeightsFormat]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
 
-        raw_node, root_path = cls.ensure_raw_node(source, root_path)
-        assert isinstance(raw_node, raw_nodes.Model)
+        raw_rd, root_path = cls.ensure_raw_rd(source, root_path)
+        assert isinstance(raw_rd, raw_nodes.Model)
 
-        raw_node = deepcopy(raw_node)
+        raw_rd = deepcopy(raw_rd)
 
         package = NoOverridesDict(
             key_exists_error_msg="Package content conflict for {key}"
         )  # todo: add check in model validation
-        package["original_rdf.txt"] = cls.serialize_raw_node(raw_node)
+        package["original_rdf.txt"] = cls.serialize_raw_resource_description(raw_rd)
         # todo: .txt -> .yaml once 'rdf.yaml' is only valid rdf file name in package
 
         _GenericRawNode = TypeVar("_GenericRawNode", bound=raw_nodes.RawNode)
@@ -80,27 +80,27 @@ class IO(IO_Base):
 
             return node
 
-        raw_node = incl_as_local(raw_node, "documentation")
-        raw_node = incl_as_local(raw_node, "test_inputs")
-        raw_node = incl_as_local(raw_node, "test_outputs")
-        raw_node = incl_as_local(raw_node, "covers")
+        raw_rd = incl_as_local(raw_rd, "documentation")
+        raw_rd = incl_as_local(raw_rd, "test_inputs")
+        raw_rd = incl_as_local(raw_rd, "test_outputs")
+        raw_rd = incl_as_local(raw_rd, "covers")
 
         # todo: improve dependency handling
-        if raw_node.dependencies is not missing:
-            dep = incl_as_local(raw_node.dependencies, "file")
-            raw_node = dataclasses.replace(raw_node, dependencies=dep)
+        if raw_rd.dependencies is not missing:
+            dep = incl_as_local(raw_rd.dependencies, "file")
+            raw_rd = dataclasses.replace(raw_rd, dependencies=dep)
 
-        if isinstance(raw_node.source, raw_nodes.ImportableSourceFile):
-            source = incl_as_local(raw_node.source, "source_file")
-            raw_node = dataclasses.replace(raw_node, source=source)
+        if isinstance(raw_rd.source, raw_nodes.ImportableSourceFile):
+            source = incl_as_local(raw_rd.source, "source_file")
+            raw_rd = dataclasses.replace(raw_rd, source=source)
 
         # filter weights
         for wfp in weights_priority_order or []:
-            if wfp in raw_node.weights:
-                weights = {wfp: raw_node.weights[wfp]}
+            if wfp in raw_rd.weights:
+                weights = {wfp: raw_rd.weights[wfp]}
                 break
         else:
-            weights = raw_node.weights
+            weights = raw_rd.weights
 
         # add weights
         local_weights = {}
@@ -118,18 +118,18 @@ class IO(IO_Base):
 
             local_weights[wf] = weights_entry
 
-        raw_node = dataclasses.replace(raw_node, weights=local_weights)
+        raw_rd = dataclasses.replace(raw_rd, weights=local_weights)
 
         # attachments:files
-        if raw_node.attachments is not missing:
+        if raw_rd.attachments is not missing:
             local_files = []
-            for fa in raw_node.attachments.get("files", []):
+            for fa in raw_rd.attachments.get("files", []):
                 fa = resolve_uri(fa, root_path=root_path)
                 package[fa.name] = fa
                 local_files.append(fa.name)
 
             if local_files:
-                raw_node.attachments["files"] = local_files
+                raw_rd.attachments["files"] = local_files
 
-        package["rdf.yaml"] = cls.serialize_raw_node(raw_node)
+        package["rdf.yaml"] = cls.serialize_raw_resource_description(raw_rd)
         return dict(package)
