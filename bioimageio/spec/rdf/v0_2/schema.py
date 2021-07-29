@@ -7,6 +7,7 @@ from bioimageio.spec.shared.common import get_args, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
+from .base_nodes import FormatVersion
 
 
 class BioImageIOSchema(SharedBioImageIOSchema):
@@ -60,7 +61,7 @@ class RDF(BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
 
-    bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
+    bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(FormatVersion)[-1]}
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
 Note that models are described with an extended Model RDF specification.
@@ -147,7 +148,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description_order=0,
         bioimageio_description=(
             "Version of the BioImage.IO Resource Description File Specification used."
-            f"The current general format version described here is {get_args(raw_nodes.FormatVersion)[-1]}. "
+            f"The current general format version described here is {get_args(FormatVersion)[-1]}. "
             "Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format."
         ),
     )
@@ -236,44 +237,3 @@ class Collection(RDF):
     model = fields.List(fields.Nested(ModelCollectionEntry))
     dataset = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
     notebook = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-
-
-# deprecated manifest draft:  # todo: remove
-class BioImageIoManifestModelEntry(BioImageIOSchema):
-    id = fields.String(required=True)
-    source = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
-    links = fields.List(fields.String)
-    download_url = fields.String(validate=field_validators.URL(schemes=["http", "https"]))
-
-
-class BioImageIoManifestNotebookEntry(BioImageIOSchema):  # todo: remove  # todo: add notebook RDF??
-    id = fields.String(required=True)
-    name = fields.String(required=True)
-    documentation = fields.RelativeLocalPath(
-        required=True,
-        validate=field_validators.Attribute(
-            "suffix",
-            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
-        ),
-    )
-    description = fields.String(required=True)
-
-    cite = fields.List(fields.Nested(CiteEntry))
-    authors = fields.List(fields.Nested(Author), required=True)
-    covers = fields.List(fields.URI)
-
-    badges = fields.List(fields.Nested(Badge))
-    tags = fields.List(fields.String)
-    source = fields.URI(required=True)
-    links = fields.List(fields.String)  # todo: make List[URI]?
-
-
-class BioImageIoManifest(BioImageIOSchema):  # todo: remove
-    format_version = fields.String(validate=field_validators.OneOf(get_args(raw_nodes.FormatVersion)), required=True)
-    config = fields.Dict()
-
-    application = fields.List(fields.Dict)
-    collection = fields.List(fields.Dict)
-    model = fields.List(fields.Nested(BioImageIoManifestModelEntry))
-    dataset = fields.List(fields.Dict)
-    notebook = fields.List(fields.Nested(BioImageIoManifestNotebookEntry))

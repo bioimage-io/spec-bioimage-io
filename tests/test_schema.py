@@ -1,9 +1,9 @@
-import pytest
 from datetime import datetime
 
+import pytest
 from marshmallow import missing
 
-from bioimageio.spec.model import nodes, schema
+from bioimageio.spec.model import raw_nodes, schema
 
 
 def test_tensor_schema_preprocessing():
@@ -21,7 +21,7 @@ def test_tensor_schema_preprocessing():
         ],
     }
     validated_data = schema.InputTensor().load(data)
-    assert isinstance(validated_data, nodes.InputTensor)
+    assert isinstance(validated_data, raw_nodes.InputTensor)
     assert validated_data.name == data["name"]
     assert validated_data.description == data["description"]
     assert validated_data.data_type == data["data_type"]

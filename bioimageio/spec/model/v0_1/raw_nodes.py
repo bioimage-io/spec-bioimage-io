@@ -8,7 +8,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow.utils import _Missing, missing
 
 from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry
-from bioimageio.spec.shared.raw_nodes import Dependencies, ImplicitInputShape, ImplicitOutputShape, Node, SpecURI, URI
+from bioimageio.spec.shared.raw_nodes import Dependencies, ImplicitInputShape, ImplicitOutputShape, RawNode, URI
 
 try:
     from typing import Literal
@@ -24,7 +24,7 @@ Dependencies = Dependencies
 
 
 @dataclass
-class BaseSpec(Node):
+class BaseSpec(RawNode):
     name: str = missing
     format_version: FormatVersion = missing
     description: str = missing
@@ -46,14 +46,14 @@ class BaseSpec(Node):
 
 
 @dataclass
-class Weights(Node):
+class Weights(RawNode):
     source: URI
     hash: Dict[str, str]
 
 
 @dataclass
-class SpecWithKwargs(Node):
-    spec: SpecURI = missing
+class SpecWithKwargs(RawNode):
+    spec: URI = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
@@ -63,7 +63,7 @@ class Transformation(SpecWithKwargs):
 
 
 @dataclass
-class Prediction(Node):
+class Prediction(RawNode):
     weights: Weights = missing
     dependencies: str = missing
     preprocess: Union[_Missing, List[Transformation]] = missing
@@ -74,7 +74,7 @@ Axes = str
 
 
 @dataclass
-class Array(Node):
+class Array(RawNode):
     name: str = missing
     axes: Union[_Missing, Axes] = missing
     data_type: str = missing

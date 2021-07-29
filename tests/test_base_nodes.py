@@ -9,4 +9,3 @@ def test_node_inheritance():
     raw_node = RawNode()
     assert isinstance(raw_node, NodeBase)
     assert not isinstance(raw_node, Node)
-

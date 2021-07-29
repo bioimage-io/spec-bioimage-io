@@ -1,9 +1,7 @@
 """shared nodes that shared transformer act on"""
-import dataclasses
 import pathlib
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Union
 
 from marshmallow import missing
 
@@ -15,14 +13,8 @@ except ImportError:
     from typing_extensions import get_args, get_origin
 
 
-@dataclass
 class Node(base_nodes.NodeBase):
-    def __post_init__(self):
-        for f in dataclasses.fields(self):
-            if getattr(self, f.name) is missing and (
-                get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
-            ):
-                raise TypeError(f"{self.__class__}.__init__() missing required argument: '{f.name}'")
+    pass
 
 
 @dataclass
@@ -30,14 +22,17 @@ class ResourceDescription(Node, base_nodes.ResourceDescription):
     pass
 
 
+@dataclass
 class URI(Node, base_nodes.URI):
     pass
 
 
+@dataclass
 class ImplicitInputShape(Node, base_nodes.ImplicitInputShape):
     pass
 
 
+@dataclass
 class ImplicitOutputShape(Node, base_nodes.ImplicitOutputShape):
     pass
 

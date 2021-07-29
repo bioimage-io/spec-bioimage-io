@@ -27,6 +27,11 @@ from marshmallow import missing
 @dataclass
 class NodeBase:
     def __post_init__(self):
+        from . import nodes, raw_nodes
+
+        if not isinstance(self, (nodes.Node, raw_nodes.RawNode)):
+            raise TypeError("base nodes should not be instantiated!")
+
         for f in dataclasses.fields(self):
             if getattr(self, f.name) is missing and (
                 get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
@@ -36,6 +41,13 @@ class NodeBase:
 
 @dataclass
 class ResourceDescription(NodeBase):
+    """Bare minimum for resource description nodes usable with the shared IO_Base class.
+    This is not part of any specification for the BioImage.IO Model Zoo and, e.g.
+    not to be confused with the definition of the general RDF.
+    (Future) RDF nodes do not have to inherit from this node, but will have to account for deviations in their IO
+    implementation.
+    """
+
     format_version: str = missing
     name: str = missing
     type: str = missing
@@ -96,14 +108,19 @@ class URI(NodeBase):  # todo: do not allow relative path and use Union[Path, URI
         super().__post_init__()
 
 
+# to pass mypy:
+# separate dataclass and abstract class as a workaround for abstract dataclasses
+# from https://github.com/python/mypy/issues/5374#issuecomment-650656381
 @dataclass
-class Dependencies(NodeBase, ABC):
+class _Dependencies(NodeBase):
     manager: str = missing
 
+
+class Dependencies(_Dependencies, ABC):
     @property
     @abstractmethod
     def file(self):
-        pass
+        ...
 
     def __str__(self):
         if isinstance(self.file, pathlib.Path):
@@ -137,11 +154,16 @@ class ImportableModule(NodeBase):
     callable_name: str = missing
 
 
+# to pass mypy:
+# separate dataclass and abstract class as a workaround for abstract dataclasses
+# from https://github.com/python/mypy/issues/5374#issuecomment-650656381
 @dataclass
-class ImportableSourceFile(NodeBase, ABC):
+class _ImportableSourceFile(NodeBase):
+    callable_name: str = missing
+
+
+class ImportableSourceFile(_ImportableSourceFile, ABC):
     @property
     @abstractmethod
     def source_file(self):
-        pass
-
-    callable_name: str = missing
+        ...

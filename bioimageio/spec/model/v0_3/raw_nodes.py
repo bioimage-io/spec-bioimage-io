@@ -1,174 +1,106 @@
-import distutils.version
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Any, ClassVar, Dict, List, Tuple, Union
+from pathlib import Path
+from typing import Dict, List, Union
 
 from marshmallow import missing
-from marshmallow.utils import _Missing
 
 from bioimageio.spec.rdf import v0_2 as rdf
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
-    Node,
+    RawNode,
     URI,
 )
+from . import base_nodes
 
-try:
-    from typing import Literal, get_args
-except ImportError:
-    from typing_extensions import Literal, get_args  # type: ignore
+# reassign to use imported classes
+ImplicitInputShape = ImplicitInputShape
+ImplicitOutputShape = ImplicitOutputShape
 
-
-FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in __init__.py)
-
-# same as general RDF; reassign to use imported classes
-Badge = Badge
-CiteEntry = CiteEntry
-Dependencies = Dependencies
-
-
-# overwritten general RDF
-Type = Literal["model"]
-
-# model specific
-Axes = str
-Framework = Literal["pytorch", "tensorflow"]
-ImportableSource = Union[ImportableModule, ImportableSourceFile]
-Language = Literal["python", "java"]
-PostprocessingName = Literal[
-    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
-]
-PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
-WeightsFormat = Literal[
-    "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
-]
+# same as general RDF
+Author = rdf.nodes.Author
+Badge = rdf.nodes.Badge
+CiteEntry = rdf.nodes.CiteEntry
+Dependencies = rdf.nodes.Dependencies
 
 
 @dataclass
-class RunMode(Node):
-    name: str = missing
-    kwargs: Union[_Missing, Dict[str, Any]] = missing
+class RunMode(RawNode, base_nodes.RunMode):
+    pass
 
 
 @dataclass
-class Preprocessing:
-    name: PreprocessingName = missing
-    kwargs: Dict[str, Any] = missing
+class Preprocessing(RawNode, base_nodes.Preprocessing):
+    pass
 
 
 @dataclass
-class Postprocessing:
-    name: PostprocessingName = missing
-    kwargs: Dict[str, Any] = missing
+class Postprocessing(RawNode, base_nodes.Postprocessing):
+    pass
 
 
 @dataclass
-class InputTensor:
-    name: str = missing
-    data_type: str = missing
-    axes: Axes = missing
-    shape: Union[List[int], ImplicitInputShape] = missing
-    preprocessing: Union[_Missing, List[Preprocessing]] = missing
-    description: Union[_Missing, str] = missing
-    data_range: Union[_Missing, Tuple[float, float]] = missing
+class InputTensor(RawNode, base_nodes.InputTensor):
+    pass
 
 
 @dataclass
-class OutputTensor:
-    name: str = missing
-    data_type: str = missing
-    axes: Axes = missing
-    shape: Union[List[int], ImplicitOutputShape] = missing
-    halo: Union[_Missing, List[int]] = missing
-    postprocessing: Union[_Missing, List[Postprocessing]] = missing
-    description: Union[_Missing, str] = missing
-    data_range: Union[_Missing, Tuple[float, float]] = missing
+class OutputTensor(RawNode, base_nodes.OutputTensor):
+    pass
 
 
 @dataclass
-class WeightsEntryBase(Node):
-    weights_format_name: ClassVar[str]  # human readable
-    authors: Union[_Missing, List[Author]] = missing
-    attachments: Union[_Missing, Dict] = missing
-    parent: Union[_Missing, str] = missing
-    sha256: Union[_Missing, str] = missing
-    source: URI = missing
+class WeightsEntryBase(RawNode, base_nodes.WeightsEntryBase):
+    source: Path = missing
 
 
 @dataclass
-class KerasHdf5WeightsEntry(WeightsEntryBase):
-    weights_format_name = "Keras HDF5"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+class KerasHdf5WeightsEntry(WeightsEntryBase, base_nodes.KerasHdf5WeightsEntry):
+    pass
 
 
 @dataclass
-class OnnxWeightsEntry(WeightsEntryBase):
-    weights_format_name = "ONNX"
-    opset_version: Union[_Missing, int] = missing
+class OnnxWeightsEntry(WeightsEntryBase, base_nodes.OnnxWeightsEntry):
+    pass
 
 
 @dataclass
-class PytorchStateDictWeightsEntry(WeightsEntryBase):
-    weights_format_name = "Pytorch State Dict"
+class PytorchStateDictWeightsEntry(WeightsEntryBase, base_nodes.PytorchStateDictWeightsEntry):
+    pass
 
 
 @dataclass
-class PytorchScriptWeightsEntry(WeightsEntryBase):
-    weights_format_name = "TorchScript"
+class PytorchScriptWeightsEntry(WeightsEntryBase, base_nodes.PytorchScriptWeightsEntry):
+    pass
 
 
 @dataclass
-class TensorflowJsWeightsEntry(WeightsEntryBase):
-    weights_format_name = "Tensorflow.js"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+class TensorflowJsWeightsEntry(WeightsEntryBase, base_nodes.TensorflowJsWeightsEntry):
+    pass
 
 
 @dataclass
-class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
-    weights_format_name = "Tensorflow Saved Model"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
-    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
+class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase, base_nodes.TensorflowSavedModelBundleWeightsEntry):
+    pass
 
 
 WeightsEntry = Union[
-    PytorchStateDictWeightsEntry,
-    PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
+    OnnxWeightsEntry,
+    PytorchScriptWeightsEntry,
+    PytorchStateDictWeightsEntry,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    OnnxWeightsEntry,
 ]
 
-
-@dataclass
-class ModelParent(Node):
-    uri: URI = missing
-    sha256: str = missing
+ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
 @dataclass
-class Model(rdf.raw_nodes.RDF):
-    authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
-    dependencies: Union[_Missing, Dependencies] = missing
-    format_version: FormatVersion = missing
-    framework: Union[_Missing, Framework] = missing
-    inputs: List[InputTensor] = missing
-    kwargs: Union[_Missing, Dict[str, Any]] = missing
-    language: Union[_Missing, Language] = missing
-    license: str = missing
-    outputs: List[OutputTensor] = missing
-    packaged_by: Union[_Missing, List[Author]] = missing
-    parent: Union[_Missing, ModelParent] = missing
-    run_mode: Union[_Missing, RunMode] = missing
-    sample_inputs: Union[_Missing, List[URI]] = missing
-    sample_outputs: Union[_Missing, List[URI]] = missing
-    sha256: Union[_Missing, str] = missing
-    source: Union[_Missing, ImportableSource] = missing
+class Model(base_nodes.Model, rdf.raw_nodes.RDF, RawNode):
+    source: ImportableSource = missing
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
-    timestamp: datetime = missing
-    weights: Dict[WeightsFormat, WeightsEntry] = missing
+    weights: Dict[base_nodes.WeightsFormat, WeightsEntry] = missing

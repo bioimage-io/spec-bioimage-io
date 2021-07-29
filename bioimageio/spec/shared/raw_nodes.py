@@ -8,7 +8,6 @@ from marshmallow import missing
 from . import base_nodes
 
 
-@dataclass
 class RawNode(base_nodes.NodeBase):
     pass
 
@@ -46,3 +45,6 @@ class ImportableModule(RawNode, base_nodes.ImportableModule):
 @dataclass
 class ImportableSourceFile(RawNode, base_nodes.ImportableSourceFile):
     source_file: URI = missing
+
+
+ImportableSource = Union[ImportableModule, ImportableSourceFile]

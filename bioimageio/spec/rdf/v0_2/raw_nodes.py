@@ -1,113 +1,53 @@
-import dataclasses
-import distutils.version
-import warnings
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import List, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared.raw_nodes import Dependencies, Node, URI
-
-try:
-    from typing import Literal, get_args
-except ImportError:
-    from typing_extensions import Literal, get_args  # type: ignore
-
-
-FormatVersion = Literal["0.2.0"]  # newest format needs to be last (used to determine latest format version)
-
-Framework = Literal["pytorch", "tensorflow"]
-Language = Literal["python", "java"]
-PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
-PostprocessingName = Literal[
-    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
-]
-Type = str
-WeightsFormat = Literal[
-    "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
-]
+from bioimageio.spec.shared.raw_nodes import Dependencies, RawNode, ResourceDescription, URI
+from . import base_nodes
 
 # reassign to use imported classes
 Dependencies = Dependencies
 
 
 @dataclass
-class CiteEntry(Node):
-    text: str = missing
-    doi: Union[_Missing, str] = missing
-    url: Union[_Missing, str] = missing
+class CiteEntry(RawNode, base_nodes.CiteEntry):
+    pass
 
 
 @dataclass
-class Author(Node):
-    name: str = missing
-    affiliation: Union[_Missing, str] = missing
-    orcid: Union[_Missing, str] = missing
+class Author(RawNode, base_nodes.Author):
+    pass
 
 
 @dataclass
-class Badge(Node):
-    label: str = missing
-    icon: Union[_Missing, str] = missing
-    url: Union[_Missing, URI] = missing
+class Badge(RawNode, base_nodes.Badge):
+    pass
 
 
-@dataclass
-class RDF(Node):
-    attachments: Union[_Missing, Dict[str, Any]] = missing
-    authors: List[Union[str, Author]] = missing
-    badges: Union[_Missing, List[Badge]] = missing
-    cite: List[CiteEntry] = missing
-    config: Union[_Missing, dict] = missing
+# to pass mypy:
+# separate dataclass and abstract class as a workaround for abstract dataclasses
+# from https://github.com/python/mypy/issues/5374#issuecomment-650656381
+@dataclass(init=False)  # use super init to allow for additional unknown kwargs
+class _RDF(ResourceDescription, base_nodes._RDF):
     covers: Union[_Missing, List[URI]] = missing
-    description: str = missing
-    documentation: Path = missing
-    format_version: FormatVersion = missing
-    git_repo: Union[_Missing, str] = missing
-    license: Union[_Missing, str] = missing
-    links: List[str] = missing
-    name: str = missing
-    tags: List[str] = missing
-    type: Type = missing
-    version: Union[_Missing, distutils.version.StrictVersion] = missing
 
-    def __init__(self, **kwargs):  # todo: improve signature
-        field_names = set(f.name for f in dataclasses.fields(self))
-        known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
-        for k, v in known_kwargs.items():
-            setattr(self, k, v)
-        unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
-        warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
 
-    def __post_init__(self):
-        if self.type is missing:
-            self.type = self.__class__.__name__.lower()  # noqa
+class RDF(_RDF, base_nodes.RDF):
+    pass
 
 
 @dataclass
-class CollectionEntry(Node):
-    source: URI
-    id: str
-    links: Union[_Missing, List[str]] = missing
+class CollectionEntry(RawNode, base_nodes.CollectionEntry):
+    source: URI = missing
 
 
 @dataclass
-class ModelCollectionEntry(CollectionEntry):
+class ModelCollectionEntry(CollectionEntry, base_nodes.ModelCollectionEntry):
     download_url: URI = missing
 
 
 @dataclass
-class Collection(RDF):
-    application: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    collection: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    model: Union[_Missing, List[ModelCollectionEntry]] = missing
-    dataset: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    notebook: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-
-
-# deprecated Manifest  # todo: remove
-BioImageIoManifest = dict
-BioImageIoManifestModelEntry = dict
-BioImageIoManifestNotebookEntry = dict
+class Collection(RDF, base_nodes.Collection):
+    pass

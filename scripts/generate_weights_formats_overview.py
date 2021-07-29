@@ -3,7 +3,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from bioimageio.spec.model import raw_nodes, schema
+from bioimageio.spec.model import base_nodes, raw_nodes, schema
 from bioimageio.spec.shared import download_uri_to_local_path, get_args
 
 MANIFEST_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage-io-models/gh-pages/manifest.bioimage.io.json"
@@ -42,7 +42,7 @@ def main(args):
             consumer["config"] = consumer.get("config", {})
             consumer["config"]["supported_weight_formats"] = consumer_defaults[consumer["id"]]
 
-    weights_format_ids = get_args(raw_nodes.WeightsFormat)
+    weights_format_ids = get_args(base_nodes.WeightsFormat)
     weights_format_class_names = [wf.title().replace("_", "") + "WeightsEntry" for wf in weights_format_ids]
 
     weights_formats = {
