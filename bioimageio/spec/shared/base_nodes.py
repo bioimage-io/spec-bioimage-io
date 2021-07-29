@@ -35,7 +35,7 @@ class NodeBase:
 
 
 @dataclass
-class ResourceDescriptionBase(NodeBase):
+class ResourceDescription(NodeBase):
     format_version: str = missing
     name: str = missing
     type: str = missing
@@ -43,7 +43,7 @@ class ResourceDescriptionBase(NodeBase):
 
 
 @dataclass
-class URI_Base(NodeBase):  # todo: do not allow relative path and use Union[Path, URI] instead
+class URI(NodeBase):  # todo: do not allow relative path and use Union[Path, URI] instead
     """URI as scheme:[//authority]path[?query][#fragment] or relative path (only path is set)"""
 
     uri_string: dataclasses.InitVar[Optional[str]] = None  # for convenience: init from string
@@ -97,7 +97,7 @@ class URI_Base(NodeBase):  # todo: do not allow relative path and use Union[Path
 
 
 @dataclass
-class DependenciesBase(NodeBase, ABC):
+class Dependencies(NodeBase, ABC):
     manager: str = missing
 
     @property
@@ -113,7 +113,7 @@ class DependenciesBase(NodeBase, ABC):
 
 
 @dataclass
-class ImplicitInputShapeBase(NodeBase):
+class ImplicitInputShape(NodeBase):
     min: List[float] = missing
     step: List[float] = missing
 
@@ -122,7 +122,7 @@ class ImplicitInputShapeBase(NodeBase):
 
 
 @dataclass
-class ImplicitOutputShapeBase(NodeBase):
+class ImplicitOutputShape(NodeBase):
     reference_input: str = missing
     scale: List[float] = missing
     offset: List[int] = missing
@@ -132,13 +132,13 @@ class ImplicitOutputShapeBase(NodeBase):
 
 
 @dataclass
-class ImportableModuleBase(NodeBase):
+class ImportableModule(NodeBase):
     module_name: str = missing
     callable_name: str = missing
 
 
 @dataclass
-class ImportableSourceFileBase(NodeBase, ABC):
+class ImportableSourceFile(NodeBase, ABC):
     @property
     @abstractmethod
     def source_file(self):

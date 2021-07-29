@@ -26,36 +26,36 @@ class Node(base_nodes.NodeBase):
 
 
 @dataclass
-class ResourceDescription(Node, base_nodes.ResourceDescriptionBase):
+class ResourceDescription(Node, base_nodes.ResourceDescription):
     pass
 
 
-class URI(Node, base_nodes.URI_Base):
+class URI(Node, base_nodes.URI):
     pass
 
 
-class ImplicitInputShape(Node, base_nodes.ImplicitInputShapeBase):
+class ImplicitInputShape(Node, base_nodes.ImplicitInputShape):
     pass
 
 
-class ImplicitOutputShape(Node, base_nodes.ImplicitOutputShapeBase):
+class ImplicitOutputShape(Node, base_nodes.ImplicitOutputShape):
     pass
 
 
 @dataclass
-class Dependencies(Node, base_nodes.DependenciesBase):
+class Dependencies(Node, base_nodes.Dependencies):
     file: pathlib.Path = missing
 
 
 @dataclass
-class LocalImportableModule(Node, base_nodes.ImportableModuleBase):
+class LocalImportableModule(Node, base_nodes.ImportableModule):
     """intermediate between raw_nodes.ImportableModule and nodes.ImportedSource. Used by SourceNodeTransformer"""
 
     root_path: pathlib.Path = missing
 
 
 @dataclass
-class ResolvedImportableSourceFile(Node, base_nodes.ImportableSourceFileBase):
+class ResolvedImportableSourceFile(Node, base_nodes.ImportableSourceFile):
     """intermediate between raw_nodes.ImportableSourceFile and nodes.ImportedSource. Used by SourceNodeTransformer"""
 
     source_file: pathlib.Path = missing

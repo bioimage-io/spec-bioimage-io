@@ -14,35 +14,35 @@ class RawNode(base_nodes.NodeBase):
 
 
 @dataclass
-class ResourceDescription(RawNode, base_nodes.ResourceDescriptionBase):
+class ResourceDescription(RawNode, base_nodes.ResourceDescription):
     pass
 
 
 @dataclass
-class URI(RawNode, base_nodes.URI_Base):
+class URI(RawNode, base_nodes.URI):
     pass
 
 
 @dataclass
-class Dependencies(RawNode, base_nodes.DependenciesBase):
+class Dependencies(RawNode, base_nodes.Dependencies):
     file: Union[URI, pathlib.Path] = missing
 
 
 @dataclass
-class ImplicitInputShape(RawNode, base_nodes.ImplicitInputShapeBase):
+class ImplicitInputShape(RawNode, base_nodes.ImplicitInputShape):
     pass
 
 
 @dataclass
-class ImplicitOutputShape(RawNode, base_nodes.ImplicitOutputShapeBase):
+class ImplicitOutputShape(RawNode, base_nodes.ImplicitOutputShape):
     pass
 
 
 @dataclass
-class ImportableModule(RawNode, base_nodes.ImportableModuleBase):
+class ImportableModule(RawNode, base_nodes.ImportableModule):
     pass
 
 
 @dataclass
-class ImportableSourceFile(RawNode, base_nodes.ImportableSourceFileBase):
+class ImportableSourceFile(RawNode, base_nodes.ImportableSourceFile):
     source_file: URI = missing
