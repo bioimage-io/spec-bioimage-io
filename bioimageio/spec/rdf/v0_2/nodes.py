@@ -5,6 +5,7 @@ from typing import List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
+from bioimageio.spec.shared.common import DataClassIgnoreUnknownKwargsMixin
 from bioimageio.spec.shared.nodes import Dependencies, Node, URI
 from . import base_nodes
 
@@ -30,12 +31,12 @@ class Badge(Node, base_nodes.Badge):
 # to pass mypy:
 # separate dataclass and abstract class as a workaround for abstract dataclasses
 # from https://github.com/python/mypy/issues/5374#issuecomment-650656381
-@dataclass(init=False)  # use super init to allow for additional unknown kwargs
+@dataclass  # use super init to allow for additional unknown kwargs
 class _RDF(Node, base_nodes._RDF):
     covers: Union[_Missing, List[Path]] = missing
 
 
-class RDF(_RDF, base_nodes.RDF):
+class RDF(DataClassIgnoreUnknownKwargsMixin, _RDF, base_nodes.RDF):
     pass
 
 

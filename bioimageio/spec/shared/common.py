@@ -1,6 +1,8 @@
+import dataclasses
 import os
 import pathlib
 import tempfile
+import warnings
 from collections import UserDict
 from typing import Generic, Optional
 
@@ -93,3 +95,13 @@ class NoOverridesDict(UserDict):
             raise ValueError(self.key_exists_error_message.format(key=key, value=value))
 
         super().__setitem__(key, value)
+
+
+@dataclasses.dataclass
+class DataClassIgnoreUnknownKwargsMixin:
+    def __init__(self, **kwargs):
+        field_names = set(f.name for f in dataclasses.fields(self))
+        known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
+        unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
+        warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
+        super().__init__(**known_kwargs)

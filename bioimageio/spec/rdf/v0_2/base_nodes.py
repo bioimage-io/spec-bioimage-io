@@ -1,5 +1,3 @@
-import dataclasses
-import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
@@ -56,7 +54,7 @@ class Badge(NodeBase):
 # to pass mypy:
 # separate dataclass and abstract class as a workaround for abstract dataclasses
 # from https://github.com/python/mypy/issues/5374#issuecomment-650656381
-@dataclass(init=False)  # to allow for additional unknown kwargs
+@dataclass
 class _RDF(ResourceDescription):
     attachments: Union[_Missing, Dict[str, Any]] = missing
     authors: List[Union[str, Author]] = missing
@@ -73,16 +71,16 @@ class _RDF(ResourceDescription):
 
 
 class RDF(_RDF, ABC):
-    @property
-    @abstractmethod
-    def covers(self):
-        raise NotImplementedError
-
     def __post_init__(self):
         if self.type is missing:
             self.type = self.__class__.__name__.lower()
 
         super().__post_init__()
+
+    @property
+    @abstractmethod
+    def covers(self):
+        raise NotImplementedError
 
 
 # to pass mypy:
