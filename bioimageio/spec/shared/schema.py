@@ -32,6 +32,14 @@ class SharedBioImageIOSchema(Schema):
             raise e
 
 
+class Dependencies(SharedBioImageIOSchema):
+    manager = fields.String(bioimageio_description="Dependency manager For example: 'conda', 'maven', or 'pip'")
+    file = fields.Union(
+        [fields.URI(), fields.RelativeLocalPath()],
+        bioimageio_description="Dependency file. For example: 'environment.yaml', 'pom.xml', or 'requirements.txt'",
+    )
+
+
 class ImplicitInputShape(SharedBioImageIOSchema):
     min = fields.List(
         fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"

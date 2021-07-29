@@ -5,6 +5,8 @@ from pathlib import Path
 from bioimageio.spec.shared.nodes import ImportedSource
 from .raw_nodes import *
 
+Dependencies = rdf.nodes.Dependencies
+
 
 @dataclass
 class KerasHdf5WeightsEntry(KerasHdf5WeightsEntry):

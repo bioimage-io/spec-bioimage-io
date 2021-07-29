@@ -8,21 +8,22 @@ import warnings
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import StringIO
-from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, Type, TypeVar, Union
+from types import ModuleType
+from typing import Any, ClassVar, Dict, Optional, Sequence, TYPE_CHECKING, Tuple, TypeVar, Union
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from marshmallow import ValidationError, missing
 
 from . import nodes, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_args, get_class_name_from_type, yaml
+from .common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict, Protocol, get_class_name_from_type, yaml
 from .raw_nodes import ImportableSourceFile
 from .schema import SharedBioImageIOSchema
 from .utils import (
     GenericNode,
     PathToRemoteUriTransformer,
-    get_dict_and_root_path_from_yaml_source,
+    _download_uri_to_local_path,
     resolve_local_uri,
-    resolve_raw_node_to_node,
+    resolve_raw_node,
     resolve_uri,
 )
 
@@ -44,17 +45,10 @@ class ConvertersModule(Protocol):
 
 class RawNodesModule(Protocol):
     FormatVersion: Any
-    FormatVersion: Any
-    Model: Type[RawNode]
-    Collection: Type[RawNode]
 
 
 class NodesModule(Protocol):
-    Model: Type[RawNode]
-
-
-class SchemaModule(Protocol):
-    Model: Type[Schema]
+    FormatVersion: Any
 
 
 # class IO_Meta(ABCMeta):
@@ -81,14 +75,23 @@ class IO_Interface(ABC):
     # todo: 'real' abstract class properties for IO_Interface. see IO_Meta draft above
     preceding_io_class: ClassVar[Optional[IO_Base]]
     converters: ClassVar[ConvertersModule]
-    schema: ClassVar[SchemaModule]
+    schema: ClassVar[ModuleType]
     raw_nodes: ClassVar[RawNodesModule]
-    nodes: ClassVar[RawNodesModule]
+    nodes: ClassVar[NodesModule]
 
     # RDF -> raw node
     @classmethod
     @abstractmethod
     def load_raw_node(cls, source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> RawNode:
+        """load a raw python representation from a BioImage.IO resource description file (RDF).
+        Use `load_node` for a more convenient representation.
+
+        Args:
+            source: resource description file (RDF)
+
+        Returns:
+            raw BioImage.IO resource
+        """
         raise NotImplementedError
 
     @classmethod
@@ -97,11 +100,10 @@ class IO_Interface(ABC):
 
     @classmethod
     def maybe_convert(cls, data: dict):
-        """
-        If model 'data' is specified in a preceding format this function converts it to the 'current' format of this
-        IO class. Note: In an IO class of a previous format version, this is not the overall latest format version.
-        The 'current' format version is determined by IO_Base.get_matching_io_class() and may be overwritten if
-        'update_to_current_format'--an argument used in several IO methods--is True.
+        """If resource 'data' is specified in a preceding format, convert it to the (newer) format of this IO class.
+
+        Args:
+            data: raw RDF data as loaded by yaml
         """
         raise NotImplementedError
 
@@ -124,38 +126,74 @@ class IO_Interface(ABC):
     # RDF|raw node -> (evaluated) node
     @classmethod
     def load_node(
-        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
+        cls,
+        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        *,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Node:
-        """
-        Load a node object from a [model] RDF 'source'.
-        node objects hold all [model] RDF information as ready-to-use python objects,
-        e.g. a nodes.Model with locally available weights files and imported source code identifiers
+        """load a BioImage.IO resource description file (RDF).
+        This includes some transformations for convenience, e.g. importing `source`.
+        Use `load_raw_node` to obtain a raw representation instead.
+
+        Args:
+            source: resource description file (RDF) or raw BioImage.IO resource
+            root_path: to resolve relative paths in the RDF (ignored if source is path/URI)
+            weights_priority_order: If given only the first weights format present in the model resource is included
+        Returns:
+            BioImage.IO resource
         """
         raise NotImplementedError
 
     # RDF|raw node -> package
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
         update_to_current_format: bool = False,
         weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
-        """Gather content required for exporting a bioimage.io package from an RDF source."""
+        """Gather content required for exporting a bioimage.io package from an RDF source.
+
+        Args:
+            source: raw node, path, URI or raw data as dict
+            root_path:  for relative paths (only used if source is RawNode or dict)
+            update_to_current_format: Convert not only the patch version, but also the major and minor version.
+            weights_priority_order: If given only the first weights format present in the model is included.
+                                    If none of the prioritized weights formats is found all are included.
+
+        Returns:
+            Package content of local file paths or text content keyed by file names.
+        """
         raise NotImplementedError
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
+        output_path: Optional[os.PathLike] = None,
         weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
-        """Export a bioimage.io package from an RDF source."""
+        """Package a BioImage.IO resource as a zip file.
+
+        Args:
+            source: raw node, path, URI or raw data as dict
+            root_path:  for relative paths (only used if source is RawNode or dict)
+            output_path: file path to write package to
+            weights_priority_order: If given only the first weights format present in the model is included.
+                                    If none of the prioritized weights formats is found all are included.
+            compression: The numeric constant of compression method.
+            compression_level: Compression level to use when writing files to the archive.
+                               See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
+
+        Returns:
+            path to zipped BioImage.IO package in BIOIMAGEIO_CACHE_PATH.
+        """
         raise NotImplementedError
 
 
@@ -177,8 +215,11 @@ class IO_Base(IO_Interface):
         raw_node = schema_class().load(data)
         assert isinstance(raw_node, raw_node_class)
 
-        if isinstance(source, raw_nodes.URI):
+        if isinstance(source, raw_nodes.URI) or isinstance(source, str) and source.startswith("http"):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
+            if isinstance(source, str):
+                source = raw_nodes.URI(source)
+
             warnings.warn(
                 f"changing file paths in RDF to URIs due to a remote {source.scheme} source "
                 "(may result in an invalid node)"
@@ -219,54 +260,80 @@ class IO_Base(IO_Interface):
 
     @classmethod
     def ensure_raw_node(cls, raw_node: Union[str, dict, os.PathLike, raw_nodes.URI, RawNode], root_path: os.PathLike):
-        if isinstance(raw_node, cls.raw_nodes.Model):
-            return raw_node, root_path
-
         if isinstance(raw_node, raw_nodes.Node):
-            # might be an older raw node; round trip to ensure correct raw node
-            raw_node = cls.serialize_raw_node_to_dict(raw_node)
+            return raw_node, root_path
         elif isinstance(raw_node, dict):
             pass
         elif isinstance(raw_node, (str, os.PathLike, raw_nodes.URI)):
-            raw_node = resolve_local_uri(raw_node, pathlib.Path())
-            if isinstance(raw_node, pathlib.Path):
-                root_path = raw_node.parent
+            local_raw_node = resolve_uri(raw_node, root_path)
+            if local_raw_node.suffix == ".zip":
+                local_raw_node = extract_resource_package(local_raw_node)
+                raw_node = local_raw_node  # zip package contains everything. ok to 'forget' that source was remote
+
+            root_path = local_raw_node.parent
         else:
             raise TypeError(raw_node)
 
-        raw_node = cls.load_raw_node(raw_node)
-        return raw_node, root_path
+        return cls.load_raw_node(raw_node), root_path
+
+    @classmethod
+    def maybe_convert(cls, data: dict):
+        if cls.preceding_io_class is not None:
+            data = cls.preceding_io_class.maybe_convert(data)
+
+        return cls.converters.maybe_convert(data)
 
     @classmethod
     def load_node(
-        cls, source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI], root_path: os.PathLike = pathlib.Path()
+        cls,
+        source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
+        root_path: os.PathLike = pathlib.Path(),
+        *,
+        weights_priority_order: Optional[Sequence[str]] = None,
     ):
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
-        node: Node = resolve_raw_node_to_node(
-            raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes
-        )
+        if weights_priority_order is not None:
+            for wf in weights_priority_order:
+                if wf in raw_node.weights:
+                    raw_node.weights = {wf: raw_node.weights[wf]}
+                    break
+            else:
+                raise ValueError(f"Not found any of the specified weights formats ({weights_priority_order})")
+
+        node: Node = resolve_raw_node(raw_node=raw_node, root_path=pathlib.Path(root_path), nodes_module=cls.nodes)
         assert isinstance(node, cls.nodes.Model)
 
         return node
 
     @classmethod
-    def export_package(
+    def export_resource_package(
         cls,
         source: Union[RawNode, os.PathLike, str, dict, raw_nodes.URI],
         root_path: os.PathLike = pathlib.Path(),
         *,
+        output_path: Optional[os.PathLike] = None,
         weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]] = None,
         compression: int = ZIP_DEFLATED,
         compression_level: int = 1,
     ) -> pathlib.Path:
-        """
-        weights_priority_order: Only used for model RDFs.
-                                    If given only the first matching weights format present in the model is included.
-                                    If none of the prioritized weights formats is found all are included.
-        """  # todo: document args
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
 
+        if output_path is None:
+            package_path = cls._get_tmp_package_path(raw_node, weights_priority_order)
+        else:
+            package_path = output_path
+
+        package_content = cls.get_resource_package_content(
+            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
+        )
+        make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
+        return package_path
+
+    @staticmethod
+    def _get_tmp_package_path(
+        raw_node: RawNode, weights_priority_order: Optional[Sequence[bioimageio.spec.model.raw_nodes.WeightsFormat]]
+    ):
         package_file_name = raw_node.name
         if raw_node.version is not missing:
             package_file_name += f"_{raw_node.version}"
@@ -298,24 +365,16 @@ class IO_Base(IO_Interface):
                 f"Already caching {max_cached_packages_with_same_name} versions of {BIOIMAGEIO_CACHE_PATH / package_file_name}!"
             )
 
-        package_content = cls.get_package_content(
-            raw_node, root_path=root_path, weights_priority_order=weights_priority_order
-        )
-        cls.make_zip(package_path, package_content, compression=compression, compression_level=compression_level)
         return package_path
 
     @classmethod
-    def get_package_content(
+    def get_resource_package_content(
         cls,
         source: Union[RawNode, os.PathLike, str, dict],
         root_path: pathlib.Path,
         update_to_current_format: bool = False,
         weights_priority_order: Optional[Sequence[str]] = None,
     ) -> Dict[str, Union[str, pathlib.Path]]:
-        """
-        weights_priority_order: If given only the first weights format present in the model is included.
-                                    If none of the prioritized weights formats is found all are included.
-        """
         raw_node, root_path = cls.ensure_raw_node(source, root_path)
         assert isinstance(raw_node, cls.raw_nodes.Model)
 
@@ -352,10 +411,8 @@ class IO_Base(IO_Interface):
 
         # todo: improve dependency handling
         if raw_node.dependencies is not missing:
-            manager, fp = raw_node.dependencies.split(":")
-            fp = resolve_uri(fp, root_path=root_path)
-            package[fp.name] = fp
-            raw_node = dataclasses.replace(raw_node, dependencies=f"{manager}:{fp.name}")
+            dep = incl_as_local(raw_node.dependencies, "file")
+            raw_node = dataclasses.replace(raw_node, dependencies=dep)
 
         if isinstance(raw_node.source, ImportableSourceFile):
             source = incl_as_local(raw_node.source, "source_file")
@@ -401,23 +458,45 @@ class IO_Base(IO_Interface):
         package["rdf.yaml"] = cls.serialize_raw_node(raw_node)
         return dict(package)
 
-    @staticmethod
-    def make_zip(
-        path: pathlib.Path, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
-    ):
-        with ZipFile(path, "w", compression=compression, compresslevel=compression_level) as myzip:
-            for arc_name, file_or_str_content in content.items():
-                if isinstance(file_or_str_content, str):
-                    myzip.writestr(arc_name, file_or_str_content)
-                else:
-                    myzip.write(file_or_str_content, arcname=arc_name)
 
-    @classmethod
-    def maybe_convert(cls, data: dict):
-        if cls.preceding_io_class is not None:
-            data = cls.preceding_io_class.maybe_convert(data)
+def extract_resource_package(source: Union[os.PathLike, str, raw_nodes.URI]) -> pathlib.Path:
+    """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
+    local_source = resolve_uri(source)
+    assert isinstance(local_source, pathlib.Path)
+    BIOIMAGEIO_CACHE_PATH.mkdir(exist_ok=True, parents=True)
+    package_path = BIOIMAGEIO_CACHE_PATH / f"{local_source.stem}_unzipped"
+    with ZipFile(local_source) as zf:
+        zf.extractall(package_path)
 
-        return cls.converters.maybe_convert(data)
+    for rdf_name in ["rdf.yaml", "model.yaml", "rdf.yml", "model.yml"]:
+        rdf_path = package_path / rdf_name
+        if rdf_path.exists():
+            break
+    else:
+        raise FileNotFoundError(local_source / "rdf.yaml")
+
+    return rdf_path
+
+
+def make_zip(
+    path: os.PathLike, content: Dict[str, Union[str, pathlib.Path]], *, compression: int, compression_level: int
+) -> None:
+    """Write a zip archive.
+
+    Args:
+        path: output path to write to.
+        content: dict with archive names and local file paths or strings for text files.
+        compression: The numeric constant of compression method.
+        compression_level: Compression level to use when writing files to the archive.
+                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
+
+    """
+    with ZipFile(path, "w", compression=compression, compresslevel=compression_level) as myzip:
+        for arc_name, file_or_str_content in content.items():
+            if isinstance(file_or_str_content, str):
+                myzip.writestr(arc_name, file_or_str_content)
+            else:
+                myzip.write(file_or_str_content, arcname=arc_name)
 
 
 def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.URI]) -> Tuple[dict, str]:
@@ -430,3 +509,37 @@ def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, raw_nodes.
     type_ = data.get("type", "model")  # todo: remove default 'model' type
 
     return data, type_
+
+
+def get_dict_and_root_path_from_yaml_source(
+    source: Union[os.PathLike, str, raw_nodes.URI, dict]
+) -> Tuple[dict, pathlib.Path]:
+    if isinstance(source, dict):
+        return source, pathlib.Path()
+    elif isinstance(source, (str, os.PathLike, raw_nodes.URI)):
+        source = resolve_local_uri(source, pathlib.Path())
+    else:
+        raise TypeError(source)
+
+    if isinstance(source, raw_nodes.URI):  # remote uri
+        local_source = _download_uri_to_local_path(source)
+        root_path = pathlib.Path()
+    else:
+        local_source = source
+        root_path = source.parent
+
+    assert isinstance(local_source, pathlib.Path)
+    if local_source.suffix == ".zip":
+        local_source = extract_resource_package(local_source)
+
+    if local_source.suffix == ".yml":
+        warnings.warn(
+            "suffix '.yml' is not recommended and will raise a ValidationError in the future. Use '.yaml' instead "
+            "(https://yaml.org/faq.html)"
+        )
+    elif local_source.suffix != ".yaml":
+        raise ValidationError(f"invalid suffix {local_source.suffix} for source {source}")
+
+    data = yaml.load(local_source)
+    assert isinstance(data, dict)
+    return data, root_path

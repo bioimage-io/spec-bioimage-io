@@ -8,7 +8,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow.utils import _Missing, missing
 
 from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry
-from bioimageio.spec.shared.raw_nodes import ImplicitInputShape, ImplicitOutputShape, Node, SpecURI, URI
+from bioimageio.spec.shared.raw_nodes import Dependencies, ImplicitInputShape, ImplicitOutputShape, Node, SpecURI, URI
 
 try:
     from typing import Literal
@@ -17,6 +17,10 @@ except ImportError:
 
 
 FormatVersion = Literal["0.1.0"]
+
+
+# reassign to use imported classes
+Dependencies = Dependencies
 
 
 @dataclass
