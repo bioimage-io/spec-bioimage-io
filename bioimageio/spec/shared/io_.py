@@ -11,19 +11,18 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from marshmallow import ValidationError, missing
 
-from . import raw_nodes
-from .base_nodes import URI
+from . import base_nodes, nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH, Protocol, get_class_name_from_type, yaml
 from .nodes import ResourceDescription
 from .raw_nodes import ResourceDescription as RawResourceDescription
 from .utils import (
     PathToRemoteUriTransformer,
+    URI_Node,
     _download_uri_to_local_path,
     resolve_local_uri,
     resolve_raw_resource_description,
     resolve_uri,
 )
-
 
 # placeholders for versioned modules
 class ConvertersModule(Protocol):
@@ -70,7 +69,7 @@ class IO_Interface(ABC):
     # RDF -> raw node
     @classmethod
     @abstractmethod
-    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
+    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI_Node]) -> RawResourceDescription:
         """load a raw python representation from a BioImage.IO resource description file (RDF).
         Use `load_resource_description` for a more convenient representation.
 
@@ -84,7 +83,7 @@ class IO_Interface(ABC):
 
     @classmethod
     def ensure_raw_rd(
-        cls, raw_node: Union[str, dict, os.PathLike, URI, RawResourceDescription], root_path: os.PathLike
+        cls, raw_node: Union[str, dict, os.PathLike, URI_Node, RawResourceDescription], root_path: os.PathLike
     ) -> Tuple[RawResourceDescription, pathlib.Path]:
         raise NotImplementedError
 
@@ -117,7 +116,7 @@ class IO_Interface(ABC):
     @classmethod
     def load_resource_description(
         cls,
-        source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
+        source: Union[RawResourceDescription, os.PathLike, str, dict, URI_Node],
         root_path: os.PathLike = pathlib.Path(),
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
@@ -162,7 +161,7 @@ class IO_Interface(ABC):
     @classmethod
     def export_resource_package(
         cls,
-        source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
+        source: Union[RawResourceDescription, os.PathLike, str, dict, URI_Node],
         root_path: os.PathLike = pathlib.Path(),
         *,
         output_path: Optional[os.PathLike] = None,
@@ -190,7 +189,7 @@ class IO_Interface(ABC):
 
 class IO_Base(IO_Interface):
     @classmethod
-    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI]) -> RawResourceDescription:
+    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI_Node]) -> RawResourceDescription:
         data, type_ = resolve_rdf_source_and_type(source)
         data = cls.maybe_convert(data)
 
@@ -206,7 +205,7 @@ class IO_Base(IO_Interface):
         raw_node = schema_class().load(data)
         assert isinstance(raw_node, raw_node_class)
 
-        if isinstance(source, URI) or isinstance(source, str) and source.startswith("http"):
+        if isinstance(source, base_nodes.URI) or isinstance(source, str) and source.startswith("http"):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
             if isinstance(source, str):
                 source = raw_nodes.URI(source)
@@ -250,12 +249,14 @@ class IO_Base(IO_Interface):
             return stream.getvalue()
 
     @classmethod
-    def ensure_raw_rd(cls, raw_rd: Union[str, dict, os.PathLike, URI, RawResourceDescription], root_path: os.PathLike):
+    def ensure_raw_rd(
+        cls, raw_rd: Union[str, dict, os.PathLike, URI_Node, RawResourceDescription], root_path: os.PathLike
+    ):
         if isinstance(raw_rd, raw_nodes.RawNode):
             return raw_rd, root_path
         elif isinstance(raw_rd, dict):
             pass
-        elif isinstance(raw_rd, (str, os.PathLike, URI)):
+        elif isinstance(raw_rd, (str, os.PathLike, base_nodes.URI)):
             local_raw_rd = resolve_uri(raw_rd, root_path)
             if local_raw_rd.suffix == ".zip":
                 local_raw_rd = extract_resource_package(local_raw_rd)
@@ -278,7 +279,7 @@ class IO_Base(IO_Interface):
     @classmethod
     def load_resource_description(
         cls,
-        source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
+        source: Union[RawResourceDescription, os.PathLike, str, dict, URI_Node],
         root_path: os.PathLike = pathlib.Path(),
         *,
         weights_priority_order: Optional[Sequence[str]] = None,
@@ -303,7 +304,7 @@ class IO_Base(IO_Interface):
     @classmethod
     def export_resource_package(
         cls,
-        source: Union[RawResourceDescription, os.PathLike, str, dict, URI],
+        source: Union[RawResourceDescription, os.PathLike, str, dict, URI_Node],
         root_path: os.PathLike = pathlib.Path(),
         *,
         output_path: Optional[os.PathLike] = None,
@@ -375,7 +376,7 @@ class IO_Base(IO_Interface):
             )
 
 
-def extract_resource_package(source: Union[os.PathLike, str, URI]) -> pathlib.Path:
+def extract_resource_package(source: Union[os.PathLike, str, URI_Node]) -> pathlib.Path:
     """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
     local_source = resolve_uri(source)
     assert isinstance(local_source, pathlib.Path)
@@ -415,7 +416,7 @@ def make_zip(
                 myzip.write(file_or_str_content, arcname=arc_name)
 
 
-def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, URI]) -> Tuple[dict, str]:
+def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, URI_Node]) -> Tuple[dict, str]:
     if isinstance(source, dict):
         data = source
     else:
@@ -427,15 +428,17 @@ def resolve_rdf_source_and_type(source: Union[os.PathLike, str, dict, URI]) -> T
     return data, type_
 
 
-def get_dict_and_root_path_from_yaml_source(source: Union[os.PathLike, str, URI, dict]) -> Tuple[dict, pathlib.Path]:
+def get_dict_and_root_path_from_yaml_source(
+    source: Union[os.PathLike, str, URI_Node, dict]
+) -> Tuple[dict, pathlib.Path]:
     if isinstance(source, dict):
         return source, pathlib.Path()
-    elif isinstance(source, (str, os.PathLike, URI)):
+    elif isinstance(source, (str, os.PathLike, base_nodes.URI)):
         source = resolve_local_uri(source, pathlib.Path())
     else:
         raise TypeError(source)
 
-    if isinstance(source, URI):  # remote uri
+    if isinstance(source, base_nodes.URI):  # remote uri
         local_source = _download_uri_to_local_path(source)
         root_path = pathlib.Path()
     else:

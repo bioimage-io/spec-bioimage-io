@@ -21,7 +21,8 @@ GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
 # GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
-GenericURI_Node = typing.TypeVar("GenericURI_Node", bound=base_nodes.URI)
+URI_Type = typing.TypeVar("URI_Type", bound=base_nodes.URI)
+URI_Node = typing.Union[raw_nodes.URI, nodes.URI]
 GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
 # todo: improve GenericNode definition
 
@@ -62,7 +63,7 @@ class UriNodeChecker(NodeVisitor):
     def __init__(self, *, root_path: os.PathLike):
         self.root_path = pathlib.Path(root_path)
 
-    def visit_URI(self, node: base_nodes.URI):
+    def visit_URI(self, node: URI_Node):
         if not uri_available(node, self.root_path):
             raise FileNotFoundError(node)
 
@@ -107,7 +108,7 @@ class UriNodeTransformer(NodeTransformer):
     def __init__(self, *, root_path: os.PathLike):
         self.root_path = pathlib.Path(root_path)
 
-    def transform_URI(self, node: base_nodes.URI) -> pathlib.Path:
+    def transform_URI(self, node: URI_Node) -> pathlib.Path:
         local_path = resolve_uri(node, root_path=self.root_path)
         return local_path
 
@@ -131,11 +132,11 @@ class UriNodeTransformer(NodeTransformer):
 
 
 class PathToRemoteUriTransformer(NodeTransformer):
-    def __init__(self, *, remote_source: GenericURI_Node):
+    def __init__(self, *, remote_source: URI_Type):
         remote_path = pathlib.PurePosixPath(remote_source.path).parent.as_posix()
         self.remote_root = dataclasses.replace(remote_source, path=remote_path, uri_string=None)
 
-    def transform_URI(self, node: GenericURI_Node) -> GenericURI_Node:
+    def transform_URI(self, node: URI_Type) -> URI_Type:
         if node.scheme == "file":
             raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
 
@@ -229,6 +230,7 @@ def resolve_uri(uri, root_path: os.PathLike = pathlib.Path()):
 
 @resolve_uri.register
 def _resolve_uri_uri_node(uri: base_nodes.URI, root_path: os.PathLike = pathlib.Path()) -> pathlib.Path:
+    assert isinstance(uri, (raw_nodes.URI, nodes.URI))
     path_or_remote_uri = resolve_local_uri(uri, root_path)
     if isinstance(path_or_remote_uri, base_nodes.URI):
         local_path = _download_uri_to_local_path(path_or_remote_uri)
@@ -277,8 +279,8 @@ def _resolve_uri_list(uri: list, root_path: os.PathLike = pathlib.Path()) -> typ
 
 
 def resolve_local_uri(
-    uri: typing.Union[str, os.PathLike, base_nodes.URI], root_path: os.PathLike
-) -> typing.Union[pathlib.Path, base_nodes.URI]:
+    uri: typing.Union[str, os.PathLike, URI_Node], root_path: os.PathLike
+) -> typing.Union[pathlib.Path, URI_Node]:
     if isinstance(uri, os.PathLike) or isinstance(uri, str):
         if isinstance(uri, str):
             try:
@@ -299,7 +301,7 @@ def resolve_local_uri(
         if uri.authority or uri.query or uri.fragment:
             raise ValidationError(f"Invalid Path/URI: {uri}")
 
-        local_path_or_remote_uri: typing.Union[pathlib.Path, base_nodes.URI] = pathlib.Path(root_path) / uri.path
+        local_path_or_remote_uri: typing.Union[pathlib.Path, URI_Node] = pathlib.Path(root_path) / uri.path
     elif uri.scheme == "file":
         if uri.authority or uri.query or uri.fragment:
             raise NotImplementedError(uri)
@@ -313,10 +315,10 @@ def resolve_local_uri(
     return local_path_or_remote_uri
 
 
-def uri_available(uri: base_nodes.URI, root_path: pathlib.Path) -> bool:
+def uri_available(uri: URI_Node, root_path: pathlib.Path) -> bool:
     local_path_or_remote_uri = resolve_local_uri(uri, root_path)
     if isinstance(local_path_or_remote_uri, base_nodes.URI):
-        response = requests.head(str(base_nodes.URI))
+        response = requests.head(str(local_path_or_remote_uri))
         available = response.status_code == 200
     elif isinstance(local_path_or_remote_uri, pathlib.Path):
         available = local_path_or_remote_uri.exists()
@@ -337,11 +339,11 @@ def all_uris_available(
         return True
 
 
-def download_uri_to_local_path(uri: typing.Union[base_nodes.URI, str]) -> pathlib.Path:
+def download_uri_to_local_path(uri: typing.Union[URI_Node, str]) -> pathlib.Path:
     return resolve_uri(uri)
 
 
-def _download_uri_to_local_path(uri: typing.Union[nodes.URI, base_nodes.URI]) -> pathlib.Path:
+def _download_uri_to_local_path(uri: URI_Node) -> pathlib.Path:
     local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
     if local_path.exists():
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
