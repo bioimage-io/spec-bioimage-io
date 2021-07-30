@@ -66,7 +66,7 @@ class _RDF(ResourceDescription):
     format_version: FormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
-    links: List[str] = missing
+    links: Union[_Missing, List[str]] = missing
     tags: List[str] = missing
 
     def __post_init__(self):

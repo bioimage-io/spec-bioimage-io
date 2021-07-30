@@ -99,8 +99,9 @@ class NoOverridesDict(UserDict):
 
 @dataclasses.dataclass
 class DataClassFilterUnknownKwargsMixin:
-    def get_known_kwargs(self, kwargs: Dict[str, Any]):
-        field_names = set(f.name for f in dataclasses.fields(self))
+    @classmethod
+    def get_known_kwargs(cls, kwargs: Dict[str, Any]):
+        field_names = set(f.name for f in dataclasses.fields(cls))
         known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
         unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
         warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")

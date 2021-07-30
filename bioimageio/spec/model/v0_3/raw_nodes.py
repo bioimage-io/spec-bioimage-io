@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from marshmallow import missing
+from marshmallow.utils import _Missing
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared.raw_nodes import (
@@ -100,7 +101,7 @@ ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 @dataclass
 class Model(base_nodes.Model, rdf.raw_nodes.RDF, RawNode):
-    source: ImportableSource = missing
+    source: Union[_Missing, ImportableSource] = missing
     test_inputs: List[URI] = missing
     test_outputs: List[URI] = missing
     weights: Dict[base_nodes.WeightsFormat, WeightsEntry] = missing

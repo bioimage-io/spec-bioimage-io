@@ -37,7 +37,7 @@ class _RDF(Node, base_nodes._RDF):
 
 
 class RDF(_RDF, base_nodes.RDF, DataClassFilterUnknownKwargsMixin):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # todo: improve signature
         known_kwargs = self.get_known_kwargs(kwargs)
         super().__init__(**known_kwargs)
 
