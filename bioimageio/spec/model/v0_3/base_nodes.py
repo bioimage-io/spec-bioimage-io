@@ -130,11 +130,11 @@ class PytorchScriptWeightsEntry(_PytorchScriptWeightsEntry, ABC):
 @dataclass
 class _TensorflowJsWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Tensorflow.js"
+    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 class TensorflowJsWeightsEntry(_TensorflowJsWeightsEntry, ABC):
     pass
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
