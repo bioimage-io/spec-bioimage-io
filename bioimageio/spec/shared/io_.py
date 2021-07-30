@@ -209,7 +209,7 @@ class IO_Base(IO_Interface):
         if isinstance(source, URI) or isinstance(source, str) and source.startswith("http"):
             # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
             if isinstance(source, str):
-                source = URI(source)
+                source = raw_nodes.URI(source)
 
             warnings.warn(
                 f"changing file paths in RDF to URIs due to a remote {source.scheme} source "

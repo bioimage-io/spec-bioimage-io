@@ -21,7 +21,7 @@ GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
 # GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
-GenericURI_Node = typing.TypeVar("GenericURI_Node", bound=raw_nodes.URI)
+GenericURI_Node = typing.TypeVar("GenericURI_Node", bound=base_nodes.URI)
 GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
 # todo: improve GenericNode definition
 
