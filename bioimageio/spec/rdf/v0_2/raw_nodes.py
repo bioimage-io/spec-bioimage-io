@@ -4,7 +4,7 @@ from typing import List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared.common import DataClassIgnoreUnknownKwargsMixin
+from bioimageio.spec.shared.common import DataClassFilterUnknownKwargsMixin
 from bioimageio.spec.shared.raw_nodes import Dependencies, RawNode, ResourceDescription, URI
 from . import base_nodes
 
@@ -35,8 +35,10 @@ class _RDF(ResourceDescription, base_nodes._RDF):
     covers: Union[_Missing, List[URI]] = missing
 
 
-class RDF(DataClassIgnoreUnknownKwargsMixin, _RDF, base_nodes.RDF):
-    pass
+class RDF(_RDF, base_nodes.RDF, DataClassFilterUnknownKwargsMixin):
+    def __init__(self, **kwargs):
+        known_kwargs = self.get_known_kwargs(kwargs)
+        super().__init__(**known_kwargs)
 
 
 @dataclass

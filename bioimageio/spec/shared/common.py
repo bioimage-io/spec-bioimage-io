@@ -4,7 +4,7 @@ import pathlib
 import tempfile
 import warnings
 from collections import UserDict
-from typing import Generic, Optional
+from typing import Any, Dict, Generic, Optional
 
 from ruamel.yaml import YAML
 
@@ -98,10 +98,10 @@ class NoOverridesDict(UserDict):
 
 
 @dataclasses.dataclass
-class DataClassIgnoreUnknownKwargsMixin:
-    def __init__(self, **kwargs):
+class DataClassFilterUnknownKwargsMixin:
+    def get_known_kwargs(self, kwargs: Dict[str, Any]):
         field_names = set(f.name for f in dataclasses.fields(self))
         known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
         unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
         warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
-        super().__init__(**known_kwargs)
+        return known_kwargs
