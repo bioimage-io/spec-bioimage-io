@@ -120,9 +120,8 @@ class UriNodeTransformer(NodeTransformer):
 
 class PathToRemoteUriTransformer(NodeTransformer):
     def __init__(self, *, remote_source: raw_nodes.URI):
-        remote_path = pathlib.PurePosixPath(remote_source.path.strip("/")).parent
-        assert not remote_path.is_absolute()
-        self.remote_root = dataclasses.replace(remote_source, path=remote_path.as_posix(), uri_string=None)
+        remote_path = pathlib.PurePosixPath(remote_source.path).parent.as_posix()
+        self.remote_root = dataclasses.replace(remote_source, path=remote_path, uri_string=None)
 
     def transform_URI(self, node: raw_nodes.URI) -> raw_nodes.URI:
         if node.scheme == "file":
