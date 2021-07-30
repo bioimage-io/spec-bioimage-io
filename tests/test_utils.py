@@ -58,6 +58,23 @@ class TestNodeVisitor:
         assert isinstance(transformed_tree.left.right, Content)
 
 
+def test_resolve_remote_relative_path():
+    from bioimageio.spec.shared.utils import PathToRemoteUriTransformer
+
+    remote_rdf = raw_nodes.URI(
+        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
+        "unet2d_nuclei_broad/rdf.yaml"
+    )
+    remote_relative_path = Path("unet2d.py")
+
+    uri = PathToRemoteUriTransformer(remote_source=remote_rdf).transform(remote_relative_path)
+
+    assert (
+        str(uri) == "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
+        "unet2d_nuclei_broad/unet2d.py"
+    )
+
+
 def test_resolve_import_path(tmpdir):
     tmpdir = Path(tmpdir)
     manifest_path = tmpdir / "manifest.yaml"

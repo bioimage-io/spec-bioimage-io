@@ -40,6 +40,14 @@ def test_uri_is_absolute_path():
         URI(path="/forum/questions/")
 
 
+def test_uri_is_url():
+    from bioimageio.spec.shared.raw_nodes import URI
+
+    url = "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/test_input.npy"
+    uri = URI(url)
+    assert str(uri) == url
+
+
 def test_general_rdf_accepts_unknown_fields():
     from bioimageio.spec.rdf.raw_nodes import RDF
 
