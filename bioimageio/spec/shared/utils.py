@@ -13,11 +13,16 @@ from urllib.request import url2pathname, urlretrieve
 import requests
 from marshmallow import ValidationError
 
-from . import fields, nodes, raw_nodes
+from . import base_nodes, fields, nodes, raw_nodes
 from .common import BIOIMAGEIO_CACHE_PATH
 from .nodes import LocalImportableModule, ResolvedImportableSourceFile
 
-GenericNode = typing.TypeVar("GenericNode", bound=raw_nodes.Node)
+GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
+GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
+GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
+# GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
+GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
+# todo: improve GenericNode definition
 
 
 def iter_fields(node: GenericNode):
@@ -29,15 +34,21 @@ class NodeVisitor:
     def visit(self, node: typing.Any) -> None:
         method = "visit_" + node.__class__.__name__
 
-        visitor = getattr(self, method, self.generic_visit)
+        visitor: typing.Callable[[typing.Any], typing.Any] = getattr(self, method, self.generic_visit)
 
         visitor(node)
 
     def generic_visit(self, node):
         """Called if no explicit visitor function exists for a node."""
-        if isinstance(node, raw_nodes.Node):
+
+        if isinstance(node, (nodes.Node, raw_nodes.RawNode)):
             for field, value in iter_fields(node):
                 self.visit(value)
+        elif isinstance(node, base_nodes.NodeBase):
+            raise TypeError(
+                f"Encountered base node {node}. Base nodes should not be instantiated! "
+                "Use raw_nodes.RawNode or nodes.Node instead."
+            )
         elif isinstance(node, dict):
             [self.visit(subnode) for subnode in node.values()]
         elif isinstance(node, (tuple, list)):
@@ -50,7 +61,7 @@ class UriNodeChecker(NodeVisitor):
     def __init__(self, *, root_path: os.PathLike):
         self.root_path = pathlib.Path(root_path)
 
-    def visit_URI(self, node: raw_nodes.URI):
+    def visit_URI(self, node: base_nodes.URI):
         if not uri_available(node, self.root_path):
             raise FileNotFoundError(node)
 
@@ -85,7 +96,7 @@ class Transformer:
 
 class NodeTransformer(Transformer):
     def generic_transformer(self, node: GenericNode) -> GenericNode:
-        if isinstance(node, raw_nodes.Node):
+        if isinstance(node, base_nodes.NodeBase):
             return dataclasses.replace(node, **{name: self.transform(value) for name, value in iter_fields(node)})
         else:
             return super().generic_transformer(node)
@@ -95,16 +106,16 @@ class UriNodeTransformer(NodeTransformer):
     def __init__(self, *, root_path: os.PathLike):
         self.root_path = pathlib.Path(root_path)
 
-    def transform_URI(self, node: raw_nodes.URI) -> pathlib.Path:
+    def transform_URI(self, node: base_nodes.URI) -> pathlib.Path:
         local_path = resolve_uri(node, root_path=self.root_path)
         return local_path
 
-    def transform_ImportableSourceFile(self, node: raw_nodes.ImportableSourceFile) -> ResolvedImportableSourceFile:
+    def transform_ImportableSourceFile(self, node: base_nodes.ImportableSourceFile) -> ResolvedImportableSourceFile:
         return ResolvedImportableSourceFile(
             source_file=resolve_uri(node.source_file, self.root_path), callable_name=node.callable_name
         )
 
-    def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> LocalImportableModule:
+    def transform_ImportableModule(self, node: base_nodes.ImportableModule) -> LocalImportableModule:
         return LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
 
     def _transform_Path(self, leaf: pathlib.Path):
@@ -123,7 +134,7 @@ class PathToRemoteUriTransformer(NodeTransformer):
         remote_path = pathlib.PurePosixPath(remote_source.path).parent.as_posix()
         self.remote_root = dataclasses.replace(remote_source, path=remote_path, uri_string=None)
 
-    def transform_URI(self, node: raw_nodes.URI) -> raw_nodes.URI:
+    def transform_URI(self, node: base_nodes.URI) -> base_nodes.URI:
         if node.scheme == "file":
             raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
 
@@ -140,12 +151,12 @@ class PathToRemoteUriTransformer(NodeTransformer):
 
     def _transform_Path(self, leaf: pathlib.Path):
         assert not leaf.is_absolute()
-        return self.transform_URI(raw_nodes.URI(path=leaf.as_posix()))
+        return self.transform_URI(base_nodes.URI(path=leaf.as_posix()))
 
-    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> raw_nodes.URI:
+    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> base_nodes.URI:
         return self._transform_Path(leaf)
 
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> raw_nodes.URI:
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> base_nodes.URI:
         return self._transform_Path(leaf)
 
 
@@ -194,17 +205,13 @@ class SourceNodeTransformer(NodeTransformer):
         )
 
 
-GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.Node)
-GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
-
-
 class RawNodeTypeTransformer(NodeTransformer):
     def __init__(self, nodes_module: ModuleType):
         super().__init__()
         self.nodes = nodes_module
 
     def generic_transformer(self, node: GenericRawNode) -> GenericResolvedNode:
-        if isinstance(node, raw_nodes.Node):
+        if isinstance(node, raw_nodes.RawNode):
             resolved_data = {
                 field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
             }
@@ -220,9 +227,9 @@ def resolve_uri(uri, root_path: os.PathLike = pathlib.Path()):
 
 
 @resolve_uri.register
-def _resolve_uri_uri_node(uri: raw_nodes.URI, root_path: os.PathLike = pathlib.Path()) -> pathlib.Path:
+def _resolve_uri_uri_node(uri: base_nodes.URI, root_path: os.PathLike = pathlib.Path()) -> pathlib.Path:
     path_or_remote_uri = resolve_local_uri(uri, root_path)
-    if isinstance(path_or_remote_uri, raw_nodes.URI):
+    if isinstance(path_or_remote_uri, base_nodes.URI):
         local_path = _download_uri_to_local_path(path_or_remote_uri)
     elif isinstance(path_or_remote_uri, pathlib.Path):
         local_path = path_or_remote_uri
@@ -249,14 +256,18 @@ def _resolve_uri_path(uri: pathlib.Path, root_path: os.PathLike = pathlib.Path()
 def _resolve_uri_resolved_importable_path(
     uri: ResolvedImportableSourceFile, root_path: os.PathLike = pathlib.Path()
 ) -> ResolvedImportableSourceFile:
-    return ResolvedImportableSourceFile(resolve_uri(uri.source_file, root_path), uri.callable_name)
+    return ResolvedImportableSourceFile(
+        callable_name=uri.callable_name, source_file=resolve_uri(uri.source_file, root_path)
+    )
 
 
 @resolve_uri.register
 def _resolve_uri_importable_path(
-    uri: raw_nodes.ImportableSourceFile, root_path: os.PathLike = pathlib.Path()
+    uri: base_nodes.ImportableSourceFile, root_path: os.PathLike = pathlib.Path()
 ) -> ResolvedImportableSourceFile:
-    return ResolvedImportableSourceFile(resolve_uri(uri.source_file, root_path), uri.callable_name)
+    return ResolvedImportableSourceFile(
+        callable_name=uri.callable_name, source_file=resolve_uri(uri.source_file, root_path)
+    )
 
 
 @resolve_uri.register
@@ -265,8 +276,8 @@ def _resolve_uri_list(uri: list, root_path: os.PathLike = pathlib.Path()) -> typ
 
 
 def resolve_local_uri(
-    uri: typing.Union[str, os.PathLike, raw_nodes.URI], root_path: os.PathLike
-) -> typing.Union[pathlib.Path, raw_nodes.URI]:
+    uri: typing.Union[str, os.PathLike, base_nodes.URI], root_path: os.PathLike
+) -> typing.Union[pathlib.Path, base_nodes.URI]:
     if isinstance(uri, os.PathLike) or isinstance(uri, str):
         if isinstance(uri, str):
             try:
@@ -282,12 +293,12 @@ def resolve_local_uri(
     if isinstance(uri, str):
         uri = fields.URI().deserialize(uri)
 
-    assert isinstance(uri, raw_nodes.URI), uri
+    assert isinstance(uri, base_nodes.URI), uri
     if not uri.scheme:  # relative path
         if uri.authority or uri.query or uri.fragment:
             raise ValidationError(f"Invalid Path/URI: {uri}")
 
-        local_path_or_remote_uri: typing.Union[pathlib.Path, raw_nodes.URI] = pathlib.Path(root_path) / uri.path
+        local_path_or_remote_uri: typing.Union[pathlib.Path, base_nodes.URI] = pathlib.Path(root_path) / uri.path
     elif uri.scheme == "file":
         if uri.authority or uri.query or uri.fragment:
             raise NotImplementedError(uri)
@@ -301,10 +312,10 @@ def resolve_local_uri(
     return local_path_or_remote_uri
 
 
-def uri_available(uri: raw_nodes.URI, root_path: pathlib.Path) -> bool:
+def uri_available(uri: base_nodes.URI, root_path: pathlib.Path) -> bool:
     local_path_or_remote_uri = resolve_local_uri(uri, root_path)
-    if isinstance(local_path_or_remote_uri, raw_nodes.URI):
-        response = requests.head(str(raw_nodes.URI))
+    if isinstance(local_path_or_remote_uri, base_nodes.URI):
+        response = requests.head(str(base_nodes.URI))
         available = response.status_code == 200
     elif isinstance(local_path_or_remote_uri, pathlib.Path):
         available = local_path_or_remote_uri.exists()
@@ -325,11 +336,11 @@ def all_uris_available(
         return True
 
 
-def download_uri_to_local_path(uri: typing.Union[raw_nodes.URI, str]) -> pathlib.Path:
+def download_uri_to_local_path(uri: typing.Union[base_nodes.URI, str]) -> pathlib.Path:
     return resolve_uri(uri)
 
 
-def _download_uri_to_local_path(uri: typing.Union[nodes.URI, raw_nodes.URI]) -> pathlib.Path:
+def _download_uri_to_local_path(uri: typing.Union[nodes.URI, base_nodes.URI]) -> pathlib.Path:
     local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
     if local_path.exists():
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
@@ -344,12 +355,14 @@ def _download_uri_to_local_path(uri: typing.Union[nodes.URI, raw_nodes.URI]) -> 
     return local_path
 
 
-def resolve_raw_node(raw_node: GenericRawNode, root_path: os.PathLike, nodes_module: ModuleType) -> GenericNode:
+def resolve_raw_resource_description(
+    raw_rd: GenericRawRD, root_path: os.PathLike, nodes_module: typing.Any
+) -> GenericResolvedNode:
     """resolve all uris and sources"""
-    node = UriNodeTransformer(root_path=root_path).transform(raw_node)
-    node = SourceNodeTransformer().transform(node)
-    node = RawNodeTypeTransformer(nodes_module).transform(node)
-    return node
+    rd = UriNodeTransformer(root_path=root_path).transform(raw_rd)
+    rd = SourceNodeTransformer().transform(rd)
+    rd = RawNodeTypeTransformer(nodes_module).transform(rd)
+    return rd
 
 
 def is_valid_orcid_id(orcid_id: str):

@@ -2,9 +2,9 @@ from bioimageio.spec.shared.common import get_args
 
 
 def test_weights_formats_have_raw_nodes():
-    from bioimageio.spec.model import nodes, raw_nodes, schema
+    from bioimageio.spec.model import nodes, raw_nodes, schema, base_nodes
 
-    weights_formats = [wf for wf in get_args(raw_nodes.WeightsFormat)]
+    weights_formats = [wf for wf in get_args(base_nodes.WeightsFormat)]
     weights_entry_class_names = [wf.title().replace("_", "") + "WeightsEntry" for wf in weights_formats]
 
     # all defined weights formats need their schema and nodes implemented...

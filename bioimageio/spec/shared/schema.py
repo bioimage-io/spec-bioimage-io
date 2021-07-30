@@ -21,7 +21,7 @@ class SharedBioImageIOSchema(Schema):
             # attempt import from shared raw nodes
             this_type = getattr(raw_nodes, self.__class__.__name__, None)
             if this_type is None:
-                raise AttributeError(
+                raise NotImplementedError(
                     f"neither {self.raw_nodes} nor {raw_nodes} has attribute {self.__class__.__name__}."
                 )
 
