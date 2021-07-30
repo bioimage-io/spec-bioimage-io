@@ -38,7 +38,7 @@ def pytest_generate_tests(metafunc):
     #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}][_package]_path
     #   - unet2d_nuclei_broad_[before_]latest[_package]_path
     #   - unet2d_nuclei_broad_any[_minor][_package]_path
-    all_format_versions = get_args_flat(spec.model.raw_nodes.FormatVersion)
+    all_format_versions = get_args_flat(spec.model.FormatVersion)
     for fixture_name in metafunc.fixturenames:
         m = re.fullmatch(
             (
@@ -71,7 +71,7 @@ def pytest_generate_tests(metafunc):
                 minor = m["minor"]
                 patch = m["patch"]
                 if patch is None:  # default to latest patch
-                    patched_version = get_args(getattr(spec.model, f"v{major}_{minor}").raw_nodes.FormatVersion)[-1]
+                    patched_version = get_args(getattr(spec.model, f"v{major}_{minor}").FormatVersion)[-1]
                     patch = patched_version.split(".")[-1]
 
                 v = ".".join([major, minor, patch])

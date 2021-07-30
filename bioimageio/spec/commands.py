@@ -61,7 +61,7 @@ def validate(
 
     source_name = rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source
     try:
-        raw_node = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
+        raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
         print(f"Invalid {source_name}:")
         pprint(e.normalized_messages())
@@ -75,9 +75,9 @@ def validate(
         return 1
 
     code = 0
-    if raw_node.type == "collection":
+    if raw_rd.type == "collection":
         for inner_category in ["application", "collection", "dataset", "model", "notebook"]:
-            for inner in getattr(raw_node, inner_category) or []:
+            for inner in getattr(raw_rd, inner_category) or []:
                 try:
                     inner_source = inner.source
                 except Exception as e:
@@ -90,6 +90,6 @@ def validate(
             print(f"Found invalid RDFs in collection {source_name}.")
 
     if not code:
-        print(f"successfully verified {raw_node.type} {source_name}")
+        print(f"successfully verified {raw_rd.type} {source_name}")
 
     return code
