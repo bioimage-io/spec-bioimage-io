@@ -93,3 +93,12 @@ class TestShape:
         expected = data
         actual = MySchema().load(data)
         assert expected == actual
+
+
+class TestURI:
+    def test_relative_local_file(self):
+        # local relative paths are valid uris; see shared.base_nodes.URI)  # todo: actually don't allow this invalid uri
+        uri_raw = "relative_file/path.txt"
+        uri_node = fields.URI().deserialize(uri_raw)
+
+        assert uri_raw == str(uri_node)
