@@ -148,16 +148,6 @@ class TensorflowSavedModelBundleWeightsEntry(_TensorflowSavedModelBundleWeightsE
     pass
 
 
-# WeightsEntry = Union[
-#     PytorchStateDictWeightsEntry,
-#     PytorchScriptWeightsEntry,
-#     KerasHdf5WeightsEntry,
-#     TensorflowJsWeightsEntry,
-#     TensorflowSavedModelBundleWeightsEntry,
-#     OnnxWeightsEntry,
-# ]
-
-
 @dataclass
 class ModelParent(NodeBase):
     uri: URI = missing
