@@ -8,14 +8,13 @@ import typing
 import warnings
 from functools import singledispatch
 from types import ModuleType
-from urllib.parse import urlunparse
 from urllib.request import url2pathname, urlretrieve
 
 import requests
 from marshmallow import ValidationError
 
 from . import fields, nodes, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, yaml
+from .common import BIOIMAGEIO_CACHE_PATH
 from .nodes import LocalImportableModule, ResolvedImportableSourceFile
 
 GenericNode = typing.TypeVar("GenericNode", bound=raw_nodes.Node)
@@ -337,9 +336,8 @@ def _download_uri_to_local_path(uri: typing.Union[nodes.URI, raw_nodes.URI]) -> 
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
     else:
         local_path.parent.mkdir(parents=True, exist_ok=True)
-        url_str = urlunparse([uri.scheme, uri.authority, uri.path, "", uri.query, uri.fragment])
         try:
-            urlretrieve(url_str, str(local_path))
+            urlretrieve(str(uri), str(local_path))
         except Exception:
             logging.getLogger("download").error("Failed to download %s", uri)
             raise
