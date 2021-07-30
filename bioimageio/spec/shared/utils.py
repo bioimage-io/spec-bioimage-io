@@ -21,6 +21,7 @@ GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
 # GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
+GenericURI_Node = typing.TypeVar("GenericURI_Node", bound=raw_nodes.URI)
 GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
 # todo: improve GenericNode definition
 
@@ -130,11 +131,11 @@ class UriNodeTransformer(NodeTransformer):
 
 
 class PathToRemoteUriTransformer(NodeTransformer):
-    def __init__(self, *, remote_source: raw_nodes.URI):
+    def __init__(self, *, remote_source: GenericURI_Node):
         remote_path = pathlib.PurePosixPath(remote_source.path).parent.as_posix()
         self.remote_root = dataclasses.replace(remote_source, path=remote_path, uri_string=None)
 
-    def transform_URI(self, node: base_nodes.URI) -> base_nodes.URI:
+    def transform_URI(self, node: GenericURI_Node) -> GenericURI_Node:
         if node.scheme == "file":
             raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
 
@@ -151,12 +152,12 @@ class PathToRemoteUriTransformer(NodeTransformer):
 
     def _transform_Path(self, leaf: pathlib.Path):
         assert not leaf.is_absolute()
-        return self.transform_URI(base_nodes.URI(path=leaf.as_posix()))
+        return self.transform_URI(raw_nodes.URI(path=leaf.as_posix()))
 
-    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> base_nodes.URI:
+    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> raw_nodes.URI:
         return self._transform_Path(leaf)
 
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> base_nodes.URI:
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> raw_nodes.URI:
         return self._transform_Path(leaf)
 
 
