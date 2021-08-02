@@ -72,8 +72,16 @@
                 "attachments": {
                     "additionalProperties": {
                         "items": {
-                            "title": "attachments",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
                         },
                         "title": "attachments",
                         "type": "array"

@@ -33,7 +33,11 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `type` _String_ 
 * `weights` _Dict\[String, Union\[PytorchStateDictWeightsEntry | PytorchScriptWeightsEntry | KerasHdf5WeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | OnnxWeightsEntry\]\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
   1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
-* `attachments` _optional* Dict\[String, List\[Raw\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+* `attachments` _optional Dict\[String, List\[Union\[URI→String | Raw\]\]\]_ 
+  1. _optional* List\[Union\[URI→String | Raw\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+    1. _optional Union\[URI→String | Raw\]_ 
+      1. _optional URI→String_ 
+      1. _optional Raw_ 
 * `badges` _optional List\[Badge\]_ a list of badges
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
     * `label` _String_ e.g. 'Open in Colab'

@@ -199,7 +199,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
@@ -249,8 +264,16 @@
                 "attachments": {
                     "additionalProperties": {
                         "items": {
-                            "title": "attachments",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
                         },
                         "title": "attachments",
                         "type": "array"
@@ -534,7 +557,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
@@ -715,7 +753,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
@@ -759,7 +812,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
@@ -821,7 +889,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
@@ -869,7 +952,22 @@
             "additionalProperties": false,
             "properties": {
                 "attachments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
                     "title": "attachments",
                     "type": "object"
                 },
