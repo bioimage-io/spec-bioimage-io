@@ -286,9 +286,11 @@ class WeightsEntryBase(BioImageIOSchema):
         "who have converted the weights to this format.",
     )  # todo: copy root authors if missing
     attachments = fields.Dict(
+        fields.String,
+        fields.List(fields.Union([fields.URI(), fields.Raw()])),
         bioimageio_description="Dictionary of text keys and list values (that may contain any valid yaml) to "
         "additional, relevant files that are specific to the current weight format. A list of URIs can be listed under"
-        " the `files` key to included additional files for generating the model package."
+        " the `files` key to included additional files for generating the model package.",
     )
     parent = fields.String(
         bioimageio_description="The source weights used as input for converting the weights to this format. For "
