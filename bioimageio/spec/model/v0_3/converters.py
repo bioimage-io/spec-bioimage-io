@@ -1,12 +1,14 @@
 import copy
 import warnings
 from collections import defaultdict
+from pathlib import Path
 from typing import Any, Dict
 
 from marshmallow import Schema
 
 from bioimageio.spec.exceptions import UnconvertibleError
 from . import schema
+from ...shared.utils import resolve_uri
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
@@ -205,7 +207,14 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
         # to be written to AUTO_CONVERTED_DOCUMENTATION_FILE_NAME at a later stage.
         data["config"] = data.get("config", {})  # make sure config exists
         if AUTO_CONVERTED_DOCUMENTATION_FILE_NAME not in data["config"]:
-            data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = data["documentation"]
+            orig_doc = data["documentation"]
+            assert isinstance(orig_doc, str)
+            if not orig_doc.endswith(".md") and orig_doc.startswith("http"):
+                doc = f"Find documentation at {orig_doc}"
+            else:
+                doc = resolve_uri(orig_doc).read_text()
+
+            data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = doc
             data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
 
     return data

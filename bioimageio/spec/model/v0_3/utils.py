@@ -6,10 +6,12 @@ from typing import Dict, List, Optional, Sequence, TypeVar, Union
 
 from marshmallow import missing
 
-from bioimageio.spec.shared.common import NoOverridesDict
+from bioimageio.spec.shared.common import BIOIMAGEIO_CACHE_PATH, NoOverridesDict
 from bioimageio.spec.shared.io_ import IO_Base
-from bioimageio.spec.shared.utils import resolve_uri
+from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
+from bioimageio.spec.shared.utils import URI_Node, resolve_uri
 from . import base_nodes, converters, nodes, raw_nodes, schema
+from .converters import AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
 from .. import v0_1
 
 
@@ -19,6 +21,21 @@ class IO(IO_Base):
     schema = schema
     raw_nodes = raw_nodes
     nodes = nodes
+
+    @classmethod
+    def load_raw_resource_description(cls, source: Union[os.PathLike, str, dict, URI_Node]) -> RawResourceDescription:
+        raw_rd = super().load_raw_resource_description(source)
+        assert isinstance(raw_rd, raw_nodes.Model)
+        doc = (raw_rd.config or {}).get("AUTO_CONVERTED_DOCUMENTATION_FILE_NAME")
+        if doc is not None:
+            # write doc to temporary path (we also do not know root_path here)
+            doc_path = BIOIMAGEIO_CACHE_PATH / "auto-convert" / hash(raw_rd) / AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
+            doc_path.mkdir(parents=True, exists_ok=True)
+            doc_path = doc_path / AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
+            doc_path.write_text(doc)
+            raw_rd.documentation = doc_path
+
+        return raw_rd
 
     @classmethod
     def _get_package_base_name(
