@@ -7,49 +7,65 @@ import warnings
 from collections import UserDict
 from typing import Any, Dict, Generic, Optional
 
-import yaml as _yaml
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
 except ImportError:
     from typing_extensions import Literal, get_args, get_origin, Protocol  # type: ignore
 
+import yaml as _yaml
 
-class yaml:
-    """ruamel.yaml replacement. This uses PyYAML's yaml 1.1 implementation with some manually added yaml 1.2 'fixes'"""
 
-    # floating point 'fix' for yaml 1.1 from https://stackoverflow.com/a/30462009
-    loader = _yaml.SafeLoader
-    loader.add_implicit_resolver(
-        "tag:yaml.org,2002:float",
-        re.compile(
-            """^(?:
-         [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
-        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
-        |\\.[0-9_]+(?:[eE][-+][0-9]+)?
-        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
-        |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$""",
-            re.X,
-        ),
-        list("-+0123456789."),
-    )
+class PyYAML:
+    """ruamel.yaml.YAML replacement. This uses PyYAML's yaml 1.1 implementation with some manually added yaml 1.2 'fixes'"""
 
-    @classmethod
-    def load(cls, stream):
+    def __init__(self, typ="safe"):
+        if typ != "safe":
+            raise NotImplementedError(typ)
+
+        # floating point 'fix' for yaml 1.1 from https://stackoverflow.com/a/30462009
+        self.loader = _yaml.SafeLoader
+        self.loader.add_implicit_resolver(
+            "tag:yaml.org,2002:float",
+            re.compile(
+                """^(?:
+             [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+            |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+            |[-+]?\\.(?:inf|Inf|INF)
+            |\\.(?:nan|NaN|NAN))$""",
+                re.X,
+            ),
+            list("-+0123456789."),
+        )
+
+    def load(self, stream):
         if isinstance(stream, os.PathLike):
             with pathlib.Path(stream).open() as f:
-                return _yaml.load(f, Loader=cls.loader)
+                return _yaml.load(f, Loader=self.loader)
         else:
-            return _yaml.load(stream, Loader=cls.loader)
+            return _yaml.load(stream, Loader=self.loader)
 
-    @classmethod
-    def dump(cls, data, stream):
+    @staticmethod
+    def dump(data, stream):
         if isinstance(stream, os.PathLike):
             with pathlib.Path(stream).open("w") as f:
                 return _yaml.dump(data, f)
         else:
             return _yaml.dump(data, stream)
+
+
+pyyaml_yaml = PyYAML()
+
+try:
+    from ruamel.yaml import YAML
+except ImportError:
+    ruamel_yaml: Optional[YAML] = None
+    yaml = pyyaml_yaml
+else:
+    ruamel_yaml = YAML(typ="safe")
+    yaml = ruamel_yaml
 
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
