@@ -1,10 +1,7 @@
 from dataclasses import asdict
 
-from ruamel.yaml import YAML
-
 from bioimageio.spec.model import schema
-
-yaml = YAML(typ="safe")
+from bioimageio.spec.shared import yaml
 
 
 def test_model_format_version_conversion(unet2d_nuclei_broad_v0_1_0_path, unet2d_nuclei_broad_latest_path):

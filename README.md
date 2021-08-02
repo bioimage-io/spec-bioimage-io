@@ -7,7 +7,7 @@ This repository contains specifications defined by the BioImage.IO community. Th
 
 
 All the BioImage.IO-compatible RDF must fulfill the following rules:
- * Must be a YAML file encoded as UTF-8;
+ * Must be a YAML file encoded as UTF-8; If yaml syntax version is not specified to be 1.1 in the first line by `% YAML 1.1` it must be equivalent in yaml 1.1 and yaml 1.2. For differences see https://yaml.readthedocs.io/en/latest/pyyaml.html#differences-with-pyyaml.
  * The RDF file extension must be `.yaml` (not `.yml`)
  * The RDF file can be saved in a folder (or virtual folder) or in a zip package, the following additional rules must apply:
    1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
