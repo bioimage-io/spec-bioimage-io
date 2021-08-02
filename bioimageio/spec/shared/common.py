@@ -1,6 +1,7 @@
 import dataclasses
 import os
 import pathlib
+import re
 import tempfile
 import warnings
 from collections import UserDict
@@ -15,15 +16,32 @@ except ImportError:
 
 
 class yaml:
-    """ruamel.yaml replacement"""
+    """ruamel.yaml replacement. This uses PyYAML's yaml 1.1 implementation with some manually added yaml 1.2 'fixes'"""
+
+    # floating point 'fix' for yaml 1.1 from https://stackoverflow.com/a/30462009
+    loader = _yaml.SafeLoader
+    loader.add_implicit_resolver(
+        "tag:yaml.org,2002:float",
+        re.compile(
+            """^(?:
+         [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+        |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+        |[-+]?\\.(?:inf|Inf|INF)
+        |\\.(?:nan|NaN|NAN))$""",
+            re.X,
+        ),
+        list("-+0123456789."),
+    )
 
     @classmethod
     def load(cls, stream):
         if isinstance(stream, os.PathLike):
             with pathlib.Path(stream).open() as f:
-                return _yaml.load(f)
+                return _yaml.load(f, Loader=cls.loader)
         else:
-            return _yaml.load(stream)
+            return _yaml.load(stream, Loader=cls.loader)
 
     @classmethod
     def dump(cls, data, stream):
