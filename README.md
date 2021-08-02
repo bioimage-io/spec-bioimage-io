@@ -31,7 +31,7 @@ The RDF can be used to describe applications. To do so set the `type` field to `
 For regular software package with a downloadable file, you can set `download_url` to the downloadable file, for example, you can upload the executable files as Github release, deposit it on Zenodo, or even generate a sharable url from Dropbox/Google Drive.\
 For web application, set `source` to the url of the web application. Users can then click and redirect to your web application. However, simple integration will not support features such as opening dataset or models with your application.
 
-It is recommended to build BioEngine Apps such that users can directly try and use them in BioImage.IO. See [here](https://github.com/bioimage-io/bioimage.io/blob/master/docs/build-bioengine-apps.md) for more details.\
+It is recommended to build BioEngine Apps such that users can directly try and use them in BioImage.IO. See [here](https://github.com/bioimage-io/bioimage.io/blob/main/docs/bioengine_apps/build-bioengine-apps.md) for more details.\
 Below is an example for [Kaibu](https://kaibu.org), which is a BioEngine/ImJoy compatible web application:
 ```yaml
 id: kaibu
