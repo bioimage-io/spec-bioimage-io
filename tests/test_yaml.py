@@ -43,3 +43,11 @@ def test_flaoting_point_numbers_ruamel():
     data_str = json.dumps(expected)
     actual = ruamel_yaml.load(data_str)
     assert expected == actual
+
+
+def test_compare_script(unet2d_nuclei_broad_any_path):
+    from scripts.compare_yaml_syntax import main
+
+    diff = main(unet2d_nuclei_broad_any_path)
+
+    assert diff == 1  # ignore difference for timestamp
