@@ -78,8 +78,8 @@ def serialize_raw_resource_description(raw_rd: Union[dict, RawResourceDescriptio
 
 def ensure_raw_resource_description(
     raw_rd: Union[str, dict, os.PathLike, URI, RawResourceDescription],
-    root_path: os.PathLike,
-    update_to_current_format: bool,
+    root_path: os.PathLike = pathlib.Path(),
+    update_to_current_format: bool = True,
 ) -> Tuple[RawResourceDescription, pathlib.Path]:
     if isinstance(raw_rd, raw_nodes.ResourceDescription) and not isinstance(raw_rd, URI):
         return raw_rd, pathlib.Path(root_path)
