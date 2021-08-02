@@ -158,3 +158,10 @@ class DataClassFilterUnknownKwargsMixin:
         unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
         warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
         return known_kwargs
+
+
+def nested_default_dict_as_nested_dict(nested_dd):
+    return {
+        key: (nested_default_dict_as_nested_dict(value) if isinstance(value, dict) else value)
+        for key, value in nested_dd.items()
+    }
