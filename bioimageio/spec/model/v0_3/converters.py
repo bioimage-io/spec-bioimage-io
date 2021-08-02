@@ -1,14 +1,14 @@
 import copy
 import warnings
 from collections import defaultdict
-from pathlib import Path
 from typing import Any, Dict
 
 from marshmallow import Schema
 
 from bioimageio.spec.exceptions import UnconvertibleError
+from bioimageio.spec.shared.common import nested_default_dict_as_nested_dict
+from bioimageio.spec.shared.utils import resolve_uri
 from . import schema
-from ...shared.utils import resolve_uri
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
@@ -147,13 +147,7 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         data["sample_outputs"] = sample_outputs
 
     if conversion_errors:
-
-        def as_nested_dict(nested_dd):
-            return {
-                key: (as_nested_dict(value) if isinstance(value, dict) else value) for key, value in nested_dd.items()
-            }
-
-        conversion_errors = as_nested_dict(conversion_errors)
+        conversion_errors = nested_default_dict_as_nested_dict(conversion_errors)
         raise UnconvertibleError(conversion_errors)
 
     del data["prediction"]
