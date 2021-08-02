@@ -79,9 +79,11 @@ specified.
 
     attachments = fields.Dict(
         fields.String,
-        fields.List(fields.Raw),
-        bioimageio_maybe_required=True,
-        bioimageio_description=authors_bioimageio_description,
+        fields.List(
+            fields.Union([fields.URI(), fields.Raw()]),
+            bioimageio_maybe_required=True,
+            bioimageio_description=authors_bioimageio_description,
+        ),
     )
 
     authors = fields.List(
