@@ -3,7 +3,6 @@ from distutils.version import StrictVersion
 from pathlib import Path
 
 import pytest
-from ruamel.yaml import YAML
 
 from bioimageio import spec
 from bioimageio.spec import export_resource_package
@@ -13,8 +12,6 @@ try:
     from typing import get_args
 except ImportError:
     from typing_extensions import get_args  # type: ignore
-
-yaml = YAML(typ="safe")
 
 
 def get_unet2d_nuclei_broad_path(version: str):

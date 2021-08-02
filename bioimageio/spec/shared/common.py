@@ -6,12 +6,37 @@ import warnings
 from collections import UserDict
 from typing import Any, Dict, Generic, Optional
 
-from ruamel.yaml import YAML
+import yaml as _yaml
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
 except ImportError:
     from typing_extensions import Literal, get_args, get_origin, Protocol  # type: ignore
+
+
+class yaml:
+    """ruamel.yaml replacement"""
+
+    @classmethod
+    def load(cls, stream):
+        if isinstance(stream, os.PathLike):
+            with pathlib.Path(stream).open() as f:
+                return _yaml.load(f)
+        else:
+            return _yaml.load(stream)
+
+    @classmethod
+    def dump(cls, data, stream):
+        if isinstance(stream, os.PathLike):
+            with pathlib.Path(stream).open("w") as f:
+                return _yaml.dump(data, f)
+        else:
+            return _yaml.dump(data, stream)
+
+
+BIOIMAGEIO_CACHE_PATH = pathlib.Path(
+    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
+)
 
 
 def get_format_version_module(type_: str, format_version: str):
@@ -64,13 +89,6 @@ def get_args_flat(tp):
             flat_args.append(a)
 
     return tuple(flat_args)
-
-
-yaml = YAML(typ="safe")
-
-BIOIMAGEIO_CACHE_PATH = pathlib.Path(
-    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
-)
 
 
 class Singleton(type):

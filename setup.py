@@ -32,7 +32,6 @@ setup(
         "marshmallow-jsonschema",
         "marshmallow-union",
         "requests",
-        "ruamel.yaml",
         "typer",
         "typing-extensions",
     ],

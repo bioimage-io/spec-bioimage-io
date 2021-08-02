@@ -3,11 +3,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from ruamel.yaml import YAML
 
 from bioimageio.spec.shared import nodes, raw_nodes, utils
-
-yaml = YAML(typ="safe")
 
 
 @dataclass
