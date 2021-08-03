@@ -81,19 +81,36 @@ class IO(IO_Base):
 
         _GenericRawNode = TypeVar("_GenericRawNode", bound=raw_nodes.RawNode)
 
+        def get_path_in_package(fp: pathlib.Path, rpath: os.PathLike) -> pathlib.Path:
+            try:
+                name = fp.relative_to(rpath)
+            except ValueError:  # fp not relative to root path, e.g. due to resolved url
+                name = pathlib.Path(fp.name)
+                if name in package:  # avoid name collision
+                    for i in range(1000):
+                        name = pathlib.Path(f"{fp.name}{i}")
+                        if name not in package:
+                            break
+                    else:
+                        raise RuntimeError(f"Cannot ad {fp.name} to package content")
+
+            return name
+
         def incl_as_local(node: _GenericRawNode, field_name: str) -> _GenericRawNode:
             value = getattr(node, field_name)
             if value is not missing:
                 if isinstance(value, list):
-                    fps = [resolve_uri(v, root_path=root_path) for v in value]
-                    for fp in fps:
-                        package[fp.name] = fp
+                    fps: List[pathlib.Path] = [resolve_uri(v, root_path=root_path) for v in value]
+                    pps: List[pathlib.Path] = [get_path_in_package(fp, root_path) for fp in fps]
+                    for pp, fp in zip(pps, fps):
+                        package[pp] = fp
 
-                    new_field_value: Union[pathlib.Path, List[pathlib.Path]] = [pathlib.Path(fp.name) for fp in fps]
+                    new_field_value: Union[pathlib.Path, List[pathlib.Path]] = pps
                 else:
                     fp = resolve_uri(value, root_path=root_path)
-                    package[fp.name] = fp
-                    new_field_value = pathlib.Path(fp.name)
+                    pp = get_path_in_package(fp, root_path)
+                    package[pp] = fp
+                    new_field_value = pp
 
                 node = dataclasses.replace(node, **{field_name: new_field_value})
 
@@ -129,8 +146,9 @@ class IO(IO_Base):
             if weights_entry.attachments is not missing:
                 for fa in weights_entry.attachments.get("files", []):
                     fa = resolve_uri(fa, root_path=root_path)
-                    package[fa.name] = fa
-                    local_files.append(fa.name)
+                    pp = get_path_in_package(fa, root_path)
+                    package[pp] = fa
+                    local_files.append(pp)
 
             if local_files:
                 weights_entry.attachments["files"] = local_files
@@ -144,8 +162,9 @@ class IO(IO_Base):
             local_files = []
             for fa in raw_rd.attachments.get("files", []):
                 fa = resolve_uri(fa, root_path=root_path)
-                package[fa.name] = fa
-                local_files.append(fa.name)
+                pp = get_path_in_package(fa, root_path)
+                package[pp] = fa
+                local_files.append(pp)
 
             if local_files:
                 raw_rd.attachments["files"] = local_files
