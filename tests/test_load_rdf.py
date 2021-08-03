@@ -3,6 +3,8 @@ from pathlib import Path
 import pytest
 from marshmallow import ValidationError
 
+from bioimageio.spec.shared.utils import resolve_uri
+
 
 def test_load_non_existing_rdf():
     from bioimageio.spec import load_resource_description
@@ -48,3 +50,16 @@ def test_load_model_from_package(unet2d_nuclei_broad_any_path):
 
     model = load_resource_description(unet2d_nuclei_broad_any_path)
     assert model
+
+
+def test_load_remote_model_with_folders():
+    from bioimageio.spec import load_resource_description, load_raw_resource_description
+    from bioimageio.spec.model import nodes, raw_nodes
+
+    # todo: point to real model with nested folders, not this temporary sandbox one
+    rdf_url = "https://sandbox.zenodo.org/record/892199/files/rdf.yaml"
+    raw_model = load_raw_resource_description(rdf_url)
+    assert isinstance(raw_model, raw_nodes.Model)
+    model = load_resource_description(rdf_url)
+    assert isinstance(model, nodes.Model)
+    assert resolve_uri(raw_model.documentation) == model.documentation
