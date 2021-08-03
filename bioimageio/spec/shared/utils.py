@@ -121,7 +121,6 @@ class UriNodeTransformer(NodeTransformer):
         return LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
 
     def _transform_Path(self, leaf: pathlib.Path):
-        assert not leaf.is_absolute()
         return self.root_path / leaf
 
     def transform_PosixPath(self, leaf: pathlib.PosixPath) -> pathlib.Path:
