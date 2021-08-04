@@ -61,7 +61,7 @@ pyyaml_yaml = PyYAML()
 try:
     from ruamel.yaml import YAML
 except ImportError:
-    ruamel_yaml: Optional[YAML] = None
+    ruamel_yaml: Optional["YAML"] = None
     yaml = pyyaml_yaml
 else:
     ruamel_yaml = YAML(typ="safe")
