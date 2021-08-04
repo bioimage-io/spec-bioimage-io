@@ -15,12 +15,7 @@ from urllib.request import url2pathname
 
 from marshmallow.utils import _Missing
 
-try:
-    from typing import get_args, get_origin
-except ImportError:
-    from typing_extensions import get_args, get_origin
-
-from .common import get_args
+from .common import get_args, get_origin
 from marshmallow import missing
 
 
