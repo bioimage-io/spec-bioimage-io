@@ -92,7 +92,7 @@ WeightsEntry = Union[
 
 @dataclass
 class Model(base_nodes.Model, rdf.nodes.RDF, Node):
-    source: ImportedSource = missing
+    source: Union[_Missing, ImportedSource] = missing
     test_inputs: List[Path] = missing
     test_outputs: List[Path] = missing
     weights: Dict[base_nodes.WeightsFormat, WeightsEntry] = missing
