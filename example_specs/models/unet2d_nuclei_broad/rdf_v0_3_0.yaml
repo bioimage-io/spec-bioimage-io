@@ -71,7 +71,7 @@ weights:
    opset_version: 12
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
  pytorch_script:
-   sha256: b7f9dcf1da55a6d4cb29a0186d5558a86e4969916368479754517d00fa365848
+   sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
    source: ./weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
