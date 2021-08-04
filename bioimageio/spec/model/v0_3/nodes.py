@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Union
 
-from marshmallow import _Missing, missing
+from marshmallow import missing
+from marshmallow.utils import _Missing
+
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared.nodes import ImplicitInputShape, ImplicitOutputShape, ImportedSource, Node
