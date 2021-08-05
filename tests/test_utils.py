@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any
 
 import pytest
 
-from bioimageio.spec.shared import nodes, raw_nodes, utils
+from bioimageio.spec.shared import nodes, raw_nodes
+from bioimageio.core.resource_io import utils
 
 
 @dataclass
@@ -56,7 +57,7 @@ class TestNodeVisitor:
 
 
 def test_resolve_remote_relative_path():
-    from bioimageio.spec.shared.utils import PathToRemoteUriTransformer
+    from bioimageio.core.resource_io.utils import PathToRemoteUriTransformer
 
     remote_rdf = raw_nodes.URI(
         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
@@ -98,7 +99,7 @@ def test_uri_available():
 
 
 def test_all_uris_available():
-    from bioimageio.spec.shared.utils import all_uris_available
+    from bioimageio.core.resource_io.utils import all_uris_available
 
     not_available = {
         "uri": raw_nodes.URI(path="non_existing_file_in/non_existing_dir/ftw"),
@@ -108,7 +109,7 @@ def test_all_uris_available():
 
 
 def test_uri_node_transformer_is_ok_with_abs_path():
-    from bioimageio.spec.shared.utils import UriNodeTransformer
+    from bioimageio.core.resource_io.utils import UriNodeTransformer
 
     # note: the call of .absolute() is required to add the drive letter for windows paths, which are relative otherwise
     tree = {"rel_path": Path("something/relative"), "abs_path": Path("/something/absolute").absolute()}

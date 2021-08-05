@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from marshmallow import ValidationError
 
-from bioimageio.spec.shared.utils import resolve_uri
+from bioimageio.core.resource_io.utils import resolve_uri
 
 
 def test_load_non_existing_rdf():

@@ -1,4 +1,4 @@
-from bioimageio.spec.shared.io_ import IO_Base
+from bioimageio.core.resource_io.io_ import IO_Base
 from . import converters, nodes, raw_nodes, schema
 
 

@@ -7,7 +7,7 @@ from marshmallow import Schema
 
 from bioimageio.spec.exceptions import UnconvertibleError
 from bioimageio.spec.shared.common import nested_default_dict_as_nested_dict
-from bioimageio.spec.shared.utils import resolve_uri
+from bioimageio.core.resource_io.utils import resolve_uri
 from . import schema
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"

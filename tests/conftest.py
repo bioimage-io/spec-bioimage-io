@@ -1,88 +1,52 @@
-import re
-from distutils.version import StrictVersion
 from pathlib import Path
+from urllib.request import urlretrieve
 
 import pytest
 
-from bioimageio import spec
-from bioimageio.spec import export_resource_package
-from bioimageio.spec.shared.common import get_args_flat
-
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args  # type: ignore
+from bioimageio.spec.shared import yaml
 
 
-def get_unet2d_nuclei_broad_path(version: str):
-    assert isinstance(version, str), version
-    assert "_" not in version, version
-    assert "." in version, version
-    if version == spec.model.format_version:
-        version = ""  # latest version without specifier
+@pytest.fixture
+def _unet2d_nuclei_broad_base_url():
+    return (
+        "https://raw.githubusercontent.com/bioimage-io/"
+        "spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/"
+    )
+
+
+@pytest.fixture
+def unet2d_nuclei_broad_path(tmp_path):
+    p = tmp_path / "unet2d_nuclei_broad"
+    p.mkdir()
+    yield p
+
+
+def get_unet2d_nuclei_broad(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request) -> dict:
+    if request.param == "v0_3_2":
+        v = ""
     else:
-        version = "_v" + version.replace(".", "_")
+        v = f"_{request.param}"
 
-    return Path(__file__).parent / f"../example_specs/models/unet2d_nuclei_broad/rdf{version}.yaml"
+    f_name = f"rdf{v}.yaml"
+    url = _unet2d_nuclei_broad_base_url + f_name
+    path = unet2d_nuclei_broad_path / f_name
+    urlretrieve(url, str(path))
+    return yaml.load(path)
 
 
-def get_package_from_rdf_path(rdf_path: Path):
-    return export_resource_package(rdf_path)
+@pytest.fixture(params=["v0_1_0", "v0_3_0", "v0_3_1", "v0_3_2"])
+def unet2d_nuclei_broad_any(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request) -> dict:
+    yield get_unet2d_nuclei_broad(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request)
 
 
-def pytest_generate_tests(metafunc):
-    # generate
-    #   - unet2d_nuclei_broad_[before_]v{major}_{minor}[_{patch}][_package]_path
-    #   - unet2d_nuclei_broad_[before_]latest[_package]_path
-    #   - unet2d_nuclei_broad_any[_minor][_package]_path
-    all_format_versions = get_args_flat(spec.model.FormatVersion)
-    for fixture_name in metafunc.fixturenames:
-        m = re.fullmatch(
-            (
-                r"unet2d_nuclei_broad_("
-                r"((?P<before>before_)?((v(?P<major>\d+)_(?P<minor>\d+)(_(?P<patch>\d+))?)|(?P<latest>latest)))"
-                r"|"
-                r"(?P<any>any)(?P<any_minor>_minor)?"
-                r")(?P<package>_package)?_path"
-            ),
-            fixture_name,
-        )
-        if not m:
-            continue
+@pytest.fixture(params=["v0_3_2"])
+def unet2d_nuclei_broad_latest(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request) -> dict:
+    yield get_unet2d_nuclei_broad(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request)
 
-        if m["any"]:
-            vs = all_format_versions
-            if m["any_minor"]:  # skip all patched versions
-                vs_patched = {}
-                for v in vs:
-                    v_patched = tuple(v.split("."))
-                    if v_patched > vs_patched.get(v_patched[:2], tuple()):
-                        vs_patched[v_patched[:2]] = v_patched
 
-                vs = [".".join(v) for v in vs_patched.values()]
-        else:
-            if m["latest"]:
-                v = spec.model.format_version
-            else:
-                major = m["major"]
-                minor = m["minor"]
-                patch = m["patch"]
-                if patch is None:  # default to latest patch
-                    patched_version = get_args(getattr(spec.model, f"v{major}_{minor}").FormatVersion)[-1]
-                    patch = patched_version.split(".")[-1]
-
-                v = ".".join([major, minor, patch])
-
-            if m["before"]:
-                vs = [vv for vv in all_format_versions if StrictVersion(vv) < StrictVersion(v)]
-            else:
-                vs = [v]
-
-        vals = map(get_unet2d_nuclei_broad_path, vs)
-        if m["package"]:
-            vals = map(get_package_from_rdf_path, vals)
-
-        metafunc.parametrize(fixture_name, vals)
+@pytest.fixture(params=["v0_1_0", "v0_3_2"])
+def unet2d_nuclei_broad_any_minor(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request) -> dict:
+    yield get_unet2d_nuclei_broad(_unet2d_nuclei_broad_base_url, unet2d_nuclei_broad_path, request)
 
 
 @pytest.fixture

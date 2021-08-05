@@ -1,7 +1,8 @@
 """shared raw nodes that shared transformer act on"""
+import dataclasses
 import pathlib
 from dataclasses import dataclass
-from typing import Union
+from typing import ClassVar, Dict, Sequence, Union
 
 from marshmallow import missing
 
@@ -10,7 +11,12 @@ from . import base_nodes
 
 @dataclass
 class RawNode(base_nodes.NodeBase):
-    pass
+    _include_in_package: ClassVar[Sequence[str]] = tuple()
+
+    def __post_init__(self):
+        field_names = [f.name for f in dataclasses.fields(self)]
+        for incl_in_package in self._include_in_package:
+            assert incl_in_package in field_names
 
 
 @dataclass
@@ -19,7 +25,7 @@ class ResourceDescription(RawNode, base_nodes.ResourceDescription):
 
 
 @dataclass
-class URI(RawNode, base_nodes.URI):
+class URI(base_nodes.URI, RawNode):
     pass
 
 

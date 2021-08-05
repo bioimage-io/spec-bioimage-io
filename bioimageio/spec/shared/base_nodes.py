@@ -9,29 +9,35 @@ import distutils.version
 import pathlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional, Union
+from typing import ClassVar, List, Optional, Sequence, Union
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
+from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from .common import get_args, get_origin
-from marshmallow import missing
 
 
 @dataclass
 class NodeBase:
-    def __post_init__(self):
-        from . import nodes, raw_nodes
+    _include_in_package: ClassVar[Sequence[str]] = tuple()
 
-        if not isinstance(self, (nodes.Node, raw_nodes.RawNode)):
-            raise TypeError("base nodes should not be instantiated!")
-
-        for f in dataclasses.fields(self):
-            if getattr(self, f.name) is missing and (
-                get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
-            ):
-                raise TypeError(f"{self.__class__}.__init__() missing required argument: '{f.name}'")
+    # def __post_init__(self):
+    #     from . import nodes, raw_nodes
+    #
+    #     if not isinstance(self, (nodes.Node, raw_nodes.RawNode)):
+    #         raise TypeError("base nodes should not be instantiated!")
+    #
+    #     for f in dataclasses.fields(self):
+    #         if getattr(self, f.name) is missing and (
+    #             get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
+    #         ):
+    #             raise TypeError(f"{self.__class__}.__init__() missing required argument: '{f.name}'")
+    #
+    #     field_names = [f.name for f in dataclasses.fields(self)]
+    #     for incl_in_package in self._include_in_package:
+    #         assert incl_in_package in field_names
 
 
 @dataclass
@@ -112,6 +118,8 @@ class _Dependencies(NodeBase):
 
 
 class Dependencies(_Dependencies, ABC):
+    _include_in_package = ("file",)
+
     @property
     @abstractmethod
     def file(self):
@@ -158,6 +166,8 @@ class _ImportableSourceFile(NodeBase):
 
 
 class ImportableSourceFile(_ImportableSourceFile, ABC):
+    _include_in_package = ("source_file",)
+
     @property
     @abstractmethod
     def source_file(self):

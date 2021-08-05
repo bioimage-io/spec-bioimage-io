@@ -83,6 +83,8 @@ class _WeightsEntryBase(NodeBase):
 
 
 class WeightsEntryBase(_WeightsEntryBase, ABC):
+    _include_in_package = ("source",)
+
     @property
     @abstractmethod
     def source(self):
@@ -180,6 +182,8 @@ class _Model(rdf.base_nodes._RDF):
 
 
 class Model(_Model, rdf.base_nodes.RDF, ABC):
+    _include_in_package = ("covers", "documentation", "source", "test_inputs", "test_outputs")
+
     @property
     @abstractmethod
     def weights(self):
