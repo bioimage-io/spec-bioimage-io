@@ -1,4 +1,9 @@
-"""shared raw nodes that shared transformers act on"""
+"""shared raw nodes that shared transformers act on
+
+raw nodes are the deserialized equivalent to the content of any RDF.
+serialization and deserialization are defined in schema:
+RDF <--schema--> raw nodes
+"""
 import dataclasses
 import distutils.version
 import pathlib

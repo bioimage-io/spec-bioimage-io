@@ -22,17 +22,22 @@ def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
 
 
 @pytest.fixture(params=["v0_1_0", "v0_3_0", "v0_3_1", "v0_3_2"])
-def unet2d_nuclei_broad_any(unet2d_nuclei_broad_base_path, request) -> dict:
+def unet2d_nuclei_broad_any(unet2d_nuclei_broad_base_path, request):
+    yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
+
+
+@pytest.fixture(params=["v0_1_0", "v0_3_0", "v0_3_1"])
+def unet2d_nuclei_broad_before_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 
 @pytest.fixture(params=["v0_3_2"])
-def unet2d_nuclei_broad_latest(unet2d_nuclei_broad_base_path, request) -> dict:
+def unet2d_nuclei_broad_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 
 @pytest.fixture(params=["v0_1_0", "v0_3_2"])
-def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request) -> dict:
+def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 

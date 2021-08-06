@@ -3,6 +3,7 @@ import os
 import pathlib
 import tempfile
 import warnings
+from abc import ABCMeta
 from collections import UserDict
 from typing import Any, Dict, Generic, Optional
 
@@ -90,17 +91,6 @@ class NoOverridesDict(UserDict):
             raise ValueError(self.key_exists_error_message.format(key=key, value=value))
 
         super().__setitem__(key, value)
-
-
-@dataclasses.dataclass
-class DataClassFilterUnknownKwargsMixin:
-    @classmethod
-    def get_known_kwargs(cls, kwargs: Dict[str, Any]):
-        field_names = set(f.name for f in dataclasses.fields(cls))
-        known_kwargs = {k: v for k, v in kwargs.items() if k in field_names}
-        unknown_kwargs = {k: v for k, v in kwargs.items() if k not in field_names}
-        warnings.warn(f"discarding unknown kwargs: {unknown_kwargs}")
-        return known_kwargs
 
 
 def nested_default_dict_as_nested_dict(nested_dd):

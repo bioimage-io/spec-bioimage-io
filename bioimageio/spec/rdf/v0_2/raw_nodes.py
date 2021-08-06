@@ -1,3 +1,12 @@
+""" raw nodes for the general RDF spec
+
+raw nodes are the deserialized equivalent to the content of any RDF.
+serialization and deserialization are defined in schema:
+RDF <--schema--> raw nodes
+"""
+import dataclasses
+import distutils.version
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Union
@@ -5,7 +14,6 @@ from typing import Any, Dict, List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared.common import DataClassFilterUnknownKwargsMixin
 from bioimageio.spec.shared.raw_nodes import Dependencies, RawNode, ResourceDescription, URI
 
 try:
@@ -51,7 +59,7 @@ class Badge(RawNode):
 
 
 @dataclass
-class RDF(ResourceDescription, DataClassFilterUnknownKwargsMixin):
+class RDF(ResourceDescription):
     attachments: Union[_Missing, Dict[str, Any]] = missing
     authors: List[Union[str, Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
@@ -66,9 +74,51 @@ class RDF(ResourceDescription, DataClassFilterUnknownKwargsMixin):
     links: Union[_Missing, List[str]] = missing
     tags: List[str] = missing
 
-    def __init__(self, **kwargs):  # todo: improve signature
-        known_kwargs = self.get_known_kwargs(kwargs)
-        super().__init__(**known_kwargs)
+    # manual __init__ to allow for unknown kwargs
+    def __init__(
+        self,
+        *,
+        # ResourceDescription
+        format_version: FormatVersion,
+        name: str,
+        type: str,
+        version: Union[_Missing, distutils.version.StrictVersion] = missing,
+        # RDF
+        attachments: Union[_Missing, Dict[str, Any]] = missing,
+        authors: List[Union[str, Author]],
+        badges: Union[_Missing, List[Badge]] = missing,
+        cite: List[CiteEntry],
+        config: Union[_Missing, dict] = missing,
+        covers: Union[_Missing, List[URI]] = missing,
+        description: str,
+        documentation: Path,
+        git_repo: Union[_Missing, str] = missing,
+        license: Union[_Missing, str] = missing,
+        links: Union[_Missing, List[str]] = missing,
+        tags: List[str],
+        **unknown_kwargs,
+    ):
+        self.attachments = attachments
+        self.authors = authors
+        self.badges = badges
+        self.cite = cite
+        self.config = config
+        self.covers = covers
+        self.description = description
+        self.documentation = documentation
+        self.git_repo = git_repo
+        self.license = license
+        self.links = links
+        self.tags = tags
+        super().__init__(format_version=format_version, name=name, type=type, version=version)
+
+        if unknown_kwargs:
+            # make sure we didn't forget a defined field
+            field_names = set(f.name for f in dataclasses.fields(self))
+            for uk in unknown_kwargs:
+                assert uk not in field_names
+
+            warnings.warn(f"discarding unknown RDF fields: {unknown_kwargs}")
 
     def __post_init__(self):
         if self.type is missing:

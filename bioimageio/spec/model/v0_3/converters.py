@@ -214,6 +214,10 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
             data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = doc
             data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
 
+    # model version
+    if "version" in future:
+        data["version"] = future.pop("version")
+
     return data
 
 
