@@ -81,7 +81,7 @@ class RDF(ResourceDescription):
         # ResourceDescription
         format_version: FormatVersion,
         name: str,
-        type: str,
+        type: str = missing,
         version: Union[_Missing, distutils.version.StrictVersion] = missing,
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
