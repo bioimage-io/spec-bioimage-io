@@ -1,21 +1,16 @@
 import dataclasses
 import pathlib
 import typing
-from types import ModuleType
 
-from bioimageio.spec.shared import base_nodes, nodes, raw_nodes
+from bioimageio.spec.shared import base_nodes, raw_nodes
 
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
-GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=nodes.Node)
-# GenericNode = typing.TypeVar("GenericNode", bound=base_nodes.NodeBase)
 URI_Type = typing.TypeVar("URI_Type", bound=base_nodes.URI)
-URI_Node = typing.Union[raw_nodes.URI, nodes.URI]
-GenericNode = typing.Union[GenericRawNode, GenericResolvedNode]
 # todo: improve GenericNode definition
 
 
-def iter_fields(node: GenericNode):
+def iter_fields(node: GenericRawNode):
     for field in dataclasses.fields(node):
         yield field.name, getattr(node, field.name)
 
@@ -31,7 +26,7 @@ class NodeVisitor:
     def generic_visit(self, node):
         """Called if no explicit visitor function exists for a node."""
 
-        if isinstance(node, (nodes.Node, raw_nodes.RawNode)):
+        if isinstance(node, raw_nodes.RawNode):
             for field, value in iter_fields(node):
                 self.visit(value)
         elif isinstance(node, base_nodes.NodeBase):
@@ -49,7 +44,7 @@ class Transformer:
     def transform(self, node: typing.Any) -> typing.Any:
         method = "transform_" + node.__class__.__name__
 
-        transformer = getattr(self, method, self.generic_transformer)
+        transformer: typing.Callable[[typing.Any], typing.Any] = getattr(self, method, self.generic_transformer)
 
         return transformer(node)
 
@@ -64,8 +59,8 @@ class Transformer:
 
 
 class NodeTransformer(Transformer):
-    def generic_transformer(self, node: GenericNode) -> GenericNode:
-        if isinstance(node, base_nodes.NodeBase):
+    def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
+        if isinstance(node, raw_nodes.RawNode):
             return dataclasses.replace(node, **{name: self.transform(value) for name, value in iter_fields(node)})
         else:
             return super().generic_transformer(node)
@@ -109,22 +104,6 @@ class PathToRemoteUriTransformer(NodeTransformer):
 
     def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> raw_nodes.URI:
         return self._transform_Path(leaf)
-
-
-class RawNodeTypeTransformer(NodeTransformer):
-    def __init__(self, nodes_module: ModuleType):
-        super().__init__()
-        self.nodes = nodes_module
-
-    def generic_transformer(self, node: GenericRawNode) -> GenericResolvedNode:
-        if isinstance(node, raw_nodes.RawNode):
-            resolved_data = {
-                field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
-            }
-            resolved_node_type: typing.Type[GenericResolvedNode] = getattr(self.nodes, node.__class__.__name__)
-            return resolved_node_type(**resolved_data)  # type: ignore
-        else:
-            return super().generic_transformer(node)
 
 
 def is_valid_orcid_id(orcid_id: str):
@@ -171,10 +150,8 @@ class RawNodePackageTransformer(NodeTransformer):
 
         return conflict_free_name
 
-    def generic_transformer(self, node: GenericRawNode) -> GenericResolvedNode:
-        if isinstance(node, nodes.Node):
-            raise NotImplementedError("Packaging resolved nodes is not implemented.")
-        elif isinstance(node, raw_nodes.RawNode):
+    def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
+        if isinstance(node, raw_nodes.RawNode):
             resolved_data = {
                 field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
             }
@@ -184,5 +161,3 @@ class RawNodePackageTransformer(NodeTransformer):
             return dataclasses.replace(node, **resolved_data)
         else:
             return super().generic_transformer(node)
-
-

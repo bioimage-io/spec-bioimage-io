@@ -21,10 +21,10 @@ ImplicitInputShape = ImplicitInputShape
 ImplicitOutputShape = ImplicitOutputShape
 
 # same as general RDF
-Author = rdf.nodes.Author
-Badge = rdf.nodes.Badge
-CiteEntry = rdf.nodes.CiteEntry
-Dependencies = rdf.nodes.Dependencies
+Author = rdf.raw_nodes.Author
+Badge = rdf.raw_nodes.Badge
+CiteEntry = rdf.raw_nodes.CiteEntry
+Dependencies = rdf.raw_nodes.Dependencies
 
 
 @dataclass

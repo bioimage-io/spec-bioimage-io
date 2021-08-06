@@ -1,5 +1,5 @@
 from bioimageio.spec.shared import fields
-from . import converters, nodes, raw_nodes, schema, utils
+from . import converters, raw_nodes, schema, utils
 from .base_nodes import FormatVersion
 
 try:
