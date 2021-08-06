@@ -120,7 +120,7 @@ class RawNodePackageTransformer(NodeTransformer):
         self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
     ) -> typing.Union[typing.List[str], str]:
         if isinstance(resource, list):
-            return [self._transform_resource(r) for r in resource]
+            return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: do not annotate as inf nested lists
         elif isinstance(resource, pathlib.PurePath):
             name_from = resource
         elif isinstance(resource, raw_nodes.URI):

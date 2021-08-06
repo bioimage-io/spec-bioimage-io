@@ -7,7 +7,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf import v0_2 as rdf
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitInputShape,
     ImplicitOutputShape,
@@ -34,14 +34,10 @@ WeightsFormat = Literal[
 ]
 
 # reassign to use imported classes
+Badge = Badge
+CiteEntry = CiteEntry
 ImplicitInputShape = ImplicitInputShape
 ImplicitOutputShape = ImplicitOutputShape
-
-# same as general RDF
-Author = rdf.raw_nodes.Author
-Badge = rdf.raw_nodes.Badge
-CiteEntry = rdf.raw_nodes.CiteEntry
-Dependencies = rdf.raw_nodes.Dependencies
 
 
 @dataclass
@@ -150,7 +146,7 @@ class ModelParent(RawNode):
 
 
 @dataclass
-class Model(rdf.raw_nodes.RDF):
+class Model(RDF):
     _include_in_package = ("covers", "documentation", "source", "test_inputs", "test_outputs")
 
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon

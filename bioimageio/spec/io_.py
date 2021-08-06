@@ -104,7 +104,7 @@ def get_resource_package_content(
 
     raw_rd = sub_spec.utils.filter_resource_description(raw_rd, **filter_kwargs)
 
-    content = {}
+    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI]] = {}
     raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
     assert "rdf.yaml" not in content
     return raw_rd, content
