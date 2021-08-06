@@ -1,19 +1,12 @@
 from dataclasses import dataclass
-from typing import List, Union
+from pathlib import Path
+from typing import Any, Dict, List, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from bioimageio.spec.shared.common import DataClassFilterUnknownKwargsMixin
 from bioimageio.spec.shared.raw_nodes import Dependencies, RawNode, ResourceDescription, URI
-from . import base_nodes
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Union
-
-from marshmallow import missing
-from marshmallow.utils import _Missing
 
 try:
     from typing import Literal, get_args

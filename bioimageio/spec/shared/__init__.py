@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import fields, nodes, raw_nodes, schema
+from . import fields, raw_nodes, schema
 from .common import BIOIMAGEIO_CACHE_PATH, get_args, yaml  # noqa
 
 _license_file = Path(__file__).parent.parent / "static" / "licenses.json"

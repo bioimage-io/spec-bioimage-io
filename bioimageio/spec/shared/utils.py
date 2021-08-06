@@ -2,12 +2,11 @@ import dataclasses
 import pathlib
 import typing
 
-from bioimageio.spec.shared import base_nodes, raw_nodes
+from bioimageio.spec.shared import raw_nodes
 
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
-URI_Type = typing.TypeVar("URI_Type", bound=base_nodes.URI)
-# todo: improve GenericNode definition
+URI_Type = typing.TypeVar("URI_Type", bound=raw_nodes.URI)
 
 
 def iter_fields(node: GenericRawNode):
@@ -29,11 +28,6 @@ class NodeVisitor:
         if isinstance(node, raw_nodes.RawNode):
             for field, value in iter_fields(node):
                 self.visit(value)
-        elif isinstance(node, base_nodes.NodeBase):
-            raise TypeError(
-                f"Encountered base node {node}. Base nodes should not be instantiated! "
-                "Use raw_nodes.RawNode or nodes.Node instead."
-            )
         elif isinstance(node, dict):
             [self.visit(subnode) for subnode in node.values()]
         elif isinstance(node, (tuple, list)):
