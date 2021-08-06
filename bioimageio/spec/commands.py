@@ -45,6 +45,7 @@ def validate(
 
         rdf_source = yaml.load(rdf_source)
 
+    assert isinstance(rdf_source, dict)
     try:
         raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
