@@ -1,3 +1,7 @@
+"""simple io functionality to deserialize a resource description from a resource description file (RDF)
+(in form of a dict, e.g. from yaml.load('rdf.yaml') to a raw_nodes.ResourceDescription raw node,
+which is a python dataclass
+"""
 import pathlib
 from types import ModuleType
 from typing import Dict, Optional, Sequence, Tuple, Union
@@ -76,6 +80,7 @@ def load_raw_resource_description(data: dict, update_to_current_format: bool = F
 
 
 def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -> dict:
+    """serialize a raw nodes resource description to a dict with the content of a resource description file (RDF)"""
     class_name = get_class_name_from_type(raw_rd.type)
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
 
