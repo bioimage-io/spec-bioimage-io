@@ -40,7 +40,6 @@ class IO(IO_Base):
         return raw_rd
 
 
-
 def filter_resource_description(
     raw_rd: raw_nodes.Model, weights_priority_order: Optional[Sequence[base_nodes.WeightsFormat]] = None
 ) -> raw_nodes.Model:

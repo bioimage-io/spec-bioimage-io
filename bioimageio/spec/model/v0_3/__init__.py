@@ -1,6 +1,6 @@
 from bioimageio.spec.shared import fields
 from . import converters, raw_nodes, schema, utils
-from .base_nodes import FormatVersion
+from .raw_nodes import FormatVersion
 
 try:
     from typing import get_args

@@ -1,6 +1,8 @@
 import os
+import pathlib
 import traceback
 from pprint import pprint
+from tempfile import TemporaryFile
 from typing import IO, Union
 
 from marshmallow import ValidationError
@@ -10,7 +12,7 @@ from .shared import yaml
 
 
 def validate(
-    rdf_source: Union[dict, os.PathLike, IO[str]],
+    rdf_source: Union[dict, os.PathLike, IO[str], str],
     update_format: bool = False,
     update_format_inner: bool = None,
     verbose: bool = False,
@@ -21,6 +23,23 @@ def validate(
 
     source_name = rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source
     if not isinstance(rdf_source, dict):
+        if isinstance(rdf_source, str):
+            if rdf_source.startswith("http"):
+                from urllib.request import urlretrieve
+
+                rdf_source, response = urlretrieve(rdf_source)
+                # todo: check http response code
+
+            try:
+                is_path = pathlib.Path(rdf_source).exists()
+            except OSError:
+                is_path = False
+
+            if is_path:
+                rdf_source = pathlib.Path(rdf_source)
+            else:
+                raise RuntimeError(f"Could not retrieve {rdf_source}")
+
         if yaml is None:
             raise RuntimeError("Cannot validate from file without ruamel.yaml dependency!")
 
