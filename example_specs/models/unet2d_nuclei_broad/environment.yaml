@@ -1,0 +1,8 @@
+name:
+    unet2d_nuclei_broad
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - pytorch
+    - numpy
