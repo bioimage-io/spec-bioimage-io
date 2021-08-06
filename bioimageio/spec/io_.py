@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import pathlib
 from types import ModuleType
-from typing import Dict, Optional, Protocol, Sequence, Tuple, Union
+from typing import Dict, Optional, Sequence, Tuple, Union
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
@@ -13,6 +11,12 @@ from bioimageio.spec.shared.common import (
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer
+
+try:
+    from typing import Protocol
+except ImportError:
+    from typing_extensions import Protocol  # type: ignore
+
 
 LATEST = "latest"
 
