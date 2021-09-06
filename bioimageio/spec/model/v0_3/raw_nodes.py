@@ -147,7 +147,7 @@ class ModelParent(RawNode):
 
 @dataclass
 class Model(RDF):
-    _include_in_package = ("covers", "documentation", "source", "test_inputs", "test_outputs")
+    _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs")
 
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
