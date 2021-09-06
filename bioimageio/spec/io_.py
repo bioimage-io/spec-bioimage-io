@@ -3,6 +3,8 @@
 which is a python dataclass
 """
 import pathlib
+import warnings
+from io import StringIO
 from types import ModuleType
 from typing import Dict, Optional, Sequence, Tuple, Union
 
@@ -11,6 +13,7 @@ from bioimageio.spec.shared.common import (
     get_class_name_from_type,
     get_format_version_module,
     get_latest_format_version_module,
+    yaml,
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
@@ -89,6 +92,29 @@ def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -
     assert isinstance(serialized, dict)
 
     return serialized
+
+
+def serialize_raw_resource_description(raw_rd: RawResourceDescription) -> str:
+    if yaml is None:
+        raise RuntimeError("'serialize_raw_resource_description' requires yaml")
+
+    serialized = serialize_raw_resource_description_to_dict(raw_rd)
+
+    with StringIO() as stream:
+        yaml.dump(serialized, stream)
+        return stream.getvalue()
+
+
+def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.Path):
+    if yaml is None:
+        raise RuntimeError("'save_raw_resource_description' requires yaml")
+
+    warnings.warn("only saving serialized rdf, no associated resources.")
+    if path.suffix != ".yaml":
+        warnings.warn("saving with '.yaml' suffix is strongly encouraged.")
+
+    serialized = serialize_raw_resource_description_to_dict(raw_rd)
+    yaml.dump(serialized, path)
 
 
 def get_resource_package_content(
