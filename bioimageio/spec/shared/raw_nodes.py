@@ -23,7 +23,7 @@ except ImportError:
 
 @dataclass
 class RawNode:
-    _include_in_package: ClassVar[Sequence[str]] = tuple()
+    _include_in_package: ClassVar[Sequence[str]] = tuple()  # todo: move to field meta data
 
     def __post_init__(self):
         for f in dataclasses.fields(self):
