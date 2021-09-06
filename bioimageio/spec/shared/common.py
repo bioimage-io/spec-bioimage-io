@@ -1,6 +1,3 @@
-import os
-import pathlib
-import tempfile
 from typing import Generic, Optional
 
 
@@ -9,10 +6,6 @@ try:
 except ImportError:
     from typing_extensions import Literal, get_args, get_origin, Protocol  # type: ignore
 
-
-BIOIMAGEIO_CACHE_PATH = pathlib.Path(
-    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
-)
 
 try:
     from ruamel.yaml import YAML
