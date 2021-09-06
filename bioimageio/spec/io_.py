@@ -142,4 +142,8 @@ def get_resource_package_content(
     content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
     raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
     assert "rdf.yaml" not in content
+    if yaml is None:
+        raise RuntimeError("'get_resource_package_content' requires yaml")
+
+    content["rdf.yaml"] = serialize_raw_resource_description(raw_rd)
     return raw_rd, content
