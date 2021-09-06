@@ -1,11 +1,7 @@
-import dataclasses
 import os
 import pathlib
 import tempfile
-import warnings
-from abc import ABCMeta
-from collections import UserDict
-from typing import Any, Dict, Generic, Optional
+from typing import Generic, Optional
 
 
 try:
@@ -76,21 +72,6 @@ def get_args_flat(tp):
             flat_args.append(a)
 
     return tuple(flat_args)
-
-
-class NoOverridesDict(UserDict):
-    def __init__(self, *args, key_exists_error_msg: Optional[str] = None, allow_if_same_value: bool = True, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.key_exists_error_message = (
-            "key {key} already exists!" if key_exists_error_msg is None else key_exists_error_msg
-        )
-        self.allow_if_same_value = allow_if_same_value
-
-    def __setitem__(self, key, value):
-        if key in self and (not self.allow_if_same_value or value != self[key]):
-            raise ValueError(self.key_exists_error_message.format(key=key, value=value))
-
-        super().__setitem__(key, value)
 
 
 def nested_default_dict_as_nested_dict(nested_dd):
