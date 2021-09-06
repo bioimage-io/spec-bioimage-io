@@ -122,13 +122,13 @@ def get_resource_package_content(
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
-        raw_rd: raw resource description, path, URI or raw data as dict
+        raw_rd: raw resource description
         # for model resources only:
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        Package content of local file paths or text content keyed by file names.
+        Package content of remote URIs, local file paths or text content keyed by file names.
     """
     assert isinstance(raw_rd, raw_nodes.ResourceDescription)
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
@@ -139,7 +139,7 @@ def get_resource_package_content(
 
     raw_rd = sub_spec.utils.filter_resource_description(raw_rd, **filter_kwargs)
 
-    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI]] = {}
+    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
     raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
     assert "rdf.yaml" not in content
     return raw_rd, content
