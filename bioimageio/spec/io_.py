@@ -117,7 +117,7 @@ def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.
     yaml.dump(serialized, path)
 
 
-def get_resource_package_content(
+def get_resource_package_content_wo_rdf(
     raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
@@ -128,7 +128,9 @@ def get_resource_package_content(
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        Package content of remote URIs, local file paths or text content keyed by file names.
+        Tuple of updated raw resource description and package content of remote URIs, local file paths or text content
+        keyed by file names.
+        Important note: the serialized rdf.yaml is not included.
     """
     assert isinstance(raw_rd, raw_nodes.ResourceDescription)
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
@@ -142,8 +144,26 @@ def get_resource_package_content(
     content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
     raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
     assert "rdf.yaml" not in content
+    return raw_rd, content
+
+
+def get_resource_package_content(
+    raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+) -> Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]:
+    """
+    Args:
+        raw_rd: raw resource description
+        # for model resources only:
+        weights_priority_order: If given only the first weights format present in the model is included.
+                                If none of the prioritized weights formats is found all are included.
+
+    Returns:
+        Package content of remote URIs, local file paths or text content keyed by file names.
+    """
     if yaml is None:
         raise RuntimeError("'get_resource_package_content' requires yaml")
 
+    content: Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]
+    raw_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
     content["rdf.yaml"] = serialize_raw_resource_description(raw_rd)
-    return raw_rd, content
+    return content
