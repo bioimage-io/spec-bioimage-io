@@ -161,7 +161,10 @@ def get_resource_package_content(
         Package content of remote URIs, local file paths or text content keyed by file names.
     """
     if yaml is None:
-        raise RuntimeError("'get_resource_package_content' requires yaml")
+        raise RuntimeError(
+            "'get_resource_package_content' requires yaml; note that 'get_resource_package_content_wo_rdf' may be used "
+            "without yaml"
+        )
 
     content: Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]
     raw_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
