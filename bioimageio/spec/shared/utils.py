@@ -123,18 +123,24 @@ class RawNodePackageTransformer(NodeTransformer):
             return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
         elif isinstance(resource, pathlib.PurePath):
             name_from = resource
+            if resource.is_absolute():
+                folder_in_package = ""
+            else:
+                folder_in_package = resource.parent.as_posix() + "/"
         elif isinstance(resource, raw_nodes.URI):
             name_from = pathlib.PurePath(resource.path)
+            folder_in_package = ""
         else:
             raise TypeError(f"Unexpected type {type(resource)} for {resource}")
 
         stem = name_from.stem
         suffix = name_from.suffix
 
-        conflict_free_name = f"{stem}{suffix}"
+        conflict_free_name = f"{folder_in_package}{stem}{suffix}"
         for i in range(100000):
-            if conflict_free_name in self.remote_resources:
-                conflict_free_name = f"{stem}-{i}{suffix}"
+            existing_resource = self.remote_resources.get(conflict_free_name)
+            if existing_resource is not None and existing_resource != resource:
+                conflict_free_name = f"{folder_in_package}{stem}-{i}{suffix}"
             else:
                 break
         else:
