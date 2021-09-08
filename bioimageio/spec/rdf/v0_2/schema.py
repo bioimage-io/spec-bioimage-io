@@ -7,7 +7,7 @@ from bioimageio.spec.shared.common import get_args, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
-from .base_nodes import FormatVersion
+from .raw_nodes import FormatVersion
 
 
 class BioImageIOSchema(SharedBioImageIOSchema):

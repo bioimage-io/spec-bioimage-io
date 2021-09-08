@@ -2,8 +2,6 @@ import pytest
 from marshmallow import ValidationError
 from pytest import raises
 
-from bioimageio.spec.shared.io_ import get_dict_and_root_path_from_yaml_source
-
 
 class TestPreprocessing:
     class TestZeroMeanUniVarianceKwargs:
@@ -21,20 +19,16 @@ class TestPreprocessing:
             )
 
 
-def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest_path):
+def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):
     from bioimageio.spec.rdf.schema import RDF
 
-    data, root_path = get_dict_and_root_path_from_yaml_source(unet2d_nuclei_broad_latest_path)
-
-    RDF().load(data)
+    RDF().load(unet2d_nuclei_broad_latest)
 
 
-def test_model_does_not_accept_unknown_fields(unet2d_nuclei_broad_latest_path):
+def test_model_does_not_accept_unknown_fields(unet2d_nuclei_broad_latest):
     from bioimageio.spec.model.schema import Model
 
-    data, root_path = get_dict_and_root_path_from_yaml_source(unet2d_nuclei_broad_latest_path)
-
-    data["unknown_additional_field"] = "shouldn't be here"
+    unet2d_nuclei_broad_latest["unknown_additional_field"] = "shouldn't be here"
 
     with pytest.raises(ValidationError):
-        Model().load(data)
+        Model().load(unet2d_nuclei_broad_latest)

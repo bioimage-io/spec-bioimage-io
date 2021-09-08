@@ -1,10 +1,5 @@
-from bioimageio.spec.shared.io_ import IO_Base
-from . import converters, nodes, raw_nodes, schema
+from . import raw_nodes
 
 
-class IO(IO_Base):
-    preceding_io_class = None
-    converters = converters
-    schema = schema
-    raw_nodes = raw_nodes
-    nodes = nodes
+def filter_resource_description(raw_rd: raw_nodes.Model, weights_priority_order=None) -> raw_nodes.Model:
+    raise NotImplementedError("Packaging a model RDF of format version 0.1. is not supported.")

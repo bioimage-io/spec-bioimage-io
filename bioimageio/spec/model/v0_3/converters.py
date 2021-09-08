@@ -1,4 +1,5 @@
 import copy
+import pathlib
 import warnings
 from collections import defaultdict
 from typing import Any, Dict
@@ -7,8 +8,7 @@ from marshmallow import Schema
 
 from bioimageio.spec.exceptions import UnconvertibleError
 from bioimageio.spec.shared.common import nested_default_dict_as_nested_dict
-from bioimageio.spec.shared.utils import resolve_uri
-from . import schema
+from . import raw_nodes, schema
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
 
@@ -203,13 +203,20 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
         if AUTO_CONVERTED_DOCUMENTATION_FILE_NAME not in data["config"]:
             orig_doc = data["documentation"]
             assert isinstance(orig_doc, str)
-            if not orig_doc.endswith(".md") and orig_doc.startswith("http"):
-                doc = f"Find documentation at {orig_doc}"
+            if orig_doc.startswith("http"):
+                if orig_doc.endswith(".md"):
+                    doc = raw_nodes.URI(orig_doc)
+                else:
+                    doc = f"Find documentation at {orig_doc}"
             else:
-                doc = resolve_uri(orig_doc).read_text()
+                doc = pathlib.Path(orig_doc)
 
             data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = doc
             data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
+
+    # model version
+    if "version" in future:
+        data["version"] = future.pop("version")
 
     return data
 

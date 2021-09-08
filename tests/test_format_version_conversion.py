@@ -1,25 +1,25 @@
 from dataclasses import asdict
 
 from bioimageio.spec.model import schema
-from bioimageio.spec.shared import yaml
 
 
-def test_model_format_version_conversion(unet2d_nuclei_broad_v0_1_0_path, unet2d_nuclei_broad_latest_path):
+def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet2d_nuclei_broad_latest):
     from bioimageio.spec.model.converters import maybe_convert
 
-    model_data_v0_1 = yaml.load(unet2d_nuclei_broad_v0_1_0_path)
-    model_data = yaml.load(unet2d_nuclei_broad_latest_path)
+    old_model_data = unet2d_nuclei_broad_before_latest
+    model_data = unet2d_nuclei_broad_latest
 
     expected = asdict(schema.Model().load(model_data))
-    converted_data = maybe_convert(model_data_v0_1)
+    converted_data = maybe_convert(old_model_data)
     actual = asdict(schema.Model().load(converted_data))
 
-    # expect converted description
-    for ipt in expected["inputs"]:
-        ipt["description"] = ipt["name"]
+    if old_model_data["format_version"] == "0.1.0":
+        # expect converted description
+        for ipt in expected["inputs"]:
+            ipt["description"] = ipt["name"]
 
-    for out in expected["outputs"]:
-        out["description"] = out["name"]
+        for out in expected["outputs"]:
+            out["description"] = out["name"]
 
     for key, item in expected.items():
         assert key in actual, key

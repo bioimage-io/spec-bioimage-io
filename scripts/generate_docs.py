@@ -4,6 +4,7 @@ import typing
 from pathlib import Path
 
 import bioimageio.spec.rdf
+from bioimageio.spec.shared import fields
 
 try:
     from typing import get_args
@@ -30,7 +31,7 @@ def doc_from_schema(obj, spec) -> DocNode:
         return DocNode(
             type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
         )
-    elif isinstance(obj, spec.fields.Nested):
+    elif isinstance(obj, fields.Nested):
         type_name = obj.type_name
         many = obj.many
         description = obj.bioimageio_description
@@ -66,20 +67,20 @@ def doc_from_schema(obj, spec) -> DocNode:
         type_name += obj.type_name
         required = obj.required
         maybe_required = obj.bioimageio_maybe_required
-        if isinstance(obj, spec.fields.Union):
+        if isinstance(obj, fields.Union):
             details = [doc_from_schema(opt, spec) for opt in obj._candidate_fields]
-        elif isinstance(obj, spec.fields.Dict):
+        elif isinstance(obj, fields.Dict):
             details = [
                 dict_descr
                 for dict_descr in [doc_from_schema(obj.key_field, spec), doc_from_schema(obj.value_field, spec)]
                 if dict_descr.description
             ]
-        elif isinstance(obj, spec.fields.List):
+        elif isinstance(obj, fields.List):
             inner_doc = doc_from_schema(obj.inner, spec)
             if inner_doc.description or inner_doc.sub_docs or inner_doc.details:
                 details = [inner_doc]
         else:
-            assert isinstance(obj, spec.fields.DocumentedField), (type(obj), obj)
+            assert isinstance(obj, fields.DocumentedField), (type(obj), obj)
 
     return DocNode(
         type_name=type_name,

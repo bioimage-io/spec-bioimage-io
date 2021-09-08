@@ -17,7 +17,7 @@ from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from . import base_nodes, raw_nodes
+from . import raw_nodes
 
 Author = rdf.schema.Author
 CiteEntry = rdf.schema.CiteEntry
@@ -147,8 +147,8 @@ class Processing(BioImageIOSchema):
 class Preprocessing(Processing):
     name = fields.String(
         required=True,
-        validate=field_validators.OneOf(get_args(base_nodes.PreprocessingName)),
-        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(base_nodes.PreprocessingName))} "
+        validate=field_validators.OneOf(get_args(raw_nodes.PreprocessingName)),
+        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))} "
         f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#preprocessing) "
         f"for information on which transformations are supported by specific consumer software).",
@@ -175,9 +175,9 @@ class Preprocessing(Processing):
 
 class Postprocessing(Processing):
     name = fields.String(
-        validate=field_validators.OneOf(get_args(base_nodes.PostprocessingName)),
+        validate=field_validators.OneOf(get_args(raw_nodes.PostprocessingName)),
         required=True,
-        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(base_nodes.PostprocessingName))} "
+        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))} "
         f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
         f"blob/master/supported_formats_and_operations.md#postprocessing) "
         f"for information on which transformations are supported by specific consumer software).",
@@ -208,7 +208,7 @@ class InputTensor(Tensor):
         if bidx == -1:
             return
 
-        if isinstance(shape, base_nodes.ImplicitInputShape):
+        if isinstance(shape, raw_nodes.ImplicitInputShape):
             step = shape.step
             shape = shape.min
 
@@ -248,7 +248,7 @@ class OutputTensor(Tensor):
         halo = data.get("halo")
         if halo is None:
             return
-        elif isinstance(shape, list) or isinstance(shape, base_nodes.ImplicitOutputShape):
+        elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
             if len(halo) != len(shape):
                 raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
@@ -304,7 +304,7 @@ class WeightsEntryBase(BioImageIOSchema):
     )
     source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
     weights_format = fields.String(
-        validate=field_validators.OneOf(get_args(base_nodes.WeightsFormat)), required=True, load_only=True
+        validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
     )
 
     @post_load
@@ -387,7 +387,7 @@ class Model(rdf.schema.RDF):
     class Meta:
         unknown = RAISE
 
-    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(base_nodes.FormatVersion)[-1]}
+    bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -416,20 +416,20 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     format_version = fields.String(
-        validate=field_validators.OneOf(get_args_flat(base_nodes.FormatVersion)),
+        validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),
         required=True,
         bioimageio_description_order=0,
         bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-{get_args(base_nodes.FormatVersion)[-1]}""",
+{get_args(raw_nodes.FormatVersion)[-1]}""",
     )
 
     framework = fields.String(
-        validate=field_validators.OneOf(get_args(base_nodes.Framework)),
+        validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
         bioimageio_description=f"The deep learning framework of the source code. One of: "
-        f"{', '.join(get_args(base_nodes.Framework))}. This field is only required if the field `source` is present.",
+        f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
     )
 
     git_repo = fields.String(
@@ -447,10 +447,10 @@ is in an unsupported format version. The current format version described here i
     )
 
     language = fields.String(
-        validate=field_validators.OneOf(get_args(base_nodes.Language)),
+        validate=field_validators.OneOf(get_args(raw_nodes.Language)),
         bioimageio_maybe_required=True,
         bioimageio_description=f"Programming language of the source code. One of: "
-        f"{', '.join(get_args(base_nodes.Language))}. This field is only required if the field `source` is present.",
+        f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
     )
 
     license = fields.String(
@@ -510,12 +510,12 @@ is in an unsupported format version. The current format version described here i
 
     weights = fields.Dict(
         fields.String(
-            validate=field_validators.OneOf(get_args(base_nodes.WeightsFormat)),
+            validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
             required=True,
             bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
             f"required) fields. See [supported_formats_and_operations.md#Weight Format]"
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
-            f"One of: {', '.join(get_args(base_nodes.WeightsFormat))}",
+            f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
         fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
         required=True,
