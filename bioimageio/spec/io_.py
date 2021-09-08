@@ -62,7 +62,7 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
 
 
 def load_raw_resource_description(
-    source: Union[Dict[str, Any], os.PathLike], update_to_current_format: bool = False
+    source: Union[Dict[str, Any], os.PathLike, str], update_to_current_format: bool = False
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
     Use `bioimageio.core.load_raw_resource_description` to load remote resources.
@@ -75,6 +75,9 @@ def load_raw_resource_description(
     Returns:
         raw BioImage.IO resource
     """
+    if isinstance(source, str):
+        source = pathlib.Path(source)
+
     if isinstance(source, os.PathLike):
         if yaml is None:
             raise RuntimeError(
