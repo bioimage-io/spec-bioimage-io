@@ -1,3 +1,4 @@
+import dataclasses
 import pathlib
 from datetime import datetime
 
@@ -18,6 +19,23 @@ def test_uri():
 
     assert str(uri_from_string) == str(uri)
     assert uri_from_string == uri
+
+
+def test_replace_uri_wo_uri_string():
+    from bioimageio.spec.shared.raw_nodes import URI
+
+    uri_string = "https://john.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top"
+    uri_string = uri_string.replace("top", "bottom")
+
+    uri = URI(
+        scheme="https",
+        authority="john.doe@www.example.com:123",
+        path="/forum/questions/",
+        query="tag=networking&order=newest",
+        fragment="top",
+    )
+    uri = dataclasses.replace(uri, fragment="bottom")
+    assert uri_string == str(uri)
 
 
 def test_uri_is_relative_path():
