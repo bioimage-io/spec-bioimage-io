@@ -56,7 +56,8 @@ class ResourceDescription(RawNode):
 class URI(RawNode):  # todo: do not allow relative path and use Union[Path, URI] instead
     """URI as scheme:[//authority]path[?query][#fragment] or relative path (only path is set)"""
 
-    uri_string: dataclasses.InitVar[Optional[str]] = None  # for convenience: init from string
+    uri_string: Optional[str] = None  # for convenience: init from string; this should be dataclasses.InitVar,
+    # but due to a bug in dataclasses.replace in py3.7 (https://bugs.python.org/issue36470) it is not.
     scheme: str = ""
     authority: str = ""
     path: str = missing
@@ -73,13 +74,15 @@ class URI(RawNode):  # todo: do not allow relative path and use Union[Path, URI]
             + ("#" + self.fragment if self.fragment else "")
         )
 
-    def __post_init__(self, uri_string):
+    def __post_init__(self):
+        uri_string = self.uri_string  # should be InitVar, see comment at definition above
         if uri_string is None:
             if self.path is missing or (not self.scheme and any([self.authority, self.query, self.fragment])):
                 raise ValueError("Invalid URI or relative path")
         elif str(self):
             raise ValueError(f"Either specify uri_string(={uri_string}) or uri components (={str(self)})")
         elif isinstance(uri_string, str):
+            self.uri_string = None  # not required if 'uri_string' would be InitVar, see comment at definition above
             uri = urlparse(uri_string)
             if uri.scheme == "file":
                 # account for leading '/' for windows paths, e.g. '/C:/folder'
