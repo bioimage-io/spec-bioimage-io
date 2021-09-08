@@ -2,11 +2,12 @@
 (in form of a dict, e.g. from yaml.load('rdf.yaml') to a raw_nodes.ResourceDescription raw node,
 which is a python dataclass
 """
+import os
 import pathlib
 import warnings
 from io import StringIO
 from types import ModuleType
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, Optional, Sequence, Tuple, Union
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
@@ -60,17 +61,31 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
     return sub_spec
 
 
-def load_raw_resource_description(data: dict, update_to_current_format: bool = False) -> RawResourceDescription:
+def load_raw_resource_description(
+    source: Union[Dict[str, Any], os.PathLike], update_to_current_format: bool = False
+) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
-    Use `load_resource_description` for a more convenient representation.
+    Use `bioimageio.core.load_raw_resource_description` to load remote resources.
+    or  `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
 
     Args:
-        data: resource description
+        source: resource description or resource description file (RDF)
         update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
 
     Returns:
         raw BioImage.IO resource
     """
+    if isinstance(source, os.PathLike):
+        if yaml is None:
+            raise RuntimeError(
+                "to load raw resource descriptions from paths, yaml is required. Add ruamel.yaml to your environment "
+                "or call `load_raw_resource_description` with a dictionary."
+            )
+
+        data: Dict[str, Any] = yaml.load(source)
+    else:
+        data = source
+
     type_ = data.get("type", "model")
     class_name = get_class_name_from_type(type_)
 

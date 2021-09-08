@@ -2,7 +2,6 @@ import os
 import pathlib
 import traceback
 from pprint import pprint
-from tempfile import TemporaryFile
 from typing import IO, Union
 
 from marshmallow import ValidationError
