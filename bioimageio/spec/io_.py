@@ -75,10 +75,9 @@ def load_raw_resource_description(
     Returns:
         raw BioImage.IO resource
     """
-    if isinstance(source, str):
-        source = pathlib.Path(source)
 
-    if isinstance(source, os.PathLike):
+    if isinstance(source, os.PathLike) or isinstance(source, str):
+        source = pathlib.Path(source)
         if yaml is None:
             raise RuntimeError(
                 "to load raw resource descriptions from paths, yaml is required. Add ruamel.yaml to your environment "
@@ -86,8 +85,10 @@ def load_raw_resource_description(
             )
 
         data: Dict[str, Any] = yaml.load(source)
+        root_path = source.parent
     else:
         data = source
+        root_path = data.pop("root_path", pathlib.Path())
 
     type_ = data.get("type", "model")
     class_name = get_class_name_from_type(type_)
@@ -97,7 +98,9 @@ def load_raw_resource_description(
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
     data = sub_spec.converters.maybe_convert(data)
-    return schema.load(data)
+    raw_rd = schema.load(data)
+    raw_rd.root_path = root_path
+    return raw_rd
 
 
 def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -> dict:

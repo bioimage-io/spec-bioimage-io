@@ -50,6 +50,8 @@ class ResourceDescription(RawNode):
     name: str = missing
     type: str = missing
     version: Union[_Missing, distutils.version.StrictVersion] = missing
+    root_path: pathlib.Path = pathlib.Path()  # note: `root_path` is not officially part of the spec,
+    #                                                  but any RDF has it as it is the folder containing the rdf.yaml
 
 
 @dataclass
