@@ -126,9 +126,6 @@ conda install -c conda-forge bioimageio.spec
 
 To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) using the following command:
 ```
-python -m bioimageio.spec validate <MY-MODEL>.yaml
-
-# alternatively using the entry-point:
 bioimageio validate <MY-MODEL>.yaml
 ```
 The output of this command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
