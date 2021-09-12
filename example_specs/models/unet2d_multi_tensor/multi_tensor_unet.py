@@ -233,13 +233,11 @@ class ConvBlock(nn.Module):
         else:
             self.block = nn.Sequential(
                 get_norm_layer(norm, dim, in_channels),
-                conv(in_channels, out_channels,
-                     kernel_size=kernel_size, padding=padding),
+                conv(in_channels, out_channels, kernel_size=kernel_size, padding=padding),
                 nn.ReLU(inplace=True),
                 get_norm_layer(norm, dim, out_channels),
-                conv(out_channels, out_channels,
-                     kernel_size=kernel_size, padding=padding),
-                nn.ReLU(inplace=True)
+                conv(out_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                nn.ReLU(inplace=True),
             )
 
     def forward(self, x):
@@ -247,9 +245,7 @@ class ConvBlock(nn.Module):
 
 
 class Upsampler(nn.Module):
-    def __init__(self, scale_factor,
-                 in_channels, out_channels,
-                 dim, mode):
+    def __init__(self, scale_factor, in_channels, out_channels, dim, mode):
         super().__init__()
         self.mode = mode
         self.scale_factor = scale_factor
@@ -258,8 +254,7 @@ class Upsampler(nn.Module):
         self.conv = conv(in_channels, out_channels, 1)
 
     def forward(self, x):
-        x = nn.functional.interpolate(x, scale_factor=self.scale_factor,
-                                      mode=self.mode, align_corners=False)
+        x = nn.functional.interpolate(x, scale_factor=self.scale_factor, mode=self.mode, align_corners=False)
         x = self.conv(x)
         return x
 
@@ -268,17 +263,15 @@ class Upsampler(nn.Module):
 # 2d unet implementations
 #
 
+
 class ConvBlock2d(ConvBlock):
     def __init__(self, in_channels, out_channels, **kwargs):
         super().__init__(in_channels, out_channels, dim=2, **kwargs)
 
 
 class Upsampler2d(Upsampler):
-    def __init__(self, scale_factor,
-                 in_channels, out_channels,
-                 mode='bilinear'):
-        super().__init__(scale_factor, in_channels, out_channels,
-                         dim=2, mode=mode)
+    def __init__(self, scale_factor, in_channels, out_channels, mode="bilinear"):
+        super().__init__(scale_factor, in_channels, out_channels, dim=2, mode=mode)
 
 
 class MultiTensorUNet(UNetBase):
@@ -294,7 +287,7 @@ class MultiTensorUNet(UNetBase):
         conv_block_impl=ConvBlock2d,
         pooler_impl=nn.MaxPool2d,
         sampler_impl=Upsampler2d,
-        **conv_block_kwargs
+        **conv_block_kwargs,
     ):
         features_encoder = [in_channels] + [initial_features * gain ** i for i in range(depth)]
         features_decoder = [initial_features * gain ** i for i in range(depth + 1)][::-1]
@@ -317,24 +310,29 @@ class MultiTensorUNet(UNetBase):
                 scale_factors=scale_factors,
                 conv_block_impl=conv_block_impl,
                 pooler_impl=pooler_impl,
-                **conv_block_kwargs
+                **conv_block_kwargs,
             ),
             decoder=Decoder(
                 features=features_decoder,
                 scale_factors=scale_factors[::-1],
                 conv_block_impl=conv_block_impl,
                 sampler_impl=sampler_impl,
-                **conv_block_kwargs
+                **conv_block_kwargs,
             ),
-            base=conv_block_impl(
-                features_encoder[-1], features_encoder[-1] * gain,
-                **conv_block_kwargs
-            ),
+            base=conv_block_impl(features_encoder[-1], features_encoder[-1] * gain, **conv_block_kwargs),
             out_conv=out_conv,
             final_activation=final_activation,
         )
-        self.init_kwargs = {'in_channels': in_channels, 'out_channels': out_channels, 'depth': depth,
-                            'initial_features': initial_features, 'gain': gain,
-                            'final_activation': final_activation, 'return_side_outputs': return_side_outputs,
-                            'conv_block_impl': conv_block_impl, 'pooler_impl': pooler_impl,
-                            'sampler_impl': sampler_impl, **conv_block_kwargs}
+        self.init_kwargs = {
+            "in_channels": in_channels,
+            "out_channels": out_channels,
+            "depth": depth,
+            "initial_features": initial_features,
+            "gain": gain,
+            "final_activation": final_activation,
+            "return_side_outputs": return_side_outputs,
+            "conv_block_impl": conv_block_impl,
+            "pooler_impl": pooler_impl,
+            "sampler_impl": sampler_impl,
+            **conv_block_kwargs,
+        }
