@@ -12,16 +12,11 @@ import torch.nn as nn
 # TODO think about more (multicut-friendly) boundary postprocessing
 # e.g. max preserving smoothing: bd = np.maximum(bd, gaussian(bd, sigma=1))
 class AccumulateChannels(nn.Module):
-    def __init__(
-        self,
-        invariant_channels,
-        accumulate_channels,
-        accumulator
-    ):
+    def __init__(self, invariant_channels, accumulate_channels, accumulator):
         super().__init__()
         self.invariant_channels = invariant_channels
         self.accumulate_channels = accumulate_channels
-        assert accumulator in ('mean', 'min', 'max')
+        assert accumulator in ("mean", "min", "max")
         self.accumulator = getattr(torch, accumulator)
 
     def _accumulate(self, x, c0, c1):
