@@ -1,0 +1,64 @@
+authors:
+- {name: Constantin Pape; @constantinpape}
+cite:
+- {text: training library, url: 'https://doi.org/10.5281/zenodo.5108853'}
+- {text: architecture, url: 'https://doi.org/10.1007/978-3-319-24574-4_28'}
+covers: [cover.jpg]
+dependencies: conda:./environment.yaml
+description: multi-tensor
+documentation: ./documentation.md
+format_version: 0.3.2
+framework: pytorch
+git_repo: https://github.com/constantinpape/torch-em.git
+inputs:
+- axes: bcyx
+  data_range: [-.inf, .inf]
+  data_type: float32
+  name: input0
+  preprocessing:
+  - kwargs: {axes: cyx, mode: per_sample}
+    name: zero_mean_unit_variance
+  shape:
+    min: [1, 1, 32, 32]
+    step: [0, 0, 16, 16]
+- axes: bcyx
+  data_range: [-.inf, .inf]
+  data_type: float32
+  name: input1
+  preprocessing:
+  - kwargs: {axes: cyx, mode: per_sample}
+    name: zero_mean_unit_variance
+  shape:
+    min: [1, 1, 32, 32]
+    step: [0, 0, 16, 16]
+kwargs: {depth: 3, in_channels: 2, initial_features: 16, out_channels: 2}
+language: python
+license: CC-BY-4.0
+links: [ilastik/ilastik]
+name: multi-tensor
+outputs:
+- axes: bcyx
+  data_range: [-.inf, .inf]
+  data_type: float32
+  name: output0
+  shape:
+    offset: [0, 0, 0, 0]
+    reference_input: input0
+    scale: [1, 1, 1, 1]
+- axes: bcyx
+  data_range: [-.inf, .inf]
+  data_type: float32
+  name: output1
+  shape:
+    offset: [0, 0, 0, 0]
+    reference_input: input1
+    scale: [1, 1, 1, 1]
+source: ./multi_tensor_unet.py:MultiTensorUNet
+tags: [segmentation]
+test_inputs: [test_input_0.npy, test_input_1.npy]
+test_outputs: [test_output_0.npy, test_output_1.npy]
+timestamp: '2021-09-12T15:01:46.437153'
+type: model
+weights:
+  pytorch_state_dict: {sha256: e3086c9604322855e1342b83e9d8508636c0e2847b99b02b44c36f3dd78c18dc,
+    source: ./weights.pt}
