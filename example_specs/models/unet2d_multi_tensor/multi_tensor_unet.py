@@ -3,16 +3,9 @@ import torch.nn as nn
 
 
 class UNetBase(nn.Module):
-    """
-    """
-    def __init__(
-        self,
-        encoder,
-        base,
-        decoder,
-        out_conv=None,
-        final_activation=None
-    ):
+    """ """
+
+    def __init__(self, encoder, base, decoder, out_conv=None, final_activation=None):
         super().__init__()
         if len(encoder) != len(decoder):
             raise ValueError(f"Incompatible depth of encoder (depth={len(encoder)}) and decoder (depth={len(decoder)})")
@@ -84,7 +77,7 @@ class UNetBase(nn.Module):
         x = torch.cat(x, dim=1)
         out = self._apply_default(x)
         assert out.shape[1] == self.out_channels
-        return [out[:, i:i+1] for i in range(out.shape[1])]
+        return [out[:, i : i + 1] for i in range(out.shape[1])]
 
 
 def _update_conv_kwargs(kwargs, scale_factor):
@@ -92,8 +85,8 @@ def _update_conv_kwargs(kwargs, scale_factor):
     if isinstance(scale_factor, int) or scale_factor.count(scale_factor[0]) == len(scale_factor):
         return kwargs
     else:  # otherwise set anisotropic kernel
-        kernel_size = kwargs.get('kernel_size', 3)
-        padding = kwargs.get('padding', 1)
+        kernel_size = kwargs.get("kernel_size", 3)
+        padding = kwargs.get("padding", 1)
 
         # bail out if kernel size or padding aren't scalars, because it's
         # unclear what to do in this case
@@ -102,19 +95,13 @@ def _update_conv_kwargs(kwargs, scale_factor):
 
         kernel_size = tuple(1 if factor == 1 else kernel_size for factor in scale_factor)
         padding = tuple(0 if factor == 1 else padding for factor in scale_factor)
-        kwargs.update({'kernel_size': kernel_size, 'padding': padding})
+        kwargs.update({"kernel_size": kernel_size, "padding": padding})
         return kwargs
 
 
 class Encoder(nn.Module):
     def __init__(
-        self,
-        features,
-        scale_factors,
-        conv_block_impl,
-        pooler_impl,
-        anisotropic_kernel=False,
-        **conv_block_kwargs
+        self, features, scale_factors, conv_block_impl, pooler_impl, anisotropic_kernel=False, **conv_block_kwargs
     ):
         super().__init__()
         if len(features) != len(scale_factors) + 1:
@@ -122,16 +109,17 @@ class Encoder(nn.Module):
 
         conv_kwargs = [conv_block_kwargs] * len(scale_factors)
         if anisotropic_kernel:
-            conv_kwargs = [_update_conv_kwargs(kwargs, scale_factor)
-                           for kwargs, scale_factor in zip(conv_kwargs, scale_factors)]
+            conv_kwargs = [
+                _update_conv_kwargs(kwargs, scale_factor) for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
+            ]
 
         self.blocks = nn.ModuleList(
-            [conv_block_impl(inc, outc, **kwargs)
-             for inc, outc, kwargs in zip(features[:-1], features[1:], conv_kwargs)]
+            [
+                conv_block_impl(inc, outc, **kwargs)
+                for inc, outc, kwargs in zip(features[:-1], features[1:], conv_kwargs)
+            ]
         )
-        self.poolers = nn.ModuleList(
-            [pooler_impl(factor) for factor in scale_factors]
-        )
+        self.poolers = nn.ModuleList([pooler_impl(factor) for factor in scale_factors])
         self.return_outputs = True
 
         self.in_channels = features[0]
@@ -155,13 +143,7 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(
-        self,
-        features,
-        scale_factors,
-        conv_block_impl,
-        sampler_impl,
-        anisotropic_kernel=False,
-        **conv_block_kwargs
+        self, features, scale_factors, conv_block_impl, sampler_impl, anisotropic_kernel=False, **conv_block_kwargs
     ):
         super().__init__()
         if len(features) != len(scale_factors) + 1:
@@ -169,16 +151,18 @@ class Decoder(nn.Module):
 
         conv_kwargs = [conv_block_kwargs] * len(scale_factors)
         if anisotropic_kernel:
-            conv_kwargs = [_update_conv_kwargs(kwargs, scale_factor)
-                           for kwargs, scale_factor in zip(conv_kwargs, scale_factors)]
+            conv_kwargs = [
+                _update_conv_kwargs(kwargs, scale_factor) for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
+            ]
 
         self.blocks = nn.ModuleList(
-            [conv_block_impl(inc, outc, **kwargs)
-             for inc, outc, kwargs in zip(features[:-1], features[1:], conv_kwargs)]
+            [
+                conv_block_impl(inc, outc, **kwargs)
+                for inc, outc, kwargs in zip(features[:-1], features[1:], conv_kwargs)
+            ]
         )
         self.samplers = nn.ModuleList(
-            [sampler_impl(factor, inc, outc) for factor, inc, outc
-             in zip(scale_factors, features[:-1], features[1:])]
+            [sampler_impl(factor, inc, outc) for factor, inc, outc in zip(scale_factors, features[:-1], features[1:])]
         )
         self.return_outputs = False
 
@@ -221,19 +205,18 @@ class Decoder(nn.Module):
 def get_norm_layer(norm, dim, channels, n_groups=32):
     if norm is None:
         return None
-    if norm == 'InstanceNorm':
+    if norm == "InstanceNorm":
         return nn.InstanceNorm2d(channels) if dim == 2 else nn.InstanceNorm3d(channels)
-    elif norm == 'GroupNorm':
+    elif norm == "GroupNorm":
         return nn.GroupNorm(min(n_groups, channels), channels)
-    elif norm == 'BatchNorm':
+    elif norm == "BatchNorm":
         return nn.BatchNorm2d(channels) if dim == 2 else nn.BatchNorm3d(channels)
     else:
         raise ValueError(f"Invalid norm: expect one of 'InstanceNorm', 'BatchNorm' or 'GroupNorm', got {norm}")
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, dim,
-                 kernel_size=3, padding=1, norm='InstanceNorm'):
+    def __init__(self, in_channels, out_channels, dim, kernel_size=3, padding=1, norm="InstanceNorm"):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -242,12 +225,10 @@ class ConvBlock(nn.Module):
 
         if norm is None:
             self.block = nn.Sequential(
-                conv(in_channels, out_channels,
-                     kernel_size=kernel_size, padding=padding),
+                conv(in_channels, out_channels, kernel_size=kernel_size, padding=padding),
                 nn.ReLU(inplace=True),
-                conv(out_channels, out_channels,
-                     kernel_size=kernel_size, padding=padding),
-                nn.ReLU(inplace=True)
+                conv(out_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                nn.ReLU(inplace=True),
             )
         else:
             self.block = nn.Sequential(
