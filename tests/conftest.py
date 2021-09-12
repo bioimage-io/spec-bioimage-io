@@ -44,3 +44,18 @@ def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request):
 @pytest.fixture
 def FruNet_model_url():
     return "https://raw.githubusercontent.com/deepimagej/models/master/fru-net_sev_segmentation/model.yaml"
+
+
+@pytest.fixture
+def unet2d_diff_output_shape():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_diff_output_shape/rdf.yaml"
+
+
+@pytest.fixture
+def unet2d_fixed_shape():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_fixed_shape/rdf.yaml"
+
+
+@pytest.fixture
+def unet2d_multi_tensor():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_multi_tensor/rdf.yaml"
