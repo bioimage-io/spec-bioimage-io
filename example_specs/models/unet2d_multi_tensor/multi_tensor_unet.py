@@ -219,7 +219,7 @@ def get_norm_layer(norm, dim, channels, n_groups=32):
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, dim, kernel_size=3, padding=1, norm="InstanceNorm"):
+    def __init__(self, in_channels, out_channels, dim, kernel_size=3, padding=1, norm=None):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels

@@ -57,12 +57,12 @@ source: ./multi_tensor_unet.py:MultiTensorUNet
 tags: [segmentation]
 test_inputs: [test_input_0.npy, test_input_1.npy]
 test_outputs: [test_output_0.npy, test_output_1.npy]
-timestamp: '2021-09-13T11:31:59.520695'
+timestamp: '2021-09-13T15:55:34.193995'
 type: model
 weights:
-  onnx: {opset_version: 12, sha256: 17e4e375b77989b0125a049a357cf9a04a5994de070aa67cbd4e41d3adb0894e,
+  onnx: {opset_version: 12, sha256: 9b5bd88a3d29cf9979b30c03b4d5af12fdfa1d7193f5d2f2cc3942ffcf71ce3c,
     source: ./weights.onnx}
-  pytorch_script: {sha256: e2012a8905915ac8c4e51fe1de10dd63b621e781b0e02b615e4a17b13fed894f,
+  pytorch_script: {sha256: 097bb5062df1fe48a5e7473ea2f6025c77d334a9e3f92af79fc3d6d530c01720,
     source: ./weights-torchscript.pt}
-  pytorch_state_dict: {sha256: 82b725e1203b7543e139a7a31421cd5c0d7f2d8126843e5346438ef0cd27a232,
+  pytorch_state_dict: {sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00,
     source: ./weights.pt}
