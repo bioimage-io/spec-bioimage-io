@@ -6,7 +6,7 @@ cite:
 covers: [cover.jpg]
 dependencies: conda:./environment.yaml
 description: multi-tensor
-documentation: ./documentation.md
+documentation: documentation.md
 format_version: 0.3.2
 framework: pytorch
 git_repo: https://github.com/constantinpape/torch-em.git
@@ -57,8 +57,12 @@ source: ./multi_tensor_unet.py:MultiTensorUNet
 tags: [segmentation]
 test_inputs: [test_input_0.npy, test_input_1.npy]
 test_outputs: [test_output_0.npy, test_output_1.npy]
-timestamp: '2021-09-12T15:01:46.437153'
+timestamp: '2021-09-13T11:31:59.520695'
 type: model
 weights:
-  pytorch_state_dict: {sha256: e3086c9604322855e1342b83e9d8508636c0e2847b99b02b44c36f3dd78c18dc,
+  onnx: {opset_version: 12, sha256: 17e4e375b77989b0125a049a357cf9a04a5994de070aa67cbd4e41d3adb0894e,
+    source: ./weights.onnx}
+  pytorch_script: {sha256: e2012a8905915ac8c4e51fe1de10dd63b621e781b0e02b615e4a17b13fed894f,
+    source: ./weights-torchscript.pt}
+  pytorch_state_dict: {sha256: 82b725e1203b7543e139a7a31421cd5c0d7f2d8126843e5346438ef0cd27a232,
     source: ./weights.pt}

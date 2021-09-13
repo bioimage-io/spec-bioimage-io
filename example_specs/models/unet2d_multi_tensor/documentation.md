@@ -1,1 +1,1 @@
-Example Model: Different Output Shape
+Example Model: Multi Tensor
