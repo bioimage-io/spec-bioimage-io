@@ -11,7 +11,7 @@ def unet2d_nuclei_broad_base_path():
 
 
 def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
-    if request.param == "v0_3_2":
+    if request.param == "v0_3_3":
         v = ""
     else:
         v = f"_{request.param}"
