@@ -136,7 +136,7 @@ class ParametrizedInputShape(RawNode):
 
 @dataclass
 class ImplicitOutputShape(RawNode):
-    reference_input: str = missing
+    reference_tensor: str = missing
     scale: List[float] = missing
     offset: List[int] = missing
 
