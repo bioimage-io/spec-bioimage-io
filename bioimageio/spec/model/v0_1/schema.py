@@ -1,7 +1,7 @@
 from marshmallow import ValidationError, validates_schema
 
 from bioimageio.spec.shared import fields
-from bioimageio.spec.shared.schema import ImplicitInputShape, ImplicitOutputShape, SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import ParametrizedInputShape, ImplicitOutputShape, SharedBioImageIOSchema
 from . import raw_nodes
 
 
@@ -56,7 +56,7 @@ class Array(BioImageIOSchema):
 
 
 class InputArray(Array):
-    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitInputShape)], required=True)
+    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ParametrizedInputShape)], required=True)
 
 
 class OutputArray(Array):

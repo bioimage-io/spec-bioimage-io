@@ -40,7 +40,7 @@ class Dependencies(SharedBioImageIOSchema):
     )
 
 
-class ImplicitInputShape(SharedBioImageIOSchema):
+class ParametrizedInputShape(SharedBioImageIOSchema):
     min = fields.List(
         fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
     )

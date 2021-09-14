@@ -126,7 +126,7 @@ class Dependencies(RawNode):
 
 
 @dataclass
-class ImplicitInputShape(RawNode):
+class ParametrizedInputShape(RawNode):
     min: List[float] = missing
     step: List[float] = missing
 

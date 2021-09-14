@@ -9,7 +9,7 @@ from marshmallow.utils import _Missing
 
 from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
 from bioimageio.spec.shared.raw_nodes import (
-    ImplicitInputShape,
+    ParametrizedInputShape,
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
@@ -36,7 +36,7 @@ WeightsFormat = Literal[
 # reassign to use imported classes
 Badge = Badge
 CiteEntry = CiteEntry
-ImplicitInputShape = ImplicitInputShape
+ParametrizedInputShape = ParametrizedInputShape
 ImplicitOutputShape = ImplicitOutputShape
 
 
@@ -63,7 +63,7 @@ class InputTensor(RawNode):
     name: str = missing
     data_type: str = missing
     axes: str = missing
-    shape: Union[List[int], ImplicitInputShape] = missing
+    shape: Union[List[int], ParametrizedInputShape] = missing
     preprocessing: Union[_Missing, List[Preprocessing]] = missing
     description: Union[_Missing, str] = missing
     data_range: Union[_Missing, Tuple[float, float]] = missing
