@@ -140,6 +140,11 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
+ * **0.4.0**:
+    - Breaking changes
+      - model inputs and outputs may not use duplicated names
+    - Other changes
+      - model inputs (like outputs) may be defined by `scale`ing and `offset`ing a `reference_tensor`
  * **0.3.3**:
     - Breaking changes that are fully auto-convertible
       - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
