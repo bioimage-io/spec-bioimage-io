@@ -9,9 +9,9 @@
 * `inputs` _List\[InputArray\]_   is a Dict with the following keys:
   * `data_type` _String_ 
   * `name` _String_ 
-  * `shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitInputShape\]_ 
+  * `shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ 
     1. _optional ExplicitShape→List\[Integer\]_ 
-    1. _ImplicitInputShape_   is a Dict with the following keys:
+    1. _ParametrizedInputShape_   is a Dict with the following keys:
       * `min` _List\[Integer\]_ The minimum input shape with same length as `axes`
       * `step` _List\[Integer\]_ The minimum shape change with same length as `axes`
   * `axes` _optional Axes→String_ 
@@ -26,7 +26,7 @@
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_   is a Dict with the following keys:
       * `offset` _List\[Integer\]_ Position of origin wrt to input.
-      * `reference_input` _String_ Name of the reference input tensor.
+      * `reference_tensor` _String_ Name of the reference input tensor.
       * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
   * `axes` _optional Axes→String_ 
   * `data_range` _optional Tuple_ 
@@ -46,9 +46,9 @@
       * `inputs` _InputArray_   is a Dict with the following keys:
         * `data_type` _String_ 
         * `name` _String_ 
-        * `shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitInputShape\]_ 
+        * `shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ 
           1. _optional ExplicitShape→List\[Integer\]_ 
-          1. _ImplicitInputShape_   is a Dict with the following keys:
+          1. _ParametrizedInputShape_   is a Dict with the following keys:
             * `min` _List\[Integer\]_ The minimum input shape with same length as `axes`
             * `step` _List\[Integer\]_ The minimum shape change with same length as `axes`
         * `axes` _optional Axes→String_ 
@@ -63,7 +63,7 @@
           1. _optional ExplicitShape→List\[Integer\]_ 
           1. _ImplicitOutputShape_   is a Dict with the following keys:
             * `offset` _List\[Integer\]_ Position of origin wrt to input.
-            * `reference_input` _String_ Name of the reference input tensor.
+            * `reference_tensor` _String_ Name of the reference input tensor.
             * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
         * `axes` _optional Axes→String_ 
         * `data_range` _optional Tuple_ 
@@ -91,9 +91,9 @@
       * `inputs` _InputArray_   is a Dict with the following keys:
         * `data_type` _String_ 
         * `name` _String_ 
-        * `shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitInputShape\]_ 
+        * `shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ 
           1. _optional ExplicitShape→List\[Integer\]_ 
-          1. _ImplicitInputShape_   is a Dict with the following keys:
+          1. _ParametrizedInputShape_   is a Dict with the following keys:
             * `min` _List\[Integer\]_ The minimum input shape with same length as `axes`
             * `step` _List\[Integer\]_ The minimum shape change with same length as `axes`
         * `axes` _optional Axes→String_ 
@@ -108,7 +108,7 @@
           1. _optional ExplicitShape→List\[Integer\]_ 
           1. _ImplicitOutputShape_   is a Dict with the following keys:
             * `offset` _List\[Integer\]_ Position of origin wrt to input.
-            * `reference_input` _String_ Name of the reference input tensor.
+            * `reference_tensor` _String_ Name of the reference input tensor.
             * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
         * `axes` _optional Axes→String_ 
         * `data_range` _optional Tuple_ 

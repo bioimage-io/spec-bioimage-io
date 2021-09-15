@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.3.2
+# BioImage.IO Model Resource Description File Specification 0.3.3
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.3.2
+0.3.3
 * `authors` _List\[Author\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
   1. _Author_   is a Dict with the following keys:
     * `name` _String_ Full name.
@@ -95,9 +95,9 @@ config:
     |  x  |  spatial dimension x |
   * `data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
   * `name` _String_ Tensor name.
-  * `shape` _InputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitInputShape\]_ Specification of tensor shape.
+  * `shape` _InputShape→Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of tensor shape.
     1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
-    1. _ImplicitInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ImplicitInputShape is a Dict with the following keys:
+    1. _ParametrizedInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ParametrizedInputShape is a Dict with the following keys:
       * `min` _List\[Integer\]_ The minimum input shape with same length as `axes`
       * `step` _List\[Integer\]_ The minimum shape change with same length as `axes`
   * `data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
@@ -127,7 +127,7 @@ config:
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. ImplicitOutputShape is a Dict with the following keys:
       * `offset` _List\[Integer\]_ Position of origin wrt to input.
-      * `reference_input` _String_ Name of the reference input tensor.
+      * `reference_tensor` _String_ Name of the reference tensor.
       * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
   * `data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
   * `description` _optional String_ 

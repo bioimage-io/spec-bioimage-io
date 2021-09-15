@@ -66,34 +66,6 @@
             ],
             "type": "object"
         },
-        "ImplicitInputShape": {
-            "additionalProperties": false,
-            "properties": {
-                "min": {
-                    "items": {
-                        "format": "integer",
-                        "title": "min",
-                        "type": "number"
-                    },
-                    "title": "min",
-                    "type": "array"
-                },
-                "step": {
-                    "items": {
-                        "format": "integer",
-                        "title": "step",
-                        "type": "number"
-                    },
-                    "title": "step",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "min",
-                "step"
-            ],
-            "type": "object"
-        },
         "ImplicitOutputShape": {
             "additionalProperties": false,
             "properties": {
@@ -106,8 +78,8 @@
                     "title": "offset",
                     "type": "array"
                 },
-                "reference_input": {
-                    "title": "reference_input",
+                "reference_tensor": {
+                    "title": "reference_tensor",
                     "type": "string"
                 },
                 "scale": {
@@ -122,7 +94,7 @@
             },
             "required": [
                 "offset",
-                "reference_input",
+                "reference_tensor",
                 "scale"
             ],
             "type": "object"
@@ -181,7 +153,7 @@
                             "type": "array"
                         },
                         {
-                            "$ref": "#/definitions/ImplicitInputShape",
+                            "$ref": "#/definitions/ParametrizedInputShape",
                             "type": "object"
                         }
                     ]
@@ -337,7 +309,8 @@
                     "enum": [
                         "0.3.0",
                         "0.3.1",
-                        "0.3.2"
+                        "0.3.2",
+                        "0.3.3"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -691,6 +664,34 @@
                 "data_type",
                 "name",
                 "shape"
+            ],
+            "type": "object"
+        },
+        "ParametrizedInputShape": {
+            "additionalProperties": false,
+            "properties": {
+                "min": {
+                    "items": {
+                        "format": "integer",
+                        "title": "min",
+                        "type": "number"
+                    },
+                    "title": "min",
+                    "type": "array"
+                },
+                "step": {
+                    "items": {
+                        "format": "integer",
+                        "title": "step",
+                        "type": "number"
+                    },
+                    "title": "step",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "min",
+                "step"
             ],
             "type": "object"
         },

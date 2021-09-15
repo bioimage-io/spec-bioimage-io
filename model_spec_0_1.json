@@ -23,34 +23,6 @@
             ],
             "type": "object"
         },
-        "ImplicitInputShape": {
-            "additionalProperties": false,
-            "properties": {
-                "min": {
-                    "items": {
-                        "format": "integer",
-                        "title": "min",
-                        "type": "number"
-                    },
-                    "title": "min",
-                    "type": "array"
-                },
-                "step": {
-                    "items": {
-                        "format": "integer",
-                        "title": "step",
-                        "type": "number"
-                    },
-                    "title": "step",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "min",
-                "step"
-            ],
-            "type": "object"
-        },
         "ImplicitOutputShape": {
             "additionalProperties": false,
             "properties": {
@@ -64,7 +36,7 @@
                     "type": "array"
                 },
                 "reference_input": {
-                    "title": "reference_input",
+                    "title": "reference_tensor",
                     "type": "string"
                 },
                 "scale": {
@@ -126,7 +98,7 @@
                             "type": "array"
                         },
                         {
-                            "$ref": "#/definitions/ImplicitInputShape",
+                            "$ref": "#/definitions/ParametrizedInputShape",
                             "type": "object"
                         }
                     ]
@@ -329,6 +301,34 @@
                 "data_type",
                 "name",
                 "shape"
+            ],
+            "type": "object"
+        },
+        "ParametrizedInputShape": {
+            "additionalProperties": false,
+            "properties": {
+                "min": {
+                    "items": {
+                        "format": "integer",
+                        "title": "min",
+                        "type": "number"
+                    },
+                    "title": "min",
+                    "type": "array"
+                },
+                "step": {
+                    "items": {
+                        "format": "integer",
+                        "title": "step",
+                        "type": "number"
+                    },
+                    "title": "step",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "min",
+                "step"
             ],
             "type": "object"
         },
