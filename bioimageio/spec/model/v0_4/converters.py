@@ -17,8 +17,8 @@ def convert_model_from_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
-    major, minor, patch = data.get("format_version", "0.1.0").split(".")
-    if (major, minor) < (0, 4):
+    major, minor, patch = map(int, data.get("format_version", "0.1.0").split("."))
+    if major == 0 and minor < 4:
         data = convert_model_from_v0_3(data)
 
     # remove 'future' from config if no other than the used future entries exist
