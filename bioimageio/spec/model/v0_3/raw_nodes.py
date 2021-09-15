@@ -9,7 +9,7 @@ from marshmallow.utils import _Missing
 
 from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
 from bioimageio.spec.shared.raw_nodes import (
-    ImplicitInputShape,
+    ParametrizedInputShape,
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
@@ -22,7 +22,7 @@ try:
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
-FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2", "0.3.3"]  # newest format needs to be last (used in __init__.py)
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PostprocessingName = Literal[
@@ -36,7 +36,7 @@ WeightsFormat = Literal[
 # reassign to use imported classes
 Badge = Badge
 CiteEntry = CiteEntry
-ImplicitInputShape = ImplicitInputShape
+ParametrizedInputShape = ParametrizedInputShape
 ImplicitOutputShape = ImplicitOutputShape
 
 
@@ -63,7 +63,7 @@ class InputTensor(RawNode):
     name: str = missing
     data_type: str = missing
     axes: str = missing
-    shape: Union[List[int], ImplicitInputShape] = missing
+    shape: Union[List[int], ParametrizedInputShape] = missing
     preprocessing: Union[_Missing, List[Preprocessing]] = missing
     description: Union[_Missing, str] = missing
     data_range: Union[_Missing, Tuple[float, float]] = missing

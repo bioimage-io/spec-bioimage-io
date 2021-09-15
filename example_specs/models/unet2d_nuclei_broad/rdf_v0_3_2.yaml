@@ -1,5 +1,5 @@
 # TODO physical scale of the data
-format_version: 0.3.3
+format_version: 0.3.2
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -48,7 +48,7 @@ outputs:
     data_range: [-.inf, .inf]
     halo: [0, 0, 32, 32]
     shape:
-      reference_tensor: raw
+      reference_input: raw
       scale: [1.0, 1.0, 1.0, 1.0]
       offset: [0, 0, 0, 0]
 

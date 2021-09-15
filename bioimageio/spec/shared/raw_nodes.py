@@ -126,7 +126,7 @@ class Dependencies(RawNode):
 
 
 @dataclass
-class ImplicitInputShape(RawNode):
+class ParametrizedInputShape(RawNode):
     min: List[float] = missing
     step: List[float] = missing
 
@@ -136,7 +136,7 @@ class ImplicitInputShape(RawNode):
 
 @dataclass
 class ImplicitOutputShape(RawNode):
-    reference_input: str = missing
+    reference_tensor: str = missing
     scale: List[float] = missing
     offset: List[int] = missing
 

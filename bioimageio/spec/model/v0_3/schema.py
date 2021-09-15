@@ -208,7 +208,7 @@ class InputTensor(Tensor):
         if bidx == -1:
             return
 
-        if isinstance(shape, raw_nodes.ImplicitInputShape):
+        if isinstance(shape, raw_nodes.ParametrizedInputShape):
             step = shape.step
             shape = shape.min
 

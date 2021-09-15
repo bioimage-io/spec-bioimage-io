@@ -221,6 +221,16 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
+def convert_model_v0_3_2_to_v0_3_3(data: Dict[str, Any]) -> Dict[str, Any]:
+    data["format_version"] = "0.3.3"
+    for out in data["outputs"]:
+        shape = out["shape"]
+        if isinstance(shape, dict):
+            shape["reference_tensor"] = shape.pop("reference_input")
+
+    return data
+
+
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     if data.get("format_version", "0.1.0") == "0.1.0":
@@ -232,6 +242,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data["format_version"] == "0.3.1":
         data = convert_model_v0_3_1_to_v0_3_2(data)
+
+    if data["format_version"] == "0.3.2":
+        data = convert_model_v0_3_2_to_v0_3_3(data)
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})

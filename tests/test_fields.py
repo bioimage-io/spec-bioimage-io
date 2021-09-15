@@ -77,7 +77,7 @@ class TestShape:
 
     def test_min_step_input_shape(self):
         data = {"min": [1, 2, 3], "step": [0, 1, 3]}
-        expected = raw_nodes.ImplicitInputShape(**data)
+        expected = raw_nodes.ParametrizedInputShape(**data)
         actual = fields.InputShape().deserialize(data)
         assert expected == actual
 

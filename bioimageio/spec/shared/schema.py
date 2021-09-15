@@ -40,7 +40,7 @@ class Dependencies(SharedBioImageIOSchema):
     )
 
 
-class ImplicitInputShape(SharedBioImageIOSchema):
+class ParametrizedInputShape(SharedBioImageIOSchema):
     min = fields.List(
         fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
     )
@@ -60,7 +60,7 @@ class ImplicitInputShape(SharedBioImageIOSchema):
 
 
 class ImplicitOutputShape(SharedBioImageIOSchema):
-    reference_input = fields.String(required=True, bioimageio_description="Name of the reference input tensor.")
+    reference_tensor = fields.String(required=True, bioimageio_description="Name of the reference tensor.")
     scale = fields.List(
         fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
     )

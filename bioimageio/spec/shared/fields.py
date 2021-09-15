@@ -260,7 +260,7 @@ class ImportableSource(String):
 
 class InputShape(Union):
     def __init__(self, **super_kwargs):
-        from .schema import ImplicitInputShape
+        from .schema import ParametrizedInputShape
 
         super().__init__(
             fields=[
@@ -268,7 +268,7 @@ class InputShape(Union):
                     bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
                 ),
                 Nested(
-                    ImplicitInputShape,
+                    ParametrizedInputShape,
                     bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
                 ),
             ],

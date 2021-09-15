@@ -8,7 +8,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow.utils import _Missing, missing
 
 from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry
-from bioimageio.spec.shared.raw_nodes import Dependencies, ImplicitInputShape, ImplicitOutputShape, RawNode, URI
+from bioimageio.spec.shared.raw_nodes import Dependencies, ParametrizedInputShape, ImplicitOutputShape, RawNode, URI
 
 try:
     from typing import Literal
@@ -83,7 +83,7 @@ class Array(RawNode):
 
 @dataclass
 class InputArray(Array):
-    shape: Union[List[int], ImplicitInputShape] = missing
+    shape: Union[List[int], ParametrizedInputShape] = missing
 
 
 @dataclass
