@@ -48,7 +48,7 @@ def test_tensor_schema_no_preprocessing(data):
 
 @pytest.mark.parametrize("schema_instance", [schema.InputTensor(), schema.OutputTensor()])
 def test_tensor_schema_optional_description(schema_instance):
-    data = {"name": "input_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
+    data = {"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
     validated_data = schema_instance.load(data)
     assert validated_data.description is missing
 
@@ -92,21 +92,3 @@ def model_dict():
         "test_outputs": [],
         "type": "model",
     }
-
-
-def test_model_schema_accepts_run_mode(model_dict):
-    model_schema = schema.Model()
-    model_dict.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
-    validated_data = model_schema.load(model_dict)
-    assert validated_data
-
-
-@pytest.mark.parametrize(
-    "format",
-    ["pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"],
-)
-def test_model_schema_accepts_valid_weight_formats(model_dict, format):
-    model_schema = schema.Model()
-    model_dict.update({"weights": {format: {"source": "local_weights"}}})
-    validated_data = model_schema.load(model_dict)
-    assert validated_data
