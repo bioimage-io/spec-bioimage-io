@@ -87,8 +87,8 @@ class Tensor(BioImageIOSchema):
 
 
 class Processing(BioImageIOSchema):
-    class Binarize(Schema):  # do not inherit from BioImageIOSchema, return only a validated dict, no specific node
-        # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing
+    class Binarize(BioImageIOSchema):
+        # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing?
         threshold = fields.Float(required=True)
 
     class Clip(BioImageIOSchema):
@@ -155,20 +155,20 @@ class Preprocessing(Processing):
     )
     kwargs = fields.Kwargs()
 
-    class ScaleRange(BioImageIOSchema):
+    class ScaleRange(Schema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(required=True, valid_axes="czyx")
         min_percentile = fields.Float(
-            required=True, validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=True)
+            default=0, validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=False)
         )
         max_percentile = fields.Float(
-            required=True, validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True)
+            default=100, validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True)
         )  # as a precaution 'max_percentile' needs to be greater than 1
 
         @validates_schema
         def min_smaller_max(self, data, **kwargs):
-            min_p = data["min_percentile"]
-            max_p = data["max_percentile"]
+            min_p = data.get("min_percentile", 0)
+            max_p = data.get("max_percentile", 100)
             if min_p >= max_p:
                 raise ValidationError(f"min_percentile {min_p} >= max_percentile {max_p}")
 
@@ -185,7 +185,7 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(required=False, validate=field_validators.Predicate("isidentifier"))
 
     class ScaleMeanVariance(BioImageIOSchema):
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))

@@ -384,7 +384,7 @@ class ProcMode(String):
         else:
             validate = [validate]
 
-        validate.append(field_validators.OneOf(self.all_modes))
+        validate.append(field_validators.OneOf(valid_modes))
         super().__init__(validate=validate, required=required, **kwargs)
 
 
