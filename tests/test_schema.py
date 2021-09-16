@@ -65,7 +65,7 @@ def model_dict():
         "language": "python",
         "source": "somesrc",
         "git_repo": "https://github.com/bioimage-io/python-bioimage-io",
-        "format_version": "0.3.0",
+        "format_version": "0.4.0",
         "description": "description",
         "authors": [
             {"name": "Author 1", "affiliation": "Affiliation 1"},
