@@ -1,22 +1,7 @@
+from datetime import datetime
+
 import pytest
 from marshmallow import ValidationError
-from pytest import raises
-
-
-class TestPreprocessing:
-    class TestZeroMeanUniVarianceKwargs:
-        def test_invalid(self):
-            from bioimageio.spec.model import schema
-
-            with raises(ValidationError):
-                schema.Preprocessing().load({"name": "zero_mean_unit_variance"})
-
-        def test_mode_fixed(self):
-            from bioimageio.spec.model import schema
-
-            schema.Preprocessing().load(
-                {"name": "zero_mean_unit_variance", "kwargs": {"mode": "fixed", "mean": 1, "std": 2, "axes": "xy"}}
-            )
 
 
 def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):
@@ -32,6 +17,47 @@ def test_model_does_not_accept_unknown_fields(unet2d_nuclei_broad_latest):
 
     with pytest.raises(ValidationError):
         Model().load(unet2d_nuclei_broad_latest)
+
+
+@pytest.fixture
+def model_dict():
+    """
+    Valid model dict fixture
+    """
+    return {
+        "documentation": "./docs.md",
+        "license": "MIT",
+        "framework": "pytorch",
+        "language": "python",
+        "source": "somesrc",
+        "git_repo": "https://github.com/bioimage-io/python-bioimage-io",
+        "format_version": "0.3.0",
+        "description": "description",
+        "authors": [
+            {"name": "Author 1", "affiliation": "Affiliation 1"},
+            {"name": "Author 2", "affiliation": "Affiliation 2"},
+        ],
+        "timestamp": datetime.now(),
+        "cite": [{"text": "Paper title", "doi": "doi"}],
+        "inputs": [
+            {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
+        ],
+        "outputs": [
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+            }
+        ],
+        "name": "Model",
+        "tags": [],
+        "weights": {},
+        "test_inputs": [],
+        "test_outputs": [],
+        "type": "model",
+    }
 
 
 def test_model_schema_accepts_run_mode(model_dict):

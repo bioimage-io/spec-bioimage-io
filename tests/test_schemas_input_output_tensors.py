@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from marshmallow import missing
 
@@ -51,44 +49,3 @@ def test_tensor_schema_optional_description(schema_instance):
     data = {"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
     validated_data = schema_instance.load(data)
     assert validated_data.description is missing
-
-
-@pytest.fixture
-def model_dict():
-    """
-    Valid model dict fixture
-    """
-    return {
-        "documentation": "./docs.md",
-        "license": "MIT",
-        "framework": "pytorch",
-        "language": "python",
-        "source": "somesrc",
-        "git_repo": "https://github.com/bioimage-io/python-bioimage-io",
-        "format_version": "0.3.0",
-        "description": "description",
-        "authors": [
-            {"name": "Author 1", "affiliation": "Affiliation 1"},
-            {"name": "Author 2", "affiliation": "Affiliation 2"},
-        ],
-        "timestamp": datetime.now(),
-        "cite": [{"text": "Paper title", "doi": "doi"}],
-        "inputs": [
-            {"name": "input_1", "description": "Input 1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}
-        ],
-        "outputs": [
-            {
-                "name": "output_1",
-                "description": "Output 1",
-                "data_type": "float32",
-                "axes": "xyc",
-                "shape": [128, 128, 3],
-            }
-        ],
-        "name": "Model",
-        "tags": [],
-        "weights": {},
-        "test_inputs": [],
-        "test_outputs": [],
-        "type": "model",
-    }
