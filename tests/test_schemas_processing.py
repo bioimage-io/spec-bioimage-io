@@ -34,7 +34,7 @@ pre_and_post_processing = [
         ("Postprocessing", valid, name, kwargs)
         for valid, name, kwargs in pre_and_post_processing
         + [
-            # (True, "scale_range", {"mode": "per_sample", "axes": "xy"}),  # todo: https://github.com/bioimage-io/spec-bioimage-io/issues/238
+            (True, "scale_range", {"mode": "per_sample", "axes": "xy"}),
             (True, "scale_range", {"mode": "per_dataset", "axes": "xy", "reference_tensor": "some_input_tensor_name"}),
             (True, "scale_mean_variance", {"mode": "per_sample", "reference_tensor": "some_tensor_name"}),
             (False, "scale_mean_variance", {"mode": "per_sample"}),
