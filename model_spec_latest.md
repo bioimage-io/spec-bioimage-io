@@ -27,7 +27,7 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * `name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 * `tags` _List\[String\]_ A list of tags.
-* `test_inputs` _List\[URI→String\]_ List of URIs to test inputs as described in inputs for a single test case. Supported file formats/extensions: '.npy'
+* `test_inputs` _List\[URI→String\]_ List of URIs to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
 * `test_outputs` _List\[URI→String\]_ Analog to to test_inputs.
 * `timestamp` _DateTime_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
 * `type` _String_ 
