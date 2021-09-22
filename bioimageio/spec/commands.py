@@ -36,11 +36,9 @@ def validate(
 
             if is_path:
                 rdf_source = pathlib.Path(rdf_source)
-            else:
-                raise RuntimeError(f"Could not retrieve {rdf_source}")
 
         if yaml is None:
-            raise RuntimeError("Cannot validate from file without ruamel.yaml dependency!")
+            raise RuntimeError("Cannot validate from file or yaml string without ruamel.yaml dependency!")
 
         rdf_source = yaml.load(rdf_source)
 
