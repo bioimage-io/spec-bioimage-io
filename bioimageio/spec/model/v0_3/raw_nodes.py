@@ -49,13 +49,13 @@ class RunMode(RawNode):
 @dataclass
 class Preprocessing(RawNode):
     name: PreprocessingName = missing
-    kwargs: Dict[str, Any] = missing
+    kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
 @dataclass
 class Postprocessing(RawNode):
     name: PostprocessingName = missing
-    kwargs: Dict[str, Any] = missing
+    kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
 @dataclass
