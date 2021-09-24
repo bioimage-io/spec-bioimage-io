@@ -1,3 +1,4 @@
+import collections
 import typing
 import warnings
 from copy import deepcopy
@@ -104,7 +105,15 @@ class Processing(BioImageIOSchema):
 
         @validates_schema
         def either_gain_or_offset(self, data, **kwargs):
-            if data["gain"] == 1.0 and data["offset"] == 0:
+            gain = data["gain"]
+            if isinstance(gain, (float, int)):
+                gain = [gain]
+
+            offset = data["offset"]
+            if isinstance(offset, (float, int)):
+                offset = [offset]
+
+            if all(g == 1.0 for g in gain) and all(off == 0 for off in offset):
                 raise ValidationError("Specify gain!=1.0 or offset!=0.0")
 
     @validates_schema
