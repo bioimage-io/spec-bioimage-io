@@ -1,8 +1,7 @@
 import os
 import pathlib
 import traceback
-from pprint import pprint
-from typing import IO, Union
+from typing import Any, Dict, IO, List, Sequence, Union
 
 from marshmallow import ValidationError
 
@@ -15,12 +14,12 @@ def validate(
     update_format: bool = False,
     update_format_inner: bool = None,
     verbose: bool = False,
-) -> int:
+) -> Dict[str, Union[str, list, dict]]:
     """Validate a BioImage.IO Resource Description File (RDF)."""
     if update_format_inner is None:
         update_format_inner = update_format
 
-    source_name = rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source
+    source_name = str(rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source)
     if not isinstance(rdf_source, dict):
         if isinstance(rdf_source, str):
             if rdf_source.startswith("http"):
@@ -46,33 +45,32 @@ def validate(
     try:
         raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
-        print(f"Invalid {source_name}:")
-        pprint(e.normalized_messages())
-        return 1
+        return {source_name: e.normalized_messages()}
     except Exception as e:
-        print(f"Could not validate {source_name}:")
-        pprint(e)
         if verbose:
-            traceback.print_exc()
+            msg: Union[str, Dict[str, Union[str, Sequence[str]]]] = {
+                "error": str(e),
+                "traceback": traceback.format_tb(e.__traceback__),
+            }
+        else:
+            msg = str(e)
 
-        return 1
+        return {source_name: msg}
 
-    code = 0
+    collection_errors: List[Union[str, dict]] = []
     if raw_rd.type == "collection":
         for inner_category in ["application", "collection", "dataset", "model", "notebook"]:
             for inner in getattr(raw_rd, inner_category) or []:
                 try:
                     inner_source = inner.source
                 except Exception as e:
-                    pprint(e)
-                    code += 1
+                    collection_errors.append(str(e))
                 else:
-                    code += validate(inner_source, update_format_inner, update_format_inner, verbose)
+                    inner_errors = validate(inner_source, update_format_inner, update_format_inner, verbose)
+                    if inner_errors:
+                        collection_errors.append(inner_errors)
 
-        if code:
-            print(f"Found invalid RDFs in collection {source_name}.")
-
-    if not code:
-        print(f"successfully verified {raw_rd.type} {source_name}")
-
-    return code
+    if collection_errors:
+        return {source_name: collection_errors}
+    else:
+        return {}

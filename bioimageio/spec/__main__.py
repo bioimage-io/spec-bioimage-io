@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import typer
 
 from bioimageio.spec import __version__, commands
@@ -19,7 +21,14 @@ def validate(
     ),
     verbose: bool = typer.Option(False, help="show traceback of exceptions"),
 ) -> int:
-    return commands.validate(rdf_source, update_format, update_format_inner, verbose)
+    errors = commands.validate(rdf_source, update_format, update_format_inner, verbose)
+    if errors:
+        print(f"Errors for {rdf_source}")
+        pprint(errors)
+        return 1
+    else:
+        print(f"No validation errors for {rdf_source}")
+        return 0
 
 
 validate.__doc__ = commands.validate.__doc__
