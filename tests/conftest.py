@@ -59,3 +59,8 @@ def unet2d_fixed_shape():
 @pytest.fixture
 def unet2d_multi_tensor():
     return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_multi_tensor/rdf.yaml"
+
+
+@pytest.fixture
+def hpa_model():
+    return pathlib.Path(__file__).parent / "../example_specs/models/hpa-densenet/rdf.yaml"

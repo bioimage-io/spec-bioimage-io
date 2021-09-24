@@ -24,3 +24,10 @@ def test_load_raw_model_multi_tensor(unet2d_multi_tensor):
 
     raw_model = load_raw_resource_description(unet2d_multi_tensor)
     assert raw_model
+
+
+def test_load_raw_model_hpa(hpa_model):
+    from bioimageio.spec import load_raw_resource_description
+
+    raw_model = load_raw_resource_description(hpa_model)
+    assert raw_model
