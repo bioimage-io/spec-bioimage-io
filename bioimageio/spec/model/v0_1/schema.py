@@ -46,7 +46,7 @@ class BaseSpec(BioImageIOSchema):
 
 
 class SpecWithKwargs(BioImageIOSchema):
-    spec: fields.SpecURI
+    spec = fields.URI()
     kwargs = fields.Dict()
 
 
@@ -81,7 +81,7 @@ class TransformationSpec(BaseSpec):
 
 
 class Transformation(SpecWithKwargs):
-    spec = fields.SpecURI(TransformationSpec, required=True)
+    spec = fields.URI(required=True)
 
 
 class Weights(BioImageIOSchema):
@@ -102,7 +102,7 @@ class ReaderSpec(BaseSpec):
 
 
 class Reader(SpecWithKwargs):
-    spec = fields.SpecURI(ReaderSpec)
+    spec = fields.URI()
     transformations = fields.List(fields.Nested(Transformation))
 
 
@@ -112,7 +112,7 @@ class SamplerSpec(BaseSpec):
 
 
 class Sampler(SpecWithKwargs):
-    spec = fields.SpecURI(SamplerSpec)
+    spec = fields.URI()
     readers = fields.List(fields.Nested(Reader, required=True), required=True)
 
 

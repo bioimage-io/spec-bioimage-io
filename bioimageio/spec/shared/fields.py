@@ -394,29 +394,6 @@ class SHA256(String):
         return value_str
 
 
-class SpecURI(Nested):
-    def _deserialize(self, value, attr, data, **kwargs):
-        uri = urlparse(value)
-
-        if uri.query:
-            raise ValidationError(f"Invalid URI: {value}. We do not support query: {uri.query}")
-        if uri.fragment:
-            raise ValidationError(f"Invalid URI: {value}. We do not support fragment: {uri.fragment}")
-        if uri.params:
-            raise ValidationError(f"Invalid URI: {value}. We do not support params: {uri.params}")
-
-        if uri.scheme == "file":
-            # account for leading '/' for windows paths, e.g. '/C:/folder'
-            # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
-            path = url2pathname(uri.path)
-        else:
-            path = uri.path
-
-        return raw_nodes.SpecURI(
-            spec_schema=self.schema, scheme=uri.scheme, authority=uri.netloc, path=path, query="", fragment=""
-        )
-
-
 class StrictVersion(String):
     def _deserialize(
         self,

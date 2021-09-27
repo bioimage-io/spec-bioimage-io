@@ -36,7 +36,7 @@ class RunMode(BioImageIOSchema):
 
 
 class SpecWithKwargs(BioImageIOSchema):
-    spec: fields.SpecURI
+    spec = fields.URI()
     kwargs = fields.Kwargs()
 
 
