@@ -375,125 +375,12 @@
                     "type": "object"
                 },
                 "spec": {
-                    "$ref": "#/definitions/TransformationSpec",
-                    "type": "object"
+                    "title": "spec",
+                    "type": "string"
                 }
             },
             "required": [
                 "spec"
-            ],
-            "type": "object"
-        },
-        "TransformationSpec": {
-            "additionalProperties": false,
-            "properties": {
-                "authors": {
-                    "items": {
-                        "title": "authors",
-                        "type": "string"
-                    },
-                    "title": "authors",
-                    "type": "array"
-                },
-                "cite": {
-                    "$ref": "#/definitions/CiteEntry",
-                    "type": "object"
-                },
-                "covers": {
-                    "items": {
-                        "title": "covers",
-                        "type": "string"
-                    },
-                    "title": "covers",
-                    "type": "array"
-                },
-                "dependencies": {
-                    "title": "dependencies",
-                    "type": "string"
-                },
-                "description": {
-                    "title": "description",
-                    "type": "string"
-                },
-                "documentation": {
-                    "title": "documentation",
-                    "type": "string"
-                },
-                "format_version": {
-                    "title": "format_version",
-                    "type": "string"
-                },
-                "framework": {
-                    "title": "framework",
-                    "type": "string"
-                },
-                "inputs": {
-                    "$ref": "#/definitions/InputArray",
-                    "type": "object"
-                },
-                "language": {
-                    "title": "language",
-                    "type": "string"
-                },
-                "license": {
-                    "title": "license",
-                    "type": "string"
-                },
-                "name": {
-                    "title": "name",
-                    "type": "string"
-                },
-                "optional_kwargs": {
-                    "additionalProperties": {},
-                    "title": "optional_kwargs",
-                    "type": "object"
-                },
-                "outputs": {
-                    "$ref": "#/definitions/OutputArray",
-                    "type": "object"
-                },
-                "required_kwargs": {
-                    "items": {
-                        "title": "required_kwargs",
-                        "type": "string"
-                    },
-                    "title": "required_kwargs",
-                    "type": "array"
-                },
-                "source": {
-                    "title": "source",
-                    "type": "string"
-                },
-                "tags": {
-                    "items": {
-                        "title": "tags",
-                        "type": "string"
-                    },
-                    "title": "tags",
-                    "type": "array"
-                },
-                "test_input": {
-                    "title": "test_input",
-                    "type": "string"
-                },
-                "test_output": {
-                    "title": "test_output",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "cite",
-                "dependencies",
-                "description",
-                "documentation",
-                "format_version",
-                "inputs",
-                "language",
-                "license",
-                "name",
-                "outputs",
-                "source",
-                "tags"
             ],
             "type": "object"
         },
