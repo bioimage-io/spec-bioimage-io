@@ -6,7 +6,7 @@ from setuptools import find_namespace_packages, setup
 ROOT_DIR = Path(__file__).parent.resolve()
 long_description = (ROOT_DIR / "README.md").read_text(encoding="utf-8")
 VERSION_FILE = ROOT_DIR / "bioimageio" / "spec" / "VERSION"
-VERSION = json.loads(VERSION_FILE.read_text())["version"]
+VERSION = json.loads(VERSION_FILE.read_text(encoding="utf-8"))["version"]
 
 
 setup(
