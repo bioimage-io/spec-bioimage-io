@@ -1,12 +1,13 @@
 import os
 import pathlib
+import re
 import traceback
 from typing import Any, Dict, IO, List, Sequence, Union
 
 from marshmallow import ValidationError
 
 from .io_ import load_raw_resource_description
-from .shared import yaml
+from .shared.common import DOI_REGEX, yaml
 
 
 def validate(
@@ -22,6 +23,9 @@ def validate(
     source_name = str(rdf_source.get("name") if isinstance(rdf_source, dict) else rdf_source)
     if not isinstance(rdf_source, dict):
         if isinstance(rdf_source, str):
+            if re.fullmatch(DOI_REGEX, rdf_source):  # turn doi into url
+                rdf_source = f"https://doi.org/{rdf_source}"
+
             if rdf_source.startswith("http"):
                 from urllib.request import urlretrieve
 

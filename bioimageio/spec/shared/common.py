@@ -15,6 +15,9 @@ else:
     yaml = YAML(typ="safe")
 
 
+DOI_REGEX = r"^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$"
+
+
 def get_format_version_module(type_: str, format_version: str):
     assert "." in format_version
     import bioimageio.spec
