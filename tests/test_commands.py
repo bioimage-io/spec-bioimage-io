@@ -10,6 +10,28 @@ def test_validate_model_as_dict(unet2d_nuclei_broad_any):
     assert not validate(unet2d_nuclei_broad_any, update_format=False, update_format_inner=False)
 
 
+def test_validate_model_as_url():
+    from bioimageio.spec.commands import validate
+
+    assert not validate(
+        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        update_format=True,
+        update_format_inner=False,
+    )
+    assert not validate(
+        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        update_format=False,
+        update_format_inner=False,
+    )
+
+
+def test_validate_model_as_doi():
+    from bioimageio.spec.commands import validate
+
+    assert not validate("10.5072/zenodo.886788", update_format=True, update_format_inner=False)
+    assert not validate("10.5072/zenodo.886788", update_format=False, update_format_inner=False)
+
+
 def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest_path):
     from bioimageio.spec.commands import validate
 
