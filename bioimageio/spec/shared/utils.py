@@ -3,6 +3,7 @@ import os
 import pathlib
 import re
 import typing
+import warnings
 import zipfile
 from io import BytesIO, StringIO
 
@@ -189,13 +190,22 @@ def resolve_rdf_source(source: typing.Union[dict, os.PathLike, typing.IO, str, b
     if isinstance(source, str):
         # source might be doi, url or file path -> resolve to pathlib.Path
         if re.fullmatch(DOI_REGEX, source):  # turn doi into url
+            import requests
             from urllib.request import urlopen
 
             zenodo_sandbox_prefix = "10.5072/zenodo."
             if source.startswith(zenodo_sandbox_prefix):
-                # zenodo sandbox doi (which is not a valid doi); resolve manually
-                zenodo_record = source[len(zenodo_sandbox_prefix) :]
-                source = f"https://sandbox.zenodo.org/record/{zenodo_record}/files/rdf.yaml"
+                # zenodo sandbox doi (which is not a valid doi)
+                record_id = source[len(zenodo_sandbox_prefix) :]
+                response = requests.get(f"https://sandbox.zenodo.org/api/records/{record_id}")
+                if not response.ok:
+                    raise RuntimeError(response.status_code)
+
+                zenodo_record = response.json()
+                rdfs = [f for f in zenodo_record["files"] if f["key"] == "rdf.yaml"]
+                assert len(rdfs) == 1
+                rdf = rdfs[0]
+                source = rdf["links"]["self"]
             else:
                 # resolve doi
                 # todo: make sure the resolved url points to a rdf.yaml or a zipped package
@@ -208,10 +218,11 @@ def resolve_rdf_source(source: typing.Union[dict, os.PathLike, typing.IO, str, b
                         f"or a packaged resource zip file."
                     )
 
+        assert isinstance(source, str)
         if source.startswith("http"):
             from urllib.request import urlretrieve
 
-            source, response = urlretrieve(source)
+            source, resp = urlretrieve(source)
             # todo: check http response code
 
         try:
