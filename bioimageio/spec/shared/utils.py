@@ -3,7 +3,6 @@ import os
 import pathlib
 import re
 import typing
-import warnings
 import zipfile
 from io import BytesIO, StringIO
 
