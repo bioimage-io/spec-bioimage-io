@@ -166,3 +166,13 @@ class RawNodePackageTransformer(NodeTransformer):
             return dataclasses.replace(node, **resolved_data)
         else:
             return super().generic_transformer(node)
+
+
+def _is_path(s: typing.Any) -> bool:
+    if not isinstance(s, (str, os.PathLike)):
+        return False
+
+    try:
+        return pathlib.Path(s).exists()
+    except OSError:
+        return False

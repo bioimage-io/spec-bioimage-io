@@ -13,7 +13,6 @@ from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
-    BIOIMAGEIO_CACHE_PATH,
     DOI_REGEX,
     get_class_name_from_type,
     get_format_version_module,
@@ -22,7 +21,7 @@ from bioimageio.spec.shared.common import (
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import GenericRawNode, PathToRemoteUriTransformer, RawNodePackageTransformer
+from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer, _is_path
 
 try:
     from typing import Protocol
@@ -55,7 +54,13 @@ def resolve_rdf_source(
         root = pathlib.Path()
     elif isinstance(source, (str, bytes)):
         source_name = str(source[:20]) + "..."
-        root = pathlib.Path()
+        # string might be path or yaml string; for yaml string (or bytes) set root to cwd
+
+        if _is_path(source):
+            assert isinstance(source, (str, os.PathLike))
+            root = pathlib.Path(source).parent
+        else:
+            root = pathlib.Path()
     else:
         raise TypeError(source)
 
@@ -98,12 +103,7 @@ def resolve_rdf_source(
             source, resp = urlretrieve(source)
             # todo: check http response code
 
-        try:
-            is_path = pathlib.Path(source).exists()
-        except OSError:
-            is_path = False
-
-        if is_path:
+        if _is_path(source):
             source = pathlib.Path(source)
 
     if isinstance(source, (pathlib.Path, str, bytes)):
