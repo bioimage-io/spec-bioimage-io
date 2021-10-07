@@ -25,11 +25,14 @@ def test_validate_model_as_url():
     )
 
 
-def test_validate_model_as_doi():
+def test_validate_model_as_zenodo_sandbox_doi():
     from bioimageio.spec.commands import validate
 
     assert not validate("10.5072/zenodo.886788", update_format=True, update_format_inner=False)
     assert not validate("10.5072/zenodo.886788", update_format=False, update_format_inner=False)
+
+
+# todo: add test with real doi
 
 
 def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest_path):

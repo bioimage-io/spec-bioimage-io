@@ -5,6 +5,7 @@ import traceback
 import zipfile
 from io import BytesIO, StringIO
 from typing import Dict, IO, List, Sequence, Union
+from urllib.request import urlopen
 
 from marshmallow import ValidationError
 
@@ -40,7 +41,16 @@ def validate(
     if not isinstance(rdf_source, dict):
         if isinstance(rdf_source, str):
             if re.fullmatch(DOI_REGEX, rdf_source):  # turn doi into url
-                rdf_source = f"https://doi.org/{rdf_source}"
+                zenodo_sandbox_prefix = "10.5072/zenodo."
+                if rdf_source.startswith(zenodo_sandbox_prefix):
+                    # zenodo sandbox doi (which is not a valid doi)
+                    rdf_source = (
+                        f"https://sandbox.zenodo.org/record/{rdf_source[len(zenodo_sandbox_prefix):]}/files/rdf.yaml"
+                    )
+                else:
+                    # resolve doi
+                    # todo: make sure the resolved url points to a rdf.yaml or a zipped package
+                    rdf_source = urlopen(f"https://doi.org/{rdf_source}?type=URL").url
 
             if rdf_source.startswith("http"):
                 from urllib.request import urlretrieve
