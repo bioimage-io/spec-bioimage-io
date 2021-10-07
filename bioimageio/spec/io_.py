@@ -105,7 +105,6 @@ def resolve_rdf_source(
 
         if is_path:
             source = pathlib.Path(source)
-            root = source.parent
 
     if isinstance(source, (pathlib.Path, str, bytes)):
         # source is either:
