@@ -45,7 +45,7 @@ def resolve_rdf_source(
     elif isinstance(source, raw_nodes.URI):
         source = str(raw_nodes.URI)
 
-    assert isinstance(source, (dict, pathlib.Path, str, bytes))
+    assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
 
     if isinstance(source, pathlib.Path):
         source_name = str(source)
@@ -137,32 +137,6 @@ def resolve_rdf_source(
     return source, source_name, root
 
 
-def extract_resource_package(
-    source: Union[os.PathLike, IO, str, bytes, raw_nodes.URI]
-) -> Tuple[dict, str, pathlib.Path]:
-    """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
-    source, source_name, root = resolve_rdf_source(source)
-    if isinstance(root, bytes):
-        raise NotImplementedError("package source was bytes")
-
-    if isinstance(root, raw_nodes.URI):
-        from urllib.request import urlretrieve
-
-        cache_folder = BIOIMAGEIO_CACHE_PATH / "extracted_packages"
-        cache_folder.mkdir(exist_ok=True, parents=True)
-        root = cache_folder / root.path
-        download, header = urlretrieve(str(root))
-
-        with zipfile.ZipFile(download) as zf:
-            zf.extractall(root)
-
-        if not (root / "rdf.yaml").exists():
-            raise FileNotFoundError(f"'rdf.yaml' in {download}, extracted to {root}")
-
-    assert isinstance(root, pathlib.Path)
-    return source, source_name, root
-
-
 def resolve_rdf_source_and_type(
     source: Union[os.PathLike, str, dict, raw_nodes.URI]
 ) -> Tuple[dict, str, Union[pathlib.Path, raw_nodes.URI, bytes], str]:
@@ -205,36 +179,14 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
     return sub_spec
 
 
-def _replace_relative_paths_for_remote_source(
-    raw_rd: RawResourceDescription, root: Union[pathlib.Path, raw_nodes.URI, bytes]
-) -> RawResourceDescription:
-    if isinstance(root, raw_nodes.URI):
-        # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
-        warnings.warn(
-            f"changing file paths in RDF to URIs due to a remote {root.scheme} source "
-            "(may result in an invalid node)"
-        )
-        raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
-        root_path = pathlib.Path()  # root_path cannot be URI
-    elif isinstance(root, pathlib.Path):
-        if zipfile.is_zipfile(root):
-            _, _, root_path = extract_resource_package(root)
-        else:
-            root_path = root
-    elif isinstance(root, bytes):
-        raise NotImplementedError("root as bytes (io)")
-    else:
-        raise TypeError(root)
-
-    raw_rd.root_path = root_path
-    return raw_rd
-
-
 def load_raw_resource_description(
-    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI], update_to_current_format: bool = False
+    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
+    update_to_current_format: bool = False,
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
+    and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
+    a local file path.
 
     Args:
         source: resource description or resource description file (RDF)
@@ -243,6 +195,8 @@ def load_raw_resource_description(
     Returns:
         raw BioImage.IO resource
     """
+    if isinstance(source, RawResourceDescription):
+        return source
 
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
 
