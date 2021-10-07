@@ -30,7 +30,6 @@ except ImportError:
 
 
 LATEST = "latest"
-ROOT_KEY = "root"
 
 
 def resolve_rdf_source(
