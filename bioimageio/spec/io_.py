@@ -198,8 +198,6 @@ def load_raw_resource_description(
         return source
 
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
-
-    type_ = data.get("type", "model")
     class_name = get_class_name_from_type(type_)
 
     data_version = LATEST if update_to_current_format else data.get("format_version", LATEST)
