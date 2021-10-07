@@ -15,7 +15,7 @@ else:
     yaml = YAML(typ="safe")
 
 
-DOI_REGEX = r"^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$"
+DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
 
 
 def get_format_version_module(type_: str, format_version: str):
