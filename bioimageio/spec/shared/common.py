@@ -1,3 +1,6 @@
+import os
+import pathlib
+import tempfile
 from typing import Generic, Optional
 
 
@@ -16,6 +19,10 @@ else:
 
 
 DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
+
+BIOIMAGEIO_CACHE_PATH = pathlib.Path(
+    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
+)
 
 
 def get_format_version_module(type_: str, format_version: str):

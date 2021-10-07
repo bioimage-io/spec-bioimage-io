@@ -4,8 +4,7 @@ from typing import Dict, IO, List, Sequence, Union
 
 from marshmallow import ValidationError
 
-from .io_ import load_raw_resource_description
-from .shared.utils import resolve_rdf_source
+from .io_ import load_raw_resource_description, resolve_rdf_source
 
 
 def validate(
@@ -18,7 +17,8 @@ def validate(
     if update_format_inner is None:
         update_format_inner = update_format
 
-    source_name, rdf_source = resolve_rdf_source(rdf_source)
+    rdf_source, source_name, root = resolve_rdf_source(rdf_source)
+    assert isinstance(rdf_source, dict)
     try:
         raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
