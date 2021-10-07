@@ -1,8 +1,13 @@
 import dataclasses
+import os
 import pathlib
+import re
 import typing
+import zipfile
+from io import BytesIO, StringIO
 
-from bioimageio.spec.shared import raw_nodes
+from . import raw_nodes
+from .common import DOI_REGEX, yaml
 
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
@@ -161,3 +166,85 @@ class RawNodePackageTransformer(NodeTransformer):
             return dataclasses.replace(node, **resolved_data)
         else:
             return super().generic_transformer(node)
+
+
+def resolve_rdf_source(source: typing.Union[dict, os.PathLike, typing.IO, str, bytes]) -> typing.Tuple[str, dict]:
+    # reduce possible source types
+    if isinstance(source, (BytesIO, StringIO)):
+        source = source.read()
+    elif isinstance(source, os.PathLike):
+        source = pathlib.Path(source)
+
+    assert isinstance(source, (dict, pathlib.Path, str, bytes))
+
+    if isinstance(source, pathlib.Path):
+        source_name = str(source)
+    elif isinstance(source, dict):
+        source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
+    elif isinstance(source, (str, bytes)):
+        source_name = str(source[:20]) + "..."
+    else:
+        raise TypeError(source)
+
+    if isinstance(source, str):
+        # source might be doi, url or file path -> resolve to pathlib.Path
+        if re.fullmatch(DOI_REGEX, source):  # turn doi into url
+            from urllib.request import urlopen
+
+            zenodo_sandbox_prefix = "10.5072/zenodo."
+            if source.startswith(zenodo_sandbox_prefix):
+                # zenodo sandbox doi (which is not a valid doi); resolve manually
+                zenodo_record = source[len(zenodo_sandbox_prefix) :]
+                source = f"https://sandbox.zenodo.org/record/{zenodo_record}/files/rdf.yaml"
+            else:
+                # resolve doi
+                # todo: make sure the resolved url points to a rdf.yaml or a zipped package
+                response = urlopen(f"https://doi.org/{source}?type=URL")
+                source = response.url
+                assert isinstance(source, str)
+                if not (source.endswith(".yaml") or source.endswith(".zip")):
+                    raise NotImplementedError(
+                        f"Resolved doi {source_name} to {source}, but don't know where to find 'rdf.yaml' "
+                        f"or a packaged resource zip file."
+                    )
+
+        if source.startswith("http"):
+            from urllib.request import urlretrieve
+
+            source, response = urlretrieve(source)
+            # todo: check http response code
+
+        try:
+            is_path = pathlib.Path(source).exists()
+        except OSError:
+            is_path = False
+
+        if is_path:
+            source = pathlib.Path(source)
+
+    if isinstance(source, (pathlib.Path, str, bytes)):
+        # source is either:
+        #   - a file path (to a yaml or a packaged zip)
+        #   - a yaml string,
+        #   - or yaml file or zip package content as bytes
+
+        if yaml is None:
+            raise RuntimeError(f"Cannot read RDF from {source_name} without ruamel.yaml dependency!")
+
+        if isinstance(source, bytes):
+            potential_package: typing.Union[pathlib.Path, typing.IO, str] = BytesIO(source)
+            potential_package.seek(0)  # type: ignore
+        else:
+            potential_package = source
+
+        if zipfile.is_zipfile(potential_package):
+            with zipfile.ZipFile(potential_package) as zf:
+                if "rdf.yaml" not in zf.namelist():
+                    raise ValueError(f"Package {source_name} does not contain 'rdf.yaml'")
+
+                source = BytesIO(zf.read("rdf.yaml"))
+
+        source = yaml.load(source)
+
+    assert isinstance(source, dict)
+    return source_name, source
