@@ -4,13 +4,16 @@ which is a python dataclass
 """
 import os
 import pathlib
+import re
 import warnings
-from io import StringIO
+import zipfile
+from io import BytesIO, StringIO
 from types import ModuleType
-from typing import Any, Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
+    DOI_REGEX,
     get_class_name_from_type,
     get_format_version_module,
     get_latest_format_version_module,
@@ -18,7 +21,7 @@ from bioimageio.spec.shared.common import (
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer
+from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer, _is_path
 
 try:
     from typing import Protocol
@@ -27,6 +30,119 @@ except ImportError:
 
 
 LATEST = "latest"
+
+
+def resolve_rdf_source(
+    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI]
+) -> Tuple[dict, str, Union[pathlib.Path, raw_nodes.URI, bytes]]:
+    # reduce possible source types
+    if isinstance(source, (BytesIO, StringIO)):
+        source = source.read()
+    elif isinstance(source, os.PathLike):
+        source = pathlib.Path(source)
+    elif isinstance(source, raw_nodes.URI):
+        source = str(raw_nodes.URI)
+
+    assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
+
+    if isinstance(source, pathlib.Path):
+        source_name = str(source)
+        root: Union[pathlib.Path, raw_nodes.URI, bytes] = source.parent
+    elif isinstance(source, dict):
+        source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
+        root = pathlib.Path()
+    elif isinstance(source, (str, bytes)):
+        source_name = str(source[:20]) + "..."
+        # string might be path or yaml string; for yaml string (or bytes) set root to cwd
+
+        if _is_path(source):
+            assert isinstance(source, (str, os.PathLike))
+            root = pathlib.Path(source).parent
+        else:
+            root = pathlib.Path()
+    else:
+        raise TypeError(source)
+
+    if isinstance(source, str):
+        # source might be doi, url or file path -> resolve to pathlib.Path
+        if re.fullmatch(DOI_REGEX, source):  # turn doi into url
+            import requests
+            from urllib.request import urlopen
+
+            zenodo_sandbox_prefix = "10.5072/zenodo."
+            if source.startswith(zenodo_sandbox_prefix):
+                # zenodo sandbox doi (which is not a valid doi)
+                record_id = source[len(zenodo_sandbox_prefix) :]
+                response = requests.get(f"https://sandbox.zenodo.org/api/records/{record_id}")
+                if not response.ok:
+                    raise RuntimeError(response.status_code)
+
+                zenodo_record = response.json()
+                rdfs = [f for f in zenodo_record["files"] if f["key"] == "rdf.yaml"]
+                assert len(rdfs) == 1
+                rdf = rdfs[0]
+                source = rdf["links"]["self"]
+            else:
+                # resolve doi
+                # todo: make sure the resolved url points to a rdf.yaml or a zipped package
+                response = urlopen(f"https://doi.org/{source}?type=URL")
+                source = response.url
+                assert isinstance(source, str)
+                if not (source.endswith(".yaml") or source.endswith(".zip")):
+                    raise NotImplementedError(
+                        f"Resolved doi {source_name} to {source}, but don't know where to find 'rdf.yaml' "
+                        f"or a packaged resource zip file."
+                    )
+
+        assert isinstance(source, str)
+        if source.startswith("http"):
+            from urllib.request import urlretrieve
+
+            root = raw_nodes.URI(uri_string=source)
+            source, resp = urlretrieve(source)
+            # todo: check http response code
+
+        if _is_path(source):
+            source = pathlib.Path(source)
+
+    if isinstance(source, (pathlib.Path, str, bytes)):
+        # source is either:
+        #   - a file path (to a yaml or a packaged zip)
+        #   - a yaml string,
+        #   - or yaml file or zip package content as bytes
+
+        if yaml is None:
+            raise RuntimeError(f"Cannot read RDF from {source_name} without ruamel.yaml dependency!")
+
+        if isinstance(source, bytes):
+            potential_package: Union[pathlib.Path, IO, str] = BytesIO(source)
+            potential_package.seek(0)  # type: ignore
+        else:
+            potential_package = source
+
+        if zipfile.is_zipfile(potential_package):
+            with zipfile.ZipFile(potential_package) as zf:
+                if "rdf.yaml" not in zf.namelist():
+                    raise ValueError(f"Package {source_name} does not contain 'rdf.yaml'")
+
+                assert isinstance(source, (pathlib.Path, bytes))
+                root = source
+                source = BytesIO(zf.read("rdf.yaml"))
+
+        source = yaml.load(source)
+
+    assert isinstance(source, dict)
+    return source, source_name, root
+
+
+def resolve_rdf_source_and_type(
+    source: Union[os.PathLike, str, dict, raw_nodes.URI]
+) -> Tuple[dict, str, Union[pathlib.Path, raw_nodes.URI, bytes], str]:
+    data, source_name, root = resolve_rdf_source(source)
+
+    type_ = data.get("type", "model")  # todo: remove model type default
+
+    return data, source_name, root, type_
 
 
 class ConvertersModule(Protocol):
@@ -62,11 +178,13 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
 
 
 def load_raw_resource_description(
-    source: Union[Dict[str, Any], os.PathLike, str], update_to_current_format: bool = False
+    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
+    update_to_current_format: bool = False,
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
-    Use `bioimageio.core.load_raw_resource_description` to load remote resources.
-    or  `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
+    Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
+    and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
+    a local file path.
 
     Args:
         source: resource description or resource description file (RDF)
@@ -75,22 +193,10 @@ def load_raw_resource_description(
     Returns:
         raw BioImage.IO resource
     """
+    if isinstance(source, RawResourceDescription):
+        return source
 
-    if isinstance(source, os.PathLike) or isinstance(source, str):
-        source = pathlib.Path(source)
-        if yaml is None:
-            raise RuntimeError(
-                "to load raw resource descriptions from paths, yaml is required. Add ruamel.yaml to your environment "
-                "or call `load_raw_resource_description` with a dictionary."
-            )
-
-        data: Dict[str, Any] = yaml.load(source)
-        root_path = source.parent
-    else:
-        data = source
-        root_path = data.pop("root_path", pathlib.Path())
-
-    type_ = data.get("type", "model")
+    data, source_name, root, type_ = resolve_rdf_source_and_type(source)
     class_name = get_class_name_from_type(type_)
 
     data_version = LATEST if update_to_current_format else data.get("format_version", LATEST)
@@ -99,7 +205,7 @@ def load_raw_resource_description(
 
     data = sub_spec.converters.maybe_convert(data)
     raw_rd = schema.load(data)
-    raw_rd.root_path = root_path
+    raw_rd.root_path = root
     return raw_rd
 
 

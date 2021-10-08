@@ -33,6 +33,12 @@ def validate(
 
 validate.__doc__ = commands.validate.__doc__
 
+# single command requires additional dummy callback
+# see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
+@app.callback()
+def callback():
+    pass
+
 
 if __name__ == "__main__":
     print(f"bioimageio.spec package version {__version__}")
