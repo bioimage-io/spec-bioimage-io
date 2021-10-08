@@ -9,10 +9,10 @@ source:
 
 requirements:
   build:
-    - python >=3.7
+    - python >=3.7,<3.10
     - pip
   run:
-    - python >=3.7
+    - python >=3.7,<3.10
     {% for dep in setup_py_data['install_requires'] %}
     - {{ dep.lower() }}
     {% endfor %}
