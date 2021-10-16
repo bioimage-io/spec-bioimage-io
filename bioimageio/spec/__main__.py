@@ -19,15 +19,18 @@ def validate(
     update_format_inner: bool = typer.Option(
         None, help="For collection RDFs only. Defaults to value of 'update-format'."
     ),
-    verbose: bool = typer.Option(False, help="show traceback of exceptions"),
+    verbose: bool = typer.Option(False, help="show traceback of unexpected (no ValidationError) exceptions"),
 ) -> int:
-    errors = commands.validate(rdf_source, update_format, update_format_inner, verbose)
-    if errors:
-        print(f"Errors for {rdf_source}")
-        pprint(errors)
+    summary = commands.validate(rdf_source, update_format, update_format_inner)
+    if summary["error"] is not None:
+        print(f"Errors for {summary['name']}")
+        pprint(summary["errors"])
+        if verbose:
+            print("traceback:")
+            pprint(summary["traceback"])
         return 1
     else:
-        print(f"No validation errors for {rdf_source}")
+        print(f"No validation errors for {summary['name']}")
         return 0
 
 
