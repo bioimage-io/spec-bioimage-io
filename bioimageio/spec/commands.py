@@ -45,7 +45,7 @@ def validate(
     except ValidationError as e:
         error = e.normalized_messages()
     except Exception as e:
-        error = (str(e),)
+        error = str(e)
         tb = traceback.format_tb(e.__traceback__)
 
     nested_errors: Dict[str, list] = {}
