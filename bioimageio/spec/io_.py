@@ -86,8 +86,13 @@ def resolve_rdf_source(
                         if f["key"] == rdf_name:
                             source = f["links"]["self"]
                             break
+                    else:
+                        continue
+
+                    break
                 else:
                     raise ValidationError(f"No RDF found; looked for {rdf_names}")
+
             else:
                 # resolve doi
                 # todo: make sure the resolved url points to a rdf.yaml or a zipped package
