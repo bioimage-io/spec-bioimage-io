@@ -59,7 +59,6 @@ def validate(
                     inner_summary = validate(inner_source, update_format_inner, update_format_inner)
 
                 if inner_summary["error"] is not None:
-                    assert nested_errors is not None
                     nested_errors[inner_category] = nested_errors.get(inner_category, []) + [inner_summary]
 
         if nested_errors:
