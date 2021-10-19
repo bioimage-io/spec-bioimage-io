@@ -11,6 +11,8 @@ from io import BytesIO, StringIO
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
+from marshmallow import ValidationError
+
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
     DOI_REGEX,
@@ -78,10 +80,14 @@ def resolve_rdf_source(
                     raise RuntimeError(response.status_code)
 
                 zenodo_record = response.json()
-                rdfs = [f for f in zenodo_record["files"] if f["key"] == "rdf.yaml"]
-                assert len(rdfs) == 1
-                rdf = rdfs[0]
-                source = rdf["links"]["self"]
+                rdf_names = ("rdf.yaml", "rdf.yml", "model.yaml", "model.yml")
+                for rdf_name in rdf_names:
+                    for f in zenodo_record["files"]:
+                        if f["key"] == rdf_name:
+                            source = f["links"]["self"]
+                            break
+                else:
+                    raise ValidationError(f"No RDF found; looked for {rdf_names}")
             else:
                 # resolve doi
                 # todo: make sure the resolved url points to a rdf.yaml or a zipped package
