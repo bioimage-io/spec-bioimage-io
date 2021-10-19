@@ -34,7 +34,8 @@ def validate(
         update_format_inner = update_format
 
     rdf_source, source_name, root = resolve_rdf_source(rdf_source)
-    assert isinstance(rdf_source, dict)
+    if not isinstance(rdf_source, dict):
+        raise TypeError(f"expected loaded resource to be a dictionary, but got type {type(dict)}: {rdf_source}")
 
     error = None
     tb = None
