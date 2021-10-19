@@ -78,7 +78,9 @@ def get_args_flat(tp):
 
 
 def nested_default_dict_as_nested_dict(nested_dd):
-    return {
-        key: (nested_default_dict_as_nested_dict(value) if isinstance(value, dict) else value)
-        for key, value in nested_dd.items()
-    }
+    if isinstance(nested_dd, dict):
+        return {key: (nested_default_dict_as_nested_dict(value)) for key, value in nested_dd.items()}
+    elif isinstance(nested_dd, list):
+        return [nested_default_dict_as_nested_dict(value) for value in nested_dd]
+    else:
+        return nested_dd

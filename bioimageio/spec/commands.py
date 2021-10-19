@@ -6,6 +6,7 @@ from typing import Dict, IO, Optional, Union
 from marshmallow import ValidationError
 
 from .io_ import load_raw_resource_description, resolve_rdf_source
+from .shared.common import nested_default_dict_as_nested_dict
 
 KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -43,7 +44,7 @@ def validate(
     try:
         raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
-        error = e.normalized_messages()
+        error = nested_default_dict_as_nested_dict(e.normalized_messages())
     except Exception as e:
         error = str(e)
         tb = traceback.format_tb(e.__traceback__)
