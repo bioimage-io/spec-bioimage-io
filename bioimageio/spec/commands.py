@@ -6,6 +6,7 @@ from typing import Dict, IO, Optional, Union
 from marshmallow import ValidationError
 
 from .io_ import load_raw_resource_description, resolve_rdf_source
+from .shared.common import nested_default_dict_as_nested_dict
 
 KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -34,7 +35,8 @@ def validate(
         update_format_inner = update_format
 
     rdf_source, source_name, root = resolve_rdf_source(rdf_source)
-    assert isinstance(rdf_source, dict)
+    if not isinstance(rdf_source, dict):
+        raise TypeError(f"expected loaded resource to be a dictionary, but got type {type(dict)}: {rdf_source}")
 
     error = None
     tb = None
@@ -42,9 +44,9 @@ def validate(
     try:
         raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
     except ValidationError as e:
-        error = e.normalized_messages()
+        error = nested_default_dict_as_nested_dict(e.normalized_messages())
     except Exception as e:
-        error = (str(e),)
+        error = str(e)
         tb = traceback.format_tb(e.__traceback__)
 
     nested_errors: Dict[str, list] = {}
@@ -59,7 +61,6 @@ def validate(
                     inner_summary = validate(inner_source, update_format_inner, update_format_inner)
 
                 if inner_summary["error"] is not None:
-                    assert nested_errors is not None
                     nested_errors[inner_category] = nested_errors.get(inner_category, []) + [inner_summary]
 
         if nested_errors:
