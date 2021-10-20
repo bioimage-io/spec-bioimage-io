@@ -11,6 +11,8 @@ from io import BytesIO, StringIO
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
+from marshmallow import ValidationError
+
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
     DOI_REGEX,
@@ -30,6 +32,7 @@ except ImportError:
 
 
 LATEST = "latest"
+RDF_NAMES = ("rdf.yaml", "model.yaml")
 
 
 def resolve_rdf_source(
@@ -78,10 +81,18 @@ def resolve_rdf_source(
                     raise RuntimeError(response.status_code)
 
                 zenodo_record = response.json()
-                rdfs = [f for f in zenodo_record["files"] if f["key"] == "rdf.yaml"]
-                assert len(rdfs) == 1
-                rdf = rdfs[0]
-                source = rdf["links"]["self"]
+                for rdf_name in RDF_NAMES:
+                    for f in zenodo_record["files"]:
+                        if f["key"] == rdf_name:
+                            source = f["links"]["self"]
+                            break
+                    else:
+                        continue
+
+                    break
+                else:
+                    raise ValidationError(f"No RDF found; looked for {RDF_NAMES}")
+
             else:
                 # resolve doi
                 # todo: make sure the resolved url points to a rdf.yaml or a zipped package
@@ -122,12 +133,15 @@ def resolve_rdf_source(
 
         if zipfile.is_zipfile(potential_package):
             with zipfile.ZipFile(potential_package) as zf:
-                if "rdf.yaml" not in zf.namelist():
-                    raise ValueError(f"Package {source_name} does not contain 'rdf.yaml'")
+                for rdf_name in RDF_NAMES:
+                    if rdf_name in zf.namelist():
+                        break
+                else:
+                    raise ValueError(f"Missing 'rdf.yaml' in package {source_name}")
 
                 assert isinstance(source, (pathlib.Path, bytes))
                 root = source
-                source = BytesIO(zf.read("rdf.yaml"))
+                source = BytesIO(zf.read(rdf_name))
 
         source = yaml.load(source)
 
