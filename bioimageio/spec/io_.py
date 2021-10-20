@@ -32,6 +32,7 @@ except ImportError:
 
 
 LATEST = "latest"
+RDF_NAMES = ("rdf.yaml", "model.yaml")
 
 
 def resolve_rdf_source(
@@ -80,8 +81,7 @@ def resolve_rdf_source(
                     raise RuntimeError(response.status_code)
 
                 zenodo_record = response.json()
-                rdf_names = ("rdf.yaml", "rdf.yml", "model.yaml", "model.yml")
-                for rdf_name in rdf_names:
+                for rdf_name in RDF_NAMES:
                     for f in zenodo_record["files"]:
                         if f["key"] == rdf_name:
                             source = f["links"]["self"]
@@ -91,7 +91,7 @@ def resolve_rdf_source(
 
                     break
                 else:
-                    raise ValidationError(f"No RDF found; looked for {rdf_names}")
+                    raise ValidationError(f"No RDF found; looked for {RDF_NAMES}")
 
             else:
                 # resolve doi
@@ -133,12 +133,15 @@ def resolve_rdf_source(
 
         if zipfile.is_zipfile(potential_package):
             with zipfile.ZipFile(potential_package) as zf:
-                if "rdf.yaml" not in zf.namelist():
-                    raise ValueError(f"Package {source_name} does not contain 'rdf.yaml'")
+                for rdf_name in RDF_NAMES:
+                    if rdf_name in zf.namelist():
+                        break
+                else:
+                    raise ValueError(f"Missing 'rdf.yaml' in package {source_name}")
 
                 assert isinstance(source, (pathlib.Path, bytes))
                 root = source
-                source = BytesIO(zf.read("rdf.yaml"))
+                source = BytesIO(zf.read(rdf_name))
 
         source = yaml.load(source)
 
