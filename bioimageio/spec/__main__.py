@@ -23,8 +23,8 @@ def validate(
 ) -> int:
     summary = commands.validate(rdf_source, update_format, update_format_inner)
     if summary["error"] is not None:
-        print(f"Errors for {summary['name']}")
-        pprint(summary["errors"])
+        print(f"Error in {summary['name']}:")
+        pprint(summary["error"])
         if verbose:
             print("traceback:")
             pprint(summary["traceback"])
