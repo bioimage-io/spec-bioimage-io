@@ -30,13 +30,13 @@ license: BSD-2-Clause
 language: java
 framework: tensorflow
 test_inputs:
-  - ./exampleImage.tif
-test_outputs:
-  - ./resultImage.tif
-sample_inputs:
   - ./exampleImage.npy
-sample_outputs:
+test_outputs:
   - ./resultImage.npy
+sample_inputs:
+  - ./exampleImage.tif
+sample_outputs:
+  - ./resultImage.tif
 weights:
   tensorflow_saved_model_bundle:
     source: ./tensorflow_saved_model_bundle.zip
