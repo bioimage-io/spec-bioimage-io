@@ -1,0 +1,5 @@
+// Preprocessing macro
+print("Preprocessing");
+run("32-bit");
+getRawStatistics(nPixels, mean, min, max, std, histogram);
+run("Divide...", "value=" + max);

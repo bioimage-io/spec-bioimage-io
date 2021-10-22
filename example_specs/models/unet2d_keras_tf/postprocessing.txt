@@ -1,0 +1,20 @@
+// Postprocessing macro
+print("Postprocessing");
+rename("Output probability");
+run("Duplicate...", "title=[Cell segmentation]");
+selectWindow("Cell segmentation");
+setThreshold(0.5000, 1.0);
+setOption("BlackBackground", true);
+run("Convert to Mask");
+
+/*Watershed*/
+run("Watershed");
+run("Fill Holes");
+run("Open");
+run("Analyze Particles...", "size=&minsize-Infinity show=[Count Masks] clear add");
+run("16-bit");
+run("glasbey on dark");
+run("Enhance Contrast", "saturated=0.35");
+
+selectWindow("Output probability");
+run("Fire");
