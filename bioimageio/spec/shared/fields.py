@@ -171,13 +171,8 @@ class Union(DocumentedField, marshmallow_union.Union):
         try:
             return super()._deserialize(value, attr=attr, data=data, **kwargs)
         except ValidationError as e:
-            errors = e.messages
-            n_errors_short = min([len(er) for er in errors])
-            short_errors = [er for er in errors if len(er) == n_errors_short]
-            long_errors = [er for er in errors if len(er) != n_errors_short]
-            messages = (
-                ["Errors in all options for this field. Fix any of the following errors:"] + short_errors + long_errors
-            )
+            errors = sorted(e.messages, key=lambda msg: len(msg))
+            messages = ["Errors in all options for this field. Fix any of the following errors:"] + errors
             raise ValidationError(message=messages, field_name=attr) from e
 
 
