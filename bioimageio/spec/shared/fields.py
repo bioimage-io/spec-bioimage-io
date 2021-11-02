@@ -4,8 +4,6 @@ import distutils.version
 import logging
 import pathlib
 import typing
-from urllib.parse import urlparse
-from urllib.request import url2pathname
 
 import marshmallow_union
 import numpy
@@ -168,6 +166,14 @@ class Union(DocumentedField, marshmallow_union.Union):
     def __init__(self, *super_args, **super_kwargs):
         super().__init__(*super_args, **super_kwargs)
         self.type_name += f"\\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\\]"  # add types of options
+
+    def _deserialize(self, value, attr=None, data=None, **kwargs):
+        try:
+            return super()._deserialize(value, attr=attr, data=data, **kwargs)
+        except ValidationError as e:
+            errors = sorted(e.messages, key=lambda msg: len(msg))
+            messages = ["Errors in all options for this field. Fix any of the following errors:"] + errors
+            raise ValidationError(message=messages, field_name=attr) from e
 
 
 #########################

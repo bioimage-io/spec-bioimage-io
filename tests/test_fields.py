@@ -102,3 +102,13 @@ class TestURI:
         uri_node = fields.URI().deserialize(uri_raw)
 
         assert uri_raw == str(uri_node)
+
+
+class TestUnion:
+    def test_error_messages(self):
+        union = fields.Union([fields.String(), fields.Number()])
+        try:
+            union.deserialize([1])
+        except ValidationError as e:
+            assert isinstance(e, ValidationError)
+            assert len(e.messages) == 3, e.messages
