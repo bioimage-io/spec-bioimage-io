@@ -71,9 +71,8 @@
             "properties": {
                 "offset": {
                     "items": {
-                        "format": "integer",
                         "title": "offset",
-                        "type": "number"
+                        "type": "integer"
                     },
                     "title": "offset",
                     "type": "array"
@@ -145,9 +144,8 @@
                     "anyOf": [
                         {
                             "items": {
-                                "format": "integer",
                                 "title": "",
-                                "type": "number"
+                                "type": "integer"
                             },
                             "title": "",
                             "type": "array"
@@ -558,9 +556,8 @@
                     "type": "array"
                 },
                 "opset_version": {
-                    "format": "integer",
                     "title": "opset_version",
-                    "type": "number"
+                    "type": "integer"
                 },
                 "parent": {
                     "title": "parent",
@@ -622,9 +619,8 @@
                 },
                 "halo": {
                     "items": {
-                        "format": "integer",
                         "title": "halo",
-                        "type": "number"
+                        "type": "integer"
                     },
                     "title": "halo",
                     "type": "array"
@@ -645,9 +641,8 @@
                     "anyOf": [
                         {
                             "items": {
-                                "format": "integer",
                                 "title": "",
-                                "type": "number"
+                                "type": "integer"
                             },
                             "title": "",
                             "type": "array"
@@ -672,18 +667,16 @@
             "properties": {
                 "min": {
                     "items": {
-                        "format": "integer",
                         "title": "min",
-                        "type": "number"
+                        "type": "integer"
                     },
                     "title": "min",
                     "type": "array"
                 },
                 "step": {
                     "items": {
-                        "format": "integer",
                         "title": "step",
-                        "type": "number"
+                        "type": "integer"
                     },
                     "title": "step",
                     "type": "array"
