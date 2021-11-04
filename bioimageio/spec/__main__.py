@@ -4,7 +4,11 @@ import typer
 
 from bioimageio.spec import __version__, commands
 
-app = typer.Typer()  # https://typer.tiangolo.com/
+help_version = f"bioimageio.spec package version {__version__}"
+app = typer.Typer(
+    help=help_version,
+    context_settings={"help_option_names": ["-h", "--help", "--version"]},  # make --version display help with version
+)  # https://typer.tiangolo.com/
 
 
 @app.command()
@@ -40,9 +44,8 @@ validate.__doc__ = commands.validate.__doc__
 # see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
 @app.callback()
 def callback():
-    pass
+    typer.echo(help_version)  # use this callback to print out version
 
 
 if __name__ == "__main__":
-    print(f"bioimageio.spec package version {__version__}")
     app()
