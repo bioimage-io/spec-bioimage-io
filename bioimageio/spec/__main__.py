@@ -2,9 +2,19 @@ from pprint import pprint
 
 import typer
 
-from bioimageio.spec import __version__, commands
+from bioimageio.spec import __version__, commands, model, rdf
 
-app = typer.Typer()  # https://typer.tiangolo.com/
+help_version = (
+    f"bioimageio.spec {__version__}"
+    "\nimplementing:"
+    f"\n\tgeneral RDF {rdf.format_version}"
+    f"\n\tmodel RDF {model.format_version}"
+)
+# prevent rewrapping with \b\n: https://click.palletsprojects.com/en/7.x/documentation/#preventing-rewrapping
+app = typer.Typer(
+    help="\b\n" + help_version,
+    context_settings={"help_option_names": ["-h", "--help", "--version"]},  # make --version display help with version
+)  # https://typer.tiangolo.com/
 
 
 @app.command()
@@ -36,13 +46,12 @@ def validate(
 
 validate.__doc__ = commands.validate.__doc__
 
-# single command requires additional dummy callback
+# note: single command requires additional (dummy) callback
 # see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
 @app.callback()
 def callback():
-    pass
+    typer.echo(help_version)
 
 
 if __name__ == "__main__":
-    print(f"bioimageio.spec package version {__version__}")
     app()
