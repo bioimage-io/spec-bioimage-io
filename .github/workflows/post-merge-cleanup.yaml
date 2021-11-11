@@ -1,0 +1,22 @@
+name: Delete PR branch and gh-pages preview after PR merge
+
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  delete_PR_branch:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: delete PR branch ${{ github.event.pull_request.head.ref }}
+        run: git push origin --delete ${{ github.event.pull_request.head.ref }}
+
+  delete_gh-pages_preview:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: delete gh-pages preview branch gh-pages-${{ github.event.pull_request.head.ref }}
+        run: git push origin --delete gh-pages-${{ github.event.pull_request.head.ref }}
