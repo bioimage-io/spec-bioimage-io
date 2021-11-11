@@ -216,6 +216,12 @@ class Preprocessing(Processing):
             "than min_percentile. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly "
             "accepting percentiles specified in the range 0.0 to 1.0.",
         )
+        eps = fields.Float(
+            missing=1e-6,
+            bioimageio_description="Epsilon for numeric stability: "
+            "`out = (tensor - v_lower) / (v_upper - v_lower + eps)`; "
+            "with `v_lower,v_upper` values at the respective percentiles. Default value: 10^-6.",
+        )
 
         @validates_schema
         def min_smaller_max(self, data, **kwargs):
