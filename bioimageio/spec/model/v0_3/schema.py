@@ -17,7 +17,7 @@ from marshmallow import (
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, SharedProcessingSchema
 from . import raw_nodes
 
 Author = rdf.schema.Author
@@ -88,15 +88,17 @@ class Tensor(BioImageIOSchema):
 
 
 class Processing(BioImageIOSchema):
-    class Binarize(BioImageIOSchema):
-        # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing?
+    class Binarize(SharedProcessingSchema):
+        bioimageio_description = ""
         threshold = fields.Float(required=True)
 
-    class Clip(BioImageIOSchema):
+    class Clip(SharedProcessingSchema):
+        bioimageio_description = "Set tensor values below min to min and above max to max."
         min = fields.Float(required=True)
         max = fields.Float(required=True)
 
-    class ScaleLinear(BioImageIOSchema):
+    class ScaleLinear(SharedProcessingSchema):
+        bioimageio_description = "Fixed linear scaling."
         axes = fields.Axes(required=True, valid_axes="czyx")
         gain = fields.Array(fields.Float(), missing=fields.Float(missing=1.0))  # todo: check if gain match input axes
         offset = fields.Array(
@@ -131,10 +133,11 @@ class Processing(BioImageIOSchema):
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
-    class Sigmoid(BioImageIOSchema):
-        pass
+    class Sigmoid(SharedProcessingSchema):
+        bioimageio_description = ""
 
-    class ZeroMeanUnitVariance(BioImageIOSchema):
+    class ZeroMeanUnitVariance(SharedProcessingSchema):
+        bioimageio_description = "Subtract mean and divide by variance."
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(required=True, valid_axes="czyx")
         mean = fields.Array(fields.Float())  # todo: check if means match input axes (for mode 'fixed')
@@ -164,7 +167,8 @@ class Preprocessing(Processing):
     )
     kwargs = fields.Kwargs()
 
-    class ScaleRange(Schema):
+    class ScaleRange(SharedProcessingSchema):
+        bioimageio_description = "Scale with percentiles"
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(required=True, valid_axes="czyx")
         min_percentile = fields.Float(
@@ -194,11 +198,21 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor = fields.String(required=False, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(
+            required=False,
+            validate=field_validators.Predicate("isidentifier"),
+            bioimageio_description="tensor name to compute the percentiles from. Default: The tensor itself. "
+            "If mode==per_dataset this needs to be the name of an input tensor.",
+        )
 
-    class ScaleMeanVariance(BioImageIOSchema):
+    class ScaleMeanVariance(SharedProcessingSchema):
+        bioimageio_description = "scale the tensor s.t. its mean and variance match a reference tensor"
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(
+            required=True,
+            validate=field_validators.Predicate("isidentifier"),
+            bioimageio_description="name of tensor to match",
+        )
 
 
 class InputTensor(Tensor):
