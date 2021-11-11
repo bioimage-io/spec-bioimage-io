@@ -196,7 +196,7 @@ class Preprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(SharedProcessingSchema):
-        bioimageio_description = "Scale with percentiles"
+        bioimageio_description = "Scale with percentiles."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(
             required=True,
@@ -240,17 +240,17 @@ class Postprocessing(Processing):
         reference_tensor = fields.String(
             required=False,
             validate=field_validators.Predicate("isidentifier"),
-            bioimageio_description="tensor name to compute the percentiles from. Default: The tensor itself. "
+            bioimageio_description="Tensor name to compute the percentiles from. Default: The tensor itself. "
             "If mode==per_dataset this needs to be the name of an input tensor.",
         )
 
     class ScaleMeanVariance(SharedProcessingSchema):
-        bioimageio_description = "scale the tensor s.t. its mean and variance match a reference tensor"
+        bioimageio_description = "Scale the tensor s.t. its mean and variance match a reference tensor."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         reference_tensor = fields.String(
             required=True,
             validate=field_validators.Predicate("isidentifier"),
-            bioimageio_description="name of tensor to match",
+            bioimageio_description="Name of tensor to match.",
         )
 
 
