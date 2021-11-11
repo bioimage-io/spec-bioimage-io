@@ -81,6 +81,8 @@ jobs:
         pip install .
     - name: Generate Docs
       run: python scripts/generate_docs.py
+    - name: Generate Pre-/Postprocessing Docs
+      run: python scripts/generate_processing_docs.py
     - name: Generate JSON Schema
       run: python scripts/generate_json_specs.py
     - name: Check weights format overview
