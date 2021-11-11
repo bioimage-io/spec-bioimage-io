@@ -381,7 +381,7 @@ class ProcMode(String):
         **kwargs,
     ) -> None:
         assert all(vm in self.all_modes for vm in valid_modes), valid_modes
-
+        self.valid_modes = valid_modes  # used in doc generation script 'generate_processing_docs.py'
         if validate is None:
             validate = []
 

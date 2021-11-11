@@ -17,7 +17,7 @@ from marshmallow import (
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, SharedProcessingSchema
 from . import raw_nodes
 
 Author = rdf.schema.Author
@@ -88,19 +88,32 @@ class Tensor(BioImageIOSchema):
 
 
 class Processing(BioImageIOSchema):
-    class Binarize(BioImageIOSchema):
-        # todo: inherit from a "TransformSchema" that allows generation of docs for pre and postprocessing?
-        threshold = fields.Float(required=True)
+    class Binarize(SharedProcessingSchema):
+        bioimageio_description = (
+            "Binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below "
+            "the threshold to zero."
+        )
+        threshold = fields.Float(required=True, bioimageio_description="The fixed threshold")
 
-    class Clip(BioImageIOSchema):
-        min = fields.Float(required=True)
-        max = fields.Float(required=True)
+    class Clip(SharedProcessingSchema):
+        bioimageio_description = "Set tensor values below min to min and above max to max."
+        min = fields.Float(required=True, bioimageio_description="minimum value for clipping")
+        max = fields.Float(required=True, bioimageio_description="maximum value for clipping")
 
-    class ScaleLinear(BioImageIOSchema):
-        axes = fields.Axes(required=True, valid_axes="czyx")
-        gain = fields.Array(fields.Float(), missing=fields.Float(missing=1.0))  # todo: check if gain match input axes
+    class ScaleLinear(SharedProcessingSchema):
+        bioimageio_description = "Fixed linear scaling."
+        axes = fields.Axes(
+            required=True,
+            valid_axes="czyx",
+            bioimageio_description="The subset of axes to scale jointly. "
+            "For example xy to scale the two image axes for 2d data jointly. "
+            "The batch axis (b) is not valid here.",
+        )
+        gain = fields.Array(
+            fields.Float(), missing=fields.Float(missing=1.0), bioimageio_description="multiplicative factor"
+        )  # todo: check if gain match input axes
         offset = fields.Array(
-            fields.Float(), missing=fields.Float(missing=0.0)
+            fields.Float(), missing=fields.Float(missing=0.0), bioimageio_description="additive term"
         )  # todo: check if offset match input axes
 
         @validates_schema
@@ -131,21 +144,39 @@ class Processing(BioImageIOSchema):
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
-    class Sigmoid(BioImageIOSchema):
-        pass
+    class Sigmoid(SharedProcessingSchema):
+        bioimageio_description = ""
 
-    class ZeroMeanUnitVariance(BioImageIOSchema):
+    class ZeroMeanUnitVariance(SharedProcessingSchema):
+        bioimageio_description = "Subtract mean and divide by variance."
         mode = fields.ProcMode(required=True)
-        axes = fields.Axes(required=True, valid_axes="czyx")
-        mean = fields.Array(fields.Float())  # todo: check if means match input axes (for mode 'fixed')
-        std = fields.Array(fields.Float())
-        eps = fields.Float(missing=1e-6)
+        axes = fields.Axes(
+            required=True,
+            valid_axes="czyx",
+            bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
+            "axes for 2d data jointly. The batch axis (b) is not valid here.",
+        )
+        mean = fields.Array(
+            fields.Float(),
+            bioimageio_description="The mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the "
+            "case of a 3 channel image where the channels are not normalized jointly.",
+        )  # todo: check if means match input axes (for mode 'fixed')
+        std = fields.Array(
+            fields.Float(),
+            bioimageio_description="The standard deviation values to use for `mode == fixed`. Analogous to mean.",
+        )
+        eps = fields.Float(
+            missing=1e-6,
+            bioimageio_description="epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`. "
+            "Default value: 10^-6.",
+        )
 
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
             if data["mode"] == "fixed" and ("mean" not in data or "std" not in data):
                 raise ValidationError(
-                    "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional `kwargs`: `mean` and `std`."
+                    "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional "
+                    "`kwargs`: `mean` and `std`."
                 )
             elif data["mode"] != "fixed" and ("mean" in data or "std" in data):
                 raise ValidationError(
@@ -164,15 +195,33 @@ class Preprocessing(Processing):
     )
     kwargs = fields.Kwargs()
 
-    class ScaleRange(Schema):
+    class ScaleRange(SharedProcessingSchema):
+        bioimageio_description = "Scale with percentiles."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        axes = fields.Axes(required=True, valid_axes="czyx")
+        axes = fields.Axes(
+            required=True,
+            valid_axes="czyx",
+            bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
+            "axes for 2d data jointly. The batch axis (b) is not valid here.",
+        )
         min_percentile = fields.Float(
-            default=0, validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=False)
+            default=0,
+            validate=field_validators.Range(0, 100, min_inclusive=True, max_inclusive=False),
+            bioimageio_description="The lower percentile used for normalization, in range 0 to 100. Default value: 0.",
         )
         max_percentile = fields.Float(
-            default=100, validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True)
-        )  # as a precaution 'max_percentile' needs to be greater than 1
+            default=100,
+            validate=field_validators.Range(1, 100, min_inclusive=False, max_inclusive=True),
+            bioimageio_description="The upper percentile used for normalization, in range 1 to 100. Has to be bigger "
+            "than min_percentile. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly "
+            "accepting percentiles specified in the range 0.0 to 1.0.",
+        )
+        eps = fields.Float(
+            missing=1e-6,
+            bioimageio_description="Epsilon for numeric stability: "
+            "`out = (tensor - v_lower) / (v_upper - v_lower + eps)`; "
+            "with `v_lower,v_upper` values at the respective percentiles. Default value: 10^-6.",
+        )
 
         @validates_schema
         def min_smaller_max(self, data, **kwargs):
@@ -194,11 +243,21 @@ class Postprocessing(Processing):
     kwargs = fields.Kwargs()
 
     class ScaleRange(Preprocessing.ScaleRange):
-        reference_tensor = fields.String(required=False, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(
+            required=False,
+            validate=field_validators.Predicate("isidentifier"),
+            bioimageio_description="Tensor name to compute the percentiles from. Default: The tensor itself. "
+            "If mode==per_dataset this needs to be the name of an input tensor.",
+        )
 
-    class ScaleMeanVariance(BioImageIOSchema):
+    class ScaleMeanVariance(SharedProcessingSchema):
+        bioimageio_description = "Scale the tensor s.t. its mean and variance match a reference tensor."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
-        reference_tensor = fields.String(required=True, validate=field_validators.Predicate("isidentifier"))
+        reference_tensor = fields.String(
+            required=True,
+            validate=field_validators.Predicate("isidentifier"),
+            bioimageio_description="Name of tensor to match.",
+        )
 
 
 class InputTensor(Tensor):

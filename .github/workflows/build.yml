@@ -69,7 +69,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.7
@@ -81,12 +80,20 @@ jobs:
         pip install .
     - name: Generate Docs
       run: python scripts/generate_docs.py
+    - name: Generate Pre-/Postprocessing Docs
+      run: python scripts/generate_processing_docs.py
     - name: Generate JSON Schema
       run: python scripts/generate_json_specs.py
     - name: Check weights format overview
       run: python scripts/generate_weights_formats_overview.py generate
-    - name: Deploy Docs and Schema 🚀
+    - name: Get branch name to deploy to
+      id: get_branch
+      shell: bash
+      run: |
+        if [[ -n '${{ github.event.pull_request.head.ref }}' ]]; then branch=gh-pages-${{ github.event.pull_request.head.ref }}; else branch=gh-pages; fi
+        echo "::set-output name=branch::$branch"
+    - name: Deploy to ${{ steps.get_branch.outputs.branch }} 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
-        branch: gh-pages
+        branch: ${{ steps.get_branch.outputs.branch }}
         folder: dist

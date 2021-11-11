@@ -9,7 +9,7 @@ from . import raw_nodes
 
 class SharedBioImageIOSchema(Schema):
     raw_nodes: ClassVar[ModuleType] = raw_nodes  # to be overwritten in subclass by version specific raw_nodes module
-    bioimageio_description: str = ""
+    bioimageio_description: ClassVar[str] = ""
 
     @post_load
     def make_object(self, data, **kwargs):
@@ -30,6 +30,15 @@ class SharedBioImageIOSchema(Schema):
         except TypeError as e:
             e.args += (f"when initializing {this_type} from {self}",)
             raise e
+
+
+class SharedProcessingSchema(Schema):
+    """Used to generate Pre- and Postprocessing documentation.
+
+    Define Pre-/Postprocessing schemas in the Preprocessing/Postprocessing schema that inherite from this class
+    and they will be rendered in the documentation."""
+
+    bioimageio_description: ClassVar[str]
 
 
 class Dependencies(SharedBioImageIOSchema):
