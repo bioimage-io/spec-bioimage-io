@@ -142,7 +142,7 @@ or if the field `test_inputs` does not contain a list, it would print:
 ## Changelog
  * **0.3.4**:
    - Other changes
-      - Add parameter `eps` to `scale_range` postprocessing.
+      - Add optional parameter `eps` to `scale_range` postprocessing.
  * **0.3.3**:
     - Breaking changes that are fully auto-convertible
       - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
