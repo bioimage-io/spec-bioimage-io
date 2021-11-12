@@ -22,9 +22,9 @@ The supported operations that are valid in preprocessing. IMPORTANT: these opera
     - `[eps]` Epsilon for numeric stability: `out = (tensor - v_lower) / (v_upper - v_lower + eps)`; with `v_lower,v_upper` values at the respective percentiles. Default value: 10^-6.
     - `[max_percentile]` The upper percentile used for normalization, in range 1 to 100. Has to be bigger than min_percentile. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0.
     - `[min_percentile]` The lower percentile used for normalization, in range 0 to 100. Default value: 0.
-  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L164-L219
+  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L164-L220
 - `Sigmoid` 
-  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L220-L225
+  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L221-L226
 - `ZeroMeanUnitVariance` Subtract mean and divide by variance.
   - key word arguments:
     - `axes` The subset of axes to normalize jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here.
@@ -32,4 +32,4 @@ The supported operations that are valid in preprocessing. IMPORTANT: these opera
     - `[eps]` epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`. Default value: 10^-6.
     - `[mean]` The mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image where the channels are not normalized jointly.
     - `[std]` The standard deviation values to use for `mode == fixed`. Analogous to mean.
-  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L226-L263
+  - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L227-L264
