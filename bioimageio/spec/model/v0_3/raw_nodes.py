@@ -126,7 +126,7 @@ class TensorflowJsWeightsEntry(_WeightsEntryBase):
 class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Tensorflow Saved Model"
     tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
-    # tag: Optional[str]  # todo: check schema. only valid for tensorflow_saved_model_bundle format
+    # tag: Union[_Missing, str] = missing  # todo: do we need the tag??
 
 
 WeightsEntry = Union[
