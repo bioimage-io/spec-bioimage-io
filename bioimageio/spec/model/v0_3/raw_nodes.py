@@ -22,7 +22,9 @@ try:
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
-FormatVersion = Literal["0.3.0", "0.3.1", "0.3.2", "0.3.3"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal[
+    "0.3.0", "0.3.1", "0.3.2", "0.3.3", "0.3.4"
+]  # newest format needs to be last (used in __init__.py)
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PostprocessingName = Literal[
