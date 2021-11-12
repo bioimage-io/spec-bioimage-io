@@ -58,7 +58,7 @@ class PostprocessingDocNode(ProcessingDocNode):
 
 
 def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDocNode]]:
-    """retrieve docs for pre- and postprocessing from schema defintions
+    """retrieve docs for pre- and postprocessing from schema definitions
 
     using that pre- and postprocessings are defined as member classes that inherit from SharedProcessingSchema
     """
