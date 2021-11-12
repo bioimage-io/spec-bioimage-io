@@ -19,7 +19,7 @@ def get_ref_impl(name: str) -> str:
     # returns link to reference implementation
     start = None
     nr = 1
-    for nr, line in enumerate(REFERENCE_IMPLEMENTATIONS.split("\n"), 1):
+    for nr, line in enumerate(REFERENCE_IMPLEMENTATIONS.split("\n")):
         if start is None:
             if line.startswith(f"class {name}("):  # start of ref implementation
                 start = nr
