@@ -78,19 +78,19 @@ class Tensor(BioImageIOSchema):
 
 
 class Processing(BioImageIOSchema):
-    class Binarize(SharedProcessingSchema):
+    class binarize(SharedProcessingSchema):
         bioimageio_description = (
             "Binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below "
             "the threshold to zero."
         )
         threshold = fields.Float(required=True, bioimageio_description="The fixed threshold")
 
-    class Clip(SharedProcessingSchema):
+    class clip(SharedProcessingSchema):
         bioimageio_description = "Set tensor values below min to min and above max to max."
         min = fields.Float(required=True, bioimageio_description="minimum value for clipping")
         max = fields.Float(required=True, bioimageio_description="maximum value for clipping")
 
-    class ScaleLinear(SharedProcessingSchema):
+    class scale_linear(SharedProcessingSchema):
         bioimageio_description = "Fixed linear scaling."
         axes = fields.Axes(
             required=True,
@@ -121,7 +121,7 @@ class Processing(BioImageIOSchema):
 
     @validates_schema
     def kwargs_match_selected_preprocessing_name(self, data, **kwargs):
-        schema_name = "".join(word.title() for word in data["name"].split("_"))
+        schema_name = data["name"]
 
         try:
             schema_class = getattr(self, schema_name)
@@ -134,10 +134,10 @@ class Processing(BioImageIOSchema):
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
-    class Sigmoid(SharedProcessingSchema):
+    class sigmoid(SharedProcessingSchema):
         bioimageio_description = ""
 
-    class ZeroMeanUnitVariance(SharedProcessingSchema):
+    class zero_mean_unit_variance(SharedProcessingSchema):
         bioimageio_description = "Subtract mean and divide by variance."
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(
@@ -186,7 +186,7 @@ class Preprocessing(Processing):
         f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
     )
 
-    class ScaleRange(SharedProcessingSchema):
+    class scale_range(SharedProcessingSchema):
         bioimageio_description = "Scale with percentiles."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(
@@ -234,7 +234,7 @@ class Postprocessing(Processing):
         f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
     )
 
-    class ScaleRange(Preprocessing.ScaleRange):
+    class scale_range(Preprocessing.scale_range):
         reference_tensor = fields.String(
             required=False,
             validate=field_validators.Predicate("isidentifier"),
@@ -242,7 +242,7 @@ class Postprocessing(Processing):
             "If mode==per_dataset this needs to be the name of an input tensor.",
         )
 
-    class ScaleMeanVariance(SharedProcessingSchema):
+    class scale_mean_variance(SharedProcessingSchema):
         bioimageio_description = "Scale the tensor s.t. its mean and variance match a reference tensor."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         reference_tensor = fields.String(
