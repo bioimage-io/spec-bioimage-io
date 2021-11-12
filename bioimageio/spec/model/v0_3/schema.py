@@ -1,18 +1,8 @@
-import collections
 import typing
 import warnings
 from copy import deepcopy
 
-from marshmallow import (
-    RAISE,
-    Schema,
-    ValidationError,
-    missing as missing_,
-    post_load,
-    pre_dump,
-    pre_load,
-    validates_schema,
-)
+from marshmallow import RAISE, ValidationError, missing as missing_, post_load, pre_dump, pre_load, validates_schema
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
@@ -188,12 +178,13 @@ class Preprocessing(Processing):
     name = fields.String(
         required=True,
         validate=field_validators.OneOf(get_args(raw_nodes.PreprocessingName)),
-        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))} "
-        f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
-        f"blob/master/supported_formats_and_operations.md#preprocessing) "
-        f"for information on which transformations are supported by specific consumer software).",
+        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))}.",
     )
-    kwargs = fields.Kwargs()
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [preprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
 
     class ScaleRange(SharedProcessingSchema):
         bioimageio_description = "Scale with percentiles."
@@ -235,12 +226,13 @@ class Postprocessing(Processing):
     name = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.PostprocessingName)),
         required=True,
-        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))} "
-        f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
-        f"blob/master/supported_formats_and_operations.md#postprocessing) "
-        f"for information on which transformations are supported by specific consumer software).",
+        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))}.",
     )
-    kwargs = fields.Kwargs()
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [postprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
 
     class ScaleRange(Preprocessing.ScaleRange):
         reference_tensor = fields.String(
@@ -549,9 +541,8 @@ is in an unsupported format version. The current format version described here i
     run_mode = fields.Nested(
         RunMode,
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
-        "listed in [supported_formats_and_operations.md#Run Modes]"
-        "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
+        "data augmentation that currently cannot be expressed in the specification. "
+        "No standard run modes are defined yet.",
     )
 
     sha256 = fields.String(
