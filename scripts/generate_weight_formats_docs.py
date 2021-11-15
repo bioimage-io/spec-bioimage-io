@@ -26,7 +26,7 @@ class WeightsFormatDocNode:
 
 
 def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
-    """retrieve documentation of weights formats from their definitions schema"""
+    """retrieve documentation of weight formats from their definitions schema"""
 
     def get_kwargs_doc(we: Type[WeightsEntryBase], exclude: Sequence[str] = tuple()) -> List[Kwarg]:
         return sorted(
@@ -86,14 +86,14 @@ def export_markdown_docs(folder: Path, spec) -> None:
     common_kwargs, doc = get_doc(spec.schema)
     md = (
         (
-            f"# Weights formats in model spec {format_version_wo_patch}\n"
+            f"# Weight formats in model spec {format_version_wo_patch}\n"
             "## Common \[optional\] key word arguments for all weight formats\n\n"
         )
         + get_md_kwargs(common_kwargs)
         + ("\n## Weight formats and their additional \[optional\] key word arguments\n")
     )
     md += md_from_doc(doc)
-    path = folder / f"weights_formats_spec_{format_version_file_name}.md"
+    path = folder / f"weight_formats_spec_{format_version_file_name}.md"
     path.write_text(md, encoding="utf-8")
 
 
