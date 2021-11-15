@@ -338,7 +338,6 @@ with open(filename, "rb") as f:
 
 
 class WeightsEntryBase(BioImageIOSchema):
-    weights_format: fields.String
     authors = fields.List(
         fields.Nested(Author),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "

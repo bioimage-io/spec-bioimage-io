@@ -1,11 +1,9 @@
 import dataclasses
-import inspect
 from pathlib import Path
-from typing import List, Tuple, Type
+from typing import List, Sequence, Tuple, Type
 
 import bioimageio.spec.model
-from bioimageio.spec.model.v0_3.schema import WeightsEntry
-from bioimageio.spec.shared.fields import DocumentedField
+from bioimageio.spec.model.v0_3.schema import WeightsEntryBase
 
 try:
     from typing import get_args
@@ -27,41 +25,52 @@ class WeightsFormatDocNode:
     kwargs: List[Kwarg]
 
 
-def get_doc(schema) -> List[WeightsFormatDocNode]:
+def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
     """retrieve documentation of weights formats from their definitions schema"""
 
-    def get_kwargs_doc(we: Type[WeightsEntry]) -> List[Kwarg]:
+    def get_kwargs_doc(we: Type[WeightsEntryBase], exclude: Sequence[str] = tuple()) -> List[Kwarg]:
         return sorted(
             [
                 Kwarg(name=name, optional=not f.required or bool(f.missing), description=f.bioimageio_description)
                 for name, f in we().fields.items()
-                if name != "weights_format"
+                if name != "weights_format" and name not in exclude
             ],
             key=lambda kw: (kw.optional, kw.name),
         )
 
+    common_kwargs = get_kwargs_doc(WeightsEntryBase)
+
     def get_wf_name_from_wf_schema(wfs):
         return wfs().fields["weights_format"].validate.comparable
 
-    return [
-        WeightsFormatDocNode(
-            name=get_wf_name_from_wf_schema(wfs),
-            description=wfs.bioimageio_description,
-            kwargs=get_kwargs_doc(wfs),
-        )
-        for wfs in get_args(schema.WeightsEntry)  # schema.WeightsEntry is a typing.Union of weights format schemas
-    ]
+    return (
+        common_kwargs,
+        [
+            WeightsFormatDocNode(
+                name=get_wf_name_from_wf_schema(wfs),
+                description=wfs.bioimageio_description,
+                kwargs=get_kwargs_doc(wfs, exclude=[kw.name for kw in common_kwargs]),
+            )
+            for wfs in get_args(schema.WeightsEntry)  # schema.WeightsEntry is a typing.Union of weights format schemas
+        ],
+    )
 
 
-def markdown_from_doc(doc_nodes: List[WeightsFormatDocNode], title: str, description: str):
-    md = f"# {title}\n{description}\n"
+def get_md_kwargs(kwargs: Sequence[Kwarg], indent: int = 0):
+    md = ""
+    for kwarg in kwargs:
+        md += f"{' ' * indent}- `{'[' if kwarg.optional else ''}{kwarg.name}{']' if kwarg.optional else ''}` {kwarg.description}\n"
 
+    return md
+
+
+def md_from_doc(doc_nodes: List[WeightsFormatDocNode]):
+    md = ""
     for doc in doc_nodes:
         md += f"- `{doc.name}` {doc.description}\n"
         if doc.kwargs:
             md += f"  - key word arguments:\n"
-            for kwarg in doc.kwargs:
-                md += f"    - `{'[' if kwarg.optional else ''}{kwarg.name}{']' if kwarg.optional else ''}` {kwarg.description}\n"
+            md += get_md_kwargs(doc.kwargs, indent=4)
 
     return md
 
@@ -74,9 +83,16 @@ def export_markdown_docs(folder: Path, spec) -> None:
     else:
         format_version_file_name = format_version_wo_patch.replace(".", "_")
 
-    doc = get_doc(spec.schema)
-    assert isinstance(doc, list)
-    md = markdown_from_doc(doc, title=f"Weights formats in model spec {format_version_wo_patch}", description="")
+    common_kwargs, doc = get_doc(spec.schema)
+    md = (
+        (
+            f"# Weights formats in model spec {format_version_wo_patch}\n"
+            "## Common \[optional\] key word arguments for all weight formats\n\n"
+        )
+        + get_md_kwargs(common_kwargs)
+        + ("\n## Weight formats and their additional \[optional\] key word arguments\n")
+    )
+    md += md_from_doc(doc)
     path = folder / f"weights_formats_spec_{format_version_file_name}.md"
     path.write_text(md, encoding="utf-8")
 
