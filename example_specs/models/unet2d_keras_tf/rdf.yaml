@@ -1,0 +1,109 @@
+format_version: 0.3.2
+type: model
+name: Pancreatic Cell Segmentation - U-Net
+description: DeepImageJ compatible U-Net trained to segment phase contrast microscopy images of pancreatic stem cells on a 2D polystyrene substrate.
+timestamp: 2021-02-17T10:13:32.618903
+cite:
+  - text: Gómez-de-Mariscal E. et al., biorXiv 2019
+    doi: https://doi.org/10.1101/799270
+  - text: Ulman V. et al., Nature Methods 2017
+    doi: https://doi.org/10.1038/nmeth.4473
+  - text: Ronneberger O. et al., MICCAI 2015
+    doi: https://doi.org/10.1007/978-3-319-24574-4_28
+authors:
+  - name: Ignacio Arganda-Carreras
+    affiliation: Ikerbasque - EHU/UPV
+  - name: DeepImageJ
+    affiliation: EPFL, UC3M
+documentation: ./README.md
+git_repo: https://github.com/deepimagej/models/u-net_pancreatic_segmentation/
+covers: [./exampleImage.png, ./resultImage.png]
+tags:
+  - deepimagej
+  - pancreatic-stem-cells
+  - segmentation
+  - phase-contrast
+  - unet
+  - neubias
+  - cell-tracking-challenge
+license: BSD-2-Clause
+language: java
+framework: tensorflow
+test_inputs:
+  - ./exampleImage.npy
+test_outputs:
+  - ./resultImage.npy
+sample_inputs:
+  - ./exampleImage.tif
+sample_outputs:
+  - ./resultImage.tif
+attachments:
+    files: ["./preprocessing.txt", "./postprocessing.txt", "./exampleImage.tif", "./resultImage.tif"]
+weights:
+  tensorflow_saved_model_bundle:
+    source: ./tensorflow_saved_model_bundle.zip
+    sha256: f9179c3bca8e5077fbe8c3db42c954708a189f572f6712a6a69bb184d23eea21
+    tensorflow_version: 1.15
+  keras_hdf5:
+    source: ./unet_pancreatic_cell_segmentation.h5
+    sha256: b01176c48b53a42c28b83421979ced49eb5cdeecdaaf9b6ea6417a27f6100d81
+    tensorflow_version: 1.15
+inputs:
+  - name: input
+    axes: byxc
+    data_type: float32
+    data_range: [-inf, inf]
+    shape:
+      min: [1, 8, 8, 1]
+      step: [0, 8, 8, 0]
+    preprocessing:
+      - name: scale_range
+        kwargs:
+          mode: per_sample
+          axes: xy
+          min_percentile: 0
+          max_percentile: 100
+
+outputs:
+  - name: output
+    axes: byxc
+    data_type: float32
+    data_range: [0, 1]
+    halo: [0, 47, 47, 0]
+    shape:
+      reference_input: input
+      scale: [1, 1, 1, 1]
+      offset: [0, 0, 0, 0]
+    postprocessing:
+      - name: binarize
+        kwargs:
+          threshold: 0.5
+config:
+# custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+  deepimagej:
+    pyramidal_model: false
+    allow_tiling: true
+    model_keys:
+      tensorflow_model_tag: tf.saved_model.tag_constants.SERVING
+      tensorflow_siganture_def: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    test_information:
+      inputs:
+        - name: exampleImage.tiff
+          size: 720 x 576 x 1 x 1
+          pixel_size:
+            x: 1,60E-04 cm
+            y: 60E-04 cm
+            z: 1.0 pixel
+      outputs:
+        - name: resultImage.tiff
+          type: image
+          size: 720 x 576 x 1 x 1
+      memory_peak: 328.1 Mb
+      runtime: 2.8 s
+    prediction:
+      preprocess:
+      -   spec: ij.IJ::runMacroFile
+          kwargs: preprocessing.txt
+      postprocess:
+      -   spec: ij.IJ::runMacroFile
+          kwargs: postprocessing.txt

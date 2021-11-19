@@ -1,0 +1,28 @@
+// ----------------------------------------------------------------------------------------------
+// This macro calculates a binary mask given a certain threshold.
+// Credits:
+// - DeepImageJ team:
+// - Reference: "DeepImageJ: A user-friendly plugin to run deep learning models in ImageJ,
+// 	E. Gomez-de-Mariscal, C. Garcia-Lopez-de-Haro, et al., bioRxiv 2019.
+// ----------------------------------------------------------------------------------------------
+
+
+getStatistics(_, _, min, max, _, _);
+// Threshold the output.
+optimalThreshold = 0.50;
+setThreshold(optimalThreshold, max);
+setOption("BlackBackground", true);
+run("Convert to Mask", "method=Default background=Dark black");
+
+
+/*Watershed*/
+run("Watershed");
+run("Fill Holes");
+run("Open");
+run("Analyze Particles...", "size=&minsize-Infinity show=[Count Masks] clear add");
+run("16-bit");
+run("glasbey on dark");
+run("Enhance Contrast", "saturated=0.35");
+
+selectWindow("Output probability");
+run("Fire");

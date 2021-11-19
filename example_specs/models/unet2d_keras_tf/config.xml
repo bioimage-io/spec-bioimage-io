@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><Model>
+    <ModelInformation>
+        <Name>Pancreatic Cell Segmentation (U-Net)</Name>
+        <Author>DeepImageJ, Ignacio Arganda-Carreras</Author>
+        <URL>https://github.com/deepimagej/models/u-net_pancreatic_stem_polystyrene/U_Net_PhC-C2DL-PSC_segmentation.ipynb</URL>
+        <Credit>Cell Tracking Challenge Data (PhC-C2DL-PSC)</Credit>
+        <Version>0.1</Version>
+        <Date>Jun 23, 2020</Date>
+        <Reference>Gómez-de-Mariscal E. et al., biorXiv 2019; Ulman V. et al., Nature Methods 2017; Ronneberger O. et al., MICCAI 2015</Reference>
+    </ModelInformation>
+    <ModelTest>
+        <InputSize>720x576</InputSize>
+        <OutputSize>720x576</OutputSize>
+        <MemoryPeak>172,9 Mb</MemoryPeak>
+        <Runtime>  2,8 s</Runtime>
+        <PixelSize>1,60E-04cmx1,60E-04cm</PixelSize>
+    </ModelTest>
+    <ModelCharacteristics>
+        <ModelTag>tf.saved_model.tag_constants.SERVING</ModelTag>
+        <SignatureDefinition>tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY</SignatureDefinition>
+        <InputTensorDimensions>,-1,-1,-1,1,</InputTensorDimensions>
+        <NumberOfInputs>1</NumberOfInputs>
+        <InputNames0>input</InputNames0>
+        <InputOrganization0>NHWC</InputOrganization0>
+        <NumberOfOutputs>1</NumberOfOutputs>
+        <OutputNames0>output</OutputNames0>
+        <OutputOrganization0>NHWC</OutputOrganization0>
+        <Channels>1</Channels>
+        <FixedPatch>false</FixedPatch>
+        <MinimumSize>8</MinimumSize>
+        <PatchSize>816</PatchSize>
+        <FixedPadding>true</FixedPadding>
+        <Padding>47</Padding>
+        <PreprocessingFile>preprocessing.txt</PreprocessingFile>
+        <PostprocessingFile>postprocessing.txt</PostprocessingFile>
+        <slices>1</slices>
+    </ModelCharacteristics>
+</Model>
