@@ -47,11 +47,6 @@ def unet2d_nuclei_broad_latest_path(unet2d_nuclei_broad_base_path):
 
 
 @pytest.fixture
-def FruNet_model_url():
-    return "https://raw.githubusercontent.com/deepimagej/models/master/fru-net_sev_segmentation/model.yaml"
-
-
-@pytest.fixture
 def unet2d_diff_output_shape():
     return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_diff_output_shape/rdf.yaml"
 
@@ -69,3 +64,8 @@ def unet2d_multi_tensor():
 @pytest.fixture
 def hpa_model():
     return pathlib.Path(__file__).parent / "../example_specs/models/hpa-densenet/rdf.yaml"
+
+
+@pytest.fixture
+def unet2d_keras_tf():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_keras_tf/rdf.yaml"
