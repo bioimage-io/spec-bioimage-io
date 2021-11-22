@@ -37,7 +37,12 @@ setup(
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
     extras_require={"test": ["pytest", "tox", "torch", "numpy", "mypy", "ruamel.yaml"], "dev": ["pre-commit"]},
-    scripts=["scripts/generate_docs.py"],
+    scripts=[
+        "scripts/generate_json_specs.py",
+        "scripts/generate_processing_docs.py",
+        "scripts/generate_rdf_docs.py",
+        "scripts/generate_weight_formats_docs.py",
+    ],
     include_package_data=True,
     project_urls={  # Optional
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",

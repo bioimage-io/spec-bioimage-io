@@ -79,13 +79,15 @@ jobs:
       run: |
         pip install .
     - name: Generate Docs
-      run: python scripts/generate_docs.py
-    - name: Generate Pre-/Postprocessing Docs
+      run: python scripts/generate_rdf_docs.py
+    - name: Generate pre-/postprocessing docs
       run: python scripts/generate_processing_docs.py
+    - name: Generate weight formats docs
+      run: python scripts/generate_weight_formats_docs.py
     - name: Generate JSON Schema
       run: python scripts/generate_json_specs.py
-    - name: Check weights format overview
-      run: python scripts/generate_weights_formats_overview.py generate
+    - name: Generate weight formats overview
+      run: python scripts/generate_weight_formats_overview.py generate
     - name: Get branch name to deploy to
       id: get_branch
       shell: bash

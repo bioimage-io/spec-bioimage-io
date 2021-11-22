@@ -19,7 +19,7 @@ def get_ref_impl(name: str) -> str:
     # returns link to reference implementation
     start = None
     nr = 1
-    for nr, line in enumerate(REFERENCE_IMPLEMENTATIONS.split("\n"), 1):
+    for nr, line in enumerate(REFERENCE_IMPLEMENTATIONS.split("\n")):
         if start is None:
             if line.startswith(f"class {name}("):  # start of ref implementation
                 start = nr
@@ -58,33 +58,15 @@ class PostprocessingDocNode(ProcessingDocNode):
 
 
 def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDocNode]]:
-    """retrieve docs for pre- and postprocessing from schema defintions
+    """retrieve docs for pre- and postprocessing from schema definitions
 
     using that pre- and postprocessings are defined as member classes that inherit from SharedProcessingSchema
     """
 
-    def get_field_descr(f) -> str:
-        assert isinstance(f, DocumentedField), "was a 'regular' marshmallow field in use?"
-        if f.bioimageio_description:
-            return f.bioimageio_description
-        elif isinstance(f, bioimageio.spec.shared.fields.ProcMode):
-            expl = {
-                "fixed": "fixed values for mean and variance",
-                "per_sample": "mean and variance are computed for each sample individually",
-                "per_dataset": "mean and variance are computed for the entire dataset",
-            }
-
-            def add_expl(mode: str) -> str:
-                return f"{mode} ({expl[mode]})"
-
-            return f"One of {', '.join(map(add_expl, f.valid_modes[:-1]))}{' and ' if len(f.valid_modes) > 1 else ''}{add_expl(f.valid_modes[-1])}."
-        else:
-            return ""
-
     def get_kwargs_doc(Sch: Type[SharedProcessingSchema]) -> List[Kwarg]:
         return sorted(
             [
-                Kwarg(name=name, optional=not f.required or bool(f.missing), description=get_field_descr(f))
+                Kwarg(name=name, optional=not f.required or bool(f.missing), description=f.bioimageio_description)
                 for name, f in Sch().fields.items()
             ],
             key=lambda kw: (kw.optional, kw.name),

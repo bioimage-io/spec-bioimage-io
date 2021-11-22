@@ -10,9 +10,25 @@ repos:
         args: [--install-types, --non-interactive]
   - repo: local
     hooks:
-    - id: generate docs
-      name: generate docs
-      entry: python scripts/generate_docs.py
+    - id: generate rdf docs
+      name: generate rdf docs
+      entry: python scripts/generate_rdf_docs.py
+      language: system
+      always_run: true
+      pass_filenames: false
+  - repo: local
+    hooks:
+    - id: generate processing docs
+      name: generate processing docs
+      entry: python scripts/generate_processing_docs.py
+      language: system
+      always_run: true
+      pass_filenames: false
+  - repo: local
+    hooks:
+    - id: generate weight formats docs
+      name: generate weight formats docs
+      entry: python scripts/generate_weight_formats_docs.py
       language: system
       always_run: true
       pass_filenames: false
@@ -34,9 +50,9 @@ repos:
       pass_filenames: false
   - repo: local
     hooks:
-    - id: generate_weights_formats_overview
-      name: generate_weights_formats_overview
-      entry: python scripts/generate_weights_formats_overview.py generate
+    - id: generate weight formats overview
+      name: generate weight formats overview
+      entry: python scripts/generate_weight_formats_overview.py generate
       language: system
       always_run: true
       pass_filenames: false

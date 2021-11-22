@@ -1,18 +1,8 @@
-import collections
 import typing
 import warnings
 from copy import deepcopy
 
-from marshmallow import (
-    RAISE,
-    Schema,
-    ValidationError,
-    missing as missing_,
-    post_load,
-    pre_dump,
-    pre_load,
-    validates_schema,
-)
+from marshmallow import RAISE, ValidationError, missing as missing_, post_load, pre_dump, pre_load, validates_schema
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
@@ -88,19 +78,19 @@ class Tensor(BioImageIOSchema):
 
 
 class Processing(BioImageIOSchema):
-    class Binarize(SharedProcessingSchema):
+    class binarize(SharedProcessingSchema):
         bioimageio_description = (
             "Binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below "
             "the threshold to zero."
         )
         threshold = fields.Float(required=True, bioimageio_description="The fixed threshold")
 
-    class Clip(SharedProcessingSchema):
+    class clip(SharedProcessingSchema):
         bioimageio_description = "Set tensor values below min to min and above max to max."
         min = fields.Float(required=True, bioimageio_description="minimum value for clipping")
         max = fields.Float(required=True, bioimageio_description="maximum value for clipping")
 
-    class ScaleLinear(SharedProcessingSchema):
+    class scale_linear(SharedProcessingSchema):
         bioimageio_description = "Fixed linear scaling."
         axes = fields.Axes(
             required=True,
@@ -131,7 +121,7 @@ class Processing(BioImageIOSchema):
 
     @validates_schema
     def kwargs_match_selected_preprocessing_name(self, data, **kwargs):
-        schema_name = "".join(word.title() for word in data["name"].split("_"))
+        schema_name = data["name"]
 
         try:
             schema_class = getattr(self, schema_name)
@@ -144,10 +134,10 @@ class Processing(BioImageIOSchema):
         if kwargs_validation_errors:
             raise ValidationError(f"Invalid `kwargs` for '{data['name']}': {kwargs_validation_errors}")
 
-    class Sigmoid(SharedProcessingSchema):
+    class sigmoid(SharedProcessingSchema):
         bioimageio_description = ""
 
-    class ZeroMeanUnitVariance(SharedProcessingSchema):
+    class zero_mean_unit_variance(SharedProcessingSchema):
         bioimageio_description = "Subtract mean and divide by variance."
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(
@@ -188,14 +178,15 @@ class Preprocessing(Processing):
     name = fields.String(
         required=True,
         validate=field_validators.OneOf(get_args(raw_nodes.PreprocessingName)),
-        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))} "
-        f"(see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/"
-        f"blob/master/supported_formats_and_operations.md#preprocessing) "
-        f"for information on which transformations are supported by specific consumer software).",
+        bioimageio_description=f"Name of preprocessing. One of: {', '.join(get_args(raw_nodes.PreprocessingName))}.",
     )
-    kwargs = fields.Kwargs()
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [preprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
 
-    class ScaleRange(SharedProcessingSchema):
+    class scale_range(SharedProcessingSchema):
         bioimageio_description = "Scale with percentiles."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(
@@ -235,14 +226,15 @@ class Postprocessing(Processing):
     name = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.PostprocessingName)),
         required=True,
-        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))} "
-        f"(see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/"
-        f"blob/master/supported_formats_and_operations.md#postprocessing) "
-        f"for information on which transformations are supported by specific consumer software).",
+        bioimageio_description=f"Name of postprocessing. One of: {', '.join(get_args(raw_nodes.PostprocessingName))}.",
     )
-    kwargs = fields.Kwargs()
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [postprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
 
-    class ScaleRange(Preprocessing.ScaleRange):
+    class scale_range(Preprocessing.scale_range):
         reference_tensor = fields.String(
             required=False,
             validate=field_validators.Predicate("isidentifier"),
@@ -250,7 +242,7 @@ class Postprocessing(Processing):
             "If mode==per_dataset this needs to be the name of an input tensor.",
         )
 
-    class ScaleMeanVariance(SharedProcessingSchema):
+    class scale_mean_variance(SharedProcessingSchema):
         bioimageio_description = "Scale the tensor s.t. its mean and variance match a reference tensor."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         reference_tensor = fields.String(
@@ -346,7 +338,6 @@ with open(filename, "rb") as f:
 
 
 class WeightsEntryBase(BioImageIOSchema):
-    weights_format: fields.String
     authors = fields.List(
         fields.Nested(Author),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
@@ -549,9 +540,8 @@ is in an unsupported format version. The current format version described here i
     run_mode = fields.Nested(
         RunMode,
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
-        "listed in [supported_formats_and_operations.md#Run Modes]"
-        "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
+        "data augmentation that currently cannot be expressed in the specification. "
+        "No standard run modes are defined yet.",
     )
 
     sha256 = fields.String(

@@ -367,6 +367,11 @@ class RelativeLocalPath(Path):
 
 class ProcMode(String):
     all_modes = ("fixed", "per_dataset", "per_sample")
+    explanations = {
+        "fixed": "fixed values for mean and variance",
+        "per_dataset": "mean and variance are computed for the entire dataset",
+        "per_sample": "mean and variance are computed for each sample individually",
+    }
 
     def __init__(
         self,
@@ -377,7 +382,8 @@ class ProcMode(String):
             ]
         ] = None,
         valid_modes: typing.Sequence[str] = all_modes,
-        required=True,
+        required: bool = True,
+        bioimageio_description: str = "",
         **kwargs,
     ) -> None:
         assert all(vm in self.all_modes for vm in valid_modes), valid_modes
@@ -391,7 +397,9 @@ class ProcMode(String):
             validate = [validate]
 
         validate.append(field_validators.OneOf(valid_modes))
-        super().__init__(validate=validate, required=required, **kwargs)
+        if not bioimageio_description:
+            bioimageio_description = f"One of {', '.join([f'{vm} ({self.explanations[vm]})' for vm in valid_modes])}"
+        super().__init__(validate=validate, required=required, bioimageio_description=bioimageio_description, **kwargs)
 
 
 class SHA256(String):
