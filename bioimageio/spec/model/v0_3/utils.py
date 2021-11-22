@@ -15,6 +15,6 @@ def filter_resource_description(
                 raw_rd.weights = {wfp: raw_rd.weights[wfp]}
                 break
         else:
-            raise ValueError(f"Not found any of the specified weights formats ({weights_priority_order})")
+            raise ValueError(f"Not found any of the specified weights formats {weights_priority_order}")
 
     return raw_rd
