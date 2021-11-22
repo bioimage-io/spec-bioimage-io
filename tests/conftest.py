@@ -69,3 +69,8 @@ def unet2d_multi_tensor():
 @pytest.fixture
 def hpa_model():
     return pathlib.Path(__file__).parent / "../example_specs/models/hpa-densenet/rdf.yaml"
+
+
+@pytest.fixture
+def stardist_model():
+    return pathlib.Path(__file__).parent / "../example_specs/models/stardist_example_model/rdf.yaml"
