@@ -104,8 +104,8 @@ config:
   * `description` _optional String_ 
   * `preprocessing` _optional List\[Preprocessing\]_ Description of how this input should be preprocessed.
     1. _Preprocessing_   is a Dict with the following keys:
-      * `name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range (see [supported_formats_and_operations.md#preprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#preprocessing) for information on which transformations are supported by specific consumer software).
-      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
+      * `name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
+      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_3.md).
 * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Keyword arguments for the implementation specified by `source`. This field is only required if the field `source` is present.
 * `language` _optional* String_ Programming language of the source code. One of: python, java. This field is only required if the field `source` is present.
 * `links` _optional List\[String\]_ links to other bioimage.io resources
@@ -134,8 +134,8 @@ config:
   * `halo` _optional List\[Integer\]_ The halo to crop from the output tensor (for example to crop away boundary effects or for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed.
   * `postprocessing` _optional List\[Postprocessing\]_ Description of how this output should be postprocessed.
     1. _Postprocessing_   is a Dict with the following keys:
-      * `name` _String_ Name of postprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range, scale_mean_variance (see [supported_formats_and_operations.md#postprocessing](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#postprocessing) for information on which transformations are supported by specific consumer software).
-      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
+      * `name` _String_ Name of postprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range, scale_mean_variance.
+      * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [postprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_0_3.md).
 * `packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any entry in `weights`.
   1. _Author_   is a Dict with the following keys:
     * `name` _String_ Full name.
@@ -144,7 +144,7 @@ config:
 * `parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
   * `sha256` _optional SHA256→String_ Hash of the weights of the parent model.
   * `uri` _optional URI→String_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
-* `run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. The different run modes should be listed in [supported_formats_and_operations.md#Run Modes](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes). RunMode is a Dict with the following keys:
+* `run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. No standard run modes are defined yet. RunMode is a Dict with the following keys:
   * `name` _String_ The name of the `run_mode`
   * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
 * `sample_inputs` _optional List\[URI→String\]_ List of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images.
