@@ -292,10 +292,10 @@ class OutputTensor(Tensor):
     shape = fields.OutputShape(required=True)
     halo = fields.List(
         fields.Integer,
-        bioimageio_description="The halo to crop from the output tensor (for example to crop away boundary effects or "
-        "for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The "
-        "`halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use "
-        "`shape:offset` if the model output itself is cropped and input and output shapes not fixed.",
+        bioimageio_description="Hint to describe the potentially corrupted edge region of the output tensor, due to "
+        "boundary effects. "
+        "The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. "
+        "Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed. ",
     )
     postprocessing = fields.List(
         fields.Nested(Postprocessing), bioimageio_description="Description of how this output should be postprocessed."
