@@ -25,7 +25,7 @@
   * `shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_   is a Dict with the following keys:
-      * `offset` _List\[Integer\]_ Position of origin wrt to input.
+      * `offset` _List\[Float\]_ Position of origin wrt to input. Multiple of 0.5.
       * `reference_tensor` _String_ Name of the reference input tensor.
       * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
   * `axes` _optional Axes→String_ 

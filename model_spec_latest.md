@@ -126,7 +126,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   * `shape` _OutputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. ImplicitOutputShape is a Dict with the following keys:
-      * `offset` _List\[Integer\]_ Position of origin wrt to input.
+      * `offset` _List\[Float\]_ Position of origin wrt to input. Multiple of 0.5.
       * `reference_tensor` _String_ Name of the reference tensor.
       * `scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
   * `data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.

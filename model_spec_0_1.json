@@ -28,8 +28,9 @@
             "properties": {
                 "offset": {
                     "items": {
+                        "format": "float",
                         "title": "offset",
-                        "type": "integer"
+                        "type": "number"
                     },
                     "title": "offset",
                     "type": "array"
