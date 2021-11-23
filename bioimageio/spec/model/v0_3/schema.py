@@ -321,17 +321,17 @@ _common_sha256_hint = (
     "Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. "
     # "[here is a codesnippet](#code-snippet-to-compute-sha256-checksum)."  # todo: link to code snippet and don't multiply it
     + """
-Code snippet to compute SHA256 checksum
-
-```python
-import hashlib
-
-filename = "your filename here"
-with open(filename, "rb") as f:
-  bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest()
-  print(readable_hash)
-  ```
+    Code snippet to compute SHA256 checksum
+    
+    ```python
+    import hashlib
+    
+    filename = "your filename here"
+    with open(filename, "rb") as f:
+      bytes = f.read() # read entire file as bytes
+      readable_hash = hashlib.sha256(bytes).hexdigest()
+      print(readable_hash)
+      ```
 
 """
 )
@@ -626,24 +626,24 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
         + """
 
-For example:
-```yaml
-config:
-  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-  deepimagej:
-    model_keys:
-      # In principle the tag "SERVING" is used in almost every tf model
-      model_tag: tf.saved_model.tag_constants.SERVING
-      # Signature definition to call the model. Again "SERVING" is the most general
-      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-    test_information:
-      input_size: [2048x2048] # Size of the input images
-      output_size: [1264x1264 ]# Size of all the outputs
-      device: cpu # Device used. In principle either cpu or GPU
-      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-      runtime: 78.8s # Time it took to run the model
-      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-```
+    For example:
+    ```yaml
+    config:
+      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+      deepimagej:
+        model_keys:
+          # In principle the tag "SERVING" is used in almost every tf model
+          model_tag: tf.saved_model.tag_constants.SERVING
+          # Signature definition to call the model. Again "SERVING" is the most general
+          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        test_information:
+          input_size: [2048x2048] # Size of the input images
+          output_size: [1264x1264 ]# Size of all the outputs
+          device: cpu # Device used. In principle either cpu or GPU
+          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+          runtime: 78.8s # Time it took to run the model
+          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+    ```
 """
     )
 
