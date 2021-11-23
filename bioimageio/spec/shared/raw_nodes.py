@@ -127,8 +127,8 @@ class Dependencies(RawNode):
 
 @dataclass
 class ParametrizedInputShape(RawNode):
-    min: List[float] = missing
-    step: List[float] = missing
+    min: List[int] = missing
+    step: List[int] = missing
 
     def __len__(self):
         return len(self.min)
