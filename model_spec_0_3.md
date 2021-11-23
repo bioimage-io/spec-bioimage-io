@@ -45,35 +45,35 @@ E.g. the citation for the model architecture and/or the training data used. List
     * `url` _optional URI→String_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 * `config` _optional Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
 Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
-```yaml
-   config:
-      bioimage_io:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-           nested: value
-      imagej:
-        macro_dir: /path/to/macro/file
-```
-If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+    ```yaml
+       config:
+          bioimage_io:  # here is the domain name
+            my_custom_key: 3837283
+            another_key:
+               nested: value
+          imagej:
+            macro_dir: /path/to/macro/file
+    ```
+    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
 
-For example:
-```yaml
-config:
-  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-  deepimagej:
-    model_keys:
-      # In principle the tag "SERVING" is used in almost every tf model
-      model_tag: tf.saved_model.tag_constants.SERVING
-      # Signature definition to call the model. Again "SERVING" is the most general
-      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-    test_information:
-      input_size: [2048x2048] # Size of the input images
-      output_size: [1264x1264 ]# Size of all the outputs
-      device: cpu # Device used. In principle either cpu or GPU
-      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-      runtime: 78.8s # Time it took to run the model
-      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-```
+    For example:
+    ```yaml
+    config:
+      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+      deepimagej:
+        model_keys:
+          # In principle the tag "SERVING" is used in almost every tf model
+          model_tag: tf.saved_model.tag_constants.SERVING
+          # Signature definition to call the model. Again "SERVING" is the most general
+          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        test_information:
+          input_size: [2048x2048] # Size of the input images
+          output_size: [1264x1264 ]# Size of all the outputs
+          device: cpu # Device used. In principle either cpu or GPU
+          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+          runtime: 78.8s # Time it took to run the model
+          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+    ```
 
 * `covers` _optional List\[URI→String\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * `dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
@@ -150,17 +150,17 @@ config:
 * `sample_inputs` _optional List\[URI→String\]_ List of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images.
 * `sample_outputs` _optional List\[URI→String\]_ List of URIs to sample outputs corresponding to the `sample_inputs`.
 * `sha256` _optional String_ SHA256 checksum of the model source code file.You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-Code snippet to compute SHA256 checksum
-
-```python
-import hashlib
-
-filename = "your filename here"
-with open(filename, "rb") as f:
-  bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest()
-  print(readable_hash)
-  ```
+    Code snippet to compute SHA256 checksum
+    
+    ```python
+    import hashlib
+    
+    filename = "your filename here"
+    with open(filename, "rb") as f:
+      bytes = f.read() # read entire file as bytes
+      readable_hash = hashlib.sha256(bytes).hexdigest()
+      print(readable_hash)
+      ```
 
  This field is only required if the field source is present.
 * `source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.

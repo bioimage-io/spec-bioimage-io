@@ -6,17 +6,17 @@
 - `[authors]` A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
 - `[parent]` The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
 - `[sha256]` SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-Code snippet to compute SHA256 checksum
-
-```python
-import hashlib
-
-filename = "your filename here"
-with open(filename, "rb") as f:
-  bytes = f.read() # read entire file as bytes
-  readable_hash = hashlib.sha256(bytes).hexdigest()
-  print(readable_hash)
-  ```
+    Code snippet to compute SHA256 checksum
+    
+    ```python
+    import hashlib
+    
+    filename = "your filename here"
+    with open(filename, "rb") as f:
+      bytes = f.read() # read entire file as bytes
+      readable_hash = hashlib.sha256(bytes).hexdigest()
+      print(readable_hash)
+      ```
 
 
 
