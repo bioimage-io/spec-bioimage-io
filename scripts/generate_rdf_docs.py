@@ -111,7 +111,7 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
 
             print("name", name)
 
-        name = f"`{name}` " if name else ""
+        name = f'<a name="{name}"></a>`{name}` ' if name else ""
         sub_doc += f"{'  ' * indent}{enumerate_symbol} {name}{markdown_from_doc(sdn, indent+1)}"
 
     type_name = (
