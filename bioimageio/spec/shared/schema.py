@@ -86,5 +86,6 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
 
     @validates("offset")
     def double_offset_is_int(self, value):
-        if 2 * value != int(2 * value):
-            raise ValidationError(f"offset {value} not a multiple of 0.5!")
+        for v in value:
+            if 2 * v != int(2 * v):
+                raise ValidationError(f"offset {v} in {value} not a multiple of 0.5!")
