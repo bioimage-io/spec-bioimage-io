@@ -1,7 +1,7 @@
 from types import ModuleType
 from typing import ClassVar
 
-from marshmallow import Schema, ValidationError, post_load, validates_schema
+from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 
 from bioimageio.spec.shared import fields
 from . import raw_nodes
@@ -73,7 +73,9 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
     scale = fields.List(
         fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
     )
-    offset = fields.List(fields.Integer, required=True, bioimageio_description="Position of origin wrt to input.")
+    offset = fields.List(
+        fields.Float, required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
+    )
 
     @validates_schema
     def matching_lengths(self, data, **kwargs):
@@ -81,3 +83,8 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
         offset = data["offset"]
         if len(scale) != len(offset):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
+
+    @validates("offset")
+    def double_offset_is_int(self, value):
+        if 2 * value != int(2 * value):
+            raise ValidationError(f"offset {value} not a multiple of 0.5!")

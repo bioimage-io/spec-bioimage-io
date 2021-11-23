@@ -138,7 +138,7 @@ class ParametrizedInputShape(RawNode):
 class ImplicitOutputShape(RawNode):
     reference_tensor: str = missing
     scale: List[float] = missing
-    offset: List[int] = missing
+    offset: List[float] = missing
 
     def __len__(self):
         return len(self.scale)
