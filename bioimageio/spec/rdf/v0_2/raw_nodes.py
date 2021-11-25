@@ -55,7 +55,7 @@ class Author(RawNode):
 class Badge(RawNode):
     label: str = missing
     icon: Union[_Missing, str] = missing
-    url: Union[_Missing, URI] = missing
+    url: Union[_Missing, URI, Path] = missing
 
 
 @dataclass
@@ -65,7 +65,7 @@ class RDF(ResourceDescription):
     badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
     config: Union[_Missing, dict] = missing
-    covers: Union[_Missing, List[URI]] = missing
+    covers: Union[_Missing, List[Union[URI, Path]]] = missing
     description: str = missing
     documentation: Path = missing
     format_version: FormatVersion = missing
@@ -89,7 +89,7 @@ class RDF(ResourceDescription):
         badges: Union[_Missing, List[Badge]] = missing,
         cite: List[CiteEntry],
         config: Union[_Missing, dict] = missing,
-        covers: Union[_Missing, List[URI]] = missing,
+        covers: Union[_Missing, List[Union[URI, Path]]] = missing,
         description: str,
         documentation: Path,
         git_repo: Union[_Missing, str] = missing,

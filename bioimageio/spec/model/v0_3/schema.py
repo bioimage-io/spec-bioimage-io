@@ -25,11 +25,6 @@ class RunMode(BioImageIOSchema):
     kwargs = fields.Kwargs()
 
 
-class SpecWithKwargs(BioImageIOSchema):
-    spec = fields.URI()
-    kwargs = fields.Kwargs()
-
-
 class Tensor(BioImageIOSchema):
     name = fields.String(
         required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
@@ -361,7 +356,11 @@ class WeightsEntryBase(BioImageIOSchema):
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the source file specified. " + _common_sha256_hint,
     )
-    source = fields.URI(required=True, bioimageio_description="Link to the source file. Preferably a url.")
+    source = fields.Union(
+        [fields.URI(), fields.RelativeLocalPath()],
+        required=True,
+        bioimageio_description="URI or path to the weights file. Preferably a url.",
+    )
     weights_format = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
     )
@@ -432,10 +431,11 @@ WeightsEntry = typing.Union[
 
 
 class ModelParent(BioImageIOSchema):
-    uri = fields.URI(
+    uri = fields.Union(  # todo: allow URI or DOI instead (and not local path!?)
+        [fields.URI(), fields.RelativeLocalPath()],
         bioimageio_description="Url of another model available on bioimage.io or path to a local model in the "
         "bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the "
-        "model (NOT the raw file)."
+        "model (NOT the raw file).",
     )
     sha256 = fields.SHA256(bioimageio_description="Hash of the weights of the parent model.")
 
@@ -603,23 +603,31 @@ is in an unsupported format version. The current format version described here i
     )
 
     test_inputs = fields.List(
-        fields.URI,
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         required=True,
-        bioimageio_description="List of URIs to test inputs as described in inputs for **a single test case**. "
+        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
+        "**a single test case**. "
         "This means if your model has more than one input, you should provide one URI for each input."
         "Each test input should be a file with a ndarray in "
         "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
         "The extension must be '.npy'.",
     )
-    test_outputs = fields.List(fields.URI, required=True, bioimageio_description="Analog to to test_inputs.")
+    test_outputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        required=True,
+        bioimageio_description="Analog to to test_inputs.",
+    )
 
     sample_inputs = fields.List(
-        fields.URI,
-        bioimageio_description="List of URIs to sample inputs to illustrate possible inputs for the model, for example "
-        "stored as png or tif images.",
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
+        "the model, for example stored as png or tif images. "
+        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
     )
     sample_outputs = fields.List(
-        fields.URI, bioimageio_description="List of URIs to sample outputs corresponding to the `sample_inputs`."
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
+        "`sample_inputs`.",
     )
 
     config = fields.Dict(

@@ -249,7 +249,9 @@ class ImportableSource(String):
 
             module_uri, object_name = parts
 
-            return raw_nodes.ImportableSourceFile(callable_name=object_name, source_file=URI().deserialize(module_uri))
+            return raw_nodes.ImportableSourceFile(
+                callable_name=object_name, source_file=Union([URI(), RelativeLocalPath()]).deserialize(module_uri)
+            )
         else:
             raise ValidationError(source_str)
 
@@ -352,7 +354,7 @@ class RelativeLocalPath(Path):
                     is_getter_method=True,
                 ),
                 field_validators.Predicate(
-                    "is_reserved", invert_output=True, error="invalid filename as it is a reserved by the OS."
+                    "is_reserved", invert_output=True, error="invalid filename as it is reserved by the OS."
                 ),
             ],
             **super_kwargs,

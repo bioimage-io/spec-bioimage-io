@@ -50,13 +50,13 @@ outputs:
     shape:
       reference_input: raw
       scale: [1.0, 1.0, 1.0, 1.0]
-      offset: [0, 0, 0, 0]
+      offset: [0.0, 0.0, 0.0, 0.0]
 
 language: python
 framework: pytorch
 source: unet2d.py:UNet2d
 kwargs: {input_channels: 1, output_channels: 1}
-dependencies: conda:./environment.yaml
+dependencies: conda:environment.yaml
 
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
