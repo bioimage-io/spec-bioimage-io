@@ -123,7 +123,7 @@ class RawNodePackageTransformer(NodeTransformer):
 
     def _transform_resource(
         self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
-    ) -> typing.Union[typing.List[str], str]:
+    ) -> typing.Union[typing.List[pathlib.Path], pathlib.Path]:
         if isinstance(resource, list):
             return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
         elif isinstance(resource, pathlib.PurePath):
@@ -153,7 +153,7 @@ class RawNodePackageTransformer(NodeTransformer):
 
         self.remote_resources[conflict_free_name] = resource
 
-        return conflict_free_name
+        return pathlib.Path(conflict_free_name)
 
     def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
         if isinstance(node, raw_nodes.RawNode):
