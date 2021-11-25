@@ -41,21 +41,16 @@ def test_replace_uri_wo_uri_string():
 def test_uri_is_relative_path():
     from bioimageio.spec.shared.raw_nodes import URI
 
-    uri_from_string = URI("forum/questions/")
-    uri = URI(path="forum/questions/")
+    # todo: figure out if it is important to keep a trailing slash.
+    #  atm uri_from_string removes it (using urllib.parse.urlparse)
+    # uri_from_string = URI("file:forum/questions/")
+    # uri = URI(scheme="file", path="forum/questions/")
+
+    uri_from_string = URI("file:forum/questions")
+    uri = URI(scheme="file", path="forum/questions")
 
     assert str(uri_from_string) == str(uri)
     assert uri_from_string == uri
-
-
-def test_uri_is_absolute_path():
-    from bioimageio.spec.shared.raw_nodes import URI
-
-    with pytest.raises(ValueError):
-        URI("/forum/questions/")
-
-    with pytest.raises(ValueError):
-        URI(path="/forum/questions/")
 
 
 def test_uri_is_url():

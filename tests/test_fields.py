@@ -1,6 +1,8 @@
+import pathlib
 from datetime import datetime, timezone
 
 import numpy
+import pytest
 from marshmallow import Schema, ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
@@ -96,12 +98,12 @@ class TestShape:
 
 
 class TestURI:
-    def test_relative_local_file(self):
-        # local relative paths are valid uris; see shared.base_nodes.URI)  # todo: actually don't allow this invalid uri
-        uri_raw = "relative_file/path.txt"
-        uri_node = fields.URI().deserialize(uri_raw)
+    def test_missing_scheme_is_invalid(self):
+        # local relative paths used to be valid "uris"
+        relative_path = "relative_file/path.txt"
 
-        assert uri_raw == str(uri_node)
+        with pytest.raises(ValidationError):
+            fields.URI().deserialize(relative_path)
 
 
 class TestUnion:
@@ -112,3 +114,12 @@ class TestUnion:
         except ValidationError as e:
             assert isinstance(e, ValidationError)
             assert len(e.messages) == 3, e.messages
+
+
+class TestRelativeLocalPath:
+    def test_simple_file_name(self):
+        fname = "unet2d.py"
+        expected = pathlib.Path(fname)
+        actual = fields.RelativeLocalPath().deserialize(fname)
+        assert isinstance(actual, pathlib.Path)
+        assert actual == expected
