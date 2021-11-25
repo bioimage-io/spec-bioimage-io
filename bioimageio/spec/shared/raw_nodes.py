@@ -152,7 +152,7 @@ class ImportableSourceFile(RawNode):
     _include_in_package = ("source_file",)
 
     callable_name: str = missing
-    source_file: URI = missing
+    source_file: Union[URI, pathlib.Path] = missing
 
 
 ImportableSource = Union[ImportableModule, ImportableSourceFile]
