@@ -359,7 +359,7 @@ class RelativeLocalPath(Path):
         )
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        if value is not None and (not isinstance(value, pathlib.Path) or not value.is_absolute()):
+        if value is not None and (not isinstance(value, pathlib.Path) or value.is_absolute()):
             logger.warning(f"invalid local relative path: {value}")
 
         return super()._serialize(value, attr, obj, **kwargs)
