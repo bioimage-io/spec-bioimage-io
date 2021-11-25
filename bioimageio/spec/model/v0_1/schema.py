@@ -46,7 +46,7 @@ class BaseSpec(BioImageIOSchema):
 
 
 class SpecWithKwargs(BioImageIOSchema):
-    spec = fields.URI()
+    spec = fields.Union([fields.URI(), fields.RelativeLocalPath()])
     kwargs = fields.Dict()
 
 
@@ -102,7 +102,7 @@ class ReaderSpec(BaseSpec):
 
 
 class Reader(SpecWithKwargs):
-    spec = fields.URI()
+    spec = fields.Union([fields.URI(), fields.RelativeLocalPath()])
     transformations = fields.List(fields.Nested(Transformation))
 
 
@@ -112,7 +112,7 @@ class SamplerSpec(BaseSpec):
 
 
 class Sampler(SpecWithKwargs):
-    spec = fields.URI()
+    spec = fields.Union([fields.URI(), fields.RelativeLocalPath()])
     readers = fields.List(fields.Nested(Reader, required=True), required=True)
 
 
