@@ -50,13 +50,13 @@ outputs:
     shape:
       reference_tensor: raw
       scale: [1.0, 1.0, 1.0, 1.0]
-      offset: [0, 0, 0, 0]
+      offset: [0.0, 0.0, 0.0, 0.0]
 
 language: python
 framework: pytorch
 source: unet2d.py:UNet2d
 kwargs: {input_channels: 1, output_channels: 1}
-dependencies: conda:./environment.yaml
+dependencies: conda:environment.yaml
 
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
@@ -74,12 +74,12 @@ weights:
    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
  onnx:
    sha256: 5bf14c4e65e8601ab551db99409ba7981ff0e501719bc2b0ee625ca9a9375b32
-   source: ./weights.onnx
+   source: weights.onnx
    opset_version: 12
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
  pytorch_script:
    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
-   source: ./weights.pt
+   source: weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
 type: model
