@@ -1,3 +1,4 @@
+import sys
 from pprint import pprint
 
 import typer
@@ -38,13 +39,15 @@ def validate(
         if verbose:
             print("traceback:")
             pprint(summary["traceback"])
-        return 1
+        ret_code = 1
     else:
         print(f"No validation errors for {summary['name']}")
-        return 0
+        ret_code = 0
+    sys.exit(ret_code)
 
 
 validate.__doc__ = commands.validate.__doc__
+
 
 # note: single command requires additional (dummy) callback
 # see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
