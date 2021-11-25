@@ -91,7 +91,7 @@ class _WeightsEntryBase(RawNode):
     attachments: Union[_Missing, Dict] = missing
     parent: Union[_Missing, str] = missing
     sha256: Union[_Missing, str] = missing
-    source: Path = missing
+    source: Union[URI, Path] = missing
 
 
 @dataclass
@@ -143,7 +143,7 @@ ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 @dataclass
 class ModelParent(RawNode):
-    uri: URI = missing
+    uri: Union[URI, Path] = missing
     sha256: str = missing
 
 
@@ -164,13 +164,13 @@ class Model(RDF):
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing
     run_mode: Union[_Missing, RunMode] = missing
-    sample_inputs: Union[_Missing, List[URI]] = missing
-    sample_outputs: Union[_Missing, List[URI]] = missing
+    sample_inputs: Union[_Missing, List[Union[URI, Path]]] = missing
+    sample_outputs: Union[_Missing, List[Union[URI, Path]]] = missing
     sha256: Union[_Missing, str] = missing
     timestamp: datetime = missing
     type: Literal["model"] = missing
 
     source: Union[_Missing, ImportableSource] = missing
-    test_inputs: List[URI] = missing
-    test_outputs: List[URI] = missing
+    test_inputs: List[Union[URI, Path]] = missing
+    test_outputs: List[Union[URI, Path]] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
