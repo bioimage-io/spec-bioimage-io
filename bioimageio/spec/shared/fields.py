@@ -249,7 +249,9 @@ class ImportableSource(String):
 
             module_uri, object_name = parts
 
-            return raw_nodes.ImportableSourceFile(callable_name=object_name, source_file=URI().deserialize(module_uri))
+            return raw_nodes.ImportableSourceFile(
+                callable_name=object_name, source_file=Union([URI(), RelativeLocalPath()]).deserialize(module_uri)
+            )
         else:
             raise ValidationError(source_str)
 
