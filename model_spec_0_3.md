@@ -11,7 +11,7 @@ This is mandatory, and important for the consumer software to verify before pars
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
 0.3.4
-* `authors` _List\[Author\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+* `authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
     * `name` _String_ Full name.
     * `affiliation` _optional String_ Affiliation.
@@ -27,8 +27,14 @@ E.g. the citation for the model architecture and/or the training data used. List
 * `license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * `name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 * `tags` _List\[String\]_ A list of tags.
-* `test_inputs` _List\[URI→String\]_ List of URIs to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
-* `test_outputs` _List\[URI→String\]_ Analog to to test_inputs.
+* `test_inputs` _List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ List of URIs or local relative paths to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
+  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
+* `test_outputs` _List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ Analog to to test_inputs.
+  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
 * `timestamp` _DateTime_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
 * `type` _String_ 
 * `weights` _Dict\[String, Union\[PytorchStateDictWeightsEntry | PytorchScriptWeightsEntry | KerasHdf5WeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | OnnxWeightsEntry\]\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
@@ -42,7 +48,9 @@ E.g. the citation for the model architecture and/or the training data used. List
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
     * `label` _String_ e.g. 'Open in Colab'
     * `icon` _optional String_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
-    * `url` _optional URI→String_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+    * `url` _optional Union\[URI→String | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+      1. _optional URI→String_ 
+      1. _optional RelativeLocalPath→Path_ 
 * `config` _optional Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
 Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
     ```yaml
@@ -75,7 +83,10 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
           pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
     ```
 
-* `covers` _optional List\[URI→String\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
+* `covers` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
+  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
 * `dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
 * `download_url` _optional String_ recommended url to the zipped file if applicable
 * `framework` _optional String_ The deep learning framework of the source code. One of: pytorch, tensorflow. This field is only required if the field `source` is present.
@@ -143,12 +154,20 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     * `orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * `parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
   * `sha256` _optional SHA256→String_ Hash of the weights of the parent model.
-  * `uri` _optional URI→String_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
+  * `uri` _optional Union\[URI→String | RelativeLocalPath→Path\]_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
 * `run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. No standard run modes are defined yet. RunMode is a Dict with the following keys:
   * `name` _String_ The name of the `run_mode`
   * `kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.
-* `sample_inputs` _optional List\[URI→String\]_ List of URIs to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images.
-* `sample_outputs` _optional List\[URI→String\]_ List of URIs to sample outputs corresponding to the `sample_inputs`.
+* `sample_inputs` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ List of URIs/local relative paths to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. The model is not tested with these sample files that serve to inform a human user about an example use case.
+  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
+* `sample_outputs` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ List of URIs/local relative paths to sample outputs corresponding to the `sample_inputs`.
+  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
 * `sha256` _optional String_ SHA256 checksum of the model source code file.You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
     Code snippet to compute SHA256 checksum
     

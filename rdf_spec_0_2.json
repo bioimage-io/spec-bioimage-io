@@ -36,8 +36,16 @@
                     "type": "string"
                 },
                 "url": {
-                    "title": "url",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 }
             },
             "required": [
@@ -128,8 +136,16 @@
                 },
                 "covers": {
                     "items": {
-                        "title": "covers",
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "title": "",
+                                "type": "string"
+                            },
+                            {
+                                "title": "",
+                                "type": "string"
+                            }
+                        ]
                     },
                     "title": "covers",
                     "type": "array"
@@ -175,8 +191,16 @@
                     "type": "string"
                 },
                 "source": {
-                    "title": "source",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "tags": {
                     "items": {
