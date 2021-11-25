@@ -81,11 +81,7 @@ class URI(RawNode):
         uri_string = self.uri_string  # should be InitVar, see comment at definition above
         uri_components = [self.scheme, self.authority, self.path, self.query, self.fragment]
         if uri_string is None:
-            if not self.scheme:
-                raise ValueError("Empty URI scheme component")
-            if not self.path:
-                raise ValueError("Empty URI path component")
-
+            pass
         elif any(uri_components):
             raise ValueError(f"Either specify uri_string(={uri_string}) or uri components(={uri_components})")
         elif isinstance(uri_string, str):
@@ -105,6 +101,12 @@ class URI(RawNode):
             self.fragment = uri.fragment
         else:
             raise TypeError(uri_string)
+
+        if not self.scheme:
+            raise ValueError("Empty URI scheme component")
+
+        if not self.path:
+            raise ValueError("Empty URI path component")
 
         super().__post_init__()
 
