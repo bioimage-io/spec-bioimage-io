@@ -90,7 +90,7 @@ class URI(RawNode):
             if uri.scheme == "file":
                 # account for leading '/' for windows paths, e.g. '/C:/folder'
                 # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
-                path = url2pathname(uri.path)
+                path = pathlib.Path(url2pathname(uri.path)).as_posix()
             else:
                 path = uri.path
 
@@ -104,9 +104,6 @@ class URI(RawNode):
 
         if not self.scheme:
             raise ValueError("Empty URI scheme component")
-
-        if not self.path:
-            raise ValueError("Empty URI path component")
 
         super().__post_init__()
 
