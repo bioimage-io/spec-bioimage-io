@@ -8,6 +8,7 @@ from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema, SharedProcessingSchema
+from bioimageio.spec.shared.utils import get_ref_url
 from . import raw_nodes
 
 Author = rdf.schema.Author
@@ -290,6 +291,8 @@ class OutputTensor(Tensor):
         bioimageio_description="Hint to describe the potentially corrupted edge region of the output tensor, due to "
         "boundary effects. "
         "The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. "
+        f"An example implementation of prediction with tiling, accounting for the halo can be found [here]("
+        f"{get_ref_url('function', 'predict_with_tiling_impl', 'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction.py')}). "
         "Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed. ",
     )
     postprocessing = fields.List(
