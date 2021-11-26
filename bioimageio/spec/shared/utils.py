@@ -9,6 +9,11 @@ import requests
 
 from . import raw_nodes
 
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal  # type: ignore
+
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 URI_Type = typing.TypeVar("URI_Type", bound=raw_nodes.URI)
@@ -173,7 +178,7 @@ def _is_path(s: typing.Any) -> bool:
         return False
 
 
-def get_ref_url(type_: typing.Literal["class", "function"], name: str, github_file_url: str) -> str:
+def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url: str) -> str:
     """get github url with line range fragment to reference implementation from non-raw github file url
 
     example:
