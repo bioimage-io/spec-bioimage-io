@@ -34,8 +34,9 @@ class Badge(BioImageIOSchema):
     bioimageio_description = "Custom badge"
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
-    url = fields.URI(
-        bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'"
+    url = fields.Union(
+        [fields.URI(), fields.RelativeLocalPath()],  # todo: make url only?
+        bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
     )
 
 
@@ -72,7 +73,7 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    authors_bioimageio_description = (
+    attachments_bioimageio_description = (
         "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
         "place a list of URIs under the `files` to list images and other files that this resource depends on."
     )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
@@ -82,14 +83,15 @@ specified.
         fields.List(
             fields.Union([fields.URI(), fields.Raw()]),
             bioimageio_maybe_required=True,
-            bioimageio_description=authors_bioimageio_description,
+            bioimageio_description=attachments_bioimageio_description,
         ),
     )
 
+    authors_bioimageio_description = (
+        "A list of authors. The authors are the creators of the specifications and the primary " "points of contact."
+    )
     authors = fields.List(
-        fields.Union([fields.Nested(Author), fields.String()]),
-        bioimageio_description="A list of authors. The authors are the creators of the specifications and the primary "
-        "points of contact.",
+        fields.Union([fields.Nested(Author), fields.String()]), bioimageio_description=authors_bioimageio_description
     )
 
     badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
@@ -106,24 +108,26 @@ E.g. the citation for the model architecture and/or the training data used."""
         "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
         "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
         """for example:
-```yaml
-   config:
-      bioimage_io:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-           nested: value
-      imagej:
-        macro_dir: /path/to/macro/file
-```
+    ```yaml
+       config:
+          bioimage_io:  # here is the domain name
+            my_custom_key: 3837283
+            another_key:
+               nested: value
+          imagej:
+            macro_dir: /path/to/macro/file
+    ```
 """
-        "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
+        "    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
     config = fields.Dict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
-        fields.URI,
+        fields.Union(
+            [fields.URI(validate=field_validators.URL(schemes=["http", "https"])), fields.RelativeLocalPath()]
+        ),
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
-        "hyperlink starting with 'https'.Please use an image smaller than 500KB and an aspect ratio width to height "
+        "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
     )
 
@@ -199,7 +203,10 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
-    source = fields.URI(bioimageio_description="url to the source of the resource")
+    source = fields.Union(
+        [fields.URI(), fields.RelativeLocalPath()],
+        bioimageio_description="url or local relative path to the source of the resource",
+    )
 
     tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
 

@@ -35,7 +35,7 @@ outputs:
     shape:
       reference_input: raw
       scale: [1.0, 1.0, 1.0, 1.0]
-      offset: [0, 0, 0, 0]
+      offset: [0.0, 0.0, 0.0, 0.0]
 
 language: python
 framework: pytorch
@@ -46,7 +46,7 @@ test_input: test_input.npy
 test_output: test_output.npy
 
 prediction:
-  dependencies: conda:./environment.yaml
+  dependencies: conda:environment.yaml
   weights:
      source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
      hash: {sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2}

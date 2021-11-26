@@ -11,7 +11,7 @@ config:
     thresholds: {nms: 0.3, prob: 0.479071463157368}
 covers: [stardist_logo.jpg]
 dependencies: pip:requirements.txt
-description: StarDist
+description: This spec contains an incorrect output shape description and is included for test purposes.
 documentation: README.md
 format_version: 0.3.3
 framework: tensorflow
@@ -34,10 +34,9 @@ outputs:
 - axes: byxc
   data_range: [-.inf, .inf]
   data_type: float32
-  halo: [0, 32, 32, 0]
   name: output
   shape:
-    offset: [0.0, 0.0, 0.0, 16.5]
+    offset: [1, 1, 1, 33]  # should be [0.0, 0.0, 0.0, 16.5]
     reference_tensor: input
     scale: [1.0, 1.0, 1.0, 0.0]
 tags: [stardist, segmentation, instance segmentation, object detection, tensorflow]

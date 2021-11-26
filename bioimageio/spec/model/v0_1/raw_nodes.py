@@ -47,13 +47,13 @@ class BaseSpec(RawNode):
 
 @dataclass
 class Weights(RawNode):
-    source: URI
+    source: Union[URI, pathlib.Path]
     hash: Dict[str, str]
 
 
 @dataclass
 class SpecWithKwargs(RawNode):
-    spec: URI = missing
+    spec: Union[URI, pathlib.Path] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 

@@ -72,22 +72,17 @@ class PathToRemoteUriTransformer(NodeTransformer):
 
     def transform_URI(self, node: URI_Type) -> URI_Type:
         if node.scheme == "file":
-            raise ValueError(f"Cannot create remote URI of absolute file path: {node}")
-
-        if node.scheme == "":
-            # make local relative path remote
             assert not node.authority
             assert not node.query
             assert not node.fragment
-
-            path = pathlib.PurePosixPath(self.remote_root.path) / node.path
-            node = dataclasses.replace(self.remote_root, path=path.as_posix(), uri_string=None)
+            return self._transform_Path(pathlib.Path(node.path))
 
         return node
 
     def _transform_Path(self, leaf: pathlib.PurePath):
         assert not leaf.is_absolute()
-        return self.transform_URI(raw_nodes.URI(path=leaf.as_posix()))
+        path = pathlib.PurePosixPath(self.remote_root.path) / leaf
+        return dataclasses.replace(self.remote_root, path=path.as_posix(), uri_string=None)
 
     def transform_PurePath(self, leaf: pathlib.PurePath) -> raw_nodes.URI:
         return self._transform_Path(leaf)
@@ -123,7 +118,7 @@ class RawNodePackageTransformer(NodeTransformer):
 
     def _transform_resource(
         self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
-    ) -> typing.Union[typing.List[str], str]:
+    ) -> typing.Union[typing.List[pathlib.Path], pathlib.Path]:
         if isinstance(resource, list):
             return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
         elif isinstance(resource, pathlib.PurePath):
@@ -153,7 +148,7 @@ class RawNodePackageTransformer(NodeTransformer):
 
         self.remote_resources[conflict_free_name] = resource
 
-        return conflict_free_name
+        return pathlib.Path(conflict_free_name)
 
     def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
         if isinstance(node, raw_nodes.RawNode):

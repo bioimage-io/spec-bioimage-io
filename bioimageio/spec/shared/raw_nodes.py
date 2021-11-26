@@ -55,41 +55,42 @@ class ResourceDescription(RawNode):
 
 
 @dataclass
-class URI(RawNode):  # todo: do not allow relative path and use Union[Path, URI] instead
-    """URI as scheme:[//authority]path[?query][#fragment] or relative path (only path is set)"""
+class URI(RawNode):
+    """URI as scheme:[//authority]path[?query][#fragment]"""
 
     uri_string: Optional[str] = None  # for convenience: init from string; this should be dataclasses.InitVar,
     # but due to a bug in dataclasses.replace in py3.7 (https://bugs.python.org/issue36470) it is not.
-    scheme: str = ""
+    scheme: str = missing
     authority: str = ""
     path: str = missing
     query: str = ""
     fragment: str = ""
 
     def __str__(self):
-        """[scheme:][//authority]path[?query][#fragment]"""
+        """scheme:[//authority]path[?query][#fragment]"""
         return (
-            (self.scheme + ":" if self.scheme else "")
+            self.scheme
+            + ":"
             + ("//" + self.authority if self.authority else "")
-            + (self.path if self.path else "")
+            + self.path
             + ("?" + self.query if self.query else "")
             + ("#" + self.fragment if self.fragment else "")
         )
 
     def __post_init__(self):
         uri_string = self.uri_string  # should be InitVar, see comment at definition above
+        uri_components = [self.scheme, self.authority, self.path, self.query, self.fragment]
         if uri_string is None:
-            if self.path is missing or (not self.scheme and any([self.authority, self.query, self.fragment])):
-                raise ValueError("Invalid URI or relative path")
-        elif str(self):
-            raise ValueError(f"Either specify uri_string(={uri_string}) or uri components (={str(self)})")
+            pass
+        elif any(uri_components):
+            raise ValueError(f"Either specify uri_string(={uri_string}) or uri components(={uri_components})")
         elif isinstance(uri_string, str):
             self.uri_string = None  # not required if 'uri_string' would be InitVar, see comment at definition above
             uri = urlparse(uri_string)
             if uri.scheme == "file":
                 # account for leading '/' for windows paths, e.g. '/C:/folder'
                 # see https://stackoverflow.com/questions/43911052/urlparse-on-a-windows-file-scheme-uri-leaves-extra-slash-at-start
-                path = url2pathname(uri.path)
+                path = pathlib.Path(url2pathname(uri.path)).as_posix()
             else:
                 path = uri.path
 
@@ -100,13 +101,9 @@ class URI(RawNode):  # todo: do not allow relative path and use Union[Path, URI]
             self.fragment = uri.fragment
         else:
             raise TypeError(uri_string)
-        # no scheme := relative path
-        # also check for absolute paths in posix style (even on windows, as '/lala' is resolved to absolute Path
-        # 'C:/lala' on windows, while '/lala' is a relative path on windows
-        if not self.scheme and (
-            pathlib.Path(self.path).is_absolute() or pathlib.PurePosixPath(self.path).is_absolute()
-        ):
-            raise ValueError("Invalid URI or relative path. (use URI with scheme 'file' for absolute file paths)")
+
+        if not self.scheme:
+            raise ValueError("Empty URI scheme component")
 
         super().__post_init__()
 
@@ -127,8 +124,8 @@ class Dependencies(RawNode):
 
 @dataclass
 class ParametrizedInputShape(RawNode):
-    min: List[float] = missing
-    step: List[float] = missing
+    min: List[int] = missing
+    step: List[int] = missing
 
     def __len__(self):
         return len(self.min)
@@ -138,7 +135,7 @@ class ParametrizedInputShape(RawNode):
 class ImplicitOutputShape(RawNode):
     reference_tensor: str = missing
     scale: List[float] = missing
-    offset: List[int] = missing
+    offset: List[float] = missing
 
     def __len__(self):
         return len(self.scale)
@@ -155,7 +152,7 @@ class ImportableSourceFile(RawNode):
     _include_in_package = ("source_file",)
 
     callable_name: str = missing
-    source_file: URI = missing
+    source_file: Union[URI, pathlib.Path] = missing
 
 
 ImportableSource = Union[ImportableModule, ImportableSourceFile]
