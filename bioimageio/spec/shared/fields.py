@@ -249,7 +249,9 @@ class ImportableSource(String):
 
             module_uri, object_name = parts
 
-            return raw_nodes.ImportableSourceFile(callable_name=object_name, source_file=URI().deserialize(module_uri))
+            return raw_nodes.ImportableSourceFile(
+                callable_name=object_name, source_file=Union([URI(), RelativeLocalPath()]).deserialize(module_uri)
+            )
         else:
             raise ValidationError(source_str)
 
@@ -352,14 +354,14 @@ class RelativeLocalPath(Path):
                     is_getter_method=True,
                 ),
                 field_validators.Predicate(
-                    "is_reserved", invert_output=True, error="invalid filename as it is a reserved by the OS."
+                    "is_reserved", invert_output=True, error="invalid filename as it is reserved by the OS."
                 ),
             ],
             **super_kwargs,
         )
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        if value is not None and (not isinstance(value, pathlib.Path) or not value.is_absolute()):
+        if value is not None and (not isinstance(value, pathlib.Path) or value.is_absolute()):
             logger.warning(f"invalid local relative path: {value}")
 
         return super()._serialize(value, attr, obj, **kwargs)
