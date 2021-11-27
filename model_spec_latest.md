@@ -51,7 +51,7 @@ E.g. the citation for the model architecture and/or the training data used. List
   * <a id="badges:url"></a>`url` _optional Union\[URI→String | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
-* <a id="config"></a>`config` _optional Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
+* <a id="config"></a>`config` _optional YamlDict→Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
 Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
     ```yaml
        config:

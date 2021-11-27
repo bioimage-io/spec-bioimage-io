@@ -39,7 +39,7 @@ E.g. the citation for the model architecture and/or the training data used. List
   * <a id="badges:url"></a>`url` _optional Union\[URI→String | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
-* <a id="config"></a>`config` _optional Dict\[Any, Any\]_ 
+* <a id="config"></a>`config` _optional YamlDict→Dict\[Any, Any\]_ 
 * <a id="covers"></a>`covers` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
   1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
   1. _optional URI→String_ 
