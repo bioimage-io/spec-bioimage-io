@@ -23,7 +23,7 @@ from bioimageio.spec.shared.common import (
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer, _is_path
+from bioimageio.spec.shared.utils import GenericRawNode, GenericRawRD, RawNodePackageTransformer, _is_path
 
 try:
     from typing import Protocol
@@ -259,7 +259,7 @@ def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.
 
 
 def get_resource_package_content_wo_rdf(
-    raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: GenericRawRD, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
@@ -283,7 +283,7 @@ def get_resource_package_content_wo_rdf(
     raw_rd = sub_spec.utils.filter_resource_description(raw_rd, **filter_kwargs)
 
     content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
-    raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
+    raw_rd = RawNodePackageTransformer(content, raw_rd.root_path).transform(raw_rd)
     assert "rdf.yaml" not in content
     return raw_rd, content
 
