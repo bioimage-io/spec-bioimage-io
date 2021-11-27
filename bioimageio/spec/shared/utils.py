@@ -2,6 +2,7 @@ import ast
 import dataclasses
 import os
 import pathlib
+import sys
 import typing
 from urllib.parse import urlparse
 
@@ -197,7 +198,10 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
             if d.name == name:  # type: ignore
                 assert hasattr(d, "decorator_list")
                 start = d.decorator_list[0].lineno if d.decorator_list else d.lineno  # type: ignore
-                stop = d.end_lineno
+                if sys.version_info >= (3, 8):
+                    stop = d.end_lineno
+                else:
+                    stop = d.lineno + 1
                 break
     else:
         raise ValueError(f"{type_} {name} not found in {github_file_url}")
