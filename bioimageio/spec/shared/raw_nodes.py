@@ -104,6 +104,8 @@ class URI(RawNode):
 
         if not self.scheme:
             raise ValueError("Empty URI scheme component")
+        elif len(self.scheme) == 1:
+            raise ValueError(f"Invalid URI scheme of len 1: {self.scheme}")  # fail for windows paths with drive letter
 
         super().__post_init__()
 
