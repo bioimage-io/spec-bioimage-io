@@ -112,9 +112,12 @@ class RawNodePackageTransformer(NodeTransformer):
     """Transforms raw node fields specified by <node>._include_in_package to local relative paths.
     Adds remote resources to given dictionary."""
 
-    def __init__(self, remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, raw_nodes.URI]]):
+    def __init__(
+        self, remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, raw_nodes.URI]], root: pathlib.Path
+    ):
         super().__init__()
         self.remote_resources = remote_resources
+        self.root = root
 
     def _transform_resource(
         self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
@@ -127,8 +130,10 @@ class RawNodePackageTransformer(NodeTransformer):
                 folder_in_package = ""
             else:
                 folder_in_package = resource.parent.as_posix() + "/"
+                resource = self.root / resource
+
         elif isinstance(resource, raw_nodes.URI):
-            name_from = pathlib.PurePath(resource.path)
+            name_from = pathlib.PurePath(resource.path or "unknown")
             folder_in_package = ""
         else:
             raise TypeError(f"Unexpected type {type(resource)} for {resource}")
