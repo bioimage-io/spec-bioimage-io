@@ -426,4 +426,4 @@ class URI(String):
         try:
             return raw_nodes.URI(uri_string=value)
         except Exception as e:
-            raise ValidationError(value) from e
+            raise ValidationError(str(e)) from e
