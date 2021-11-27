@@ -120,7 +120,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 """
         "    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
-    config = fields.Dict(bioimageio_descriptio=config_bioimageio_description)
+    config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
         fields.Union(

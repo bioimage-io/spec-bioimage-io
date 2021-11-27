@@ -630,7 +630,7 @@ is in an unsupported format version. The current format version described here i
         "`sample_inputs`.",
     )
 
-    config = fields.Dict(
+    config = fields.YamlDict(
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
         + """
 
