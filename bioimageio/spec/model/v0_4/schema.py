@@ -254,9 +254,8 @@ is in an unsupported format version. The current format version described here i
     run_mode = fields.Nested(
         RunMode,
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. The different run modes should be "
-        "listed in [supported_formats_and_operations.md#Run Modes]"
-        "(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#run-modes).",
+        "data augmentation that currently cannot be expressed in the specification. "
+        "No standard run modes are defined yet.",
     )
 
     sha256 = fields.String(
