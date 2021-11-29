@@ -11,7 +11,6 @@ from bioimageio.spec.model.v0_3.schema import (
     Postprocessing,
     Preprocessing,
     PytorchScriptWeightsEntry,
-    PytorchStateDictWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
@@ -144,6 +143,21 @@ class OutputTensor(Tensor):
             raise NotImplementedError(type(shape))
 
 
+class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    bioimageio_description = "PyTorch state dictionary weights format"
+    weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
+    architecture = fields.ImportableSource(
+        bioimageio_maybe_required=True,
+        bioimageio_description="Source code of the model architecture that either points to a "
+        "local implementation: `<relative path to file>:<identifier of implementation within the file>` or the "
+        "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
+        "`my_function.py:MyImplementation` or `bioimageio.core.some_module.some_class_or_function`.",
+    )
+    kwargs = fields.Kwargs(
+        bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
+    )
+
+
 WeightsEntry = typing.Union[
     PytorchStateDictWeightsEntry,
     PytorchScriptWeightsEntry,
@@ -214,11 +228,6 @@ is in an unsupported format version. The current format version described here i
 
     icon = missing_  # todo: allow icon for Model (RDF has it)
 
-    kwargs = fields.Kwargs(
-        bioimageio_description="Keyword arguments for the implementation specified by `source`. "
-        "This field is only required if the field `source` is present."
-    )
-
     language = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.Language)),
         bioimageio_maybe_required=True,
@@ -263,15 +272,6 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="SHA256 checksum of the model source code file."
         + _common_sha256_hint
         + " This field is only required if the field source is present.",
-    )
-
-    source = fields.ImportableSource(
-        bioimageio_maybe_required=True,
-        bioimageio_description="Language and framework specific implementation. As some weights contain the model "
-        "architecture, the source is optional depending on the present weight formats. `source` can either point to a "
-        "local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the "
-        "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
-        "`my_function.py:MyImplementation` or `core_library.some_module.some_function`.",
     )
 
     timestamp = fields.DateTime(
@@ -442,7 +442,7 @@ is in an unsupported format version. The current format version described here i
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
-        weights: typing.Dict[str, WeightsEntryBase] = data["weights"]
+        weights: typing.Dict[str, WeightsEntry] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 assert isinstance(

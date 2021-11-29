@@ -15,11 +15,11 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     OnnxWeightsEntry,
     OutputTensor,
     PytorchScriptWeightsEntry,
-    PytorchStateDictWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
     WeightsFormat,
+    _WeightsEntryBase,
 )
 from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
 from bioimageio.spec.shared.raw_nodes import (
@@ -43,6 +43,16 @@ ImplicitOutputShape = ImplicitOutputShape
 
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
 
+ImportableSource = Union[ImportableSourceFile, ImportableModule]
+
+
+@dataclass
+class PytorchStateDictWeightsEntry(_WeightsEntryBase):
+    weights_format_name = "Pytorch State Dict"
+    architecture: ImportableSource = missing
+    kwargs: Union[_Missing, Dict[str, Any]] = missing
+
+
 WeightsEntry = Union[
     KerasHdf5WeightsEntry,
     OnnxWeightsEntry,
@@ -51,9 +61,6 @@ WeightsEntry = Union[
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
 ]
-
-
-ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
 @dataclass
@@ -65,7 +72,6 @@ class Model(RDF):
     format_version: FormatVersion = missing
     framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
-    kwargs: Union[_Missing, Dict[str, Any]] = missing
     language: Union[_Missing, Language] = missing
     license: str = missing
     links: Union[_Missing, List[str]] = missing
@@ -79,7 +85,6 @@ class Model(RDF):
     timestamp: datetime = missing
     type: Literal["model"] = missing
 
-    source: Union[_Missing, ImportableSource] = missing
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
