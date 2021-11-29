@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Union
 
 from marshmallow import missing
@@ -73,13 +73,13 @@ class Model(RDF):
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing
     run_mode: Union[_Missing, RunMode] = missing
-    sample_inputs: Union[_Missing, List[URI]] = missing
-    sample_outputs: Union[_Missing, List[URI]] = missing
+    sample_inputs: Union[_Missing, List[Union[URI, Path]]] = missing
+    sample_outputs: Union[_Missing, List[Union[URI, Path]]] = missing
     sha256: Union[_Missing, str] = missing
     timestamp: datetime = missing
     type: Literal["model"] = missing
 
     source: Union[_Missing, ImportableSource] = missing
-    test_inputs: List[URI] = missing
-    test_outputs: List[URI] = missing
+    test_inputs: List[Union[URI, Path]] = missing
+    test_outputs: List[Union[URI, Path]] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
