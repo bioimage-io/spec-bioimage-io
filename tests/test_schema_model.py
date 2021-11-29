@@ -80,3 +80,18 @@ def test_model_schema_accepts_valid_weight_formats(model_dict, format):
     model_dict.update({"weights": {format: {"source": "local_weights"}}})
     validated_data = model_schema.load(model_dict)
     assert validated_data
+
+
+def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate_tensor_names):
+    from bioimageio.spec.model.schema import Model
+    from bioimageio.spec.model.v0_3.schema import Model as Model_v03
+
+    model_schema = Model()
+    with pytest.raises(ValidationError):
+        model_schema.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
+
+    # as 0.3 the model should still be valid
+    model_schema = Model_v03()
+    invalid_rdf_v0_4_0_duplicate_tensor_names["format_version"] = "0.3.3"
+    valid_data = model_schema.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
+    assert valid_data

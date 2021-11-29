@@ -47,6 +47,11 @@ def unet2d_nuclei_broad_latest_path(unet2d_nuclei_broad_base_path):
 
 
 @pytest.fixture
+def invalid_rdf_v0_4_0_duplicate_tensor_names(unet2d_nuclei_broad_base_path):
+    return yaml.load(unet2d_nuclei_broad_base_path / "invalid_rdf_v0_4_0_duplicate_tensor_names.yaml")
+
+
+@pytest.fixture
 def FruNet_model_url():
     return "https://raw.githubusercontent.com/deepimagej/models/master/fru-net_sev_segmentation/model.yaml"
 

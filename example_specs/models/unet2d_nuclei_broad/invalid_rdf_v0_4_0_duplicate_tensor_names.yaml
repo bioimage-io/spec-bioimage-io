@@ -1,0 +1,86 @@
+# TODO physical scale of the data
+format_version: 0.3.3
+
+name: UNet 2D Nuclei Broad
+description: A 2d U-Net trained on the nuclei broad dataset.
+authors:
+  - name: "Constantin Pape;@bioimage-io"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0001-6562-7187"
+  - name: "Fynn Beuttenmueller"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0002-8567-6389"
+
+# we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
+cite:
+  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+    doi: https://doi.org/10.1007/978-3-319-24574-4_28
+  - text: "2018 Data Science Bowl"
+    url: https://www.kaggle.com/c/data-science-bowl-2018
+
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
+license: MIT
+
+documentation: README.md
+covers: [cover0.png]
+attachments: {}
+timestamp: 2019-12-11T12:22:32Z  # ISO 8601
+
+inputs:
+  - name: data
+    description: raw input
+    axes: bcyx  # letters of axes in btczyx
+    data_type: float32
+    data_range: [-.inf, .inf]
+    shape: [1, 1, 512, 512]
+    preprocessing:  # list of preprocessing steps
+      - name: zero_mean_unit_variance  # name of preprocessing step
+        kwargs:
+          mode: per_sample      # mode in [fixed, per_dataset, per_sample]
+          axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+
+outputs:
+  - name: data  # <<--------------------------------------- invalid as name 'data' is used in inputs already!!!
+    description: probability in [0,1]
+    axes: bcyx
+    data_type: float32
+    data_range: [-.inf, .inf]
+    halo: [0, 0, 32, 32]
+    shape:
+      reference_tensor: raw
+      scale: [1.0, 1.0, 1.0, 1.0]
+      offset: [0.0, 0.0, 0.0, 0.0]
+
+language: python
+framework: pytorch
+source: unet2d.py:UNet2d
+kwargs: {input_channels: 1, output_channels: 1}
+dependencies: conda:environment.yaml
+
+test_inputs: [test_input.npy]
+test_outputs: [test_output.npy]
+
+sample_inputs: [test_input.npy]
+sample_outputs: [test_output.npy]
+
+weights:
+ pytorch_state_dict:
+   authors:
+     - name: "Constantin Pape;@bioimage-io"
+       affiliation: "EMBL Heidelberg"
+       orcid: "0000-0001-6562-7187"
+   sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+   source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+ onnx:
+   sha256: 5bf14c4e65e8601ab551db99409ba7981ff0e501719bc2b0ee625ca9a9375b32
+   source: weights.onnx
+   opset_version: 12
+   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+ pytorch_script:
+   sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
+   source: weights.pt
+   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+
+type: model
+version: 0.1.3
