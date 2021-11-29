@@ -336,44 +336,55 @@ is in an unsupported format version. The current format version described here i
             raise ValidationError("Duplicate tensor names are not allowed.")
 
     test_inputs = fields.List(
-        fields.URI,
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         required=True,
-        bioimageio_description="List of URIs to test inputs as described in inputs for a single test case. "
-        "Supported file formats/extensions: '.npy'",
+        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
+        "**a single test case**. "
+        "This means if your model has more than one input, you should provide one URI for each input."
+        "Each test input should be a file with a ndarray in "
+        "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
+        "The extension must be '.npy'.",
     )
-    test_outputs = fields.List(fields.URI, required=True, bioimageio_description="Analog to to test_inputs.")
+    test_outputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        required=True,
+        bioimageio_description="Analog to to test_inputs.",
+    )
 
     sample_inputs = fields.List(
-        fields.URI,
-        bioimageio_description="List of URIs to sample inputs to illustrate possible inputs for the model, for example "
-        "stored as png or tif images.",
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
+        "the model, for example stored as png or tif images. "
+        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
     )
     sample_outputs = fields.List(
-        fields.URI, bioimageio_description="List of URIs to sample outputs corresponding to the `sample_inputs`."
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
+        "`sample_inputs`.",
     )
 
     config = fields.Dict(
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
         + """
 
-For example:
-```yaml
-config:
-  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-  deepimagej:
-    model_keys:
-      # In principle the tag "SERVING" is used in almost every tf model
-      model_tag: tf.saved_model.tag_constants.SERVING
-      # Signature definition to call the model. Again "SERVING" is the most general
-      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-    test_information:
-      input_size: [2048x2048] # Size of the input images
-      output_size: [1264x1264 ]# Size of all the outputs
-      device: cpu # Device used. In principle either cpu or GPU
-      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-      runtime: 78.8s # Time it took to run the model
-      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-```
+    For example:
+    ```yaml
+    config:
+      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+      deepimagej:
+        model_keys:
+          # In principle the tag "SERVING" is used in almost every tf model
+          model_tag: tf.saved_model.tag_constants.SERVING
+          # Signature definition to call the model. Again "SERVING" is the most general
+          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        test_information:
+          input_size: [2048x2048] # Size of the input images
+          output_size: [1264x1264 ]# Size of all the outputs
+          device: cpu # Device used. In principle either cpu or GPU
+          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+          runtime: 78.8s # Time it took to run the model
+          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+    ```
 """
     )
 
