@@ -12,6 +12,13 @@ from marshmallow.validate import (
     Validator,
 )
 
+ContainsNoneOf = ContainsNoneOf
+Equal = Equal
+Length = Length
+OneOf = OneOf
+Range = Range
+URL = URL
+
 
 class Attribute(Validator):
 
