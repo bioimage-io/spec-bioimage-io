@@ -144,6 +144,8 @@ class OutputTensor(Tensor):
 
 
 class PytorchStateDictWeightsEntry(WeightsEntryBase):
+    raw_nodes = raw_nodes
+
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
     architecture = fields.ImportableSource(
@@ -213,12 +215,6 @@ is in an unsupported format version. The current format version described here i
 {get_args(raw_nodes.FormatVersion)[-1]}""",
     )
 
-    framework = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.Framework)),
-        bioimageio_description=f"The deep learning framework of the source code. One of: "
-        f"{', '.join(get_args(raw_nodes.Framework))}. This field is only required if the field `source` is present.",
-    )
-
     git_repo = fields.String(
         validate=field_validators.URL(schemes=["http", "https"]),
         bioimageio_description=rdf.schema.RDF.git_repo_bioimageio_description
@@ -228,20 +224,13 @@ is in an unsupported format version. The current format version described here i
 
     icon = missing_  # todo: allow icon for Model (RDF has it)
 
-    language = fields.String(
-        validate=field_validators.OneOf(get_args(raw_nodes.Language)),
-        bioimageio_maybe_required=True,
-        bioimageio_description=f"Programming language of the source code. One of: "
-        f"{', '.join(get_args(raw_nodes.Language))}. This field is only required if the field `source` is present.",
-    )
-
     license = fields.String(
         required=True,  # todo: unify license with RDF (optional or required?)
         bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
     )
 
     name = fields.String(
-        # validate=field_validators.Length(max=36),  # todo: enforce in future version (0.4.0?)
+        # validate=field_validators.Length(max=64),  # todo: generate warning in 0.4.0
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "`_`, `-` or spaces and not be longer than 36 characters.",
@@ -387,43 +376,6 @@ is in an unsupported format version. The current format version described here i
     ```
 """
     )
-
-    @validates_schema
-    def language_and_framework_match(self, data, **kwargs):
-        field_names = ("language", "framework")
-        valid_combinations = [
-            ("python", "scikit-learn"),  # todo: remove
-            ("python", "pytorch"),
-            ("python", "tensorflow"),
-            ("java", "tensorflow"),
-        ]
-        if "source" not in data:
-            valid_combinations.append((missing_, missing_))
-            valid_combinations.append(("python", missing_))
-            valid_combinations.append(("java", missing_))
-
-        combination = tuple(data.get(name, missing_) for name in field_names)
-        if combination not in valid_combinations:
-            raise ValidationError(f"invalid combination of {dict(zip(field_names, combination))}")
-
-    @validates_schema
-    def source_specified_if_required(self, data, **kwargs):
-        if "source" in data:
-            return
-
-        weights_format_requires_source = {
-            "pytorch_state_dict": True,
-            "pytorch_script": False,
-            "keras_hdf5": False,
-            "tensorflow_js": False,
-            "tensorflow_saved_model_bundle": False,
-            "onnx": False,
-        }
-        require_source = {wf for wf in data["weights"] if weights_format_requires_source[wf]}
-        if require_source:
-            raise ValidationError(
-                f"These specified weight formats require source code to be specified: {require_source}"
-            )
 
     @validates_schema
     def validate_reference_tensor_names(self, data, **kwargs):

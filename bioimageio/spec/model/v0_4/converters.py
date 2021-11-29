@@ -10,11 +10,12 @@ def convert_model_from_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
     data = v0_3.converters.maybe_convert(data)
     v0_3.schema.Model().validate(data)
 
-    data["format_version"] = "0.4.0"
+    data.pop("language", None)
+    data.pop("framework", None)
 
     architecture = data.pop("source", None)
     kwargs = data.pop("kwargs", None)
-    pytorch_state_dict_weights_entry = data.get("pytorch_state_dict")
+    pytorch_state_dict_weights_entry = data.get("weights", {}).get("pytorch_state_dict")
     if pytorch_state_dict_weights_entry is not None:
         pytorch_state_dict_weights_entry["architecture"] = architecture
         pytorch_state_dict_weights_entry["kwargs"] = kwargs

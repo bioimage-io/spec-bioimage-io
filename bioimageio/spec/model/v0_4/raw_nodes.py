@@ -7,10 +7,8 @@ from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from bioimageio.spec.model.v0_3.raw_nodes import (
-    Framework,
     InputTensor,
     KerasHdf5WeightsEntry,
-    Language,
     ModelParent,
     OnnxWeightsEntry,
     OutputTensor,
@@ -70,9 +68,7 @@ class Model(RDF):
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
     format_version: FormatVersion = missing
-    framework: Union[_Missing, Framework] = missing
     inputs: List[InputTensor] = missing
-    language: Union[_Missing, Language] = missing
     license: str = missing
     links: Union[_Missing, List[str]] = missing
     outputs: List[OutputTensor] = missing
