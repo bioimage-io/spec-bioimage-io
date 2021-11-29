@@ -222,8 +222,6 @@ is in an unsupported format version. The current format version described here i
         + "(which contains the configuration yaml file) should be used.",
     )
 
-    icon = missing_  # todo: allow icon for Model (RDF has it)
-
     license = fields.String(
         validate=field_validators.OneOf(LICENSES),
         required=True,
