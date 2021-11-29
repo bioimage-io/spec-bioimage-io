@@ -90,8 +90,14 @@ def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate
     with pytest.raises(ValidationError):
         model_schema.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
 
-    # as 0.3 the model should still be valid
+    # as 0.3 the model should still be valid with some small changes
     model_schema = Model_v03()
-    invalid_rdf_v0_4_0_duplicate_tensor_names["format_version"] = "0.3.3"
-    valid_data = model_schema.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
+    data = dict(invalid_rdf_v0_4_0_duplicate_tensor_names)
+    data["format_version"] = "0.3.3"
+    data["language"] = "python"
+    data["framework"] = "pytorch"
+    data["source"] = data["pytorch_state_dict"].pop("architecture")
+    data["kwargs"] = data["pytorch_state_dict"].pop("kwargs")
+
+    valid_data = model_schema.load(data)
     assert valid_data
