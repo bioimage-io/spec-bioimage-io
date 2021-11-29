@@ -2,23 +2,23 @@ import typing
 import warnings
 from copy import deepcopy
 
-from marshmallow import RAISE, ValidationError, pre_load, validates, validates_schema, missing
+from marshmallow import RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
 
-from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.model.v0_3.schema import (
-    RunMode,
-    Preprocessing,
-    Postprocessing,
-    PytorchStateDictWeightsEntry,
-    PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
+    ModelParent,
+    OnnxWeightsEntry,
+    Postprocessing,
+    Preprocessing,
+    PytorchScriptWeightsEntry,
+    PytorchStateDictWeightsEntry,
+    RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    OnnxWeightsEntry,
-    ModelParent,
     WeightsEntryBase,
     _common_sha256_hint,
 )
+from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
@@ -173,7 +173,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         fields.Nested(Author), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
     )
 
-    badges = missing  # todo: allow badges for Model (RDF has it)
+    badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.Nested(
         CiteEntry,
         many=True,
@@ -181,7 +181,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
-    download_url = missing  # todo: allow download_url for Model (RDF has it)
+    download_url = missing_  # todo: allow download_url for Model (RDF has it)
 
     dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
@@ -212,7 +212,7 @@ is in an unsupported format version. The current format version described here i
         + "(which contains the configuration yaml file) should be used.",
     )
 
-    icon = missing  # todo: allow icon for Model (RDF has it)
+    icon = missing_  # todo: allow icon for Model (RDF has it)
 
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `source`. "
@@ -388,11 +388,11 @@ config:
             ("java", "tensorflow"),
         ]
         if "source" not in data:
-            valid_combinations.append((missing, missing))
-            valid_combinations.append(("python", missing))
-            valid_combinations.append(("java", missing))
+            valid_combinations.append((missing_, missing_))
+            valid_combinations.append(("python", missing_))
+            valid_combinations.append(("java", missing_))
 
-        combination = tuple(data.get(name, missing) for name in field_names)
+        combination = tuple(data.get(name, missing_) for name in field_names)
         if combination not in valid_combinations:
             raise ValidationError(f"invalid combination of {dict(zip(field_names, combination))}")
 
@@ -419,15 +419,15 @@ config:
     def validate_reference_tensor_names(self, data, **kwargs):
         valid_input_tensor_references = [ipt.name for ipt in data["inputs"]]
         for out in data["outputs"]:
-            if out.postprocessing is missing:
+            if out.postprocessing is missing_:
                 continue
 
             for postpr in out.postprocessing:
-                if postpr.kwargs is missing:
+                if postpr.kwargs is missing_:
                     continue
 
-                ref_tensor = postpr.kwargs.get("reference_tensor", missing)
-                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
+                ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
+                if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
 
     @validates_schema
@@ -443,12 +443,12 @@ config:
                         raw_nodes.TensorflowSavedModelBundleWeightsEntry,
                     ),
                 )
-                if weights_entry.tensorflow_version is missing:
+                if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
                     warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
-                if weights_entry.opset_version is missing:
+                if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
                     warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
