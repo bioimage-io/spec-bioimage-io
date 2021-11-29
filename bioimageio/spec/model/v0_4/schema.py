@@ -18,7 +18,7 @@ from bioimageio.spec.model.v0_3.schema import (
     _common_sha256_hint,
 )
 from bioimageio.spec.rdf import v0_2 as rdf
-from bioimageio.spec.shared import field_validators, fields
+from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
@@ -225,7 +225,8 @@ is in an unsupported format version. The current format version described here i
     icon = missing_  # todo: allow icon for Model (RDF has it)
 
     license = fields.String(
-        required=True,  # todo: unify license with RDF (optional or required?)
+        validate=field_validators.OneOf(LICENSES),
+        required=True,
         bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
     )
 
