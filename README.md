@@ -143,11 +143,16 @@ or if the field `test_inputs` does not contain a list, it would print:
  * **0.4.0**:
     - Breaking changes
       - model inputs and outputs may not use duplicated names
+    - Breaking changes that are fully auto-convertible
+      - model fields language and framework are removed
+      - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict` 
+        weights entry (if it exists, otherwise they are removed).
     - Other changes
       - model inputs (like outputs) may be defined by `scale`ing and `offset`ing a `reference_tensor`
  * **0.3.4**:
    - Other changes
-      - Add optional parameter `eps` to `scale_range` postprocessing. * **0.3.3**:
+      - Add optional parameter `eps` to `scale_range` postprocessing. 
+ * **0.3.3**:
     - Breaking changes that are fully auto-convertible
       - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
  * **0.3.2**: 
