@@ -1,3 +1,5 @@
+import pytest
+
 from bioimageio.spec.shared import fields
 
 
@@ -44,7 +46,8 @@ def test_cite_field_option2():
     assert len(out) == 2
 
 
-def test_cite_field_option3():  # we (arbitrarily) don't allow this
+@pytest.skip("we (arbitrarily) don't allow this. Test for reference only. see fields.Nested for details")
+def test_cite_field_option3():
     from bioimageio.spec.rdf.schema import CiteEntry
 
     data = [
