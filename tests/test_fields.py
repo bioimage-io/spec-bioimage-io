@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import numpy
 import pytest
-from marshmallow import Schema, ValidationError
+from marshmallow import ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
@@ -68,7 +68,7 @@ class TestShape:
     def test_explicit_input_shape(self):
         data = [1, 2, 3]
         expected = data
-        actual = fields.InputShape().deserialize(data)
+        actual = fields.ExplicitShape().deserialize(data)
         assert expected == actual
 
     def test_explicit_output_shape(self):
@@ -80,21 +80,18 @@ class TestShape:
     def test_min_step_input_shape(self):
         data = {"min": [1, 2, 3], "step": [0, 1, 3]}
         expected = raw_nodes.ParametrizedInputShape(**data)
-        actual = fields.InputShape().deserialize(data)
-        assert expected == actual
+        actual = fields.Union(
+            [fields.ExplicitShape(), fields.Nested(schema.ParametrizedInputShape())], required=True
+        ).deserialize(data)
+        assert actual == expected
 
-    def test_todo_output_shape(self):
-        # todo: output shape with schema (implicit shape)
-        pass
-
-    def test_explicit_input_shape_schema(self):
-        class MySchema(Schema):
-            shape = fields.InputShape()
-
-        data = {"shape": [1, 2, 3]}
-        expected = data
-        actual = MySchema().load(data)
-        assert expected == actual
+    def test_output_shape(self):
+        data = {"reference_tensor": "in1", "scale": [1, 2, 3], "offset": [0, 1, 3]}
+        expected = raw_nodes.ImplicitOutputShape(**data)
+        actual = fields.Union(
+            [fields.ExplicitShape(), fields.Nested(schema.ImplicitOutputShape())], required=True
+        ).deserialize(data)
+        assert actual == expected
 
 
 class TestURI:

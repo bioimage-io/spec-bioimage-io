@@ -7,7 +7,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, CiteEntry, Dependencies, RDF
 from bioimageio.spec.shared.raw_nodes import (
     ParametrizedInputShape,
     ImplicitOutputShape,
@@ -36,10 +36,7 @@ WeightsFormat = Literal[
 ]
 
 # reassign to use imported classes
-Badge = Badge
 CiteEntry = CiteEntry
-ParametrizedInputShape = ParametrizedInputShape
-ImplicitOutputShape = ImplicitOutputShape
 
 
 @dataclass

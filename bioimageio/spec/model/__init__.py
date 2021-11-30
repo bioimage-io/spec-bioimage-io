@@ -1,4 +1,4 @@
-from . import v0_1, v0_3
+from . import v0_1, v0_3, v0_4
 
 # autogen: start
 from . import converters, raw_nodes, schema, utils

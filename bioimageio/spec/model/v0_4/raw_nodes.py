@@ -12,6 +12,10 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     ModelParent,
     OnnxWeightsEntry,
     OutputTensor,
+    PostprocessingName,
+    PreprocessingName,
+    Postprocessing,
+    Preprocessing,
     PytorchScriptWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
@@ -19,7 +23,7 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     WeightsFormat,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, CiteEntry, Dependencies, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitOutputShape,
     ImportableModule,
@@ -34,10 +38,13 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 # reassign to use imported classes
-Badge = Badge
 CiteEntry = CiteEntry
-ParametrizedInputShape = ParametrizedInputShape
 ImplicitOutputShape = ImplicitOutputShape
+ParametrizedInputShape = ParametrizedInputShape
+Postprocessing = Postprocessing
+PostprocessingName = PostprocessingName
+Preprocessing = Preprocessing
+PreprocessingName = PreprocessingName
 
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
 
@@ -62,7 +69,7 @@ WeightsEntry = Union[
 
 
 @dataclass
-class Model(RDF):
+class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs")
 
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
