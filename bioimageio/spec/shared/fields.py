@@ -287,44 +287,9 @@ class ImportableSource(String):
             raise TypeError(f"{value} has unexpected type {type(value)}")
 
 
-class InputShape(Union):
-    def __init__(self, **super_kwargs):
-        from .schema import ParametrizedInputShape
-
-        super().__init__(
-            fields=[
-                ExplicitShape(
-                    bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
-                ),
-                Nested(
-                    ParametrizedInputShape,
-                    bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
-                ),
-            ],
-            **super_kwargs,
-        )
-
-
 class Kwargs(Dict):
     def __init__(self, keys=String, bioimageio_description="Key word arguments.", **super_kwargs):
         super().__init__(keys, bioimageio_description=bioimageio_description, **super_kwargs)
-
-
-class OutputShape(Union):
-    def __init__(self, **super_kwargs):
-        from .schema import ImplicitOutputShape
-
-        super().__init__(
-            fields=[
-                ExplicitShape(),
-                Nested(
-                    ImplicitOutputShape,
-                    bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
-                    "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
-                ),
-            ],
-            **super_kwargs,
-        )
 
 
 class Path(String):

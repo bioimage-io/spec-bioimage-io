@@ -9,6 +9,7 @@ from pytest import raises
 
 from bioimageio.spec.model import schema
 from bioimageio.spec.shared import fields, raw_nodes
+from bioimageio.spec.shared.raw_nodes import ImplicitOutputShape, ParametrizedInputShape
 
 
 class TestArray:
@@ -80,21 +81,16 @@ class TestShape:
     def test_min_step_input_shape(self):
         data = {"min": [1, 2, 3], "step": [0, 1, 3]}
         expected = raw_nodes.ParametrizedInputShape(**data)
-        actual = fields.InputShape().deserialize(data)
-        assert expected == actual
+        actual = fields.Union(
+            [fields.ExplicitShape(), fields.Nested(ParametrizedInputShape)], required=True
+        ).deserialize(data)
+        assert actual == expected
 
-    def test_todo_output_shape(self):
-        # todo: output shape with schema (implicit shape)
-        pass
-
-    def test_explicit_input_shape_schema(self):
-        class MySchema(Schema):
-            shape = fields.InputShape()
-
-        data = {"shape": [1, 2, 3]}
-        expected = data
-        actual = MySchema().load(data)
-        assert expected == actual
+    def test_output_shape(self):
+        data = {"reference_tensor": "in1", "scale": [1, 2, 3], "offset": [0, 1, 3]}
+        expected = raw_nodes.ImplicitOutputShape(**data)
+        actual = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitOutputShape)], required=True)
+        assert actual == expected
 
 
 class TestURI:

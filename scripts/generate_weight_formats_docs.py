@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Sequence, Tuple, Type
 
 import bioimageio.spec.model
-from bioimageio.spec.model.v0_3.schema import WeightsEntryBase
+from bioimageio.spec.model.v0_3.schema import _WeightsEntryBase
 
 try:
     from typing import get_args
@@ -28,7 +28,7 @@ class WeightsFormatDocNode:
 def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
     """retrieve documentation of weight formats from their definitions schema"""
 
-    def get_kwargs_doc(we: Type[WeightsEntryBase], exclude: Sequence[str] = tuple()) -> List[Kwarg]:
+    def get_kwargs_doc(we: Type[_WeightsEntryBase], exclude: Sequence[str] = tuple()) -> List[Kwarg]:
         return sorted(
             [
                 Kwarg(name=name, optional=not f.required or bool(f.missing), description=f.bioimageio_description)
@@ -38,7 +38,7 @@ def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
             key=lambda kw: (kw.optional, kw.name),
         )
 
-    common_kwargs = get_kwargs_doc(WeightsEntryBase)
+    common_kwargs = get_kwargs_doc(_WeightsEntryBase)
 
     def get_wf_name_from_wf_schema(wfs):
         return wfs().fields["weights_format"].validate.comparable

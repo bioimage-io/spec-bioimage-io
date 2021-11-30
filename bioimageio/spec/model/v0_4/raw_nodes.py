@@ -14,6 +14,8 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     OutputTensor,
     PostprocessingName,
     PreprocessingName,
+    Postprocessing,
+    Preprocessing,
     PytorchScriptWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
@@ -39,7 +41,9 @@ except ImportError:
 CiteEntry = CiteEntry
 ImplicitOutputShape = ImplicitOutputShape
 ParametrizedInputShape = ParametrizedInputShape
+Postprocessing = Postprocessing
 PostprocessingName = PostprocessingName
+Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
