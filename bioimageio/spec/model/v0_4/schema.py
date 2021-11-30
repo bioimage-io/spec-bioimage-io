@@ -215,13 +215,17 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author()), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
+        fields.Nested(Author()),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description=rdf.schema.RDF.authors_bioimageio_description,
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.List(
         fields.Nested(CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
+        validate=field_validators.Length(min=1),
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
@@ -326,7 +330,10 @@ is in an unsupported format version. The current format version described here i
         return data
 
     inputs = fields.List(
-        fields.Nested(InputTensor()), bioimageio_description="Describes the input tensors expected by this model."
+        fields.Nested(InputTensor()),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="Describes the input tensors expected by this model.",
     )
 
     @validates("inputs")
@@ -339,7 +346,9 @@ is in an unsupported format version. The current format version described here i
             raise ValidationError("Duplicate input tensor names are not allowed.")
 
     outputs = fields.List(
-        fields.Nested(OutputTensor()), bioimageio_description="Describes the output tensors from this model."
+        fields.Nested(OutputTensor()),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="Describes the output tensors from this model.",
     )
 
     @validates("outputs")
@@ -367,6 +376,7 @@ is in an unsupported format version. The current format version described here i
 
     test_inputs = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
         "**a single test case**. "
@@ -377,18 +387,21 @@ is in an unsupported format version. The current format version described here i
     )
     test_outputs = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="Analog to to test_inputs.",
     )
 
     sample_inputs = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
         bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
         "the model, for example stored as png or tif images. "
         "The model is not tested with these sample files that serve to inform a human user about an example use case.",
     )
     sample_outputs = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
         bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
         "`sample_inputs`.",
     )
@@ -424,13 +437,23 @@ is in an unsupported format version. The current format version described here i
             return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
 
         valid_input_tensor_references = get_tnames("inputs")
-        # a model is not allowed to have no or empty outputs, but I hope that this is validated somewhere else,
-        # so I use get with a default empty list here
-        for out in data.get("outputs", []):
-            if out.postprocessing is missing_:
+        ins = data.get("inputs", [])
+        outs = data.get("outputs", [])
+        if not isinstance(ins, list) or not isinstance(outs, list):
+            raise ValidationError(
+                f"Failed to validate reference tensor names due to other validation errors in inputs/outputs."
+            )
+
+        for t in outs + ins:
+            if not isinstance(t, (raw_nodes.InputTensor, raw_nodes.OutputTensor)):
+                raise ValidationError(
+                    "Failed to validate reference tensor names due to validation errors in inputs/outputs"
+                )
+
+            if t.postprocessing is missing_:
                 continue
 
-            for postpr in out.postprocessing:
+            for postpr in t.postprocessing:
                 if postpr.kwargs is missing_:
                     continue
 
@@ -440,8 +463,11 @@ is in an unsupported format version. The current format version described here i
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
-        weights: typing.Dict[str, WeightsEntry] = data["weights"]
+        weights: typing.Dict[str, WeightsEntry] = data.get("weights", {})
         for weights_format, weights_entry in weights.items():
+            if not isinstance(weights_entry, get_args(raw_nodes.WeightsEntry)):
+                raise ValidationError("Cannot validate keys in weights field due to other validation errors.")
+
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 assert isinstance(
                     weights_entry,

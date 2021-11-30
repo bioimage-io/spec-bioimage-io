@@ -161,8 +161,8 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     @validates_schema
     def format_version_matches_type(self, data, **kwargs):
-        format_version = data["format_version"]
-        type_ = data["type"]
+        format_version = data.get("format_version")
+        type_ = data.get("type")
         try:
             patched_format_version = get_patched_format_version(type_, format_version)
             if format_version.split(".") > patched_format_version.split("."):
