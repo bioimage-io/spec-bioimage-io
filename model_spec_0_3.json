@@ -289,6 +289,7 @@
                         "$ref": "#/definitions/CiteEntry",
                         "type": "object"
                     },
+                    "title": "cite",
                     "type": "array"
                 },
                 "config": {
@@ -362,10 +363,8 @@
                         "$ref": "#/definitions/InputTensor",
                         "type": "object"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "title": "inputs",
+                    "type": "array"
                 },
                 "kwargs": {
                     "additionalProperties": {},
@@ -402,10 +401,8 @@
                         "$ref": "#/definitions/OutputTensor",
                         "type": "object"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "title": "outputs",
+                    "type": "array"
                 },
                 "packaged_by": {
                     "items": {

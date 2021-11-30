@@ -16,9 +16,10 @@ is in an unsupported format version. The current format version described here i
   * <a id="authors:name"></a>`name` _String_ Full name.
   * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
   * <a id="authors:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
-* <a id="cite"></a>`cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
+* <a id="cite"></a>`cite` _List\[CiteEntry\]_ A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys:
+E.g. the citation for the model architecture and/or the training data used.
+  1. _CiteEntry_   is a Dict with the following keys:
   * <a id="cite:text"></a>`text` _String_ 
   * <a id="cite:doi"></a>`doi` _optional* String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
@@ -91,7 +92,8 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
 * <a id="download_url"></a>`download_url` _optional String_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
-* <a id="inputs"></a>`inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model. List\[InputTensor\] is a Dict with the following keys:
+* <a id="inputs"></a>`inputs` _optional List\[InputTensor\]_ Describes the input tensors expected by this model.
+  1. _InputTensor_   is a Dict with the following keys:
   * <a id="inputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
     | character | description |
@@ -117,7 +119,8 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     * <a id="inputs:preprocessing:name"></a>`name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
     * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_3.md).
 * <a id="links"></a>`links` _optional List\[String\]_ links to other bioimage.io resources
-* <a id="outputs"></a>`outputs` _List\[OutputTensor\]_ Describes the output tensors from this model. List\[OutputTensor\] is a Dict with the following keys:
+* <a id="outputs"></a>`outputs` _optional List\[OutputTensor\]_ Describes the output tensors from this model.
+  1. _OutputTensor_   is a Dict with the following keys:
   * <a id="outputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
     | character | description |

@@ -159,6 +159,7 @@
                         "$ref": "#/definitions/InputArray",
                         "type": "object"
                     },
+                    "title": "inputs",
                     "type": "array"
                 },
                 "language": {
@@ -183,6 +184,7 @@
                         "$ref": "#/definitions/OutputArray",
                         "type": "object"
                     },
+                    "title": "outputs",
                     "type": "array"
                 },
                 "prediction": {
@@ -339,20 +341,16 @@
                         "$ref": "#/definitions/Transformation",
                         "type": "object"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "title": "postprocess",
+                    "type": "array"
                 },
                 "preprocess": {
                     "items": {
                         "$ref": "#/definitions/Transformation",
                         "type": "object"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "title": "preprocess",
+                    "type": "array"
                 },
                 "weights": {
                     "$ref": "#/definitions/Weights",

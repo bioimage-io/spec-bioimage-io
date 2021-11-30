@@ -126,6 +126,7 @@
                         "$ref": "#/definitions/CiteEntry",
                         "type": "object"
                     },
+                    "title": "cite",
                     "type": "array"
                 },
                 "config": {

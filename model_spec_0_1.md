@@ -6,7 +6,8 @@
 * <a id="description"></a>`description` _String_ 
 * <a id="documentation"></a>`documentation` _RelativeLocalPath→Path_ 
 * <a id="format_version"></a>`format_version` _String_ 
-* <a id="inputs"></a>`inputs` _List\[InputArray\]_   is a Dict with the following keys:
+* <a id="inputs"></a>`inputs` _List\[InputArray\]_ 
+  1. _InputArray_   is a Dict with the following keys:
   * <a id="inputs:data_type"></a>`data_type` _String_ 
   * <a id="inputs:name"></a>`name` _String_ 
   * <a id="inputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ 
@@ -19,7 +20,8 @@
 * <a id="language"></a>`language` _String_ 
 * <a id="license"></a>`license` _String_ 
 * <a id="name"></a>`name` _String_ 
-* <a id="outputs"></a>`outputs` _List\[OutputArray\]_   is a Dict with the following keys:
+* <a id="outputs"></a>`outputs` _List\[OutputArray\]_ 
+  1. _OutputArray_   is a Dict with the following keys:
   * <a id="outputs:data_type"></a>`data_type` _String_ 
   * <a id="outputs:name"></a>`name` _String_ 
   * <a id="outputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
@@ -33,10 +35,12 @@
   * <a id="outputs:halo"></a>`halo` _optional List\[Integer\]_ 
 * <a id="prediction"></a>`prediction` _Prediction_   is a Dict with the following keys:
   * <a id="prediction:dependencies"></a>`dependencies` _optional Dependencies→String_ 
-  * <a id="prediction:postprocess"></a>`postprocess` _List\[Transformation\]_   is a Dict with the following keys:
+  * <a id="prediction:postprocess"></a>`postprocess` _optional List\[Transformation\]_ 
+    1. _Transformation_   is a Dict with the following keys:
     * <a id="prediction:postprocess:spec"></a>`spec` _URI→String_ 
     * <a id="prediction:postprocess:kwargs"></a>`kwargs` _optional Dict\[Any, Any\]_ 
-  * <a id="prediction:preprocess"></a>`preprocess` _List\[Transformation\]_   is a Dict with the following keys:
+  * <a id="prediction:preprocess"></a>`preprocess` _optional List\[Transformation\]_ 
+    1. _Transformation_   is a Dict with the following keys:
     * <a id="prediction:preprocess:spec"></a>`spec` _URI→String_ 
     * <a id="prediction:preprocess:kwargs"></a>`kwargs` _optional Dict\[Any, Any\]_ 
   * <a id="prediction:weights"></a>`weights` _Weights_   is a Dict with the following keys:

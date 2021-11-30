@@ -9,9 +9,10 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 
 * <a id="format_version"></a>`format_version` _String_ Version of the BioImage.IO Resource Description File Specification used.The current general format version described here is 0.2.0. Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format.
-* <a id="cite"></a>`cite` _List\[CiteEntry\]_ A citation entry or list of citation entries.
+* <a id="cite"></a>`cite` _List\[CiteEntry\]_ A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used. List\[CiteEntry\] is a Dict with the following keys:
+E.g. the citation for the model architecture and/or the training data used.
+  1. _CiteEntry_   is a Dict with the following keys:
   * <a id="cite:text"></a>`text` _String_ 
   * <a id="cite:doi"></a>`doi` _optional* String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
