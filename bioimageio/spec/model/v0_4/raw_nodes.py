@@ -55,6 +55,7 @@ ImportableSource = Union[ImportableSourceFile, ImportableModule]
 class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
     architecture: ImportableSource = missing
+    architecture_sha256: Union[_Missing, str] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
@@ -84,7 +85,6 @@ class Model(_RDF):
     run_mode: Union[_Missing, RunMode] = missing
     sample_inputs: Union[_Missing, List[Union[URI, Path]]] = missing
     sample_outputs: Union[_Missing, List[Union[URI, Path]]] = missing
-    sha256: Union[_Missing, str] = missing
     timestamp: datetime = missing
     type: Literal["model"] = missing
 

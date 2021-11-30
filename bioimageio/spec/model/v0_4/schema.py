@@ -184,9 +184,28 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
         "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
         "`my_function.py:MyImplementation` or `bioimageio.core.some_module.some_class_or_function`.",
     )
+    architecture_sha256 = fields.String(
+        validate=field_validators.Length(equal=64),
+        bioimageio_description="SHA256 checksum of the model source code file."
+        + _common_sha256_hint
+        + " This field is only required if the architecture points to a source file.",
+    )
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
+
+    @validates_schema
+    def sha_for_source_code_file(self, data, **kwargs):
+        arch = data.get("architecture")
+        if isinstance(arch, raw_nodes.ImportableModule):
+            return
+        elif isinstance(arch, raw_nodes.ImportableSourceFile):
+            sha = data.get("architecture_sha256")
+            if sha is None:
+                raise ValidationError(
+                    "When specifying 'architecture' with a callable from a source file, "
+                    "the corresponding 'architecture_sha256' field is required."
+                )
 
 
 WeightsEntry = typing.Union[
@@ -281,13 +300,6 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. "
         "No standard run modes are defined yet.",
-    )
-
-    sha256 = fields.String(
-        validate=field_validators.Length(equal=64),
-        bioimageio_description="SHA256 checksum of the model source code file."
-        + _common_sha256_hint
-        + " This field is only required if the field source is present.",
     )
 
     timestamp = fields.DateTime(

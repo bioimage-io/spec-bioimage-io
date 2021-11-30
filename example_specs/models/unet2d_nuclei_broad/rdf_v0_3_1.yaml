@@ -50,6 +50,7 @@ outputs:
 language: python
 framework: pytorch
 source: unet2d.py:UNet2d
+sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
 kwargs: {input_channels: 1, output_channels: 1}
 dependencies: conda:environment.yaml
 
