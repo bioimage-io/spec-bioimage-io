@@ -13,8 +13,7 @@ covers: [stardist_logo.jpg]
 dependencies: pip:requirements.txt
 description: StarDist
 documentation: README.md
-format_version: 0.3.3
-framework: tensorflow
+format_version: 0.4.0
 git_repo: https://github.com/stardist/stardist
 inputs:
 - axes: byxc
@@ -27,8 +26,7 @@ inputs:
   shape:
     min: [1, 16, 16, 1]
     step: [0, 16, 16, 0]
-language: python
-license: BSD 3-Clause License
+license: CC-BY-NC-4.0
 name: StardistExampleModel
 outputs:
 - axes: byxc
