@@ -60,7 +60,7 @@ class Array(BioImageIOSchema):
 
 
 class InputArray(Array):
-    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ParametrizedInputShape)], required=True)
+    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ParametrizedInputShape())], required=True)
 
 
 class ImplicitOutputShape(SharedImplicitOutputShape):

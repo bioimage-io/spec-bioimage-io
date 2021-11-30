@@ -14,24 +14,24 @@ from bioimageio.spec.model.v0_3.schema import (
     RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    WeightsEntryBase,
+    _WeightsEntryBase,
     _common_sha256_hint,
 )
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
 from . import raw_nodes
 
 Author = rdf.schema.Author
 CiteEntry = rdf.schema.CiteEntry
 
 
-class BioImageIOSchema(SharedBioImageIOSchema):
+class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Tensor(BioImageIOSchema):
+class _TensorBase(_BioImageIOSchema):
     name = fields.String(
         required=True,
         validate=field_validators.Predicate("isidentifier"),
@@ -80,8 +80,20 @@ class Tensor(BioImageIOSchema):
                 raise ValidationError("`kwargs.axes` needs to be subset of axes")
 
 
-class InputTensor(Tensor):
-    shape = fields.InputShape(required=True, bioimageio_description="Specification of tensor shape.")
+class InputTensor(_TensorBase):
+    shape = fields.Union(
+        [
+            fields.ExplicitShape(
+                bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
+            ),
+            fields.Nested(
+                ParametrizedInputShape(),
+                bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
+            ),
+        ],
+        required=True,
+        bioimageio_description="Specification of input tensor shape.",
+    )
     preprocessing = fields.List(
         fields.Nested(Preprocessing), bioimageio_description="Description of how this input should be preprocessed."
     )
@@ -116,8 +128,19 @@ class InputTensor(Tensor):
             raise ValidationError("Input shape has to be 1 in the batch dimension b.")
 
 
-class OutputTensor(Tensor):
-    shape = fields.OutputShape(required=True)
+class OutputTensor(_TensorBase):
+    shape = fields.Union(
+        [
+            fields.ExplicitShape(),
+            fields.Nested(
+                ImplicitOutputShape,
+                bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
+                "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
+            ),
+        ],
+        required=True,
+        bioimageio_description="Specification of output tensor shape.",
+    )
     halo = fields.List(
         fields.Integer,
         bioimageio_description="The halo to crop from the output tensor (for example to crop away boundary effects or "
@@ -143,7 +166,7 @@ class OutputTensor(Tensor):
             raise NotImplementedError(type(shape))
 
 
-class PytorchStateDictWeightsEntry(WeightsEntryBase):
+class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     raw_nodes = raw_nodes
 
     bioimageio_description = "PyTorch state dictionary weights format"
