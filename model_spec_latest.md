@@ -105,7 +105,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     |  x  |  spatial dimension x |
   * <a id="inputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
   * <a id="inputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
-  * <a id="inputs:shape"></a>`shape` _InputShape→Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of tensor shape.
+  * <a id="inputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of input tensor shape.
     1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
     1. _ParametrizedInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ParametrizedInputShape is a Dict with the following keys:
     * <a id="inputs:shape:min"></a>`min` _List\[Integer\]_ The minimum input shape with same length as `axes`
@@ -131,7 +131,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     |  x  |  spatial dimension x |
   * <a id="outputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
   * <a id="outputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
-  * <a id="outputs:shape"></a>`shape` _OutputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
+  * <a id="outputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ Specification of output tensor shape.
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. ImplicitOutputShape is a Dict with the following keys:
     * <a id="outputs:shape:offset"></a>`offset` _List\[Float\]_ Position of origin wrt to input. Multiple of 0.5.
