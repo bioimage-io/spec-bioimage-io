@@ -12,6 +12,8 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     ModelParent,
     OnnxWeightsEntry,
     OutputTensor,
+    PostprocessingName,
+    PreprocessingName,
     PytorchScriptWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
@@ -36,8 +38,10 @@ except ImportError:
 # reassign to use imported classes
 Badge = Badge
 CiteEntry = CiteEntry
-ParametrizedInputShape = ParametrizedInputShape
 ImplicitOutputShape = ImplicitOutputShape
+ParametrizedInputShape = ParametrizedInputShape
+PostprocessingName = PostprocessingName
+PreprocessingName = PreprocessingName
 
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
 
