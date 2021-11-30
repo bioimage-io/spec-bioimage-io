@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import ClassVar
+from typing import ClassVar, List
 
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 
@@ -51,10 +51,10 @@ class Dependencies(SharedBioImageIOSchema):
 
 class ParametrizedInputShape(SharedBioImageIOSchema):
     min = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
+        fields.Integer(), required=True, bioimageio_description="The minimum input shape with same length as `axes`"
     )
     step = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum shape change with same length as `axes`"
+        fields.Integer(), required=True, bioimageio_description="The minimum shape change with same length as `axes`"
     )
 
     @validates_schema
@@ -71,10 +71,10 @@ class ParametrizedInputShape(SharedBioImageIOSchema):
 class ImplicitOutputShape(SharedBioImageIOSchema):
     reference_tensor = fields.String(required=True, bioimageio_description="Name of the reference tensor.")
     scale = fields.List(
-        fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
+        fields.Float(), required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
     )
     offset = fields.List(
-        fields.Float, required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
+        fields.Float(), required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
     )
 
     @validates_schema
@@ -85,7 +85,7 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
     @validates("offset")
-    def double_offset_is_int(self, value):
+    def double_offset_is_int(self, value: List[float]):
         for v in value:
             if 2 * v != int(2 * v):
                 raise ValidationError(f"offset {v} in {value} not a multiple of 0.5!")

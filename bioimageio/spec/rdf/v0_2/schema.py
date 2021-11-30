@@ -79,7 +79,7 @@ specified.
     )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
 
     attachments = fields.Dict(
-        fields.String,
+        fields.String(),
         fields.List(
             fields.Union([fields.URI(), fields.Raw()]),
             bioimageio_maybe_required=True,
@@ -91,15 +91,15 @@ specified.
         "A list of authors. The authors are the creators of the specifications and the primary " "points of contact."
     )
     authors = fields.List(
-        fields.Union([fields.Nested(Author), fields.String()]), bioimageio_description=authors_bioimageio_description
+        fields.Union([fields.Nested(Author()), fields.String()]), bioimageio_description=authors_bioimageio_description
     )
 
-    badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
+    badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
-    cite_bioimageio_description = """A citation entry or list of citation entries.
+    cite_bioimageio_description = """A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used."""
-    cite = fields.Nested(CiteEntry, many=True, required=True, bioimageio_description=cite_bioimageio_description)
+    cite = fields.List(fields.Nested(CiteEntry()), required=True, bioimageio_description=cite_bioimageio_description)
 
     config_bioimageio_description = (
         "A custom configuration field that can contain any keys not present in the RDF spec. "
@@ -203,7 +203,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             if not license_info["isOsiApproved"]:
                 warnings.warn(f"license {value} ({license_info['name']}) is not approved by OSI")
 
-    links = fields.List(fields.String, bioimageio_description="links to other bioimage.io resources")
+    links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
 
     # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
@@ -213,7 +213,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description="url or local relative path to the source of the resource",
     )
 
-    tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
+    tags = fields.List(fields.String(), required=True, bioimageio_description="A list of tags.")
 
     type = fields.String(required=True)
 
@@ -246,8 +246,8 @@ class ModelCollectionEntry(CollectionEntry):
 
 
 class Collection(RDF):
-    application = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    collection = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    model = fields.List(fields.Nested(ModelCollectionEntry))
-    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
+    application = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
+    collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
+    model = fields.List(fields.Nested(ModelCollectionEntry()))
+    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
+    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))

@@ -70,10 +70,9 @@ class _TensorBase(_BioImageIOSchema):
 
     @validates_schema
     def validate_processing_kwargs(self, data, **kwargs):
-        axes = data["axes"]
+        axes = data.get("axes", [])
         processing_list = data.get(self.processing_name, [])
         for processing in processing_list:
-            name = processing.name
             kwargs = processing.kwargs or {}
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
@@ -95,12 +94,18 @@ class InputTensor(_TensorBase):
         bioimageio_description="Specification of input tensor shape.",
     )
     preprocessing = fields.List(
-        fields.Nested(Preprocessing), bioimageio_description="Description of how this input should be preprocessed."
+        fields.Nested(Preprocessing()), bioimageio_description="Description of how this input should be preprocessed."
     )
     processing_name = "preprocessing"
 
     @validates_schema
     def zero_batch_step_and_one_batch_size(self, data, **kwargs):
+        axes = data.get("axes")
+        shape = data.get("shape")
+
+        if axes is None or shape is None:
+            raise ValidationError("Failed to validate batch_step=0 and batch_size=1 due to other validation errors")
+
         axes = data["axes"]
         shape = data["shape"]
 
@@ -133,7 +138,7 @@ class OutputTensor(_TensorBase):
         [
             fields.ExplicitShape(),
             fields.Nested(
-                ImplicitOutputShape,
+                ImplicitOutputShape(),
                 bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
                 "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
             ),
@@ -142,25 +147,26 @@ class OutputTensor(_TensorBase):
         bioimageio_description="Specification of output tensor shape.",
     )
     halo = fields.List(
-        fields.Integer,
+        fields.Integer(),
         bioimageio_description="The halo to crop from the output tensor (for example to crop away boundary effects or "
         "for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The "
         "`halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use "
         "`shape:offset` if the model output itself is cropped and input and output shapes not fixed.",
     )
     postprocessing = fields.List(
-        fields.Nested(Postprocessing), bioimageio_description="Description of how this output should be postprocessed."
+        fields.Nested(Postprocessing()),
+        bioimageio_description="Description of how this output should be postprocessed.",
     )
     processing_name = "postprocessing"
 
     @validates_schema
     def matching_halo_length(self, data, **kwargs):
-        shape = data["shape"]
+        shape = data.get("shape")
         halo = data.get("halo")
         if halo is None:
             return
         elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
-            if len(halo) != len(shape):
+            if shape is None or len(halo) != len(shape):
                 raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
             raise NotImplementedError(type(shape))
@@ -209,13 +215,12 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
+        fields.Nested(Author()), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
-    cite = fields.Nested(
-        CiteEntry,
-        many=True,
+    cite = fields.List(
+        fields.Nested(CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
@@ -259,20 +264,20 @@ is in an unsupported format version. The current format version described here i
     )
 
     packaged_by = fields.List(
-        fields.Nested(Author),
+        fields.Nested(Author()),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
-        ModelParent,
+        ModelParent(),
         bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
         "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
         "checkpoint, see `weights`.",
     )
 
     run_mode = fields.Nested(
-        RunMode,
+        RunMode(),
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. "
         "No standard run modes are defined yet.",
@@ -300,7 +305,7 @@ is in an unsupported format version. The current format version described here i
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
+        fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
         "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
@@ -320,28 +325,42 @@ is in an unsupported format version. The current format version described here i
 
         return data
 
-    inputs = fields.Nested(
-        InputTensor, many=True, bioimageio_description="Describes the input tensors expected by this model."
+    inputs = fields.List(
+        fields.Nested(InputTensor()), bioimageio_description="Describes the input tensors expected by this model."
     )
 
     @validates("inputs")
-    def no_duplicate_input_tensor_names(self, value: typing.List[InputTensor]):
+    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.InputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
+
         names = [t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate input tensor names are not allowed.")
 
-    outputs = fields.Nested(
-        OutputTensor, many=True, bioimageio_description="Describes the output tensors from this model."
+    outputs = fields.List(
+        fields.Nested(OutputTensor()), bioimageio_description="Describes the output tensors from this model."
     )
 
     @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[InputTensor]):
-        names = [t.name for t in value]
+    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.OutputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
+
+        names = [t["name"] if isinstance(t, dict) else t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate output tensor names are not allowed.")
 
     @validates_schema
     def no_duplicate_tensor_names(self, data, **kwargs):
+        ipts = data.get("inputs")
+        if not isinstance(ipts, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in ipts):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
+        outs = data.get("outputs")
+        if not isinstance(outs, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in outs):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
         names = [t.name for t in data["inputs"] + data["outputs"]]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate tensor names are not allowed.")
@@ -401,8 +420,13 @@ is in an unsupported format version. The current format version described here i
 
     @validates_schema
     def validate_reference_tensor_names(self, data, **kwargs):
-        valid_input_tensor_references = [ipt.name for ipt in data["inputs"]]
-        for out in data["outputs"]:
+        def get_tnames(tname: str):
+            return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
+
+        valid_input_tensor_references = get_tnames("inputs")
+        # a model is not allowed to have no or empty outputs, but I hope that this is validated somewhere else,
+        # so I use get with a default empty list here
+        for out in data.get("outputs", []):
             if out.postprocessing is missing_:
                 continue
 

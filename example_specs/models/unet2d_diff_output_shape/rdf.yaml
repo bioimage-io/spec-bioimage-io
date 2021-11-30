@@ -7,8 +7,7 @@ covers: [cover.jpg]
 dependencies: conda:./environment.yaml
 description: diff-output-shape
 documentation: ./documentation.md
-format_version: 0.3.2
-framework: pytorch
+format_version: 0.4.0
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
 - axes: bcyx
@@ -21,8 +20,6 @@ inputs:
   shape:
     min: [1, 1, 32, 32]
     step: [0, 0, 16, 16]
-kwargs: {depth: 3, in_channels: 1, initial_features: 16, out_channels: 1}
-language: python
 license: CC-BY-4.0
 links: [ilastik/ilastik]
 name: diff-output-shape
@@ -33,14 +30,16 @@ outputs:
   name: output
   shape:
     offset: [0, 0, 0, 0]
-    reference_input: input
+    reference_tensor: input
     scale: [1, 1, 0.5, 0.5]
-source: ./resize_unet.py:ResizeUNet
 tags: [segmentation]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
 timestamp: '2021-09-12T14:18:58.389834'
 type: model
 weights:
-  pytorch_state_dict: {sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838,
-    source: ./weights.pt}
+  pytorch_state_dict:
+    architecture: ./resize_unet.py:ResizeUNet
+    kwargs: {depth: 3, in_channels: 1, initial_features: 16, out_channels: 1}
+    sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838
+    source: ./weights.pt
