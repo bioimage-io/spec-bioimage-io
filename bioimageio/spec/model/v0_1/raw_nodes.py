@@ -47,8 +47,8 @@ class BaseSpec(RawNode):
 
 @dataclass
 class Weights(RawNode):
-    source: Union[URI, pathlib.Path]
-    hash: Dict[str, str]
+    source: Union[URI, pathlib.Path] = missing
+    hash: Dict[str, str] = missing
 
 
 @dataclass

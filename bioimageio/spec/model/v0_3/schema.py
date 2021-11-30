@@ -437,7 +437,7 @@ class ModelParent(BioImageIOSchema):
         "bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the "
         "model (NOT the raw file).",
     )
-    sha256 = fields.SHA256(bioimageio_description="Hash of the weights of the parent model.")
+    sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF.")
 
 
 class Model(rdf.schema.RDF):

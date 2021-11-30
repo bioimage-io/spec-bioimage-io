@@ -27,11 +27,8 @@ def model_dict():
     return {
         "documentation": "./docs.md",
         "license": "MIT",
-        "framework": "pytorch",
-        "language": "python",
-        "source": "somesrc",
         "git_repo": "https://github.com/bioimage-io/python-bioimage-io",
-        "format_version": "0.3.0",
+        "format_version": "0.4.0",
         "description": "description",
         "authors": [
             {"name": "Author 1", "affiliation": "Affiliation 1"},
@@ -78,5 +75,29 @@ def test_model_schema_accepts_valid_weight_formats(model_dict, format):
 
     model_schema = Model()
     model_dict.update({"weights": {format: {"source": "local_weights"}}})
+    if format == "pytorch_state_dict":
+        model_dict["weights"][format]["architecture"] = "file.py:Model"
+
     validated_data = model_schema.load(model_dict)
     assert validated_data
+
+
+def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate_tensor_names):
+    from bioimageio.spec.model.schema import Model
+    from bioimageio.spec.model.v0_3.schema import Model as Model_v03
+
+    model_schema = Model()
+    with pytest.raises(ValidationError):
+        model_schema.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
+
+    # as 0.3 the model should still be valid with some small changes
+    model_schema = Model_v03()
+    data = dict(invalid_rdf_v0_4_0_duplicate_tensor_names)
+    data["format_version"] = "0.3.3"
+    data["language"] = "python"
+    data["framework"] = "pytorch"
+    data["source"] = data["weights"]["pytorch_state_dict"].pop("architecture")
+    data["kwargs"] = data["weights"]["pytorch_state_dict"].pop("kwargs")
+
+    valid_data = model_schema.load(data)
+    assert valid_data

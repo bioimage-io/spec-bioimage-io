@@ -186,8 +186,8 @@ E.g. the citation for the model architecture and/or the training data used."""
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
         "an Github issue to discuss your intentions with the community."
     )
-    license = fields.String(
-        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: enforce in 0.4.0
+    license = fields.String(  # todo: make mandatory?
+        # validate=field_validators.OneOf(LICENSES),  # enforce license id
         bioimageio_description=license_bioimageio_description
     )
 
@@ -196,11 +196,16 @@ E.g. the citation for the model architecture and/or the training data used."""
         license_info = LICENSES.get(value)
         if license_info is None:
             warnings.warn(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
-        elif license_info["isDeprecatedLicenseId"]:
-            warnings.warn(f"{license_info['name']} is deprecated")
+        else:
+            if license_info["isDeprecatedLicenseId"]:
+                warnings.warn(f"license {value} ({license_info['name']}) is deprecated")
+
+            if not license_info["isOsiApproved"]:
+                warnings.warn(f"license {value} ({license_info['name']}) is not approved by OSI")
 
     links = fields.List(fields.String, bioimageio_description="links to other bioimage.io resources")
 
+    # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     source = fields.Union(

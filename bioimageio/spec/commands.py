@@ -1,7 +1,7 @@
 import os
 import traceback
 import warnings
-from typing import Dict, IO, Optional, Union
+from typing import Dict, IO, Union
 
 from marshmallow import ValidationError
 

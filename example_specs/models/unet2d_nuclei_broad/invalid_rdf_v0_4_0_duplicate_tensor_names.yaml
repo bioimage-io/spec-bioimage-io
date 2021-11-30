@@ -28,7 +28,7 @@ attachments: {}
 timestamp: 2019-12-11T12:22:32Z  # ISO 8601
 
 inputs:
-  - name: raw
+  - name: data
     description: raw input
     axes: bcyx  # letters of axes in btczyx
     data_type: float32
@@ -41,7 +41,7 @@ inputs:
           axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
 
 outputs:
-  - name: probability
+  - name: data  # <<--------------------------------------- invalid as name 'data' is used in inputs already!!!
     description: probability in [0,1]
     axes: bcyx
     data_type: float32
