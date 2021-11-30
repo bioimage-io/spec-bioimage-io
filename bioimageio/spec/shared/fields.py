@@ -156,9 +156,11 @@ class Number(DocumentedField, marshmallow_fields.Number):
 class Nested(DocumentedField, marshmallow_fields.Nested):
     def __init__(self, nested: Schema, *super_args, many: bool = False, **super_kwargs):
         assert isinstance(nested, Schema)  # schema classes cause all sorts of trouble (so we enforce instance)
-        assert (
-            not many
-        ), "Use List(Nested(...)) instead! see also https://github.com/marshmallow-code/marshmallow/issues/779"
+        assert not many, (
+            "Use List(Nested(...)) or Nested(Schema(many=True)) instead! "
+            "see also https://github.com/marshmallow-code/marshmallow/issues/779"
+            "We only don't allow this to be more consistent and avoid bugs."
+        )
         super().__init__(nested, *super_args, **super_kwargs)
 
         self.type_name = self.schema.__class__.__name__
