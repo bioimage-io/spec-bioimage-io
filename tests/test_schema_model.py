@@ -51,8 +51,8 @@ def model_dict():
         "name": "Model",
         "tags": [],
         "weights": {},
-        "test_inputs": [],
-        "test_outputs": [],
+        "test_inputs": ["test_ipt.npy"],
+        "test_outputs": ["test_out.npy"],
         "type": "model",
     }
 
