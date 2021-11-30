@@ -7,7 +7,7 @@ import typing
 
 import marshmallow_union
 import numpy
-from marshmallow import ValidationError, fields as marshmallow_fields
+from marshmallow import ValidationError, fields as marshmallow_fields, Schema
 
 from . import field_validators, raw_nodes
 
@@ -97,8 +97,16 @@ class DateTime(DocumentedField, marshmallow_fields.DateTime):
 
 
 class Dict(DocumentedField, marshmallow_fields.Dict):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(
+        self,
+        keys: typing.Optional[DocumentedField] = None,
+        values: typing.Optional[DocumentedField] = None,
+        *super_args,
+        **super_kwargs,
+    ):
+        assert keys is None or isinstance(keys, DocumentedField)
+        assert values is None or isinstance(values, DocumentedField)
+        super().__init__(keys, values, *super_args, **super_kwargs)
         # add types of dict keys and values
         key = "Any" if self.key_field is None else self.key_field.type_name
         value = "Any" if self.value_field is None else self.value_field.type_name
@@ -135,8 +143,9 @@ class Integer(DocumentedField, marshmallow_fields.Integer):
 
 
 class List(DocumentedField, marshmallow_fields.List):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, instance: DocumentedField, *super_args, **super_kwargs):
+        assert isinstance(instance, DocumentedField), "classes not allowd to avoid trouble"
+        super().__init__(instance, *super_args, **super_kwargs)
         self.type_name += f"\\[{self.inner.type_name}\\]"  # add type of list elements
 
 
@@ -145,8 +154,9 @@ class Number(DocumentedField, marshmallow_fields.Number):
 
 
 class Nested(DocumentedField, marshmallow_fields.Nested):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, nested: Schema, *super_args, **super_kwargs):
+        assert isinstance(nested, Schema)  # schema classes cause all sorts of trouble (so we enforce instance)
+        super().__init__(nested, *super_args, **super_kwargs)
 
         self.type_name = self.schema.__class__.__name__
         if self.many:
@@ -168,6 +178,10 @@ class String(DocumentedField, marshmallow_fields.String):
 
 
 class Tuple(DocumentedField, marshmallow_fields.Tuple):
+    def __init__(self, tuple_fields: typing.Sequence[DocumentedField], *args, **kwargs):
+        assert all(isinstance(tf, DocumentedField) for tf in tuple_fields)
+        super().__init__(tuple_fields, *args, **kwargs)
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.List:
         value = super()._serialize(value, attr, obj, **kwargs)
         return list(value)  # return tuple as list
@@ -184,8 +198,9 @@ class Tuple(DocumentedField, marshmallow_fields.Tuple):
 class Union(DocumentedField, marshmallow_union.Union):
     _candidate_fields: typing.Iterable[typing.Union[DocumentedField, marshmallow_fields.Field]]
 
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, fields_, *super_args, **super_kwargs):
+        assert all(isinstance(f, DocumentedField) for f in fields_), "only DocumentedField instances (no classes)!"
+        super().__init__(fields_, *super_args, **super_kwargs)
         self.type_name += f"\\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\\]"  # add types of options
 
     def _deserialize(self, value, attr=None, data=None, **kwargs):
@@ -228,7 +243,7 @@ class Dependencies(String):  # todo: check format of dependency string
 
 class ExplicitShape(List):
     def __init__(self, **super_kwargs):
-        super().__init__(Integer, **super_kwargs)
+        super().__init__(Integer(), **super_kwargs)
 
 
 class ImportableSource(String):
@@ -288,8 +303,14 @@ class ImportableSource(String):
 
 
 class Kwargs(Dict):
-    def __init__(self, keys=String, bioimageio_description="Key word arguments.", **super_kwargs):
-        super().__init__(keys, bioimageio_description=bioimageio_description, **super_kwargs)
+    def __init__(
+        self,
+        keys: String = String(),
+        values: typing.Optional[DocumentedField] = None,
+        bioimageio_description="Key word arguments.",
+        **super_kwargs,
+    ):
+        super().__init__(keys, values, bioimageio_description=bioimageio_description, **super_kwargs)
 
 
 class Path(String):

@@ -95,7 +95,7 @@ class InputTensor(_TensorBase):
         bioimageio_description="Specification of input tensor shape.",
     )
     preprocessing = fields.List(
-        fields.Nested(Preprocessing), bioimageio_description="Description of how this input should be preprocessed."
+        fields.Nested(Preprocessing()), bioimageio_description="Description of how this input should be preprocessed."
     )
     processing_name = "preprocessing"
 
@@ -142,14 +142,15 @@ class OutputTensor(_TensorBase):
         bioimageio_description="Specification of output tensor shape.",
     )
     halo = fields.List(
-        fields.Integer,
+        fields.Integer(),
         bioimageio_description="The halo to crop from the output tensor (for example to crop away boundary effects or "
         "for tiling). The halo should be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`. The "
         "`halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. Use "
         "`shape:offset` if the model output itself is cropped and input and output shapes not fixed.",
     )
     postprocessing = fields.List(
-        fields.Nested(Postprocessing), bioimageio_description="Description of how this output should be postprocessed."
+        fields.Nested(Postprocessing()),
+        bioimageio_description="Description of how this output should be postprocessed.",
     )
     processing_name = "postprocessing"
 
@@ -209,12 +210,12 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
+        fields.Nested(Author()), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.Nested(
-        CiteEntry,
+        CiteEntry(),
         many=True,
         required=True,  # todo: unify authors with RDF (optional or required?)
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
@@ -259,20 +260,20 @@ is in an unsupported format version. The current format version described here i
     )
 
     packaged_by = fields.List(
-        fields.Nested(Author),
+        fields.Nested(Author()),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
-        ModelParent,
+        ModelParent(),
         bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
         "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
         "checkpoint, see `weights`.",
     )
 
     run_mode = fields.Nested(
-        RunMode,
+        RunMode(),
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. "
         "No standard run modes are defined yet.",
@@ -300,7 +301,7 @@ is in an unsupported format version. The current format version described here i
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
+        fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
         "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
@@ -321,7 +322,7 @@ is in an unsupported format version. The current format version described here i
         return data
 
     inputs = fields.Nested(
-        InputTensor, many=True, bioimageio_description="Describes the input tensors expected by this model."
+        InputTensor(), many=True, bioimageio_description="Describes the input tensors expected by this model."
     )
 
     @validates("inputs")
@@ -331,7 +332,7 @@ is in an unsupported format version. The current format version described here i
             raise ValidationError("Duplicate input tensor names are not allowed.")
 
     outputs = fields.Nested(
-        OutputTensor, many=True, bioimageio_description="Describes the output tensors from this model."
+        OutputTensor(), many=True, bioimageio_description="Describes the output tensors from this model."
     )
 
     @validates("outputs")

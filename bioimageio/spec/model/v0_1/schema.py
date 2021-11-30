@@ -31,18 +31,18 @@ class BaseSpec(BioImageIOSchema):
     cite = fields.Nested(CiteEntry(many=True), required=True)
     authors = fields.List(fields.String(required=True))
     documentation = fields.RelativeLocalPath(required=True)
-    tags = fields.List(fields.String, required=True)
+    tags = fields.List(fields.String(), required=True)
     license = fields.String(required=True)
 
     language = fields.String(required=True)
     framework = fields.String()
     source = fields.String(required=True)
-    required_kwargs = fields.List(fields.String)
-    optional_kwargs = fields.Dict(fields.String)
+    required_kwargs = fields.List(fields.String())
+    optional_kwargs = fields.Dict(fields.String())
 
     test_input = fields.RelativeLocalPath()
     test_output = fields.RelativeLocalPath()
-    covers = fields.List(fields.RelativeLocalPath)
+    covers = fields.List(fields.RelativeLocalPath())
 
 
 class SpecWithKwargs(BioImageIOSchema):
@@ -70,14 +70,14 @@ class ImplicitOutputShape(SharedImplicitOutputShape):
 
 
 class OutputArray(Array):
-    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitOutputShape)], required=True)
-    halo = fields.List(fields.Integer)
+    shape = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitOutputShape())], required=True)
+    halo = fields.List(fields.Integer())
 
 
 class TransformationSpec(BaseSpec):
     dependencies = fields.Dependencies(required=True)
-    inputs = fields.Nested(InputArray, required=True)
-    outputs = fields.Nested(OutputArray, required=True)
+    inputs = fields.Nested(InputArray(), required=True)
+    outputs = fields.Nested(OutputArray(), required=True)
 
 
 class Transformation(SpecWithKwargs):
@@ -90,50 +90,50 @@ class Weights(BioImageIOSchema):
 
 
 class Prediction(BioImageIOSchema):
-    weights = fields.Nested(Weights)
+    weights = fields.Nested(Weights())
     dependencies = fields.Dependencies()
-    preprocess = fields.Nested(Transformation, many=True)
-    postprocess = fields.Nested(Transformation, many=True)
+    preprocess = fields.Nested(Transformation(), many=True)
+    postprocess = fields.Nested(Transformation(), many=True)
 
 
 class ReaderSpec(BaseSpec):
     dependencies = fields.Dependencies()
-    outputs = fields.Nested(OutputArray, required=True)
+    outputs = fields.Nested(OutputArray(), required=True)
 
 
 class Reader(SpecWithKwargs):
     spec = fields.Union([fields.URI(), fields.RelativeLocalPath()])
-    transformations = fields.List(fields.Nested(Transformation))
+    transformations = fields.List(fields.Nested(Transformation()))
 
 
 class SamplerSpec(BaseSpec):
     dependencies = fields.Dependencies()
-    outputs = fields.Nested(OutputArray)
+    outputs = fields.Nested(OutputArray())
 
 
 class Sampler(SpecWithKwargs):
     spec = fields.Union([fields.URI(), fields.RelativeLocalPath()])
-    readers = fields.List(fields.Nested(Reader, required=True), required=True)
+    readers = fields.List(fields.Nested(Reader(), required=True), required=True)
 
 
 class Optimizer(BioImageIOSchema):
     source = fields.String(required=True)
-    required_kwargs = fields.List(fields.String)
-    optional_kwargs = fields.Dict(fields.String)
+    required_kwargs = fields.List(fields.String())
+    optional_kwargs = fields.Dict(fields.String())
 
 
 class Setup(BioImageIOSchema):
-    samplers = fields.List(fields.Nested(Sampler, required=True), required=True)
-    preprocess = fields.Nested(Transformation, many=True)
-    postprocess = fields.Nested(Transformation, many=True)
-    losses = fields.Nested(Transformation, many=True)
-    optimizer = fields.Nested(Optimizer)
+    samplers = fields.List(fields.Nested(Sampler(), required=True), required=True)
+    preprocess = fields.Nested(Transformation(), many=True)
+    postprocess = fields.Nested(Transformation(), many=True)
+    losses = fields.Nested(Transformation(), many=True)
+    optimizer = fields.Nested(Optimizer())
 
 
 class Model(BaseSpec):
-    prediction = fields.Nested(Prediction, required=True)
-    inputs = fields.Nested(InputArray, many=True, required=True)
-    outputs = fields.Nested(OutputArray, many=True, required=True)
+    prediction = fields.Nested(Prediction(), required=True)
+    inputs = fields.Nested(InputArray(), many=True, required=True)
+    outputs = fields.Nested(OutputArray(), many=True, required=True)
     training = fields.Dict()
 
     config = fields.Dict()
