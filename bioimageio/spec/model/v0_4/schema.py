@@ -424,7 +424,9 @@ is in an unsupported format version. The current format version described here i
             return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
 
         valid_input_tensor_references = get_tnames("inputs")
-        for out in get_tnames("outputs"):
+        # a model is not allowed to have no or empty outputs, but I hope that this is validated somewhere else,
+        # so I use get with a default empty list here
+        for out in data.get("outputs", []):
             if out.postprocessing is missing_:
                 continue
 
