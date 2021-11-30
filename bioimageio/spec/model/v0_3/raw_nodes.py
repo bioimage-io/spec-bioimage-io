@@ -37,8 +37,6 @@ WeightsFormat = Literal[
 
 # reassign to use imported classes
 CiteEntry = CiteEntry
-ParametrizedInputShape = ParametrizedInputShape
-ImplicitOutputShape = ImplicitOutputShape
 
 
 @dataclass

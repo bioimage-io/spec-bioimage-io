@@ -259,7 +259,7 @@ class InputTensor(_TensorBase):
                 bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
             ),
             fields.Nested(
-                ParametrizedInputShape,
+                ParametrizedInputShape(),
                 bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
             ),
         ],

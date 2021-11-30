@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import numpy
 import pytest
-from marshmallow import Schema, ValidationError
+from marshmallow import ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
@@ -69,7 +69,7 @@ class TestShape:
     def test_explicit_input_shape(self):
         data = [1, 2, 3]
         expected = data
-        actual = fields.InputShape().deserialize(data)
+        actual = fields.ExplicitShape().deserialize(data)
         assert expected == actual
 
     def test_explicit_output_shape(self):
@@ -82,7 +82,7 @@ class TestShape:
         data = {"min": [1, 2, 3], "step": [0, 1, 3]}
         expected = raw_nodes.ParametrizedInputShape(**data)
         actual = fields.Union(
-            [fields.ExplicitShape(), fields.Nested(ParametrizedInputShape)], required=True
+            [fields.ExplicitShape(), fields.Nested(ParametrizedInputShape())], required=True
         ).deserialize(data)
         assert actual == expected
 
