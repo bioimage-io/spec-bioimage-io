@@ -70,7 +70,7 @@ class _TensorBase(_BioImageIOSchema):
 
     @validates_schema
     def validate_processing_kwargs(self, data, **kwargs):
-        axes = data.get("axes")
+        axes = data.get("axes", [])
         processing_list = data.get(self.processing_name, [])
         for processing in processing_list:
             kwargs = processing.kwargs or {}
@@ -161,12 +161,12 @@ class OutputTensor(_TensorBase):
 
     @validates_schema
     def matching_halo_length(self, data, **kwargs):
-        shape = data["shape"]
+        shape = data.get("shape")
         halo = data.get("halo")
         if halo is None:
             return
         elif isinstance(shape, list) or isinstance(shape, raw_nodes.ImplicitOutputShape):
-            if len(halo) != len(shape):
+            if shape is None or len(halo) != len(shape):
                 raise ValidationError(f"halo {halo} has to have same length as shape {shape}!")
         else:
             raise NotImplementedError(type(shape))
@@ -420,8 +420,11 @@ is in an unsupported format version. The current format version described here i
 
     @validates_schema
     def validate_reference_tensor_names(self, data, **kwargs):
-        valid_input_tensor_references = [ipt.name for ipt in data["inputs"]]
-        for out in data["outputs"]:
+        def get_tnames(tname: str):
+            return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
+
+        valid_input_tensor_references = get_tnames("inputs")
+        for out in get_tnames("outputs"):
             if out.postprocessing is missing_:
                 continue
 
