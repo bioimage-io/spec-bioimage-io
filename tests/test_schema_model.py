@@ -77,6 +77,7 @@ def test_model_schema_accepts_valid_weight_formats(model_dict, format):
     model_dict.update({"weights": {format: {"source": "local_weights"}}})
     if format == "pytorch_state_dict":
         model_dict["weights"][format]["architecture"] = "file.py:Model"
+        model_dict["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
 
     validated_data = model_schema.load(model_dict)
     assert validated_data
@@ -98,6 +99,7 @@ def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate
     data["framework"] = "pytorch"
     data["source"] = data["weights"]["pytorch_state_dict"].pop("architecture")
     data["kwargs"] = data["weights"]["pytorch_state_dict"].pop("kwargs")
+    data["sha256"] = data["weights"]["pytorch_state_dict"].pop("architecture_sha256")
 
     valid_data = model_schema.load(data)
     assert valid_data
