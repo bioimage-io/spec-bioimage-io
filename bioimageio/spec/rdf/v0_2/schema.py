@@ -96,10 +96,10 @@ specified.
 
     badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
-    cite_bioimageio_description = """A citation entry or list of citation entries.
+    cite_bioimageio_description = """A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used."""
-    cite = fields.Nested(CiteEntry(), many=True, required=True, bioimageio_description=cite_bioimageio_description)
+    cite = fields.List(fields.Nested(CiteEntry()), required=True, bioimageio_description=cite_bioimageio_description)
 
     config_bioimageio_description = (
         "A custom configuration field that can contain any keys not present in the RDF spec. "

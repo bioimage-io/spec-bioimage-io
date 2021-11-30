@@ -214,9 +214,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
-    cite = fields.Nested(
-        CiteEntry(),
-        many=True,
+    cite = fields.List(
+        fields.Nested(CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
@@ -321,8 +320,8 @@ is in an unsupported format version. The current format version described here i
 
         return data
 
-    inputs = fields.Nested(
-        InputTensor(), many=True, bioimageio_description="Describes the input tensors expected by this model."
+    inputs = fields.List(
+        fields.Nested(InputTensor()), bioimageio_description="Describes the input tensors expected by this model."
     )
 
     @validates("inputs")
@@ -331,8 +330,8 @@ is in an unsupported format version. The current format version described here i
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate input tensor names are not allowed.")
 
-    outputs = fields.Nested(
-        OutputTensor(), many=True, bioimageio_description="Describes the output tensors from this model."
+    outputs = fields.List(
+        fields.Nested(OutputTensor()), bioimageio_description="Describes the output tensors from this model."
     )
 
     @validates("outputs")

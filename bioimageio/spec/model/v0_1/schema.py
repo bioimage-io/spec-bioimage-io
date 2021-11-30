@@ -92,8 +92,8 @@ class Weights(BioImageIOSchema):
 class Prediction(BioImageIOSchema):
     weights = fields.Nested(Weights())
     dependencies = fields.Dependencies()
-    preprocess = fields.Nested(Transformation(), many=True)
-    postprocess = fields.Nested(Transformation(), many=True)
+    preprocess = fields.List(fields.Nested(Transformation()))
+    postprocess = fields.List(fields.Nested(Transformation()))
 
 
 class ReaderSpec(BaseSpec):
@@ -124,16 +124,16 @@ class Optimizer(BioImageIOSchema):
 
 class Setup(BioImageIOSchema):
     samplers = fields.List(fields.Nested(Sampler(), required=True), required=True)
-    preprocess = fields.Nested(Transformation(), many=True)
-    postprocess = fields.Nested(Transformation(), many=True)
-    losses = fields.Nested(Transformation(), many=True)
+    preprocess = fields.List(fields.Nested(Transformation()))
+    postprocess = fields.List(fields.Nested(Transformation()))
+    losses = fields.List(fields.Nested(Transformation()))
     optimizer = fields.Nested(Optimizer())
 
 
 class Model(BaseSpec):
     prediction = fields.Nested(Prediction(), required=True)
-    inputs = fields.Nested(InputArray(), many=True, required=True)
-    outputs = fields.Nested(OutputArray(), many=True, required=True)
+    inputs = fields.List(fields.Nested(InputArray()), required=True)
+    outputs = fields.List(fields.Nested(OutputArray()), required=True)
     training = fields.Dict()
 
     config = fields.Dict()
