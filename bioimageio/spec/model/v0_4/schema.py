@@ -330,8 +330,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     @validates("inputs")
-    def no_duplicate_input_tensor_names(self, value: typing.List[InputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, InputTensor) for v in value):
+    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.InputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in value):
             raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
 
         names = [t.name for t in value]
@@ -343,8 +343,8 @@ is in an unsupported format version. The current format version described here i
     )
 
     @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[OutputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, OutputTensor) for v in value):
+    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.OutputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in value):
             raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
 
         names = [t["name"] if isinstance(t, dict) else t.name for t in value]
@@ -354,11 +354,11 @@ is in an unsupported format version. The current format version described here i
     @validates_schema
     def no_duplicate_tensor_names(self, data, **kwargs):
         ipts = data.get("inputs")
-        if not isinstance(ipts, list) or not all(isinstance(v, InputTensor) for v in ipts):
+        if not isinstance(ipts, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in ipts):
             raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
 
         outs = data.get("outputs")
-        if not isinstance(outs, list) or not all(isinstance(v, OutputTensor) for v in outs):
+        if not isinstance(outs, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in outs):
             raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
 
         names = [t.name for t in data["inputs"] + data["outputs"]]
