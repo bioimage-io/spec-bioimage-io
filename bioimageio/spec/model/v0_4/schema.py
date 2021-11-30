@@ -133,7 +133,7 @@ class OutputTensor(_TensorBase):
         [
             fields.ExplicitShape(),
             fields.Nested(
-                ImplicitOutputShape,
+                ImplicitOutputShape(),
                 bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
                 "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
             ),
@@ -335,7 +335,7 @@ is in an unsupported format version. The current format version described here i
     )
 
     @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[InputTensor]):
+    def no_duplicate_output_tensor_names(self, value: typing.List[OutputTensor]):
         names = [t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate output tensor names are not allowed.")

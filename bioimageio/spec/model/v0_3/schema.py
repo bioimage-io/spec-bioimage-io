@@ -305,7 +305,7 @@ class OutputTensor(_TensorBase):
         [
             fields.ExplicitShape(),
             fields.Nested(
-                ImplicitOutputShape,
+                ImplicitOutputShape(),
                 bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
                 "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
             ),

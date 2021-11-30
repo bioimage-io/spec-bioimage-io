@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import ClassVar
+from typing import ClassVar, List
 
 from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
 
@@ -85,7 +85,7 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
     @validates("offset")
-    def double_offset_is_int(self, value):
+    def double_offset_is_int(self, value: List[float]):
         for v in value:
             if 2 * v != int(2 * v):
                 raise ValidationError(f"offset {v} in {value} not a multiple of 0.5!")
