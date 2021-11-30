@@ -444,11 +444,9 @@ is in an unsupported format version. The current format version described here i
                 f"Failed to validate reference tensor names due to other validation errors in inputs/outputs."
             )
 
-        for t in outs + ins:
-            if not isinstance(t, (raw_nodes.InputTensor, raw_nodes.OutputTensor)):
-                raise ValidationError(
-                    "Failed to validate reference tensor names due to validation errors in inputs/outputs"
-                )
+        for t in outs:
+            if not isinstance(t, raw_nodes.OutputTensor):
+                raise ValidationError("Failed to validate reference tensor names due to validation errors in outputs")
 
             if t.postprocessing is missing_:
                 continue
@@ -460,6 +458,24 @@ is in an unsupported format version. The current format version described here i
                 ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
                 if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
+
+        for t in ins:
+            if not isinstance(t, raw_nodes.InputTensor):
+                raise ValidationError("Failed to validate reference tensor names due to validation errors in inputs")
+
+            if t.preprocessing is missing_:
+                continue
+
+            for prep in t.preprocessing:
+                if prep.kwargs is missing_:
+                    continue
+
+                ref_tensor = prep.kwargs.get("reference_tensor", missing_)
+                if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
+                    raise ValidationError(f"{ref_tensor} not found in inputs")
+
+                if ref_tensor == t.name:
+                    raise ValidationError(f"invalid self reference for preprocessing of tensor {t.name}")
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
