@@ -9,7 +9,6 @@ from pytest import raises
 
 from bioimageio.spec.model import schema
 from bioimageio.spec.shared import fields, raw_nodes
-from bioimageio.spec.shared.raw_nodes import ImplicitOutputShape, ParametrizedInputShape
 
 
 class TestArray:
@@ -82,14 +81,14 @@ class TestShape:
         data = {"min": [1, 2, 3], "step": [0, 1, 3]}
         expected = raw_nodes.ParametrizedInputShape(**data)
         actual = fields.Union(
-            [fields.ExplicitShape(), fields.Nested(ParametrizedInputShape())], required=True
+            [fields.ExplicitShape(), fields.Nested(schema.ParametrizedInputShape())], required=True
         ).deserialize(data)
         assert actual == expected
 
     def test_output_shape(self):
         data = {"reference_tensor": "in1", "scale": [1, 2, 3], "offset": [0, 1, 3]}
         expected = raw_nodes.ImplicitOutputShape(**data)
-        actual = fields.Union([fields.ExplicitShape(), fields.Nested(ImplicitOutputShape)], required=True)
+        actual = fields.Union([fields.ExplicitShape(), fields.Nested(schema.ImplicitOutputShape)], required=True)
         assert actual == expected
 
 
