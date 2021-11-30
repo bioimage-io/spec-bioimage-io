@@ -33,6 +33,7 @@ class BaseSpec(BioImageIOSchema):
     documentation = fields.RelativeLocalPath(required=True)
     tags = fields.List(fields.String(), required=True)
     license = fields.String(required=True)
+    hash = fields.Dict()
 
     language = fields.String(required=True)
     framework = fields.String()
