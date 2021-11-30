@@ -40,7 +40,7 @@ outputs:
   name: output0
   shape:
     offset: [0, 0, 0, 0]
-    reference_input: input0
+    reference_tensor: input0
     scale: [1, 1, 1, 1]
 - axes: bcyx
   data_range: [-.inf, .inf]
@@ -48,7 +48,7 @@ outputs:
   name: output1
   shape:
     offset: [0, 0, 0, 0]
-    reference_input: input1
+    reference_tensor: input1
     scale: [1, 1, 1, 1]
 tags: [segmentation]
 test_inputs: [test_input_0.npy, test_input_1.npy]

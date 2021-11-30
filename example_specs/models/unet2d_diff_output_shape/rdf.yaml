@@ -30,7 +30,7 @@ outputs:
   name: output
   shape:
     offset: [0, 0, 0, 0]
-    reference_input: input
+    reference_tensor: input
     scale: [1, 1, 0.5, 0.5]
 tags: [segmentation]
 test_inputs: [test_input.npy]
