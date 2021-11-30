@@ -70,10 +70,9 @@ class _TensorBase(_BioImageIOSchema):
 
     @validates_schema
     def validate_processing_kwargs(self, data, **kwargs):
-        axes = data["axes"]
+        axes = data.get("axes")
         processing_list = data.get(self.processing_name, [])
         for processing in processing_list:
-            name = processing.name
             kwargs = processing.kwargs or {}
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
@@ -101,6 +100,12 @@ class InputTensor(_TensorBase):
 
     @validates_schema
     def zero_batch_step_and_one_batch_size(self, data, **kwargs):
+        axes = data.get("axes")
+        shape = data.get("shape")
+
+        if axes is None or shape is None:
+            raise ValidationError("Failed to validate batch_step=0 and batch_size=1 due to other validation errors")
+
         axes = data["axes"]
         shape = data["shape"]
 
@@ -326,6 +331,9 @@ is in an unsupported format version. The current format version described here i
 
     @validates("inputs")
     def no_duplicate_input_tensor_names(self, value: typing.List[InputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, InputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
+
         names = [t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate input tensor names are not allowed.")
@@ -336,12 +344,23 @@ is in an unsupported format version. The current format version described here i
 
     @validates("outputs")
     def no_duplicate_output_tensor_names(self, value: typing.List[OutputTensor]):
-        names = [t.name for t in value]
+        if not isinstance(value, list) or not all(isinstance(v, OutputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
+
+        names = [t["name"] if isinstance(t, dict) else t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate output tensor names are not allowed.")
 
     @validates_schema
     def no_duplicate_tensor_names(self, data, **kwargs):
+        ipts = data.get("inputs")
+        if not isinstance(ipts, list) or not all(isinstance(v, InputTensor) for v in ipts):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
+        outs = data.get("outputs")
+        if not isinstance(outs, list) or not all(isinstance(v, OutputTensor) for v in outs):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
         names = [t.name for t in data["inputs"] + data["outputs"]]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate tensor names are not allowed.")
