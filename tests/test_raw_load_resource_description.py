@@ -38,3 +38,10 @@ def test_load_raw_model_stardist(stardist_model):
 
     raw_model = load_raw_resource_description(stardist_model)
     assert raw_model
+
+
+def test_load_raw_model_unet2d_keras_tf(unet2d_keras_tf):
+    from bioimageio.spec import load_raw_resource_description
+
+    raw_model = load_raw_resource_description(unet2d_keras_tf)
+    assert raw_model

@@ -79,3 +79,8 @@ def hpa_model():
 @pytest.fixture
 def stardist_model():
     return pathlib.Path(__file__).parent / "../example_specs/models/stardist_example_model/rdf.yaml"
+
+
+@pytest.fixture
+def unet2d_keras_tf():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_keras_tf/rdf.yaml"
