@@ -273,6 +273,7 @@
                         "$ref": "#/definitions/Author",
                         "type": "object"
                     },
+                    "minItems": 1,
                     "title": "authors",
                     "type": "array"
                 },
@@ -289,6 +290,7 @@
                         "$ref": "#/definitions/CiteEntry",
                         "type": "object"
                     },
+                    "minItems": 1,
                     "title": "cite",
                     "type": "array"
                 },
@@ -350,6 +352,7 @@
                         "$ref": "#/definitions/InputTensor",
                         "type": "object"
                     },
+                    "minItems": 1,
                     "title": "inputs",
                     "type": "array"
                 },
@@ -837,6 +840,7 @@
                         "$ref": "#/definitions/OutputTensor",
                         "type": "object"
                     },
+                    "minItems": 1,
                     "title": "outputs",
                     "type": "array"
                 },
@@ -869,6 +873,7 @@
                             }
                         ]
                     },
+                    "minItems": 1,
                     "title": "sample_inputs",
                     "type": "array"
                 },
@@ -885,6 +890,7 @@
                             }
                         ]
                     },
+                    "minItems": 1,
                     "title": "sample_outputs",
                     "type": "array"
                 },
@@ -927,6 +933,7 @@
                             }
                         ]
                     },
+                    "minItems": 1,
                     "title": "test_inputs",
                     "type": "array"
                 },
@@ -943,6 +950,7 @@
                             }
                         ]
                     },
+                    "minItems": 1,
                     "title": "test_outputs",
                     "type": "array"
                 },
@@ -998,6 +1006,7 @@
                 "description",
                 "documentation",
                 "format_version",
+                "inputs",
                 "license",
                 "name",
                 "tags",

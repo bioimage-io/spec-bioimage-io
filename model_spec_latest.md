@@ -25,6 +25,32 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="cite:url"></a>`url` _optional* String_ 
 * <a id="description"></a>`description` _String_ A string containing a brief description.
 * <a id="documentation"></a>`documentation` _RelativeLocalPath→Path_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+* <a id="inputs"></a>`inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model.
+  1. _InputTensor_   is a Dict with the following keys:
+  * <a id="inputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
+
+    | character | description |
+    | --- | --- |
+    |  b  |  batch (groups multiple samples) |
+    |  i  |  instance/index/element |
+    |  t  |  time |
+    |  c  |  channel |
+    |  z  |  spatial dimension z |
+    |  y  |  spatial dimension y |
+    |  x  |  spatial dimension x |
+  * <a id="inputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
+  * <a id="inputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
+  * <a id="inputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of input tensor shape.
+    1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
+    1. _ParametrizedInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ParametrizedInputShape is a Dict with the following keys:
+    * <a id="inputs:shape:min"></a>`min` _List\[Integer\]_ The minimum input shape with same length as `axes`
+    * <a id="inputs:shape:step"></a>`step` _List\[Integer\]_ The minimum shape change with same length as `axes`
+  * <a id="inputs:data_range"></a>`data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
+  * <a id="inputs:description"></a>`description` _optional String_ 
+  * <a id="inputs:preprocessing"></a>`preprocessing` _optional List\[Preprocessing\]_ Description of how this input should be preprocessed.
+    1. _Preprocessing_   is a Dict with the following keys:
+    * <a id="inputs:preprocessing:name"></a>`name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
+    * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_3.md).
 * <a id="license"></a>`license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * <a id="name"></a>`name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 * <a id="tags"></a>`tags` _List\[String\]_ A list of tags.
@@ -92,32 +118,6 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
 * <a id="download_url"></a>`download_url` _optional String_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
-* <a id="inputs"></a>`inputs` _optional List\[InputTensor\]_ Describes the input tensors expected by this model.
-  1. _InputTensor_   is a Dict with the following keys:
-  * <a id="inputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
-
-    | character | description |
-    | --- | --- |
-    |  b  |  batch (groups multiple samples) |
-    |  i  |  instance/index/element |
-    |  t  |  time |
-    |  c  |  channel |
-    |  z  |  spatial dimension z |
-    |  y  |  spatial dimension y |
-    |  x  |  spatial dimension x |
-  * <a id="inputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
-  * <a id="inputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
-  * <a id="inputs:shape"></a>`shape` _Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of input tensor shape.
-    1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
-    1. _ParametrizedInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ParametrizedInputShape is a Dict with the following keys:
-    * <a id="inputs:shape:min"></a>`min` _List\[Integer\]_ The minimum input shape with same length as `axes`
-    * <a id="inputs:shape:step"></a>`step` _List\[Integer\]_ The minimum shape change with same length as `axes`
-  * <a id="inputs:data_range"></a>`data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
-  * <a id="inputs:description"></a>`description` _optional String_ 
-  * <a id="inputs:preprocessing"></a>`preprocessing` _optional List\[Preprocessing\]_ Description of how this input should be preprocessed.
-    1. _Preprocessing_   is a Dict with the following keys:
-    * <a id="inputs:preprocessing:name"></a>`name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
-    * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_3.md).
 * <a id="links"></a>`links` _optional List\[String\]_ links to other bioimage.io resources
 * <a id="outputs"></a>`outputs` _optional List\[OutputTensor\]_ Describes the output tensors from this model.
   1. _OutputTensor_   is a Dict with the following keys:
