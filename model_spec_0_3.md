@@ -153,7 +153,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   * <a id="packaged_by:affiliation"></a>`affiliation` _optional String_ Affiliation.
   * <a id="packaged_by:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
-  * <a id="parent:sha256"></a>`sha256` _optional SHA256→String_ Hash of the weights of the parent model.
+  * <a id="parent:sha256"></a>`sha256` _optional SHA256→String_ Hash of the parent model RDF.
   * <a id="parent:uri"></a>`uri` _optional Union\[URI→String | RelativeLocalPath→Path\]_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 

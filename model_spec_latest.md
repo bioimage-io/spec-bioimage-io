@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.3.4
+# BioImage.IO Model Resource Description File Specification 0.4.0
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.3.4
+0.4.0
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
   * <a id="authors:name"></a>`name` _String_ Full name.
@@ -89,7 +89,6 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   1. _optional RelativeLocalPath→Path_ 
 * <a id="dependencies"></a>`dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
 * <a id="download_url"></a>`download_url` _optional String_ recommended url to the zipped file if applicable
-* <a id="framework"></a>`framework` _optional String_ The deep learning framework of the source code. One of: pytorch, tensorflow. This field is only required if the field `source` is present.
 * <a id="git_repo"></a>`git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
 * <a id="inputs"></a>`inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model. List\[InputTensor\] is a Dict with the following keys:
@@ -105,7 +104,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     |  y  |  spatial dimension y |
     |  x  |  spatial dimension x |
   * <a id="inputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
-  * <a id="inputs:name"></a>`name` _String_ Tensor name.
+  * <a id="inputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
   * <a id="inputs:shape"></a>`shape` _InputShape→Union\[ExplicitShape→List\[Integer\] | ParametrizedInputShape\]_ Specification of tensor shape.
     1. _optional ExplicitShape→List\[Integer\]_ Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`
     1. _ParametrizedInputShape_ A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`. ParametrizedInputShape is a Dict with the following keys:
@@ -117,8 +116,6 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     1. _Preprocessing_   is a Dict with the following keys:
     * <a id="inputs:preprocessing:name"></a>`name` _String_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
     * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_3.md).
-* <a id="kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Keyword arguments for the implementation specified by `source`. This field is only required if the field `source` is present.
-* <a id="language"></a>`language` _optional* String_ Programming language of the source code. One of: python, java. This field is only required if the field `source` is present.
 * <a id="links"></a>`links` _optional List\[String\]_ links to other bioimage.io resources
 * <a id="outputs"></a>`outputs` _List\[OutputTensor\]_ Describes the output tensors from this model. List\[OutputTensor\] is a Dict with the following keys:
   * <a id="outputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
@@ -133,7 +130,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     |  y  |  spatial dimension y |
     |  x  |  spatial dimension x |
   * <a id="outputs:data_type"></a>`data_type` _String_ The data type of this tensor. For inputs, only `float32` is allowed and the consumer software needs to ensure that the correct data type is passed here. For outputs can be any of `float32, float64, (u)int8, (u)int16, (u)int32, (u)int64`. The data flow in bioimage.io models is explained [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).
-  * <a id="outputs:name"></a>`name` _String_ Tensor name.
+  * <a id="outputs:name"></a>`name` _String_ Tensor name. No duplicates are allowed.
   * <a id="outputs:shape"></a>`shape` _OutputShape→Union\[ExplicitShape→List\[Integer\] | ImplicitOutputShape\]_ 
     1. _optional ExplicitShape→List\[Integer\]_ 
     1. _ImplicitOutputShape_ In reference to the shape of an input tensor, the shape of the output tensor is `shape = shape(input_tensor) * scale + 2 * offset`. ImplicitOutputShape is a Dict with the following keys:
@@ -153,7 +150,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   * <a id="packaged_by:affiliation"></a>`affiliation` _optional String_ Affiliation.
   * <a id="packaged_by:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
-  * <a id="parent:sha256"></a>`sha256` _optional SHA256→String_ Hash of the weights of the parent model.
+  * <a id="parent:sha256"></a>`sha256` _optional SHA256→String_ Hash of the parent model RDF.
   * <a id="parent:uri"></a>`uri` _optional Union\[URI→String | RelativeLocalPath→Path\]_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
@@ -182,6 +179,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
       ```
 
  This field is only required if the field source is present.
-* <a id="source"></a>`source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
-For example: `my_function.py:MyImplementation` or `core_library.some_module.some_function`.
+* <a id="source"></a>`source` _optional Union\[URI→String | RelativeLocalPath→Path\]_ url or local relative path to the source of the resource
+  1. _optional URI→String_ 
+  1. _optional RelativeLocalPath→Path_ 
 * <a id="version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.

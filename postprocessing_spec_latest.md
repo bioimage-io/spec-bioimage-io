@@ -1,4 +1,4 @@
-# Postprocessing operations in model spec 0.3
+# Postprocessing operations in model spec 0.4
 The supported operations that are valid in postprocessing. IMPORTANT: these operations must return float32 tensors, so that their output can be consumed by the models.
 - `binarize` Binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below the threshold to zero.
   - key word arguments:
