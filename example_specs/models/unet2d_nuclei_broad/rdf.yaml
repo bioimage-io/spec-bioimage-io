@@ -10,6 +10,10 @@ authors:
   - name: "Fynn Beuttenmueller"
     affiliation: "EMBL Heidelberg"
     orcid: "0000-0002-8567-6389"
+maintainers:
+  - name: "Constantin Pape"
+    github_user: constantinpape
+
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
