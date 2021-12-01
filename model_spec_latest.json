@@ -894,12 +894,6 @@
                     "title": "sample_outputs",
                     "type": "array"
                 },
-                "sha256": {
-                    "maxLength": 64,
-                    "minLength": 64,
-                    "title": "sha256",
-                    "type": "string"
-                },
                 "source": {
                     "anyOf": [
                         {
@@ -1339,6 +1333,12 @@
             "properties": {
                 "architecture": {
                     "title": "architecture",
+                    "type": "string"
+                },
+                "architecture_sha256": {
+                    "maxLength": 64,
+                    "minLength": 64,
+                    "title": "architecture_sha256",
                     "type": "string"
                 },
                 "attachments": {

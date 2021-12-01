@@ -154,6 +154,11 @@
                     "title": "framework",
                     "type": "string"
                 },
+                "hash": {
+                    "additionalProperties": {},
+                    "title": "hash",
+                    "type": "object"
+                },
                 "inputs": {
                     "items": {
                         "$ref": "#/definitions/InputArray",

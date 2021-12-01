@@ -52,6 +52,7 @@
 * <a id="config"></a>`config` _optional Dict\[Any, Any\]_ 
 * <a id="covers"></a>`covers` _optional List\[RelativeLocalPath→Path\]_ 
 * <a id="framework"></a>`framework` _optional String_ 
+* <a id="hash"></a>`hash` _optional Dict\[Any, Any\]_ 
 * <a id="optional_kwargs"></a>`optional_kwargs` _optional Dict\[String, Any\]_ 
 * <a id="required_kwargs"></a>`required_kwargs` _optional List\[String\]_ 
 * <a id="test_input"></a>`test_input` _optional RelativeLocalPath→Path_ 
