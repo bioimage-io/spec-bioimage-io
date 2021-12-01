@@ -17,7 +17,6 @@ consumer_defaults = {
     "ilastik": ["pytorch_state_dict", "onnx", "pytorch_script"],
     "zero": ["keras_hdf5"],
     "deepimagej": ["pytorch_script", "tensorflow_saved_model_bundle"],
-    "fiji": ["tensorflow_saved_model_bundle"],
     "imjoy": ["onnx"],
 }
 
