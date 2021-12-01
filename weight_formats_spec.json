@@ -28,11 +28,6 @@
         },
         "fiji": {
             "background_image": "static/img/zoo-background.svg",
-            "config": {
-                "supported_weight_formats": [
-                    "tensorflow_saved_model_bundle"
-                ]
-            },
             "explore_button_text": "Start Exploring",
             "icon": "https://fiji.sc/site/logo.png",
             "id": "fiji",
@@ -192,7 +187,6 @@
         },
         "tensorflow_saved_model_bundle": {
             "consumers": [
-                "fiji",
                 "deepimagej"
             ],
             "description": "Tensorflow Saved Model Bundle weights format",
