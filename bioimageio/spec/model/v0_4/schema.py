@@ -2,7 +2,7 @@ import typing
 import warnings
 from copy import deepcopy
 
-from marshmallow import RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
+from marshmallow import INCLUDE, RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
 
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry,
@@ -29,6 +29,16 @@ CiteEntry = rdf.schema.CiteEntry
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
+
+
+class Attachments(_BioImageIOSchema):
+    class Meta:
+        unknown = INCLUDE
+
+    files = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="File attachments; included when packaging the model.",
+    )
 
 
 class _TensorBase(_BioImageIOSchema):
@@ -232,6 +242,9 @@ The model RDFs can be downloaded or uploaded to the bioimage.io website, produce
 The model RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
+    attachments = fields.Nested(
+        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
+    )
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
         fields.Nested(Author()),

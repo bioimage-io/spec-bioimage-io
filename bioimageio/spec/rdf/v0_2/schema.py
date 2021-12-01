@@ -78,7 +78,7 @@ specified.
         "place a list of URIs under the `files` to list images and other files that this resource depends on."
     )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
 
-    attachments = fields.Dict(
+    attachments = fields.Dict(  # todo: in v0.3 update to attachments like in model v0.4?
         fields.String(),
         fields.List(
             fields.Union([fields.URI(), fields.Raw()]),
