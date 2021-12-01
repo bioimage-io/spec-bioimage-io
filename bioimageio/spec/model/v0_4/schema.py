@@ -11,7 +11,6 @@ from bioimageio.spec.model.v0_3.schema import (
     Postprocessing,
     Preprocessing,
     PytorchScriptWeightsEntry,
-    RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
     _WeightsEntryBase,
@@ -259,6 +258,16 @@ WeightsEntry = typing.Union[
     TensorflowSavedModelBundleWeightsEntry,
     TorchscriptWeightsEntry,
 ]
+
+
+class RunMode(_BioImageIOSchema):
+    name = fields.String(required=True, bioimageio_description="The name of the `run_mode`")
+    kwargs = fields.Kwargs()
+
+    @validates("name")
+    def warn_on_unrecognized_run_mode(self, value: str):
+        if isinstance(value, str):
+            self.warn("name", f"Unrecognized run mode '{value}'")
 
 
 class Model(rdf.schema.RDF):

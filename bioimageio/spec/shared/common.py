@@ -1,8 +1,8 @@
 import os
 import pathlib
 import tempfile
-from typing import Generic, Optional
-
+import warnings
+from typing import Generic, Optional, Sequence
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -23,6 +23,54 @@ DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
+
+
+class ValidationWarning(UserWarning):
+    """a warning category to warn with during RDF validation"""
+
+    @staticmethod
+    def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]):
+        """Summarize warning messsages of the ValidationWarning category"""
+
+        def add_to_summary(s, keys, msg):
+            key = keys.pop(0)
+            if "[" in key:
+                key, rest = key.split("[")
+                assert rest[-1] == "]"
+                idx = int(rest[:-1])
+            else:
+                idx = None
+
+            if key not in s:
+                s[key] = {} if keys or idx is not None else msg
+
+            s = s[key]
+
+            if idx is not None:
+                if idx not in s:
+                    s[idx] = {} if keys else msg
+
+                s = s[idx]
+
+            if keys:
+                assert isinstance(s, dict)
+                add_to_summary(s, keys, msg)
+
+        summary: dict = {}
+        for vw in val_warns:
+            assert issubclass(vw.category, ValidationWarning)
+            msg = str(vw.message)
+            if ": " in msg:
+                assert msg.count(": ")
+                keys_, *rest = msg.split(": ")
+                msg = ": ".join(rest)
+                keys = keys_.split(":")
+            else:
+                keys = []
+
+            add_to_summary(summary, keys, msg)
+
+        return summary
 
 
 def get_format_version_module(type_: str, format_version: str):
