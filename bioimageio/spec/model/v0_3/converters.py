@@ -81,6 +81,8 @@ def convert_model_from_v0_1(data: Dict[str, Any]) -> Dict[str, Any]:
         conversion_errors["prediction"]["weights"]["hash"]["sha256"] = missing
         sha256 = missing
 
+    data["sha256"] = data.pop("hash", {}).pop("sha256", missing)
+
     try:
         data["dependencies"] = data["prediction"].pop("dependencies")
     except KeyError:
