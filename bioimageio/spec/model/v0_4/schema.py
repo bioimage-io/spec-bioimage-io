@@ -21,9 +21,9 @@ from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
+from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 
-Author = rdf.schema.Author
 CiteEntry = rdf.schema.CiteEntry
 
 
@@ -39,6 +39,32 @@ class Attachments(_BioImageIOSchema):
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         bioimageio_description="File attachments; included when packaging the model.",
     )
+
+
+class _Person(_BioImageIOSchema):
+    name = fields.String(bioimageio_description="Full name.")
+    affiliation = fields.String(bioimageio_description="Affiliation.")
+    email = fields.Email()
+    github_user = fields.String(bioimageio_description="GitHub user name.")  # todo: add validation?
+    orcid = fields.String(
+        validate=[
+            field_validators.Length(19),
+            lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
+            lambda oid: is_valid_orcid_id(oid.replace("-", "")),
+        ],
+        bioimageio_description="[orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id "
+        "in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid]("
+        "https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier"
+        ") as per ISO 7064 11,2.)",
+    )
+
+
+class Author(_Person):
+    name = fields.String(require=True, bioimageio_description="Full name.")
+
+
+class Maintainer(_Person):
+    github_user = fields.String(require=True, bioimageio_description="GitHub user name.")
 
 
 class _TensorBase(_BioImageIOSchema):
@@ -245,13 +271,14 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     attachments = fields.Nested(
         Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
     )
-    # todo: unify authors with RDF (optional or required?)
+    # todo: sync authors with RDF
     authors = fields.List(
         fields.Nested(Author()),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description=rdf.schema.RDF.authors_bioimageio_description,
     )
+    maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this model.")
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.List(

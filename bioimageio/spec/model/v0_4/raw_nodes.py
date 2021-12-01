@@ -23,7 +23,7 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     WeightsFormat,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, CiteEntry, Dependencies, RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry, Dependencies, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitOutputShape,
     ImportableModule,
@@ -60,6 +60,25 @@ class Attachments(RawNode):  # note: not a dataclass due to the unknown fields; 
 
 
 @dataclass
+class _Person(RawNode):
+    name: Union[_Missing, str] = missing
+    affiliation: Union[_Missing, str] = missing
+    email: Union[_Missing, str] = missing
+    github_user: Union[_Missing, str] = missing
+    orcid: Union[_Missing, str] = missing
+
+
+@dataclass
+class Author(_Person):
+    name: str = missing
+
+
+@dataclass
+class Maintainer(_Person):
+    github_user: str = missing
+
+
+@dataclass
 class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
     architecture: ImportableSource = missing
@@ -88,6 +107,7 @@ class Model(_RDF):
     inputs: List[InputTensor] = missing
     license: str = missing
     links: Union[_Missing, List[str]] = missing
+    maintainers: Union[_Missing, List[Maintainer]] = missing
     outputs: List[OutputTensor] = missing
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing

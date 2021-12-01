@@ -134,6 +134,10 @@ class YamlDict(Dict):
         return super()._serialize(value, attr, obj, **kwargs)
 
 
+class Email(DocumentedField, marshmallow_fields.Email):
+    pass
+
+
 class Float(DocumentedField, marshmallow_fields.Float):
     pass
 
