@@ -1,6 +1,6 @@
 import warnings
 
-from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
+from marshmallow import EXCLUDE, ValidationError, post_load, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
@@ -207,6 +207,14 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+
+    @post_load
+    def warn_about_long_name(self, value: str, **kwargs):
+        if isinstance(value, str):
+            if len(value) > 64:
+                warnings.warn(f"Length of name ({len(value)}) exceeds the recommended maximum length of 64 characters.")
+        else:
+            warnings.warn(f"Could not check length of name {value}.")
 
     source = fields.Union(
         [fields.URI(), fields.RelativeLocalPath()],
