@@ -1,3 +1,4 @@
+import warnings
 from types import ModuleType
 from typing import ClassVar, List
 
@@ -5,6 +6,7 @@ from marshmallow import Schema, ValidationError, post_load, validates, validates
 
 from bioimageio.spec.shared import fields
 from . import raw_nodes
+from .common import ValidationWarning
 
 
 class SharedBioImageIOSchema(Schema):
@@ -30,6 +32,17 @@ class SharedBioImageIOSchema(Schema):
         except TypeError as e:
             e.args += (f"when initializing {this_type} from {self}",)
             raise e
+
+    def warn(self, field: str, msg: str):
+        """warn about a field with a ValidationWarning"""
+        field_instance = self.fields[field]
+        assert ":" not in field
+        assert " " not in field
+        # todo: add spec trail to field
+        # e.g. something similar to field = ":".join(self.context.get("field_path", []) + [field])
+        # or: ":".join(field_instance.spec_trail)
+        msg = f"{field}: {msg}"
+        warnings.warn(msg, category=ValidationWarning)
 
 
 class SharedProcessingSchema(Schema):

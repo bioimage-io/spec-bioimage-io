@@ -49,6 +49,23 @@ def validate(
 validate.__doc__ = commands.validate.__doc__
 
 
+@app.command()
+def update_format(
+    rdf_source: str = typer.Argument(..., help="RDF source as relative file path or URI"),
+    path: str = typer.Argument(..., help="Path to save the RDF converted to the latest format"),
+):
+    try:
+        commands.update_format(rdf_source, path)
+        ret_code = 0
+    except Exception as e:
+        print(f"update_format failed with {e}")
+        ret_code = 1
+    sys.exit(ret_code)
+
+
+update_format.__doc__ == commands.update_format.__doc__
+
+
 # note: single command requires additional (dummy) callback
 # see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
 @app.callback()

@@ -21,6 +21,11 @@ def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet
         for out in expected["outputs"]:
             out["description"] = out["name"]
 
+    # ignore new maintainers field
+    if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 0):
+        expected.pop("maintainers", None)
+        actual.pop("maintainers", None)
+
     for key, item in expected.items():
         assert key in actual, key
         assert actual[key] == item, key

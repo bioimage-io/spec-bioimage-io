@@ -10,6 +10,10 @@ authors:
   - name: "Fynn Beuttenmueller"
     affiliation: "EMBL Heidelberg"
     orcid: "0000-0002-8567-6389"
+maintainers:
+  - name: "Constantin Pape"
+    github_user: constantinpape
+
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
@@ -76,7 +80,7 @@ weights:
    source: weights.onnx
    opset_version: 12
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
- pytorch_script:
+ torchscript:
    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
    source: weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch

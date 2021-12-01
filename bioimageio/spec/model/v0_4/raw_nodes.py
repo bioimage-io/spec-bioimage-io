@@ -16,11 +16,9 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     PreprocessingName,
     Postprocessing,
     Preprocessing,
-    PytorchScriptWeightsEntry,
     RunMode,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    WeightsFormat,
     _WeightsEntryBase,
 )
 from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry, Dependencies, RDF as _RDF
@@ -48,6 +46,9 @@ Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
+WeightsFormat = Literal[
+    "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
+]
 
 ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
@@ -86,13 +87,18 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
+@dataclass
+class TorchscriptWeightsEntry(_WeightsEntryBase):
+    weights_format_name = "Torchscript"
+
+
 WeightsEntry = Union[
     KerasHdf5WeightsEntry,
     OnnxWeightsEntry,
-    PytorchScriptWeightsEntry,
     PytorchStateDictWeightsEntry,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
+    TorchscriptWeightsEntry,
 ]
 
 
