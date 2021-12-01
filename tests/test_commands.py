@@ -2,7 +2,10 @@ import zipfile
 from copy import copy
 from io import BytesIO, StringIO
 
+import pytest
+
 from bioimageio.spec import load_raw_resource_description
+from bioimageio.spec.exceptions import UnconvertibleError
 from bioimageio.spec.model import format_version
 
 
@@ -36,7 +39,14 @@ def test_validate_model_as_zenodo_sandbox_doi():
     assert not validate(doi, update_format=False, update_format_inner=False)["error"]
 
 
-# todo: add test with real doi
+def test_validate_model_as_zenodo_doi():
+    from bioimageio.spec.commands import validate
+
+    doi = "10.5281/zenodo.5744490"
+    assert not validate(doi, update_format=False, update_format_inner=False)["error"]
+
+    # expecting UnconvertibleError due to missing sha256
+    assert validate(doi, update_format=True, update_format_inner=False)["error"]
 
 
 def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest_path):

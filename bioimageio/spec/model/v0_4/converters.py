@@ -3,6 +3,8 @@ from typing import Any, Dict
 
 from marshmallow import missing
 
+from bioimageio.spec.exceptions import UnconvertibleError
+
 
 def convert_model_from_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
     from bioimageio.spec.model import v0_3
@@ -23,8 +25,10 @@ def convert_model_from_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
         if architecture is not missing:
             pytorch_state_dict_weights_entry["architecture"] = architecture
 
-        if architecture_sha256 is not missing:
-            pytorch_state_dict_weights_entry["architecture_sha256"] = architecture_sha256
+        if architecture_sha256 is missing:
+            raise UnconvertibleError("Missing 'sha256' which is now required.")
+
+        pytorch_state_dict_weights_entry["architecture_sha256"] = architecture_sha256
 
         if architecture_sha256 is not missing:
             pytorch_state_dict_weights_entry["kwargs"] = kwargs
