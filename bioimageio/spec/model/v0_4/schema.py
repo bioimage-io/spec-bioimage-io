@@ -34,6 +34,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 class Person(_BioImageIOSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
+    email = fields.Email()
     orcid = fields.String(
         validate=[
             field_validators.Length(19),
