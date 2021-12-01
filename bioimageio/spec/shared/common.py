@@ -28,14 +28,6 @@ BIOIMAGEIO_CACHE_PATH = pathlib.Path(
 class ValidationWarning(UserWarning):
     """a warning category to warn with during RDF validation"""
 
-    def __init__(self, msg: str):
-        if ": " in msg:
-            self.field = msg.split(": ")[0]
-        else:
-            self.field = ""
-
-        super().__init__(msg)
-
     @staticmethod
     def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]):
         """Summarize warning messsages of the ValidationWarning category"""
@@ -66,9 +58,17 @@ class ValidationWarning(UserWarning):
 
         summary: dict = {}
         for vw in val_warns:
-            assert isinstance(vw.category, ValidationWarning)
-            keys = vw.category.field.split(":")
-            add_to_summary(summary, keys, vw.message)
+            assert issubclass(vw.category, ValidationWarning)
+            msg = str(vw.message)
+            if ": " in msg:
+                assert msg.count(": ")
+                keys_, *rest = msg.split(": ")
+                msg = ": ".join(rest)
+                keys = keys_.split(":")
+            else:
+                keys = []
+
+            add_to_summary(summary, keys, msg)
 
         return summary
 
