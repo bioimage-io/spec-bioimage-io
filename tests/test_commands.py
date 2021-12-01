@@ -2,6 +2,9 @@ import zipfile
 from copy import copy
 from io import BytesIO, StringIO
 
+from bioimageio.spec import load_raw_resource_description
+from bioimageio.spec.model import format_version
+
 
 def test_validate_model_as_dict(unet2d_nuclei_broad_any):
     from bioimageio.spec.commands import validate
@@ -109,8 +112,19 @@ def test_validate_generates_warnings(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
     data = copy(unet2d_nuclei_broad_latest)
-    # data["license"] = "BSD-2-Clause-FreeBSD"
+    data["license"] = "BSD-2-Clause-FreeBSD"
     data["run_mode"] = {"name": "fancy"}
     summary = validate(data, update_format=True, update_format_inner=False)
 
     assert summary["warnings"]
+
+
+def test_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
+    from bioimageio.spec.commands import update_format
+
+    path = tmp_path / "rdf_new.yaml"
+    update_format(unet2d_nuclei_broad_before_latest, path)
+
+    assert path.exists()
+    model = load_raw_resource_description(path)
+    assert model.format_version == format_version
