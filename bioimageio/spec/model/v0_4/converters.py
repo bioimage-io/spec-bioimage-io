@@ -29,6 +29,10 @@ def convert_model_from_v0_3(data: Dict[str, Any]) -> Dict[str, Any]:
         if architecture_sha256 is not missing:
             pytorch_state_dict_weights_entry["kwargs"] = kwargs
 
+    torchscript_weights_entry = data.get("weights", {}).pop("pytorch_script", None)
+    if torchscript_weights_entry is not None:
+        data["weights"]["torchscript"] = torchscript_weights_entry
+
     data["format_version"] = "0.4.0"
 
     return data

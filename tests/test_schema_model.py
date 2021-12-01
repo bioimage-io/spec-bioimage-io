@@ -72,7 +72,7 @@ def test_model_schema_accepts_run_mode(model_dict):
 
 @pytest.mark.parametrize(
     "format",
-    ["pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"],
+    ["pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"],
 )
 def test_model_schema_accepts_valid_weight_formats(model_dict, format):
     from bioimageio.spec.model.schema import Model
