@@ -142,13 +142,20 @@ or if the field `test_inputs` does not contain a list, it would print:
 ## Changelog
  * **0.4.0**:
     - Breaking changes
-      - model inputs and outputs may not use duplicated names
+      - model inputs and outputs may not use duplicated names.
+      - model field `sha256` is required if `pytorch_state_dict` weights are defined. 
+        and is now moved to the `pytroch_state_dict` entry as `architecture_sha256`.
     - Breaking changes that are fully auto-convertible
-      - model fields language and framework are removed
+      - model fields language and framework are removed.
       - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict` 
         weights entry (if it exists, otherwise they are removed).
+      - the weight format `pytorch_script` was renamed to `torchscript`.
     - Other changes
       - model inputs (like outputs) may be defined by `scale`ing and `offset`ing a `reference_tensor`
+      - a `maintainers` field was added to the model RDF.
+      - the entries in the `authors` field may now additionally contain `email` or `github_user`.
+      - the summary returned by the `validate` command now also contains a list of warnings.
+      - an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
  * **0.3.4**:
    - Other changes
       - Add optional parameter `eps` to `scale_range` postprocessing. 
