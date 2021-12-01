@@ -53,7 +53,7 @@ validate.__doc__ = commands.validate.__doc__
 @app.command()
 def update_format(
     rdf_source: str = typer.Argument(..., help="RDF source as relative file path or URI"),
-    path: str = typer.Argument(..., help="Path to save the RDF converted to the latest format")
+    path: str = typer.Argument(..., help="Path to save the RDF converted to the latest format"),
 ):
     try:
         commands.update_format(rdf_source, Path(path))
