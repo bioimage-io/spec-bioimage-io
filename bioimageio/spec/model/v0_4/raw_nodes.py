@@ -52,6 +52,13 @@ FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __in
 ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
+class Attachments(RawNode):  # note: not a dataclass due to the unknown fields; (fingers crossed for no bugs)
+    def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
+        self.files = files
+        self.unknown = unknown
+        super().__init__()
+
+
 @dataclass
 class _Person(RawNode):
     name: Union[_Missing, str] = missing
@@ -93,6 +100,7 @@ WeightsEntry = Union[
 class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs")
 
+    attachments: Union[_Missing, Attachments] = missing
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
     format_version: FormatVersion = missing
