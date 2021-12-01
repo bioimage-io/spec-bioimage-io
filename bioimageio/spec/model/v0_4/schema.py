@@ -21,14 +21,34 @@ from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
 from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
+from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 
-Author = rdf.schema.Author
 CiteEntry = rdf.schema.CiteEntry
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
+
+
+class Person(_BioImageIOSchema):
+    name = fields.String(required=True, bioimageio_description="Full name.")
+    affiliation = fields.String(bioimageio_description="Affiliation.")
+    orcid = fields.String(
+        validate=[
+            field_validators.Length(19),
+            lambda oid: all(oid[idx] == "-" for idx in [4, 9, 14]),
+            lambda oid: is_valid_orcid_id(oid.replace("-", "")),
+        ],
+        bioimageio_description="[orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id "
+        "in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid]("
+        "https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier"
+        ") as per ISO 7064 11,2.)",
+    )
+
+
+Author = Person
+Maintainer = Person
 
 
 class _TensorBase(_BioImageIOSchema):
