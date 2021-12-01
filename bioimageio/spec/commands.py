@@ -1,6 +1,7 @@
 import os
 import traceback
 import warnings
+from pathlib import Path
 from typing import Dict, IO, Union
 
 from marshmallow import ValidationError
@@ -20,7 +21,7 @@ def update_format(
     raw = load_raw_resource_description(rdf_source, update_to_current_format=True)
     if raw.type != "model":
         raise NotImplementedError(f"update_format is currently only for supported for models, not {raw.type}")
-    save_raw_resource_description(raw, path)
+    save_raw_resource_description(raw, Path(path))
 
 
 def validate(

@@ -1,6 +1,5 @@
 import sys
 from pprint import pprint
-from pathlib import Path
 
 import typer
 
@@ -56,7 +55,7 @@ def update_format(
     path: str = typer.Argument(..., help="Path to save the RDF converted to the latest format")
 ):
     try:
-        commands.update_format(rdf_source, Path(path))
+        commands.update_format(rdf_source, path)
         ret_code = 0
     except Exception as e:
         print(f"update_format failed with {e}")
