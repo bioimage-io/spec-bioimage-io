@@ -40,6 +40,7 @@ type: model
 weights:
   pytorch_state_dict:
     architecture: ./resize_unet.py:ResizeUNet
+    architecture_sha256: bc9e7fe5dd5d3a6c7a4ef7d32b6704169f887b7632f898fc07c762eea7a3feb5
     kwargs: {depth: 3, in_channels: 1, initial_features: 16, out_channels: 1}
     sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838
     source: ./weights.pt

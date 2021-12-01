@@ -37,6 +37,7 @@ class BaseSpec(RawNode):
     language: str = missing
     framework: Union[_Missing, str] = missing
     source: str = missing
+    hash: Dict[str, str] = missing
     required_kwargs: Union[_Missing, List[str]] = missing
     optional_kwargs: Union[_Missing, Dict[str, Any]] = missing
 
