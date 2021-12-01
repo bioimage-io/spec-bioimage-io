@@ -34,6 +34,10 @@ def model_dict():
             {"name": "Author 1", "affiliation": "Affiliation 1"},
             {"name": "Author 2", "affiliation": "Affiliation 2"},
         ],
+        "maintainers": [
+            {"name": "Author 1", "affiliation": "Affiliation 1", "github_user": "githubuser1"},
+            {"name": "Author 2", "affiliation": "Affiliation 2", "github_user": "githubuser2"},
+        ],
         "timestamp": datetime.now(),
         "cite": [{"text": "Paper title", "doi": "doi"}],
         "inputs": [
