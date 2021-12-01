@@ -103,3 +103,14 @@ def test_validate_invalid_model(unet2d_nuclei_broad_latest):
     del data["test_inputs"]  # invalidate data
     assert validate(data, update_format=True, update_format_inner=False)["error"]
     assert validate(data, update_format=False, update_format_inner=False)["error"]
+
+
+def test_validate_generates_warnings(unet2d_nuclei_broad_latest):
+    from bioimageio.spec.commands import validate
+
+    data = copy(unet2d_nuclei_broad_latest)
+    # data["license"] = "BSD-2-Clause-FreeBSD"
+    data["run_mode"] = {"name": "fancy"}
+    summary = validate(data, update_format=True, update_format_inner=False)
+
+    assert summary["warnings"]
