@@ -23,12 +23,13 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     WeightsFormat,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, CiteEntry, Dependencies, RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import CiteEntry, Dependencies, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
     ParametrizedInputShape,
+    RawNode,
     URI,
 )
 
@@ -49,6 +50,25 @@ PreprocessingName = PreprocessingName
 FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
 
 ImportableSource = Union[ImportableSourceFile, ImportableModule]
+
+
+@dataclass
+class _Person(RawNode):
+    name: Union[_Missing, str] = missing
+    affiliation: Union[_Missing, str] = missing
+    email: Union[_Missing, str] = missing
+    github_user: Union[_Missing, str] = missing
+    orcid: Union[_Missing, str] = missing
+
+
+@dataclass
+class Author(_Person):
+    name: str = missing
+
+
+@dataclass
+class Maintainer(_Person):
+    github_user: str = missing
 
 
 @dataclass

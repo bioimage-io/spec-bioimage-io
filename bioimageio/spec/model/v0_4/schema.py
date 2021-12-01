@@ -31,10 +31,11 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Person(_BioImageIOSchema):
-    name = fields.String(required=True, bioimageio_description="Full name.")
+class _Person(_BioImageIOSchema):
+    name = fields.String(bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
     email = fields.Email()
+    github_user = fields.String(bioimageio_description="GitHub user name.")
     orcid = fields.String(
         validate=[
             field_validators.Length(19),
@@ -48,8 +49,12 @@ class Person(_BioImageIOSchema):
     )
 
 
-Author = Person
-Maintainer = Person
+class Author(_Person):
+    name = fields.String(require=True, bioimageio_description="Full name.")
+
+
+class Maintainer(_Person):
+    github_user = fields.String(require=True, bioimageio_description="GitHub user name.")
 
 
 class _TensorBase(_BioImageIOSchema):
@@ -253,12 +258,16 @@ The model RDFs can be downloaded or uploaded to the bioimage.io website, produce
 The model RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
-    # todo: unify authors with RDF (optional or required?)
+    # todo: sync authors with RDF
     authors = fields.List(
         fields.Nested(Author()),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description=rdf.schema.RDF.authors_bioimageio_description,
+    )
+    maintainers = fields.List(
+        fields.Nested(Maintainer()),
+        bioimageio_description="Maintainers of this model.",
     )
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
