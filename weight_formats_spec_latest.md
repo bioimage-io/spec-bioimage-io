@@ -21,6 +21,12 @@
 
 
 ## Weight formats and their additional \[optional\] key word arguments
+- `keras_hdf5` Keras HDF5 weights format
+  - key word arguments:
+    - `[tensorflow_version]` 
+- `onnx` ONNX weights format
+  - key word arguments:
+    - `[opset_version]` 
 - `pytorch_state_dict` PyTorch state dictionary weights format
   - key word arguments:
     - `[architecture]` Source code of the model architecture that either points to a local implementation: `<relative path to file>:<identifier of implementation within the file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
@@ -40,16 +46,10 @@ For example: `my_function.py:MyImplementation` or `bioimageio.core.some_module.s
 
  This field is only required if the architecture points to a source file.
     - `[kwargs]` Keyword arguments for the implementation specified by `architecture`.
-- `pytorch_script` Torch Script weights format
-- `keras_hdf5` Keras HDF5 weights format
-  - key word arguments:
-    - `[tensorflow_version]` 
 - `tensorflow_js` Tensorflow Javascript weights format
   - key word arguments:
     - `[tensorflow_version]` 
 - `tensorflow_saved_model_bundle` Tensorflow Saved Model Bundle weights format
   - key word arguments:
     - `[tensorflow_version]` 
-- `onnx` ONNX weights format
-  - key word arguments:
-    - `[opset_version]` 
+- `torchscript` Torchscript weights format

@@ -4,7 +4,7 @@
             "background_image": "static/img/zoo-background.svg",
             "config": {
                 "supported_weight_formats": [
-                    "pytorch_script",
+                    "torchscript",
                     "tensorflow_saved_model_bundle"
                 ]
             },
@@ -71,7 +71,7 @@
                 "supported_weight_formats": [
                     "pytorch_state_dict",
                     "onnx",
-                    "pytorch_script"
+                    "torchscript"
                 ]
             },
             "default_type": "model",
@@ -165,14 +165,6 @@
             "description": "ONNX weights format",
             "name": "ONNX"
         },
-        "pytorch_script": {
-            "consumers": [
-                "ilastik",
-                "deepimagej"
-            ],
-            "description": "Torch Script weights format",
-            "name": "TorchScript"
-        },
         "pytorch_state_dict": {
             "consumers": [
                 "ilastik"
@@ -191,6 +183,14 @@
             ],
             "description": "Tensorflow Saved Model Bundle weights format",
             "name": "Tensorflow Saved Model"
+        },
+        "torchscript": {
+            "consumers": [
+                "ilastik",
+                "deepimagej"
+            ],
+            "description": "Torchscript weights format",
+            "name": "Torchscript"
         }
     }
 }

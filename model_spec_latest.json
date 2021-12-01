@@ -1007,15 +1007,15 @@
                     "additionalProperties": {
                         "anyOf": [
                             {
-                                "$ref": "#/definitions/PytorchStateDictWeightsEntry",
-                                "type": "object"
-                            },
-                            {
-                                "$ref": "#/definitions/PytorchScriptWeightsEntry",
-                                "type": "object"
-                            },
-                            {
                                 "$ref": "#/definitions/KerasHdf5WeightsEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/OnnxWeightsEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/PytorchStateDictWeightsEntry",
                                 "type": "object"
                             },
                             {
@@ -1027,7 +1027,7 @@
                                 "type": "object"
                             },
                             {
-                                "$ref": "#/definitions/OnnxWeightsEntry",
+                                "$ref": "#/definitions/TorchscriptWeightsEntry",
                                 "type": "object"
                             }
                         ]
@@ -1303,73 +1303,6 @@
             ],
             "type": "object"
         },
-        "PytorchScriptWeightsEntry": {
-            "additionalProperties": false,
-            "properties": {
-                "attachments": {
-                    "additionalProperties": {
-                        "items": {
-                            "anyOf": [
-                                {
-                                    "title": "",
-                                    "type": "string"
-                                },
-                                {
-                                    "title": "",
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "title": "attachments",
-                        "type": "array"
-                    },
-                    "title": "attachments",
-                    "type": "object"
-                },
-                "authors": {
-                    "items": {
-                        "$ref": "#/definitions/Author",
-                        "type": "object"
-                    },
-                    "title": "authors",
-                    "type": "array"
-                },
-                "parent": {
-                    "title": "parent",
-                    "type": "string"
-                },
-                "sha256": {
-                    "maxLength": 64,
-                    "minLength": 64,
-                    "title": "sha256",
-                    "type": "string"
-                },
-                "source": {
-                    "anyOf": [
-                        {
-                            "title": "",
-                            "type": "string"
-                        },
-                        {
-                            "title": "",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "weights_format": {
-                    "enum": [
-                        "pytorch_script"
-                    ],
-                    "title": "weights_format",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "source",
-                "weights_format"
-            ],
-            "type": "object"
-        },
         "PytorchStateDictWeightsEntry": {
             "additionalProperties": false,
             "properties": {
@@ -1601,6 +1534,73 @@
                 "weights_format": {
                     "enum": [
                         "tensorflow_saved_model_bundle"
+                    ],
+                    "title": "weights_format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "source",
+                "weights_format"
+            ],
+            "type": "object"
+        },
+        "TorchscriptWeightsEntry": {
+            "additionalProperties": false,
+            "properties": {
+                "attachments": {
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
+                    "title": "attachments",
+                    "type": "object"
+                },
+                "authors": {
+                    "items": {
+                        "$ref": "#/definitions/Author",
+                        "type": "object"
+                    },
+                    "title": "authors",
+                    "type": "array"
+                },
+                "parent": {
+                    "title": "parent",
+                    "type": "string"
+                },
+                "sha256": {
+                    "maxLength": 64,
+                    "minLength": 64,
+                    "title": "sha256",
+                    "type": "string"
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "weights_format": {
+                    "enum": [
+                        "torchscript"
                     ],
                     "title": "weights_format",
                     "type": "string"
