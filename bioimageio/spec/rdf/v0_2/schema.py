@@ -1,5 +1,3 @@
-import warnings
-
 from marshmallow import EXCLUDE, ValidationError, post_load, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
@@ -49,13 +47,6 @@ class CiteEntry(BioImageIOSchema):
     def doi_or_url(self, data, **kwargs):
         if data.get("doi") is None and data.get("url") is None:
             raise ValidationError("doi or url needs to be specified in a citation")
-
-
-class RunMode(BioImageIOSchema):
-    name = fields.String(
-        required=True, bioimageio_description="The name of the `run_mode`"
-    )  # todo: limit valid run mode names
-    kwargs = fields.Kwargs()
 
 
 class RDF(BioImageIOSchema):
@@ -195,26 +186,31 @@ E.g. the citation for the model architecture and/or the training data used."""
     def warn_about_deprecated_spdx_license(self, value: str):
         license_info = LICENSES.get(value)
         if license_info is None:
-            warnings.warn(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
+            self.warn("license", f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
         else:
             if license_info["isDeprecatedLicenseId"]:
-                warnings.warn(f"license {value} ({license_info['name']}) is deprecated")
+                self.warn("license", f"{value} ({license_info['name']}) is deprecated")
 
             if not license_info["isOsiApproved"]:
-                warnings.warn(f"license {value} ({license_info['name']}) is not approved by OSI")
+                self.warn("license", f"{value} ({license_info['name']}) is not approved by OSI")
+
+            if not license_info["isFsfLibre"]:
+                self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
 
     links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
 
     # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
-    @post_load
-    def warn_about_long_name(self, value: str, **kwargs):
+    @validates
+    def warn_about_long_name(self, value: str):
         if isinstance(value, str):
             if len(value) > 64:
-                warnings.warn(f"Length of name ({len(value)}) exceeds the recommended maximum length of 64 characters.")
+                self.warn(
+                    "name", f"Length of name ({len(value)}) exceeds the recommended maximum length of 64 characters."
+                )
         else:
-            warnings.warn(f"Could not check length of name {value}.")
+            self.warn("name", f"Could not check length of name {value}.")
 
     source = fields.Union(
         [fields.URI(), fields.RelativeLocalPath()],
