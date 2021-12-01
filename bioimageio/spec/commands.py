@@ -12,12 +12,8 @@ from .shared.common import nested_default_dict_as_nested_dict
 KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
 
 
-def update_format(
-    rdf_source: Union[dict, os.PathLike, IO, str, bytes],
-    path: Union[os.PathLike, str]
-):
-    """Update a BioImageie.IO
-    """
+def update_format(rdf_source: Union[dict, os.PathLike, IO, str, bytes], path: Union[os.PathLike, str]):
+    """Update a BioImageie.IO"""
     raw = load_raw_resource_description(rdf_source, update_to_current_format=True)
     if raw.type != "model":
         raise NotImplementedError(f"update_format is currently only for supported for models, not {raw.type}")
