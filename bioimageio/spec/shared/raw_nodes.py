@@ -148,6 +148,9 @@ class ImportableModule(RawNode):
     module_name: str = missing
     callable_name: str = missing
 
+    def __str__(self):
+        return f"{self.module_name}:{self.callable_name}"
+
 
 @dataclass
 class ImportableSourceFile(RawNode):
@@ -155,6 +158,9 @@ class ImportableSourceFile(RawNode):
 
     callable_name: str = missing
     source_file: Union[URI, pathlib.Path] = missing
+
+    def __str__(self):
+        return f"{self.source_file}:{self.callable_name}"
 
 
 ImportableSource = Union[ImportableModule, ImportableSourceFile]
