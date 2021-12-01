@@ -188,13 +188,13 @@ E.g. the citation for the model architecture and/or the training data used."""
         if license_info is None:
             self.warn("license", f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
         else:
-            if license_info["isDeprecatedLicenseId"]:
+            if license_info.get("isDeprecatedLicenseId", False):
                 self.warn("license", f"{value} ({license_info['name']}) is deprecated")
 
-            if not license_info["isOsiApproved"]:
+            if not license_info.get("isOsiApproved", False):
                 self.warn("license", f"{value} ({license_info['name']}) is not approved by OSI")
 
-            if not license_info["isFsfLibre"]:
+            if not license_info.get("isFsfLibre", False):
                 self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
 
     links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
