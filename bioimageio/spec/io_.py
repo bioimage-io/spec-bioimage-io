@@ -72,11 +72,22 @@ def resolve_rdf_source(
             import requests
             from urllib.request import urlopen
 
+            zenodo_prefix = "10.5281/zenodo."
+            zenodo_record_api = "https://zenodo.org/api/records"
             zenodo_sandbox_prefix = "10.5072/zenodo."
-            if source.startswith(zenodo_sandbox_prefix):
+            zenodo_sandbox_record_api = "https://sandbox.zenodo.org/api/records"
+            is_zenodo_doi = False
+            if source.startswith(zenodo_prefix):
+                is_zenodo_doi = True
+            elif source.startswith(zenodo_sandbox_prefix):
                 # zenodo sandbox doi (which is not a valid doi)
-                record_id = source[len(zenodo_sandbox_prefix) :]
-                response = requests.get(f"https://sandbox.zenodo.org/api/records/{record_id}")
+                zenodo_prefix = zenodo_sandbox_prefix
+                zenodo_record_api = zenodo_sandbox_record_api
+                is_zenodo_doi = True
+
+            if is_zenodo_doi:
+                record_id = source[len(zenodo_prefix) :]
+                response = requests.get(f"{zenodo_record_api}/{record_id}")
                 if not response.ok:
                     raise RuntimeError(response.status_code)
 
