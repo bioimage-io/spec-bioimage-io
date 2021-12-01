@@ -107,6 +107,7 @@ class Model(_RDF):
     inputs: List[InputTensor] = missing
     license: str = missing
     links: Union[_Missing, List[str]] = missing
+    maintainers: Union[_Missing, List[Maintainer]] = missing
     outputs: List[OutputTensor] = missing
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing
