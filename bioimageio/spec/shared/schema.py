@@ -35,9 +35,12 @@ class SharedBioImageIOSchema(Schema):
 
     def warn(self, field: str, msg: str):
         """warn about a field with a ValidationWarning"""
+        field_instance = self.fields[field]
         assert ":" not in field
         assert " " not in field
-        field = ":".join(self.context.get("field_path", []) + [field])
+        # todo: add spec trail to field
+        # e.g. something similar to field = ":".join(self.context.get("field_path", []) + [field])
+        # or: ":".join(field_instance.spec_trail)
         msg = f"{field}: {msg}"
         warnings.warn(msg, category=ValidationWarning)
 
