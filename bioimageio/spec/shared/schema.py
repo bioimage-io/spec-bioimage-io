@@ -13,7 +13,7 @@ class SharedBioImageIOSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs):
-        if not data:
+        if data is None:
             return None
 
         this_type = getattr(self.raw_nodes, self.__class__.__name__, None)
