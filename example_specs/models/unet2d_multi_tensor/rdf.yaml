@@ -60,7 +60,7 @@ weights:
     opset_version: 12
     sha256: 9b5bd88a3d29cf9979b30c03b4d5af12fdfa1d7193f5d2f2cc3942ffcf71ce3c
     source: ./weights.onnx
-  pytorch_script:
+  torchscript:
     sha256: 097bb5062df1fe48a5e7473ea2f6025c77d334a9e3f92af79fc3d6d530c01720
     source: ./weights-torchscript.pt
   pytorch_state_dict:

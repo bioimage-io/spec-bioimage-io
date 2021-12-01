@@ -244,13 +244,20 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
                 )
 
 
+class TorchscriptWeightsEntry(_WeightsEntryBase):
+    raw_nodes = raw_nodes
+
+    bioimageio_description = "Torchscript weights format"
+    weights_format = fields.String(validate=field_validators.Equal("torchscript"), required=True, load_only=True)
+
+
 WeightsEntry = typing.Union[
-    PytorchStateDictWeightsEntry,
-    PytorchScriptWeightsEntry,
     KerasHdf5WeightsEntry,
+    OnnxWeightsEntry,
+    PytorchStateDictWeightsEntry,
     TensorflowJsWeightsEntry,
     TensorflowSavedModelBundleWeightsEntry,
-    OnnxWeightsEntry,
+    TorchscriptWeightsEntry,
 ]
 
 
