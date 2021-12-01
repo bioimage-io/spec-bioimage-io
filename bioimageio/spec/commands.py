@@ -1,14 +1,23 @@
 import os
 import traceback
 import warnings
+from pathlib import Path
 from typing import Dict, IO, Union
 
 from marshmallow import ValidationError
 
-from .io_ import load_raw_resource_description, resolve_rdf_source
+from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
 from .shared.common import nested_default_dict_as_nested_dict
 
 KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
+
+
+def update_format(rdf_source: Union[dict, os.PathLike, IO, str, bytes], path: Union[os.PathLike, str]):
+    """Update a BioImageie.IO"""
+    raw = load_raw_resource_description(rdf_source, update_to_current_format=True)
+    if raw.type != "model":
+        raise NotImplementedError(f"update_format is currently only for supported for models, not {raw.type}")
+    save_raw_resource_description(raw, Path(path))
 
 
 def validate(
