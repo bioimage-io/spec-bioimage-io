@@ -1,5 +1,6 @@
 
-* <a id="cite"></a>`cite` _CiteEntry_   is a Dict with the following keys:
+* <a id="cite"></a>`cite` _List\[CiteEntry\]_ 
+  1. _CiteEntry_   is a Dict with the following keys:
   * <a id="cite:text"></a>`text` _String_ 
   * <a id="cite:doi"></a>`doi` _optional String_ 
   * <a id="cite:url"></a>`url` _optional String_ 

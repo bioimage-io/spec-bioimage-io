@@ -122,8 +122,12 @@
                     "type": "array"
                 },
                 "cite": {
-                    "$ref": "#/definitions/CiteEntry",
-                    "type": "object"
+                    "items": {
+                        "$ref": "#/definitions/CiteEntry",
+                        "type": "object"
+                    },
+                    "title": "cite",
+                    "type": "array"
                 },
                 "config": {
                     "additionalProperties": {},
