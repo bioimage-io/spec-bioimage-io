@@ -30,7 +30,7 @@ setup(
         "marshmallow-jsonschema",
         "marshmallow-union",
         "marshmallow>=3.6.0,<4.0",
-        "requests",
+        "requests;platform_system!='Emscripten'",
         "ruamel.yaml;platform_system!='Emscripten'",
         "typer",
         "typing-extensions",
