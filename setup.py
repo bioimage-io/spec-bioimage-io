@@ -35,7 +35,7 @@ setup(
         "typing-extensions",
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
-    extras_require={"test": ["pytest", "tox", "mypy"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "mypy", "numpy"], "dev": ["pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",
         "scripts/generate_processing_docs.py",
