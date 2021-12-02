@@ -177,6 +177,12 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
         repeat_type_name = self.type_name if self.bioimageio_description else ""
         self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"
 
+    def _deserialize(self, value, attr, data, partial=None, **kwargs):
+        if not isinstance(value, dict):
+            raise ValidationError(f"Expected dictionary, but got {type(value).__name__}.")
+
+        return super()._deserialize(value, attr, data, partial, **kwargs)
+
 
 class Raw(DocumentedField, marshmallow_fields.Raw):
     pass

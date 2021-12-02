@@ -189,10 +189,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             self.warn("license", f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
         else:
             if license_info.get("isDeprecatedLicenseId", False):
-                self.warn("license", f"{value} ({license_info['name']}) is deprecated")
-
-            if not license_info.get("isOsiApproved", False):
-                self.warn("license", f"{value} ({license_info['name']}) is not approved by OSI")
+                self.warn("license", f"{value} ({license_info['name']}) is deprecated.")
 
             if not license_info.get("isFsfLibre", False):
                 self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
