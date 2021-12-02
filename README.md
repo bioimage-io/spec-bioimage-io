@@ -110,6 +110,7 @@ It is recommended to host the resource description file on one of the public git
  * Store the yaml file in a version controlled Git repository (e.g. Github or Gitlab)
  * Use or upgrade to the latest format version
 
+# Build and validate your model specifications from scratch
 
 ## BioImage.IO Spec Validator
 
