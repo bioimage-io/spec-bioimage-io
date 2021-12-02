@@ -28,7 +28,7 @@ class BaseSpec(BioImageIOSchema):
     name = fields.String(required=True)
     format_version = fields.String(required=True)
     description = fields.String(required=True)
-    cite = fields.Nested(CiteEntry(many=True), required=True)
+    cite = fields.List(fields.Nested(CiteEntry()), required=True)
     authors = fields.List(fields.String(required=True))
     documentation = fields.RelativeLocalPath(required=True)
     tags = fields.List(fields.String(), required=True)
