@@ -13,7 +13,7 @@ requirements:
     - pip
   run:
     - python >=3.7,<3.10
-    - ruamel.yaml  # manually 
+    - ruamel.yaml  # manually
     {% for dep in setup_py_data['install_requires'] if not dep.startswith('ruamel.yaml') %}
     - {{ dep.lower() }}
     {% endfor %}

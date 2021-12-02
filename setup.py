@@ -26,6 +26,7 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
+        "numpy",
         "marshmallow-jsonschema",
         "marshmallow-union",
         "marshmallow>=3.6.0,<4.0",
@@ -35,7 +36,7 @@ setup(
         "typing-extensions",
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
-    extras_require={"test": ["pytest", "tox", "mypy", "numpy"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "mypy"], "dev": ["pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",
         "scripts/generate_processing_docs.py",
