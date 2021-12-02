@@ -6,6 +6,8 @@ import typing
 import zipfile
 from io import BytesIO, StringIO
 
+from marshmallow import missing
+
 from . import raw_nodes
 from .common import DOI_REGEX, yaml
 
@@ -161,7 +163,9 @@ class RawNodePackageTransformer(NodeTransformer):
                 field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
             }
             for incl_field in node._include_in_package:
-                resolved_data[incl_field] = self._transform_resource(resolved_data[incl_field])
+                field_value = resolved_data[incl_field]
+                if field_value is not missing:  # optional fields might be missing
+                    resolved_data[incl_field] = self._transform_resource(field_value)
 
             return dataclasses.replace(node, **resolved_data)
         else:

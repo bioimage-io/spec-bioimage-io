@@ -104,7 +104,7 @@ WeightsEntry = Union[
 
 @dataclass
 class Model(_RDF):
-    _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs")
+    _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs", "sample_inputs", "sample_outputs")
 
     attachments: Union[_Missing, Attachments] = missing
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
