@@ -562,11 +562,11 @@ is in an unsupported format version. The current format version described here i
                     ),
                 )
                 if weights_entry.tensorflow_version is missing_:
-                    # todo: raise ValidationError (allow -> require)?
-                    warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
+                    # todo: raise ValidationError instead?
+                    self.warn(f"weights[{weights_format}]", "missing 'tensorflow_version'")
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
-                    # todo: raise ValidationError?
-                    warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
+                    # todo: raise ValidationError instead?
+                    self.warn(f"weights[{weights_format}]", "missing 'opset_version'")
