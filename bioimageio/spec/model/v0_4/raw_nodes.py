@@ -53,7 +53,13 @@ WeightsFormat = Literal[
 ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
-class Attachments(RawNode):  # note: not a dataclass due to the unknown fields; (fingers crossed for no bugs)
+@dataclass(init=False)
+class Attachments(RawNode):
+    _include_in_package = ("files",)
+
+    files: Union[_Missing, List[Union[Path, URI]]] = missing
+    unknown: Dict[str, Any] = missing
+
     def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
         self.files = files
         self.unknown = unknown
