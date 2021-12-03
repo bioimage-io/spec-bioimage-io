@@ -54,6 +54,8 @@ ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
 class Attachments(RawNode):  # note: not a dataclass due to the unknown fields; (fingers crossed for no bugs)
+    _include_in_package = ("files",)
+
     def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
         self.files = files
         self.unknown = unknown
