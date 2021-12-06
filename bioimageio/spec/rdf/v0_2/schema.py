@@ -33,7 +33,7 @@ class Badge(_BioImageIOSchema):
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
     url = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()],  # todo: make url only?
+        [fields.URL(), fields.RelativeLocalPath()],
         bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
     )
 
@@ -65,7 +65,7 @@ specified.
 """
 
     attachments_bioimageio_description = (
-        "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
+        "Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can "
         "place a list of URIs under the `files` to list images and other files that this resource depends on."
     )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
 
@@ -114,9 +114,7 @@ E.g. the citation for the model architecture and/or the training data used."""
     config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
-        fields.Union(
-            [fields.URI(validate=field_validators.URL(schemes=["http", "https"])), fields.RelativeLocalPath()]
-        ),
+        fields.Union([fields.URL(), fields.RelativeLocalPath()]),
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
@@ -126,7 +124,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     documentation = fields.Union(
         [
-            fields.URI(validate=field_validators.URL(schemes=["http", "https"])),
+            fields.URL(),
             fields.RelativeLocalPath(
                 validate=field_validators.Attribute(
                     "suffix",
@@ -141,10 +139,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         "For markdown files the recommended documentation file name is `README.md`.",
     )
 
-    download_url = fields.URI(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="recommended url to the zipped file if applicable",
-    )
+    download_url = fields.URL(bioimageio_description="recommended url to the zipped file if applicable")
 
     format_version = fields.String(
         required=True,
@@ -170,9 +165,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}. (error: {e})")
 
     git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
-    git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]), bioimageio_description=git_repo_bioimageio_description
-    )
+    git_repo = fields.URL(bioimageio_description=git_repo_bioimageio_description)
 
     icon = fields.String(
         bioimageio_description="an icon for the resource"
@@ -242,13 +235,13 @@ E.g. the citation for the model architecture and/or the training data used."""
 class CollectionEntry(_BioImageIOSchema):
     """instead of nesting RDFs, RDFs can be pointed to"""
 
-    source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
+    source = fields.URL(required=True)
     id = fields.String(required=True)
     links = fields.List(fields.String())
 
 
 class ModelCollectionEntry(CollectionEntry):
-    download_url = fields.URI(validate=field_validators.URL(schemes=["http", "https"]))
+    download_url = fields.URL()
 
 
 class Collection(RDF):

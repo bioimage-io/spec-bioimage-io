@@ -333,11 +333,10 @@ is in an unsupported format version. The current format version described here i
 {get_args(raw_nodes.FormatVersion)[-1]}""",
     )
 
-    git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]),
+    git_repo = fields.URL(
         bioimageio_description=rdf.schema.RDF.git_repo_bioimageio_description
         + "If the model is contained in a subfolder of a git repository, then a url to the exact folder"
-        + "(which contains the configuration yaml file) should be used.",
+        + "(which contains the configuration yaml file) should be used."
     )
 
     license = fields.String(

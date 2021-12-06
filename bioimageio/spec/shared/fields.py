@@ -449,3 +449,9 @@ class URI(String):
             return raw_nodes.URI(uri_string=value)
         except Exception as e:
             raise ValidationError(str(e)) from e
+
+
+class URL(URI):
+    def __init__(self, *, validate: typing.Sequence[field_validators.Validator] = tuple(), **kwargs):
+        validate = list(validate) + [field_validators.URL(schemes=["http", "https"])]
+        super().__init__(validate=validate, **kwargs)
