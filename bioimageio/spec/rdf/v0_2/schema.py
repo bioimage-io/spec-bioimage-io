@@ -8,11 +8,11 @@ from . import raw_nodes
 from .raw_nodes import FormatVersion
 
 
-class BioImageIOSchema(SharedBioImageIOSchema):
+class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Author(BioImageIOSchema):
+class Author(_BioImageIOSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
     orcid = fields.String(
@@ -28,7 +28,7 @@ class Author(BioImageIOSchema):
     )
 
 
-class Badge(BioImageIOSchema):
+class Badge(_BioImageIOSchema):
     bioimageio_description = "Custom badge"
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
@@ -38,7 +38,7 @@ class Badge(BioImageIOSchema):
     )
 
 
-class CiteEntry(BioImageIOSchema):
+class CiteEntry(_BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String(bioimageio_maybe_required=True)
     url = fields.String(bioimageio_maybe_required=True)
@@ -49,7 +49,7 @@ class CiteEntry(BioImageIOSchema):
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
-class RDF(BioImageIOSchema):
+class RDF(_BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
 
@@ -240,7 +240,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 
 # todo: decide on Collection/move Collection
 # Collection
-class CollectionEntry(BioImageIOSchema):
+class CollectionEntry(_BioImageIOSchema):
     """instead of nesting RDFs, RDFs can be pointed to"""
 
     source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
