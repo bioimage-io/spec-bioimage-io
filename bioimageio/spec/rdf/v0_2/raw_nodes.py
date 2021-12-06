@@ -124,24 +124,3 @@ class RDF(ResourceDescription):
             self.type = self.__class__.__name__.lower()
 
         super().__post_init__()
-
-
-@dataclass
-class CollectionEntry(RawNode):
-    source: URI = missing
-    id: str = missing
-    links: Union[_Missing, List[str]] = missing
-
-
-@dataclass
-class ModelCollectionEntry(CollectionEntry):
-    download_url: URI = missing
-
-
-@dataclass
-class Collection(RDF):
-    application: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    collection: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    model: Union[_Missing, List[ModelCollectionEntry]] = missing
-    dataset: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
-    notebook: Union[_Missing, List[Union[CollectionEntry, RDF]]] = missing
