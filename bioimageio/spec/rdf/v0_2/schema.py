@@ -12,9 +12,11 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Author(_BioImageIOSchema):
-    name = fields.String(required=True, bioimageio_description="Full name.")
+class _Person(_BioImageIOSchema):
+    name = fields.String(bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
+    email = fields.Email()
+    github_user = fields.String(bioimageio_description="GitHub user name.")  # todo: add validation?
     orcid = fields.String(
         validate=[
             field_validators.Length(19),
@@ -26,6 +28,14 @@ class Author(_BioImageIOSchema):
         "https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier"
         ") as per ISO 7064 11,2.)",
     )
+
+
+class Author(_Person):
+    name = fields.String(require=True, bioimageio_description="Full name.")
+
+
+class Maintainer(_Person):
+    github_user = fields.String(require=True, bioimageio_description="GitHub user name.")
 
 
 class Badge(_BioImageIOSchema):
@@ -79,11 +89,11 @@ specified.
     )
 
     authors_bioimageio_description = (
-        "A list of authors. The authors are the creators of the specifications and the primary " "points of contact."
+        "A list of authors. The authors are the creators of the specifications and the primary points of contact."
     )
     authors = fields.List(
-        fields.Union([fields.Nested(Author()), fields.String()]), bioimageio_description=authors_bioimageio_description
-    )
+        fields.Nested(Author()), bioimageio_description=authors_bioimageio_description
+    )  # todo: make mandatory
 
     badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
@@ -194,6 +204,8 @@ E.g. the citation for the model architecture and/or the training data used."""
                 self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
 
     links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
+
+    maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 

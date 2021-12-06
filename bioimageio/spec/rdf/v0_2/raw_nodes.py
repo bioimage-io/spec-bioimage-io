@@ -21,7 +21,26 @@ try:
 except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
-FormatVersion = Literal["0.2.0"]  # newest format needs to be last (used to determine latest format version)
+FormatVersion = Literal["0.2.0", "0.2.1"]  # newest format needs to be last (used to determine latest format version)
+
+
+@dataclass
+class _Person(RawNode):
+    name: Union[_Missing, str] = missing
+    affiliation: Union[_Missing, str] = missing
+    email: Union[_Missing, str] = missing
+    github_user: Union[_Missing, str] = missing
+    orcid: Union[_Missing, str] = missing
+
+
+@dataclass
+class Author(_Person):
+    name: str = missing
+
+
+@dataclass
+class Maintainer(_Person):
+    github_user: str = missing
 
 
 @dataclass
@@ -29,13 +48,6 @@ class CiteEntry(RawNode):
     text: str = missing
     doi: Union[_Missing, str] = missing
     url: Union[_Missing, str] = missing
-
-
-@dataclass
-class Author(RawNode):
-    name: str = missing
-    affiliation: Union[_Missing, str] = missing
-    orcid: Union[_Missing, str] = missing
 
 
 @dataclass
