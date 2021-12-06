@@ -23,15 +23,6 @@ except ImportError:
 
 FormatVersion = Literal["0.2.0"]  # newest format needs to be last (used to determine latest format version)
 
-Framework = Literal["pytorch", "tensorflow"]
-Language = Literal["python", "java"]
-PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
-PostprocessingName = Literal[
-    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
-]
-WeightsFormat = Literal[
-    "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
-]
 
 # reassign to use imported classes
 Dependencies = Dependencies
