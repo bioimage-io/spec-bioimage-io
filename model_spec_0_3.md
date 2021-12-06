@@ -41,7 +41,7 @@ E.g. the citation for the model architecture and/or the training data used.
 * <a id="weights"></a>`weights` _Dict\[String, Union\[PytorchStateDictWeightsEntry | PytorchScriptWeightsEntry | KerasHdf5WeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | OnnxWeightsEntry\]\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
   1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pytorch_state_dict, pytorch_script, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
 * <a id="attachments"></a>`attachments` _optional Dict\[String, List\[Union\[URI→String | Raw\]\]\]_ 
-  1. _optional* List\[Union\[URI→String | Raw\]\]_ Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
+  1. _optional* List\[Union\[URI→String | Raw\]\]_ Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
   1. _optional Union\[URI→String | Raw\]_ 
   1. _optional URI→String_ 
   1. _optional Raw_ 
@@ -49,8 +49,8 @@ E.g. the citation for the model architecture and/or the training data used.
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
   * <a id="badges:label"></a>`label` _String_ e.g. 'Open in Colab'
   * <a id="badges:icon"></a>`icon` _optional String_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
-  * <a id="badges:url"></a>`url` _optional Union\[URI→String | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
-    1. _optional URI→String_ 
+  * <a id="badges:url"></a>`url` _optional Union\[URL→URI | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+    1. _optional URL→URI_ 
     1. _optional RelativeLocalPath→Path_ 
 * <a id="config"></a>`config` _optional YamlDict→Dict\[Any, Any\]_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
 Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
@@ -84,12 +84,12 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
           pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
     ```
 
-* <a id="covers"></a>`covers` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
-  1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
-  1. _optional URI→String_ 
+* <a id="covers"></a>`covers` _optional List\[Union\[URL→URI | RelativeLocalPath→Path\]\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
+  1. _optional Union\[URL→URI | RelativeLocalPath→Path\]_ 
+  1. _optional URL→URI_ 
   1. _optional RelativeLocalPath→Path_ 
 * <a id="dependencies"></a>`dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
-* <a id="download_url"></a>`download_url` _optional URI→String_ recommended url to the zipped file if applicable
+* <a id="download_url"></a>`download_url` _optional URL→URI_ recommended url to the zipped file if applicable
 * <a id="framework"></a>`framework` _optional String_ The deep learning framework of the source code. One of: pytorch, tensorflow. This field is only required if the field `source` is present.
 * <a id="git_repo"></a>`git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
