@@ -1,8 +1,6 @@
-from marshmallow import INCLUDE
-
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared import fields
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from . import raw_nodes
 
 
@@ -10,10 +8,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class CollectionEntry(_BioImageIOSchema):
-    class Meta:
-        unknown = INCLUDE
-
+class CollectionEntry(_BioImageIOSchema, WithUnknown):
     id_ = fields.String(required=True, data_key="id")
     source = fields.URL(required=True)
     links = fields.List(fields.String())
