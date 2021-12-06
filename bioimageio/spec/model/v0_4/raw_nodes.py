@@ -21,7 +21,7 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     TensorflowSavedModelBundleWeightsEntry,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
@@ -64,25 +64,6 @@ class Attachments(RawNode):
         self.files = files
         self.unknown = unknown
         super().__init__()
-
-
-@dataclass
-class _Person(RawNode):
-    name: Union[_Missing, str] = missing
-    affiliation: Union[_Missing, str] = missing
-    email: Union[_Missing, str] = missing
-    github_user: Union[_Missing, str] = missing
-    orcid: Union[_Missing, str] = missing
-
-
-@dataclass
-class Author(_Person):
-    name: str = missing
-
-
-@dataclass
-class Maintainer(_Person):
-    github_user: str = missing
 
 
 @dataclass

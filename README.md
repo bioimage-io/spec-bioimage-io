@@ -140,7 +140,8 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
- * **0.4.0**:
+### Model RDF
+ * **0.4.0**
     - Breaking changes
       - model inputs and outputs may not use duplicated names.
       - model field `sha256` is required if `pytorch_state_dict` weights are defined. 
@@ -156,13 +157,13 @@ or if the field `test_inputs` does not contain a list, it would print:
       - the entries in the `authors` field may now additionally contain `email` or `github_user`.
       - the summary returned by the `validate` command now also contains a list of warnings.
       - an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
- * **0.3.4**:
+ * **0.3.4**
    - Other changes
       - Add optional parameter `eps` to `scale_range` postprocessing. 
- * **0.3.3**:
+ * **0.3.3**
     - Breaking changes that are fully auto-convertible
       - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
- * **0.3.2**: 
+ * **0.3.2** 
     - Breaking changes
       - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
       - Change `authors` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary `{name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}`;
@@ -171,3 +172,9 @@ or if the field `test_inputs` does not contain a list, it would print:
     - Other changes
       - Add optional `version` field (default 0.1.0) to keep track of model changes;
       - Allow the values in the `attachments` list to be any values besides URI;
+
+### general RDF
+* **0.2.1**
+  - Non-breaking changes
+    - add optional `email` and `github_user` fields to entries in `authors`
+    - add `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
