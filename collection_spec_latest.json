@@ -1,0 +1,548 @@
+{
+    "$ref": "#/definitions/Collection",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Author": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "title": "affiliation",
+                    "type": "string"
+                },
+                "email": {
+                    "title": "email",
+                    "type": "string"
+                },
+                "github_user": {
+                    "title": "github_user",
+                    "type": "string"
+                },
+                "name": {
+                    "require": true,
+                    "title": "name",
+                    "type": "string"
+                },
+                "orcid": {
+                    "minLength": 19,
+                    "title": "orcid",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Badge": {
+            "additionalProperties": false,
+            "properties": {
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "label": {
+                    "title": "label",
+                    "type": "string"
+                },
+                "url": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "type": "object"
+        },
+        "CiteEntry": {
+            "additionalProperties": false,
+            "properties": {
+                "doi": {
+                    "title": "doi",
+                    "type": "string"
+                },
+                "text": {
+                    "title": "text",
+                    "type": "string"
+                },
+                "url": {
+                    "title": "url",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "type": "object"
+        },
+        "Collection": {
+            "additionalProperties": false,
+            "properties": {
+                "application": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/CollectionEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/RDF",
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "title": "application",
+                    "type": "array"
+                },
+                "attachments": {
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
+                    "title": "attachments",
+                    "type": "object"
+                },
+                "authors": {
+                    "items": {
+                        "$ref": "#/definitions/Author",
+                        "type": "object"
+                    },
+                    "title": "authors",
+                    "type": "array"
+                },
+                "badges": {
+                    "items": {
+                        "$ref": "#/definitions/Badge",
+                        "type": "object"
+                    },
+                    "title": "badges",
+                    "type": "array"
+                },
+                "cite": {
+                    "items": {
+                        "$ref": "#/definitions/CiteEntry",
+                        "type": "object"
+                    },
+                    "title": "cite",
+                    "type": "array"
+                },
+                "collection": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/CollectionEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/RDF",
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "title": "collection",
+                    "type": "array"
+                },
+                "config": {
+                    "additionalProperties": {},
+                    "bioimageio_descriptio": "A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:\n    ```yaml\n       config:\n          bioimage_io:  # here is the domain name\n            my_custom_key: 3837283\n            another_key:\n               nested: value\n          imagej:\n            macro_dir: /path/to/macro/file\n    ```\n    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.",
+                    "title": "config",
+                    "type": "object"
+                },
+                "covers": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "title": "",
+                                "type": "string"
+                            },
+                            {
+                                "title": "",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "title": "covers",
+                    "type": "array"
+                },
+                "dataset": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/CollectionEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/RDF",
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "title": "dataset",
+                    "type": "array"
+                },
+                "description": {
+                    "title": "description",
+                    "type": "string"
+                },
+                "documentation": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "download_url": {
+                    "title": "download_url",
+                    "type": "string"
+                },
+                "format_version": {
+                    "title": "format_version",
+                    "type": "string"
+                },
+                "git_repo": {
+                    "title": "git_repo",
+                    "type": "string"
+                },
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "license": {
+                    "title": "license",
+                    "type": "string"
+                },
+                "links": {
+                    "items": {
+                        "title": "links",
+                        "type": "string"
+                    },
+                    "title": "links",
+                    "type": "array"
+                },
+                "maintainers": {
+                    "items": {
+                        "$ref": "#/definitions/Maintainer",
+                        "type": "object"
+                    },
+                    "title": "maintainers",
+                    "type": "array"
+                },
+                "model": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/CollectionEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/RDF",
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "title": "model",
+                    "type": "array"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "notebook": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/CollectionEntry",
+                                "type": "object"
+                            },
+                            {
+                                "$ref": "#/definitions/RDF",
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "title": "notebook",
+                    "type": "array"
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "tags": {
+                    "items": {
+                        "title": "tags",
+                        "type": "string"
+                    },
+                    "title": "tags",
+                    "type": "array"
+                },
+                "type": {
+                    "title": "type",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cite",
+                "description",
+                "documentation",
+                "format_version",
+                "name",
+                "tags",
+                "type"
+            ],
+            "type": "object"
+        },
+        "CollectionEntry": {
+            "additionalProperties": true,
+            "properties": {
+                "id": {
+                    "title": "id_",
+                    "type": "string"
+                },
+                "links": {
+                    "items": {
+                        "title": "links",
+                        "type": "string"
+                    },
+                    "title": "links",
+                    "type": "array"
+                },
+                "source": {
+                    "title": "source",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "source"
+            ],
+            "type": "object"
+        },
+        "Maintainer": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "title": "affiliation",
+                    "type": "string"
+                },
+                "email": {
+                    "title": "email",
+                    "type": "string"
+                },
+                "github_user": {
+                    "require": true,
+                    "title": "github_user",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "orcid": {
+                    "minLength": 19,
+                    "title": "orcid",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RDF": {
+            "additionalProperties": false,
+            "properties": {
+                "attachments": {
+                    "additionalProperties": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                },
+                                {
+                                    "title": "",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "title": "attachments",
+                        "type": "array"
+                    },
+                    "title": "attachments",
+                    "type": "object"
+                },
+                "authors": {
+                    "items": {
+                        "$ref": "#/definitions/Author",
+                        "type": "object"
+                    },
+                    "title": "authors",
+                    "type": "array"
+                },
+                "badges": {
+                    "items": {
+                        "$ref": "#/definitions/Badge",
+                        "type": "object"
+                    },
+                    "title": "badges",
+                    "type": "array"
+                },
+                "cite": {
+                    "items": {
+                        "$ref": "#/definitions/CiteEntry",
+                        "type": "object"
+                    },
+                    "title": "cite",
+                    "type": "array"
+                },
+                "config": {
+                    "additionalProperties": {},
+                    "bioimageio_descriptio": "A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:\n    ```yaml\n       config:\n          bioimage_io:  # here is the domain name\n            my_custom_key: 3837283\n            another_key:\n               nested: value\n          imagej:\n            macro_dir: /path/to/macro/file\n    ```\n    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.",
+                    "title": "config",
+                    "type": "object"
+                },
+                "covers": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "title": "",
+                                "type": "string"
+                            },
+                            {
+                                "title": "",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "title": "covers",
+                    "type": "array"
+                },
+                "description": {
+                    "title": "description",
+                    "type": "string"
+                },
+                "documentation": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "download_url": {
+                    "title": "download_url",
+                    "type": "string"
+                },
+                "format_version": {
+                    "title": "format_version",
+                    "type": "string"
+                },
+                "git_repo": {
+                    "title": "git_repo",
+                    "type": "string"
+                },
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "license": {
+                    "title": "license",
+                    "type": "string"
+                },
+                "links": {
+                    "items": {
+                        "title": "links",
+                        "type": "string"
+                    },
+                    "title": "links",
+                    "type": "array"
+                },
+                "maintainers": {
+                    "items": {
+                        "$ref": "#/definitions/Maintainer",
+                        "type": "object"
+                    },
+                    "title": "maintainers",
+                    "type": "array"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "tags": {
+                    "items": {
+                        "title": "tags",
+                        "type": "string"
+                    },
+                    "title": "tags",
+                    "type": "array"
+                },
+                "type": {
+                    "title": "type",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cite",
+                "description",
+                "documentation",
+                "format_version",
+                "name",
+                "tags",
+                "type"
+            ],
+            "type": "object"
+        }
+    }
+}

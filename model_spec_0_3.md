@@ -13,8 +13,10 @@ is in an unsupported format version. The current format version described here i
 0.3.4
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
-  * <a id="authors:name"></a>`name` _String_ Full name.
   * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
+  * <a id="authors:email"></a>`email` _optional Email_ 
+  * <a id="authors:github_user"></a>`github_user` _optional String_ GitHub user name.
+  * <a id="authors:name"></a>`name` _optional String_ Full name.
   * <a id="authors:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="cite"></a>`cite` _List\[CiteEntry\]_ A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
@@ -122,6 +124,13 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
 * <a id="kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Keyword arguments for the implementation specified by `source`. This field is only required if the field `source` is present.
 * <a id="language"></a>`language` _optional* String_ Programming language of the source code. One of: python, java. This field is only required if the field `source` is present.
 * <a id="links"></a>`links` _optional List\[String\]_ links to other bioimage.io resources
+* <a id="maintainers"></a>`maintainers` _optional List\[Maintainer\]_ Maintainers of this resource.
+  1. _Maintainer_   is a Dict with the following keys:
+  * <a id="maintainers:affiliation"></a>`affiliation` _optional String_ Affiliation.
+  * <a id="maintainers:email"></a>`email` _optional Email_ 
+  * <a id="maintainers:github_user"></a>`github_user` _optional String_ GitHub user name.
+  * <a id="maintainers:name"></a>`name` _optional String_ Full name.
+  * <a id="maintainers:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="outputs"></a>`outputs` _optional List\[OutputTensor\]_ Describes the output tensors from this model.
   1. _OutputTensor_   is a Dict with the following keys:
   * <a id="outputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
@@ -152,8 +161,10 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     * <a id="outputs:postprocessing:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments as described in [postprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_0_3.md).
 * <a id="packaged_by"></a>`packaged_by` _optional List\[Author\]_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any entry in `weights`.
   1. _Author_   is a Dict with the following keys:
-  * <a id="packaged_by:name"></a>`name` _String_ Full name.
   * <a id="packaged_by:affiliation"></a>`affiliation` _optional String_ Affiliation.
+  * <a id="packaged_by:email"></a>`email` _optional Email_ 
+  * <a id="packaged_by:github_user"></a>`github_user` _optional String_ GitHub user name.
+  * <a id="packaged_by:name"></a>`name` _optional String_ Full name.
   * <a id="packaged_by:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _ModelParent_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
   * <a id="parent:sha256"></a>`sha256` _optional SHA256→String_ Hash of the parent model RDF.
