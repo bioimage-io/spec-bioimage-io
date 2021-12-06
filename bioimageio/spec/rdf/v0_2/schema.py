@@ -202,7 +202,6 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
 
-    # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     @validates
