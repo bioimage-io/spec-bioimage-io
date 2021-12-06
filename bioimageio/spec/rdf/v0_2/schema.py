@@ -1,4 +1,4 @@
-from marshmallow import EXCLUDE, ValidationError, post_load, validates, validates_schema
+from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
