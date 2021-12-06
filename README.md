@@ -177,4 +177,4 @@ or if the field `test_inputs` does not contain a list, it would print:
 * **0.2.1**
   - Non-breaking changes
     - add optional `email` and `github_user` fields to entries in `authors`
-    - add `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
+    - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
