@@ -240,25 +240,3 @@ E.g. the citation for the model architecture and/or the training data used."""
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
         "e.g. the initial version number should be `0.1.0`."
     )
-
-
-# todo: decide on Collection/move Collection
-# Collection
-class CollectionEntry(_BioImageIOSchema):
-    """instead of nesting RDFs, RDFs can be pointed to"""
-
-    source = fields.URL(required=True)
-    id = fields.String(required=True)
-    links = fields.List(fields.String())
-
-
-class ModelCollectionEntry(CollectionEntry):
-    download_url = fields.URL()
-
-
-class Collection(RDF):
-    application = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    model = fields.List(fields.Nested(ModelCollectionEntry()))
-    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))

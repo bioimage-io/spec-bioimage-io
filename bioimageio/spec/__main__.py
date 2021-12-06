@@ -8,6 +8,7 @@ from bioimageio.spec import __version__, commands, model, rdf
 help_version = (
     f"bioimageio.spec {__version__}"
     "\nimplementing:"
+    f"\n\tcollection RDF {rdf.format_version}"
     f"\n\tgeneral RDF {rdf.format_version}"
     f"\n\tmodel RDF {model.format_version}"
 )
