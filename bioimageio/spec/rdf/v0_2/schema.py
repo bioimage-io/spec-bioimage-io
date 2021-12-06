@@ -1,4 +1,4 @@
-from marshmallow import EXCLUDE, ValidationError, post_load, validates, validates_schema
+from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
@@ -124,18 +124,24 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
-    documentation = fields.RelativeLocalPath(
-        validate=field_validators.Attribute(
-            "suffix",
-            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
-        ),
+    documentation = fields.Union(
+        [
+            fields.URI(validate=field_validators.URL(schemes=["http", "https"])),
+            fields.RelativeLocalPath(
+                validate=field_validators.Attribute(
+                    "suffix",
+                    field_validators.Equal(
+                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
+                    ),
+                )
+            ),
+        ],
         required=True,
-        bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
-        "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
-        "not allowed. It is recommended to use `README.md` as the documentation name.",
+        bioimageio_description="URL or relative path to markdown file with additional documentation. "
+        "For markdown files the recommended documentation file name is `README.md`.",
     )
 
-    download_url = fields.String(
+    download_url = fields.URI(
         validate=field_validators.URL(schemes=["http", "https"]),
         bioimageio_description="recommended url to the zipped file if applicable",
     )
