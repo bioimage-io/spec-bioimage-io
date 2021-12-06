@@ -156,8 +156,16 @@
                     "type": "string"
                 },
                 "documentation": {
-                    "title": "documentation",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "download_url": {
                     "title": "download_url",

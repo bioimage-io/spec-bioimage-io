@@ -17,7 +17,9 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="cite:doi"></a>`doi` _optional* String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
 * <a id="description"></a>`description` _String_ A string containing a brief description.
-* <a id="documentation"></a>`documentation` _RelativeLocalPath→Path_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+* <a id="documentation"></a>`documentation` _Union\[URI→String | RelativeLocalPath→Path\]_ URL or relative path to markdown file with additional documentation. For markdown files the recommended documentation file name is `README.md`.
+  1. _optional URI→String_ 
+  1. _optional RelativeLocalPath→Path_ 
 * <a id="name"></a>`name` _String_ name of the resource, a human-friendly name
 * <a id="tags"></a>`tags` _List\[String\]_ A list of tags.
 * <a id="type"></a>`type` _String_ 
@@ -45,7 +47,7 @@ E.g. the citation for the model architecture and/or the training data used.
   1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
   1. _optional URI→String_ 
   1. _optional RelativeLocalPath→Path_ 
-* <a id="download_url"></a>`download_url` _optional String_ recommended url to the zipped file if applicable
+* <a id="download_url"></a>`download_url` _optional URI→String_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional String_ A url to the git repository, e.g. to Github or Gitlab.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
 * <a id="license"></a>`license` _optional String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
