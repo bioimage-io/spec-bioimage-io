@@ -223,12 +223,12 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     type = fields.String(required=True)
 
-    # todo: restrict valid RDF types (0.4.0)
-    # @validates("type")
-    # def validate_type(self, value):
-    #     schema_type = self.__class__.__name__.lower()
-    #     if value != schema_type:
-    #         raise ValidationError(f"type must be {schema_type}. Are you using the correct validator?")
+    # todo: restrict valid RDF types?
+    @validates("type")
+    def validate_type(self, value):
+        schema_type = self.__class__.__name__.lower()
+        if value != schema_type:
+            self.warn("type", f"Unrecognized type {value}. Validating as {schema_type}.")
 
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "
