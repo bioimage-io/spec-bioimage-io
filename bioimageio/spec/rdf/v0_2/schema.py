@@ -8,11 +8,11 @@ from . import raw_nodes
 from .raw_nodes import FormatVersion
 
 
-class BioImageIOSchema(SharedBioImageIOSchema):
+class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Author(BioImageIOSchema):
+class Author(_BioImageIOSchema):
     name = fields.String(required=True, bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
     orcid = fields.String(
@@ -28,17 +28,17 @@ class Author(BioImageIOSchema):
     )
 
 
-class Badge(BioImageIOSchema):
+class Badge(_BioImageIOSchema):
     bioimageio_description = "Custom badge"
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
     url = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()],  # todo: make url only?
+        [fields.URL(), fields.RelativeLocalPath()],
         bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
     )
 
 
-class CiteEntry(BioImageIOSchema):
+class CiteEntry(_BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String(bioimageio_maybe_required=True)
     url = fields.String(bioimageio_maybe_required=True)
@@ -49,7 +49,7 @@ class CiteEntry(BioImageIOSchema):
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
-class RDF(BioImageIOSchema):
+class RDF(_BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
 
@@ -65,7 +65,7 @@ specified.
 """
 
     attachments_bioimageio_description = (
-        "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
+        "Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can "
         "place a list of URIs under the `files` to list images and other files that this resource depends on."
     )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
 
@@ -114,9 +114,7 @@ E.g. the citation for the model architecture and/or the training data used."""
     config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
-        fields.Union(
-            [fields.URI(validate=field_validators.URL(schemes=["http", "https"])), fields.RelativeLocalPath()]
-        ),
+        fields.Union([fields.URL(), fields.RelativeLocalPath()]),
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
@@ -126,7 +124,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     documentation = fields.Union(
         [
-            fields.URI(validate=field_validators.URL(schemes=["http", "https"])),
+            fields.URL(),
             fields.RelativeLocalPath(
                 validate=field_validators.Attribute(
                     "suffix",
@@ -141,10 +139,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         "For markdown files the recommended documentation file name is `README.md`.",
     )
 
-    download_url = fields.URI(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="recommended url to the zipped file if applicable",
-    )
+    download_url = fields.URL(bioimageio_description="recommended url to the zipped file if applicable")
 
     format_version = fields.String(
         required=True,
@@ -170,9 +165,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}. (error: {e})")
 
     git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
-    git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]), bioimageio_description=git_repo_bioimageio_description
-    )
+    git_repo = fields.URL(bioimageio_description=git_repo_bioimageio_description)
 
     icon = fields.String(
         bioimageio_description="an icon for the resource"
@@ -202,7 +195,6 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
 
-    # todo: warn about length
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     @validates
@@ -224,12 +216,12 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     type = fields.String(required=True)
 
-    # todo: restrict valid RDF types (0.4.0)
-    # @validates("type")
-    # def validate_type(self, value):
-    #     schema_type = self.__class__.__name__.lower()
-    #     if value != schema_type:
-    #         raise ValidationError(f"type must be {schema_type}. Are you using the correct validator?")
+    # todo: restrict valid RDF types?
+    @validates("type")
+    def validate_type(self, value):
+        schema_type = self.__class__.__name__.lower()
+        if value != schema_type:
+            self.warn("type", f"Unrecognized type {value}. Validating as {schema_type}.")
 
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "
@@ -240,16 +232,16 @@ E.g. the citation for the model architecture and/or the training data used."""
 
 # todo: decide on Collection/move Collection
 # Collection
-class CollectionEntry(BioImageIOSchema):
+class CollectionEntry(_BioImageIOSchema):
     """instead of nesting RDFs, RDFs can be pointed to"""
 
-    source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
+    source = fields.URL(required=True)
     id = fields.String(required=True)
     links = fields.List(fields.String())
 
 
 class ModelCollectionEntry(CollectionEntry):
-    download_url = fields.URI(validate=field_validators.URL(schemes=["http", "https"]))
+    download_url = fields.URL()
 
 
 class Collection(RDF):

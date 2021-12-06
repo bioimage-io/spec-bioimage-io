@@ -7,7 +7,7 @@ from marshmallow.validate import (
     OneOf,
     Predicate as MarshmallowPredicate,
     Range,
-    URL,
+    URL as MarshmallowURL,
     ValidationError,
     Validator,
 )
@@ -17,7 +17,6 @@ Equal = Equal
 Length = Length
 OneOf = OneOf
 Range = Range
-URL = URL
 
 
 class Attribute(Validator):
@@ -93,3 +92,8 @@ class Predicate(MarshmallowPredicate):
             raise ValidationError(self._format_error(value))
 
         return value
+
+
+class URL(MarshmallowURL):
+    def __call__(self, value: typing.Any):
+        return super().__call__(str(value))  # cast value which might be a raw_nodes.URI to string
