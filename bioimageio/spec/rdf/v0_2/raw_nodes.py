@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared.raw_nodes import Dependencies, RawNode, ResourceDescription, URI
+from bioimageio.spec.shared.raw_nodes import RawNode, ResourceDescription, URI
 
 try:
     from typing import Literal, get_args
@@ -22,10 +22,6 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 FormatVersion = Literal["0.2.0"]  # newest format needs to be last (used to determine latest format version)
-
-
-# reassign to use imported classes
-Dependencies = Dependencies
 
 
 @dataclass
