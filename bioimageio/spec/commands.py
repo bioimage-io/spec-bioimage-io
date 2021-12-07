@@ -9,7 +9,7 @@ from marshmallow import ValidationError
 from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 
-KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
+KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model")
 
 
 def update_format(rdf_source: Union[dict, os.PathLike, IO, str, bytes], path: Union[os.PathLike, str]):
