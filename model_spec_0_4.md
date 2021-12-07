@@ -69,7 +69,7 @@ E.g. the citation for the model architecture and/or the training data used.
 * <a id="weights"></a>`weights` _Dict\[String, Union\[KerasHdf5WeightsEntry | OnnxWeightsEntry | PytorchStateDictWeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | TorchscriptWeightsEntry\]\]_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. The available weight formats determine which consumers can use this model.
   1. _String_ Format of this set of weights. Weight formats can define additional (optional or required) fields. See [supported_formats_and_operations.md#Weight Format](https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). One of: pytorch_state_dict, torchscript, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
 * <a id="attachments"></a>`attachments` _Attachments_ Attachments. Additional, unknown keys are allowed. Attachments is a Dict with the following keys:
-  * <a id="attachments:files"></a>`files` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ File attachments; included when packaging the model.
+  * <a id="attachments:files"></a>`files` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ File attachments; included when packaging the resource.
     1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 

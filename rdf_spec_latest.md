@@ -9,6 +9,13 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 
 * <a id="format_version"></a>`format_version` _String_ Version of the BioImage.IO Resource Description File Specification used.The current general format version described here is 0.2.1. Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format.
+* <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
+  1. _Author_   is a Dict with the following keys:
+  * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
+  * <a id="authors:email"></a>`email` _optional Email_ 
+  * <a id="authors:github_user"></a>`github_user` _optional String_ GitHub user name.
+  * <a id="authors:name"></a>`name` _optional String_ Full name.
+  * <a id="authors:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="cite"></a>`cite` _List\[CiteEntry\]_ A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used.
@@ -23,18 +30,11 @@ E.g. the citation for the model architecture and/or the training data used.
 * <a id="name"></a>`name` _String_ name of the resource, a human-friendly name
 * <a id="tags"></a>`tags` _List\[String\]_ A list of tags.
 * <a id="type"></a>`type` _String_ 
-* <a id="attachments"></a>`attachments` _optional Dict\[String, List\[Union\[URI→String | Raw\]\]\]_ 
-  1. _optional* List\[Union\[URI→String | Raw\]\]_ Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can place a list of URIs under the `files` to list images and other files that this resource depends on.
-  1. _optional Union\[URI→String | Raw\]_ 
-  1. _optional URI→String_ 
-  1. _optional Raw_ 
-* <a id="authors"></a>`authors` _optional List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
-  1. _Author_   is a Dict with the following keys:
-  * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
-  * <a id="authors:email"></a>`email` _optional Email_ 
-  * <a id="authors:github_user"></a>`github_user` _optional String_ GitHub user name.
-  * <a id="authors:name"></a>`name` _optional String_ Full name.
-  * <a id="authors:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
+* <a id="attachments"></a>`attachments` _Attachments_ Attachments. Additional, unknown keys are allowed. Attachments is a Dict with the following keys:
+  * <a id="attachments:files"></a>`files` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ File attachments; included when packaging the resource.
+    1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
+    1. _optional URI→String_ 
+    1. _optional RelativeLocalPath→Path_ 
 * <a id="badges"></a>`badges` _optional List\[Badge\]_ a list of badges
   1. _Badge_ Custom badge Badge is a Dict with the following keys:Custom badge
   * <a id="badges:label"></a>`label` _String_ e.g. 'Open in Colab'
