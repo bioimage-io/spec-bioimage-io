@@ -206,6 +206,7 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
 def load_raw_resource_description(
     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
     update_to_current_format: bool = False,
+    update_to_format: Optional[str] = None,
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
@@ -215,7 +216,7 @@ def load_raw_resource_description(
     Args:
         source: resource description or resource description file (RDF)
         update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
-
+        update_to_format: update resource to specific major.minor format version; ignoring patch version.
     Returns:
         raw BioImage.IO resource
     """
@@ -226,7 +227,21 @@ def load_raw_resource_description(
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
     class_name = get_class_name_from_type(type_)
 
-    data_version = LATEST if update_to_current_format else data.get("format_version", LATEST)
+    if update_to_format is None:
+        if update_to_current_format:
+            data_version = LATEST
+        else:
+            data_version = data.get("format_version", LATEST)
+    elif update_to_format == LATEST:
+        data_version = LATEST
+    else:
+        data_version = ".".join(update_to_format.split("."[:2]))
+        if update_to_format.count(".") > 1:
+            warnings.warn(
+                f"Ignoring patch version of update_to_format {update_to_format} "
+                f"(always updating to latest patch version)."
+            )
+
     sub_spec = _get_spec_submodule(type_, data_version)
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
