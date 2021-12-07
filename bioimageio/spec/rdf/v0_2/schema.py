@@ -2,7 +2,7 @@ from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 from .raw_nodes import FormatVersion
@@ -10,6 +10,13 @@ from .raw_nodes import FormatVersion
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
+
+
+class Attachments(_BioImageIOSchema, WithUnknown):
+    files = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="File attachments; included when packaging the resource.",
+    )
 
 
 class _Person(_BioImageIOSchema):

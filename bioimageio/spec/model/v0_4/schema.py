@@ -15,29 +15,14 @@ from bioimageio.spec.model.v0_3.schema import (
     _common_sha256_hint,
 )
 from bioimageio.spec.rdf import v0_2 as rdf
-from bioimageio.spec.rdf.v0_2.schema import Author
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import (
-    ImplicitOutputShape,
-    ParametrizedInputShape,
-    SharedBioImageIOSchema,
-    WithUnknown,
-)
+from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
 from . import raw_nodes
-
-CiteEntry = rdf.schema.CiteEntry
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
-
-
-class Attachments(_BioImageIOSchema, WithUnknown):
-    files = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        bioimageio_description="File attachments; included when packaging the model.",
-    )
 
 
 class _TensorBase(_BioImageIOSchema):
@@ -259,11 +244,11 @@ The model RDF YAML file contains mandatory and optional fields. In the following
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
     attachments = fields.Nested(
-        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
+        rdf.schema.Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
     )
     # todo: sync authors with RDF
     authors = fields.List(
-        fields.Nested(Author()),
+        fields.Nested(rdf.schema.Author()),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description=rdf.schema.RDF.authors_bioimageio_description,
@@ -271,7 +256,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
     badges = missing_  # todo: allow badges for Model (RDF has it)
     cite = fields.List(
-        fields.Nested(CiteEntry()),
+        fields.Nested(rdf.schema.CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
         validate=field_validators.Length(min=1),
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
@@ -325,7 +310,7 @@ is in an unsupported format version. The current format version described here i
     )
 
     packaged_by = fields.List(
-        fields.Nested(Author()),
+        fields.Nested(rdf.schema.Author()),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any entry in `weights`.",
     )

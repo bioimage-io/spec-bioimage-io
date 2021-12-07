@@ -24,6 +24,19 @@ except ImportError:
 FormatVersion = Literal["0.2.0", "0.2.1"]  # newest format needs to be last (used to determine latest format version)
 
 
+@dataclass(init=False)
+class Attachments(RawNode):
+    _include_in_package = ("files",)
+
+    files: Union[_Missing, List[Union[Path, URI]]] = missing
+    unknown: Dict[str, Any] = missing
+
+    def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
+        self.files = files
+        self.unknown = unknown
+        super().__init__()
+
+
 @dataclass
 class _Person(RawNode):
     name: Union[_Missing, str] = missing
@@ -59,8 +72,8 @@ class Badge(RawNode):
 
 @dataclass
 class RDF(ResourceDescription):
-    attachments: Union[_Missing, Dict[str, Any]] = missing
-    authors: List[Union[str, Author]] = missing
+    attachments: Union[_Missing, Attachments] = missing
+    authors: List[Author] = missing
     badges: Union[_Missing, List[Badge]] = missing
     cite: List[CiteEntry] = missing
     config: Union[_Missing, dict] = missing
@@ -71,6 +84,7 @@ class RDF(ResourceDescription):
     git_repo: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
     links: Union[_Missing, List[str]] = missing
+    maintainers: Union[_Missing, List[Maintainer]] = missing
     tags: List[str] = missing
 
     # manual __init__ to allow for unknown kwargs
@@ -84,7 +98,7 @@ class RDF(ResourceDescription):
         version: Union[_Missing, distutils.version.StrictVersion] = missing,
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
-        authors: List[Union[str, Author]],
+        authors: List[Author],
         badges: Union[_Missing, List[Badge]] = missing,
         cite: List[CiteEntry],
         config: Union[_Missing, dict] = missing,

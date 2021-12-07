@@ -53,19 +53,6 @@ WeightsFormat = Literal[
 ImportableSource = Union[ImportableSourceFile, ImportableModule]
 
 
-@dataclass(init=False)
-class Attachments(RawNode):
-    _include_in_package = ("files",)
-
-    files: Union[_Missing, List[Union[Path, URI]]] = missing
-    unknown: Dict[str, Any] = missing
-
-    def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
-        self.files = files
-        self.unknown = unknown
-        super().__init__()
-
-
 @dataclass
 class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
@@ -93,14 +80,10 @@ WeightsEntry = Union[
 class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs", "sample_inputs", "sample_outputs")
 
-    attachments: Union[_Missing, Attachments] = missing
-    authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
     dependencies: Union[_Missing, Dependencies] = missing
     format_version: FormatVersion = missing
     inputs: List[InputTensor] = missing
     license: str = missing
-    links: Union[_Missing, List[str]] = missing
-    maintainers: Union[_Missing, List[Maintainer]] = missing
     outputs: List[OutputTensor] = missing
     packaged_by: Union[_Missing, List[Author]] = missing
     parent: Union[_Missing, ModelParent] = missing
