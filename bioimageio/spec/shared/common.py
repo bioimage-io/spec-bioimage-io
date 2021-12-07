@@ -83,7 +83,7 @@ def get_format_version_module(type_: str, format_version: str):
     except AttributeError:
         raise ValueError(
             f"Invalid RDF format version {format_version} for RDF type {type_}. "
-            f"Submodule bioimageio.spec.{type_}{version_mod_name} does not exist."
+            f"Submodule bioimageio.spec.{type_}.{version_mod_name} does not exist."
         )
 
 
