@@ -1,4 +1,4 @@
-from . import raw_nodes, schema, utils
+from . import converters, raw_nodes, schema, utils
 from .raw_nodes import FormatVersion
 
 try:

@@ -2,7 +2,7 @@ from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 from .raw_nodes import FormatVersion
@@ -10,6 +10,13 @@ from .raw_nodes import FormatVersion
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
+
+
+class Attachments(_BioImageIOSchema, WithUnknown):
+    files = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="File attachments; included when packaging the resource.",
+    )
 
 
 class _Person(_BioImageIOSchema):
@@ -74,26 +81,14 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    attachments_bioimageio_description = (
-        "Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can "
-        "place a list of URIs under the `files` to list images and other files that this resource depends on."
-    )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
-
-    attachments = fields.Dict(  # todo: in v0.3 update to attachments like in model v0.4?
-        fields.String(),
-        fields.List(
-            fields.Union([fields.URI(), fields.Raw()]),
-            bioimageio_maybe_required=True,
-            bioimageio_description=attachments_bioimageio_description,
-        ),
+    attachments = fields.Nested(
+        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
     )
 
     authors_bioimageio_description = (
         "A list of authors. The authors are the creators of the specifications and the primary points of contact."
     )
-    authors = fields.List(
-        fields.Nested(Author()), bioimageio_description=authors_bioimageio_description
-    )  # todo: make mandatory
+    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description, required=True)
 
     badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
