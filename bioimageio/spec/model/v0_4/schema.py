@@ -243,9 +243,6 @@ The model RDFs can be downloaded or uploaded to the bioimage.io website, produce
 The model RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
-    attachments = fields.Nested(
-        rdf.schema.Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
-    )
     # todo: sync authors with RDF
     authors = fields.List(
         fields.Nested(rdf.schema.Author()),

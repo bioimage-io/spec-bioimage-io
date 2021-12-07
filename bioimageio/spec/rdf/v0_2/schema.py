@@ -81,18 +81,8 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    attachments_bioimageio_description = (
-        "Dictionary of text keys and URI (or a list of URIs) values to additional, relevant files. E.g. we can "
-        "place a list of URIs under the `files` to list images and other files that this resource depends on."
-    )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
-
-    attachments = fields.Dict(  # todo: in v0.3 update to attachments like in model v0.4?
-        fields.String(),
-        fields.List(
-            fields.Union([fields.URI(), fields.Raw()]),
-            bioimageio_maybe_required=True,
-            bioimageio_description=attachments_bioimageio_description,
-        ),
+    attachments = fields.Nested(
+        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
     )
 
     authors_bioimageio_description = (
