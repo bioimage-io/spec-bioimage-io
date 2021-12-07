@@ -1,12 +1,9 @@
-# BioImage.IO Resource Description File Specification 0.2.1
-This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
-An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
-Note that models are described with an extended Model RDF specification.
+# BioImage.IO Collection Resource Description File Specification 0.2.1
+This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing collections of other resources.
+These fields are typically stored in YAML files which we call Collection Resource Description Files or `collection RDF`.
 
-The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by 
-_optional_. _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
-If no specialized RDF exists for the specified type (like model RDF for type='model') additional fields may be 
-specified.
+The collection RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
+_optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 
 * <a id="format_version"></a>`format_version` _String_ Version of the BioImage.IO Resource Description File Specification used.The current general format version described here is 0.2.1. Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format.
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
