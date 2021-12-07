@@ -68,10 +68,13 @@ class WithUnknown(SharedBioImageIOSchema):
 
     @post_dump(pass_original=True)
     def keep_unknowns(self, output, orig, **kwargs):
-        assert hasattr(orig, "unknown")  # expected raw node to have attribute "unknown"
-        out_w_unknown = dict(orig.unknown)
-        out_w_unknown.update(output)
-        return out_w_unknown
+        if orig:
+            assert hasattr(orig, "unknown")  # expected raw node to have attribute "unknown"
+            out_w_unknown = dict(orig.unknown)
+            out_w_unknown.update(output)
+            return out_w_unknown
+        else:
+            return output
 
 
 class Dependencies(SharedBioImageIOSchema):
