@@ -61,6 +61,7 @@ class WithUnknown(SharedBioImageIOSchema):
     class Meta:
         unknown = INCLUDE
 
+    @post_load
     def make_object(self, data, **kwargs):
         obj = super().make_object(data, **kwargs)
         assert hasattr(obj, "unknown")  # expected raw node to have attribute "unknown"
