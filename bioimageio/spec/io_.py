@@ -166,7 +166,8 @@ def resolve_rdf_source_and_type(
     data, source_name, root = resolve_rdf_source(source)
 
     type_ = data.get("type", "model")  # todo: remove model type default
-
+    if type_ == "dataset":
+        type_ = "rdf"
     return data, source_name, root, type_
 
 
