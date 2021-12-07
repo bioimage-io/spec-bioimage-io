@@ -220,7 +220,8 @@ def load_raw_resource_description(
         raw BioImage.IO resource
     """
     if isinstance(source, RawResourceDescription):
-        return source
+        # do serialization round-trip to account for 'update_to_current_format'
+        source = serialize_raw_resource_description_to_dict(source)
 
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
     class_name = get_class_name_from_type(type_)
