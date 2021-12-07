@@ -27,7 +27,7 @@ class CollectionEntry(RawNode):
     links: Union[_Missing, List[str]] = missing
     unknown: Dict[str, Any] = missing
 
-    def __init__(self, source, id_, links, **unknown):
+    def __init__(self, source=missing, id_=missing, links=missing, **unknown):
         self.source = source
         self.id_ = id_
         self.links = links
