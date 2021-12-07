@@ -2,7 +2,7 @@ import warnings
 from types import ModuleType
 from typing import ClassVar, List
 
-from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
+from marshmallow import INCLUDE, Schema, ValidationError, post_dump, post_load, validates, validates_schema
 
 from bioimageio.spec.shared import fields
 from . import raw_nodes
@@ -53,6 +53,20 @@ class SharedProcessingSchema(Schema):
     and they will be rendered in the documentation."""
 
     bioimageio_description: ClassVar[str]
+
+
+class WithUnknown(SharedBioImageIOSchema):
+    """allows to keep unknown fields on load and dump them the 'unknown' attribute of the data to serialize"""
+
+    class Meta:
+        unknown = INCLUDE
+
+    @post_dump(pass_original=True)
+    def keep_unknowns(self, output, orig, **kwargs):
+        assert hasattr(orig, "unknown")
+        out_w_unknown = dict(orig.unknown)
+        out_w_unknown.update(output)
+        return out_w_unknown
 
 
 class Dependencies(SharedBioImageIOSchema):

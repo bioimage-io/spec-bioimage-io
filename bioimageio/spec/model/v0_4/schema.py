@@ -1,7 +1,7 @@
 import typing
 from copy import deepcopy
 
-from marshmallow import INCLUDE, RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
+from marshmallow import RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
 
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry,
@@ -18,7 +18,12 @@ from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.rdf.v0_2.schema import Author
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import (
+    ImplicitOutputShape,
+    ParametrizedInputShape,
+    SharedBioImageIOSchema,
+    WithUnknown,
+)
 from . import raw_nodes
 
 CiteEntry = rdf.schema.CiteEntry
@@ -28,10 +33,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Attachments(_BioImageIOSchema):
-    class Meta:
-        unknown = INCLUDE
-
+class Attachments(_BioImageIOSchema, WithUnknown):
     files = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         bioimageio_description="File attachments; included when packaging the model.",
