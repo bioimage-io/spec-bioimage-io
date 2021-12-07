@@ -82,6 +82,11 @@ Here is a list of model RDF Examples:
  - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
 
 
+## [Collection Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)
+
+Another specialized RDF spec, the [`Collection Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection RDF`) defines a file format for representing collections of resources for the [BioImage.IO](https://bioimage.io) website.
+
+
 ## Link between resource items (under development)
 
 You can use `links` which is a list of `id` to other resource items, for example, if you want to associate an applicaiton with a model, you can set the links field of the models like the following:
