@@ -91,9 +91,7 @@ specified.
     authors_bioimageio_description = (
         "A list of authors. The authors are the creators of the specifications and the primary points of contact."
     )
-    authors = fields.List(
-        fields.Nested(Author()), bioimageio_description=authors_bioimageio_description
-    )  # todo: make mandatory
+    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description, required=True)
 
     badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
