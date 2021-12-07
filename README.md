@@ -150,6 +150,10 @@ or if the field `test_inputs` does not contain a list, it would print:
   - `export_resource_package` accepts `update_to_format` kwarg
 
 ### RDF Format Versions
+#### collection RDF 0.2.1
+- First official release, extends general RDF with fields `application`, `model`, `dataset`, `notebook` and (nested) 
+  `collection`, which hold lists linking to respective resources.
+
 #### (general) RDF 0.2.1
 - Non-breaking changes
   - add optional `email` and `github_user` fields to entries in `authors`
@@ -171,12 +175,15 @@ or if the field `test_inputs` does not contain a list, it would print:
   - the entries in the `authors` field may now additionally contain `email` or `github_user`.
   - the summary returned by the `validate` command now also contains a list of warnings.
   - an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
+
 #### model RDF 0.3.4
-- Other changes
+- Non-breaking changes
    - Add optional parameter `eps` to `scale_range` postprocessing. 
+
 #### model RDF 0.3.3
 - Breaking changes that are fully auto-convertible
   - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
+
 #### model RDF 0.3.2 
 - Breaking changes
   - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
