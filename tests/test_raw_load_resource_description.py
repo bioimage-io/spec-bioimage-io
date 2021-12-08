@@ -46,7 +46,7 @@ def test_load_raw_model_stardist(stardist_model):
 def test_load_raw_model_unet2d_keras_tf(unet2d_keras_tf):
     from bioimageio.spec import load_raw_resource_description
 
-    raw_model = load_raw_resource_description(unet2d_keras_tf, update_to_current_format=True)
+    raw_model = load_raw_resource_description(unet2d_keras_tf, update_to_format="latest")
     assert isinstance(raw_model, raw_nodes.Model)
     # test attachments
     assert len(raw_model.attachments.files) == 1
