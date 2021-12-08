@@ -53,7 +53,7 @@ def test_load_raw_model_unet2d_keras_tf(unet2d_keras_tf):
     assert (raw_model.root_path / raw_model.attachments.files[0]).exists()
 
 
-def test_load_raw_model_(unet2d_nuclei_broad_before_latest):
+def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
     from bioimageio.spec import load_raw_resource_description
 
     format_targets = [(0, 3), (0, 4)]
@@ -62,4 +62,5 @@ def test_load_raw_model_(unet2d_nuclei_broad_before_latest):
     for target in format_targets:
         if format_version <= target:
             to_format = ".".join(map(str, target))
-            load_raw_resource_description(unet2d_nuclei_broad_before_latest, update_to_format=to_format)
+            raw_model = load_raw_resource_description(unet2d_nuclei_broad_before_latest, update_to_format=to_format)
+            assert raw_model.format_version[: raw_model.format_version.rfind(".")] == to_format
