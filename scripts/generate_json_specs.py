@@ -37,11 +37,16 @@ if __name__ == "__main__":
     dist.mkdir(exist_ok=True)
 
     import bioimageio.spec.rdf.v0_2
+    import bioimageio.spec.collection.v0_2
     import bioimageio.spec.model.v0_1
     import bioimageio.spec.model.v0_3
+    import bioimageio.spec.model.v0_4
 
     export_json_schema_from_schema(dist, bioimageio.spec.rdf)
     export_json_schema_from_schema(dist, bioimageio.spec.rdf.v0_2)
+    export_json_schema_from_schema(dist, bioimageio.spec.collection)
+    export_json_schema_from_schema(dist, bioimageio.spec.collection.v0_2)
     export_json_schema_from_schema(dist, bioimageio.spec.model)
     export_json_schema_from_schema(dist, bioimageio.spec.model.v0_1)
     export_json_schema_from_schema(dist, bioimageio.spec.model.v0_3)
+    export_json_schema_from_schema(dist, bioimageio.spec.model.v0_4)

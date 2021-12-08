@@ -7,8 +7,9 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Dependencies, RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, RDF
 from bioimageio.spec.shared.raw_nodes import (
+    Dependencies,
     ParametrizedInputShape,
     ImplicitOutputShape,
     ImportableModule,
@@ -34,12 +35,6 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 WeightsFormat = Literal[
     "pytorch_state_dict", "pytorch_script", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
-
-# reassign to use imported classes
-Badge = Badge
-CiteEntry = CiteEntry
-ParametrizedInputShape = ParametrizedInputShape
-ImplicitOutputShape = ImplicitOutputShape
 
 
 @dataclass

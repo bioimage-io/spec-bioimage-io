@@ -10,7 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: check if branch still exists
+        id: ls-remote
+        run: |
+          out=$(git ls-remote --heads origin ${{ github.event.pull_request.head.ref }})
+          echo "::set-output name=out::$out"
       - name: delete PR branch ${{ github.event.pull_request.head.ref }}
+        if: steps.ls-remote.outputs.out
         run: git push origin --delete ${{ github.event.pull_request.head.ref }}
 
   delete_gh-pages_preview:
@@ -18,5 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: check if branch still exists
+        id: ls-remote
+        run: |
+          out=$(git ls-remote --heads origin gh-pages-${{ github.event.pull_request.head.ref }})
+          echo "::set-output name=out::$out"
       - name: delete gh-pages preview branch gh-pages-${{ github.event.pull_request.head.ref }}
+        if: steps.ls-remote.outputs.out
         run: git push origin --delete gh-pages-${{ github.event.pull_request.head.ref }}

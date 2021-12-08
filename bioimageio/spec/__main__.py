@@ -8,6 +8,7 @@ from bioimageio.spec import __version__, commands, model, rdf
 help_version = (
     f"bioimageio.spec {__version__}"
     "\nimplementing:"
+    f"\n\tcollection RDF {rdf.format_version}"
     f"\n\tgeneral RDF {rdf.format_version}"
     f"\n\tmodel RDF {model.format_version}"
 )
@@ -31,7 +32,7 @@ def validate(
         None, help="For collection RDFs only. Defaults to value of 'update-format'."
     ),
     verbose: bool = typer.Option(False, help="show traceback of unexpected (no ValidationError) exceptions"),
-) -> int:
+):
     summary = commands.validate(rdf_source, update_format, update_format_inner)
     if summary["error"] is not None:
         print(f"Error in {summary['name']}:")
@@ -47,6 +48,23 @@ def validate(
 
 
 validate.__doc__ = commands.validate.__doc__
+
+
+@app.command()
+def update_format(
+    rdf_source: str = typer.Argument(..., help="RDF source as relative file path or URI"),
+    path: str = typer.Argument(..., help="Path to save the RDF converted to the latest format"),
+):
+    try:
+        commands.update_format(rdf_source, path)
+        ret_code = 0
+    except Exception as e:
+        print(f"update_format failed with {e}")
+        ret_code = 1
+    sys.exit(ret_code)
+
+
+update_format.__doc__ == commands.update_format.__doc__
 
 
 # note: single command requires additional (dummy) callback

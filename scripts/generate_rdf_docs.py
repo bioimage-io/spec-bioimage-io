@@ -16,7 +16,7 @@ except ImportError:
 class DocNode:
     type_name: str
     description: str
-    sub_docs: typing.List[typing.Tuple[typing.Union["DocNode", str], "DocNode"]]
+    sub_docs: typing.List[typing.Tuple[str, "DocNode"]]
     details: typing.List["DocNode"]
     many: bool  # expecting a list of the described sub spec
     optional: bool
@@ -93,7 +93,7 @@ def doc_from_schema(obj, spec) -> DocNode:
     )
 
 
-def markdown_from_doc(doc: DocNode, indent: int = 0):
+def markdown_from_doc(doc: DocNode, parent_names: typing.Sequence[str] = tuple()):
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
         enumerate_symbol: typing.Optional[str] = "*"
@@ -106,13 +106,10 @@ def markdown_from_doc(doc: DocNode, indent: int = 0):
 
     sub_doc = ""
     for name, sdn in sub_docs:
-        if isinstance(name, DocNode):
-            name = markdown_from_doc(name, indent=indent).strip().strip("_")
-
-            print("name", name)
-
-        name = f"`{name}` " if name else ""
-        sub_doc += f"{'  ' * indent}{enumerate_symbol} {name}{markdown_from_doc(sdn, indent+1)}"
+        field_path = [n for n in [*parent_names, name] if n]
+        assert isinstance(name, str), name  # earlier version allowed DocNode here
+        name = f'<a id="{":".join(field_path)}"></a>`{name}` ' if name else ""
+        sub_doc += f"{'  ' * len(parent_names)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path)}"
 
     type_name = (
         f"{'optional' if doc.optional else ''}{'*' if doc.maybe_optional else ''}{' ' if doc.optional else ''}"
@@ -146,15 +143,20 @@ def export_markdown_doc(folder: Path, spec) -> None:
 
 
 if __name__ == "__main__":
+    import bioimageio.spec.collection.v0_2
     import bioimageio.spec.model.v0_1
     import bioimageio.spec.model.v0_3
+    import bioimageio.spec.model.v0_4
     import bioimageio.spec.rdf.v0_2
 
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
+    export_markdown_doc(dist, bioimageio.spec.collection)
+    export_markdown_doc(dist, bioimageio.spec.collection.v0_2)
     export_markdown_doc(dist, bioimageio.spec.model)
     export_markdown_doc(dist, bioimageio.spec.model.v0_1)
     export_markdown_doc(dist, bioimageio.spec.model.v0_3)
+    export_markdown_doc(dist, bioimageio.spec.model.v0_4)
     export_markdown_doc(dist, bioimageio.spec.rdf)
     export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)

@@ -104,6 +104,8 @@ class URI(RawNode):
 
         if not self.scheme:
             raise ValueError("Empty URI scheme component")
+        elif len(self.scheme) == 1:
+            raise ValueError(f"Invalid URI scheme of len 1: {self.scheme}")  # fail for windows paths with drive letter
 
         super().__post_init__()
 
@@ -146,6 +148,9 @@ class ImportableModule(RawNode):
     module_name: str = missing
     callable_name: str = missing
 
+    def __str__(self):
+        return f"{self.module_name}:{self.callable_name}"
+
 
 @dataclass
 class ImportableSourceFile(RawNode):
@@ -153,6 +158,9 @@ class ImportableSourceFile(RawNode):
 
     callable_name: str = missing
     source_file: Union[URI, pathlib.Path] = missing
+
+    def __str__(self):
+        return f"{self.source_file}:{self.callable_name}"
 
 
 ImportableSource = Union[ImportableModule, ImportableSourceFile]

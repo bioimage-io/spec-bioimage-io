@@ -1,6 +1,8 @@
 import subprocess
 import zipfile
 
+from bioimageio.spec.io_ import load_raw_resource_description, save_raw_resource_description
+
 
 def test_cli_validate_model(unet2d_nuclei_broad_latest_path):
     ret = subprocess.run(["bioimageio", "validate", str(unet2d_nuclei_broad_latest_path)])
@@ -30,3 +32,13 @@ def test_cli_validate_model_package(unet2d_nuclei_broad_latest_path, tmpdir):
 
     ret = subprocess.run(["bioimageio", "validate", str(zf_path)])
     assert ret.returncode == 0
+
+
+def test_cli_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
+    in_path = tmp_path / "rdf.yaml"
+    save_raw_resource_description(load_raw_resource_description(unet2d_nuclei_broad_before_latest), in_path)
+    assert in_path.exists()
+    path = tmp_path / "rdf_new.yaml"
+    ret = subprocess.run(["bioimageio", "update-format", str(in_path), str(path)])
+    assert ret.returncode == 0
+    assert path.exists()

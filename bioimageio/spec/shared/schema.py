@@ -1,10 +1,12 @@
+import warnings
 from types import ModuleType
-from typing import ClassVar
+from typing import ClassVar, List
 
-from marshmallow import Schema, ValidationError, post_load, validates, validates_schema
+from marshmallow import INCLUDE, Schema, ValidationError, post_dump, post_load, validates, validates_schema
 
 from bioimageio.spec.shared import fields
 from . import raw_nodes
+from .common import ValidationWarning
 
 
 class SharedBioImageIOSchema(Schema):
@@ -13,7 +15,7 @@ class SharedBioImageIOSchema(Schema):
 
     @post_load
     def make_object(self, data, **kwargs):
-        if not data:
+        if data is None:
             return None
 
         this_type = getattr(self.raw_nodes, self.__class__.__name__, None)
@@ -31,6 +33,18 @@ class SharedBioImageIOSchema(Schema):
             e.args += (f"when initializing {this_type} from {self}",)
             raise e
 
+    def warn(self, field: str, msg: str):
+        """warn about a field with a ValidationWarning"""
+        simple_field_name = field.split("[")[0]  # field may include [idx] or [key]
+        field_instance = self.fields[simple_field_name]
+        assert ":" not in field
+        assert " " not in field
+        # todo: add spec trail to field
+        # e.g. something similar to field = ":".join(self.context.get("field_path", []) + [field])
+        # or: ":".join(field_instance.spec_trail)
+        msg = f"{field}: {msg}"
+        warnings.warn(msg, category=ValidationWarning)
+
 
 class SharedProcessingSchema(Schema):
     """Used to generate Pre- and Postprocessing documentation.
@@ -39,6 +53,29 @@ class SharedProcessingSchema(Schema):
     and they will be rendered in the documentation."""
 
     bioimageio_description: ClassVar[str]
+
+
+class WithUnknown(SharedBioImageIOSchema):
+    """allows to keep unknown fields on load and dump them the 'unknown' attribute of the data to serialize"""
+
+    class Meta:
+        unknown = INCLUDE
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        obj = super().make_object(data, **kwargs)
+        assert hasattr(obj, "unknown")  # expected raw node to have attribute "unknown"
+        return obj
+
+    @post_dump(pass_original=True)
+    def keep_unknowns(self, output, orig, **kwargs):
+        if orig:
+            assert hasattr(orig, "unknown")  # expected raw node to have attribute "unknown"
+            out_w_unknown = dict(orig.unknown)
+            out_w_unknown.update(output)
+            return out_w_unknown
+        else:
+            return output
 
 
 class Dependencies(SharedBioImageIOSchema):
@@ -51,10 +88,10 @@ class Dependencies(SharedBioImageIOSchema):
 
 class ParametrizedInputShape(SharedBioImageIOSchema):
     min = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum input shape with same length as `axes`"
+        fields.Integer(), required=True, bioimageio_description="The minimum input shape with same length as `axes`"
     )
     step = fields.List(
-        fields.Integer, required=True, bioimageio_description="The minimum shape change with same length as `axes`"
+        fields.Integer(), required=True, bioimageio_description="The minimum shape change with same length as `axes`"
     )
 
     @validates_schema
@@ -71,10 +108,10 @@ class ParametrizedInputShape(SharedBioImageIOSchema):
 class ImplicitOutputShape(SharedBioImageIOSchema):
     reference_tensor = fields.String(required=True, bioimageio_description="Name of the reference tensor.")
     scale = fields.List(
-        fields.Float, required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
+        fields.Float(), required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
     )
     offset = fields.List(
-        fields.Float, required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
+        fields.Float(), required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
     )
 
     @validates_schema
@@ -85,7 +122,7 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
 
     @validates("offset")
-    def double_offset_is_int(self, value):
+    def double_offset_is_int(self, value: List[float]):
         for v in value:
             if 2 * v != int(2 * v):
                 raise ValidationError(f"offset {v} in {value} not a multiple of 0.5!")

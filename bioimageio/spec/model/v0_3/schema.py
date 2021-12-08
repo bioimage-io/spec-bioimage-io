@@ -7,7 +7,12 @@ from marshmallow import RAISE, ValidationError, missing as missing_, post_load, 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema, SharedProcessingSchema
+from bioimageio.spec.shared.schema import (
+    ImplicitOutputShape,
+    ParametrizedInputShape,
+    SharedBioImageIOSchema,
+    SharedProcessingSchema,
+)
 from bioimageio.spec.shared.utils import get_ref_url
 from . import raw_nodes
 
@@ -15,18 +20,18 @@ Author = rdf.schema.Author
 CiteEntry = rdf.schema.CiteEntry
 
 
-class BioImageIOSchema(SharedBioImageIOSchema):
+class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class RunMode(BioImageIOSchema):
+class RunMode(_BioImageIOSchema):
     name = fields.String(
         required=True, bioimageio_description="The name of the `run_mode`"
     )  # todo: limit valid run mode names
     kwargs = fields.Kwargs()
 
 
-class Tensor(BioImageIOSchema):
+class _TensorBase(_BioImageIOSchema):
     name = fields.String(
         required=True, validate=field_validators.Predicate("isidentifier"), bioimageio_description="Tensor name."
     )
@@ -73,7 +78,7 @@ class Tensor(BioImageIOSchema):
                 raise ValidationError("`kwargs.axes` needs to be subset of axes")
 
 
-class Processing(BioImageIOSchema):
+class Processing(_BioImageIOSchema):
     class binarize(SharedProcessingSchema):
         bioimageio_description = (
             "Binarize the tensor with a fixed threshold, values above the threshold will be set to one, values below "
@@ -248,10 +253,22 @@ class Postprocessing(Processing):
         )
 
 
-class InputTensor(Tensor):
-    shape = fields.InputShape(required=True, bioimageio_description="Specification of tensor shape.")
+class InputTensor(_TensorBase):
+    shape = fields.Union(
+        [
+            fields.ExplicitShape(
+                bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
+            ),
+            fields.Nested(
+                ParametrizedInputShape(),
+                bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
+            ),
+        ],
+        required=True,
+        bioimageio_description="Specification of input tensor shape.",
+    )
     preprocessing = fields.List(
-        fields.Nested(Preprocessing), bioimageio_description="Description of how this input should be preprocessed."
+        fields.Nested(Preprocessing()), bioimageio_description="Description of how this input should be preprocessed."
     )
     processing_name = "preprocessing"
 
@@ -284,19 +301,31 @@ class InputTensor(Tensor):
             raise ValidationError("Input shape has to be 1 in the batch dimension b.")
 
 
-class OutputTensor(Tensor):
-    shape = fields.OutputShape(required=True)
+class OutputTensor(_TensorBase):
+    shape = fields.Union(
+        [
+            fields.ExplicitShape(),
+            fields.Nested(
+                ImplicitOutputShape(),
+                bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
+                "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
+            ),
+        ],
+        required=True,
+        bioimageio_description="Specification of output tensor shape.",
+    )
     halo = fields.List(
-        fields.Integer,
+        fields.Integer(),
         bioimageio_description="Hint to describe the potentially corrupted edge region of the output tensor, due to "
         "boundary effects. "
         "The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. "
         f"An example implementation of prediction with tiling, accounting for the halo can be found [here]("
-        f"{get_ref_url('function', 'predict_with_tiling_impl', 'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction.py')}). "
+        f"{get_ref_url('function', '_predict_with_tiling_impl', 'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction.py')}). "
         "Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed. ",
     )
     postprocessing = fields.List(
-        fields.Nested(Postprocessing), bioimageio_description="Description of how this output should be postprocessed."
+        fields.Nested(Postprocessing()),
+        bioimageio_description="Description of how this output should be postprocessed.",
     )
     processing_name = "postprocessing"
 
@@ -335,15 +364,15 @@ _common_sha256_hint = (
 )
 
 
-class WeightsEntryBase(BioImageIOSchema):
+class _WeightsEntryBase(_BioImageIOSchema):
     authors = fields.List(
-        fields.Nested(Author),
+        fields.Nested(Author()),
         bioimageio_description="A list of authors. If this is the root weight (it does not have a `parent` field): the "
         "person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) "
         "who have converted the weights to this format.",
     )  # todo: copy root authors if missing
     attachments = fields.Dict(
-        fields.String,
+        fields.String(),
         fields.List(fields.Union([fields.URI(), fields.Raw()])),
         bioimageio_description="Dictionary of text keys and list values (that may contain any valid yaml) to "
         "additional, relevant files that are specific to the current weight format. A list of URIs can be listed under"
@@ -387,35 +416,35 @@ class WeightsEntryBase(BioImageIOSchema):
         return raw_node
 
 
-class KerasHdf5WeightsEntry(WeightsEntryBase):
+class KerasHdf5WeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Keras HDF5 weights format"
     weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"), required=True, load_only=True)
     tensorflow_version = fields.StrictVersion()  # todo: required=True
 
 
-class OnnxWeightsEntry(WeightsEntryBase):
+class OnnxWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "ONNX weights format"
     weights_format = fields.String(validate=field_validators.Equal("onnx"), required=True, load_only=True)
     opset_version = fields.Integer()  # todo: required=True
 
 
-class PytorchStateDictWeightsEntry(WeightsEntryBase):
+class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
 
 
-class PytorchScriptWeightsEntry(WeightsEntryBase):
+class PytorchScriptWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Torch Script weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_script"), required=True, load_only=True)
 
 
-class TensorflowJsWeightsEntry(WeightsEntryBase):
+class TensorflowJsWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Tensorflow Javascript weights format"
     weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"), required=True, load_only=True)
     tensorflow_version = fields.StrictVersion()  # todo: required=True
 
 
-class TensorflowSavedModelBundleWeightsEntry(WeightsEntryBase):
+class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Tensorflow Saved Model Bundle weights format"
     weights_format = fields.String(
         validate=field_validators.Equal("tensorflow_saved_model_bundle"), required=True, load_only=True
@@ -433,14 +462,14 @@ WeightsEntry = typing.Union[
 ]
 
 
-class ModelParent(BioImageIOSchema):
+class ModelParent(_BioImageIOSchema):
     uri = fields.Union(  # todo: allow URI or DOI instead (and not local path!?)
         [fields.URI(), fields.RelativeLocalPath()],
         bioimageio_description="Url of another model available on bioimage.io or path to a local model in the "
         "bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the "
         "model (NOT the raw file).",
     )
-    sha256 = fields.SHA256(bioimageio_description="Hash of the weights of the parent model.")
+    sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF.")
 
 
 class Model(rdf.schema.RDF):
@@ -459,18 +488,28 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     # todo: unify authors with RDF (optional or required?)
     authors = fields.List(
-        fields.Nested(Author), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
+        fields.Nested(Author()), required=True, bioimageio_description=rdf.schema.RDF.authors_bioimageio_description
     )
 
-    badges = missing_  # todo: allow badges for Model (RDF has it)
-    cite = fields.Nested(
-        CiteEntry,
-        many=True,
+    badges = missing_
+    cite = fields.List(
+        fields.Nested(CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
-    download_url = missing_  # todo: allow download_url for Model (RDF has it)
+    documentation = fields.RelativeLocalPath(
+        validate=field_validators.Attribute(
+            "suffix",
+            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
+        ),
+        required=True,
+        bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
+        "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
+        "not allowed. It is recommended to use `README.md` as the documentation name.",
+    )
+
+    download_url = missing_
 
     dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
@@ -501,7 +540,7 @@ is in an unsupported format version. The current format version described here i
         + "(which contains the configuration yaml file) should be used.",
     )
 
-    icon = missing_  # todo: allow icon for Model (RDF has it)
+    icon = missing_
 
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `source`. "
@@ -528,20 +567,20 @@ is in an unsupported format version. The current format version described here i
     )
 
     packaged_by = fields.List(
-        fields.Nested(Author),
+        fields.Nested(Author()),
         bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
         f"different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
-        ModelParent,
+        ModelParent(),
         bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
         "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
         "checkpoint, see `weights`.",
     )
 
     run_mode = fields.Nested(
-        RunMode,
+        RunMode(),
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. "
         "No standard run modes are defined yet.",
@@ -578,7 +617,7 @@ is in an unsupported format version. The current format version described here i
             f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Union([fields.Nested(we) for we in get_args(WeightsEntry)]),
+        fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
         "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
@@ -598,11 +637,11 @@ is in an unsupported format version. The current format version described here i
 
         return data
 
-    inputs = fields.Nested(
-        InputTensor, many=True, bioimageio_description="Describes the input tensors expected by this model."
+    inputs = fields.List(
+        fields.Nested(InputTensor()), bioimageio_description="Describes the input tensors expected by this model."
     )
-    outputs = fields.Nested(
-        OutputTensor, many=True, bioimageio_description="Describes the output tensors from this model."
+    outputs = fields.List(
+        fields.Nested(OutputTensor()), bioimageio_description="Describes the output tensors from this model."
     )
 
     test_inputs = fields.List(
@@ -633,7 +672,7 @@ is in an unsupported format version. The current format version described here i
         "`sample_inputs`.",
     )
 
-    config = fields.Dict(
+    config = fields.YamlDict(
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
         + """
 
@@ -712,7 +751,7 @@ is in an unsupported format version. The current format version described here i
 
     @validates_schema
     def weights_entries_match_weights_formats(self, data, **kwargs):
-        weights: typing.Dict[str, WeightsEntryBase] = data["weights"]
+        weights: typing.Dict[str, _WeightsEntryBase] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 assert isinstance(

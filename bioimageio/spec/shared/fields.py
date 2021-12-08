@@ -7,7 +7,7 @@ import typing
 
 import marshmallow_union
 import numpy
-from marshmallow import ValidationError, fields as marshmallow_fields
+from marshmallow import ValidationError, fields as marshmallow_fields, Schema
 
 from . import field_validators, raw_nodes
 
@@ -97,12 +97,45 @@ class DateTime(DocumentedField, marshmallow_fields.DateTime):
 
 
 class Dict(DocumentedField, marshmallow_fields.Dict):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(
+        self,
+        keys: typing.Optional[DocumentedField] = None,
+        values: typing.Optional[DocumentedField] = None,
+        *super_args,
+        **super_kwargs,
+    ):
+        assert keys is None or isinstance(keys, DocumentedField)
+        assert values is None or isinstance(values, DocumentedField)
+        super().__init__(keys, values, *super_args, **super_kwargs)
         # add types of dict keys and values
         key = "Any" if self.key_field is None else self.key_field.type_name
         value = "Any" if self.value_field is None else self.value_field.type_name
         self.type_name += f"\\[{key}, {value}\\]"
+
+
+class YamlDict(Dict):
+    """yaml friendly dict"""
+
+    @staticmethod
+    def _make_yaml_friendly(obj):
+        if isinstance(obj, (list, tuple)):
+            return [YamlDict._make_yaml_friendly(ob) for ob in obj]
+        elif isinstance(obj, dict):
+            return {YamlDict._make_yaml_friendly(k): YamlDict._make_yaml_friendly(v) for k, v in obj.items()}
+        elif obj is None or isinstance(obj, (float, int, str, bool)):
+            return obj
+        elif isinstance(obj, pathlib.PurePath):
+            return obj.as_posix()
+        else:
+            raise TypeError(f"Encountered YAML unfriendly type: {type(obj)}")
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        value = self._make_yaml_friendly(value)
+        return super()._serialize(value, attr, obj, **kwargs)
+
+
+class Email(DocumentedField, marshmallow_fields.Email):
+    pass
 
 
 class Float(DocumentedField, marshmallow_fields.Float):
@@ -114,8 +147,9 @@ class Integer(DocumentedField, marshmallow_fields.Integer):
 
 
 class List(DocumentedField, marshmallow_fields.List):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, instance: DocumentedField, *super_args, **super_kwargs):
+        assert isinstance(instance, DocumentedField), "classes not allowd to avoid trouble"
+        super().__init__(instance, *super_args, **super_kwargs)
         self.type_name += f"\\[{self.inner.type_name}\\]"  # add type of list elements
 
 
@@ -124,8 +158,14 @@ class Number(DocumentedField, marshmallow_fields.Number):
 
 
 class Nested(DocumentedField, marshmallow_fields.Nested):
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, nested: Schema, *super_args, many: bool = False, **super_kwargs):
+        assert isinstance(nested, Schema)  # schema classes cause all sorts of trouble (so we enforce instance)
+        assert not many, (
+            "Use List(Nested(...)) or Nested(Schema(many=True)) instead! "
+            "see also https://github.com/marshmallow-code/marshmallow/issues/779"
+            "We only don't allow this to be more consistent and avoid bugs."
+        )
+        super().__init__(nested, *super_args, **super_kwargs)
 
         self.type_name = self.schema.__class__.__name__
         if self.many:
@@ -137,6 +177,12 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
         repeat_type_name = self.type_name if self.bioimageio_description else ""
         self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"
 
+    def _deserialize(self, value, attr, data, partial=None, **kwargs):
+        if not isinstance(value, dict):
+            raise ValidationError(f"Expected dictionary, but got {type(value).__name__}.")
+
+        return super()._deserialize(value, attr, data, partial, **kwargs)
+
 
 class Raw(DocumentedField, marshmallow_fields.Raw):
     pass
@@ -147,6 +193,10 @@ class String(DocumentedField, marshmallow_fields.String):
 
 
 class Tuple(DocumentedField, marshmallow_fields.Tuple):
+    def __init__(self, tuple_fields: typing.Sequence[DocumentedField], *args, **kwargs):
+        assert all(isinstance(tf, DocumentedField) for tf in tuple_fields)
+        super().__init__(tuple_fields, *args, **kwargs)
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.List:
         value = super()._serialize(value, attr, obj, **kwargs)
         return list(value)  # return tuple as list
@@ -163,8 +213,9 @@ class Tuple(DocumentedField, marshmallow_fields.Tuple):
 class Union(DocumentedField, marshmallow_union.Union):
     _candidate_fields: typing.Iterable[typing.Union[DocumentedField, marshmallow_fields.Field]]
 
-    def __init__(self, *super_args, **super_kwargs):
-        super().__init__(*super_args, **super_kwargs)
+    def __init__(self, fields_, *super_args, **super_kwargs):
+        assert all(isinstance(f, DocumentedField) for f in fields_), "only DocumentedField instances (no classes)!"
+        super().__init__(fields_, *super_args, **super_kwargs)
         self.type_name += f"\\[{' | '.join(cf.type_name for cf in self._candidate_fields)}\\]"  # add types of options
 
     def _deserialize(self, value, attr=None, data=None, **kwargs):
@@ -207,7 +258,7 @@ class Dependencies(String):  # todo: check format of dependency string
 
 class ExplicitShape(List):
     def __init__(self, **super_kwargs):
-        super().__init__(Integer, **super_kwargs)
+        super().__init__(Integer(), **super_kwargs)
 
 
 class ImportableSource(String):
@@ -266,44 +317,15 @@ class ImportableSource(String):
             raise TypeError(f"{value} has unexpected type {type(value)}")
 
 
-class InputShape(Union):
-    def __init__(self, **super_kwargs):
-        from .schema import ParametrizedInputShape
-
-        super().__init__(
-            fields=[
-                ExplicitShape(
-                    bioimageio_description="Exact shape with same length as `axes`, e.g. `shape: [1, 512, 512, 1]`"
-                ),
-                Nested(
-                    ParametrizedInputShape,
-                    bioimageio_description="A sequence of valid shapes given by `shape = min + k * step for k in {0, 1, ...}`.",
-                ),
-            ],
-            **super_kwargs,
-        )
-
-
 class Kwargs(Dict):
-    def __init__(self, keys=String, bioimageio_description="Key word arguments.", **super_kwargs):
-        super().__init__(keys, bioimageio_description=bioimageio_description, **super_kwargs)
-
-
-class OutputShape(Union):
-    def __init__(self, **super_kwargs):
-        from .schema import ImplicitOutputShape
-
-        super().__init__(
-            fields=[
-                ExplicitShape(),
-                Nested(
-                    ImplicitOutputShape,
-                    bioimageio_description="In reference to the shape of an input tensor, the shape of the output "
-                    "tensor is `shape = shape(input_tensor) * scale + 2 * offset`.",
-                ),
-            ],
-            **super_kwargs,
-        )
+    def __init__(
+        self,
+        keys: String = String(),
+        values: typing.Optional[DocumentedField] = None,
+        bioimageio_description="Key word arguments.",
+        **super_kwargs,
+    ):
+        super().__init__(keys, values, bioimageio_description=bioimageio_description, **super_kwargs)
 
 
 class Path(String):
@@ -426,4 +448,10 @@ class URI(String):
         try:
             return raw_nodes.URI(uri_string=value)
         except Exception as e:
-            raise ValidationError(value) from e
+            raise ValidationError(str(e)) from e
+
+
+class URL(URI):
+    def __init__(self, *, validate: typing.Sequence[field_validators.Validator] = tuple(), **kwargs):
+        validate = list(validate) + [field_validators.URL(schemes=["http", "https"])]
+        super().__init__(validate=validate, **kwargs)

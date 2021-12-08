@@ -1,22 +1,29 @@
-import warnings
-
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 from .raw_nodes import FormatVersion
 
 
-class BioImageIOSchema(SharedBioImageIOSchema):
+class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Author(BioImageIOSchema):
-    name = fields.String(required=True, bioimageio_description="Full name.")
+class Attachments(_BioImageIOSchema, WithUnknown):
+    files = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        bioimageio_description="File attachments; included when packaging the resource.",
+    )
+
+
+class _Person(_BioImageIOSchema):
+    name = fields.String(bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
+    email = fields.Email()
+    github_user = fields.String(bioimageio_description="GitHub user name.")  # todo: add validation?
     orcid = fields.String(
         validate=[
             field_validators.Length(19),
@@ -30,17 +37,25 @@ class Author(BioImageIOSchema):
     )
 
 
-class Badge(BioImageIOSchema):
+class Author(_Person):
+    name = fields.String(require=True, bioimageio_description="Full name.")
+
+
+class Maintainer(_Person):
+    github_user = fields.String(require=True, bioimageio_description="GitHub user name.")
+
+
+class Badge(_BioImageIOSchema):
     bioimageio_description = "Custom badge"
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
     url = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()],  # todo: make url only?
+        [fields.URL(), fields.RelativeLocalPath()],
         bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
     )
 
 
-class CiteEntry(BioImageIOSchema):
+class CiteEntry(_BioImageIOSchema):
     text = fields.String(required=True)
     doi = fields.String(bioimageio_maybe_required=True)
     url = fields.String(bioimageio_maybe_required=True)
@@ -51,14 +66,7 @@ class CiteEntry(BioImageIOSchema):
             raise ValidationError("doi or url needs to be specified in a citation")
 
 
-class RunMode(BioImageIOSchema):
-    name = fields.String(
-        required=True, bioimageio_description="The name of the `run_mode`"
-    )  # todo: limit valid run mode names
-    kwargs = fields.Kwargs()
-
-
-class RDF(BioImageIOSchema):
+class RDF(_BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
 
@@ -73,33 +81,21 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    attachments_bioimageio_description = (
-        "Dictionary of text keys and URI (or a list of URI) values to additional, relevant files. E.g. we can "
-        "place a list of URIs under the `files` to list images and other files that this resource depends on."
-    )  # todo: shouldn't we package all attachments (or None) and always package certain fields if present?
-
-    attachments = fields.Dict(
-        fields.String,
-        fields.List(
-            fields.Union([fields.URI(), fields.Raw()]),
-            bioimageio_maybe_required=True,
-            bioimageio_description=attachments_bioimageio_description,
-        ),
+    attachments = fields.Nested(
+        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
     )
 
     authors_bioimageio_description = (
-        "A list of authors. The authors are the creators of the specifications and the primary " "points of contact."
+        "A list of authors. The authors are the creators of the specifications and the primary points of contact."
     )
-    authors = fields.List(
-        fields.Union([fields.Nested(Author), fields.String()]), bioimageio_description=authors_bioimageio_description
-    )
+    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description, required=True)
 
-    badges = fields.List(fields.Nested(Badge), bioimageio_description="a list of badges")
+    badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
-    cite_bioimageio_description = """A citation entry or list of citation entries.
+    cite_bioimageio_description = """A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used."""
-    cite = fields.Nested(CiteEntry, many=True, required=True, bioimageio_description=cite_bioimageio_description)
+    cite = fields.List(fields.Nested(CiteEntry()), required=True, bioimageio_description=cite_bioimageio_description)
 
     config_bioimageio_description = (
         "A custom configuration field that can contain any keys not present in the RDF spec. "
@@ -120,12 +116,10 @@ E.g. the citation for the model architecture and/or the training data used."""
 """
         "    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
-    config = fields.Dict(bioimageio_descriptio=config_bioimageio_description)
+    config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
-        fields.Union(
-            [fields.URI(validate=field_validators.URL(schemes=["http", "https"])), fields.RelativeLocalPath()]
-        ),
+        fields.Union([fields.URL(), fields.RelativeLocalPath()]),
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
@@ -133,21 +127,24 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
 
-    documentation = fields.RelativeLocalPath(
-        validate=field_validators.Attribute(
-            "suffix",
-            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
-        ),
+    documentation = fields.Union(
+        [
+            fields.URL(),
+            fields.RelativeLocalPath(
+                validate=field_validators.Attribute(
+                    "suffix",
+                    field_validators.Equal(
+                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
+                    ),
+                )
+            ),
+        ],
         required=True,
-        bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
-        "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
-        "not allowed. It is recommended to use `README.md` as the documentation name.",
+        bioimageio_description="URL or relative path to markdown file with additional documentation. "
+        "For markdown files the recommended documentation file name is `README.md`.",
     )
 
-    download_url = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]),
-        bioimageio_description="recommended url to the zipped file if applicable",
-    )
+    download_url = fields.URL(bioimageio_description="recommended url to the zipped file if applicable")
 
     format_version = fields.String(
         required=True,
@@ -161,8 +158,8 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     @validates_schema
     def format_version_matches_type(self, data, **kwargs):
-        format_version = data["format_version"]
-        type_ = data["type"]
+        format_version = data.get("format_version")
+        type_ = data.get("type")
         try:
             patched_format_version = get_patched_format_version(type_, format_version)
             if format_version.split(".") > patched_format_version.split("."):
@@ -173,9 +170,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}. (error: {e})")
 
     git_repo_bioimageio_description = "A url to the git repository, e.g. to Github or Gitlab."
-    git_repo = fields.String(
-        validate=field_validators.URL(schemes=["http", "https"]), bioimageio_description=git_repo_bioimageio_description
-    )
+    git_repo = fields.URL(bioimageio_description=git_repo_bioimageio_description)
 
     icon = fields.String(
         bioimageio_description="an icon for the resource"
@@ -186,8 +181,8 @@ E.g. the citation for the model architecture and/or the training data used."""
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
         "an Github issue to discuss your intentions with the community."
     )
-    license = fields.String(
-        # validate=field_validators.OneOf(LICENSES),  # only warn for now (see warn_about_deprecated_spdx_license) todo: enforce in 0.4.0
+    license = fields.String(  # todo: make mandatory?
+        # validate=field_validators.OneOf(LICENSES),  # enforce license id
         bioimageio_description=license_bioimageio_description
     )
 
@@ -195,54 +190,48 @@ E.g. the citation for the model architecture and/or the training data used."""
     def warn_about_deprecated_spdx_license(self, value: str):
         license_info = LICENSES.get(value)
         if license_info is None:
-            warnings.warn(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
-        elif license_info["isDeprecatedLicenseId"]:
-            warnings.warn(f"{license_info['name']} is deprecated")
+            self.warn("license", f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
+        else:
+            if license_info.get("isDeprecatedLicenseId", False):
+                self.warn("license", f"{value} ({license_info['name']}) is deprecated.")
 
-    links = fields.List(fields.String, bioimageio_description="links to other bioimage.io resources")
+            if not license_info.get("isFsfLibre", False):
+                self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
+
+    links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
+
+    maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
     name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+
+    @validates
+    def warn_about_long_name(self, value: str):
+        if isinstance(value, str):
+            if len(value) > 64:
+                self.warn(
+                    "name", f"Length of name ({len(value)}) exceeds the recommended maximum length of 64 characters."
+                )
+        else:
+            self.warn("name", f"Could not check length of name {value}.")
 
     source = fields.Union(
         [fields.URI(), fields.RelativeLocalPath()],
         bioimageio_description="url or local relative path to the source of the resource",
     )
 
-    tags = fields.List(fields.String, required=True, bioimageio_description="A list of tags.")
+    tags = fields.List(fields.String(), required=True, bioimageio_description="A list of tags.")
 
     type = fields.String(required=True)
 
-    # todo: restrict valid RDF types (0.4.0)
-    # @validates("type")
-    # def validate_type(self, value):
-    #     schema_type = self.__class__.__name__.lower()
-    #     if value != schema_type:
-    #         raise ValidationError(f"type must be {schema_type}. Are you using the correct validator?")
+    # todo: restrict valid RDF types?
+    @validates("type")
+    def validate_type(self, value):
+        schema_type = self.__class__.__name__.lower()
+        if value != schema_type:
+            self.warn("type", f"Unrecognized type {value}. Validating as {schema_type}.")
 
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
         "e.g. the initial version number should be `0.1.0`."
     )
-
-
-# todo: decide on Collection/move Collection
-# Collection
-class CollectionEntry(BioImageIOSchema):
-    """instead of nesting RDFs, RDFs can be pointed to"""
-
-    source = fields.URI(validate=field_validators.URL(schemes=["http", "https"]), required=True)
-    id = fields.String(required=True)
-    links = fields.List(fields.String())
-
-
-class ModelCollectionEntry(CollectionEntry):
-    download_url = fields.URI(validate=field_validators.URL(schemes=["http", "https"]))
-
-
-class Collection(RDF):
-    application = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    collection = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    model = fields.List(fields.Nested(ModelCollectionEntry))
-    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))
-    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry), fields.Nested(RDF)]))

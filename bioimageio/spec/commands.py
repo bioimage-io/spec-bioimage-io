@@ -1,14 +1,25 @@
 import os
 import traceback
 import warnings
-from typing import Dict, IO, Optional, Union
+from pathlib import Path
+from typing import Dict, IO, Union
 
 from marshmallow import ValidationError
 
-from .io_ import load_raw_resource_description, resolve_rdf_source
-from .shared.common import nested_default_dict_as_nested_dict
+from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
+from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 
-KNOWN_COLLECTION_CATEGORIES = ("application", "collection", "dataset", "model", "notebook")
+KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model")
+
+
+def update_format(
+    rdf_source: Union[dict, os.PathLike, IO, str, bytes],
+    path: Union[os.PathLike, str],
+    update_to_format: str = "latest",
+):
+    """Update a BioImage.IO resource"""
+    raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
+    save_raw_resource_description(raw, Path(path))
 
 
 def validate(
@@ -26,7 +37,7 @@ def validate(
         verbose: deprecated
 
     Returns:
-        A summary dict with "error", "traceback" and "nested_errors" keys.
+        A summary dict with "error", "warnings", "traceback" and "nested_errors" keys.
     """
     if verbose != "deprecated":
         warnings.warn("'verbose' flag is deprecated")
@@ -52,14 +63,16 @@ def validate(
 
     raw_rd = None
     if error is None:
-        try:
-            raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
-        except ValidationError as e:
-            error = nested_default_dict_as_nested_dict(e.normalized_messages())
-        except Exception as e:
-            error = str(e)
-            tb = traceback.format_tb(e.__traceback__)
+        with warnings.catch_warnings(record=True) as all_warnings:
+            try:
+                raw_rd = load_raw_resource_description(rdf_source, update_to_format="latest" if update_format else None)
+            except ValidationError as e:
+                error = nested_default_dict_as_nested_dict(e.normalized_messages())
+            except Exception as e:
+                error = str(e)
+                tb = traceback.format_tb(e.__traceback__)
 
+        validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
         if raw_rd is not None and raw_rd.type == "collection":
             for inner_category in KNOWN_COLLECTION_CATEGORIES:
                 for inner in getattr(raw_rd, inner_category) or []:
@@ -75,11 +88,14 @@ def validate(
 
             if nested_errors:
                 error = f"Errors in collections of {list(nested_errors)}"
+    else:
+        validation_warnings = []
 
     return {
         "name": source_name if raw_rd is None else raw_rd.name,
         "source_name": source_name,
         "error": error,
+        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
         "traceback": tb,
         "nested_errors": nested_errors,
     }

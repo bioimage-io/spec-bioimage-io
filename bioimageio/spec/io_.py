@@ -23,7 +23,7 @@ from bioimageio.spec.shared.common import (
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import GenericRawNode, RawNodePackageTransformer, _is_path
+from bioimageio.spec.shared.utils import GenericRawNode, GenericRawRD, RawNodePackageTransformer, _is_path
 
 try:
     from typing import Protocol
@@ -72,11 +72,22 @@ def resolve_rdf_source(
             import requests
             from urllib.request import urlopen
 
+            zenodo_prefix = "10.5281/zenodo."
+            zenodo_record_api = "https://zenodo.org/api/records"
             zenodo_sandbox_prefix = "10.5072/zenodo."
-            if source.startswith(zenodo_sandbox_prefix):
+            zenodo_sandbox_record_api = "https://sandbox.zenodo.org/api/records"
+            is_zenodo_doi = False
+            if source.startswith(zenodo_prefix):
+                is_zenodo_doi = True
+            elif source.startswith(zenodo_sandbox_prefix):
                 # zenodo sandbox doi (which is not a valid doi)
-                record_id = source[len(zenodo_sandbox_prefix) :]
-                response = requests.get(f"https://sandbox.zenodo.org/api/records/{record_id}")
+                zenodo_prefix = zenodo_sandbox_prefix
+                zenodo_record_api = zenodo_sandbox_record_api
+                is_zenodo_doi = True
+
+            if is_zenodo_doi:
+                record_id = source[len(zenodo_prefix) :]
+                response = requests.get(f"{zenodo_record_api}/{record_id}")
                 if not response.ok:
                     raise RuntimeError(response.status_code)
 
@@ -155,7 +166,8 @@ def resolve_rdf_source_and_type(
     data, source_name, root = resolve_rdf_source(source)
 
     type_ = data.get("type", "model")  # todo: remove model type default
-
+    if type_ == "dataset":
+        type_ = "rdf"
     return data, source_name, root, type_
 
 
@@ -193,7 +205,7 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
 
 def load_raw_resource_description(
     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
-    update_to_current_format: bool = False,
+    update_to_format: Optional[str] = None,
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
@@ -202,18 +214,29 @@ def load_raw_resource_description(
 
     Args:
         source: resource description or resource description file (RDF)
-        update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
-
+        update_to_format: update resource to specific major.minor format version; ignoring patch version.
     Returns:
         raw BioImage.IO resource
     """
     if isinstance(source, RawResourceDescription):
-        return source
+        # do serialization round-trip to account for 'update_to_format'
+        source = serialize_raw_resource_description_to_dict(source)
 
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
     class_name = get_class_name_from_type(type_)
 
-    data_version = LATEST if update_to_current_format else data.get("format_version", LATEST)
+    if update_to_format is None:
+        data_version = data.get("format_version", LATEST)
+    elif update_to_format == LATEST:
+        data_version = LATEST
+    else:
+        data_version = ".".join(update_to_format.split("."[:2]))
+        if update_to_format.count(".") > 1:
+            warnings.warn(
+                f"Ignoring patch version of update_to_format {update_to_format} "
+                f"(always updating to latest patch version)."
+            )
+
     sub_spec = _get_spec_submodule(type_, data_version)
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
@@ -259,7 +282,7 @@ def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.
 
 
 def get_resource_package_content_wo_rdf(
-    raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: GenericRawRD, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
@@ -283,7 +306,7 @@ def get_resource_package_content_wo_rdf(
     raw_rd = sub_spec.utils.filter_resource_description(raw_rd, **filter_kwargs)
 
     content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
-    raw_rd = RawNodePackageTransformer(content).transform(raw_rd)
+    raw_rd = RawNodePackageTransformer(content, raw_rd.root_path).transform(raw_rd)
     assert "rdf.yaml" not in content
     return raw_rd, content
 

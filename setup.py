@@ -26,17 +26,17 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "PyYAML>=5.2",
-        "imageio>=2.5",
-        "marshmallow>=3.6.0,<4.0",
+        "numpy",
         "marshmallow-jsonschema",
         "marshmallow-union",
-        "requests",
+        "marshmallow>=3.6.0,<4.0",
+        "requests;platform_system!='Emscripten'",
+        "ruamel.yaml;platform_system!='Emscripten'",
         "typer",
         "typing-extensions",
     ],
     entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
-    extras_require={"test": ["pytest", "tox", "torch", "numpy", "mypy", "ruamel.yaml"], "dev": ["pre-commit"]},
+    extras_require={"test": ["pytest", "tox", "mypy"], "dev": ["pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",
         "scripts/generate_processing_docs.py",
