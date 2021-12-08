@@ -32,7 +32,7 @@ def validate(
         None, help="For collection RDFs only. Defaults to value of 'update-format'."
     ),
     verbose: bool = typer.Option(False, help="show traceback of unexpected (no ValidationError) exceptions"),
-) -> int:
+):
     summary = commands.validate(rdf_source, update_format, update_format_inner)
     if summary["error"] is not None:
         print(f"Error in {summary['name']}:")

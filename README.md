@@ -145,41 +145,52 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
-### Model RDF
- * **0.4.0**
-    - Breaking changes
-      - model inputs and outputs may not use duplicated names.
-      - model field `sha256` is required if `pytorch_state_dict` weights are defined. 
-        and is now moved to the `pytroch_state_dict` entry as `architecture_sha256`.
-    - Breaking changes that are fully auto-convertible
-      - model fields language and framework are removed.
-      - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict` 
-        weights entry (if it exists, otherwise they are removed).
-      - the weight format `pytorch_script` was renamed to `torchscript`.
-    - Other changes
-      - model inputs (like outputs) may be defined by `scale`ing and `offset`ing a `reference_tensor`
-      - a `maintainers` field was added to the model RDF.
-      - the entries in the `authors` field may now additionally contain `email` or `github_user`.
-      - the summary returned by the `validate` command now also contains a list of warnings.
-      - an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
- * **0.3.4**
-   - Other changes
-      - Add optional parameter `eps` to `scale_range` postprocessing. 
- * **0.3.3**
-    - Breaking changes that are fully auto-convertible
-      - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
- * **0.3.2** 
-    - Breaking changes
-      - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
-      - Change `authors` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary `{name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}`;
-      - Add a mandatory `type` field to comply with the general RDF. Only valid value is 'model' for model RDF;
-      - Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/);
-    - Other changes
-      - Add optional `version` field (default 0.1.0) to keep track of model changes;
-      - Allow the values in the `attachments` list to be any values besides URI;
+#### bioimageio.spec 0.4.0.post2
+  - `load_raw_resource_description` accepts `update_to_format` kwarg
+  - `export_resource_package` accepts `update_to_format` kwarg
 
-### general RDF
-* **0.2.1**
-  - Non-breaking changes
-    - add optional `email` and `github_user` fields to entries in `authors`
-    - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
+### RDF Format Versions
+#### collection RDF 0.2.1
+- First official release, extends general RDF with fields `application`, `model`, `dataset`, `notebook` and (nested) 
+  `collection`, which hold lists linking to respective resources.
+
+#### (general) RDF 0.2.1
+- Non-breaking changes
+  - add optional `email` and `github_user` fields to entries in `authors`
+  - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
+
+#### model RDF 0.4.0
+- Breaking changes
+  - model inputs and outputs may not use duplicated names.
+  - model field `sha256` is required if `pytorch_state_dict` weights are defined. 
+    and is now moved to the `pytroch_state_dict` entry as `architecture_sha256`.
+- Breaking changes that are fully auto-convertible
+  - model fields language and framework are removed.
+  - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict` 
+    weights entry (if it exists, otherwise they are removed).
+  - the weight format `pytorch_script` was renamed to `torchscript`.
+- Other changes
+  - model inputs (like outputs) may be defined by `scale`ing and `offset`ing a `reference_tensor`
+  - a `maintainers` field was added to the model RDF.
+  - the entries in the `authors` field may now additionally contain `email` or `github_user`.
+  - the summary returned by the `validate` command now also contains a list of warnings.
+  - an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
+
+#### model RDF 0.3.4
+- Non-breaking changes
+   - Add optional parameter `eps` to `scale_range` postprocessing. 
+
+#### model RDF 0.3.3
+- Breaking changes that are fully auto-convertible
+  - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
+
+#### model RDF 0.3.2 
+- Breaking changes
+  - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
+  - Change `authors` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary `{name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}`;
+  - Add a mandatory `type` field to comply with the general RDF. Only valid value is 'model' for model RDF;
+  - Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/);
+- Other changes
+  - Add optional `version` field (default 0.1.0) to keep track of model changes;
+  - Allow the values in the `attachments` list to be any values besides URI;
+  

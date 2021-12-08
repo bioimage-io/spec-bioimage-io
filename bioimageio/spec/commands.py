@@ -12,11 +12,13 @@ from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model")
 
 
-def update_format(rdf_source: Union[dict, os.PathLike, IO, str, bytes], path: Union[os.PathLike, str]):
-    """Update a BioImageie.IO"""
-    raw = load_raw_resource_description(rdf_source, update_to_current_format=True)
-    if raw.type != "model":
-        raise NotImplementedError(f"update_format is currently only for supported for models, not {raw.type}")
+def update_format(
+    rdf_source: Union[dict, os.PathLike, IO, str, bytes],
+    path: Union[os.PathLike, str],
+    update_to_format: str = "latest",
+):
+    """Update a BioImage.IO resource"""
+    raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
     save_raw_resource_description(raw, Path(path))
 
 
@@ -63,7 +65,7 @@ def validate(
     if error is None:
         with warnings.catch_warnings(record=True) as all_warnings:
             try:
-                raw_rd = load_raw_resource_description(rdf_source, update_to_current_format=update_format)
+                raw_rd = load_raw_resource_description(rdf_source, update_to_format="latest" if update_format else None)
             except ValidationError as e:
                 error = nested_default_dict_as_nested_dict(e.normalized_messages())
             except Exception as e:
