@@ -205,7 +205,6 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
 
 def load_raw_resource_description(
     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
-    update_to_current_format: bool = False,
     update_to_format: Optional[str] = None,
 ) -> RawResourceDescription:
     """load a raw python representation from a BioImage.IO resource description.
@@ -215,23 +214,19 @@ def load_raw_resource_description(
 
     Args:
         source: resource description or resource description file (RDF)
-        update_to_current_format: auto convert content to adhere to the latest appropriate RDF format version
         update_to_format: update resource to specific major.minor format version; ignoring patch version.
     Returns:
         raw BioImage.IO resource
     """
     if isinstance(source, RawResourceDescription):
-        # do serialization round-trip to account for 'update_to_current_format'
+        # do serialization round-trip to account for 'update_to_format'
         source = serialize_raw_resource_description_to_dict(source)
 
     data, source_name, root, type_ = resolve_rdf_source_and_type(source)
     class_name = get_class_name_from_type(type_)
 
     if update_to_format is None:
-        if update_to_current_format:
-            data_version = LATEST
-        else:
-            data_version = data.get("format_version", LATEST)
+        data_version = data.get("format_version", LATEST)
     elif update_to_format == LATEST:
         data_version = LATEST
     else:
