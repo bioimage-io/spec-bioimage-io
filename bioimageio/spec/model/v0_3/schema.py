@@ -613,8 +613,8 @@ is in an unsupported format version. The current format version described here i
             validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
             required=True,
             bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
-            f"required) fields. See [supported_formats_and_operations.md#Weight Format]"
-            f"(https://github.com/bioimage-io/configuration/blob/master/supported_formats_and_operations.md#weight_format). "
+            f"required) fields. See [weight_formats_spec_0_3.md]"
+            f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_3.md). "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
         fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
