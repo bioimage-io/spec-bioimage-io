@@ -3,33 +3,11 @@ import inspect
 from pathlib import Path
 from typing import List, Tuple, Type
 
-import requests
-
 import bioimageio.spec.model
-from bioimageio.spec.shared.fields import DocumentedField
 from bioimageio.spec.shared.schema import SharedProcessingSchema
+from bioimageio.spec.shared.utils import get_ref_url, snake_case_to_camel_case
 
 REFERENCE_IMPLEMENTATIONS_SOURCE = "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
-REFERENCE_IMPLEMENTATIONS_SOURCE_RAW = "https://raw.githubusercontent.com/bioimage-io/core-bioimage-io-python/main/bioimageio/core/prediction_pipeline/_processing.py"
-
-REFERENCE_IMPLEMENTATIONS = requests.get(REFERENCE_IMPLEMENTATIONS_SOURCE_RAW).text
-
-
-def get_ref_impl(name: str) -> str:
-    # returns link to reference implementation
-    start = None
-    nr = 1
-    for nr, line in enumerate(REFERENCE_IMPLEMENTATIONS.split("\n")):
-        if start is None:
-            if line.startswith(f"class {name}("):  # start of ref implementation
-                start = nr
-        elif line and not line.startswith(" "):  # end of indentation block
-            stop = nr
-            break
-    else:
-        stop = nr
-
-    return f"{REFERENCE_IMPLEMENTATIONS_SOURCE}#L{start}-L{stop}"
 
 
 @dataclasses.dataclass
@@ -77,7 +55,9 @@ def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDoc
             name=name,
             description=member.bioimageio_description,
             kwargs=get_kwargs_doc(member),
-            reference_implemation=get_ref_impl(name),
+            reference_implemation=get_ref_url(
+                "class", snake_case_to_camel_case(name), REFERENCE_IMPLEMENTATIONS_SOURCE
+            ),
         )
         for name, member in inspect.getmembers(schema.Preprocessing)
         if inspect.isclass(member) and issubclass(member, SharedProcessingSchema)
@@ -87,7 +67,9 @@ def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDoc
             name=name,
             description=member.bioimageio_description,
             kwargs=get_kwargs_doc(member),
-            reference_implemation=get_ref_impl(name),
+            reference_implemation=get_ref_url(
+                "class", snake_case_to_camel_case(name), REFERENCE_IMPLEMENTATIONS_SOURCE
+            ),
         )
         for name, member in inspect.getmembers(schema.Postprocessing)
         if inspect.isclass(member) and issubclass(member, SharedProcessingSchema)
