@@ -150,7 +150,7 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 #### bioimageio.spec 0.4.0.post2
   - `load_raw_resource_description` accepts `update_to_format` kwarg
-  - `export_resource_package` accepts `update_to_format` kwarg
+
 
 ### RDF Format Versions
 #### collection RDF 0.2.1
