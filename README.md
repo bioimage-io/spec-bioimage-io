@@ -145,6 +145,9 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
+#### bioimageio.spec 0.4.0.post3
+  - `load_raw_resource_description` no longer accepts `update_to_current_format` kwarg (use `update_to_format` instead)
+
 #### bioimageio.spec 0.4.0.post2
   - `load_raw_resource_description` accepts `update_to_format` kwarg
   - `export_resource_package` accepts `update_to_format` kwarg
