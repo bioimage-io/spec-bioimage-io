@@ -87,7 +87,7 @@ def validate(
                         nested_errors[inner_category] = nested_errors.get(inner_category, []) + [inner_summary]
 
             if nested_errors:
-                error = f"Errors in collections of {list(nested_errors)}"
+                error = f"Errors in referenced resources:\n{nested_errors}"
     else:
         validation_warnings = []
 
