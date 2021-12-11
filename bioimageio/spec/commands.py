@@ -57,9 +57,9 @@ def validate(
             source_name = str(rdf_source)
         except Exception as e:
             source_name = str(e)
-
-    if not isinstance(rdf_source, dict):
-        error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source)}: {str(rdf_source)}"
+    else:
+        if not isinstance(rdf_source, dict):
+            error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source)}: {str(rdf_source)}"
 
     raw_rd = None
     if error is None:
