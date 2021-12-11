@@ -42,8 +42,6 @@ class ResourceDescription(RawNode):
     """Bare minimum for resource description nodes usable with the shared IO_Base class.
     This is not part of any specification for the BioImage.IO Model Zoo and, e.g.
     not to be confused with the definition of the general RDF.
-    (Future) RDF nodes do not have to inherit from this node, but will have to account for deviations in their IO
-    implementation.
     """
 
     format_version: str = missing
@@ -153,6 +151,16 @@ class ImportableModule(RawNode):
 
 
 @dataclass
+class LocalImportableModule(ImportableModule):
+    """intermediate between raw_nodes.ImportableModule and core.resource_io.nodes.ImportedSource.
+
+    Used by SourceNodeTransformer
+    """
+
+    root_path: pathlib.Path = missing
+
+
+@dataclass
 class ImportableSourceFile(RawNode):
     _include_in_package = ("source_file",)
 
@@ -163,4 +171,14 @@ class ImportableSourceFile(RawNode):
         return f"{self.source_file}:{self.callable_name}"
 
 
-ImportableSource = Union[ImportableModule, ImportableSourceFile]
+@dataclass
+class ResolvedImportableSourceFile(ImportableSourceFile):
+    """intermediate between raw_nodes.ImportableSourceFile and core.resource_io.nodes.ImportedSource.
+
+    Used by SourceNodeTransformer
+    """
+
+    source_file: pathlib.Path = missing
+
+
+ImportableSource = Union[ImportableModule, ImportableSourceFile, ResolvedImportableSourceFile, LocalImportableModule]

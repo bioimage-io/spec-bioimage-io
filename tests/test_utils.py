@@ -15,7 +15,7 @@ class MyNode(raw_nodes.RawNode):
 
 def test_iter_fields():
     entry = MyNode("a", 42)
-    assert [("field_a", "a"), ("field_b", 42)] == list(utils.iter_fields(entry))
+    assert [("field_a", "a"), ("field_b", 42)] == list(utils._node_transformer.iter_fields(entry))
 
 
 @dataclass
