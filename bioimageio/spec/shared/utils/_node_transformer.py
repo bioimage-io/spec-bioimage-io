@@ -126,7 +126,11 @@ class RawNodePackageTransformer(NodeTransformer):
             if resource.is_absolute():
                 folder_in_package = ""
             else:
-                folder_in_package = resource.parent.as_posix() + "/"
+                if resource.parent.as_posix() == ".":
+                    folder_in_package = ""
+                else:
+                    folder_in_package = resource.parent.as_posix() + "/"
+
                 resource = self.root / resource
 
         elif isinstance(resource, raw_nodes.URI):

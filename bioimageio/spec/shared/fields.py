@@ -248,7 +248,8 @@ class Dependencies(String):  # todo: check format of dependency string
 
         dep_str = super()._deserialize(*args, **kwargs)
         try:
-            data = dict(zip(["manager", "file"], dep_str.split(":")))
+            manager, *file_parts = dep_str.split(":")
+            data = dict(manager=manager, file=":".join(file_parts))
             ret = schema.Dependencies().load(data)
         except Exception as e:
             raise ValidationError(f"Invalid dependency: {dep_str} ({e})")
@@ -291,17 +292,24 @@ class ImportableSource(String):
             return raw_nodes.ImportableModule(callable_name=object_name, module_name=module_name)
 
         elif self._is_filepath(source_str):
-            if source_str.startswith("/"):
-                raise ValidationError("Only relative paths are allowed")
+            *module_uri_parts, object_name = source_str.split(":")
+            module_uri = ":".join(module_uri_parts).strip(":")
 
-            parts = source_str.replace("::", ":").split(":")
-            if len(parts) != 2:
-                raise ValidationError("Incorrect source_file format, expected example.py:ClassName")
-
-            module_uri, object_name = parts
-
+            source_file_field = Union(
+                [
+                    URL(),
+                    RelativeLocalPath(
+                        validate=field_validators.Attribute(
+                            "suffix",
+                            field_validators.Equal(
+                                ".py", error="{!r} is invalid; expected python source file with '.py' extension."
+                            ),
+                        )
+                    ),
+                ]
+            )
             return raw_nodes.ImportableSourceFile(
-                callable_name=object_name, source_file=Union([URI(), RelativeLocalPath()]).deserialize(module_uri)
+                callable_name=object_name, source_file=source_file_field.deserialize(module_uri)
             )
         else:
             raise ValidationError(source_str)

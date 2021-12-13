@@ -1,5 +1,5 @@
 # TODO physical scale of the data
-format_version: 0.4.1
+format_version: 0.4.0
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -26,7 +26,7 @@ git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_spec
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 
-documentation: README.md  # may also be a url
+documentation: README.md
 covers: [cover0.png]
 attachments: {}
 timestamp: 2019-12-11T12:22:32Z  # ISO 8601
@@ -56,6 +56,8 @@ outputs:
       scale: [1.0, 1.0, 1.0, 1.0]
       offset: [0.0, 0.0, 0.0, 0.0]
 
+dependencies: conda:environment.yaml
+
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
 
@@ -73,7 +75,6 @@ weights:
    architecture: unet2d.py:UNet2d
    architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
    kwargs: {input_channels: 1, output_channels: 1}
-   dependencies: conda:environment.yaml
  onnx:
    sha256: 5bf14c4e65e8601ab551db99409ba7981ff0e501719bc2b0ee625ca9a9375b32
    source: weights.onnx

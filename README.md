@@ -145,6 +145,9 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
+#### bioimageio.spec 0.4.1.post0
+  - new model spec 0.3.5 and 0.4.1
+
 #### bioimageio.spec 0.4.0.post3
   - `load_raw_resource_description` no longer accepts `update_to_current_format` kwarg (use `update_to_format` instead)
 
@@ -161,6 +164,16 @@ or if the field `test_inputs` does not contain a list, it would print:
 - Non-breaking changes
   - add optional `email` and `github_user` fields to entries in `authors`
   - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
+
+#### model RDF 0.4.1
+- Breaking changes that are fuly auto-convertible
+  - moved field `dependencies` to `weights:pytorch_state_dict:dependencies`
+- Non-breaking changes
+  - `documentation` field accepts URLs as well
+
+#### model RDF 0.3.5
+- Non-breaking changes
+  - `documentation` field accepts URLs as well
 
 #### model RDF 0.4.0
 - Breaking changes

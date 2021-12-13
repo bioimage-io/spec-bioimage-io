@@ -184,6 +184,11 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
         + _common_sha256_hint
         + " This field is only required if the architecture points to a source file.",
     )
+    dependencies = fields.Dependencies(  # todo: add validation (0.4.2?)
+        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
+        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
+    )
+
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
@@ -259,11 +264,18 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
-    documentation = fields.RelativeLocalPath(
-        validate=field_validators.Attribute(
-            "suffix",
-            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
-        ),
+    documentation = fields.Union(
+        [
+            fields.URL(),
+            fields.RelativeLocalPath(
+                validate=field_validators.Attribute(
+                    "suffix",
+                    field_validators.Equal(
+                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
+                    ),
+                )
+            ),
+        ],
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
         "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
@@ -271,11 +283,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     download_url = missing_  # todo: allow download_url for Model (RDF has it)
-
-    dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
-        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
-        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
-    )
 
     format_version = fields.String(
         validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),

@@ -16,6 +16,7 @@ from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
     get_class_name_from_type,
     get_format_version_module,
+    get_latest_format_version,
     get_latest_format_version_module,
     yaml,
 )
@@ -25,9 +26,12 @@ from bioimageio.spec.shared.utils import (
     GenericRawNode,
     GenericRawRD,
     PathToRemoteUriTransformer,
+    RDF_NAMES,
     RawNodePackageTransformer,
+    resolve_rdf_source,
+    resolve_rdf_source_and_type,
+    resolve_source,
 )
-from bioimageio.spec.shared.utils import RDF_NAMES, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 
 try:
     from typing import Protocol
@@ -120,10 +124,6 @@ def _replace_relative_paths_for_remote_source(
 ) -> RawResourceDescription:
     if isinstance(root, raw_nodes.URI):
         # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
-        warnings.warn(
-            f"changing file paths in RDF to URIs due to a remote {root.scheme} source "
-            "(may result in an invalid node)"
-        )
         raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
         root_path = pathlib.Path()  # root_path cannot be URI
     elif isinstance(root, pathlib.Path):
@@ -156,11 +156,22 @@ def load_raw_resource_description(
     Returns:
         raw BioImage.IO resource
     """
+    root = None
     if isinstance(source, RawResourceDescription):
-        # do serialization round-trip to account for 'update_to_format'
-        source = serialize_raw_resource_description_to_dict(source)
+        if update_to_format == "latest":
+            update_to_format = get_latest_format_version(source.type)
 
-    data, source_name, root, type_ = resolve_rdf_source_and_type(source)
+        if update_to_format is not None and source.format_version != update_to_format:
+            # do serialization round-trip to account for 'update_to_format' but keep root_path
+            root = source.root_path
+            source = serialize_raw_resource_description_to_dict(source)
+        else:
+            return source
+
+    data, source_name, _root, type_ = resolve_rdf_source_and_type(source)
+    if root is None:
+        root = _root
+
     class_name = get_class_name_from_type(type_)
 
     if update_to_format is None:
@@ -223,7 +234,9 @@ def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.
 
 
 def get_resource_package_content_wo_rdf(
-    raw_rd: GenericRawRD, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: Union[GenericRawRD, raw_nodes.URI, str, pathlib.Path],
+    *,
+    weights_priority_order: Optional[Sequence[str]] = None,  # model only
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
@@ -237,7 +250,9 @@ def get_resource_package_content_wo_rdf(
         keyed by file names.
         Important note: the serialized rdf.yaml is not included.
     """
-    assert isinstance(raw_rd, raw_nodes.ResourceDescription)
+    if not isinstance(raw_rd, raw_nodes.ResourceDescription):
+        raw_rd = load_raw_resource_description(raw_rd)
+
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
     if raw_rd.type == "model":
         filter_kwargs = dict(weights_priority_order=weights_priority_order)
@@ -253,7 +268,9 @@ def get_resource_package_content_wo_rdf(
 
 
 def get_resource_package_content(
-    raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: Union[GenericRawNode, raw_nodes.URI, str, pathlib.Path],
+    *,
+    weights_priority_order: Optional[Sequence[str]] = None,  # model only
 ) -> Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]:
     """
     Args:
