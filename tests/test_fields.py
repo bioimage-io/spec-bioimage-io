@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import numpy
 import pytest
-from marshmallow import ValidationError
+from marshmallow import Schema, ValidationError
 from numpy.testing import assert_equal
 from pytest import raises
 
@@ -120,3 +120,24 @@ class TestRelativeLocalPath:
         actual = fields.RelativeLocalPath().deserialize(fname)
         assert isinstance(actual, pathlib.Path)
         assert actual == expected
+
+
+class TestDependencies:
+    class MinimalSchema(Schema):
+        dep = fields.Dependencies()
+
+    def test_url_roundtrip(self):
+        manager = "conda"
+        file = "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/environment.yaml"
+        dep_input = dict(dep=f"{manager}:{file}")
+        s = self.MinimalSchema()
+
+        node = s.load(dep_input)
+        dep = node["dep"]
+        assert isinstance(dep, raw_nodes.Dependencies)
+        assert dep.manager == manager
+        assert isinstance(dep.file, raw_nodes.URI)
+        assert str(dep.file) == file
+
+        dep_serialized = s.dump(node)
+        assert dep_serialized == dep_input
