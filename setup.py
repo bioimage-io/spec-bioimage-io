@@ -26,12 +26,13 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "numpy",
         "marshmallow-jsonschema",
         "marshmallow-union",
         "marshmallow>=3.6.0,<4.0",
+        "numpy",
         "requests;platform_system!='Emscripten'",
         "ruamel.yaml;platform_system!='Emscripten'",
+        "tqdm;platform_system!='Emscripten'",
         "typer",
         "typing-extensions",
     ],

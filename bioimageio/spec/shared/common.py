@@ -11,14 +11,12 @@ except ImportError:
 
 
 try:
-    from ruamel.yaml import YAML
+    from ruamel.yaml import YAML  # not available in pyodide
 except ImportError:
     yaml: Optional["YAML"] = None
 else:
     yaml = YAML(typ="safe")
 
-
-DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")

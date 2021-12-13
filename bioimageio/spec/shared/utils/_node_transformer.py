@@ -1,22 +1,19 @@
-import ast
 import dataclasses
 import os
 import pathlib
-import sys
 import typing
-from urllib.parse import urlparse
-
-import requests
 
 from marshmallow import missing
 
-from . import raw_nodes
+from bioimageio.spec.shared import raw_nodes
+from ._resolve_source import resolve_source
 
 try:
     from typing import Literal
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
+GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=raw_nodes.RawNode)
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
 URI_Type = typing.TypeVar("URI_Type", bound=raw_nodes.URI)
@@ -108,14 +105,6 @@ class PathToRemoteUriTransformer(NodeTransformer):
         return self._transform_Path(leaf)
 
 
-def is_valid_orcid_id(orcid_id: str):
-    """adapted from stdnum.iso7064.mod_11_2.checksum()"""
-    check = 0
-    for n in orcid_id:
-        check = (2 * check + int(10 if n == "X" else n)) % 11
-    return check == 1
-
-
 class RawNodePackageTransformer(NodeTransformer):
     """Transforms raw node fields specified by <node>._include_in_package to local relative paths.
     Adds remote resources to given dictionary."""
@@ -178,45 +167,29 @@ class RawNodePackageTransformer(NodeTransformer):
             return super().generic_transformer(node)
 
 
-def _is_path(s: typing.Any) -> bool:
-    if not isinstance(s, (str, os.PathLike)):
-        return False
+class UriNodeTransformer(NodeTransformer):
+    def __init__(self, *, root_path: os.PathLike):
+        self.root_path = pathlib.Path(root_path).resolve()
 
-    try:
-        return pathlib.Path(s).exists()
-    except OSError:
-        return False
+    def transform_URI(self, node: raw_nodes.URI) -> pathlib.Path:
+        local_path = resolve_source(node, root_path=self.root_path)
+        return local_path
 
+    def transform_ImportableSourceFile(
+        self, node: raw_nodes.ImportableSourceFile
+    ) -> raw_nodes.ResolvedImportableSourceFile:
+        return raw_nodes.ResolvedImportableSourceFile(
+            source_file=resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
+        )
 
-def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url: str) -> str:
-    """get github url with line range fragment to reference implementation from non-raw github file url
+    def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> raw_nodes.LocalImportableModule:
+        return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
 
-    example:
-    >>> get_ref_url("class", "Binarize", "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py")
-    https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L107-L112
-    """
-    assert not urlparse(github_file_url).fragment, "unexpected url fragment"
-    look_for = {"class": ast.ClassDef, "function": ast.FunctionDef}[type_]
-    raw_github_file_url = github_file_url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
-    code = requests.get(raw_github_file_url).text
-    tree = ast.parse(code)
+    def _transform_Path(self, leaf: pathlib.Path):
+        return self.root_path / leaf
 
-    for d in tree.body:
-        if isinstance(d, look_for):
-            assert hasattr(d, "name")
-            if d.name == name:  # type: ignore
-                assert hasattr(d, "decorator_list")
-                start = d.decorator_list[0].lineno if d.decorator_list else d.lineno  # type: ignore
-                if sys.version_info >= (3, 8):
-                    stop = d.end_lineno
-                else:
-                    stop = d.lineno + 1
-                break
-    else:
-        raise ValueError(f"{type_} {name} not found in {github_file_url}")
+    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> pathlib.Path:
+        return self._transform_Path(leaf)
 
-    return f"{github_file_url}#L{start}-L{stop}"
-
-
-def snake_case_to_camel_case(string: str) -> str:
-    return "".join([s.title() for s in string.split("_")])
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> pathlib.Path:
+        return self._transform_Path(leaf)

@@ -4,18 +4,16 @@ which is a python dataclass
 """
 import os
 import pathlib
-import re
 import warnings
 import zipfile
-from io import BytesIO, StringIO
+from hashlib import sha256
+from io import StringIO
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
-from marshmallow import ValidationError
-
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
-    DOI_REGEX,
+    BIOIMAGEIO_CACHE_PATH,
     get_class_name_from_type,
     get_format_version_module,
     get_latest_format_version_module,
@@ -23,7 +21,13 @@ from bioimageio.spec.shared.common import (
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import GenericRawNode, GenericRawRD, RawNodePackageTransformer, _is_path
+from bioimageio.spec.shared.utils import (
+    GenericRawNode,
+    GenericRawRD,
+    PathToRemoteUriTransformer,
+    RawNodePackageTransformer,
+)
+from bioimageio.spec.shared.utils import RDF_NAMES, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 
 try:
     from typing import Protocol
@@ -32,143 +36,6 @@ except ImportError:
 
 
 LATEST = "latest"
-RDF_NAMES = ("rdf.yaml", "model.yaml")
-
-
-def resolve_rdf_source(
-    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI]
-) -> Tuple[dict, str, Union[pathlib.Path, raw_nodes.URI, bytes]]:
-    # reduce possible source types
-    if isinstance(source, (BytesIO, StringIO)):
-        source = source.read()
-    elif isinstance(source, os.PathLike):
-        source = pathlib.Path(source)
-    elif isinstance(source, raw_nodes.URI):
-        source = str(raw_nodes.URI)
-
-    assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
-
-    if isinstance(source, pathlib.Path):
-        source_name = str(source)
-        root: Union[pathlib.Path, raw_nodes.URI, bytes] = source.parent
-    elif isinstance(source, dict):
-        source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
-        root = pathlib.Path()
-    elif isinstance(source, (str, bytes)):
-        source_name = str(source[:20]) + "..."
-        # string might be path or yaml string; for yaml string (or bytes) set root to cwd
-
-        if _is_path(source):
-            assert isinstance(source, (str, os.PathLike))
-            root = pathlib.Path(source).parent
-        else:
-            root = pathlib.Path()
-    else:
-        raise TypeError(source)
-
-    if isinstance(source, str):
-        # source might be doi, url or file path -> resolve to pathlib.Path
-        if re.fullmatch(DOI_REGEX, source):  # turn doi into url
-            import requests
-            from urllib.request import urlopen
-
-            zenodo_prefix = "10.5281/zenodo."
-            zenodo_record_api = "https://zenodo.org/api/records"
-            zenodo_sandbox_prefix = "10.5072/zenodo."
-            zenodo_sandbox_record_api = "https://sandbox.zenodo.org/api/records"
-            is_zenodo_doi = False
-            if source.startswith(zenodo_prefix):
-                is_zenodo_doi = True
-            elif source.startswith(zenodo_sandbox_prefix):
-                # zenodo sandbox doi (which is not a valid doi)
-                zenodo_prefix = zenodo_sandbox_prefix
-                zenodo_record_api = zenodo_sandbox_record_api
-                is_zenodo_doi = True
-
-            if is_zenodo_doi:
-                record_id = source[len(zenodo_prefix) :]
-                response = requests.get(f"{zenodo_record_api}/{record_id}")
-                if not response.ok:
-                    raise RuntimeError(response.status_code)
-
-                zenodo_record = response.json()
-                for rdf_name in RDF_NAMES:
-                    for f in zenodo_record["files"]:
-                        if f["key"] == rdf_name:
-                            source = f["links"]["self"]
-                            break
-                    else:
-                        continue
-
-                    break
-                else:
-                    raise ValidationError(f"No RDF found; looked for {RDF_NAMES}")
-
-            else:
-                # resolve doi
-                # todo: make sure the resolved url points to a rdf.yaml or a zipped package
-                response = urlopen(f"https://doi.org/{source}?type=URL")
-                source = response.url
-                assert isinstance(source, str)
-                if not (source.endswith(".yaml") or source.endswith(".zip")):
-                    raise NotImplementedError(
-                        f"Resolved doi {source_name} to {source}, but don't know where to find 'rdf.yaml' "
-                        f"or a packaged resource zip file."
-                    )
-
-        assert isinstance(source, str)
-        if source.startswith("http"):
-            from urllib.request import urlretrieve
-
-            root = raw_nodes.URI(uri_string=source)
-            source, resp = urlretrieve(source)
-            # todo: check http response code
-
-        if _is_path(source):
-            source = pathlib.Path(source)
-
-    if isinstance(source, (pathlib.Path, str, bytes)):
-        # source is either:
-        #   - a file path (to a yaml or a packaged zip)
-        #   - a yaml string,
-        #   - or yaml file or zip package content as bytes
-
-        if yaml is None:
-            raise RuntimeError(f"Cannot read RDF from {source_name} without ruamel.yaml dependency!")
-
-        if isinstance(source, bytes):
-            potential_package: Union[pathlib.Path, IO, str] = BytesIO(source)
-            potential_package.seek(0)  # type: ignore
-        else:
-            potential_package = source
-
-        if zipfile.is_zipfile(potential_package):
-            with zipfile.ZipFile(potential_package) as zf:
-                for rdf_name in RDF_NAMES:
-                    if rdf_name in zf.namelist():
-                        break
-                else:
-                    raise ValueError(f"Missing 'rdf.yaml' in package {source_name}")
-
-                assert isinstance(source, (pathlib.Path, bytes))
-                root = source
-                source = BytesIO(zf.read(rdf_name))
-
-        source = yaml.load(source)
-
-    assert isinstance(source, dict)
-    return source, source_name, root
-
-
-def resolve_rdf_source_and_type(
-    source: Union[os.PathLike, str, dict, raw_nodes.URI]
-) -> Tuple[dict, str, Union[pathlib.Path, raw_nodes.URI, bytes], str]:
-    data, source_name, root = resolve_rdf_source(source)
-
-    type_ = data.get("type", "model")  # todo: remove model type default
-    if type_ == "dataset":
-        type_ = "rdf"
-    return data, source_name, root, type_
 
 
 class ConvertersModule(Protocol):
@@ -201,6 +68,77 @@ def _get_spec_submodule(type_: str, data_version: str = LATEST) -> SpecSubmodule
         sub_spec = get_format_version_module(type_, data_version)
 
     return sub_spec
+
+
+def extract_resource_package(
+    source: Union[os.PathLike, IO, str, bytes, raw_nodes.URI]
+) -> Tuple[dict, str, pathlib.Path]:
+    """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
+    source, source_name, root = resolve_rdf_source(source)
+    if isinstance(root, bytes):
+        raise NotImplementedError("package source was bytes")
+
+    cache_folder = BIOIMAGEIO_CACHE_PATH / "extracted_packages"
+    cache_folder.mkdir(exist_ok=True, parents=True)
+
+    package_path = cache_folder / sha256(str(root).encode("utf-8")).hexdigest()
+    if isinstance(root, raw_nodes.URI):
+        for rdf_name in RDF_NAMES:
+            if (package_path / rdf_name).exists():
+                download = None
+                break
+        else:
+            download = resolve_source(root)
+
+        local_source = download
+    else:
+        download = None
+        local_source = root
+
+    if local_source is not None:
+        with zipfile.ZipFile(local_source) as zf:
+            zf.extractall(package_path)
+
+    for rdf_name in RDF_NAMES:
+        if (package_path / rdf_name).exists():
+            break
+    else:
+        raise FileNotFoundError(f"Missing 'rdf.yaml' in {root} extracted from {download}")
+
+    if download is not None:
+        try:
+            os.remove(download)
+        except Exception as e:
+            warnings.warn(f"Could not remove download {download} due to {e}")
+
+    assert isinstance(package_path, pathlib.Path)
+    return source, source_name, package_path
+
+
+def _replace_relative_paths_for_remote_source(
+    raw_rd: RawResourceDescription, root: Union[pathlib.Path, raw_nodes.URI, bytes]
+) -> RawResourceDescription:
+    if isinstance(root, raw_nodes.URI):
+        # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
+        warnings.warn(
+            f"changing file paths in RDF to URIs due to a remote {root.scheme} source "
+            "(may result in an invalid node)"
+        )
+        raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
+        root_path = pathlib.Path()  # root_path cannot be URI
+    elif isinstance(root, pathlib.Path):
+        if zipfile.is_zipfile(root):
+            _, _, root_path = extract_resource_package(root)
+        else:
+            root_path = root
+    elif isinstance(root, bytes):
+        raise NotImplementedError("root as bytes (io)")
+    else:
+        raise TypeError(root)
+
+    assert isinstance(root_path, pathlib.Path)
+    raw_rd.root_path = root_path.resolve()
+    return raw_rd
 
 
 def load_raw_resource_description(
@@ -243,6 +181,9 @@ def load_raw_resource_description(
     data = sub_spec.converters.maybe_convert(data)
     raw_rd = schema.load(data)
     raw_rd.root_path = root
+
+    raw_rd = _replace_relative_paths_for_remote_source(raw_rd, raw_rd.root_path)
+
     return raw_rd
 
 
