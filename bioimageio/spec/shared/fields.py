@@ -248,7 +248,8 @@ class Dependencies(String):  # todo: check format of dependency string
 
         dep_str = super()._deserialize(*args, **kwargs)
         try:
-            data = dict(zip(["manager", "file"], dep_str.split(":")))
+            manager, *file_parts = dep_str.split(":")
+            data = dict(manager=manager, file=":".join(file_parts))
             ret = schema.Dependencies().load(data)
         except Exception as e:
             raise ValidationError(f"Invalid dependency: {dep_str} ({e})")
