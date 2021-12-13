@@ -48,6 +48,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if major == 0 and minor < 4:
         data = convert_model_from_v0_3(data)
 
+    if data["format_version"] == "0.4.0":
+        data["format_version"] = "0.4.1"
+
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
     if config.get("future") == {}:
