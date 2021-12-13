@@ -10,7 +10,6 @@ from io import BytesIO, StringIO
 from urllib.request import url2pathname
 
 from marshmallow import ValidationError
-from tqdm import tqdm
 
 from bioimageio.spec.shared import fields, raw_nodes, yaml
 from bioimageio.spec.shared.common import BIOIMAGEIO_CACHE_PATH
@@ -63,7 +62,7 @@ def resolve_rdf_source(
     if isinstance(source, str):
         # source might be doi, url or file path -> resolve to pathlib.Path
         if re.fullmatch(DOI_REGEX, source):  # turn doi into url
-            import requests
+            import requests  # not available in pyodide
             from urllib.request import urlopen
 
             zenodo_prefix = "10.5281/zenodo."
@@ -307,7 +306,7 @@ def resolve_local_source(
 
 
 def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_path: pathlib.Path) -> bool:
-    import requests
+    import requests  # not available in pyodide
 
     local_path_or_remote_uri = resolve_local_source(source, root_path)
     if isinstance(local_path_or_remote_uri, raw_nodes.URI):
@@ -333,9 +332,11 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
     else:
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
-        import requests
+        import requests  # not available in pyodide
+        from tqdm import tqdm  # not available in pyodide
 
         try:
+
             # download with tqdm adapted from:
             # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
             # Streaming, so we can iterate over the response.

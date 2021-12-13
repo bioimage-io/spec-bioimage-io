@@ -11,7 +11,7 @@ except ImportError:
 
 
 try:
-    from ruamel.yaml import YAML
+    from ruamel.yaml import YAML  # not available in pyodide
 except ImportError:
     yaml: Optional["YAML"] = None
 else:

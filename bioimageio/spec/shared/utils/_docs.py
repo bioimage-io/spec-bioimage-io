@@ -20,7 +20,7 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     >>> get_ref_url("class", "Binarize", "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py")
     https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L107-L112
     """
-    import requests
+    import requests  # not available in pyodide
 
     assert not urlparse(github_file_url).fragment, "unexpected url fragment"
     look_for = {"class": ast.ClassDef, "function": ast.FunctionDef}[type_]
