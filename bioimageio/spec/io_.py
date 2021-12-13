@@ -154,7 +154,7 @@ def load_raw_resource_description(
     """
     root = None
     if isinstance(source, RawResourceDescription):
-        if source.format_version != update_to_format:
+        if update_to_format is not None and source.format_version != update_to_format:
             # do serialization round-trip to account for 'update_to_format' but keep root_path
             root = source.root_path
             source = serialize_raw_resource_description_to_dict(source)

@@ -112,6 +112,16 @@ class TestUnion:
             assert isinstance(e, ValidationError)
             assert len(e.messages) == 3, e.messages
 
+    def test_union_with_absolute_path(self):
+        class DummySchema(Schema):
+            source = fields.Union([fields.URI(), fields.RelativeLocalPath()])  # we use this case in a lot of places
+
+        s = DummySchema()
+        data = dict(source="C:/repos")
+
+        with pytest.raises(ValidationError):
+            s.load(data)
+
 
 class TestRelativeLocalPath:
     def test_simple_file_name(self):
