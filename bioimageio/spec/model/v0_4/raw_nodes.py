@@ -45,7 +45,7 @@ PostprocessingName = PostprocessingName
 Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
-FormatVersion = Literal["0.4.0"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal["0.4.0", "0.4.1"]  # newest format needs to be last (used in __init__.py)
 WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
