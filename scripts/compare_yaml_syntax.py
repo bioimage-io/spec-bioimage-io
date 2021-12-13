@@ -16,7 +16,7 @@ try:
         @staticmethod
         def load(path: Path):
             with path.open() as f:
-                return _pyyaml_yaml.load(f)
+                return _pyyaml_yaml.load(f, None)
 
 
 except ImportError:
