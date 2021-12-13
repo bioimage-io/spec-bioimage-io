@@ -16,6 +16,7 @@ from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
     get_class_name_from_type,
     get_format_version_module,
+    get_latest_format_version,
     get_latest_format_version_module,
     yaml,
 )
@@ -25,9 +26,12 @@ from bioimageio.spec.shared.utils import (
     GenericRawNode,
     GenericRawRD,
     PathToRemoteUriTransformer,
+    RDF_NAMES,
     RawNodePackageTransformer,
+    resolve_rdf_source,
+    resolve_rdf_source_and_type,
+    resolve_source,
 )
-from bioimageio.spec.shared.utils import RDF_NAMES, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 
 try:
     from typing import Protocol
@@ -154,6 +158,9 @@ def load_raw_resource_description(
     """
     root = None
     if isinstance(source, RawResourceDescription):
+        if update_to_format == "latest":
+            update_to_format = get_latest_format_version(source.type)
+
         if update_to_format is not None and source.format_version != update_to_format:
             # do serialization round-trip to account for 'update_to_format' but keep root_path
             root = source.root_path
