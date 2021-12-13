@@ -120,10 +120,6 @@ def _replace_relative_paths_for_remote_source(
 ) -> RawResourceDescription:
     if isinstance(root, raw_nodes.URI):
         # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
-        warnings.warn(
-            f"changing file paths in RDF to URIs due to a remote {root.scheme} source "
-            "(may result in an invalid node)"
-        )
         raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
         root_path = pathlib.Path()  # root_path cannot be URI
     elif isinstance(root, pathlib.Path):
