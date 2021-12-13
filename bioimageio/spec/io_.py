@@ -219,7 +219,9 @@ def save_raw_resource_description(raw_rd: RawResourceDescription, path: pathlib.
 
 
 def get_resource_package_content_wo_rdf(
-    raw_rd: GenericRawRD, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: Union[GenericRawRD, raw_nodes.URI, str, pathlib.Path],
+    *,
+    weights_priority_order: Optional[Sequence[str]] = None,  # model only
 ) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
@@ -233,7 +235,9 @@ def get_resource_package_content_wo_rdf(
         keyed by file names.
         Important note: the serialized rdf.yaml is not included.
     """
-    assert isinstance(raw_rd, raw_nodes.ResourceDescription)
+    if not isinstance(raw_rd, raw_nodes.ResourceDescription):
+        raw_rd = load_raw_resource_description(raw_rd)
+
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
     if raw_rd.type == "model":
         filter_kwargs = dict(weights_priority_order=weights_priority_order)
@@ -249,7 +253,9 @@ def get_resource_package_content_wo_rdf(
 
 
 def get_resource_package_content(
-    raw_rd: GenericRawNode, *, weights_priority_order: Optional[Sequence[str]] = None  # model only
+    raw_rd: Union[GenericRawNode, raw_nodes.URI, str, pathlib.Path],
+    *,
+    weights_priority_order: Optional[Sequence[str]] = None,  # model only
 ) -> Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]:
     """
     Args:
