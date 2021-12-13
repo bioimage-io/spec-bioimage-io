@@ -1,5 +1,5 @@
 # TODO physical scale of the data
-format_version: 0.4.1
+format_version: 0.4.0
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -26,7 +26,7 @@ git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_spec
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 
-documentation: README.md  # may also be a url
+documentation: README.md
 covers: [cover0.png]
 attachments: {}
 timestamp: 2019-12-11T12:22:32Z  # ISO 8601
