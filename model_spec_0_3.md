@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.3.4
+# BioImage.IO Model Resource Description File Specification 0.3.5
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we called Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.3.4
+0.3.5
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
   * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
@@ -26,7 +26,9 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="cite:doi"></a>`doi` _optional* String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
 * <a id="description"></a>`description` _String_ A string containing a brief description.
-* <a id="documentation"></a>`documentation` _RelativeLocalPath→Path_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+* <a id="documentation"></a>`documentation` _Union\[URL→URI | RelativeLocalPath→Path\]_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+  1. _optional URL→URI_ 
+  1. _optional RelativeLocalPath→Path_ 
 * <a id="license"></a>`license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * <a id="name"></a>`name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
 * <a id="tags"></a>`tags` _List\[String\]_ A list of tags.

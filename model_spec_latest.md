@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.0
+# BioImage.IO Model Resource Description File Specification 0.4.1
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.4.0
+0.4.1
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
   * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
@@ -26,7 +26,9 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="cite:doi"></a>`doi` _optional* String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
 * <a id="description"></a>`description` _String_ A string containing a brief description.
-* <a id="documentation"></a>`documentation` _RelativeLocalPath→Path_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+* <a id="documentation"></a>`documentation` _Union\[URL→URI | RelativeLocalPath→Path\]_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
+  1. _optional URL→URI_ 
+  1. _optional RelativeLocalPath→Path_ 
 * <a id="inputs"></a>`inputs` _List\[InputTensor\]_ Describes the input tensors expected by this model.
   1. _InputTensor_   is a Dict with the following keys:
   * <a id="inputs:axes"></a>`axes` _Axes→String_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
@@ -116,7 +118,6 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   1. _optional Union\[URL→URI | RelativeLocalPath→Path\]_ 
   1. _optional URL→URI_ 
   1. _optional RelativeLocalPath→Path_ 
-* <a id="dependencies"></a>`dependencies` _optional Dependencies→String_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
 * <a id="download_url"></a>`download_url` _optional URL→URI_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional URL→URI_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource

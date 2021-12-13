@@ -355,17 +355,21 @@
                     "title": "covers",
                     "type": "array"
                 },
-                "dependencies": {
-                    "title": "dependencies",
-                    "type": "string"
-                },
                 "description": {
                     "title": "description",
                     "type": "string"
                 },
                 "documentation": {
-                    "title": "documentation",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "download_url": {
                     "title": "download_url",
@@ -373,7 +377,8 @@
                 },
                 "format_version": {
                     "enum": [
-                        "0.4.0"
+                        "0.4.0",
+                        "0.4.1"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -1349,6 +1354,10 @@
                     },
                     "title": "authors",
                     "type": "array"
+                },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
                 },
                 "kwargs": {
                     "additionalProperties": {},

@@ -45,6 +45,7 @@ For example: `my_function.py:MyImplementation` or `bioimageio.core.some_module.s
       ```
 
  This field is only required if the architecture points to a source file.
+    - `[dependencies]` Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
     - `[kwargs]` Keyword arguments for the implementation specified by `architecture`.
 - `tensorflow_js` Tensorflow Javascript weights format
   - key word arguments:
