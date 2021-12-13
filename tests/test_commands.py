@@ -2,10 +2,7 @@ import zipfile
 from copy import copy
 from io import BytesIO, StringIO
 
-import pytest
-
 from bioimageio.spec import load_raw_resource_description
-from bioimageio.spec.exceptions import UnconvertibleError
 from bioimageio.spec.model import format_version
 
 

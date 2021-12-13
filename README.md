@@ -166,6 +166,8 @@ or if the field `test_inputs` does not contain a list, it would print:
   - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
 
 #### model RDF 0.4.1
+- Breaking changes that are fuly auto-convertible
+  - moved field `dependencies` to `weights:pytorch_state_dict:dependencies`
 - Non-breaking changes
   - `documentation` field accepts URLs as well
 

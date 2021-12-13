@@ -58,6 +58,7 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
     architecture: ImportableSource = missing
     architecture_sha256: Union[_Missing, str] = missing
+    dependencies: Union[_Missing, Dependencies] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
@@ -80,7 +81,6 @@ WeightsEntry = Union[
 class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs", "sample_inputs", "sample_outputs")
 
-    dependencies: Union[_Missing, Dependencies] = missing
     format_version: FormatVersion = missing
     inputs: List[InputTensor] = missing
     license: str = missing

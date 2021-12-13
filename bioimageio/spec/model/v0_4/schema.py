@@ -184,6 +184,11 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
         + _common_sha256_hint
         + " This field is only required if the architecture points to a source file.",
     )
+    dependencies = fields.Dependencies(  # todo: add validation (0.4.2?)
+        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
+        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
+    )
+
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
@@ -278,11 +283,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     )
 
     download_url = missing_  # todo: allow download_url for Model (RDF has it)
-
-    dependencies = fields.Dependencies(  # todo: add validation (0.4.0?)
-        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
-        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
-    )
 
     format_version = fields.String(
         validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),
