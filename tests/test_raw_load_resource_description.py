@@ -8,6 +8,14 @@ def test_load_raw_model(unet2d_nuclei_broad_any):
     assert raw_model
 
 
+def test_loaded_remote_raw_model_is_valid(unet2d_nuclei_broadl_url):
+    from bioimageio.spec import load_raw_resource_description
+
+    raw_model = load_raw_resource_description(unet2d_nuclei_broadl_url)
+    raw_model = load_raw_resource_description(raw_model)
+    assert raw_model
+
+
 def test_load_raw_model_fixed_shape(unet2d_fixed_shape):
     from bioimageio.spec import load_raw_resource_description
 
