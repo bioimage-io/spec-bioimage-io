@@ -498,11 +498,18 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
-    documentation = fields.RelativeLocalPath(
-        validate=field_validators.Attribute(
-            "suffix",
-            field_validators.Equal(".md", error="{!r} is invalid; expected markdown file with '.md' extension."),
-        ),
+    documentation = fields.Union(
+        [
+            fields.URL(),
+            fields.RelativeLocalPath(
+                validate=field_validators.Attribute(
+                    "suffix",
+                    field_validators.Equal(
+                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
+                    ),
+                )
+            ),
+        ],
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
         "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
