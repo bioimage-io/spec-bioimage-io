@@ -44,6 +44,11 @@ def validate(
     else:
         print(f"No validation errors for {summary['name']}")
         ret_code = 0
+
+    if summary["warnings"]:
+        print(f"Validation Warnings for {summary['name']}:")
+        pprint(summary["warnings"])
+
     sys.exit(ret_code)
 
 

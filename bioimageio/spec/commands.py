@@ -2,15 +2,14 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from pprint import pformat
-from typing import Dict, IO, Union
+from typing import Any, Dict, IO, Optional, Union
 
 from marshmallow import ValidationError
 
 from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 
-KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model")
+KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model", "notebook", "rdf")
 
 
 def update_format(
@@ -46,9 +45,9 @@ def validate(
     if update_format_inner is None:
         update_format_inner = update_format
 
-    error = None
+    error: Union[None, str, Dict[str, Any]] = None
     tb = None
-    nested_errors: Dict[str, list] = {}
+    nested_errors: Dict[str, dict] = {}
     try:
         rdf_source, source_name, root = resolve_rdf_source(rdf_source)
     except Exception as e:
@@ -63,7 +62,9 @@ def validate(
             error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source)}: {str(rdf_source)}"
 
     raw_rd = None
-    if error is None:
+    if error:
+        validation_warnings = []
+    else:
         with warnings.catch_warnings(record=True) as all_warnings:
             try:
                 raw_rd = load_raw_resource_description(rdf_source, update_to_format="latest" if update_format else None)
@@ -73,24 +74,44 @@ def validate(
                 error = str(e)
                 tb = traceback.format_tb(e.__traceback__)
 
+            if raw_rd is not None and raw_rd.type == "collection":
+                for inner_category in KNOWN_COLLECTION_CATEGORIES:
+                    for inner_idx, inner in enumerate(getattr(raw_rd, inner_category, []) or []):
+                        try:
+                            # check if inner.source points to an rdf
+                            try:
+                                rdf_data, source_name, root = resolve_rdf_source(inner.source)
+                            except Exception as e:
+                                warnings.warn(
+                                    f"{inner_category}[{inner_idx}]: (id={inner.id}) Failed to interpret source as rdf source; error {e}",
+                                    category=ValidationWarning,
+                                )
+                                rdf_data = {}
+
+                        except Exception as e:
+                            inner_summary: Dict[str, Any] = {"error": str(e)}
+                        else:
+                            # update rdf data with additional fields of the collection entry
+                            rdf_data.update(inner.unknown)
+                            inner_summary = validate(
+                                rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                            )
+
+                        if inner_summary["error"]:
+                            if inner_category not in nested_errors:
+                                nested_errors[inner_category] = {}
+
+                            nested_errors[inner_category][inner_idx] = inner_summary["error"]
+
+                        for k, v in inner_summary["warnings"].items():
+                            warnings.warn(
+                                f"{inner_category}[{inner_idx}]:{k}: (id={inner.id}) {v}", category=ValidationWarning
+                            )
+
+                if nested_errors:
+                    error = nested_errors
+
         validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
-        if raw_rd is not None and raw_rd.type == "collection":
-            for inner_category in KNOWN_COLLECTION_CATEGORIES:
-                for inner in getattr(raw_rd, inner_category) or []:
-                    try:
-                        inner_source = inner.source
-                    except Exception as e:
-                        inner_summary = {"error": str(e)}
-                    else:
-                        inner_summary = validate(inner_source, update_format_inner, update_format_inner)
-
-                    if inner_summary["error"] is not None:
-                        nested_errors[inner_category] = nested_errors.get(inner_category, []) + [inner_summary]
-
-            if nested_errors:
-                error = f"Errors in collection: {pformat(nested_errors)}"
-    else:
-        validation_warnings = []
 
     return {
         "name": source_name if raw_rd is None else raw_rd.name,
