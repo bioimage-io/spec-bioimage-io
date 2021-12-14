@@ -27,7 +27,7 @@ class ValidationWarning(UserWarning):
     """a warning category to warn with during RDF validation"""
 
     @staticmethod
-    def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]):
+    def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]) -> dict:
         """Summarize warning messsages of the ValidationWarning category"""
 
         def add_to_summary(s, keys, msg):
@@ -46,12 +46,12 @@ class ValidationWarning(UserWarning):
 
             if idx is not None:
                 if idx not in s:
-                    s[idx] = {} if keys else msg
+                    s[idx] = {} if keys else {"warning": msg}
 
                 s = s[idx]
 
             if keys:
-                assert isinstance(s, dict)
+                assert isinstance(s, dict), (keys, s)
                 add_to_summary(s, keys, msg)
 
         summary: dict = {}
