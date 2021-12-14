@@ -77,7 +77,7 @@ def get_format_version_module(type_: str, format_version: str):
 
     version_mod_name = "v" + "_".join(format_version.split(".")[:2])
     try:
-        return getattr(getattr(bioimageio.spec, type_), version_mod_name)
+        return getattr(getattr(bioimageio.spec, type_, bioimageio.spec.rdf), version_mod_name)
     except AttributeError:
         raise ValueError(
             f"Invalid RDF format version {format_version} for RDF type {type_}. "
