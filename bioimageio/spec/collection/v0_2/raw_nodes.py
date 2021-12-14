@@ -23,13 +23,13 @@ except ImportError:
 @dataclass
 class CollectionEntry(RawNode):
     source: URI = missing
-    id_: str = missing
+    id: str = missing
     links: Union[_Missing, List[str]] = missing
     unknown: Dict[str, Any] = missing
 
     def __init__(self, source=missing, id_=missing, links=missing, **unknown):
         self.source = source
-        self.id_ = id_
+        self.id = id_
         self.links = links
         self.unknown = unknown
         super().__init__()
