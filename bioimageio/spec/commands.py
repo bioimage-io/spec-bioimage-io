@@ -2,6 +2,7 @@ import os
 import traceback
 import warnings
 from pathlib import Path
+from pprint import pformat
 from typing import Dict, IO, Union
 
 from marshmallow import ValidationError
@@ -87,7 +88,7 @@ def validate(
                         nested_errors[inner_category] = nested_errors.get(inner_category, []) + [inner_summary]
 
             if nested_errors:
-                error = f"Errors in collections of {list(nested_errors)}"
+                error = f"Errors in collection: {pformat(nested_errors)}"
     else:
         validation_warnings = []
 
