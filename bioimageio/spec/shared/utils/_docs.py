@@ -1,5 +1,6 @@
 import ast
 import sys
+import warnings
 from urllib.parse import urlparse
 
 
@@ -17,7 +18,11 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     """get github url with line range fragment to reference implementation from non-raw github file url
 
     example:
-    >>> get_ref_url("class", "Binarize", "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py")
+    >>> get_ref_url(
+        "class",
+        "Binarize",
+        "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
+    )
     https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L107-L112
     """
     import requests  # not available in pyodide
@@ -25,7 +30,11 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     assert not urlparse(github_file_url).fragment, "unexpected url fragment"
     look_for = {"class": ast.ClassDef, "function": ast.FunctionDef}[type_]
     raw_github_file_url = github_file_url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
-    code = requests.get(raw_github_file_url).text
+    try:
+        code = requests.get(raw_github_file_url).text
+    except requests.RequestException as e:
+        warnings.warn(f"Could not resolve {github_file_url} due to {e}. Please check your internet connection.")
+        return "URL NOT RESOLVED"
     tree = ast.parse(code)
 
     for d in tree.body:
