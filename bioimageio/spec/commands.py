@@ -103,7 +103,7 @@ def validate(
 
                             nested_errors[inner_category][inner_idx] = inner_summary["error"]
 
-                        for k, v in inner_summary["warnings"].items():
+                        for k, v in inner_summary.get("warnings", {}).items():
                             warnings.warn(
                                 f"{inner_category}[{inner_idx}]:{k}: (id={inner.id}) {v}", category=ValidationWarning
                             )
