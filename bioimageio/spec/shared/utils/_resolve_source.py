@@ -48,7 +48,7 @@ def resolve_rdf_source(
         source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
         root = pathlib.Path()
     elif isinstance(source, (str, bytes)):
-        source_name = str(source[:20]) + "..."
+        source_name = str(source[:120]) + "..."
         # string might be path or yaml string; for yaml string (or bytes) set root to cwd
 
         if _is_path(source):
