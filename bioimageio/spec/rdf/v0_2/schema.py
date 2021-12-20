@@ -228,7 +228,7 @@ E.g. the citation for the model architecture and/or the training data used."""
     def validate_type(self, value):
         schema_type = self.__class__.__name__.lower()
         if value != schema_type:
-            self.warn("type", f"Unrecognized type {value}. Validating as {schema_type}.")
+            self.warn("type", f"Unrecognized type '{value}'. Validating as {schema_type}.")
 
     version = fields.StrictVersion(
         bioimageio_description="The version number of the model. The version number format must be a string in "

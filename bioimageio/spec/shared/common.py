@@ -28,7 +28,7 @@ class ValidationWarning(UserWarning):
 
     @staticmethod
     def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]) -> dict:
-        """Summarize warning messsages of the ValidationWarning category"""
+        """Summarize warning messages of the ValidationWarning category"""
 
         def add_to_summary(s, keys, msg):
             key = keys.pop(0)
