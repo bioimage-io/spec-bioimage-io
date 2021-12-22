@@ -21,7 +21,7 @@ def test_cli_validate_model_url():
 
 
 def test_cli_validate_model_doi():
-    ret = subprocess.run(["bioimageio", "validate", "10.5072/zenodo.886788"])
+    ret = subprocess.run(["bioimageio", "validate", "10.5281/zenodo.5744489"])
     assert ret.returncode == 0
 
 

@@ -31,8 +31,7 @@ def test_validate_model_as_url():
 def test_validate_model_as_zenodo_sandbox_doi():
     from bioimageio.spec.commands import validate
 
-    doi = "10.5072/zenodo.886788"
-    assert not validate(doi, update_format=True, update_format_inner=False)["error"]
+    doi = "10.5281/zenodo.5744489"
     assert not validate(doi, update_format=False, update_format_inner=False)["error"]
 
 

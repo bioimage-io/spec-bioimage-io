@@ -77,25 +77,31 @@ def validate(
             if raw_rd is not None and raw_rd.type == "collection":
                 for inner_category in KNOWN_COLLECTION_CATEGORIES:
                     for inner_idx, inner in enumerate(getattr(raw_rd, inner_category, []) or []):
-                        try:
-                            # check if inner.source points to an rdf
+                        # inner is CollectionEntry or RDF
+                        inner_source = getattr(inner, "source", None)
+                        inner_id = getattr(inner, "id", None)
+
+                        rdf_data = {}
+                        if inner_id is None:
+                            inner_descr = f"name={getattr(inner, 'name', 'unknown')}"
+                        else:
+                            inner_descr = f"id={inner_id}"
+
                             try:
-                                rdf_data, source_name, root = resolve_rdf_source(inner.source)
+                                # check if inner.source points to an rdf
+                                rdf_data, source_name, root = resolve_rdf_source(inner_source)
                             except Exception as e:
                                 warnings.warn(
-                                    f"{inner_category}[{inner_idx}]: (id={inner.id}) Failed to interpret source as rdf source; error {e}",
+                                    f"{inner_category}[{inner_idx}]: ({inner_descr}) Failed to interpret source as rdf source; error {e}",
                                     category=ValidationWarning,
                                 )
-                                rdf_data = {}
+                                inner_summary: Dict[str, Any] = {"error": str(e)}
 
-                        except Exception as e:
-                            inner_summary: Dict[str, Any] = {"error": str(e)}
-                        else:
-                            # update rdf data with additional fields of the collection entry
-                            rdf_data.update(inner.unknown)
-                            inner_summary = validate(
-                                rdf_data, update_format=update_format, update_format_inner=update_format_inner
-                            )
+                        # update rdf data with additional fields of the collection entry
+                        rdf_data.update(getattr(inner, "unknown", {}))
+                        inner_summary = validate(
+                            rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                        )
 
                         if inner_summary["error"]:
                             if inner_category not in nested_errors:
@@ -103,9 +109,9 @@ def validate(
 
                             nested_errors[inner_category][inner_idx] = inner_summary["error"]
 
-                        for k, v in inner_summary["warnings"].items():
+                        for k, v in inner_summary.get("warnings", {}).items():
                             warnings.warn(
-                                f"{inner_category}[{inner_idx}]:{k}: (id={inner.id}) {v}", category=ValidationWarning
+                                f"{inner_category}[{inner_idx}]:{k}: ({inner_descr}) {v}", category=ValidationWarning
                             )
 
                 if nested_errors:

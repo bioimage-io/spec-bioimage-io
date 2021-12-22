@@ -1,6 +1,7 @@
 from marshmallow import RAISE
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
+from bioimageio.spec import model
 from bioimageio.spec.shared import fields
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from . import raw_nodes
@@ -18,7 +19,6 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 class CollectionEntry(_BioImageIOSchema, WithUnknown):
     id_ = fields.String(required=True, data_key="id")
     source = fields.URL(required=True)
-    links = fields.List(fields.String())
 
 
 class Collection(_BioImageIOSchema, RDF):
@@ -33,7 +33,15 @@ The collection RDF YAML file contains mandatory and optional fields. In the foll
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
     application = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    model = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
+    # collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(lambda: Collection())]))
+    model = fields.List(
+        fields.Union(
+            [
+                fields.Nested(CollectionEntry()),
+                fields.Nested(model.v0_4.schema.Model()),
+                fields.Nested(model.v0_3.schema.Model()),
+            ]
+        )
+    )
     dataset = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
     notebook = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
