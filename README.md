@@ -145,6 +145,11 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ## Changelog
+#### bioimageio.spec 0.4.1.post5
+  - fixes to collection RDF: 
+    - RDFs specified directly in collection RDF are validated correctly even if their source field does not point to an RDF.
+    - nesting of collection RDF allowed
+
 #### bioimageio.spec 0.4.1.post4
   - fixed missing field `icon` in general RDF's raw node
   - fixes to collection RDF: 
