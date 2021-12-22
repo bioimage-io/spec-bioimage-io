@@ -947,18 +947,6 @@
                     "title": "sample_outputs",
                     "type": "array"
                 },
-                "source": {
-                    "anyOf": [
-                        {
-                            "title": "",
-                            "type": "string"
-                        },
-                        {
-                            "title": "",
-                            "type": "string"
-                        }
-                    ]
-                },
                 "tags": {
                     "items": {
                         "title": "tags",

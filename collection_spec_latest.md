@@ -408,9 +408,6 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
-  * <a id="model:source"></a>`source` _optional Union\[URI→String | RelativeLocalPath→Path\]_ url or local relative path to the source of the resource
-    1. _optional URI→String_ 
-    1. _optional RelativeLocalPath→Path_ 
   * <a id="model:version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
   1. _Model_ # BioImage.IO Model Resource Description File Specification 0.3.5
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
