@@ -1,4 +1,4 @@
-from marshmallow import RAISE
+from marshmallow import INCLUDE, RAISE
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec import model
@@ -38,8 +38,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         fields.Union(
             [
                 fields.Nested(CollectionEntry()),
-                fields.Nested(model.v0_4.schema.Model()),
-                fields.Nested(model.v0_3.schema.Model()),
+                fields.Nested(model.v0_4.schema.Model(unknown=INCLUDE)),
+                fields.Nested(model.v0_3.schema.Model(unknown=INCLUDE)),
             ]
         )
     )
