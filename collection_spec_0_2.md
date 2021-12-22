@@ -27,11 +27,8 @@ E.g. the citation for the model architecture and/or the training data used.
 * <a id="name"></a>`name` _String_ name of the resource, a human-friendly name
 * <a id="tags"></a>`tags` _List\[String\]_ A list of tags.
 * <a id="type"></a>`type` _String_ 
-* <a id="application"></a>`application` _optional List\[Union\[CollectionEntry | RDF\]\]_ 
-  1. _optional Union\[CollectionEntry | RDF\]_ 
-  1. _CollectionEntry_   is a Dict with the following keys:
-  * <a id="application:id_"></a>`id_` _String_ 
-  * <a id="application:source"></a>`source` _URL→URI_ 
+* <a id="application"></a>`application` _optional List\[Union\[RDF | CollectionEntry\]\]_ 
+  1. _optional Union\[RDF | CollectionEntry\]_ 
   1. _RDF_ # BioImage.IO Resource Description File Specification 0.2.1
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
@@ -106,6 +103,9 @@ E.g. the citation for the model architecture and/or the training data used.
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
   * <a id="application:version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
+  1. _CollectionEntry_   is a Dict with the following keys:
+  * <a id="application:id_"></a>`id_` _String_ 
+  * <a id="application:source"></a>`source` _URL→URI_ 
 * <a id="attachments"></a>`attachments` _Attachments_ Attachments. Additional, unknown keys are allowed. Attachments is a Dict with the following keys:
   * <a id="attachments:files"></a>`files` _optional List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ File attachments; included when packaging the resource.
     1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
@@ -118,16 +118,17 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="badges:url"></a>`url` _optional Union\[URL→URI | RelativeLocalPath→Path\]_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
     1. _optional URL→URI_ 
     1. _optional RelativeLocalPath→Path_ 
+* <a id="collection"></a>`collection` _optional List\[CollectionEntry\]_ 
+  1. _CollectionEntry_   is a Dict with the following keys:
+  * <a id="collection:id_"></a>`id_` _String_ 
+  * <a id="collection:source"></a>`source` _URL→URI_ 
 * <a id="config"></a>`config` _optional YamlDict→Dict\[Any, Any\]_ 
 * <a id="covers"></a>`covers` _optional List\[Union\[URL→URI | RelativeLocalPath→Path\]\]_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
   1. _optional Union\[URL→URI | RelativeLocalPath→Path\]_ 
   1. _optional URL→URI_ 
   1. _optional RelativeLocalPath→Path_ 
-* <a id="dataset"></a>`dataset` _optional List\[Union\[CollectionEntry | RDF\]\]_ 
-  1. _optional Union\[CollectionEntry | RDF\]_ 
-  1. _CollectionEntry_   is a Dict with the following keys:
-  * <a id="dataset:id_"></a>`id_` _String_ 
-  * <a id="dataset:source"></a>`source` _URL→URI_ 
+* <a id="dataset"></a>`dataset` _optional List\[Union\[RDF | CollectionEntry\]\]_ 
+  1. _optional Union\[RDF | CollectionEntry\]_ 
   1. _RDF_ # BioImage.IO Resource Description File Specification 0.2.1
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
@@ -202,6 +203,9 @@ E.g. the citation for the model architecture and/or the training data used.
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
   * <a id="dataset:version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
+  1. _CollectionEntry_   is a Dict with the following keys:
+  * <a id="dataset:id_"></a>`id_` _String_ 
+  * <a id="dataset:source"></a>`source` _URL→URI_ 
 * <a id="download_url"></a>`download_url` _optional URL→URI_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional URL→URI_ A url to the git repository, e.g. to Github or Gitlab.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
@@ -214,11 +218,8 @@ E.g. the citation for the model architecture and/or the training data used.
   * <a id="maintainers:github_user"></a>`github_user` _optional String_ GitHub user name.
   * <a id="maintainers:name"></a>`name` _optional String_ Full name.
   * <a id="maintainers:orcid"></a>`orcid` _optional String_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
-* <a id="model"></a>`model` _optional List\[Union\[CollectionEntry | Model | Model\]\]_ 
-  1. _optional Union\[CollectionEntry | Model | Model\]_ 
-  1. _CollectionEntry_   is a Dict with the following keys:
-  * <a id="model:id_"></a>`id_` _String_ 
-  * <a id="model:source"></a>`source` _URL→URI_ 
+* <a id="model"></a>`model` _optional List\[Union\[Model | Model | CollectionEntry\]\]_ 
+  1. _optional Union\[Model | Model | CollectionEntry\]_ 
   1. _Model_ # BioImage.IO Model Resource Description File Specification 0.4.1
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
@@ -619,11 +620,11 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   * <a id="model:source"></a>`source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
 For example: `my_function.py:MyImplementation` or `core_library.some_module.some_function`.
   * <a id="model:version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
-* <a id="notebook"></a>`notebook` _optional List\[Union\[CollectionEntry | RDF\]\]_ 
-  1. _optional Union\[CollectionEntry | RDF\]_ 
   1. _CollectionEntry_   is a Dict with the following keys:
-  * <a id="notebook:id_"></a>`id_` _String_ 
-  * <a id="notebook:source"></a>`source` _URL→URI_ 
+  * <a id="model:id_"></a>`id_` _String_ 
+  * <a id="model:source"></a>`source` _URL→URI_ 
+* <a id="notebook"></a>`notebook` _optional List\[Union\[RDF | CollectionEntry\]\]_ 
+  1. _optional Union\[RDF | CollectionEntry\]_ 
   1. _RDF_ # BioImage.IO Resource Description File Specification 0.2.1
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
 An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks. 
@@ -698,6 +699,9 @@ E.g. the citation for the model architecture and/or the training data used.
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
   * <a id="notebook:version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
+  1. _CollectionEntry_   is a Dict with the following keys:
+  * <a id="notebook:id_"></a>`id_` _String_ 
+  * <a id="notebook:source"></a>`source` _URL→URI_ 
 * <a id="source"></a>`source` _optional Union\[URI→String | RelativeLocalPath→Path\]_ url or local relative path to the source of the resource
   1. _optional URI→String_ 
   1. _optional RelativeLocalPath→Path_ 
