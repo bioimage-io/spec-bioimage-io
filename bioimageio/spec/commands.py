@@ -2,7 +2,7 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, Optional, Union
+from typing import Any, Dict, IO, Union
 
 from marshmallow import ValidationError
 
@@ -77,40 +77,37 @@ def validate(
             if raw_rd is not None and raw_rd.type == "collection":
                 for inner_category in KNOWN_COLLECTION_CATEGORIES:
                     for inner_idx, inner in enumerate(getattr(raw_rd, inner_category, []) or []):
-                        # inner is CollectionEntry or RDF
-                        inner_source = getattr(inner, "source", None)
-                        inner_id = getattr(inner, "id", None)
+                        if inner.__class__.__name__ != "CollectionEntry":
+                            continue
 
-                        if inner_id is not None:
-                            # expect that inner.source points to an rdf as only CollectionEntry has 'id' field
-                            try:
-                                rdf_data, source_name, root = resolve_rdf_source(inner_source)
-                            except Exception as e:
-                                inner_summary: Dict[str, Union[str, dict]] = {
-                                    "error": (
-                                        f"{inner_category}[{inner_idx}]: (id={inner_id}) Failed to interpret source as rdf source; error {e}"
-                                    )
-                                }
-                            else:
-                                # update rdf data with additional fields of the collection entry
-                                rdf_data.update(getattr(inner, "unknown", {}))
-                                inner_summary = validate(
-                                    rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                        try:
+                            rdf_data, source_name, root = resolve_rdf_source(inner.source)
+                        except Exception as e:
+                            inner_summary: Dict[str, Union[str, dict]] = {
+                                "error": (
+                                    f"{inner_category}[{inner_idx}]: (id={inner.id}) Failed to interpret source as rdf source; {e}"
+                                )
+                            }
+                        else:
+                            # update rdf data with additional fields of the collection entry
+                            rdf_data.update(getattr(inner, "unknown", {}))
+                            inner_summary = validate(
+                                rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                            )
+
+                            wrns = inner_summary.get("warnings", {})
+                            assert isinstance(wrns, dict)
+                            for k, v in wrns.items():
+                                warnings.warn(
+                                    f"{inner_category}[{inner_idx}]:{k}: (id={inner.id}) {v}",
+                                    category=ValidationWarning,
                                 )
 
-                                wrns = inner_summary.get("warnings", {})
-                                assert isinstance(wrns, dict)
-                                for k, v in wrns.items():
-                                    warnings.warn(
-                                        f"{inner_category}[{inner_idx}]:{k}: (id={inner_id}) {v}",
-                                        category=ValidationWarning,
-                                    )
+                        if inner_summary["error"]:
+                            if inner_category not in nested_errors:
+                                nested_errors[inner_category] = {}
 
-                            if inner_summary["error"]:
-                                if inner_category not in nested_errors:
-                                    nested_errors[inner_category] = {}
-
-                                nested_errors[inner_category][inner_idx] = inner_summary["error"]
+                            nested_errors[inner_category][inner_idx] = inner_summary["error"]
 
                 if nested_errors:
                     error = nested_errors

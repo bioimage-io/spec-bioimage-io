@@ -32,16 +32,16 @@ These fields are typically stored in YAML files which we call Collection Resourc
 The collection RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
-    application = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    # collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(lambda: Collection())]))
+    application = fields.List(fields.Union([fields.Nested(RDF()), fields.Nested(CollectionEntry())]))
+    collection = fields.List(fields.Nested(CollectionEntry()))
     model = fields.List(
         fields.Union(
             [
-                fields.Nested(CollectionEntry()),
                 fields.Nested(model.v0_4.schema.Model(unknown=EXCLUDE)),
                 fields.Nested(model.v0_3.schema.Model(unknown=EXCLUDE)),
+                fields.Nested(CollectionEntry()),
             ]
         )
     )
-    dataset = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
-    notebook = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.Nested(RDF())]))
+    dataset = fields.List(fields.Union([fields.Nested(RDF()), fields.Nested(CollectionEntry())]))
+    notebook = fields.List(fields.Union([fields.Nested(RDF()), fields.Nested(CollectionEntry())]))
