@@ -18,7 +18,6 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 class CollectionEntry(_BioImageIOSchema, WithUnknown):
     id_ = fields.String(required=True, data_key="id")
     source = fields.URL(required=True)
-    links = fields.List(fields.String())
 
 
 class Collection(_BioImageIOSchema, RDF):
