@@ -2,7 +2,7 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, Optional, Union
+from typing import Any, Dict, IO, Union
 
 from marshmallow import ValidationError
 
@@ -86,11 +86,18 @@ def validate(
                             try:
                                 rdf_data, source_name, root = resolve_rdf_source(inner_source)
                             except Exception as e:
-                                inner_summary: Dict[str, Union[str, dict]] = {
-                                    "error": (
-                                        f"{inner_category}[{inner_idx}]: (id={inner_id}) Failed to interpret source as rdf source; error {e}"
+                                if inner_category in ("model",):
+                                    inner_summary: Dict[str, Union[str, dict]] = {
+                                        "error": (
+                                            f"{inner_category}[{inner_idx}]: (id={inner_id}) Failed to interpret source as rdf source; {e}"
+                                        )
+                                    }
+                                else:
+                                    warnings.warn(
+                                        f"{inner_category}[{inner_idx}]: (id={inner_id}) Failed to interpret source as rdf source; {e}",
+                                        category=ValidationWarning,
                                     )
-                                }
+                                    inner_summary = {}
                             else:
                                 # update rdf data with additional fields of the collection entry
                                 rdf_data.update(getattr(inner, "unknown", {}))
@@ -106,7 +113,7 @@ def validate(
                                         category=ValidationWarning,
                                     )
 
-                            if inner_summary["error"]:
+                            if inner_summary.get("error"):
                                 if inner_category not in nested_errors:
                                     nested_errors[inner_category] = {}
 
