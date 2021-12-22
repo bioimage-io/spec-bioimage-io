@@ -239,6 +239,7 @@ class Model(rdf.schema.RDF):
 
     class Meta:
         unknown = RAISE
+        exclude = ("source",)  # while RDF does have a source field, Model does not
 
     bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
