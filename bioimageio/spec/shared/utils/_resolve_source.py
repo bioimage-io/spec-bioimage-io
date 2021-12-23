@@ -158,8 +158,8 @@ def resolve_rdf_source_and_type(
 ) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes], str]:
     data, source_name, root = resolve_rdf_source(source)
 
-    type_ = data.get("type", "model")  # todo: remove model type default
-    if type_ == "dataset":
+    type_ = data.get("type", "rdf")
+    if type_ not in ("rdf", "model", "collection"):
         type_ = "rdf"
     return data, source_name, root, type_
 

@@ -34,3 +34,28 @@ def test_spec_round_trip_w_attachments(unet2d_nuclei_broad_latest):
 
     raw_model_from_serialized = load_raw_resource_description(serialized)
     assert raw_model_from_serialized == raw_model
+
+
+def test_dataset_rdf_rount_trip():
+    from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
+
+    data = dict(
+        id="platynereis_em_training_data",
+        authors=[{"name": "Constantin Pape"}],
+        cite=[{"doi": "https://doi.org/10.1016/j.cell.2021.07.017", "text": "Vergara, Pape, Meechan et al."}],
+        covers=["https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy-cover0.png"],
+        description="Training data for EM segmentation of cellular membranes, nuclei, cuticle and cilia in Platynereis.",
+        documentation="https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy.md",
+        format_version="0.2.1",
+        license="CC-BY-4.0",
+        name="Platynereis EM Traning Data",
+        source="https://doi.org/10.5281/zenodo.3675220",
+        tags=["electron-microscopy", "platynereis", "cells", "cilia", "nuclei", "instance-segmentation", "3D"],
+        type="dataset",
+    )
+    raw = load_raw_resource_description(data)
+    serialized = serialize_raw_resource_description_to_dict(raw)
+    # remove keys that are ignored
+    data.pop("id")
+    data.pop("source")
+    assert data == serialized
