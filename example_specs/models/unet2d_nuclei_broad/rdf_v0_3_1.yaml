@@ -76,6 +76,7 @@ weights:
    source: ./weights.pt
    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
+type: model
 config:
   future:
     0.3.2:
