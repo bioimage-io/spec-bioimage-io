@@ -75,9 +75,10 @@ def get_format_version_module(type_: str, format_version: str):
     assert "." in format_version
     import bioimageio.spec
 
+    type_ = get_spec_type_from_type(type_)
     version_mod_name = "v" + "_".join(format_version.split(".")[:2])
     try:
-        return getattr(getattr(bioimageio.spec, type_, bioimageio.spec.rdf), version_mod_name)
+        return getattr(getattr(bioimageio.spec, type_), version_mod_name)
     except AttributeError:
         raise ValueError(
             f"Invalid RDF format version {format_version} for RDF type {type_}. "
@@ -91,7 +92,15 @@ def get_patched_format_version(type_: str, format_version: str):
     return version_mod.format_version
 
 
+def get_spec_type_from_type(type_: str):
+    if type_ in ("model", "collection"):
+        return type_
+    else:
+        return "rdf"
+
+
 def get_latest_format_version_module(type_: str):
+    type_ = get_spec_type_from_type(type_)
     import bioimageio.spec
 
     try:
@@ -105,6 +114,7 @@ def get_latest_format_version(type_: str):
 
 
 def get_class_name_from_type(type_: str):
+    type_ = get_spec_type_from_type(type_)
     if type_ == "rdf":
         return "RDF"
     else:
