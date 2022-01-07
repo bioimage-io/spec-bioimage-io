@@ -134,6 +134,20 @@ class YamlDict(Dict):
         return super()._serialize(value, attr, obj, **kwargs)
 
 
+class RDF_Update(YamlDict):
+    def __init__(
+        self,
+        keys: typing.Optional[DocumentedField] = None,
+        values: typing.Optional[DocumentedField] = None,
+        *args,
+        **kwargs,
+    ):
+        if keys is None:
+            keys = String(bioimageio_description="RDF field names to overwrite")
+
+        super().__init__(keys, values, *args, **kwargs)
+
+
 class Email(DocumentedField, marshmallow_fields.Email):
     pass
 
