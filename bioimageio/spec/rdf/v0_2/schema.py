@@ -57,8 +57,8 @@ class Badge(_BioImageIOSchema):
 
 class CiteEntry(_BioImageIOSchema):
     text = fields.String(required=True)
-    doi = fields.String(bioimageio_maybe_required=True)
-    url = fields.String(bioimageio_maybe_required=True)
+    doi = fields.DOI(bioimageio_maybe_required=True)
+    url = fields.String(bioimageio_maybe_required=True)  # todo: change to fields.URL
 
     @validates_schema
     def doi_or_url(self, data, **kwargs):

@@ -206,6 +206,10 @@ class String(DocumentedField, marshmallow_fields.String):
     pass
 
 
+class DOI(String):
+    pass
+
+
 class Tuple(DocumentedField, marshmallow_fields.Tuple):
     def __init__(self, tuple_fields: typing.Sequence[DocumentedField], *args, **kwargs):
         assert all(isinstance(tf, DocumentedField) for tf in tuple_fields)

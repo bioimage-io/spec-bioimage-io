@@ -17,8 +17,8 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 
 class CollectionEntry(_BioImageIOSchema, WithUnknown):
     field_name_unknown_dict = "rdf_update"
-    id_ = fields.String(required=True, data_key="id")
-    source = fields.URL(required=True)
+    id = fields.String(required=True)
+    source = fields.Union([fields.URL(), fields.DOI()], required=True)
 
 
 class Collection(_BioImageIOSchema, WithUnknown, RDF):

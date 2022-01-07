@@ -36,9 +36,9 @@ class CollectionEntry(RawNode):
     id: str = missing
     rdf_update: RDF_Update = missing
 
-    def __init__(self, source=missing, id_=missing, **rdf_update):
+    def __init__(self, source=missing, id=missing, **rdf_update):
         self.source = source
-        self.id = id_
+        self.id = id
         self.rdf_update = RDF_Update(rdf_update)
         super().__init__()
 

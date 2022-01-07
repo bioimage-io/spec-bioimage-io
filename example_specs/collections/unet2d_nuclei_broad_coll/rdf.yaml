@@ -65,6 +65,8 @@ sample_outputs: [test_output.npy]
 version: 0.1.0
 
 collection:
+  - id: zenodo_example
+    source: 10.5281/zenodo.5744489
   - format_version: 0.4.0
     type: model
     dependencies: conda:environment.yaml
