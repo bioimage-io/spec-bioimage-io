@@ -66,13 +66,14 @@ class WithUnknown(SharedBioImageIOSchema):
     @post_load
     def make_object(self, data, **kwargs):
         obj = super().make_object(data, **kwargs)
-        assert hasattr(obj, self.field_name_unknown_dict)  # expected raw node to have attribute "unknown"
+        assert hasattr(
+            obj, self.field_name_unknown_dict
+        ), f"expected raw node to have attribute {self.field_name_unknown_dict}"
         return obj
 
     @post_dump(pass_original=True)
     def keep_unknowns(self, output, orig, **kwargs):
-        if orig:
-            assert hasattr(orig, self.field_name_unknown_dict)  # expected raw node to have attribute "unknown"
+        if orig and hasattr(orig, self.field_name_unknown_dict):
             out_w_unknown = dict(orig.unknown)
             out_w_unknown.update(output)
             return out_w_unknown
