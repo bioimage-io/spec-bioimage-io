@@ -44,7 +44,7 @@ jobs:
       run: python scripts/generate_passthrough_modules.py check
     - name: Mypy
       if: ${{ matrix.python-version != '3.7' }}
-      run: mypy --install-types --non-interactive .
+      run: mypy --install-types --non-interactive --no-incremental .
 
   conda-build:
     runs-on: ubuntu-latest
