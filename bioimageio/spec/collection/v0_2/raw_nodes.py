@@ -25,27 +25,20 @@ FormatVersion = Literal[
 ]  # newest format needs to be last (used to determine latest format version)
 
 
-RDF_Update = NewType("RDF_Update", Dict[str, Any])
-
-
 @dataclass
 class CollectionEntry(RawNode):
-    """ """
+    rdf_source: Union[_Missing, URI] = missing
+    rdf_update: Dict[str, Any] = missing
 
-    source: URI = missing
-    id: str = missing
-    rdf_update: RDF_Update = missing
-
-    def __init__(self, source=missing, id=missing, **rdf_update):
-        self.source = source
-        self.id = id
-        self.rdf_update = RDF_Update(rdf_update)
+    def __init__(self, rdf_source=missing, **rdf_update):
+        self.rdf_source = rdf_source
+        self.rdf_update = rdf_update
         super().__init__()
 
 
 @dataclass
 class Collection(RDF):
-    collection: List[Union[RDF_Update, CollectionEntry]] = missing
+    collection: List[CollectionEntry] = missing
 
     # manual __init__ to allow for unknown kwargs
     def __init__(
@@ -71,7 +64,7 @@ class Collection(RDF):
         maintainers: Union[_Missing, List[Maintainer]] = missing,
         tags: List[str],
         # collection RDF
-        collection: List[Union[RDF_Update, CollectionEntry]],
+        collection: List[CollectionEntry],
         **unknown,
     ):
         self.collection = collection

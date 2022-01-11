@@ -21,14 +21,13 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     TensorflowSavedModelBundleWeightsEntry,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
     ParametrizedInputShape,
-    RawNode,
     URI,
 )
 
@@ -45,7 +44,7 @@ PostprocessingName = PostprocessingName
 Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
-FormatVersion = Literal["0.4.0", "0.4.1"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal["0.4.0", "0.4.1", "0.4.2"]  # newest format needs to be last (used in __init__.py)
 WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]

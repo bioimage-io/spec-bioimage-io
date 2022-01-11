@@ -65,9 +65,11 @@ sample_outputs: [test_output.npy]
 version: 0.1.0
 
 collection:
-  - id: zenodo_example
-    source: 10.5281/zenodo.5744489
-  - format_version: 0.4.0
+  - id: with_rdf_source_url
+    rdf_source: https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml
+    name: UNet 2D Nuclei Broad (latest)
+  - id: in_place_0.4.0
+    format_version: 0.4.0
     type: model
     dependencies: conda:environment.yaml
     weights:
@@ -91,7 +93,8 @@ collection:
        source: weights.pt
        parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
-  - format_version: 0.4.1
+  - id: in_place_0.4.1
+    format_version: 0.4.1
     type: model
     weights:
       pytorch_state_dict:

@@ -176,6 +176,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description="an icon for the resource"
     )  # todo: limit length? validate=field_validators.Length(max=1)
 
+    id = fields.String(bioimageio_description="Unique id within a collection of resources.")
     license_bioimageio_description = (
         "A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, "
         "`BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send "
@@ -214,6 +215,9 @@ E.g. the citation for the model architecture and/or the training data used."""
         else:
             self.warn("name", f"Could not check length of name {value}.")
 
+    rdf_source = fields.Union(
+        [fields.URL(), fields.DOI()], bioimageio_description="url or doi to the source of the resource definition"
+    )
     source = fields.Union(
         [fields.URI(), fields.RelativeLocalPath()],
         bioimageio_description="url or local relative path to the source of the resource",

@@ -149,7 +149,7 @@ def resolve_rdf_source(
 
         source = yaml.load(source)
 
-    assert isinstance(source, dict)
+    assert isinstance(source, dict), source
     return source, source_name, root
 
 

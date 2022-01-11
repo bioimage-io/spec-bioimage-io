@@ -1,4 +1,4 @@
-from marshmallow import INCLUDE
+from marshmallow import missing, validates
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared import fields
@@ -6,7 +6,7 @@ from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from . import raw_nodes
 
 try:
-    from typing import get_args
+    from typing import List, Union, get_args
 except ImportError:
     from typing_extensions import get_args  # type: ignore
 
@@ -17,8 +17,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 
 class CollectionEntry(_BioImageIOSchema, WithUnknown):
     field_name_unknown_dict = "rdf_update"
-    id = fields.String(required=True)
-    source = fields.Union([fields.URL(), fields.DOI()], required=True)
+    rdf_source = fields.Union([fields.URL(), fields.DOI()])
 
 
 class Collection(_BioImageIOSchema, WithUnknown, RDF):
@@ -29,4 +28,42 @@ These fields are typically stored in YAML files which we call Collection Resourc
 The collection RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
-    collection = fields.List(fields.Union([fields.Nested(CollectionEntry()), fields.RDF_Update()]))
+    collection = fields.List(
+        fields.Nested(CollectionEntry()),
+        bioimageio_description="Collection entries. Each entry needs to specify a valid RDF with an id. "
+        "Each collection entry RDF is based on the collection RDF itself, "
+        "updated by rdf_source content if rdf_source is specified, "
+        "and updated by any fields specified directly in the entry. "
+        "In this context 'update' refers to overwriting RDF root fields by name."
+        "Except for the `id` field, which appends to the collection RDF `id` "
+        "such that full_collection_entry_id=<collection_id>/<entry_id>",
+    )
+
+    @validates("collection")
+    def unique_ids(self, value: List[Union[dict, raw_nodes.CollectionEntry]]):
+        ids = [
+            (v.get("id", missing), v.get("rdf_source", missing))
+            if isinstance(v, dict)
+            else (v.rdf_update.get("id", missing), v.rdf_source)
+            for v in value
+        ]
+        # skip check for id only specified in remote source
+        ids = [vid for vid, vs in ids if not (vid is missing and vs is not missing)]
+
+        if missing in ids:
+            raise ValueError(f"Missing ids in collection entries")
+
+        non_string_ids = [v for v in ids if not isinstance(v, str)]
+        if non_string_ids:
+            raise ValueError(f"Non-string ids in collection: {non_string_ids}")
+
+        seen = set()
+        duplicates = []
+        for v in ids:
+            if v in seen:
+                duplicates.append(v)
+            else:
+                seen.add(v)
+
+        if duplicates:
+            raise ValueError(f"Duplicate ids in collection: {duplicates}")
