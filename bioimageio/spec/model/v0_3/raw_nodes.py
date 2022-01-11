@@ -7,13 +7,13 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
-    ParametrizedInputShape,
     ImplicitOutputShape,
     ImportableModule,
     ImportableSourceFile,
+    ParametrizedInputShape,
     RawNode,
     URI,
 )
@@ -22,6 +22,9 @@ try:
     from typing import Literal
 except ImportError:
     from typing_extensions import Literal  # type: ignore
+
+# reassign to use imported classes
+Maintainer = Maintainer
 
 FormatVersion = Literal[
     "0.3.0", "0.3.1", "0.3.2", "0.3.3", "0.3.4", "0.3.5", "0.3.6"

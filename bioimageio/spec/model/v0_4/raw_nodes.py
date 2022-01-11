@@ -21,7 +21,7 @@ from bioimageio.spec.model.v0_3.raw_nodes import (
     TensorflowSavedModelBundleWeightsEntry,
     _WeightsEntryBase,
 )
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
@@ -38,6 +38,7 @@ except ImportError:
 
 # reassign to use imported classes
 ImplicitOutputShape = ImplicitOutputShape
+Maintainer = Maintainer
 ParametrizedInputShape = ParametrizedInputShape
 Postprocessing = Postprocessing
 PostprocessingName = PostprocessingName
