@@ -58,20 +58,23 @@ class SharedProcessingSchema(Schema):
 class WithUnknown(SharedBioImageIOSchema):
     """allows to keep unknown fields on load and dump them the 'unknown' attribute of the data to serialize"""
 
+    field_name_unknown_dict = "unknown"
+
     class Meta:
         unknown = INCLUDE
 
     @post_load
     def make_object(self, data, **kwargs):
         obj = super().make_object(data, **kwargs)
-        assert hasattr(obj, "unknown")  # expected raw node to have attribute "unknown"
+        assert hasattr(
+            obj, self.field_name_unknown_dict
+        ), f"expected raw node to have attribute {self.field_name_unknown_dict}"
         return obj
 
     @post_dump(pass_original=True)
     def keep_unknowns(self, output, orig, **kwargs):
-        if orig:
-            assert hasattr(orig, "unknown")  # expected raw node to have attribute "unknown"
-            out_w_unknown = dict(orig.unknown)
+        if orig and hasattr(orig, self.field_name_unknown_dict):
+            out_w_unknown = dict(getattr(orig, self.field_name_unknown_dict))
             out_w_unknown.update(output)
             return out_w_unknown
         else:

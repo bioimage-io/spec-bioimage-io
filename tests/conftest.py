@@ -11,7 +11,7 @@ def unet2d_nuclei_broad_base_path():
 
 
 def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
-    if request.param == "v0_4_1":
+    if request.param == "v0_4_2":
         v = ""
     else:
         v = f"_{request.param}"
@@ -21,7 +21,7 @@ def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
     return yaml.load(path)
 
 
-@pytest.fixture(params=["v0_3_0", "v0_3_1", "v0_3_2", "v0_3_3", "v0_3_4", "v0_4_0", "v0_4_1"])
+@pytest.fixture(params=["v0_3_0", "v0_3_1", "v0_3_2", "v0_3_3", "v0_3_4", "v0_4_0", "v0_4_2"])
 def unet2d_nuclei_broad_any(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
@@ -31,12 +31,12 @@ def unet2d_nuclei_broad_before_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 
-@pytest.fixture(params=["v0_4_1"])
+@pytest.fixture(params=["v0_4_2"])
 def unet2d_nuclei_broad_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 
-@pytest.fixture(params=["v0_3_4", "v0_4_1"])
+@pytest.fixture(params=["v0_3_4", "v0_4_2"])
 def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
@@ -49,6 +49,11 @@ def unet2d_nuclei_broad_latest_path(unet2d_nuclei_broad_base_path):
 @pytest.fixture
 def invalid_rdf_v0_4_0_duplicate_tensor_names(unet2d_nuclei_broad_base_path):
     return yaml.load(unet2d_nuclei_broad_base_path / "invalid_rdf_v0_4_0_duplicate_tensor_names.yaml")
+
+
+@pytest.fixture
+def unet2d_nuclei_broad_collection():
+    return yaml.load(pathlib.Path(__file__).parent / "../example_specs/collections/unet2d_nuclei_broad_coll/rdf.yaml")
 
 
 @pytest.fixture

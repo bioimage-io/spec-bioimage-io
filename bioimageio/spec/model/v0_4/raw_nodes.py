@@ -28,7 +28,6 @@ from bioimageio.spec.shared.raw_nodes import (
     ImportableModule,
     ImportableSourceFile,
     ParametrizedInputShape,
-    RawNode,
     URI,
 )
 
@@ -39,13 +38,14 @@ except ImportError:
 
 # reassign to use imported classes
 ImplicitOutputShape = ImplicitOutputShape
+Maintainer = Maintainer
 ParametrizedInputShape = ParametrizedInputShape
 Postprocessing = Postprocessing
 PostprocessingName = PostprocessingName
 Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
-FormatVersion = Literal["0.4.0", "0.4.1"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal["0.4.0", "0.4.1", "0.4.2"]  # newest format needs to be last (used in __init__.py)
 WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]

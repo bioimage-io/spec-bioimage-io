@@ -168,6 +168,16 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 
 ### RDF Format Versions
+#### collection RDF 0.2.2
+- Breaking changes that are fully auto-convertible
+  - Simplifies collection RDF 0.2.1 by merging resource type fields together to a `collection` field, 
+    holindg a list of all resources in the specified collection.
+
+#### (general) RDF 0.2.2 / model RDF 0.3.6 / model RDF 0.4.2
+- Non-breaking changes
+  - `rdf_source` new optional field
+  - `id` new optional field
+
 #### collection RDF 0.2.1
 - First official release, extends general RDF with fields `application`, `model`, `dataset`, `notebook` and (nested) 
   `collection`, which hold lists linking to respective resources.
@@ -178,7 +188,7 @@ or if the field `test_inputs` does not contain a list, it would print:
   - add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
 
 #### model RDF 0.4.1
-- Breaking changes that are fuly auto-convertible
+- Breaking changes that are fully auto-convertible
   - moved field `dependencies` to `weights:pytorch_state_dict:dependencies`
 - Non-breaking changes
   - `documentation` field accepts URLs as well

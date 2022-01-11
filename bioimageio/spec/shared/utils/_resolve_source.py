@@ -37,7 +37,7 @@ def resolve_rdf_source(
     elif isinstance(source, os.PathLike):
         source = pathlib.Path(source)
     elif isinstance(source, raw_nodes.URI):
-        source = str(raw_nodes.URI)
+        source = str(source)
 
     assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
 
@@ -149,7 +149,7 @@ def resolve_rdf_source(
 
         source = yaml.load(source)
 
-    assert isinstance(source, dict)
+    assert isinstance(source, dict), source
     return source, source_name, root
 
 

@@ -44,7 +44,10 @@ jobs:
       run: python scripts/generate_passthrough_modules.py check
     - name: Mypy
       if: ${{ matrix.python-version != '3.7' }}
-      run: mypy --install-types --non-interactive .
+      run: |
+# avoid error: --install-types failed (no mypy cache directory)
+        mkdir -p .mypy-cache
+        mypy . --install-types --non-interactive --cache-dir .mypy-cache
 
   conda-build:
     runs-on: ubuntu-latest

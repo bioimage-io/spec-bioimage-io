@@ -2,14 +2,18 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, Union
+from typing import Any, Dict, IO, Optional, Union
 
-from marshmallow import ValidationError
+from marshmallow import ValidationError, missing
+from marshmallow.utils import _Missing
 
-from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
+from .io_ import (
+    load_raw_resource_description,
+    resolve_rdf_source,
+    save_raw_resource_description,
+    serialize_raw_resource_description_to_dict,
+)
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
-
-KNOWN_COLLECTION_CATEGORIES = ("collection", "dataset", "model", "notebook", "rdf")
 
 
 def update_format(
@@ -75,39 +79,53 @@ def validate(
                 tb = traceback.format_tb(e.__traceback__)
 
             if raw_rd is not None and raw_rd.type == "collection":
-                for inner_category in KNOWN_COLLECTION_CATEGORIES:
-                    for inner_idx, inner in enumerate(getattr(raw_rd, inner_category, []) or []):
-                        if inner.__class__.__name__ != "CollectionEntry":
-                            continue
+                assert hasattr(raw_rd, "collection")
+                for idx, entry in enumerate(raw_rd.collection):  # type: ignore
+                    entry_error: Optional[str] = None
+                    rdf_update = entry.rdf_update
+                    id_info = f"(id={rdf_update['id']}) " if "id" in rdf_update else ""
 
+                    # rdf entries are based on collection RDF...
+                    rdf_data = serialize_raw_resource_description_to_dict(raw_rd)
+                    rdf_data.pop("collection")  # ... without the collection field to avoid recursion
+
+                    root_id = rdf_data.pop("id", missing)
+                    # update rdf entry with entrie's rdf_source
+                    sub_id: Union[str, _Missing] = missing
+                    if entry.rdf_source is not missing:
                         try:
-                            rdf_data, source_name, root = resolve_rdf_source(inner.source)
+                            rdf_update, _, _ = resolve_rdf_source(entry.rdf_source)
                         except Exception as e:
-                            inner_summary: Dict[str, Union[str, dict]] = {
-                                "error": (
-                                    f"{inner_category}[{inner_idx}]: (id={inner.id}) Failed to interpret source as rdf source; {e}"
-                                )
-                            }
+                            entry_error = f"collection[{idx}]: {id_info}Invalid rdf_source: {e}"
                         else:
-                            # update rdf data with additional fields of the collection entry
-                            rdf_data.update(getattr(inner, "unknown", {}))
-                            inner_summary = validate(
-                                rdf_data, update_format=update_format, update_format_inner=update_format_inner
-                            )
+                            sub_id = rdf_update.pop("id", missing)
+                            rdf_data.update(rdf_update)
 
-                            wrns = inner_summary.get("warnings", {})
-                            assert isinstance(wrns, dict)
-                            for k, v in wrns.items():
-                                warnings.warn(
-                                    f"{inner_category}[{inner_idx}]:{k}: (id={inner.id}) {v}",
-                                    category=ValidationWarning,
-                                )
+                    # update rdf entry with fields specified directly in the entry
+                    rdf_update = dict(entry.rdf_update)
+                    sub_id = rdf_update.pop("id", sub_id)
+                    if sub_id is missing:
+                        entry_error = f"collection[{idx}]: Missing `id` field for collection entry"
 
-                        if inner_summary["error"]:
-                            if inner_category not in nested_errors:
-                                nested_errors[inner_category] = {}
+                    rdf_data.update(rdf_update)
 
-                            nested_errors[inner_category][inner_idx] = inner_summary["error"]
+                    if entry_error:
+                        entry_summary = {"error": entry_error}
+                    else:
+                        entry_summary = validate(
+                            rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                        )
+
+                        wrns: Union[str, dict] = entry_summary.get("warnings", {})
+                        assert isinstance(wrns, dict)
+                        for k, v in wrns.items():
+                            warnings.warn(f"collection[{idx}]:{k}: {id_info}{v}", category=ValidationWarning)
+
+                    if entry_summary["error"]:
+                        if "collection" not in nested_errors:
+                            nested_errors["collection"] = {}
+
+                        nested_errors["collection"][idx] = entry_summary["error"]
 
                 if nested_errors:
                     error = nested_errors
