@@ -109,9 +109,11 @@ class RDF(ResourceDescription):
         description: str,
         documentation: Path,
         git_repo: Union[_Missing, str] = missing,
+        id: Union[_Missing, str] = missing,
         license: Union[_Missing, str] = missing,
         links: Union[_Missing, List[str]] = missing,
         maintainers: Union[_Missing, List[Maintainer]] = missing,
+        rdf_source: Union[_Missing, URI] = missing,
         tags: List[str],
         **unknown_kwargs,
     ):
@@ -124,9 +126,11 @@ class RDF(ResourceDescription):
         self.description = description
         self.documentation = documentation
         self.git_repo = git_repo
+        self.id = id
         self.license = license
         self.links = links
         self.maintainers = maintainers
+        self.rdf_source = rdf_source
         self.tags = tags
         super().__init__(format_version=format_version, name=name, type=type, version=version)
 
