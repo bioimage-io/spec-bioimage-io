@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.1
+# BioImage.IO Model Resource Description File Specification 0.4.2
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is
-0.4.1
+0.4.2
 * <a id="authors"></a>`authors` _List\[Author\]_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
   1. _Author_   is a Dict with the following keys:
   * <a id="authors:affiliation"></a>`affiliation` _optional String_ Affiliation.
@@ -23,7 +23,7 @@ Each entry contains a mandatory `text` field and either one or both of `doi` and
 E.g. the citation for the model architecture and/or the training data used.
   1. _CiteEntry_   is a Dict with the following keys:
   * <a id="cite:text"></a>`text` _String_ 
-  * <a id="cite:doi"></a>`doi` _optional* String_ 
+  * <a id="cite:doi"></a>`doi` _optional* DOI→String_ 
   * <a id="cite:url"></a>`url` _optional* String_ 
 * <a id="description"></a>`description` _String_ A string containing a brief description.
 * <a id="documentation"></a>`documentation` _Union\[URL→URI | RelativeLocalPath→Path\]_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
@@ -121,6 +121,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
 * <a id="download_url"></a>`download_url` _optional URL→URI_ recommended url to the zipped file if applicable
 * <a id="git_repo"></a>`git_repo` _optional URL→URI_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
+* <a id="id"></a>`id` _optional String_ Unique id within a collection of resources.
 * <a id="links"></a>`links` _optional List\[String\]_ links to other bioimage.io resources
 * <a id="maintainers"></a>`maintainers` _optional List\[Maintainer\]_ Maintainers of this resource.
   1. _Maintainer_   is a Dict with the following keys:
@@ -169,6 +170,9 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   * <a id="parent:uri"></a>`uri` _optional Union\[URI→String | RelativeLocalPath→Path\]_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
     1. _optional URI→String_ 
     1. _optional RelativeLocalPath→Path_ 
+* <a id="rdf_source"></a>`rdf_source` _optional Union\[URL→URI | DOI→String\]_ url or doi to the source of the resource definition
+  1. _optional URL→URI_ 
+  1. _optional DOI→String_ 
 * <a id="run_mode"></a>`run_mode` _RunMode_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. No standard run modes are defined yet. RunMode is a Dict with the following keys:
   * <a id="run_mode:name"></a>`name` _String_ The name of the `run_mode`
   * <a id="run_mode:kwargs"></a>`kwargs` _optional Kwargs→Dict\[String, Any\]_ Key word arguments.

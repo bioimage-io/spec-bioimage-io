@@ -384,7 +384,8 @@
                         "0.3.2",
                         "0.3.3",
                         "0.3.4",
-                        "0.3.5"
+                        "0.3.5",
+                        "0.3.6"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -405,6 +406,10 @@
                 },
                 "icon": {
                     "title": "icon",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "id",
                     "type": "string"
                 },
                 "inputs": {
@@ -472,6 +477,18 @@
                 "parent": {
                     "$ref": "#/definitions/ModelParent",
                     "type": "object"
+                },
+                "rdf_source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "run_mode": {
                     "$ref": "#/definitions/RunMode",

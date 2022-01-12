@@ -215,6 +215,10 @@
                     "title": "icon",
                     "type": "string"
                 },
+                "id": {
+                    "title": "id",
+                    "type": "string"
+                },
                 "license": {
                     "title": "license",
                     "type": "string"
@@ -238,6 +242,18 @@
                 "name": {
                     "title": "name",
                     "type": "string"
+                },
+                "rdf_source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "source": {
                     "anyOf": [

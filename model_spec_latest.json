@@ -378,7 +378,8 @@
                 "format_version": {
                     "enum": [
                         "0.4.0",
-                        "0.4.1"
+                        "0.4.1",
+                        "0.4.2"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -390,6 +391,10 @@
                 },
                 "icon": {
                     "title": "icon",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "id",
                     "type": "string"
                 },
                 "inputs": {
@@ -909,6 +914,18 @@
                     "$ref": "#/definitions/ModelParent",
                     "type": "object"
                 },
+                "rdf_source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
                 "run_mode": {
                     "$ref": "#/definitions/RunMode",
                     "type": "object"
@@ -1383,6 +1400,7 @@
                 }
             },
             "required": [
+                "architecture",
                 "source",
                 "weights_format"
             ],
