@@ -172,19 +172,20 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
     architecture = fields.ImportableSource(
-        bioimageio_maybe_required=True,
+        required=True,
         bioimageio_description="Source code of the model architecture that either points to a "
         "local implementation: `<relative path to file>:<identifier of implementation within the file>` or the "
         "implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.\nFor example: "
         "`my_function.py:MyImplementation` or `bioimageio.core.some_module.some_class_or_function`.",
     )
     architecture_sha256 = fields.String(
+        bioimageio_maybe_required=True,
         validate=field_validators.Length(equal=64),
         bioimageio_description="SHA256 checksum of the model source code file."
         + _common_sha256_hint
         + " This field is only required if the architecture points to a source file.",
     )
-    dependencies = fields.Dependencies(  # todo: add validation (0.4.2?)
+    dependencies = fields.Dependencies(
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
     )
