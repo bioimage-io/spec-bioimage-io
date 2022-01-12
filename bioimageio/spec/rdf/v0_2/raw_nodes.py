@@ -84,10 +84,12 @@ class RDF(ResourceDescription):
     documentation: Path = missing
     format_version: FormatVersion = missing
     git_repo: Union[_Missing, str] = missing
+    id: Union[_Missing, str] = missing
     icon: Union[_Missing, str] = missing
     license: Union[_Missing, str] = missing
     links: Union[_Missing, List[str]] = missing
     maintainers: Union[_Missing, List[Maintainer]] = missing
+    rdf_source: Union[_Missing, URI] = missing
     tags: List[str] = missing
 
     # manual __init__ to allow for unknown kwargs
