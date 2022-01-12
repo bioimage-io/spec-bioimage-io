@@ -18,8 +18,7 @@ def resolve_collection_entries(raw_rd: raw_nodes.Collection) -> List[Tuple[dict,
     seen_ids = set()
     for idx, entry in enumerate(raw_rd.collection):  # type: ignore
         entry_error: Optional[str] = None
-        rdf_update = entry.rdf_update
-        id_info = f"(id={rdf_update['id']}) " if "id" in rdf_update else ""
+        id_info = f"(id={entry.rdf_update['id']}) " if "id" in entry.rdf_update else ""
 
         # rdf entries are based on collection RDF...
         rdf_data = serialize_raw_resource_description_to_dict(raw_rd)
@@ -30,12 +29,12 @@ def resolve_collection_entries(raw_rd: raw_nodes.Collection) -> List[Tuple[dict,
         sub_id: Union[str, _Missing] = missing
         if entry.rdf_source is not missing:
             try:
-                rdf_update, _, _ = resolve_rdf_source(entry.rdf_source)
+                remote_rdf_update, _, _ = resolve_rdf_source(entry.rdf_source)
             except Exception as e:
                 entry_error = f"collection[{idx}]: {id_info}Invalid rdf_source: {e}"
             else:
-                sub_id = rdf_update.pop("id", missing)
-                rdf_data.update(rdf_update)
+                sub_id = remote_rdf_update.pop("id", missing)
+                rdf_data.update(remote_rdf_update)
 
         # update rdf entry with fields specified directly in the entry
         rdf_update = dict(entry.rdf_update)
