@@ -118,6 +118,7 @@ class RDF(ResourceDescription):
         documentation: Path,
         git_repo: Union[_Missing, str] = missing,
         id: Union[_Missing, str] = missing,
+        icon: Union[_Missing, str] = missing,
         license: Union[_Missing, str] = missing,
         links: Union[_Missing, List[str]] = missing,
         maintainers: Union[_Missing, List[Maintainer]] = missing,
@@ -135,6 +136,7 @@ class RDF(ResourceDescription):
         self.documentation = documentation
         self.git_repo = git_repo
         self.id = id
+        self.icon = icon
         self.license = license
         self.links = links
         self.maintainers = maintainers
@@ -146,7 +148,7 @@ class RDF(ResourceDescription):
             # make sure we didn't forget a defined field
             field_names = set(f.name for f in dataclasses.fields(self))
             for uk in unknown_kwargs:
-                assert uk not in field_names
+                assert uk not in field_names, uk
 
             warnings.warn(f"discarding unknown RDF fields: {unknown_kwargs}")
 

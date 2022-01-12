@@ -2,17 +2,15 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, Optional, Union
+from typing import Any, Dict, IO, Union
 
-from marshmallow import ValidationError, missing
-from marshmallow.utils import _Missing
+from marshmallow import ValidationError
 
 from .collection.v0_2.utils import resolve_collection_entries
 from .io_ import (
     load_raw_resource_description,
     resolve_rdf_source,
     save_raw_resource_description,
-    serialize_raw_resource_description_to_dict,
 )
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 
