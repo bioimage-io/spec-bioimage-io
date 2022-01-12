@@ -7,7 +7,7 @@ import typing
 
 import marshmallow_union
 import numpy
-from marshmallow import ValidationError, fields as marshmallow_fields, Schema
+from marshmallow import Schema, ValidationError, fields as marshmallow_fields, missing
 
 from . import field_validators, raw_nodes
 
@@ -119,13 +119,21 @@ class YamlDict(Dict):
     @staticmethod
     def _make_yaml_friendly(obj):
         if isinstance(obj, (list, tuple)):
-            return [YamlDict._make_yaml_friendly(ob) for ob in obj]
+            return [YamlDict._make_yaml_friendly(ob) for ob in obj if ob is not missing]
         elif isinstance(obj, dict):
-            return {YamlDict._make_yaml_friendly(k): YamlDict._make_yaml_friendly(v) for k, v in obj.items()}
+            return {
+                YamlDict._make_yaml_friendly(k): YamlDict._make_yaml_friendly(v)
+                for k, v in obj.items()
+                if v is not missing
+            }
         elif obj is None or isinstance(obj, (float, int, str, bool)):
             return obj
         elif isinstance(obj, pathlib.PurePath):
             return obj.as_posix()
+        elif isinstance(obj, raw_nodes.URI):
+            return str(obj)
+        elif obj is missing:
+            return missing
         else:
             raise TypeError(f"Encountered YAML unfriendly type: {type(obj)}")
 

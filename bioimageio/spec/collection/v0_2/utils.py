@@ -41,7 +41,8 @@ def resolve_collection_entries(
                 rdf_data.update(remote_rdf_update)
 
         # update rdf entry with fields specified directly in the entry
-        rdf_update = schema.CollectionEntry().dump(entry)["rdf_update"]
+        rdf_update = schema.CollectionEntry().dump(entry)
+        assert missing not in rdf_update.values()
         sub_id = rdf_update.pop("id", sub_id)
         if sub_id is missing:
             entry_error = f"collection[{idx}]: Missing `id` field"
@@ -56,6 +57,7 @@ def resolve_collection_entries(
         else:
             rdf_data["id"] = f"{root_id}/{sub_id}"
 
+        rdf_data.pop("rdf_source", None)  # remove rdf_source as we return a plain dict that has no simple source file
         assert missing not in rdf_data.values()
         ret.append((rdf_data, entry_error))
 
