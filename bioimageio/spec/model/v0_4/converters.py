@@ -3,8 +3,6 @@ from typing import Any, Dict
 
 from marshmallow import missing
 
-from bioimageio.spec.exceptions import UnconvertibleError
-
 
 def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
     from bioimageio.spec.model import v0_3

@@ -11,6 +11,8 @@ from io import StringIO
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
+from marshmallow import missing
+
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
@@ -206,6 +208,7 @@ def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
     serialized = schema.dump(raw_rd)
     assert isinstance(serialized, dict)
+    assert missing not in serialized.values()
 
     return serialized
 

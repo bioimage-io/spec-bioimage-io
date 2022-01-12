@@ -2,16 +2,15 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, Optional, Union
+from typing import Any, Dict, IO, Union
 
-from marshmallow import ValidationError, missing
-from marshmallow.utils import _Missing
+from marshmallow import ValidationError
 
+from .collection.v0_2.utils import resolve_collection_entries
 from .io_ import (
     load_raw_resource_description,
     resolve_rdf_source,
     save_raw_resource_description,
-    serialize_raw_resource_description_to_dict,
 )
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
 
@@ -80,35 +79,7 @@ def validate(
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
-                for idx, entry in enumerate(raw_rd.collection):  # type: ignore
-                    entry_error: Optional[str] = None
-                    rdf_update = entry.rdf_update
-                    id_info = f"(id={rdf_update['id']}) " if "id" in rdf_update else ""
-
-                    # rdf entries are based on collection RDF...
-                    rdf_data = serialize_raw_resource_description_to_dict(raw_rd)
-                    rdf_data.pop("collection")  # ... without the collection field to avoid recursion
-
-                    root_id = rdf_data.pop("id", missing)
-                    # update rdf entry with entrie's rdf_source
-                    sub_id: Union[str, _Missing] = missing
-                    if entry.rdf_source is not missing:
-                        try:
-                            rdf_update, _, _ = resolve_rdf_source(entry.rdf_source)
-                        except Exception as e:
-                            entry_error = f"collection[{idx}]: {id_info}Invalid rdf_source: {e}"
-                        else:
-                            sub_id = rdf_update.pop("id", missing)
-                            rdf_data.update(rdf_update)
-
-                    # update rdf entry with fields specified directly in the entry
-                    rdf_update = dict(entry.rdf_update)
-                    sub_id = rdf_update.pop("id", sub_id)
-                    if sub_id is missing:
-                        entry_error = f"collection[{idx}]: Missing `id` field for collection entry"
-
-                    rdf_data.update(rdf_update)
-
+                for idx, (rdf_data, entry_error) in enumerate(resolve_collection_entries(raw_rd)):  # type: ignore
                     if entry_error:
                         entry_summary = {"error": entry_error}
                     else:
@@ -118,6 +89,7 @@ def validate(
 
                         wrns: Union[str, dict] = entry_summary.get("warnings", {})
                         assert isinstance(wrns, dict)
+                        id_info = f"(id={rdf_data['id']}) " if "id" in rdf_data else ""
                         for k, v in wrns.items():
                             warnings.warn(f"collection[{idx}]:{k}: {id_info}{v}", category=ValidationWarning)
 

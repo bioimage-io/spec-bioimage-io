@@ -74,7 +74,9 @@ class WithUnknown(SharedBioImageIOSchema):
     @post_dump(pass_original=True)
     def keep_unknowns(self, output, orig, **kwargs):
         if orig and hasattr(orig, self.field_name_unknown_dict):
-            out_w_unknown = dict(getattr(orig, self.field_name_unknown_dict))
+            out_w_unknown = fields.YamlDict()._serialize(
+                getattr(orig, self.field_name_unknown_dict), self.field_name_unknown_dict, self
+            )
             out_w_unknown.update(output)
             return out_w_unknown
         else:
