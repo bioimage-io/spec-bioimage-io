@@ -25,12 +25,10 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
         if architecture is not missing:
             pytorch_state_dict_weights_entry["architecture"] = architecture
 
-        if architecture_sha256 is missing:
-            raise UnconvertibleError("Missing 'sha256' which is now required.")
-
-        pytorch_state_dict_weights_entry["architecture_sha256"] = architecture_sha256
-
         if architecture_sha256 is not missing:
+            pytorch_state_dict_weights_entry["architecture_sha256"] = architecture_sha256
+
+        if kwargs is not missing:
             pytorch_state_dict_weights_entry["kwargs"] = kwargs
 
     torchscript_weights_entry = data.get("weights", {}).pop("pytorch_script", None)
