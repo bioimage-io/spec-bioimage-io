@@ -132,6 +132,8 @@ class YamlDict(Dict):
             return obj.as_posix()
         elif isinstance(obj, raw_nodes.URI):
             return str(obj)
+        elif isinstance(obj, (datetime.datetime, datetime.time)):
+            return obj.isoformat()
         elif obj is missing:
             return missing
         else:
