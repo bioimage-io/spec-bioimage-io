@@ -36,7 +36,7 @@ def test_spec_round_trip_w_attachments(unet2d_nuclei_broad_latest):
     assert raw_model_from_serialized == raw_model
 
 
-def test_dataset_rdf_rount_trip():
+def test_dataset_rdf_round_trip():
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
     data = dict(
@@ -56,6 +56,5 @@ def test_dataset_rdf_rount_trip():
     raw = load_raw_resource_description(data)
     serialized = serialize_raw_resource_description_to_dict(raw)
     # remove keys that are ignored
-    data.pop("id")
     data.pop("source")
     assert data == serialized
