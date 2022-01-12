@@ -5,7 +5,7 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 import distutils.version
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, NewType, Union
 
@@ -30,9 +30,12 @@ class CollectionEntry(RawNode):
     rdf_source: Union[_Missing, URI] = missing
     rdf_update: Dict[str, Any] = missing
 
-    def __init__(self, rdf_source=missing, **rdf_update):
+    def __init__(
+        self, rdf_source: Union[_Missing, URI] = missing, rdf_update: Dict[str, Any] = missing, **implicit_rdf_update
+    ):
         self.rdf_source = rdf_source
-        self.rdf_update = rdf_update
+        self.rdf_update = rdf_update or {}
+        self.rdf_update.update(implicit_rdf_update)
         super().__init__()
 
 
@@ -65,7 +68,8 @@ class Collection(RDF):
         tags: List[str],
         # collection RDF
         collection: List[CollectionEntry],
-        **unknown,
+        unknown: Dict[str, Any] = missing,
+        **implicitly_unknown,
     ):
         self.collection = collection
         super().__init__(
@@ -87,4 +91,5 @@ class Collection(RDF):
             type=type,
             version=version,
         )
-        self.unknown = unknown
+        self.unknown = unknown or {}
+        self.unknown.update(implicitly_unknown)

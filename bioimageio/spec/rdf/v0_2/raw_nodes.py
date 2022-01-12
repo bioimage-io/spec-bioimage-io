@@ -33,9 +33,15 @@ class Attachments(RawNode):
     files: Union[_Missing, List[Union[Path, URI]]] = missing
     unknown: Dict[str, Any] = missing
 
-    def __init__(self, files: Union[_Missing, List[Union[Path, URI]]] = missing, **unknown):
+    def __init__(
+        self,
+        files: Union[_Missing, List[Union[Path, URI]]] = missing,
+        unknown: Dict[str, Any] = missing,
+        **implicitly_unknown,
+    ):
         self.files = files
-        self.unknown = unknown
+        self.unknown = unknown or {}
+        self.unknown.update(implicitly_unknown)
         super().__init__()
 
 
