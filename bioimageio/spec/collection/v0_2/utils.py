@@ -24,6 +24,7 @@ def resolve_collection_entries(
 
         # rdf entries are based on collection RDF...
         rdf_data = serialize_raw_resource_description_to_dict(collection)
+        assert missing not in rdf_data.values()
         rdf_data.pop("collection")  # ... without the collection field to avoid recursion
 
         root_id = rdf_data.pop("id", None) if collection_id is None else collection_id
@@ -36,6 +37,7 @@ def resolve_collection_entries(
                 entry_error = f"collection[{idx}]: {id_info}Invalid rdf_source: {e}"
             else:
                 sub_id = remote_rdf_update.pop("id", missing)
+                assert missing not in remote_rdf_update.values()
                 rdf_data.update(remote_rdf_update)
 
         # update rdf entry with fields specified directly in the entry
