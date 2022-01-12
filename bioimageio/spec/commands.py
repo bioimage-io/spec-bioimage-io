@@ -81,7 +81,7 @@ def validate(
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
-                for idx, (rdf_data, entry_error) in resolve_collection_entries(raw_rd):  # type: ignore
+                for idx, (rdf_data, entry_error) in enumerate(resolve_collection_entries(raw_rd)):  # type: ignore
                     if entry_error:
                         entry_summary = {"error": entry_error}
                     else:
