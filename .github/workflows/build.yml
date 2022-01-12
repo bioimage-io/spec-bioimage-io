@@ -45,7 +45,6 @@ jobs:
     - name: Mypy
       if: ${{ matrix.python-version != '3.7' }}
       run: |
-# avoid error: --install-types failed (no mypy cache directory)
         mkdir -p .mypy-cache
         mypy . --install-types --non-interactive --cache-dir .mypy-cache
 
