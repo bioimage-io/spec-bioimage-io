@@ -1,7 +1,10 @@
+import copy
 from typing import Any, Dict
 
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
+    data = copy.deepcopy(data)
+
     # we unofficially accept strings as author entries...
     authors = data.get("authors")
     if isinstance(authors, list):

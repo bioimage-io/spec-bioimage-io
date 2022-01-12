@@ -1,7 +1,9 @@
+import copy
 from typing import Any, Dict
 
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
+    data = copy.deepcopy(data)
     if data.get("format_version") in ("0.2.0", "0.2.1"):
         # move all type groups to the 'collection' field
         if "collection" not in data:

@@ -1,3 +1,4 @@
+import copy
 import pathlib
 from typing import Any, Dict
 
@@ -91,6 +92,9 @@ def convert_model_v0_3_2_to_v0_3_3(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
+
+    data = copy.deepcopy(data)
+
     if data.get("format_version", "0.3.0") == "0.3.0":
         # no breaking change, bump to 0.3.1
         data["format_version"] = "0.3.1"
