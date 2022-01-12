@@ -41,9 +41,9 @@ def resolve_collection_entries(raw_rd: raw_nodes.Collection) -> List[Tuple[dict,
         rdf_update = dict(entry.rdf_update)
         sub_id = rdf_update.pop("id", sub_id)
         if sub_id is missing:
-            entry_error = f"collection[{idx}]: Missing `id` field for collection entry"
+            entry_error = f"collection[{idx}]: Missing `id` field"
         elif sub_id in seen_ids:
-            entry_error = f"collection[{idx}]: Duplicate `id` value {sub_id} for collection entry"
+            entry_error = f"collection[{idx}]: Duplicate `id` value {sub_id}"
         else:
             seen_ids.add(sub_id)
 
