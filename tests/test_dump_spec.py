@@ -46,7 +46,7 @@ def test_dataset_rdf_round_trip():
         covers=["https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy-cover0.png"],
         description="Training data for EM segmentation of cellular membranes, nuclei, cuticle and cilia in Platynereis.",
         documentation="https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy.md",
-        format_version="0.2.1",
+        format_version="0.2.2",
         license="CC-BY-4.0",
         name="Platynereis EM Traning Data",
         source="https://doi.org/10.5281/zenodo.3675220",
