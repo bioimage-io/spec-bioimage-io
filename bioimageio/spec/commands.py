@@ -80,6 +80,7 @@ def validate(
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
+                seen_ids = set()
                 for idx, entry in enumerate(raw_rd.collection):  # type: ignore
                     entry_error: Optional[str] = None
                     rdf_update = entry.rdf_update
@@ -90,7 +91,7 @@ def validate(
                     rdf_data.pop("collection")  # ... without the collection field to avoid recursion
 
                     root_id = rdf_data.pop("id", missing)
-                    # update rdf entry with entrie's rdf_source
+                    # update rdf entry with entry's rdf_source
                     sub_id: Union[str, _Missing] = missing
                     if entry.rdf_source is not missing:
                         try:
@@ -106,8 +107,13 @@ def validate(
                     sub_id = rdf_update.pop("id", sub_id)
                     if sub_id is missing:
                         entry_error = f"collection[{idx}]: Missing `id` field for collection entry"
+                    elif sub_id in seen_ids:
+                        entry_error = f"collection[{idx}]: Duplicate `id` value {sub_id} for collection entry"
+                    else:
+                        seen_ids.add(sub_id)
 
                     rdf_data.update(rdf_update)
+                    rdf_data["id"] = f"{root_id}/{sub_id}"
 
                     if entry_error:
                         entry_summary = {"error": entry_error}
