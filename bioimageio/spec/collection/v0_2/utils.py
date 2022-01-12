@@ -10,21 +10,23 @@ def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
     return raw_rd
 
 
-def resolve_collection_entries(raw_rd: raw_nodes.Collection) -> List[Tuple[dict, Optional[str]]]:
+def resolve_collection_entries(
+    collection: raw_nodes.Collection, collection_id: Optional[str] = None
+) -> List[Tuple[dict, Optional[str]]]:
     from bioimageio.spec import serialize_raw_resource_description_to_dict
     from bioimageio.spec.shared.utils import resolve_rdf_source
 
     ret = []
     seen_ids = set()
-    for idx, entry in enumerate(raw_rd.collection):  # type: ignore
+    for idx, entry in enumerate(collection.collection):  # type: ignore
         entry_error: Optional[str] = None
         id_info = f"(id={entry.rdf_update['id']}) " if "id" in entry.rdf_update else ""
 
         # rdf entries are based on collection RDF...
-        rdf_data = serialize_raw_resource_description_to_dict(raw_rd)
+        rdf_data = serialize_raw_resource_description_to_dict(collection)
         rdf_data.pop("collection")  # ... without the collection field to avoid recursion
 
-        root_id = rdf_data.pop("id", missing)
+        root_id = rdf_data.pop("id", None) if collection_id is None else collection_id
         # update rdf entry with entry's rdf_source
         sub_id: Union[str, _Missing] = missing
         if entry.rdf_source is not missing:
@@ -47,7 +49,11 @@ def resolve_collection_entries(raw_rd: raw_nodes.Collection) -> List[Tuple[dict,
             seen_ids.add(sub_id)
 
         rdf_data.update(rdf_update)
-        rdf_data["id"] = f"{root_id}/{sub_id}"
+        if root_id is None:
+            rdf_data["id"] = sub_id
+        else:
+            rdf_data["id"] = f"{root_id}/{sub_id}"
+
         ret.append((rdf_data, entry_error))
 
     return ret
