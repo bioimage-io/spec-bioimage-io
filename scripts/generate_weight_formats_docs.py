@@ -14,8 +14,9 @@ except ImportError:
 @dataclasses.dataclass
 class Kwarg:
     name: str
-    optional: bool
     description: str
+    optional: bool
+    maybe_optional: bool
 
 
 @dataclasses.dataclass
@@ -31,7 +32,12 @@ def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
     def get_kwargs_doc(we: Type[_WeightsEntryBase], exclude: Sequence[str] = tuple()) -> List[Kwarg]:
         return sorted(
             [
-                Kwarg(name=name, optional=not f.required or bool(f.missing), description=f.bioimageio_description)
+                Kwarg(
+                    name=name,
+                    description=f.bioimageio_description,
+                    optional=not f.required or bool(f.missing),
+                    maybe_optional=f.bioimageio_maybe_required,
+                )
                 for name, f in we().fields.items()
                 if name != "weights_format" and name not in exclude
             ],
@@ -59,7 +65,10 @@ def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
 def get_md_kwargs(kwargs: Sequence[Kwarg], indent: int = 0):
     md = ""
     for kwarg in kwargs:
-        md += f"{' ' * indent}- `{'[' if kwarg.optional else ''}{kwarg.name}{']' if kwarg.optional else ''}` {kwarg.description}\n"
+        md += (
+            f"{' ' * indent}- `{kwarg.name}` {'_optional' if kwarg.optional or kwarg.maybe_optional else ''}"
+            f"{'*_ ' if kwarg.maybe_optional else '_ ' if kwarg.optional else ''}{kwarg.description}\n"
+        )
 
     return md
 
@@ -87,10 +96,12 @@ def export_markdown_docs(folder: Path, spec) -> None:
     md = (
         (
             f"# Weight formats in model spec {format_version_wo_patch}\n"
-            "## Common \[optional\] key word arguments for all weight formats\n\n"
+            "## Common key word arguments for all weight formats\n"
+            "Optional arguments are marked as _optional_ or _optional*_ with an asterisk if they are optional "
+            "depending on another argument's value.\n\n"
         )
         + get_md_kwargs(common_kwargs)
-        + ("\n## Weight formats and their additional \[optional\] key word arguments\n")
+        + ("\n## Weight formats and their additional key word arguments\n")
     )
     md += md_from_doc(doc)
     path = folder / f"weight_formats_spec_{format_version_file_name}.md"
