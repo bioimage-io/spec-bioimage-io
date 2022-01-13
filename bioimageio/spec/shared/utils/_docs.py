@@ -25,7 +25,13 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     )
     https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L107-L112
     """
-    import requests  # not available in pyodide
+    # hotfix to handle requests not available in pyodide, see
+    # https://github.com/bioimage-io/bioimage.io/issues/216#issuecomment-1012422194
+    try:
+        import requests  # not available in pyodide
+    except Exception:
+        warnings.warn(f"Could not reslove {github_file_url} because requests library is not available.")
+        return "URL NOT RESOLVED"
 
     assert not urlparse(github_file_url).fragment, "unexpected url fragment"
     look_for = {"class": ast.ClassDef, "function": ast.FunctionDef}[type_]
