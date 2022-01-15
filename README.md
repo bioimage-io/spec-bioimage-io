@@ -169,6 +169,8 @@ or if the field `test_inputs` does not contain a list, it would print:
 
 ### RDF Format Versions
 #### collection RDF 0.2.2
+- Non-breaking changes
+  - make `authors`, `cite`, `documentation` and `tags` optional
 - Breaking changes that are fully auto-convertible
   - Simplifies collection RDF 0.2.1 by merging resource type fields together to a `collection` field, 
     holindg a list of all resources in the specified collection.
