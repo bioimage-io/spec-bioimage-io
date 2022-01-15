@@ -18,7 +18,7 @@ covers:
 # source url to kaibu.org
 source: https://kaibu.org
 # add custom badge
-badge:
+badges:
  - icon: https://imjoy.io/static/badge/launch-imjoy-badge.svg
    label: Launch ImJoy
    url: https://imjoy.io/#/app?plugin=https://kaibu.org/#/app

@@ -88,14 +88,14 @@ specified.
     authors_bioimageio_description = (
         "A list of authors. The authors are the creators of the specifications and the primary points of contact."
     )
-    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description, required=True)
+    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description)
 
     badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
 
     cite_bioimageio_description = """A list of citation entries.
 Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
 E.g. the citation for the model architecture and/or the training data used."""
-    cite = fields.List(fields.Nested(CiteEntry()), required=True, bioimageio_description=cite_bioimageio_description)
+    cite = fields.List(fields.Nested(CiteEntry()), bioimageio_description=cite_bioimageio_description)
 
     config_bioimageio_description = (
         "A custom configuration field that can contain any keys not present in the RDF spec. "
@@ -139,7 +139,6 @@ E.g. the citation for the model architecture and/or the training data used."""
                 )
             ),
         ],
-        required=True,
         bioimageio_description="URL or relative path to markdown file with additional documentation. "
         "For markdown files the recommended documentation file name is `README.md`.",
     )
@@ -223,7 +222,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description="url or local relative path to the source of the resource",
     )
 
-    tags = fields.List(fields.String(), required=True, bioimageio_description="A list of tags.")
+    tags = fields.List(fields.String(), bioimageio_description="A list of tags.")
 
     type = fields.String(required=True)
 
