@@ -630,7 +630,6 @@
                 "format_version",
                 "license",
                 "name",
-                "tags",
                 "test_inputs",
                 "test_outputs",
                 "timestamp",

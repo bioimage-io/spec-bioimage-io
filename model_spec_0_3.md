@@ -31,7 +31,6 @@ E.g. the citation for the model architecture and/or the training data used.
   1. _optional RelativeLocalPath→Path_ 
 * <a id="license"></a>`license` _String_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * <a id="name"></a>`name` _String_ Name of this model. It should be human-readable and only contain letters, numbers, `_`, `-` or spaces and not be longer than 36 characters.
-* <a id="tags"></a>`tags` _List\[String\]_ A list of tags.
 * <a id="test_inputs"></a>`test_inputs` _List\[Union\[URI→String | RelativeLocalPath→Path\]\]_ List of URIs or local relative paths to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
   1. _optional Union\[URI→String | RelativeLocalPath→Path\]_ 
   1. _optional URI→String_ 
@@ -157,7 +156,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
     * <a id="outputs:shape:scale"></a>`scale` _List\[Float\]_ 'output_pix/input_pix' for each dimension.
   * <a id="outputs:data_range"></a>`data_range` _optional Tuple_ Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor. If not specified, the full data range that can be expressed in `data_type` is allowed.
   * <a id="outputs:description"></a>`description` _optional String_ 
-  * <a id="outputs:halo"></a>`halo` _optional List\[Integer\]_ Hint to describe the potentially corrupted edge region of the output tensor, due to boundary effects. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. An example implementation of prediction with tiling, accounting for the halo can be found [here](https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction.py#L194-L242). Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed. 
+  * <a id="outputs:halo"></a>`halo` _optional List\[Integer\]_ Hint to describe the potentially corrupted edge region of the output tensor, due to boundary effects. The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. An example implementation of prediction with tiling, accounting for the halo can be found [here](https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction.py#L195-L243). Use `shape:offset` if the model output itself is cropped and input and output shapes not fixed. 
   * <a id="outputs:postprocessing"></a>`postprocessing` _optional List\[Postprocessing\]_ Description of how this output should be postprocessed.
     1. _Postprocessing_   is a Dict with the following keys:
     * <a id="outputs:postprocessing:name"></a>`name` _String_ Name of postprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range, scale_mean_variance.
@@ -204,4 +203,5 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
  This field is only required if the field source is present.
 * <a id="source"></a>`source` _optional* ImportableSource→String_ Language and framework specific implementation. As some weights contain the model architecture, the source is optional depending on the present weight formats. `source` can either point to a local implementation: `<relative path to file>:<identifier of implementation within the source file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
 For example: `my_function.py:MyImplementation` or `core_library.some_module.some_function`.
+* <a id="tags"></a>`tags` _optional List\[String\]_ A list of tags.
 * <a id="version"></a>`version` _optional StrictVersion→String_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.

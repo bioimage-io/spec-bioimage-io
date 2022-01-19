@@ -265,13 +265,9 @@
                 }
             },
             "required": [
-                "authors",
-                "cite",
                 "description",
-                "documentation",
                 "format_version",
                 "name",
-                "tags",
                 "type"
             ],
             "type": "object"
