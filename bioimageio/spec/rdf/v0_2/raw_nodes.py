@@ -81,13 +81,13 @@ class Badge(RawNode):
 @dataclass
 class RDF(ResourceDescription):
     attachments: Union[_Missing, Attachments] = missing
-    authors: List[Author] = missing
+    authors: Union[_Missing, List[Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
-    cite: List[CiteEntry] = missing
+    cite: Union[_Missing, List[CiteEntry]] = missing
     config: Union[_Missing, dict] = missing
     covers: Union[_Missing, List[Union[URI, Path]]] = missing
     description: str = missing
-    documentation: Path = missing
+    documentation: Union[_Missing, Path] = missing
     format_version: FormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     id: Union[_Missing, str] = missing
@@ -96,7 +96,7 @@ class RDF(ResourceDescription):
     links: Union[_Missing, List[str]] = missing
     maintainers: Union[_Missing, List[Maintainer]] = missing
     rdf_source: Union[_Missing, URI] = missing
-    tags: List[str] = missing
+    tags: Union[_Missing, List[str]] = missing
 
     # manual __init__ to allow for unknown kwargs
     def __init__(
@@ -109,13 +109,13 @@ class RDF(ResourceDescription):
         version: Union[_Missing, distutils.version.StrictVersion] = missing,
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
-        authors: List[Author],
+        authors: Union[_Missing, List[Author]] = missing,
         badges: Union[_Missing, List[Badge]] = missing,
-        cite: List[CiteEntry],
+        cite: Union[_Missing, List[CiteEntry]] = missing,
         config: Union[_Missing, dict] = missing,
         covers: Union[_Missing, List[Union[URI, Path]]] = missing,
         description: str,
-        documentation: Path,
+        documentation: Union[_Missing, Path] = missing,
         git_repo: Union[_Missing, str] = missing,
         id: Union[_Missing, str] = missing,
         icon: Union[_Missing, str] = missing,
@@ -123,7 +123,7 @@ class RDF(ResourceDescription):
         links: Union[_Missing, List[str]] = missing,
         maintainers: Union[_Missing, List[Maintainer]] = missing,
         rdf_source: Union[_Missing, URI] = missing,
-        tags: List[str],
+        tags: Union[_Missing, List[str]] = missing,
         **unknown_kwargs,
     ):
         self.attachments = attachments
