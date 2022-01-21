@@ -71,11 +71,10 @@ In order to make it available in https://bioimage.io, you can submit the RDF pac
  * Use or upgrade to the latest format version
 
 
-## BioImage.IO Spec Validator
+# BioImage.IO CLI
+The BioImage.IO command line tool provides makes it easy to work with BioImage.IO RDFs. 
+It can be installed with either `pip` or `conda`:
 
-It is recommended to use our validator to verify your models when you write it manually or develop tools for generating RDF/MDF files.
-
-The spec validator can be installed either with `pip`, or `conda`:
 ```
 # pip
 pip install -U bioimageio.spec
@@ -84,11 +83,27 @@ pip install -U bioimageio.spec
 conda install -c conda-forge bioimageio.spec
 ```
 
-To use the spec validator, you can verify a model configuration in the [bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) using the following command:
+Alternatively you can install the extended [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python#installation) CLI. 
+
+
+## validate
+
+It is recommended to use this validator to verify your models when you write it manually or develop tools for generating RDF files.
+
+
+Use the `validate` command to check for formatting errors like missing or invalid values:
 ```
-bioimageio validate <MY-MODEL>.yaml
+bioimageio validate <MY-MODEL-SOURCE>
 ```
-The output of this command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
+
+`<MY-MODEL-SOURCE>` may be a local RDF yaml "`<MY-MODEL>/rdf.yaml`" or a DOI / URL to a zenodo record, or a URL to an rdf.yaml file.
+
+To see if your model is compatible to the [latest bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) use the spec validator with the `--update-format` flag:
+```
+bioimageio validate --update-format `<MY-MODEL-SOURCE>`
+```
+
+The output of the `validate` command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
 ```
 {'timestamp': ['Missing data for required field.']}
 ```
@@ -97,6 +112,12 @@ or if the field `test_inputs` does not contain a list, it would print:
 {'test_inputs': ['Not a valid list.']}.
 ```
 
+## update-format
+Similar to the `validate` command with `--update-format` flag the `update-format` command attempts to convert an RDF 
+to the latest applicable format version, but saves the result in a file for further manual editing:
+```
+bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
+```
 
 
 ## Changelog
