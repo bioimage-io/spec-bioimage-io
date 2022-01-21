@@ -13,7 +13,7 @@ All the BioImage.IO-compatible RDF must fulfill the following rules:
    1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
    2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
 
-As a general guideline, please follow the model RDF spec to describe AI models and use the general RDF spec for other resource types including `dataset`, `notebook`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-compliant is to run the BioImage.IO Validator against it.
+As a general guideline, please follow the model RDF spec to describe AI models and use the general RDF spec for other resource types including `dataset`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-compliant is to run the BioImage.IO Validator against it.
 
 ## [Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md)
 
@@ -40,7 +40,7 @@ Here is a list of model RDF Examples:
 Another specialized RDF spec, the [`Collection Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection RDF`) defines a file format for representing collections of resources for the [BioImage.IO](https://bioimage.io) website.
 
 
-## Link between resource items (under development)
+## Link between resource items
 
 You can use `links` which is a list of `id` to other resource items, for example, if you want to associate an applicaiton with a model, you can set the links field of the models like the following:
 ```yaml
@@ -55,8 +55,10 @@ model:
       - HPA-Classification
 ```
 
-## Hosting the file (under development)
-It is recommended to host the resource description file on one of the public git repository website, including Github, Gitlab, Bitbucket, or Gist. A link can be submitted to BioImage.IO so we can keep track of the changes later.
+## Hosting the file
+
+You can host the resource description file on one of the public git repository website, including Zenodo Github, Gitlab, Bitbucket, or Gist.
+In order to make it available in https://bioimage.io, you can submit the RDF package via the uploader.
 
 
 ## Recommendations
