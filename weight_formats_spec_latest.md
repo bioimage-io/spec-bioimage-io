@@ -7,7 +7,7 @@ Optional arguments are marked as _optional_ or _optional*_ with an asterisk if t
 - `authors` _optional_ A list of authors. If this is the root weight (it does not have a `parent` field): the person(s) that have trained this model. If this is a child weight (it has a `parent` field): the person(s) who have converted the weights to this format.
 - `parent` _optional_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
 - `sha256` _optional_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-    Code snippet to compute SHA256 checksum
+    Code snippet to compute SHA256 checksum:
     
     ```python
     import hashlib
@@ -32,20 +32,20 @@ Optional arguments are marked as _optional_ or _optional*_ with an asterisk if t
   - key word arguments:
     - `architecture` Source code of the model architecture that either points to a local implementation: `<relative path to file>:<identifier of implementation within the file>` or the implementation in an available dependency: `<root-dependency>.<sub-dependency>.<identifier>`.
 For example: `my_function.py:MyImplementation` or `bioimageio.core.some_module.some_class_or_function`.
-    - `architecture_sha256` _optional*_ SHA256 checksum of the model source code file.You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-    Code snippet to compute SHA256 checksum
-    
-    ```python
-    import hashlib
-    
-    filename = "your filename here"
-    with open(filename, "rb") as f:
-      bytes = f.read() # read entire file as bytes
-      readable_hash = hashlib.sha256(bytes).hexdigest()
-      print(readable_hash)
-      ```
+    - `architecture_sha256` _optional*_ This field is only required if the architecture points to a source file. SHA256 checksum of the model source code file.You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
+        Code snippet to compute SHA256 checksum:
+        
+        ```python
+        import hashlib
+        
+        filename = "your filename here"
+        with open(filename, "rb") as f:
+          bytes = f.read() # read entire file as bytes
+          readable_hash = hashlib.sha256(bytes).hexdigest()
+          print(readable_hash)
+          ```
 
- This field is only required if the architecture points to a source file.
+
     - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
     - `kwargs` _optional_ Keyword arguments for the implementation specified by `architecture`.
 - `tensorflow_js` Tensorflow Javascript weights format

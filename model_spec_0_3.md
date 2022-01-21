@@ -188,7 +188,7 @@ Keys in `config` may be very specific to a tool or consumer software. To avoid c
   1. _optional URI→String_ 
   1. _optional RelativeLocalPath→Path_ 
 * <a id="sha256"></a>`sha256` _optional String_ SHA256 checksum of the model source code file.You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. 
-    Code snippet to compute SHA256 checksum
+    Code snippet to compute SHA256 checksum:
     
     ```python
     import hashlib
