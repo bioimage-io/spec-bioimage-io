@@ -181,9 +181,9 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     architecture_sha256 = fields.String(
         bioimageio_maybe_required=True,
         validate=field_validators.Length(equal=64),
-        bioimageio_description="SHA256 checksum of the model source code file."
-        + _common_sha256_hint
-        + "    This field is only required if the architecture points to a source file.",
+        bioimageio_description="This field is only required if the architecture points to a source file. "
+        "SHA256 checksum of the model source code file."
+        + _common_sha256_hint.replace("    ", "        "),  # sha256 hint with one more intend level
     )
     dependencies = fields.Dependencies(
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
