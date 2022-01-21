@@ -348,7 +348,7 @@ _common_sha256_hint = (
     "Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. "
     # "[here is a codesnippet](#code-snippet-to-compute-sha256-checksum)."  # todo: link to code snippet and don't multiply it
     + """
-    Code snippet to compute SHA256 checksum
+    Code snippet to compute SHA256 checksum:
     
     ```python
     import hashlib
