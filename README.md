@@ -55,7 +55,7 @@ model:
       - HPA-Classification
 ```
 
-## Hosting the file
+## Hosting RDFs
 
 You can host the resource description file on one of the public git repository website, including Zenodo Github, Gitlab, Bitbucket, or Gist.
 In order to make it available in https://bioimage.io, you can submit the RDF package via the uploader.
