@@ -147,6 +147,7 @@ class RDF(ResourceDescription):
         if unknown_kwargs:
             # make sure we didn't forget a defined field
             field_names = set(f.name for f in dataclasses.fields(self))
+            field_names.remove("root_path")  # ignore internal root_path field
             for uk in unknown_kwargs:
                 assert uk not in field_names, uk
 
