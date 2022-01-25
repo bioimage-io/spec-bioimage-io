@@ -171,7 +171,7 @@ class _WeightsEntryBase(_WeightsEntryBase03):
     dependencies = fields.Dependencies(
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. "
-        "These dependencies are only valid in the context of the specified weight format."
+        "These dependencies are only used for the specified weight format."
     )
 
 
