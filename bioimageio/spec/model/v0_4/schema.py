@@ -4,14 +4,14 @@ from copy import deepcopy
 from marshmallow import RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
 
 from bioimageio.spec.model.v0_3.schema import (
-    KerasHdf5WeightsEntry,
+    KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
     ModelParent,
-    OnnxWeightsEntry,
+    OnnxWeightsEntry as OnnxWeightsEntry03,
     Postprocessing,
     Preprocessing,
-    TensorflowJsWeightsEntry,
-    TensorflowSavedModelBundleWeightsEntry,
-    _WeightsEntryBase,
+    TensorflowJsWeightsEntry as TensorflowJsWeightsEntry03,
+    TensorflowSavedModelBundleWeightsEntry as TensorflowSavedModelBundleWeightsEntry03,
+    _WeightsEntryBase as _WeightsEntryBase03,
     _common_sha256_hint,
 )
 from bioimageio.spec.rdf import v0_2 as rdf
@@ -166,9 +166,23 @@ class OutputTensor(_TensorBase):
             raise NotImplementedError(type(shape))
 
 
-class PytorchStateDictWeightsEntry(_WeightsEntryBase):
+class _WeightsEntryBase(_WeightsEntryBase03):
     raw_nodes = raw_nodes
+    dependencies = fields.Dependencies(
+        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
+        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
+    )
 
+
+class KerasHdf5WeightsEntry(KerasHdf5WeightsEntry03, _WeightsEntryBase):
+    pass
+
+
+class OnnxWeightsEntry(OnnxWeightsEntry03, _WeightsEntryBase):
+    pass
+
+
+class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
     architecture = fields.ImportableSource(
@@ -185,11 +199,6 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
         "SHA256 checksum of the model source code file."
         + _common_sha256_hint.replace("    ", "        "),  # sha256 hint with one more intend level
     )
-    dependencies = fields.Dependencies(
-        bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
-        "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'"
-    )
-
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
@@ -206,6 +215,14 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
                     "When specifying 'architecture' with a callable from a source file, "
                     "the corresponding 'architecture_sha256' field is required."
                 )
+
+
+class TensorflowJsWeightsEntry(TensorflowJsWeightsEntry03, _WeightsEntryBase):
+    pass
+
+
+class TensorflowSavedModelBundleWeightsEntry(TensorflowSavedModelBundleWeightsEntry03, _WeightsEntryBase):
+    pass
 
 
 class TorchscriptWeightsEntry(_WeightsEntryBase):
