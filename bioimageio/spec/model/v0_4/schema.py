@@ -543,20 +543,19 @@ is in an unsupported format version. The current format version described here i
                 raise ValidationError("Cannot validate keys in weights field due to other validation errors.")
 
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
-                assert isinstance(
-                    weights_entry,
-                    (
-                        raw_nodes.KerasHdf5WeightsEntry,
-                        raw_nodes.TensorflowJsWeightsEntry,
-                        raw_nodes.TensorflowSavedModelBundleWeightsEntry,
-                    ),
-                )
+                if weights_format == "keras_hdf5":
+                    assert isinstance(weights_entry, raw_nodes.KerasHdf5WeightsEntry)
+                elif weights_format == "tensorflow_js":
+                    assert isinstance(weights_entry, raw_nodes.TensorflowJsWeightsEntry)
+                elif weights_format == "tensorflow_saved_model_bundle":
+                    assert isinstance(weights_entry, raw_nodes.TensorflowSavedModelBundleWeightsEntry)
+                else:
+                    raise NotImplementedError
+
                 if weights_entry.tensorflow_version is missing_:
-                    # todo: raise ValidationError instead?
                     self.warn(f"weights[{weights_format}]", "missing 'tensorflow_version'")
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
-                    # todo: raise ValidationError instead?
                     self.warn(f"weights[{weights_format}]", "missing 'opset_version'")
