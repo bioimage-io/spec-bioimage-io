@@ -553,7 +553,7 @@ is in an unsupported format version. The current format version described here i
                     raise NotImplementedError
 
                 if weights_entry.dependencies is missing and weights_entry.pytorch_version is missing:
-                    self.warn(f"weights[{weights_format}]", "missing 'pytorch_version'")
+                    self.warn(f"weights:{weights_format}", "missing 'pytorch_version'")
 
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 if weights_format == "keras_hdf5":
@@ -566,9 +566,9 @@ is in an unsupported format version. The current format version described here i
                     raise NotImplementedError
 
                 if weights_entry.dependencies is missing and weights_entry.tensorflow_version is missing:
-                    self.warn(f"weights[{weights_format}]", "missing 'tensorflow_version'")
+                    self.warn(f"weights:{weights_format}", "missing 'tensorflow_version'")
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.dependencies is missing and weights_entry.opset_version is missing:
-                    self.warn(f"weights[{weights_format}]", "missing 'opset_version'")
+                    self.warn(f"weights:{weights_format}", "missing 'opset_version'")

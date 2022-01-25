@@ -59,7 +59,6 @@ class ValidationWarning(UserWarning):
             assert issubclass(vw.category, ValidationWarning)
             msg = str(vw.message)
             if ": " in msg:
-                assert msg.count(": ")
                 keys_, *rest = msg.split(": ")
                 msg = ": ".join(rest)
                 keys = keys_.split(":")
