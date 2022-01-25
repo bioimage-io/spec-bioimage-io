@@ -1,3 +1,4 @@
+import distutils.version
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -74,6 +75,7 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     architecture: ImportableSource = missing
     architecture_sha256: Union[_Missing, str] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
+    pytorch_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 @dataclass
@@ -89,6 +91,7 @@ class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase, TensorflowSavedM
 @dataclass
 class TorchscriptWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Torchscript"
+    pytorch_version: Union[_Missing, distutils.version.StrictVersion] = missing
 
 
 WeightsEntry = Union[

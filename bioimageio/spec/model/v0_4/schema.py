@@ -1,7 +1,7 @@
 import typing
 from copy import deepcopy
 
-from marshmallow import RAISE, ValidationError, missing as missing_, pre_load, validates, validates_schema
+from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
 
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
@@ -202,6 +202,7 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
+    pytorch_version = fields.StrictVersion()
 
     @validates_schema
     def sha_for_source_code_file(self, data, **kwargs):
@@ -230,6 +231,7 @@ class TorchscriptWeightsEntry(_WeightsEntryBase):
 
     bioimageio_description = "Torchscript weights format"
     weights_format = fields.String(validate=field_validators.Equal("torchscript"), required=True, load_only=True)
+    pytorch_version = fields.StrictVersion()
 
 
 WeightsEntry = typing.Union[
@@ -275,7 +277,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.authors_bioimageio_description,
     )
 
-    badges = missing_  # todo: allow badges for Model (RDF has it)
+    badges = missing  # todo: allow badges for Model (RDF has it)
     cite = fields.List(
         fields.Nested(rdf.schema.CiteEntry()),
         required=True,  # todo: unify authors with RDF (optional or required?)
@@ -301,7 +303,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "not allowed. It is recommended to use `README.md` as the documentation name.",
     )
 
-    download_url = missing_  # todo: allow download_url for Model (RDF has it)
+    download_url = missing  # todo: allow download_url for Model (RDF has it)
 
     format_version = fields.String(
         validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),
@@ -506,30 +508,30 @@ is in an unsupported format version. The current format version described here i
             if not isinstance(t, raw_nodes.OutputTensor):
                 raise ValidationError("Failed to validate reference tensor names due to validation errors in outputs")
 
-            if t.postprocessing is missing_:
+            if t.postprocessing is missing:
                 continue
 
             for postpr in t.postprocessing:
-                if postpr.kwargs is missing_:
+                if postpr.kwargs is missing:
                     continue
 
-                ref_tensor = postpr.kwargs.get("reference_tensor", missing_)
-                if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
+                ref_tensor = postpr.kwargs.get("reference_tensor", missing)
+                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
 
         for t in ins:
             if not isinstance(t, raw_nodes.InputTensor):
                 raise ValidationError("Failed to validate reference tensor names due to validation errors in inputs")
 
-            if t.preprocessing is missing_:
+            if t.preprocessing is missing:
                 continue
 
             for prep in t.preprocessing:
-                if prep.kwargs is missing_:
+                if prep.kwargs is missing:
                     continue
 
-                ref_tensor = prep.kwargs.get("reference_tensor", missing_)
-                if ref_tensor is not missing_ and ref_tensor not in valid_input_tensor_references:
+                ref_tensor = prep.kwargs.get("reference_tensor", missing)
+                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
                     raise ValidationError(f"{ref_tensor} not found in inputs")
 
                 if ref_tensor == t.name:
@@ -542,6 +544,17 @@ is in an unsupported format version. The current format version described here i
             if not isinstance(weights_entry, get_args(raw_nodes.WeightsEntry)):
                 raise ValidationError("Cannot validate keys in weights field due to other validation errors.")
 
+            if weights_format in ["pytorch_state_dict", "torchscript"]:
+                if weights_format == "pytorch_state_dict":
+                    assert isinstance(weights_entry, raw_nodes.PytorchStateDictWeightsEntry)
+                elif weights_format == "torchscript":
+                    assert isinstance(weights_entry, raw_nodes.TorchscriptWeightsEntry)
+                else:
+                    raise NotImplementedError
+
+                if weights_entry.dependencies is missing and weights_entry.pytorch_version is missing:
+                    self.warn(f"weights[{weights_format}]", "missing 'pytorch_version'")
+
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:
                 if weights_format == "keras_hdf5":
                     assert isinstance(weights_entry, raw_nodes.KerasHdf5WeightsEntry)
@@ -552,10 +565,10 @@ is in an unsupported format version. The current format version described here i
                 else:
                     raise NotImplementedError
 
-                if weights_entry.tensorflow_version is missing_:
+                if weights_entry.dependencies is missing and weights_entry.tensorflow_version is missing:
                     self.warn(f"weights[{weights_format}]", "missing 'tensorflow_version'")
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
-                if weights_entry.opset_version is missing_:
+                if weights_entry.dependencies is missing and weights_entry.opset_version is missing:
                     self.warn(f"weights[{weights_format}]", "missing 'opset_version'")
