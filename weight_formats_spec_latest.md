@@ -24,9 +24,11 @@ Optional arguments are marked as _optional_ or _optional*_ with an asterisk if t
 ## Weight formats and their additional key word arguments
 - `keras_hdf5` Keras HDF5 weights format
   - key word arguments:
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
     - `tensorflow_version` _optional_ 
 - `onnx` ONNX weights format
   - key word arguments:
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
     - `opset_version` _optional_ 
 - `pytorch_state_dict` PyTorch state dictionary weights format
   - key word arguments:
@@ -46,12 +48,18 @@ For example: `my_function.py:MyImplementation` or `bioimageio.core.some_module.s
           ```
 
 
-    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
     - `kwargs` _optional_ Keyword arguments for the implementation specified by `architecture`.
+    - `pytorch_version` _optional_ 
 - `tensorflow_js` Tensorflow Javascript weights format
   - key word arguments:
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
     - `tensorflow_version` _optional_ 
 - `tensorflow_saved_model_bundle` Tensorflow Saved Model Bundle weights format
   - key word arguments:
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
     - `tensorflow_version` _optional_ 
 - `torchscript` Torchscript weights format
+  - key word arguments:
+    - `dependencies` _optional_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. These dependencies are only used for the specified weight format.
+    - `pytorch_version` _optional_ 

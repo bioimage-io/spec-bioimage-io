@@ -233,6 +233,10 @@
                     "title": "authors",
                     "type": "array"
                 },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
+                },
                 "parent": {
                     "title": "parent",
                     "type": "string"
@@ -379,7 +383,8 @@
                     "enum": [
                         "0.4.0",
                         "0.4.1",
-                        "0.4.2"
+                        "0.4.2",
+                        "0.4.3"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -1122,6 +1127,10 @@
                     "title": "authors",
                     "type": "array"
                 },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
+                },
                 "opset_version": {
                     "title": "opset_version",
                     "type": "integer"
@@ -1372,6 +1381,10 @@
                     "title": "parent",
                     "type": "string"
                 },
+                "pytorch_version": {
+                    "title": "pytorch_version",
+                    "type": "string"
+                },
                 "sha256": {
                     "maxLength": 64,
                     "minLength": 64,
@@ -1454,6 +1467,10 @@
                     "title": "authors",
                     "type": "array"
                 },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
+                },
                 "parent": {
                     "title": "parent",
                     "type": "string"
@@ -1524,6 +1541,10 @@
                     },
                     "title": "authors",
                     "type": "array"
+                },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
                 },
                 "parent": {
                     "title": "parent",
@@ -1596,8 +1617,16 @@
                     "title": "authors",
                     "type": "array"
                 },
+                "dependencies": {
+                    "title": "dependencies",
+                    "type": "string"
+                },
                 "parent": {
                     "title": "parent",
+                    "type": "string"
+                },
+                "pytorch_version": {
+                    "title": "pytorch_version",
                     "type": "string"
                 },
                 "sha256": {
