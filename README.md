@@ -144,6 +144,10 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ### RDF Format Versions
+#### model RDF 0.4.2
+- Bug fixes:
+  - in a `pytorch_state_dict` weight entry `architecture` is no longer optional.
+
 #### collection RDF 0.2.2
 - Non-breaking changes
   - make `authors`, `cite`, `documentation` and `tags` optional
