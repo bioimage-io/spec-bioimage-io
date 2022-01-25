@@ -121,6 +121,10 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.4.2post4
+  - fixes to general RDF:
+    - ignore value of field `root_path` if present in yaml. This field is used internally and always present in RDF nodes.
+
 #### bioimageio.spec 0.4.1.post5
   - fixes to collection RDF: 
     - RDFs specified directly in collection RDF are validated correctly even if their source field does not point to an RDF.
