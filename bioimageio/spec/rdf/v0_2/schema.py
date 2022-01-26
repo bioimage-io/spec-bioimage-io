@@ -46,7 +46,7 @@ class Maintainer(_Person):
 
 
 class Badge(_BioImageIOSchema):
-    bioimageio_description = "Custom badge"
+    bioimageio_description = "Custom badge."
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
     url = fields.Union(
@@ -81,9 +81,7 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    attachments = fields.Nested(
-        Attachments(), bioimageio_description="Attachments. Additional, unknown keys are allowed."
-    )
+    attachments = fields.Nested(Attachments(), bioimageio_description="Additional unknown keys are allowed.")
 
     authors_bioimageio_description = (
         "A list of authors. The authors are the creators of the specifications and the primary points of contact."

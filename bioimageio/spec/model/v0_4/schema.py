@@ -363,15 +363,17 @@ is in an unsupported format version. The current format version described here i
         fields.String(
             validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
             required=True,
-            bioimageio_description=f"Format of this set of weights. Weight formats can define additional (optional or "
-            f"required) fields. See [weight_formats_spec_0_4.md]"
-            f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md). "
+            bioimageio_description="Format of this set of weights. "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
         fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
         required=True,
         bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
-        "otherwise be equivalent. The available weight formats determine which consumers can use this model.",
+        "otherwise be equivalent. "
+        "See [weight_formats_spec_0_4.md]"
+        "(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) "
+        "for the required and optional fields per weight format. "
+        "The available weight formats determine which consumers can use this model.",
     )
 
     @pre_load
