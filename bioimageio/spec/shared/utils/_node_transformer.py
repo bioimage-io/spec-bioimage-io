@@ -4,6 +4,7 @@ import pathlib
 import typing
 
 from marshmallow import missing
+from marshmallow.utils import _Missing
 
 from bioimageio.spec.shared import raw_nodes
 from ._resolve_source import resolve_source
@@ -118,9 +119,11 @@ class RawNodePackageTransformer(NodeTransformer):
 
     def _transform_resource(
         self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
-    ) -> typing.Union[typing.List[pathlib.Path], pathlib.Path]:
+    ) -> typing.Union[typing.List[pathlib.Path], _Missing, pathlib.Path]:
         if isinstance(resource, list):
             return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
+        elif resource is missing:
+            return resource
         elif isinstance(resource, pathlib.PurePath):
             name_from = resource
             if resource.is_absolute():
