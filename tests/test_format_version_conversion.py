@@ -21,10 +21,13 @@ def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet
         for out in expected["outputs"]:
             out["description"] = out["name"]
 
-    # ignore new maintainers field
+    # ignore new optional fields
     if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 0):
-        expected.pop("maintainers", None)
-        actual.pop("maintainers", None)
+        expected.pop("maintainers")
+        actual.pop("maintainers")
+    if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 3):
+        expected.pop("download_url")
+        actual.pop("download_url")
 
     for key, item in expected.items():
         assert key in actual, key

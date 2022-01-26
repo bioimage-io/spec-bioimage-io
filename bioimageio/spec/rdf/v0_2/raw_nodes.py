@@ -88,6 +88,7 @@ class RDF(ResourceDescription):
     covers: Union[_Missing, List[Union[URI, Path]]] = missing
     description: str = missing
     documentation: Union[_Missing, Path, URI] = missing
+    download_url: Union[_Missing, URI] = missing
     format_version: FormatVersion = missing
     git_repo: Union[_Missing, str] = missing
     id: Union[_Missing, str] = missing
@@ -116,6 +117,7 @@ class RDF(ResourceDescription):
         covers: Union[_Missing, List[Union[URI, Path]]] = missing,
         description: str,
         documentation: Union[_Missing, Path, URI] = missing,
+        download_url: Union[_Missing, URI] = missing,
         git_repo: Union[_Missing, str] = missing,
         id: Union[_Missing, str] = missing,
         icon: Union[_Missing, str] = missing,
@@ -134,6 +136,7 @@ class RDF(ResourceDescription):
         self.covers = covers
         self.description = description
         self.documentation = documentation
+        self.download_url = download_url
         self.git_repo = git_repo
         self.id = id
         self.icon = icon

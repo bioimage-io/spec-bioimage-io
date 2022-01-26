@@ -148,6 +148,13 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ### RDF Format Versions
+
+#### model RDF 0.4.3
+- Non-breaking changes
+  - add optional field `download_url`
+  - add optional field `dependencies` to all weight formats (not only pytorch_state_dict)
+  - add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats 
+
 #### model RDF 0.4.2
 - Bug fixes:
   - in a `pytorch_state_dict` weight entry `architecture` is no longer optional.
