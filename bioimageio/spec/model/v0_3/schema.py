@@ -346,21 +346,7 @@ _common_sha256_hint = (
     "You can drag and drop your file to this [online tool]"
     "(http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. "
     "Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. "
-    # "[here is a codesnippet](#code-snippet-to-compute-sha256-checksum)."  # todo: link to code snippet and don't multiply it
-    + """
-    Code snippet to compute SHA256 checksum:
-    
-    ```python
-    import hashlib
-    
-    filename = "your filename here"
-    with open(filename, "rb") as f:
-      bytes = f.read() # read entire file as bytes
-      readable_hash = hashlib.sha256(bytes).hexdigest()
-      print(readable_hash)
-      ```
-
-"""
+    "[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."
 )
 
 
