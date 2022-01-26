@@ -111,12 +111,7 @@ def markdown_from_doc(doc: DocNode, parent_names: typing.Sequence[str] = tuple()
         name = f'<a id="{":".join(field_path)}"></a>`{name}` ' if name else ""
         sub_doc += f"{'  ' * len(parent_names)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path)}"
 
-    type_name = (
-        f"{'optional' if doc.optional else ''}{'*' if doc.maybe_optional else ''}{' ' if doc.optional else ''}"
-        f"{doc.type_name}"
-    )
-    if type_name:
-        type_name = f"_{type_name}_ "
+    type_name = f"_{'optional' if doc.optional else 'required'}{'*' if doc.maybe_optional else ''} {doc.type_name}_"
 
     return f"{type_name}{doc.description}\n{sub_doc}"
 
