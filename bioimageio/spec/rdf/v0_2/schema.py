@@ -143,7 +143,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         "For markdown files the recommended documentation file name is `README.md`.",
     )
 
-    download_url = fields.URL(bioimageio_description="recommended url to the zipped file if applicable")
+    download_url = fields.URL(bioimageio_description="optional url to download the resource from")
 
     format_version = fields.String(
         required=True,
