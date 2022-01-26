@@ -48,7 +48,7 @@ E.g. the citation for the model architecture and/or the training data used.
 * <a id="documentation"></a>`documentation` _optional Union\[URL→URI | RelativeLocalPath→Path\]_ URL or relative path to markdown file with additional documentation. For markdown files the recommended documentation file name is `README.md`.
   1. _optional URL→URI_ 
   1. _optional RelativeLocalPath→Path_ 
-* <a id="download_url"></a>`download_url` _optional URL→URI_ recommended url to the zipped file if applicable
+* <a id="download_url"></a>`download_url` _optional URL→URI_ optional url to download the resource from
 * <a id="git_repo"></a>`git_repo` _optional URL→URI_ A url to the git repository, e.g. to Github or Gitlab.
 * <a id="icon"></a>`icon` _optional String_ an icon for the resource
 * <a id="id"></a>`id` _optional String_ Unique id within a collection of resources.
