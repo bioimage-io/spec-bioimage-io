@@ -304,8 +304,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "not allowed. It is recommended to use `README.md` as the documentation name.",
     )
 
-    download_url = missing  # todo: allow download_url for Model (RDF has it)
-
     format_version = fields.String(
         validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),
         required=True,
