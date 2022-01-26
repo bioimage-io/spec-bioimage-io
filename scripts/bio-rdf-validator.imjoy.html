@@ -1,0 +1,43 @@
+<config lang="json">
+{
+  "name": "BIO-RDF-Validator",
+  "type": "web-python",
+  "version": "0.1.0",
+  "description": "A spec validator for bioimage RDF files.",
+  "tags": [],
+  "ui": "",
+  "cover": "",
+  "inputs": null,
+  "outputs": null,
+  "flags": [],
+  "icon": "extension",
+  "api_version": "0.1.8",
+  "env": "",
+  "permissions": [],
+  "requirements": ["bioimageio.spec==0.4.3"],
+  "dependencies": []
+}
+</config>
+
+<script lang="python">
+import json
+from imjoy import api
+from bioimageio.spec import __version__
+from bioimageio.spec.commands import validate
+
+
+class ImJoyPlugin():
+    def setup(self):
+        api.log('BioImage RDF spec validator loaded: ' + __version__)
+
+    def validate(self, source):
+        # Convert js Date to string
+        if "timestamp" in source:
+            if hasattr(source["timestamp"], 'toISOString'):
+                source["timestamp"] = source["timestamp"].toISOString()
+        result = validate(source)
+        api.log(f"Validation results: {result}")
+        return result
+
+api.export(ImJoyPlugin())
+</script>
