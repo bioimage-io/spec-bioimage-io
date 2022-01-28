@@ -117,6 +117,7 @@ def markdown_from_doc(
             else:
                 yield name, sdn, additional_indent
 
+    n_o_n_r = neither_opt_nor_req or doc.type_name.startswith("List") or doc.type_name.startswith("Dict")
     sub_doc = ""
     for name, sdn, add_ind in iterate_over_sub_docs(sub_docs):
         if not (name or sdn.sub_docs or sdn.details or sdn.description):
@@ -126,7 +127,6 @@ def markdown_from_doc(
         field_path = [n for n in [*parent_names, name] if n]
         assert isinstance(name, str), name  # earlier version allowed DocNode here
         name = f'<a id="{":".join(field_path)}"></a>`{name}` ' if name else ""
-        n_o_n_r = neither_opt_nor_req or sdn.type_name.startswith("List") or sdn.type_name.startswith("Dict")
         sub_doc += f"{'  ' * (len(parent_names) + add_ind)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, additional_indent=add_ind)}"
 
     if doc.type_name:
