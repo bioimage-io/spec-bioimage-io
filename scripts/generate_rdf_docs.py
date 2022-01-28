@@ -139,7 +139,7 @@ def markdown_from_doc(
             if doc.optional
             else "required "
         )
-        type_name = f"_{opt}" f"{doc.type_name}_ "
+        type_name = f"_({opt}{doc.type_name})_ "
     else:
         type_name = ""
 
