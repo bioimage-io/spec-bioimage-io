@@ -36,17 +36,18 @@ def doc_from_schema(obj, spec) -> DocNode:
         many = obj.many
         description = obj.bioimageio_description
         maybe_required = obj.bioimageio_maybe_required
+        required = obj.required
         obj = obj.nested
     else:
         type_name = ""
         description = ""
         many = False
         maybe_required = False
+        required = True
 
     description += obj.bioimageio_description
     details = []
     sub_docs = []
-    required = True
     if inspect.isclass(obj) and issubclass(obj, spec.schema.SharedBioImageIOSchema):
         obj = obj()
 
@@ -93,7 +94,12 @@ def doc_from_schema(obj, spec) -> DocNode:
     )
 
 
-def markdown_from_doc(doc: DocNode, parent_names: typing.Sequence[str] = tuple()):
+def markdown_from_doc(
+    doc: DocNode,
+    parent_names: typing.Sequence[str] = tuple(),
+    neither_opt_nor_req: bool = False,
+    additional_indent: int = 0,
+):
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
         enumerate_symbol: typing.Optional[str] = "*"
@@ -104,19 +110,38 @@ def markdown_from_doc(doc: DocNode, parent_names: typing.Sequence[str] = tuple()
         sub_docs = []
         enumerate_symbol = None
 
+    def iterate_over_sub_docs(s_docs):
+        for name, sdn in s_docs:
+            if sdn.type_name.startswith("Union"):
+                yield from [("", inner_sdn, additional_indent + 1) for inner_sdn in sdn.details]
+            else:
+                yield name, sdn, additional_indent
+
     sub_doc = ""
-    for name, sdn in sub_docs:
+    for name, sdn, add_ind in iterate_over_sub_docs(sub_docs):
+        if not (name or sdn.sub_docs or sdn.details or sdn.description):
+            # skip details that just repeat the value type
+            continue
+
         field_path = [n for n in [*parent_names, name] if n]
         assert isinstance(name, str), name  # earlier version allowed DocNode here
         name = f'<a id="{":".join(field_path)}"></a>`{name}` ' if name else ""
-        sub_doc += f"{'  ' * len(parent_names)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path)}"
+        n_o_n_r = neither_opt_nor_req or sdn.type_name.startswith("List") or sdn.type_name.startswith("Dict")
+        sub_doc += f"{'  ' * (len(parent_names) + add_ind)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, additional_indent=add_ind)}"
 
-    type_name = (
-        f"{'optional' if doc.optional else ''}{'*' if doc.maybe_optional else ''}{' ' if doc.optional else ''}"
-        f"{doc.type_name}"
-    )
-    if type_name:
-        type_name = f"_{type_name}_ "
+    if doc.type_name:
+        opt = (
+            ""
+            if neither_opt_nor_req
+            else "optional* "
+            if doc.maybe_optional
+            else "optional "
+            if doc.optional
+            else "required "
+        )
+        type_name = f"_{opt}" f"{doc.type_name}_ "
+    else:
+        type_name = ""
 
     return f"{type_name}{doc.description}\n{sub_doc}"
 

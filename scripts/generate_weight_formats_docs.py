@@ -66,8 +66,8 @@ def get_md_kwargs(kwargs: Sequence[Kwarg], indent: int = 0):
     md = ""
     for kwarg in kwargs:
         md += (
-            f"{' ' * indent}- `{kwarg.name}` {'_optional' if kwarg.optional or kwarg.maybe_optional else ''}"
-            f"{'*_ ' if kwarg.maybe_optional else '_ ' if kwarg.optional else ''}{kwarg.description}\n"
+            f"{' ' * indent}- `{kwarg.name}` _{'optional' if kwarg.optional or kwarg.maybe_optional else 'required'}"
+            f"{'*' if kwarg.maybe_optional else ''}_ {kwarg.description}\n"
         )
 
     return md
