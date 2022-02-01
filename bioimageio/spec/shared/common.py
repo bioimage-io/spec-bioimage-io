@@ -13,9 +13,24 @@ except ImportError:
 try:
     from ruamel.yaml import YAML  # not available in pyodide
 except ImportError:
-    yaml: Optional["YAML"] = None
+    yaml: Optional["MyYAML"] = None
 else:
-    yaml = YAML(typ="safe")
+
+    class MyYAML(YAML):
+        """add convenient improvements over YAML
+        improve dump:
+            - make sure to dump with utf-8 encoding. on windows encoding 'windows-1252' may otherwise be used
+            - expose indentation kwargs for dump
+        """
+
+        def dump(self, data, stream=None, *, transform=None):
+            if isinstance(stream, pathlib.Path):
+                with stream.open("wt", encoding="utf-8") as f:
+                    return super().dump(data, f, transform=transform)
+            else:
+                return super().dump(data, stream, transform=transform)
+
+    yaml = MyYAML(typ="safe")
 
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
