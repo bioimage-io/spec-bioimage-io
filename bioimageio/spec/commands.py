@@ -65,6 +65,8 @@ def validate(
             error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source)}: {str(rdf_source)}"
 
     raw_rd = None
+    format_version = ""
+    resource_type = ""
     if error:
         validation_warnings = []
     else:
@@ -76,6 +78,10 @@ def validate(
             except Exception as e:
                 error = str(e)
                 tb = traceback.format_tb(e.__traceback__)
+
+            if raw_rd is not None:
+                format_version = raw_rd.format_version
+                resource_type = "general" if raw_rd.type == "rdf" else raw_rd.type
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
@@ -105,7 +111,7 @@ def validate(
         validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
 
     return {
-        "name": source_name if raw_rd is None else raw_rd.name,
+        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
         "source_name": source_name,
         "error": error,
         "warnings": ValidationWarning.get_warning_summary(validation_warnings),
