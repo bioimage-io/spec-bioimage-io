@@ -113,7 +113,7 @@ def validate(
         "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
         "nested_errors": nested_errors,
         "source_name": source_name,
-        "status": error is None,
+        "status": "passed" if error is None else "failed",
         "traceback": tb,
         "warnings": ValidationWarning.get_warning_summary(validation_warnings),
     }
