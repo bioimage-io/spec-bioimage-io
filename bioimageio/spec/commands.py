@@ -37,7 +37,7 @@ def validate(
         verbose: deprecated
 
     Returns:
-        A summary dict with "error", "warnings", "bioimageio_spec_version", "traceback" and "nested_errors" keys.
+        A summary dict with keys: status, error, warnings, traceback, nested_errors, bioimageio_spec_version
     """
     if verbose != "deprecated":
         warnings.warn("'verbose' flag is deprecated")
@@ -109,10 +109,11 @@ def validate(
 
     return {
         "bioimageio_spec_version": __version__,
-        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
-        "source_name": source_name,
         "error": error,
-        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
-        "traceback": tb,
+        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
         "nested_errors": nested_errors,
+        "source_name": source_name,
+        "status": error is None,
+        "traceback": tb,
+        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
     }
