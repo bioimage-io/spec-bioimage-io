@@ -7,12 +7,9 @@ from typing import Any, Dict, IO, Union
 from marshmallow import ValidationError
 
 from .collection.v0_2.utils import resolve_collection_entries
-from .io_ import (
-    load_raw_resource_description,
-    resolve_rdf_source,
-    save_raw_resource_description,
-)
+from .io_ import load_raw_resource_description, resolve_rdf_source, save_raw_resource_description
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict
+from .v import __version__
 
 
 def update_format(
@@ -40,7 +37,7 @@ def validate(
         verbose: deprecated
 
     Returns:
-        A summary dict with "error", "warnings", "traceback" and "nested_errors" keys.
+        A summary dict with keys: status, error, warnings, traceback, nested_errors, bioimageio_spec_version
     """
     if verbose != "deprecated":
         warnings.warn("'verbose' flag is deprecated")
@@ -111,10 +108,12 @@ def validate(
         validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
 
     return {
-        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
-        "source_name": source_name,
+        "bioimageio_spec_version": __version__,
         "error": error,
-        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
-        "traceback": tb,
+        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
         "nested_errors": nested_errors,
+        "source_name": source_name,
+        "status": "passed" if error is None else "failed",
+        "traceback": tb,
+        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
     }
