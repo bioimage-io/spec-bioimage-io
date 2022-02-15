@@ -299,9 +299,9 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
             ),
         ],
         required=True,
-        bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "
-        "relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is "
-        "not allowed. It is recommended to use `README.md` as the documentation name.",
+        bioimageio_description="Relative path or URL to file with additional documentation in markdown. "
+        "The file must be in markdown format with `.md` file name extension"
+        "It is recommended to use `README.md` as the documentation name.",
     )
 
     format_version = fields.String(
@@ -450,7 +450,7 @@ is in an unsupported format version. The current format version described here i
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         validate=field_validators.Length(min=1),
         required=True,
-        bioimageio_description="Analog to to test_inputs.",
+        bioimageio_description="Analog to test_inputs.",
     )
 
     sample_inputs = fields.List(

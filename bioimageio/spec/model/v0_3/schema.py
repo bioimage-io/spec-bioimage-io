@@ -642,7 +642,7 @@ is in an unsupported format version. The current format version described here i
         required=True,
         bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
         "**a single test case**. "
-        "This means if your model has more than one input, you should provide one URI for each input."
+        "This means if your model has more than one input, you should provide one URI for each input. "
         "Each test input should be a file with a ndarray in "
         "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
         "The extension must be '.npy'.",
