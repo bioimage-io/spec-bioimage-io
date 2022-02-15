@@ -103,6 +103,7 @@ def markdown_from_doc(
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
         enumerate_symbol: typing.Optional[str] = "*"
+        additional_indent += 1
     elif doc.details:
         sub_docs = [("", sdn) for sdn in doc.details]
         enumerate_symbol = "1."
@@ -110,24 +111,15 @@ def markdown_from_doc(
         sub_docs = []
         enumerate_symbol = None
 
-    def iterate_over_sub_docs(s_docs):
-        for name, sdn in s_docs:
-            if sdn.type_name.startswith("Union"):
-                yield from [("", inner_sdn, additional_indent + 1) for inner_sdn in sdn.details]
-            else:
-                yield name, sdn, additional_indent
-
     n_o_n_r = neither_opt_nor_req or doc.type_name.startswith("List") or doc.type_name.startswith("Dict")
     sub_doc = ""
-    for name, sdn, add_ind in iterate_over_sub_docs(sub_docs):
-        if not (name or sdn.sub_docs or sdn.details or sdn.description):
-            # skip details that just repeat the value type
-            continue
-
+    for name, sdn in sub_docs:
         field_path = [n for n in [*parent_names, name] if n]
         assert isinstance(name, str), name  # earlier version allowed DocNode here
-        name = f'<a id="{":".join(field_path)}"></a>`{name}` ' if name else ""
-        sub_doc += f"{'  ' * (len(parent_names) + add_ind)}{enumerate_symbol} {name}{markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, additional_indent=add_ind)}"
+        name = f'<a id="{":".join(field_path)}"></a>`{name}`' if name else ""
+        entry = markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, additional_indent=additional_indent)
+        if entry:
+            sub_doc += f"{'  ' * (len(parent_names) + additional_indent)}{enumerate_symbol} {name} {entry}"
 
     if doc.type_name:
         opt = (
