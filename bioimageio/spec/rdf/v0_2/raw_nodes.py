@@ -97,6 +97,7 @@ class RDF(ResourceDescription):
     links: Union[_Missing, List[str]] = missing
     maintainers: Union[_Missing, List[Maintainer]] = missing
     rdf_source: Union[_Missing, URI] = missing
+    source: Union[_Missing, URI, Path] = missing
     tags: Union[_Missing, List[str]] = missing
 
     # manual __init__ to allow for unknown kwargs
@@ -125,6 +126,7 @@ class RDF(ResourceDescription):
         links: Union[_Missing, List[str]] = missing,
         maintainers: Union[_Missing, List[Maintainer]] = missing,
         rdf_source: Union[_Missing, URI] = missing,
+        source: Union[_Missing, URI, Path] = missing,
         tags: Union[_Missing, List[str]] = missing,
         **unknown_kwargs,
     ):
@@ -144,6 +146,7 @@ class RDF(ResourceDescription):
         self.links = links
         self.maintainers = maintainers
         self.rdf_source = rdf_source
+        self.source = source
         self.tags = tags
         super().__init__(format_version=format_version, name=name, type=type, version=version)
 
