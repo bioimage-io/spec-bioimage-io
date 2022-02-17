@@ -111,11 +111,8 @@ def resolve_rdf_source(
 
         assert isinstance(source, str)
         if source.startswith("http"):
-            from urllib.request import urlretrieve
-
             root = raw_nodes.URI(uri_string=source)
-            source, resp = urlretrieve(source)
-            # todo: check http response code
+            source = _download_url(root)
 
         if _is_path(source):
             source = pathlib.Path(source)
