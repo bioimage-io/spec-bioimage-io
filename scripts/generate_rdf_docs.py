@@ -161,6 +161,7 @@ def export_markdown_doc(folder: Path, spec) -> None:
 
 if __name__ == "__main__":
     import bioimageio.spec.collection.v0_2
+    import bioimageio.spec.dataset.v0_2
     import bioimageio.spec.model.v0_3
     import bioimageio.spec.model.v0_4
     import bioimageio.spec.rdf.v0_2
@@ -170,6 +171,8 @@ if __name__ == "__main__":
 
     export_markdown_doc(dist, bioimageio.spec.collection)
     export_markdown_doc(dist, bioimageio.spec.collection.v0_2)
+    export_markdown_doc(dist, bioimageio.spec.dataset)
+    export_markdown_doc(dist, bioimageio.spec.dataset.v0_2)
     export_markdown_doc(dist, bioimageio.spec.model)
     export_markdown_doc(dist, bioimageio.spec.model.v0_3)
     export_markdown_doc(dist, bioimageio.spec.model.v0_4)

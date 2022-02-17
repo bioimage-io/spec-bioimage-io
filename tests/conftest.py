@@ -94,3 +94,8 @@ def stardist_model():
 @pytest.fixture
 def unet2d_keras_tf():
     return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_keras_tf/rdf.yaml"
+
+
+@pytest.fixture
+def dataset_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/datasets/covid_if_training_data/rdf.yaml"

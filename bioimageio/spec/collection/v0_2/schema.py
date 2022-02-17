@@ -23,7 +23,7 @@ class CollectionEntry(_BioImageIOSchema, WithUnknown):
 class Collection(_BioImageIOSchema, WithUnknown, RDF):
     bioimageio_description = f"""# BioImage.IO Collection Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing collections of other resources.
-These fields are typically stored in YAML files which we call Collection Resource Description Files or `collection RDFs`.
+These fields are typically stored in a YAML file which we call Collection Resource Description File or `collection RDF`.
 
 The collection RDF YAML file contains mandatory and optional fields. In the following description, optional fields are indicated by _optional_.
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
