@@ -40,15 +40,15 @@ class _TensorBase(_BioImageIOSchema):
         required=True,
         bioimageio_description="""Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
-    | character | description |
-    | --- | --- |
-    |  b  |  batch (groups multiple samples) |
-    |  i  |  instance/index/element |
-    |  t  |  time |
-    |  c  |  channel |
-    |  z  |  spatial dimension z |
-    |  y  |  spatial dimension y |
-    |  x  |  spatial dimension x |""",
+| character | description |
+| --- | --- |
+|  b  |  batch (groups multiple samples) |
+|  i  |  instance/index/element |
+|  t  |  time |
+|  c  |  channel |
+|  z  |  spatial dimension z |
+|  y  |  spatial dimension y |
+|  x  |  spatial dimension x |""",
     )
     data_type = fields.String(
         required=True,
@@ -556,7 +556,7 @@ is in an unsupported format version. The current format version described here i
         # validate=field_validators.Length(max=36),  # todo: enforce in future version (0.4.0?)
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
-        "`_`, `-` or spaces and not be longer than 36 characters.",
+        "underscore '_',  minus '-' or spaces and not be longer than 36 characters.",
     )
 
     packaged_by = fields.List(

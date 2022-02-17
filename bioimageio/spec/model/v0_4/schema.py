@@ -3,6 +3,7 @@ from copy import deepcopy
 
 from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
 
+from bioimageio.spec.dataset.v0_2.schema import Dataset as _Dataset
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
     ModelParent,
@@ -36,15 +37,15 @@ class _TensorBase(_BioImageIOSchema):
         required=True,
         bioimageio_description="""Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
-    | character | description |
-    | --- | --- |
-    |  b  |  batch (groups multiple samples) |
-    |  i  |  instance/index/element |
-    |  t  |  time |
-    |  c  |  channel |
-    |  z  |  spatial dimension z |
-    |  y  |  spatial dimension y |
-    |  x  |  spatial dimension x |""",
+| character | description |
+| --- | --- |
+|  b  |  batch (groups multiple samples) |
+|  i  |  instance/index/element |
+|  t  |  time |
+|  c  |  channel |
+|  z  |  spatial dimension z |
+|  y  |  spatial dimension y |
+|  x  |  spatial dimension x |""",
     )
     data_type = fields.String(
         required=True,
@@ -227,6 +228,10 @@ class TensorflowSavedModelBundleWeightsEntry(TensorflowSavedModelBundleWeightsEn
     pass
 
 
+class Dataset(_Dataset):
+    short_bioimageio_description = "in-place definition of [dataset RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_0_2.md)"
+
+
 class TorchscriptWeightsEntry(_WeightsEntryBase):
     raw_nodes = raw_nodes
 
@@ -289,25 +294,24 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     config = fields.YamlDict(
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
         + """
-
-    For example:
-    ```yaml
-    config:
-      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-      deepimagej:
-        model_keys:
-          # In principle the tag "SERVING" is used in almost every tf model
-          model_tag: tf.saved_model.tag_constants.SERVING
-          # Signature definition to call the model. Again "SERVING" is the most general
-          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-        test_information:
-          input_size: [2048x2048] # Size of the input images
-          output_size: [1264x1264 ]# Size of all the outputs
-          device: cpu # Device used. In principle either cpu or GPU
-          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-          runtime: 78.8s # Time it took to run the model
-          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-    ```
+For example:
+```yaml
+config:
+  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+  deepimagej:
+    model_keys:
+      # In principle the tag "SERVING" is used in almost every tf model
+      model_tag: tf.saved_model.tag_constants.SERVING
+      # Signature definition to call the model. Again "SERVING" is the most general
+      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    test_information:
+      input_size: [2048x2048] # Size of the input images
+      output_size: [1264x1264 ]# Size of all the outputs
+      device: cpu # Device used. In principle either cpu or GPU
+      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+      runtime: 78.8s # Time it took to run the model
+      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+```
 """
     )
 
@@ -371,7 +375,7 @@ is in an unsupported format version. The current format version described here i
     name = fields.String(
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
-        "`_`, `-` or spaces and not be longer than 64 characters.",
+        "underscore '_', minus '-' or spaces and not be longer than 64 characters.",
     )
 
     outputs = fields.List(
@@ -461,6 +465,10 @@ is in an unsupported format version. The current format version described here i
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
 
+    training_data = fields.Dict(
+        fields.String(bioimageio_description="dataset role, e.g. 'validation'"),
+        fields.Union([fields.String(bioimageio_description="dataset id"), fields.Nested(Dataset())]),
+    )
     weights = fields.Dict(
         fields.String(
             validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
@@ -468,14 +476,18 @@ is in an unsupported format version. The current format version described here i
             bioimageio_description="Format of this set of weights. "
             f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
         ),
-        fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
+        fields.Union(
+            [fields.Nested(we()) for we in get_args(WeightsEntry)],
+            short_bioimageio_description=(
+                "The weights for this model. Weights can be given for different formats, but should "
+                "otherwise be equivalent. "
+                "See [weight_formats_spec_0_4.md]"
+                "(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) "
+                "for the required and optional fields per weight format. "
+                "The available weight formats determine which consumers can use this model."
+            ),
+        ),
         required=True,
-        bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
-        "otherwise be equivalent. "
-        "See [weight_formats_spec_0_4.md]"
-        "(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) "
-        "for the required and optional fields per weight format. "
-        "The available weight formats determine which consumers can use this model.",
     )
 
     @pre_load

@@ -104,17 +104,18 @@ E.g. the citation for the model architecture and/or the training data used."""
         "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
         "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
         """for example:
-    ```yaml
-       config:
-          bioimage_io:  # here is the domain name
-            my_custom_key: 3837283
-            another_key:
-               nested: value
-          imagej:
-            macro_dir: /path/to/macro/file
-    ```
+
+```yaml
+   config:
+      bioimage_io:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+           nested: value
+      imagej:
+        macro_dir: /path/to/macro/file
+```
 """
-        "    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
+        "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
     )
     config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 

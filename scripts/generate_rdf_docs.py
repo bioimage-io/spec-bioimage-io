@@ -15,6 +15,7 @@ except ImportError:
 @dataclasses.dataclass
 class DocNode:
     type_name: str
+    short_description: str
     description: str
     sub_docs: typing.List[typing.Tuple[str, "DocNode"]]
     details: typing.List["DocNode"]
@@ -29,23 +30,31 @@ class DocNode:
 def doc_from_schema(obj, spec) -> DocNode:
     if obj is None:
         return DocNode(
-            type_name="Any", description="", sub_docs=[], details=[], many=False, optional=False, maybe_optional=False
+            type_name="Any",
+            short_description="",
+            description="",
+            sub_docs=[],
+            details=[],
+            many=False,
+            optional=False,
+            maybe_optional=False,
         )
     elif isinstance(obj, fields.Nested):
         type_name = obj.type_name
         many = obj.many
+        short_description = obj.short_bioimageio_description
         description = obj.bioimageio_description
         maybe_required = obj.bioimageio_maybe_required
         required = obj.required
         obj = obj.nested
     else:
         type_name = ""
-        description = ""
+        short_description = obj.short_bioimageio_description
+        description = obj.bioimageio_description
         many = False
         maybe_required = False
         required = True
 
-    description += obj.bioimageio_description
     details = []
     sub_docs = []
     if inspect.isclass(obj) and issubclass(obj, spec.schema.SharedBioImageIOSchema):
@@ -71,23 +80,18 @@ def doc_from_schema(obj, spec) -> DocNode:
         if isinstance(obj, fields.Union):
             details = [doc_from_schema(opt, spec) for opt in obj._candidate_fields]
         elif isinstance(obj, fields.Dict):
-            details = [
-                dict_descr
-                for dict_descr in [doc_from_schema(obj.key_field, spec), doc_from_schema(obj.value_field, spec)]
-                if dict_descr.description
-            ]
+            details = [doc_from_schema(obj.key_field, spec), doc_from_schema(obj.value_field, spec)]
         elif isinstance(obj, fields.List):
-            inner_doc = doc_from_schema(obj.inner, spec)
-            if inner_doc.description or inner_doc.sub_docs or inner_doc.details:
-                details = [inner_doc]
+            details = [doc_from_schema(obj.inner, spec)]
         else:
             assert isinstance(obj, fields.DocumentedField), (type(obj), obj)
 
     return DocNode(
         type_name=type_name,
+        short_description=short_description,
         description=description,
-        sub_docs=sub_docs,
-        details=details,
+        sub_docs=[(name, d) for name, d in sub_docs if d.description or d.sub_docs or d.details],
+        details=[d for d in details if d.description or d.sub_docs or d.details],
         many=many,
         optional=not required,
         maybe_optional=maybe_required,
@@ -95,15 +99,11 @@ def doc_from_schema(obj, spec) -> DocNode:
 
 
 def markdown_from_doc(
-    doc: DocNode,
-    parent_names: typing.Sequence[str] = tuple(),
-    neither_opt_nor_req: bool = False,
-    additional_indent: int = 0,
+    doc: DocNode, parent_names: typing.Sequence[str] = tuple(), neither_opt_nor_req: bool = False, indent_lvl: int = 0
 ):
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
         enumerate_symbol: typing.Optional[str] = "*"
-        additional_indent += 1
     elif doc.details:
         sub_docs = [("", sdn) for sdn in doc.details]
         enumerate_symbol = "1."
@@ -113,13 +113,14 @@ def markdown_from_doc(
 
     n_o_n_r = neither_opt_nor_req or doc.type_name.startswith("List") or doc.type_name.startswith("Dict")
     sub_doc = ""
-    for name, sdn in sub_docs:
-        field_path = [n for n in [*parent_names, name] if n]
-        assert isinstance(name, str), name  # earlier version allowed DocNode here
-        name = f'<a id="{":".join(field_path)}"></a>`{name}`' if name else ""
-        entry = markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, additional_indent=additional_indent)
-        if entry:
-            sub_doc += f"{'  ' * (len(parent_names) + additional_indent)}{enumerate_symbol} {name} {entry}"
+    if not doc.short_description:
+        for name, sdn in sub_docs:
+            field_path = [n for n in [*parent_names, name] if n]
+            assert isinstance(name, str), name  # earlier version allowed DocNode here
+            name = f'<a id="{":".join(field_path)}"></a>`{name}`' if name else ""
+            entry = markdown_from_doc(sdn, field_path, neither_opt_nor_req=n_o_n_r, indent_lvl=indent_lvl + 1)
+            if entry:
+                sub_doc += f"{enumerate_symbol} {name} {entry}"
 
     if doc.type_name:
         opt = (
@@ -135,7 +136,12 @@ def markdown_from_doc(
     else:
         type_name = ""
 
-    return f"{type_name}{doc.description}\n{sub_doc}"
+    md_doc = f"{type_name}{doc.short_description or doc.description}\n{sub_doc}"
+    indent = "    "
+    if indent_lvl:
+        md_doc = f"\n{indent}".join(md_doc.strip().split("\n"))
+
+    return md_doc + "\n"
 
 
 def export_markdown_doc(folder: Path, spec) -> None:
@@ -169,12 +175,12 @@ if __name__ == "__main__":
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
-    export_markdown_doc(dist, bioimageio.spec.collection)
-    export_markdown_doc(dist, bioimageio.spec.collection.v0_2)
-    export_markdown_doc(dist, bioimageio.spec.dataset)
-    export_markdown_doc(dist, bioimageio.spec.dataset.v0_2)
+    # export_markdown_doc(dist, bioimageio.spec.collection)
+    # export_markdown_doc(dist, bioimageio.spec.collection.v0_2)
+    # export_markdown_doc(dist, bioimageio.spec.dataset)
+    # export_markdown_doc(dist, bioimageio.spec.dataset.v0_2)
     export_markdown_doc(dist, bioimageio.spec.model)
-    export_markdown_doc(dist, bioimageio.spec.model.v0_3)
-    export_markdown_doc(dist, bioimageio.spec.model.v0_4)
-    export_markdown_doc(dist, bioimageio.spec.rdf)
-    export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)
+    # export_markdown_doc(dist, bioimageio.spec.model.v0_3)
+    # export_markdown_doc(dist, bioimageio.spec.model.v0_4)
+    # export_markdown_doc(dist, bioimageio.spec.rdf)
+    # export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)
