@@ -55,6 +55,4 @@ def test_dataset_rdf_round_trip():
     )
     raw = load_raw_resource_description(data)
     serialized = serialize_raw_resource_description_to_dict(raw)
-    # remove keys that are ignored
-    data.pop("source")
     assert data == serialized
