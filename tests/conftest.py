@@ -31,7 +31,7 @@ def unet2d_nuclei_broad_before_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
 
-@pytest.fixture(params=["v0_4_3"])
+@pytest.fixture(params=["v0_4_4"])
 def unet2d_nuclei_broad_latest(unet2d_nuclei_broad_base_path, request):
     yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
 
