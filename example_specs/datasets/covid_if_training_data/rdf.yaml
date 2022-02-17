@@ -10,7 +10,6 @@ documentation: https://raw.githubusercontent.com/ilastik/bioimage-io-models/main
 format_version: 0.2.1
 license: CC-BY-4.0
 name: Covid-IF Training Data
-#source: https://zenodo.org/record/5092850
-source: 1
+source: https://zenodo.org/record/5092850
 tags: [high-content-imaging, fluorescence-light-microscopy, 2D, cells, nuclei, covid19, semantic-segmentation, instance-segmentation]
 type: dataset
