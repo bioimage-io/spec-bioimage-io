@@ -286,6 +286,31 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
+    config = fields.YamlDict(
+        bioimageio_description=rdf.schema.RDF.config_bioimageio_description
+        + """
+
+    For example:
+    ```yaml
+    config:
+      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+      deepimagej:
+        model_keys:
+          # In principle the tag "SERVING" is used in almost every tf model
+          model_tag: tf.saved_model.tag_constants.SERVING
+          # Signature definition to call the model. Again "SERVING" is the most general
+          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        test_information:
+          input_size: [2048x2048] # Size of the input images
+          output_size: [1264x1264 ]# Size of all the outputs
+          device: cpu # Device used. In principle either cpu or GPU
+          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+          runtime: 78.8s # Time it took to run the model
+          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+    ```
+"""
+    )
+
     documentation = fields.Union(
         [
             fields.URL(),
@@ -321,6 +346,22 @@ is in an unsupported format version. The current format version described here i
         + "(which contains the configuration yaml file) should be used."
     )
 
+    inputs = fields.List(
+        fields.Nested(InputTensor()),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="Describes the input tensors expected by this model.",
+    )
+
+    @validates("inputs")
+    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.InputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
+
+        names = [t.name for t in value]
+        if len(names) > len(set(names)):
+            raise ValidationError("Duplicate input tensor names are not allowed.")
+
     license = fields.String(
         validate=field_validators.OneOf(LICENSES),
         required=True,
@@ -332,6 +373,35 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "`_`, `-` or spaces and not be longer than 64 characters.",
     )
+
+    outputs = fields.List(
+        fields.Nested(OutputTensor()),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="Describes the output tensors from this model.",
+    )
+
+    @validates("outputs")
+    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.OutputTensor]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in value):
+            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
+
+        names = [t["name"] if isinstance(t, dict) else t.name for t in value]
+        if len(names) > len(set(names)):
+            raise ValidationError("Duplicate output tensor names are not allowed.")
+
+    @validates_schema
+    def no_duplicate_tensor_names(self, data, **kwargs):
+        ipts = data.get("inputs")
+        if not isinstance(ipts, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in ipts):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
+        outs = data.get("outputs")
+        if not isinstance(outs, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in outs):
+            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+
+        names = [t.name for t in data["inputs"] + data["outputs"]]
+        if len(names) > len(set(names)):
+            raise ValidationError("Duplicate tensor names are not allowed.")
 
     packaged_by = fields.List(
         fields.Nested(rdf.schema.Author()),
@@ -351,6 +421,38 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
         "data augmentation that currently cannot be expressed in the specification. "
         "No standard run modes are defined yet.",
+    )
+
+    sample_inputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
+        "the model, for example stored as png or tif images. "
+        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
+    )
+    sample_outputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
+        "`sample_inputs`.",
+    )
+
+    test_inputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
+        "**a single test case**. "
+        "This means if your model has more than one input, you should provide one URI for each input."
+        "Each test input should be a file with a ndarray in "
+        "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
+        "The extension must be '.npy'.",
+    )
+    test_outputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="Analog to test_inputs.",
     )
 
     timestamp = fields.DateTime(
@@ -389,108 +491,6 @@ is in an unsupported format version. The current format version described here i
             weights_entry["weights_format"] = weights_format
 
         return data
-
-    inputs = fields.List(
-        fields.Nested(InputTensor()),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="Describes the input tensors expected by this model.",
-    )
-
-    @validates("inputs")
-    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.InputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in value):
-            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
-
-        names = [t.name for t in value]
-        if len(names) > len(set(names)):
-            raise ValidationError("Duplicate input tensor names are not allowed.")
-
-    outputs = fields.List(
-        fields.Nested(OutputTensor()),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="Describes the output tensors from this model.",
-    )
-
-    @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.OutputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in value):
-            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
-
-        names = [t["name"] if isinstance(t, dict) else t.name for t in value]
-        if len(names) > len(set(names)):
-            raise ValidationError("Duplicate output tensor names are not allowed.")
-
-    @validates_schema
-    def no_duplicate_tensor_names(self, data, **kwargs):
-        ipts = data.get("inputs")
-        if not isinstance(ipts, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in ipts):
-            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
-
-        outs = data.get("outputs")
-        if not isinstance(outs, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in outs):
-            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
-
-        names = [t.name for t in data["inputs"] + data["outputs"]]
-        if len(names) > len(set(names)):
-            raise ValidationError("Duplicate tensor names are not allowed.")
-
-    test_inputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
-        "**a single test case**. "
-        "This means if your model has more than one input, you should provide one URI for each input."
-        "Each test input should be a file with a ndarray in "
-        "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
-        "The extension must be '.npy'.",
-    )
-    test_outputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="Analog to test_inputs.",
-    )
-
-    sample_inputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
-        "the model, for example stored as png or tif images. "
-        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
-    )
-    sample_outputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
-        "`sample_inputs`.",
-    )
-
-    config = fields.YamlDict(
-        bioimageio_description=rdf.schema.RDF.config_bioimageio_description
-        + """
-
-    For example:
-    ```yaml
-    config:
-      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-      deepimagej:
-        model_keys:
-          # In principle the tag "SERVING" is used in almost every tf model
-          model_tag: tf.saved_model.tag_constants.SERVING
-          # Signature definition to call the model. Again "SERVING" is the most general
-          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-        test_information:
-          input_size: [2048x2048] # Size of the input images
-          output_size: [1264x1264 ]# Size of all the outputs
-          device: cpu # Device used. In principle either cpu or GPU
-          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-          runtime: 78.8s # Time it took to run the model
-          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-    ```
-"""
-    )
 
     @validates_schema
     def validate_reference_tensor_names(self, data, **kwargs):
