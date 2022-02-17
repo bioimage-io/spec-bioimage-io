@@ -148,6 +148,13 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ### RDF Format Versions
+#### model RDF 0.4.4
+- Non-breaking changes
+  - new optional field `training_data`
+
+#### dataset RDF 0.2.2
+- Non-breaking changes
+  - explicitly define and document dataset RDF (for now, clone of general RDF with type="dataset")
 
 #### model RDF 0.4.3
 - Non-breaking changes
