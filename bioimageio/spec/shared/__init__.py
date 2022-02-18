@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import fields, raw_nodes, schema
 from .common import get_args, yaml  # noqa
+from . import fields, raw_nodes, schema
 
 _license_file = Path(__file__).parent.parent / "static" / "licenses.json"
 _license_data = json.loads(_license_file.read_text(encoding="utf-8"))

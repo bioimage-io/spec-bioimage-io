@@ -316,7 +316,7 @@ class OutputTensor(_TensorBase):
     )
     halo = fields.List(
         fields.Integer(),
-        bioimageio_description="Hint to describe the potentially corrupted edge region of the output tensor, due to "
+        bioimageio_description=lambda: "Hint to describe the potentially corrupted edge region of the output tensor, due to "
         "boundary effects. "
         "The `halo` is not cropped by the bioimage.io model, but is left to be cropped by the consumer software. "
         f"An example implementation of prediction with tiling, accounting for the halo can be found [here]("

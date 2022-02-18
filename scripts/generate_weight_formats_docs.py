@@ -4,6 +4,7 @@ from typing import List, Sequence, Tuple, Type
 
 import bioimageio.spec.model
 from bioimageio.spec.model.v0_3.schema import _WeightsEntryBase
+from bioimageio.spec.shared.utils import resolve_bioimageio_descrcription
 
 try:
     from typing import get_args
@@ -34,7 +35,7 @@ def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
             [
                 Kwarg(
                     name=name,
-                    description=f.bioimageio_description,
+                    description=resolve_bioimageio_descrcription(f.bioimageio_description),
                     optional=not f.required or bool(f.missing),
                     maybe_optional=f.bioimageio_maybe_required,
                 )
@@ -54,7 +55,7 @@ def get_doc(schema) -> Tuple[List[Kwarg], List[WeightsFormatDocNode]]:
         [
             WeightsFormatDocNode(
                 name=get_wf_name_from_wf_schema(wfs),
-                description=wfs.bioimageio_description,
+                description=resolve_bioimageio_descrcription(wfs.bioimageio_description),
                 kwargs=get_kwargs_doc(wfs, exclude=[kw.name for kw in common_kwargs]),
             )
             for wfs in get_args(schema.WeightsEntry)  # schema.WeightsEntry is a typing.Union of weights format schemas

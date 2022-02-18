@@ -5,7 +5,7 @@ from typing import List, Tuple, Type
 
 import bioimageio.spec.model
 from bioimageio.spec.shared.schema import SharedProcessingSchema
-from bioimageio.spec.shared.utils import get_ref_url, snake_case_to_camel_case
+from bioimageio.spec.shared.utils import get_ref_url, resolve_bioimageio_descrcription, snake_case_to_camel_case
 
 REFERENCE_IMPLEMENTATIONS_SOURCE = "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
 
@@ -44,7 +44,11 @@ def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDoc
     def get_kwargs_doc(Sch: Type[SharedProcessingSchema]) -> List[Kwarg]:
         return sorted(
             [
-                Kwarg(name=name, optional=not f.required or bool(f.missing), description=f.bioimageio_description)
+                Kwarg(
+                    name=name,
+                    optional=not f.required or bool(f.missing),
+                    description=resolve_bioimageio_descrcription(f.bioimageio_description),
+                )
                 for name, f in Sch().fields.items()
             ],
             key=lambda kw: (kw.optional, kw.name),
@@ -53,7 +57,7 @@ def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDoc
     preps = [
         PreprocessingDocNode(
             name=name,
-            description=member.bioimageio_description,
+            description=resolve_bioimageio_descrcription(member.bioimageio_description),
             kwargs=get_kwargs_doc(member),
             reference_implemation=get_ref_url(
                 "class", snake_case_to_camel_case(name), REFERENCE_IMPLEMENTATIONS_SOURCE
@@ -65,7 +69,7 @@ def get_docs(schema) -> Tuple[List[PreprocessingDocNode], List[PostprocessingDoc
     posts = [
         PostprocessingDocNode(
             name=name,
-            description=member.bioimageio_description,
+            description=resolve_bioimageio_descrcription(member.bioimageio_description),
             kwargs=get_kwargs_doc(member),
             reference_implemation=get_ref_url(
                 "class", snake_case_to_camel_case(name), REFERENCE_IMPLEMENTATIONS_SOURCE

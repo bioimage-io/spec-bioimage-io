@@ -55,6 +55,12 @@ def doc_from_schema(obj, spec) -> DocNode:
         maybe_required = False
         required = True
 
+    if callable(description):
+        description = description()
+
+    if callable(short_description):
+        short_description = short_description()
+
     details = []
     sub_docs = []
     if inspect.isclass(obj) and issubclass(obj, spec.schema.SharedBioImageIOSchema):
