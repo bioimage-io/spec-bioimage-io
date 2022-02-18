@@ -107,3 +107,70 @@ def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate
 
     valid_data = model_schema.load(data)
     assert valid_data
+
+
+def test_output_fixed_shape_too_small(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+            "halo": [32, 128, 0],
+        }
+    ]
+
+    with pytest.raises(ValidationError) as e:
+        Model().load(model_dict)
+
+    assert e.value.messages == {
+        "_schema": ["Minimal shape [128 128   3] of output output_1 is too small for halo [32, 128, 0]."]
+    }
+
+
+def test_output_ref_shape_mismatch(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
+        }
+    ]
+
+    with pytest.raises(ValidationError) as e:
+        Model().load(model_dict)
+
+    assert e.value.messages == {
+        "_schema": [
+            "Referenced tensor input_1 with 3 dimensions does not match output tensor output_1 with 4 dimensions."
+        ]
+    }
+
+
+def test_output_ref_shape_too_small(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
+            "halo": [256, 128, 0],
+        }
+    ]
+
+    with pytest.raises(ValidationError) as e:
+        Model().load(model_dict)
+
+    assert e.value.messages == {
+        "_schema": ["Minimal shape [128. 256.   9.] of output output_1 is too small for halo [256, 128, 0]."]
+    }
