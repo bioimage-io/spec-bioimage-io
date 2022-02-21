@@ -340,11 +340,13 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
             t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=local_path.name)
-            with local_path.open("wb") as f:
+            tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
+            with tmp_path.open("wb") as f:
                 for data in r.iter_content(block_size):
                     t.update(len(data))
                     f.write(data)
             t.close()
+            shutil.move(str(tmp_path), str(local_path))
             if total_size != 0 and t.n != total_size:
                 # todo: check more carefully and raise on real issue
                 warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
