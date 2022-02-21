@@ -124,7 +124,6 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 #### bioimageio.spec 0.4.3post1
 - fix to shape validation for model RDF 0.4: output shape now needs to be bigger than halo
 - moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
-- improved generation of cleaner documentation; only fetching remote resources when building documentation 
 - additional keys to validation summary: bioimageio_spec_version, status 
 
 #### bioimageio.spec 0.4.2post4
