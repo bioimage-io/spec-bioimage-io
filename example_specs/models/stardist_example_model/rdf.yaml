@@ -24,7 +24,7 @@ inputs:
   - kwargs: {axes: yx, max_percentile: 99.8, min_percentile: 1.0, mode: per_sample}
     name: scale_range
   shape:
-    min: [1, 16, 16, 1]
+    min: [1, 80, 80, 1]
     step: [0, 16, 16, 0]
 license: CC-BY-NC-4.0
 name: StardistExampleModel

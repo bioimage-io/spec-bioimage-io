@@ -1,6 +1,7 @@
 import typing
 from copy import deepcopy
 
+import numpy
 from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
 
 from bioimageio.spec.dataset.v0_2.schema import Dataset as _Dataset
@@ -394,18 +395,63 @@ is in an unsupported format version. The current format version described here i
             raise ValidationError("Duplicate output tensor names are not allowed.")
 
     @validates_schema
-    def no_duplicate_tensor_names(self, data, **kwargs):
-        ipts = data.get("inputs")
-        if not isinstance(ipts, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in ipts):
+    def inputs_and_outputs(self, data, **kwargs):
+        ipts: typing.List[raw_nodes.InputTensor] = data.get("inputs")
+        outs: typing.List[raw_nodes.OutputTensor] = data.get("outputs")
+        if any(
+            [
+                not isinstance(ipts, list),
+                not isinstance(outs, list),
+                not all(isinstance(v, raw_nodes.InputTensor) for v in ipts),
+                not all(isinstance(v, raw_nodes.OutputTensor) for v in outs),
+            ]
+        ):
             raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
 
-        outs = data.get("outputs")
-        if not isinstance(outs, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in outs):
-            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
-
-        names = [t.name for t in data["inputs"] + data["outputs"]]
+        # no duplicate tensor names
+        names = [t.name for t in ipts + outs]  # type: ignore
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate tensor names are not allowed.")
+
+        tensors_by_name: typing.Dict[str, typing.Union[raw_nodes.InputTensor, raw_nodes.OutputTensor]] = {
+            t.name: t for t in ipts + outs  # type: ignore
+        }
+
+        # minimum shape leads to valid output:
+        # output with subtracted halo has to result in meaningful output even for the minimal input
+        # see https://github.com/bioimage-io/spec-bioimage-io/issues/392
+        def get_min_shape(t) -> numpy.ndarray:
+            if isinstance(t.shape, raw_nodes.ParametrizedInputShape):
+                shape = numpy.array(t.shape.min)
+            elif isinstance(t.shape, raw_nodes.ImplicitOutputShape):
+                shape = get_min_shape(tensors_by_name[t.shape.reference_tensor]) * t.shape.scale + 2 * numpy.array(
+                    t.shape.offset
+                )
+            else:
+                shape = numpy.array(t.shape)
+
+            return shape
+
+        for out in outs:
+            if isinstance(out.shape, raw_nodes.ImplicitOutputShape) and len(out.shape) != len(
+                tensors_by_name[out.shape.reference_tensor].shape
+            ):
+                raise ValidationError(
+                    f"Referenced tensor {out.shape.reference_tensor} "
+                    f"with {len(tensors_by_name[out.shape.reference_tensor].shape)} dimensions does not match "
+                    f"output tensor {out.name} with {len(out.shape)} dimensions."
+                )
+
+            min_out_shape = get_min_shape(out)
+            if out.halo:
+                halo = out.halo
+                halo_msg = f" for halo {out.halo}"
+            else:
+                halo = [0] * len(min_out_shape)
+                halo_msg = ""
+
+            if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
+                raise ValidationError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
 
     packaged_by = fields.List(
         fields.Nested(rdf.schema.Author()),
