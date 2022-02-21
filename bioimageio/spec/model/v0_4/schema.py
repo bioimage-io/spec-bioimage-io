@@ -465,10 +465,8 @@ is in an unsupported format version. The current format version described here i
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
 
-    training_data = fields.Dict(
-        fields.String(bioimageio_description="dataset role, e.g. 'validation'"),
-        fields.Union([fields.String(bioimageio_description="dataset id"), fields.Nested(Dataset())]),
-    )
+    training_data = fields.Union([fields.String(bioimageio_description="dataset id"), fields.Nested(Dataset())])
+
     weights = fields.Dict(
         fields.String(
             validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
