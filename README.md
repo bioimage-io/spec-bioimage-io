@@ -121,6 +121,10 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### todo: bioimageio.spec 0.4.3post1
+  - changes to api:
+    - moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
+
 #### bioimageio.spec 0.4.2post4
   - fixes to general RDF:
     - ignore value of field `root_path` if present in yaml. This field is used internally and always present in RDF nodes.

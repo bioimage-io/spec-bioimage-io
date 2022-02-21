@@ -1,6 +1,12 @@
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
-from bioimageio.spec.shared import LICENSES, field_validators, fields
+from bioimageio.spec.shared import (
+    BIOIMAGEIO_SITE_CONFIG,
+    BIOIMAGEIO_SITE_CONFIG_ERROR,
+    LICENSES,
+    field_validators,
+    fields,
+)
 from bioimageio.spec.shared.common import get_args, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
@@ -223,6 +229,29 @@ E.g. the citation for the model architecture and/or the training data used."""
     )
 
     tags = fields.List(fields.String(), bioimageio_description="A list of tags.")
+
+    @validates("tags")
+    def warn_about_tag_categories(self, value):
+        if BIOIMAGEIO_SITE_CONFIG is None:
+            error = BIOIMAGEIO_SITE_CONFIG_ERROR
+        else:
+            missing_categories = []
+            try:
+                categories = {
+                    c["type"]: c["tag_categories"] for c in BIOIMAGEIO_SITE_CONFIG["resource_categories"]
+                }.get(self.__class__.__name__.lower(), {})
+                for cat, entries in categories.items():
+                    if not any(e in value for e in entries):
+                        missing_categories.append(cat)
+            except Exception as e:
+                error = str(e)
+            else:
+                error = None
+                if missing_categories:
+                    self.warn("tags", f"Missing tags for categories: {missing_categories}")
+
+        if error is not None:
+            self.warn("tags", f"could not check tag categories ({error})")
 
     type = fields.String(required=True)
 

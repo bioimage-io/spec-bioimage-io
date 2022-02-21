@@ -6,8 +6,8 @@ import typing
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.shared import raw_nodes
-from ._resolve_source import resolve_source
+from . import raw_nodes
+from ._resolve_source import resolve_source as _resolve_source
 
 try:
     from typing import Literal
@@ -179,14 +179,14 @@ class UriNodeTransformer(NodeTransformer):
         self.root_path = pathlib.Path(root_path).resolve()
 
     def transform_URI(self, node: raw_nodes.URI) -> pathlib.Path:
-        local_path = resolve_source(node, root_path=self.root_path)
+        local_path = _resolve_source(node, root_path=self.root_path)
         return local_path
 
     def transform_ImportableSourceFile(
         self, node: raw_nodes.ImportableSourceFile
     ) -> raw_nodes.ResolvedImportableSourceFile:
         return raw_nodes.ResolvedImportableSourceFile(
-            source_file=resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
+            source_file=_resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
         )
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> raw_nodes.LocalImportableModule:
