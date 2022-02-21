@@ -123,6 +123,6 @@ class Model(_RDF):
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing
     timestamp: datetime = missing
-    training_data: Union[_Missing, Dict[str, Union[str, Dataset]]] = missing
+    training_data: Union[_Missing, str, Dataset] = missing
     type: Literal["model"] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing
