@@ -13,7 +13,7 @@ from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
 from marshmallow import missing
 
-from bioimageio.spec.shared import raw_nodes
+from bioimageio.spec.shared import RDF_NAMES, raw_nodes, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
     get_class_name_from_type,
@@ -22,18 +22,14 @@ from bioimageio.spec.shared.common import (
     get_latest_format_version_module,
     yaml,
 )
-from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
-from bioimageio.spec.shared.schema import SharedBioImageIOSchema
-from bioimageio.spec.shared.utils import (
+from bioimageio.spec.shared.node_transformer import (
     GenericRawNode,
     GenericRawRD,
     PathToRemoteUriTransformer,
-    RDF_NAMES,
     RawNodePackageTransformer,
-    resolve_rdf_source,
-    resolve_rdf_source_and_type,
-    resolve_source,
 )
+from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
+from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 
 try:
     from typing import Protocol
