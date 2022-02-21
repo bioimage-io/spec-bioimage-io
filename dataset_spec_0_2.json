@@ -1,5 +1,5 @@
 {
-    "$ref": "#/definitions/Collection",
+    "$ref": "#/definitions/Dataset",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
         "Attachments": {
@@ -102,8 +102,8 @@
             ],
             "type": "object"
         },
-        "Collection": {
-            "additionalProperties": true,
+        "Dataset": {
+            "additionalProperties": false,
             "properties": {
                 "attachments": {
                     "$ref": "#/definitions/Attachments",
@@ -131,14 +131,6 @@
                         "type": "object"
                     },
                     "title": "cite",
-                    "type": "array"
-                },
-                "collection": {
-                    "items": {
-                        "$ref": "#/definitions/CollectionEntry",
-                        "type": "object"
-                    },
-                    "title": "collection",
                     "type": "array"
                 },
                 "config": {
@@ -270,24 +262,6 @@
                 "name",
                 "type"
             ],
-            "type": "object"
-        },
-        "CollectionEntry": {
-            "additionalProperties": true,
-            "properties": {
-                "rdf_source": {
-                    "anyOf": [
-                        {
-                            "title": "",
-                            "type": "string"
-                        },
-                        {
-                            "title": "",
-                            "type": "string"
-                        }
-                    ]
-                }
-            },
             "type": "object"
         },
         "Maintainer": {

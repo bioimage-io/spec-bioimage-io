@@ -102,6 +102,168 @@
             ],
             "type": "object"
         },
+        "Dataset": {
+            "additionalProperties": false,
+            "properties": {
+                "attachments": {
+                    "$ref": "#/definitions/Attachments",
+                    "type": "object"
+                },
+                "authors": {
+                    "items": {
+                        "$ref": "#/definitions/Author",
+                        "type": "object"
+                    },
+                    "title": "authors",
+                    "type": "array"
+                },
+                "badges": {
+                    "items": {
+                        "$ref": "#/definitions/Badge",
+                        "type": "object"
+                    },
+                    "title": "badges",
+                    "type": "array"
+                },
+                "cite": {
+                    "items": {
+                        "$ref": "#/definitions/CiteEntry",
+                        "type": "object"
+                    },
+                    "title": "cite",
+                    "type": "array"
+                },
+                "config": {
+                    "additionalProperties": {},
+                    "bioimageio_descriptio": "A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:\n\n```yaml\n   config:\n      bioimage_io:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n           nested: value\n      imagej:\n        macro_dir: /path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.",
+                    "title": "config",
+                    "type": "object"
+                },
+                "covers": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "title": "",
+                                "type": "string"
+                            },
+                            {
+                                "title": "",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "title": "covers",
+                    "type": "array"
+                },
+                "description": {
+                    "title": "description",
+                    "type": "string"
+                },
+                "documentation": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "download_url": {
+                    "title": "download_url",
+                    "type": "string"
+                },
+                "format_version": {
+                    "title": "format_version",
+                    "type": "string"
+                },
+                "git_repo": {
+                    "title": "git_repo",
+                    "type": "string"
+                },
+                "icon": {
+                    "title": "icon",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "id",
+                    "type": "string"
+                },
+                "license": {
+                    "title": "license",
+                    "type": "string"
+                },
+                "links": {
+                    "items": {
+                        "title": "links",
+                        "type": "string"
+                    },
+                    "title": "links",
+                    "type": "array"
+                },
+                "maintainers": {
+                    "items": {
+                        "$ref": "#/definitions/Maintainer",
+                        "type": "object"
+                    },
+                    "title": "maintainers",
+                    "type": "array"
+                },
+                "name": {
+                    "title": "name",
+                    "type": "string"
+                },
+                "rdf_source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "tags": {
+                    "items": {
+                        "title": "tags",
+                        "type": "string"
+                    },
+                    "title": "tags",
+                    "type": "array"
+                },
+                "type": {
+                    "title": "type",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "format_version",
+                "name",
+                "type"
+            ],
+            "type": "object"
+        },
         "ImplicitOutputShape": {
             "additionalProperties": false,
             "properties": {
@@ -384,7 +546,8 @@
                         "0.4.0",
                         "0.4.1",
                         "0.4.2",
-                        "0.4.3"
+                        "0.4.3",
+                        "0.4.4"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -1015,6 +1178,18 @@
                     "format": "date-time",
                     "title": "timestamp",
                     "type": "string"
+                },
+                "training_data": {
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/definitions/Dataset",
+                            "type": "object"
+                        }
+                    ]
                 },
                 "type": {
                     "title": "type",
