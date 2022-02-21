@@ -14,7 +14,7 @@ def resolve_collection_entries(
     collection: raw_nodes.Collection, collection_id: Optional[str] = None
 ) -> List[Tuple[dict, Optional[str]]]:
     from bioimageio.spec import serialize_raw_resource_description_to_dict
-    from bioimageio.spec.shared.utils import resolve_rdf_source
+    from bioimageio.spec.shared import resolve_rdf_source
 
     ret = []
     seen_ids = set()

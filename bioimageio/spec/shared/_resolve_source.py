@@ -11,8 +11,8 @@ from urllib.request import url2pathname
 
 from marshmallow import ValidationError
 
-from bioimageio.spec.shared import fields, raw_nodes, yaml
-from bioimageio.spec.shared.common import BIOIMAGEIO_CACHE_PATH
+from . import fields, raw_nodes
+from .common import BIOIMAGEIO_CACHE_PATH, yaml
 
 DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
 RDF_NAMES = ("rdf.yaml", "model.yaml")
@@ -258,9 +258,7 @@ def resolve_local_source(
     root_path: os.PathLike,
     output: typing.Optional[os.PathLike] = None,
 ) -> typing.Union[pathlib.Path, raw_nodes.URI]:
-    if isinstance(source, (tuple, list)):
-        return type(source)([resolve_local_source(s, root_path, output) for s in source])
-    elif isinstance(source, os.PathLike) or isinstance(source, str):
+    if isinstance(source, os.PathLike) or isinstance(source, str):
         try:  # source as path from cwd
             is_path_cwd = pathlib.Path(source).exists()
         except OSError:
@@ -296,7 +294,7 @@ def resolve_local_source(
 
     assert isinstance(uri, raw_nodes.URI), uri
     if uri.scheme == "file":
-        local_path_or_remote_uri = pathlib.Path(url2pathname(uri.path))
+        local_path_or_remote_uri: typing.Union[pathlib.Path, raw_nodes.URI] = pathlib.Path(url2pathname(uri.path))
     elif uri.scheme in ("https", "https"):
         local_path_or_remote_uri = uri
     else:

@@ -4,7 +4,8 @@ from typing import Any
 
 import pytest
 
-from bioimageio.spec.shared import raw_nodes, utils
+from bioimageio.spec.shared import raw_nodes
+from bioimageio.spec.shared.node_transformer import NodeTransformer, NodeVisitor, iter_fields
 
 
 @dataclass
@@ -15,7 +16,7 @@ class MyNode(raw_nodes.RawNode):
 
 def test_iter_fields():
     entry = MyNode("a", 42)
-    assert [("field_a", "a"), ("field_b", 42)] == list(utils._node_transformer.iter_fields(entry))
+    assert [("field_a", "a"), ("field_b", 42)] == list(iter_fields(entry))
 
 
 @dataclass
@@ -41,11 +42,11 @@ class TestNodeVisitor:
         )
 
     def test_node(self, tree):
-        visitor = utils.NodeVisitor()
+        visitor = NodeVisitor()
         visitor.visit(tree)
 
     def test_node_transform(self, tree):
-        class MyTransformer(utils.NodeTransformer):
+        class MyTransformer(NodeTransformer):
             def transform_URL(self, node):
                 return Content(f"content of url {node.url}")
 
@@ -56,7 +57,7 @@ class TestNodeVisitor:
 
 
 def test_resolve_remote_relative_path():
-    from bioimageio.spec.shared.utils import PathToRemoteUriTransformer
+    from bioimageio.spec.shared.node_transformer import PathToRemoteUriTransformer
 
     remote_rdf = raw_nodes.URI(
         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"

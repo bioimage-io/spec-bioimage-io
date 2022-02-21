@@ -1,12 +1,13 @@
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
-from bioimageio.spec.shared import LICENSES, field_validators, fields
-from bioimageio.spec.shared.common import (
+from bioimageio.spec.shared import (
     BIOIMAGEIO_SITE_CONFIG,
     BIOIMAGEIO_SITE_CONFIG_ERROR,
-    get_args,
-    get_patched_format_version,
+    LICENSES,
+    field_validators,
+    fields,
 )
+from bioimageio.spec.shared.common import get_args, get_patched_format_version
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
