@@ -20,6 +20,7 @@ class DocumentedField:
     def __init__(
         self,
         *super_args,
+        short_bioimageio_description: str = "",
         bioimageio_description: str = "",
         bioimageio_description_order: typing.Optional[int] = None,
         bioimageio_maybe_required: bool = False,  # indicates that this field may be required, depending on other fields
@@ -38,6 +39,7 @@ class DocumentedField:
         # if bioimageio_examples_valid is not None:
         #     valid_examples =
         self.type_name = "→".join(bases)
+        self.short_bioimageio_description = short_bioimageio_description
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
         self.bioimageio_maybe_required = bioimageio_maybe_required
@@ -197,6 +199,9 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
 
         if not self.bioimageio_description:
             self.bioimageio_description = self.schema.bioimageio_description
+
+        if not self.short_bioimageio_description:
+            self.short_bioimageio_description = self.schema.short_bioimageio_description
 
         repeat_type_name = self.type_name if self.bioimageio_description else ""
         self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"

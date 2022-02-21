@@ -25,9 +25,11 @@ def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet
     if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 0):
         expected.pop("maintainers")
         actual.pop("maintainers")
-    if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 3):
+    if tuple(map(int, old_model_data["format_version"].split("."))) < (0, 4, 4):
         expected.pop("download_url")
         actual.pop("download_url")
+        expected.pop("training_data")
+        actual.pop("training_data")
 
     for key, item in expected.items():
         assert key in actual, key

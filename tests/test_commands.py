@@ -6,6 +6,15 @@ from bioimageio.spec import load_raw_resource_description
 from bioimageio.spec.model import format_version
 
 
+def test_validate_dataset(dataset_rdf):
+    from bioimageio.spec.commands import validate
+
+    summary = validate(dataset_rdf, update_format=True, update_format_inner=False)
+    assert summary["status"] == "passed", summary
+    summary = validate(dataset_rdf, update_format=False, update_format_inner=False)
+    assert summary["status"] == "passed", summary
+
+
 def test_validate_model_as_dict(unet2d_nuclei_broad_any):
     from bioimageio.spec.commands import validate
 

@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
+from bioimageio.spec.dataset.v0_2.raw_nodes import Dataset
 from bioimageio.spec.model.v0_3.raw_nodes import (
     InputTensor,
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
@@ -46,7 +47,9 @@ PostprocessingName = PostprocessingName
 Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
-FormatVersion = Literal["0.4.0", "0.4.1", "0.4.2", "0.4.3"]  # newest format needs to be last (used in __init__.py)
+FormatVersion = Literal[
+    "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4"
+]  # newest format needs to be last (used in __init__.py)
 WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
@@ -117,9 +120,9 @@ class Model(_RDF):
     run_mode: Union[_Missing, RunMode] = missing
     sample_inputs: Union[_Missing, List[Union[URI, Path]]] = missing
     sample_outputs: Union[_Missing, List[Union[URI, Path]]] = missing
-    timestamp: datetime = missing
-    type: Literal["model"] = missing
-
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing
+    timestamp: datetime = missing
+    training_data: Union[_Missing, str, Dataset] = missing
+    type: Literal["model"] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing

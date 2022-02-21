@@ -4,6 +4,7 @@ from copy import deepcopy
 import numpy
 from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
 
+from bioimageio.spec.dataset.v0_2.schema import Dataset as _Dataset
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
     ModelParent,
@@ -37,15 +38,15 @@ class _TensorBase(_BioImageIOSchema):
         required=True,
         bioimageio_description="""Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
 
-    | character | description |
-    | --- | --- |
-    |  b  |  batch (groups multiple samples) |
-    |  i  |  instance/index/element |
-    |  t  |  time |
-    |  c  |  channel |
-    |  z  |  spatial dimension z |
-    |  y  |  spatial dimension y |
-    |  x  |  spatial dimension x |""",
+| character | description |
+| --- | --- |
+|  b  |  batch (groups multiple samples) |
+|  i  |  instance/index/element |
+|  t  |  time |
+|  c  |  channel |
+|  z  |  spatial dimension z |
+|  y  |  spatial dimension y |
+|  x  |  spatial dimension x |""",
     )
     data_type = fields.String(
         required=True,
@@ -228,6 +229,10 @@ class TensorflowSavedModelBundleWeightsEntry(TensorflowSavedModelBundleWeightsEn
     pass
 
 
+class Dataset(_Dataset):
+    short_bioimageio_description = "in-place definition of [dataset RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_0_2.md)"
+
+
 class TorchscriptWeightsEntry(_WeightsEntryBase):
     raw_nodes = raw_nodes
 
@@ -287,6 +292,30 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
+    config = fields.YamlDict(
+        bioimageio_description=rdf.schema.RDF.config_bioimageio_description
+        + """
+For example:
+```yaml
+config:
+  # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
+  deepimagej:
+    model_keys:
+      # In principle the tag "SERVING" is used in almost every tf model
+      model_tag: tf.saved_model.tag_constants.SERVING
+      # Signature definition to call the model. Again "SERVING" is the most general
+      signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+    test_information:
+      input_size: [2048x2048] # Size of the input images
+      output_size: [1264x1264 ]# Size of all the outputs
+      device: cpu # Device used. In principle either cpu or GPU
+      memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
+      runtime: 78.8s # Time it took to run the model
+      pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
+```
+"""
+    )
+
     documentation = fields.Union(
         [
             fields.URL(),
@@ -322,75 +351,6 @@ is in an unsupported format version. The current format version described here i
         + "(which contains the configuration yaml file) should be used."
     )
 
-    license = fields.String(
-        validate=field_validators.OneOf(LICENSES),
-        required=True,
-        bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
-    )
-
-    name = fields.String(
-        required=True,
-        bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
-        "`_`, `-` or spaces and not be longer than 64 characters.",
-    )
-
-    packaged_by = fields.List(
-        fields.Nested(rdf.schema.Author()),
-        bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
-        f"different from `authors` in root or any entry in `weights`.",
-    )
-
-    parent = fields.Nested(
-        ModelParent(),
-        bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
-        "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
-        "checkpoint, see `weights`.",
-    )
-
-    run_mode = fields.Nested(
-        RunMode(),
-        bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. "
-        "No standard run modes are defined yet.",
-    )
-
-    timestamp = fields.DateTime(
-        required=True,
-        bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
-        "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
-    )
-
-    weights = fields.Dict(
-        fields.String(
-            validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
-            required=True,
-            bioimageio_description="Format of this set of weights. "
-            f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
-        ),
-        fields.Union([fields.Nested(we()) for we in get_args(WeightsEntry)]),
-        required=True,
-        bioimageio_description="The weights for this model. Weights can be given for different formats, but should "
-        "otherwise be equivalent. "
-        "See [weight_formats_spec_0_4.md]"
-        "(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) "
-        "for the required and optional fields per weight format. "
-        "The available weight formats determine which consumers can use this model.",
-    )
-
-    @pre_load
-    def add_weights_format_key_to_weights_entry_value(self, data: dict, many=False, partial=False, **kwargs):
-        data = deepcopy(data)  # Schema.validate() calls pre_load methods, thus we should not modify the input data
-        if many or partial:
-            raise NotImplementedError
-
-        for weights_format, weights_entry in data.get("weights", {}).items():
-            if "weights_format" in weights_entry:
-                raise ValidationError(f"Got unexpected key 'weights_format' in weights entry {weights_format}")
-
-            weights_entry["weights_format"] = weights_format
-
-        return data
-
     inputs = fields.List(
         fields.Nested(InputTensor()),
         validate=field_validators.Length(min=1),
@@ -406,6 +366,18 @@ is in an unsupported format version. The current format version described here i
         names = [t.name for t in value]
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate input tensor names are not allowed.")
+
+    license = fields.String(
+        validate=field_validators.OneOf(LICENSES),
+        required=True,
+        bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
+    )
+
+    name = fields.String(
+        required=True,
+        bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
+        "underscore '_', minus '-' or spaces and not be longer than 64 characters.",
+    )
 
     outputs = fields.List(
         fields.Nested(OutputTensor()),
@@ -481,6 +453,40 @@ is in an unsupported format version. The current format version described here i
             if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
                 raise ValidationError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
 
+    packaged_by = fields.List(
+        fields.Nested(rdf.schema.Author()),
+        bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
+        f"different from `authors` in root or any entry in `weights`.",
+    )
+
+    parent = fields.Nested(
+        ModelParent(),
+        bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
+        "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
+        "checkpoint, see `weights`.",
+    )
+
+    run_mode = fields.Nested(
+        RunMode(),
+        bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
+        "data augmentation that currently cannot be expressed in the specification. "
+        "No standard run modes are defined yet.",
+    )
+
+    sample_inputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
+        "the model, for example stored as png or tif images. "
+        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
+    )
+    sample_outputs = fields.List(
+        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        validate=field_validators.Length(min=1),
+        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
+        "`sample_inputs`.",
+    )
+
     test_inputs = fields.List(
         fields.Union([fields.URI(), fields.RelativeLocalPath()]),
         validate=field_validators.Length(min=1),
@@ -499,44 +505,48 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description="Analog to test_inputs.",
     )
 
-    sample_inputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
-        "the model, for example stored as png or tif images. "
-        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
-    )
-    sample_outputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
-        "`sample_inputs`.",
+    timestamp = fields.DateTime(
+        required=True,
+        bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
+        "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
 
-    config = fields.YamlDict(
-        bioimageio_description=rdf.schema.RDF.config_bioimageio_description
-        + """
+    training_data = fields.Union([fields.String(bioimageio_description="dataset id"), fields.Nested(Dataset())])
 
-    For example:
-    ```yaml
-    config:
-      # custom config for DeepImageJ, see https://github.com/bioimage-io/configuration/issues/23
-      deepimagej:
-        model_keys:
-          # In principle the tag "SERVING" is used in almost every tf model
-          model_tag: tf.saved_model.tag_constants.SERVING
-          # Signature definition to call the model. Again "SERVING" is the most general
-          signature_definition: tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-        test_information:
-          input_size: [2048x2048] # Size of the input images
-          output_size: [1264x1264 ]# Size of all the outputs
-          device: cpu # Device used. In principle either cpu or GPU
-          memory_peak: 257.7 Mb # Maximum memory consumed by the model in the device
-          runtime: 78.8s # Time it took to run the model
-          pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
-    ```
-"""
+    weights = fields.Dict(
+        fields.String(
+            validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)),
+            required=True,
+            bioimageio_description="Format of this set of weights. "
+            f"One of: {', '.join(get_args(raw_nodes.WeightsFormat))}",
+        ),
+        fields.Union(
+            [fields.Nested(we()) for we in get_args(WeightsEntry)],
+            short_bioimageio_description=(
+                "The weights for this model. Weights can be given for different formats, but should "
+                "otherwise be equivalent. "
+                "See [weight_formats_spec_0_4.md]"
+                "(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) "
+                "for the required and optional fields per weight format. "
+                "The available weight formats determine which consumers can use this model."
+            ),
+        ),
+        required=True,
     )
+
+    @pre_load
+    def add_weights_format_key_to_weights_entry_value(self, data: dict, many=False, partial=False, **kwargs):
+        data = deepcopy(data)  # Schema.validate() calls pre_load methods, thus we should not modify the input data
+        if many or partial:
+            raise NotImplementedError
+
+        for weights_format, weights_entry in data.get("weights", {}).items():
+            if "weights_format" in weights_entry:
+                raise ValidationError(f"Got unexpected key 'weights_format' in weights entry {weights_format}")
+
+            weights_entry["weights_format"] = weights_format
+
+        return data
 
     @validates_schema
     def validate_reference_tensor_names(self, data, **kwargs):

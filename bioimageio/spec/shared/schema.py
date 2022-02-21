@@ -11,6 +11,7 @@ from .common import ValidationWarning
 
 class SharedBioImageIOSchema(Schema):
     raw_nodes: ClassVar[ModuleType] = raw_nodes  # to be overwritten in subclass by version specific raw_nodes module
+    short_bioimageio_description: ClassVar[str] = ""
     bioimageio_description: ClassVar[str] = ""
 
     @post_load
