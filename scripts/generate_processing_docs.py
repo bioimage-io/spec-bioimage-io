@@ -125,5 +125,6 @@ if __name__ == "__main__":
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
+    export_markdown_docs(dist, bioimageio.spec.model.v0_4)
     export_markdown_docs(dist, bioimageio.spec.model.v0_3)
     export_markdown_docs(dist, bioimageio.spec.model)
