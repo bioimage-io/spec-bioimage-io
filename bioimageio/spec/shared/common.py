@@ -1,8 +1,11 @@
+import json
 import os
 import pathlib
 import tempfile
 import warnings
 from typing import Generic, Optional, Sequence
+
+from .utils import resolve_source
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -36,6 +39,21 @@ else:
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
+
+BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
+
+
+try:
+    p = resolve_source(BIOIMAGEIO_SITE_CONFIG_URL)
+    with p.open() as f:
+        BIOIMAGEIO_SITE_CONFIG = json.load(f)
+
+    assert isinstance(BIOIMAGEIO_SITE_CONFIG, dict)
+except Exception as e:
+    BIOIMAGEIO_SITE_CONFIG = None
+    BIOIMAGEIO_SITE_CONFIG_ERROR = str(e)
+else:
+    BIOIMAGEIO_SITE_CONFIG_ERROR = None
 
 
 class ValidationWarning(UserWarning):
