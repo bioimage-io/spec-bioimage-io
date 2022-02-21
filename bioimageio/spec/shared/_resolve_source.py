@@ -350,7 +350,7 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             t.close()
             if total_size != 0 and t.n != total_size:
                 # todo: check more carefully and raise on real issue
-                warnings.warn("Download does not have expected size.")
+                warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
         except Exception as e:
             raise RuntimeError(f"Failed to download {uri} ({e})")
 

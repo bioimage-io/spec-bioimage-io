@@ -121,34 +121,35 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
-#### todo: bioimageio.spec 0.4.3post1
-  - changes to api:
-    - moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
+#### bioimageio.spec 0.4.3post1
+- fix to shape validation for model RDF 0.4: output shape now needs to be bigger than halo
+- moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
+- additional keys to validation summary: bioimageio_spec_version, status 
 
 #### bioimageio.spec 0.4.2post4
-  - fixes to general RDF:
-    - ignore value of field `root_path` if present in yaml. This field is used internally and always present in RDF nodes.
+- fixes to general RDF:
+  - ignore value of field `root_path` if present in yaml. This field is used internally and always present in RDF nodes.
 
 #### bioimageio.spec 0.4.1.post5
-  - fixes to collection RDF: 
-    - RDFs specified directly in collection RDF are validated correctly even if their source field does not point to an RDF.
-    - nesting of collection RDF allowed
+- fixes to collection RDF: 
+  - RDFs specified directly in collection RDF are validated correctly even if their source field does not point to an RDF.
+  - nesting of collection RDF allowed
 
 #### bioimageio.spec 0.4.1.post4
-  - fixed missing field `icon` in general RDF's raw node
-  - fixes to collection RDF: 
-    - RDFs specified directly in collection RDF are validated correctly
-    - no nesting of collection RDF allowed for now
-    - `links` is no longer an explicit collection entry field ("moved" to unknown)
+- fixed missing field `icon` in general RDF's raw node
+- fixes to collection RDF: 
+  - RDFs specified directly in collection RDF are validated correctly
+  - no nesting of collection RDF allowed for now
+  - `links` is no longer an explicit collection entry field ("moved" to unknown)
 
 #### bioimageio.spec 0.4.1.post0
-  - new model spec 0.3.5 and 0.4.1
+- new model spec 0.3.5 and 0.4.1
 
 #### bioimageio.spec 0.4.0.post3
-  - `load_raw_resource_description` no longer accepts `update_to_current_format` kwarg (use `update_to_format` instead)
+- `load_raw_resource_description` no longer accepts `update_to_current_format` kwarg (use `update_to_format` instead)
 
 #### bioimageio.spec 0.4.0.post2
-  - `load_raw_resource_description` accepts `update_to_format` kwarg
+- `load_raw_resource_description` accepts `update_to_format` kwarg
 
 
 ### RDF Format Versions
