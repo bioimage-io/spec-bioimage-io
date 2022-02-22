@@ -239,7 +239,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             missing_categories = []
             try:
                 categories = {
-                    c["type"]: c["tag_categories"] for c in BIOIMAGEIO_SITE_CONFIG["resource_categories"]
+                    c["type"]: c.get("tag_categories", {}) for c in BIOIMAGEIO_SITE_CONFIG["resource_categories"]
                 }.get(self.__class__.__name__.lower(), {})
                 for cat, entries in categories.items():
                     if not any(e in value for e in entries):
