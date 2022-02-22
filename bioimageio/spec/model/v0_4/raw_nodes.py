@@ -108,6 +108,11 @@ WeightsEntry = Union[
 
 
 @dataclass
+class LinkedDataset:
+    id: str
+
+
+@dataclass
 class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs", "sample_inputs", "sample_outputs")
 
@@ -123,6 +128,6 @@ class Model(_RDF):
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing
     timestamp: datetime = missing
-    training_data: Union[_Missing, str, Dataset] = missing
+    training_data: Union[_Missing, Dataset, LinkedDataset] = missing
     type: Literal["model"] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing

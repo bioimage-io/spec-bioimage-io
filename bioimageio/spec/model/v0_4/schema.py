@@ -277,6 +277,10 @@ class RunMode(_BioImageIOSchema):
             self.warn("name", f"Unrecognized run mode '{value}'")
 
 
+class LinkedDataset(_BioImageIOSchema):
+    id = fields.String(bioimageio_description="dataset id")
+
+
 class Model(rdf.schema.RDF):
     raw_nodes = raw_nodes
 
@@ -527,7 +531,7 @@ is in an unsupported format version. The current format version described here i
         "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
     )
 
-    training_data = fields.Union([fields.String(bioimageio_description="dataset id"), fields.Nested(Dataset())])
+    training_data = fields.Union([fields.Nested(Dataset()), fields.Nested(LinkedDataset())])
 
     weights = fields.Dict(
         fields.String(
