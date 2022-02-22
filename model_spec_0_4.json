@@ -439,6 +439,16 @@
             ],
             "type": "object"
         },
+        "LinkedDataset": {
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "title": "id",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "Maintainer": {
             "additionalProperties": false,
             "properties": {
@@ -1182,11 +1192,11 @@
                 "training_data": {
                     "anyOf": [
                         {
-                            "title": "",
-                            "type": "string"
+                            "$ref": "#/definitions/Dataset",
+                            "type": "object"
                         },
                         {
-                            "$ref": "#/definitions/Dataset",
+                            "$ref": "#/definitions/LinkedDataset",
                             "type": "object"
                         }
                     ]
