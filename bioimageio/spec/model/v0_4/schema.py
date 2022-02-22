@@ -9,8 +9,8 @@ from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
     ModelParent,
     OnnxWeightsEntry as OnnxWeightsEntry03,
-    Postprocessing,
-    Preprocessing,
+    Postprocessing as Postprocessing03,
+    Preprocessing as Preprocessing03,
     TensorflowJsWeightsEntry as TensorflowJsWeightsEntry03,
     TensorflowSavedModelBundleWeightsEntry as TensorflowSavedModelBundleWeightsEntry03,
     _WeightsEntryBase as _WeightsEntryBase03,
@@ -73,6 +73,22 @@ class _TensorBase(_BioImageIOSchema):
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
                 raise ValidationError("`kwargs.axes` needs to be subset of axes")
+
+
+class Preprocessing(Preprocessing03):
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [preprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
+
+
+class Postprocessing(Postprocessing03):
+    kwargs = fields.Kwargs(
+        bioimageio_description=f"Key word arguments as described in [postprocessing spec]"
+        f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_"
+        f"{'_'.join(get_args(raw_nodes.FormatVersion)[-1].split('.')[:2])}.md)."
+    )
 
 
 class InputTensor(_TensorBase):

@@ -6,6 +6,7 @@ from urllib.request import urlretrieve
 
 from bioimageio.spec.model import raw_nodes, schema
 from bioimageio.spec.shared import get_args
+from bioimageio.spec.shared.utils import resolve_bioimageio_descrcription
 
 MANIFEST_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage-io-models/gh-pages/manifest.bioimage.io.json"
 WEIGHTS_FORMATS_OVERVIEW_PATH = (
@@ -48,7 +49,7 @@ def main(args):
     weights_formats = {
         wf: {
             "name": getattr(raw_nodes, wfcn).weights_format_name,
-            "description": getattr(schema, wfcn).bioimageio_description,
+            "description": resolve_bioimageio_descrcription(getattr(schema, wfcn).bioimageio_description),
             "consumers": [
                 cname
                 for cname, c in consumers.items()

@@ -1,8 +1,8 @@
 import ast
 import sys
 import warnings
+from typing import Callable, Union
 from urllib.parse import urlparse
-
 
 try:
     from typing import Literal
@@ -58,3 +58,10 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
         raise ValueError(f"{type_} {name} not found in {github_file_url}")
 
     return f"{github_file_url}#L{start}-L{stop}"
+
+
+def resolve_bioimageio_descrcription(descr: Union[Callable[[], str], str]):
+    if callable(descr):
+        return descr()
+    else:
+        return descr

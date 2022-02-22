@@ -10,6 +10,7 @@ import numpy
 from marshmallow import Schema, ValidationError, fields as marshmallow_fields, missing
 
 from . import field_validators, raw_nodes
+from .utils._docs import resolve_bioimageio_descrcription
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,8 @@ class DocumentedField:
     def __init__(
         self,
         *super_args,
-        short_bioimageio_description: str = "",
-        bioimageio_description: str = "",
+        short_bioimageio_description: typing.Union[str, typing.Callable[[], str]] = "",
+        bioimageio_description: typing.Union[str, typing.Callable[[], str]] = "",
         bioimageio_description_order: typing.Optional[int] = None,
         bioimageio_maybe_required: bool = False,  # indicates that this field may be required, depending on other fields
         bioimageio_examples_valid: typing.Optional[
@@ -36,6 +37,7 @@ class DocumentedField:
         if self.__class__.__name__ not in bases:
             bases.insert(0, self.__class__.__name__)
 
+        # todo: support examples for documentation
         # if bioimageio_examples_valid is not None:
         #     valid_examples =
         self.type_name = "→".join(bases)
@@ -204,7 +206,11 @@ class Nested(DocumentedField, marshmallow_fields.Nested):
             self.short_bioimageio_description = self.schema.short_bioimageio_description
 
         repeat_type_name = self.type_name if self.bioimageio_description else ""
-        self.bioimageio_description += f" {repeat_type_name} is a Dict with the following keys:"
+        add_to_descr = f" {repeat_type_name} is a Dict with the following keys:"
+        bioimageio_description_part = self.bioimageio_description
+        self.bioimageio_description = (
+            lambda: resolve_bioimageio_descrcription(bioimageio_description_part) + add_to_descr
+        )
 
     def _deserialize(self, value, attr, data, partial=None, **kwargs):
         if not isinstance(value, dict):

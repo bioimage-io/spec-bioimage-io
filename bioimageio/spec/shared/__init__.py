@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from . import fields, raw_nodes, schema
 from ._resolve_source import (
     RDF_NAMES,
     resolve_local_source,
