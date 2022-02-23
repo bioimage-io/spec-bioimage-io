@@ -265,6 +265,7 @@
                 }
             },
             "required": [
+                "collection",
                 "description",
                 "format_version",
                 "name",

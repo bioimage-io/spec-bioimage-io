@@ -6,6 +6,8 @@ The collection RDF YAML file contains mandatory and optional fields. In the foll
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 
 * <a id="format_version"></a>`format_version` _(required String)_ Version of the BioImage.IO Resource Description File Specification used.The current general format version described here is 0.2.2. Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format.
+* <a id="collection"></a>`collection` _(required List\[CollectionEntry\])_ Collection entries. Each entry needs to specify a valid RDF with an id. Each collection entry RDF is based on the collection RDF itself, updated by rdf_source content if rdf_source is specified, and updated by any fields specified directly in the entry. In this context 'update' refers to overwriting RDF root fields by name.Except for the `id` field, which appends to the collection RDF `id` such that full_collection_entry_id=<collection_id>/<entry_id>
+    1.  _(CollectionEntry)_   is a Dict with the following keys:
 * <a id="description"></a>`description` _(required String)_ A string containing a brief description.
 * <a id="name"></a>`name` _(required String)_ name of the resource, a human-friendly name
 * <a id="attachments"></a>`attachments` _(optional Attachments)_ Additional unknown keys are allowed. Attachments is a Dict with the following keys:
@@ -27,8 +29,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(CiteEntry)_   is a Dict with the following keys:
         * <a id="cite:text"></a>`text` _(String)_ free text description
         * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/
-* <a id="collection"></a>`collection` _(optional List\[CollectionEntry\])_ Collection entries. Each entry needs to specify a valid RDF with an id. Each collection entry RDF is based on the collection RDF itself, updated by rdf_source content if rdf_source is specified, and updated by any fields specified directly in the entry. In this context 'update' refers to overwriting RDF root fields by name.Except for the `id` field, which appends to the collection RDF `id` such that full_collection_entry_id=<collection_id>/<entry_id>
-    1.  _(CollectionEntry)_   is a Dict with the following keys:
 * <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | RelativeLocalPath→Path\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * <a id="documentation"></a>`documentation` _(optional Union\[URL→URI | RelativeLocalPath→Path\])_ URL or relative path to markdown file with additional documentation. For markdown files the recommended documentation file name is `README.md`.
 * <a id="download_url"></a>`download_url` _(optional URL→URI)_ optional url to download the resource from
