@@ -37,6 +37,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "In this context 'update' refers to overwriting RDF root fields by name."
         "Except for the `id` field, which appends to the collection RDF `id` "
         "such that full_collection_entry_id=<collection_id>/<entry_id>",
+        required=True,
     )
 
     @validates("collection")
