@@ -9,17 +9,23 @@ Optional arguments are marked as _optional_ or _optional*_ with an asterisk if t
 - `sha256` _optional_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
 
 ## Weight formats and their additional key word arguments
-- `pytorch_state_dict` PyTorch state dictionary weights format
-- `pytorch_script` Torch Script weights format
-- `keras_hdf5` Keras HDF5 weights format
-  - key word arguments:
-    - `tensorflow_version` _optional_ 
-- `tensorflow_js` Tensorflow Javascript weights format
-  - key word arguments:
-    - `tensorflow_version` _optional_ 
-- `tensorflow_saved_model_bundle` Tensorflow Saved Model Bundle weights format
-  - key word arguments:
-    - `tensorflow_version` _optional_ 
-- `onnx` ONNX weights format
-  - key word arguments:
-    - `opset_version` _optional_ 
+### `pytorch_state_dict`
+PyTorch state dictionary weights format
+### `pytorch_script`
+Torch Script weights format
+### `keras_hdf5`
+Keras HDF5 weights format
+- key word arguments:
+  - `tensorflow_version` _optional_ 
+### `tensorflow_js`
+Tensorflow Javascript weights format
+- key word arguments:
+  - `tensorflow_version` _optional_ 
+### `tensorflow_saved_model_bundle`
+Tensorflow Saved Model Bundle weights format
+- key word arguments:
+  - `tensorflow_version` _optional_ 
+### `onnx`
+ONNX weights format
+- key word arguments:
+  - `opset_version` _optional_ 
