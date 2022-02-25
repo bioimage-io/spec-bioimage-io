@@ -85,12 +85,12 @@ def markdown_from_docs(doc_nodes: List[ProcessingDocNode], title: str, descripti
     md = f"# {title}\n{description}\n"
 
     for doc in doc_nodes:
-        md += f"- `{doc.name}` {doc.description}\n"
+        md += f"### `{doc.name}`\n{doc.description}\n"
         if doc.kwargs:
-            md += f"  - key word arguments:\n"
+            md += f"- key word arguments:\n"
             for kwarg in doc.kwargs:
-                md += f"    - `{'[' if kwarg.optional else ''}{kwarg.name}{']' if kwarg.optional else ''}` {kwarg.description}\n"
-        md += f"  - reference implementation: {doc.reference_implemation}\n"
+                md += f"  - `{'[' if kwarg.optional else ''}{kwarg.name}{']' if kwarg.optional else ''}` {kwarg.description}\n"
+        md += f"- reference implementation: {doc.reference_implemation}\n"
 
     return md
 

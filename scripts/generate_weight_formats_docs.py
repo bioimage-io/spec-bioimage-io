@@ -77,10 +77,10 @@ def get_md_kwargs(kwargs: Sequence[Kwarg], indent: int = 0):
 def md_from_doc(doc_nodes: List[WeightsFormatDocNode]):
     md = ""
     for doc in doc_nodes:
-        md += f"- `{doc.name}` {doc.description}\n"
+        md += f"### `{doc.name}`\n{doc.description}\n"
         if doc.kwargs:
-            md += f"  - key word arguments:\n"
-            md += get_md_kwargs(doc.kwargs, indent=4)
+            md += f"- key word arguments:\n"
+            md += get_md_kwargs(doc.kwargs, indent=2)
 
     return md
 
