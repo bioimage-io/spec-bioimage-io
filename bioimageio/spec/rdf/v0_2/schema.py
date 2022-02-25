@@ -243,7 +243,7 @@ E.g. the citation for the model architecture and/or the training data used."""
                 }.get(self.__class__.__name__.lower(), {})
                 for cat, entries in categories.items():
                     if not any(e in value for e in entries):
-                        missing_categories.append(cat)
+                        missing_categories.append({cat: entries})
             except Exception as e:
                 error = str(e)
             else:

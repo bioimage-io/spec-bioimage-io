@@ -110,7 +110,10 @@ def validate(
     return {
         "bioimageio_spec_version": __version__,
         "error": error,
-        "name": f"bioimageio.spec static validation of {resource_type} RDF {format_version}",
+        "name": (
+            f"bioimageio.spec static validation of {resource_type} RDF {format_version}"
+            f"{' with update to latest format version' if update_format else ''}"
+        ),
         "nested_errors": nested_errors,
         "source_name": source_name,
         "status": "passed" if error is None else "failed",
