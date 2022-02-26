@@ -12,6 +12,7 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
         for group in ["application", "model", "dataset", "notebook"]:
             if group in data:
                 data["collection"] += data[group]
+                data["collection"][-1]["type"] = group
 
         config = data.get("config")
         if config and isinstance(config, dict):
