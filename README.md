@@ -121,6 +121,9 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.4.4post1
+- fix collection RDF conversion for type field
+
 #### bioimageio.spec 0.4.3post1
 - fix to shape validation for model RDF 0.4: output shape now needs to be bigger than halo
 - moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
