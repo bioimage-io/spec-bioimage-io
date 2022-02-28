@@ -38,6 +38,11 @@ BIOIMAGEIO_CACHE_PATH = pathlib.Path(
 )
 
 BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
+BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-io/collection.json"
+
+
+DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
+RDF_NAMES = ("rdf.yaml", "model.yaml")
 
 
 class ValidationWarning(UserWarning):
