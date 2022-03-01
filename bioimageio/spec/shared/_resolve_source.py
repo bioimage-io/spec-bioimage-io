@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 import re
@@ -7,15 +8,19 @@ import warnings
 import zipfile
 from functools import singledispatch
 from io import BytesIO, StringIO
-from urllib.request import url2pathname
+from urllib.request import url2pathname, urlopen
 
 from marshmallow import ValidationError
 
 from . import fields, raw_nodes
-from .common import BIOIMAGEIO_CACHE_PATH, yaml
-
-DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"
-RDF_NAMES = ("rdf.yaml", "model.yaml")
+from .common import (
+    BIOIMAGEIO_CACHE_PATH,
+    BIOIMAGEIO_COLLECTION_URL,
+    BIOIMAGEIO_SITE_CONFIG_URL,
+    DOI_REGEX,
+    RDF_NAMES,
+    yaml,
+)
 
 
 def _is_path(s: typing.Any) -> bool:
@@ -60,10 +65,22 @@ def resolve_rdf_source(
         raise TypeError(source)
 
     if isinstance(source, str):
-        # source might be doi, url or file path -> resolve to pathlib.Path
-        if re.fullmatch(DOI_REGEX, source):  # turn doi into url
+        # source might be bioimageio id, doi, url or file path -> resolve to pathlib.Path
+
+        if BIOIMAGEIO_COLLECTION is None:
+            bioimageio_rdf_source = None
+        else:
+            bioimageio_collection = {
+                c.get("id", f"missind_id_{i}"): c.get("rdf_source")
+                for i, c in enumerate(BIOIMAGEIO_COLLECTION.get("collection", []))
+            }
+            bioimageio_rdf_source = bioimageio_collection.get(source) or bioimageio_collection.get(source + "/latest")
+
+        if bioimageio_rdf_source is not None:
+            # source is bioimageio id
+            source = bioimageio_rdf_source
+        elif re.fullmatch(DOI_REGEX, source):  # turn doi into url
             import requests  # not available in pyodide
-            from urllib.request import urlopen
 
             zenodo_prefix = "10.5281/zenodo."
             zenodo_record_api = "https://zenodo.org/api/records"
@@ -79,7 +96,20 @@ def resolve_rdf_source(
                 is_zenodo_doi = True
 
             if is_zenodo_doi:
+                # source is a doi pointing to a zenodo record;
+                # we'll expect an rdf.yaml file in that record and use it as source...
                 record_id = source[len(zenodo_prefix) :]
+                s_count = record_id.count("/")
+                if s_count:
+                    # record_id/record_version_id
+                    if s_count != 1:
+                        warnings.warn(
+                            f"Unexpected Zenodo record ids: {record_id}. "
+                            f"Expected <concept id> or <concept id>/<version id>."
+                        )
+
+                    record_id = record_id.split("/")[-1]
+
                 response = requests.get(f"{zenodo_record_api}/{record_id}")
                 if not response.ok:
                     raise RuntimeError(response.status_code)
@@ -331,7 +361,6 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
         from tqdm import tqdm  # not available in pyodide
 
         try:
-
             # download with tqdm adapted from:
             # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
             # Streaming, so we can iterate over the response.
@@ -354,3 +383,32 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             raise RuntimeError(f"Failed to download {uri} ({e})")
 
     return local_path
+
+
+T = typing.TypeVar("T")
+
+
+def _resolve_json_from_url(
+    url: str,
+    expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
+    warning_msg: str = "Failed to fetch {url}: {error}",
+) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
+    try:
+        p = resolve_source(url)
+        with p.open() as f:
+            data = json.load(f)
+
+        assert isinstance(data, expected_type)
+    except Exception as e:
+        data = None
+        error: typing.Optional[str] = str(e)
+        if warning_msg:
+            warnings.warn(warning_msg.format(url=url, error=error))
+    else:
+        error = None
+
+    return data, error
+
+
+BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(BIOIMAGEIO_SITE_CONFIG_URL)
+BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL)

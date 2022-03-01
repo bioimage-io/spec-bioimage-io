@@ -54,6 +54,38 @@ def test_validate_model_as_zenodo_doi():
     assert validate(doi, update_format=True, update_format_inner=False)["error"]
 
 
+def test_validate_model_as_bioimageio_full_version_id_partner():
+    from bioimageio.spec.commands import validate
+
+    full_version_id = "ilastik/isbi2012_neuron_segmentation_challenge/latest"
+    summary = validate(full_version_id, update_format=False, update_format_inner=False)
+    assert summary["status"] == "passed", summary["error"]
+
+
+def test_validate_model_as_bioimageio_full_version_id_zenodo():
+    from bioimageio.spec.commands import validate
+
+    full_version_id = "10.5281/zenodo.5874741/5874742"
+    summary = validate(full_version_id, update_format=False, update_format_inner=False)
+    assert summary["status"] == "passed", summary["error"]
+
+
+def test_validate_model_as_bioimageio_resource_id_partner():
+    from bioimageio.spec.commands import validate
+
+    resource_id = "ilastik/isbi2012_neuron_segmentation_challenge"
+    summary = validate(resource_id, update_format=False, update_format_inner=False)
+    assert summary["status"] == "passed", summary["error"]
+
+
+def test_validate_model_as_bioimageio_resource_id_zenodo():
+    from bioimageio.spec.commands import validate
+
+    resource_id = "10.5281/zenodo.5874741"
+    summary = validate(resource_id, update_format=False, update_format_inner=False)
+    assert summary["status"] == "passed", summary["error"]
+
+
 def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest_path):
     from bioimageio.spec.commands import validate
 
