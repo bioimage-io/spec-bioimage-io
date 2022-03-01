@@ -70,10 +70,11 @@ def resolve_rdf_source(
         if BIOIMAGEIO_COLLECTION is None:
             bioimageio_rdf_source = None
         else:
-            bioimageio_rdf_source = {
+            bioimageio_collection = {
                 c.get("id", f"missind_id_{i}"): c.get("rdf_source")
                 for i, c in enumerate(BIOIMAGEIO_COLLECTION.get("collection", []))
-            }.get(source)
+            }
+            bioimageio_rdf_source = bioimageio_collection.get(source) or bioimageio_collection.get(source + "/latest")
 
         if bioimageio_rdf_source is not None:
             # source is bioimageio id
