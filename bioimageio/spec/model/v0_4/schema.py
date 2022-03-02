@@ -288,7 +288,7 @@ class ModelParent(_BioImageIOSchema):
     sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF. Note: the hash is not validated")
 
     @validates_schema()
-    def id_xor_uri(self, data):
+    def id_xor_uri(self, data, **kwargs):
         if ("id" in data) == ("uri" in data):
             raise ValidationError("Either 'id' or 'uri' are required (not both).")
 
