@@ -104,8 +104,6 @@ def resolve_rdf_source(
     if isinstance(source, str):
         # source might be bioimageio id, doi, url or file path -> resolve to pathlib.Path
 
-        from ._remote_constants import BIOIMAGEIO_COLLECTION
-
         if BIOIMAGEIO_COLLECTION is None:
             bioimageio_rdf_source = None
         else:
