@@ -174,3 +174,21 @@ def test_output_ref_shape_too_small(model_dict):
     assert e.value.messages == {
         "_schema": ["Minimal shape [128. 256.   9.] of output output_1 is too small for halo [256, 128, 0]."]
     }
+
+
+def test_model_has_parent_with_uri(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["parent"] = dict(uri="https://doi.org/10.5281/zenodo.5744489")
+
+    valid_data = Model().load(model_dict)
+    assert valid_data
+
+
+def test_model_has_parent_with_id(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["parent"] = dict(id="10.5281/zenodo.5764892")
+
+    valid_data = Model().load(model_dict)
+    assert valid_data

@@ -11,7 +11,6 @@ from bioimageio.spec.dataset.v0_2.raw_nodes import Dataset
 from bioimageio.spec.model.v0_3.raw_nodes import (
     InputTensor,
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
-    ModelParent,
     OnnxWeightsEntry as OnnxWeightsEntry03,
     OutputTensor,
     Postprocessing,
@@ -30,6 +29,7 @@ from bioimageio.spec.shared.raw_nodes import (
     ImportableModule,
     ImportableSourceFile,
     ParametrizedInputShape,
+    RawNode,
     URI,
 )
 
@@ -48,7 +48,7 @@ Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
 FormatVersion = Literal[
-    "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4"
+    "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.4.5"
 ]  # newest format needs to be last (used in __init__.py)
 WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
@@ -108,8 +108,15 @@ WeightsEntry = Union[
 
 
 @dataclass
-class LinkedDataset:
+class LinkedDataset(RawNode):
     id: str
+
+
+@dataclass
+class ModelParent(RawNode):
+    id: Union[_Missing, str] = missing
+    uri: Union[_Missing, URI, Path] = missing
+    sha256: Union[_Missing, str] = missing
 
 
 @dataclass

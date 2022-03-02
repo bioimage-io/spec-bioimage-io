@@ -156,6 +156,10 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ### RDF Format Versions
+#### model RDF 0.4.5
+- Breaking changes that are fully auto-convertible
+  - `parent` field changed to hold a string that is a BioImage.IO ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
+
 #### model RDF 0.4.4
 - Non-breaking changes
   - new optional field `training_data`
