@@ -460,8 +460,8 @@ class BioImageIO_ID(String):
                 field_validators.OneOf(
                     {
                         k
-                        for k, v in BIOIMAGEIO_COLLECTION_ENTRIES.items()
-                        if resource_type is None or resource_type == v.get("type")
+                        for k, (v_type, _) in BIOIMAGEIO_COLLECTION_ENTRIES.items()
+                        if resource_type is None or resource_type == v_type
                     },
                     error=error_msg,
                 )

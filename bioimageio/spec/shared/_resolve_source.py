@@ -67,10 +67,7 @@ def resolve_rdf_source(
     if isinstance(source, str):
         # source might be bioimageio id, doi, url or file path -> resolve to pathlib.Path
 
-        if BIOIMAGEIO_COLLECTION is None:
-            bioimageio_rdf_source = None
-        else:
-            bioimageio_rdf_source = BIOIMAGEIO_COLLECTION.get(source) or BIOIMAGEIO_COLLECTION.get(source + "/latest")
+        bioimageio_rdf_source: typing.Optional[str] = (BIOIMAGEIO_COLLECTION_ENTRIES or {}).get(source, (None, None))[1]
 
         if bioimageio_rdf_source is not None:
             # source is bioimageio id
@@ -409,13 +406,24 @@ def _resolve_json_from_url(
 BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(BIOIMAGEIO_SITE_CONFIG_URL)
 BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL)
 if BIOIMAGEIO_COLLECTION is None:
-    BIOIMAGEIO_COLLECTION_ENTRIES = None
+    BIOIMAGEIO_COLLECTION_ENTRIES: typing.Optional[typing.Dict[str, typing.Tuple[str, str]]] = None
 else:
     BIOIMAGEIO_COLLECTION_ENTRIES = {
-        f"{cr['id']}/{cv}": cr["rdf_source"].replace(
-            f"/{cr['versions'][0]}", cv  # todo: improve this replace-version-monkeypatch
-        )
-        for i, cr in enumerate(BIOIMAGEIO_COLLECTION.get("collection", []))
-        for cv in cr.get("versions", [])
-        if "id" in cr and "rdf_source" in cr
+        cr["id"]: (cr["type"], cr["rdf_source"])
+        for cr in BIOIMAGEIO_COLLECTION.get("collection", [])
+        if "id" in cr and "rdf_source" in cr and "type" in cr
     }
+    # add resource versions explicitly
+    BIOIMAGEIO_COLLECTION_ENTRIES.update(
+        {
+            f"{cr['id']}/{cv}": (
+                cr["type"],
+                cr["rdf_source"].replace(
+                    f"/{cr['versions'][0]}", f"/{cv}"
+                ),  # todo: improve this replace-version-monkeypatch
+            )
+            for cr in BIOIMAGEIO_COLLECTION.get("collection", [])
+            for cv in cr.get("versions", [])
+            if "id" in cr and "rdf_source" in cr and "type" in cr
+        }
+    )
