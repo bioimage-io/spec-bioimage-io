@@ -60,6 +60,7 @@ def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> Dict[str, Any]:
     if parent and "uri" in parent:
         data["parent"] = parent["uri"]
 
+    data["format_version"] = "0.4.5"
     return data
 
 
