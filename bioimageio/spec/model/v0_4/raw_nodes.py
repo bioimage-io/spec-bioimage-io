@@ -11,7 +11,6 @@ from bioimageio.spec.dataset.v0_2.raw_nodes import Dataset
 from bioimageio.spec.model.v0_3.raw_nodes import (
     InputTensor,
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
-    ModelParent,
     OnnxWeightsEntry as OnnxWeightsEntry03,
     OutputTensor,
     Postprocessing,
@@ -30,6 +29,7 @@ from bioimageio.spec.shared.raw_nodes import (
     ImportableModule,
     ImportableSourceFile,
     ParametrizedInputShape,
+    RawNode,
     URI,
 )
 
@@ -108,8 +108,15 @@ WeightsEntry = Union[
 
 
 @dataclass
-class LinkedDataset:
+class LinkedDataset(RawNode):
     id: str
+
+
+@dataclass
+class ModelParent(RawNode):
+    id: Union[_Missing, str] = missing
+    uri: Union[_Missing, URI, Path] = missing
+    sha256: Union[_Missing, str] = missing
 
 
 @dataclass
