@@ -7,7 +7,6 @@ from marshmallow import RAISE, ValidationError, missing, pre_load, validates, va
 from bioimageio.spec.dataset.v0_2.schema import Dataset as _Dataset
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
-    ModelParent,
     OnnxWeightsEntry as OnnxWeightsEntry03,
     Postprocessing as Postprocessing03,
     Preprocessing as Preprocessing03,
@@ -281,6 +280,19 @@ class LinkedDataset(_BioImageIOSchema):
     id = fields.String(bioimageio_description="dataset id")
 
 
+class ModelParent(_BioImageIOSchema):
+    id = fields.BioImageIO_ID(resource_type="model")
+    uri = fields.Union(
+        [fields.URI(), fields.RelativeLocalPath()], bioimageio_description="URL or local relative path of a model RDF"
+    )
+    sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF. Note: the hash is not validated")
+
+    @validates_schema()
+    def id_xor_uri(self, data):
+        if ("id" in data) == ("uri" in data):
+            raise ValidationError("Either 'id' or 'uri' are required (not both).")
+
+
 class Model(rdf.schema.RDF):
     raw_nodes = raw_nodes
 
@@ -479,9 +491,9 @@ is in an unsupported format version. The current format version described here i
         f"different from `authors` in root or any entry in `weights`.",
     )
 
-    parent = fields.Union(
-        [fields.BioImageIO_ID(resource_type="model"), fields.URI(), fields.RelativeLocalPath()],
-        bioimageio_description="BioImage.IO model id or URL or local relative path to a model RDF",
+    parent = fields.Nested(
+        ModelParent(),
+        bioimageio_description="The model from which this model is derived, e.g. by fine-tuning the weights.",
     )
 
     run_mode = fields.Nested(
