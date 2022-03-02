@@ -557,7 +557,8 @@
                         "0.4.1",
                         "0.4.2",
                         "0.4.3",
-                        "0.4.4"
+                        "0.4.4",
+                        "0.4.5"
                     ],
                     "enumNames": [],
                     "title": "format_version",
@@ -1262,6 +1263,10 @@
         "ModelParent": {
             "additionalProperties": false,
             "properties": {
+                "id": {
+                    "title": "id",
+                    "type": "string"
+                },
                 "sha256": {
                     "title": "sha256",
                     "type": "string"

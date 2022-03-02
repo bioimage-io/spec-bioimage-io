@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.4
+# BioImage.IO Model Resource Description File Specification 0.4.5
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     This is mandatory, and important for the consumer software to verify before parsing the fields.
     The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
     is in an unsupported format version. The current format version described here is
-    0.4.4
+    0.4.5
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
@@ -140,9 +140,10 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         * <a id="packaged_by:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="packaged_by:name"></a>`name` _(String)_ Full name.
         * <a id="packaged_by:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
-* <a id="parent"></a>`parent` _(optional ModelParent)_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
-    * <a id="parent:sha256"></a>`sha256` _(optional SHA256→String)_ Hash of the parent model RDF.
-    * <a id="parent:uri"></a>`uri` _(optional Union\[URI→String | RelativeLocalPath→Path\])_ Url of another model available on bioimage.io or path to a local model in the bioimage.io specification. If it is a url, it needs to be a github url linking to the page containing the model (NOT the raw file).
+* <a id="parent"></a>`parent` _(optional ModelParent)_ The model from which this model is derived, e.g. by fine-tuning the weights. ModelParent is a Dict with the following keys:
+    * <a id="parent:id"></a>`id` _(optional BioImageIO_ID→String)_ ID as shown on resource card on bioimage.io
+    * <a id="parent:sha256"></a>`sha256` _(optional SHA256→String)_ Hash of the parent model RDF. Note: the hash is not validated
+    * <a id="parent:uri"></a>`uri` _(optional Union\[URI→String | RelativeLocalPath→Path\])_ URL or local relative path of a model RDF
 * <a id="rdf_source"></a>`rdf_source` _(optional Union\[URL→URI | DOI→String\])_ url or doi to the source of the resource definition
 * <a id="run_mode"></a>`run_mode` _(optional RunMode)_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. No standard run modes are defined yet. RunMode is a Dict with the following keys:
     * <a id="run_mode:name"></a>`name` _(required String)_ The name of the `run_mode`
