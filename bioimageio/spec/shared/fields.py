@@ -48,11 +48,6 @@ class DocumentedField:
         super().__init__(*super_args, **super_kwargs)  # type: ignore
 
 
-#################################################
-# fields directly derived from marshmallow fields
-#################################################
-
-
 class Array(DocumentedField, marshmallow_fields.Field):
     def __init__(self, inner: marshmallow_fields.Field, **kwargs):
         self.inner = inner
@@ -266,11 +261,6 @@ class Union(DocumentedField, marshmallow_union.Union):
             raise ValidationError(message=messages, field_name=attr) from e
 
 
-#########################
-# more specialized fields
-#########################
-
-
 class Axes(String):
     def _deserialize(self, *args, **kwargs) -> str:
         axes_str = super()._deserialize(*args, **kwargs)
@@ -434,6 +424,50 @@ class RelativeLocalPath(Path):
             logger.warning(f"invalid local relative path: {value}")
 
         return super()._serialize(value, attr, obj, **kwargs)
+
+
+class BioImageIO_ID(String):
+    def __init__(
+        self,
+        *super_args,
+        bioimageio_description: typing.Union[
+            str, typing.Callable[[], str]
+        ] = "ID as shown on resource card on bioimage.io",
+        resource_type: typing.Optional[str] = None,
+        validate: typing.Optional[
+            typing.Union[
+                typing.Callable[[typing.Any], typing.Any], typing.Iterable[typing.Callable[[typing.Any], typing.Any]]
+            ]
+        ] = None,
+        **super_kwargs,
+    ):
+        from ._resolve_source import BIOIMAGEIO_COLLECTION_ENTRIES
+
+        if validate is None:
+            validate = []
+
+        if isinstance(validate, typing.Iterable):
+            validate = list(validate)
+        else:
+            validate = [validate]
+
+        if BIOIMAGEIO_COLLECTION_ENTRIES is not None:
+            error_msg = "'{input}' is not a valid BioImage.IO ID"
+            if resource_type is not None:
+                error_msg += f" of type {resource_type}"
+
+            validate.append(
+                field_validators.OneOf(
+                    {
+                        k
+                        for k, v in BIOIMAGEIO_COLLECTION_ENTRIES.items()
+                        if resource_type is None or resource_type == v.get("type")
+                    },
+                    error=error_msg,
+                )
+            )
+
+        super().__init__(*super_args, bioimageio_description=bioimageio_description, **super_kwargs)
 
 
 class ProcMode(String):

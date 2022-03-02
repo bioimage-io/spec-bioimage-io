@@ -38,7 +38,7 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def convert_model_from_v0_4_0_to_0_4_4(data: Dict[str, Any]) -> Dict[str, Any]:
+def convert_model_from_v0_4_0_to_0_4_1(data: Dict[str, Any]) -> Dict[str, Any]:
     data = dict(data)
 
     # move dependencies from root to pytorch_state_dict weights entry
@@ -49,7 +49,17 @@ def convert_model_from_v0_4_0_to_0_4_4(data: Dict[str, Any]) -> Dict[str, Any]:
         if entry and isinstance(entry, dict):
             entry["dependencies"] = deps
 
-    data["format_version"] = "0.4.4"
+    data["format_version"] = "0.4.1"
+    return data
+
+
+def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> Dict[str, Any]:
+    data = dict(data)
+
+    parent = data.pop("parent", None)
+    if parent and "uri" in parent:
+        data["parent"] = parent["uri"]
+
     return data
 
 
@@ -60,7 +70,13 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
         data = convert_model_from_v0_3_to_0_4_0(data)
 
     if data["format_version"] == "0.4.0":
-        data = convert_model_from_v0_4_0_to_0_4_4(data)
+        data = convert_model_from_v0_4_0_to_0_4_1(data)
+
+    if data["format_version"] in ("0.4.1", "0.4.2", "0.4.3"):
+        data["format_version"] = "0.4.4"
+
+    if data["format_version"] == "0.4.4":
+        data = convert_model_from_v0_4_4_to_0_4_5(data)
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})

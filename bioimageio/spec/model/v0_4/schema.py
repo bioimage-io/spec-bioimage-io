@@ -479,11 +479,9 @@ is in an unsupported format version. The current format version described here i
         f"different from `authors` in root or any entry in `weights`.",
     )
 
-    parent = fields.Nested(
-        ModelParent(),
-        bioimageio_description="Parent model from which the trained weights of this model have been derived, e.g. by "
-        "finetuning the weights of this model on a different dataset. For format changes of the same trained model "
-        "checkpoint, see `weights`.",
+    parent = fields.Union(
+        [fields.BioImageIO_ID(resource_type="model"), fields.URI(), fields.RelativeLocalPath()],
+        bioimageio_description="BioImage.IO model id or URL or local relative path to a model RDF",
     )
 
     run_mode = fields.Nested(

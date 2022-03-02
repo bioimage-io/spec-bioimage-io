@@ -33,6 +33,43 @@ def _is_path(s: typing.Any) -> bool:
         return False
 
 
+T = typing.TypeVar("T")
+
+
+def _resolve_json_from_url(
+    url: str,
+    expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
+    warning_msg: str = "Failed to fetch {url}: {error}",
+) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
+    try:
+        p = resolve_source(url)
+        with p.open() as f:
+            data = json.load(f)
+
+        assert isinstance(data, expected_type)
+    except Exception as e:
+        data = None
+        error: typing.Optional[str] = str(e)
+        if warning_msg:
+            warnings.warn(warning_msg.format(url=url, error=error))
+    else:
+        error = None
+
+    return data, error
+
+
+BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(BIOIMAGEIO_SITE_CONFIG_URL)
+BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL)
+if BIOIMAGEIO_COLLECTION is None:
+    BIOIMAGEIO_COLLECTION_ENTRIES = None
+else:
+    BIOIMAGEIO_COLLECTION_ENTRIES = {
+        c["id"]: c["rdf_source"]
+        for i, c in enumerate(BIOIMAGEIO_COLLECTION.get("collection", []))
+        if "id" in c and "rdf_source" in c
+    }
+
+
 def resolve_rdf_source(
     source: typing.Union[dict, os.PathLike, typing.IO, str, bytes, raw_nodes.URI]
 ) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes]]:
@@ -67,14 +104,12 @@ def resolve_rdf_source(
     if isinstance(source, str):
         # source might be bioimageio id, doi, url or file path -> resolve to pathlib.Path
 
+        from ._remote_constants import BIOIMAGEIO_COLLECTION
+
         if BIOIMAGEIO_COLLECTION is None:
             bioimageio_rdf_source = None
         else:
-            bioimageio_collection = {
-                c.get("id", f"missind_id_{i}"): c.get("rdf_source")
-                for i, c in enumerate(BIOIMAGEIO_COLLECTION.get("collection", []))
-            }
-            bioimageio_rdf_source = bioimageio_collection.get(source) or bioimageio_collection.get(source + "/latest")
+            bioimageio_rdf_source = BIOIMAGEIO_COLLECTION.get(source) or BIOIMAGEIO_COLLECTION.get(source + "/latest")
 
         if bioimageio_rdf_source is not None:
             # source is bioimageio id
@@ -383,32 +418,3 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             raise RuntimeError(f"Failed to download {uri} ({e})")
 
     return local_path
-
-
-T = typing.TypeVar("T")
-
-
-def _resolve_json_from_url(
-    url: str,
-    expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
-    warning_msg: str = "Failed to fetch {url}: {error}",
-) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
-    try:
-        p = resolve_source(url)
-        with p.open() as f:
-            data = json.load(f)
-
-        assert isinstance(data, expected_type)
-    except Exception as e:
-        data = None
-        error: typing.Optional[str] = str(e)
-        if warning_msg:
-            warnings.warn(warning_msg.format(url=url, error=error))
-    else:
-        error = None
-
-    return data, error
-
-
-BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(BIOIMAGEIO_SITE_CONFIG_URL)
-BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL)
