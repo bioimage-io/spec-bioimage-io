@@ -15,8 +15,11 @@ from .utils._docs import resolve_bioimageio_descrcription
 logger = logging.getLogger(__name__)
 
 
-class DocumentedField:
+class DocumentedField(marshmallow_fields.Field):
     """base class for all fields that aids in generating a documentation"""
+
+    # metadata: typing.Optional[typing.Mapping[str, typing.Any]]
+    # name: str
 
     def __init__(
         self,
@@ -31,6 +34,7 @@ class DocumentedField:
         bioimageio_examples_invalid: typing.Optional[
             typing.Sequence[typing.Any]
         ] = None,  # invalid examples to render in documentation
+        metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
         **super_kwargs,
     ):
         bases = [b.__name__ for b in self.__class__.__bases__ if issubclass(b, marshmallow_fields.Field)]
@@ -45,7 +49,18 @@ class DocumentedField:
         self.bioimageio_description = bioimageio_description
         self.bioimageio_description_order = bioimageio_description_order
         self.bioimageio_maybe_required = bioimageio_maybe_required
-        super().__init__(*super_args, **super_kwargs)  # type: ignore
+        if metadata is None:
+            metadata = {}
+
+        if "ui:description" not in metadata:
+            metadata["ui:description"] = bioimageio_description
+
+        super().__init__(*super_args, metadata=metadata, **super_kwargs)  # type: ignore
+
+    def _bind_to_schema(self, field_name, schema):
+        super()._bind_to_schema(field_name, schema)
+        if "ui:title" not in self.metadata:
+            self.metadata["ui:title"] = self.name.replace("_", " ").title()
 
 
 class Array(DocumentedField, marshmallow_fields.Field):
@@ -467,7 +482,7 @@ class BioImageIO_ID(String):
                 )
             )
 
-        super().__init__(*super_args, bioimageio_description=bioimageio_description, **super_kwargs)
+        super().__init__(*super_args, bioimageio_description=bioimageio_description, validate=validate, **super_kwargs)
 
 
 class ProcMode(String):

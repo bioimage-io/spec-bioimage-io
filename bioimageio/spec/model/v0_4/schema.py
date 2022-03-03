@@ -299,6 +299,43 @@ class Model(rdf.schema.RDF):
     class Meta:
         unknown = RAISE
         exclude = ("source",)  # while RDF does have a source field, Model does not
+        react_uischema_extra = {
+            "ui:order": [
+                "name",
+                "description",
+                "documentation",
+                "authors",
+                "cite",
+                "badges",
+                "config",
+                "covers",
+                "download_url",
+                "format_version",
+                "git_repo",
+                "icon",
+                "id",
+                "inputs",
+                "license",
+                "links",
+                "maintainers",
+                "outputs",
+                "packaged_by",
+                "parent",
+                "run_mode",
+                "sample_inputs",
+                "sample_outputs",
+                "tags",
+                "test_inputs",
+                "test_outputs",
+                "timestamp",
+                "training_data",
+                "weights",
+                "version",
+                "attachments",
+                "type",
+                "rdf_source",
+            ]
+        }
 
     bioimageio_description = f"""# BioImage.IO Model Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
@@ -364,6 +401,10 @@ config:
         bioimageio_description="Relative path or URL to file with additional documentation in markdown. "
         "The file must be in markdown format with `.md` file name extension"
         "It is recommended to use `README.md` as the documentation name.",
+        metadata={
+            "ui:description": "URL of markdown file with additional documentation.",
+            "ui:help": "The file must be in markdown format with `.md` file name extension.",
+        },
     )
 
     format_version = fields.String(

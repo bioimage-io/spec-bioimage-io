@@ -77,6 +77,32 @@ class CiteEntry(_BioImageIOSchema):
 class RDF(_BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
+        react_uischema_extra = {
+            "ui:order": [
+                "name",
+                "description",
+                "documentation",
+                "type",
+                "authors",
+                "cite",
+                "tags",
+                "links",
+                "covers",
+                "badges",
+                "git_repo",
+                "icon",
+                "id",
+                "license",
+                "maintainers",
+                "version",
+                "source",
+                "config",
+                "format_version",
+                "download_url",
+                "attachments",
+                "rdf_source",
+            ]
+        }
 
     bioimageio_description = f"""# BioImage.IO Resource Description File Specification {get_args(FormatVersion)[-1]}
 This specification defines the fields used in a general BioImage.IO-compliant resource description file (`RDF`).
@@ -132,7 +158,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
     )
 
-    description = fields.String(required=True, bioimageio_description="A string containing a brief description.")
+    description = fields.String(required=True, bioimageio_description="A brief description.")
 
     documentation = fields.Union(
         [
@@ -148,6 +174,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         ],
         bioimageio_description="URL or relative path to markdown file with additional documentation. "
         "For markdown files the recommended documentation file name is `README.md`.",
+        metadata={"ui:description": "URL of markdown file with additional documentation."},
     )
 
     download_url = fields.URL(bioimageio_description="optional url to download the resource from")
@@ -160,6 +187,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             f"The current general format version described here is {get_args(FormatVersion)[-1]}. "
             "Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format."
         ),
+        metadata={"ui:default": get_args(FormatVersion)[-1]},
     )
 
     @validates_schema
@@ -209,7 +237,11 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
-    name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+    name = fields.String(
+        required=True,
+        bioimageio_description="name of the resource, a human-friendly name",
+        metadata={"ui:title": "Resource name", "ui:autofocus": True, "ui:placeholder": "My Resource"},
+    )
 
     @validates
     def warn_about_long_name(self, value: str):
@@ -222,7 +254,9 @@ E.g. the citation for the model architecture and/or the training data used."""
             self.warn("name", f"Could not check length of name {value}.")
 
     rdf_source = fields.Union(
-        [fields.URL(), fields.DOI()], bioimageio_description="url or doi to the source of the resource definition"
+        [fields.URL(), fields.DOI()],
+        bioimageio_description="url or doi to the source of the resource definition",
+        metadata={"ui:widget": "hidden"},
     )
     source = fields.Union(
         [fields.URI(), fields.RelativeLocalPath()],
@@ -264,7 +298,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             self.warn("type", f"Unrecognized type '{value}'. Validating as {schema_type}.")
 
     version = fields.StrictVersion(
-        bioimageio_description="The version number of the model. The version number format must be a string in "
+        bioimageio_description="The version number of the resource. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
         "e.g. the initial version number should be `0.1.0`."
     )
