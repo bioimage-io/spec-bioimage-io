@@ -207,21 +207,11 @@ class UriNodeTransformer(NodeTransformerKnownParent):
             return local_path
 
     def transform_ImportableSourceFile(
-        self,
-        node: raw_nodes.ImportableSourceFile,
-        name: typing.Optional[str] = None,
-        parent: typing.Optional[raw_nodes.RawNode] = None,
-    ) -> typing.Union[raw_nodes.ImportableSourceFile, raw_nodes.ResolvedImportableSourceFile]:
-        if (
-            self.uri_only_if_in_package
-            and ((name is None or parent is None) or name not in parent._include_in_package)
-            and isinstance(node.source_file, raw_nodes.URI)
-        ):
-            return node
-        else:
-            return raw_nodes.ResolvedImportableSourceFile(
-                source_file=_resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
-            )
+        self, node: raw_nodes.ImportableSourceFile, **kwargs
+    ) -> raw_nodes.ResolvedImportableSourceFile:
+        return raw_nodes.ResolvedImportableSourceFile(
+            source_file=_resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
+        )
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule, **kwargs) -> raw_nodes.LocalImportableModule:
         return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
