@@ -46,5 +46,5 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="rdf_source"></a>`rdf_source` _(optional Union\[URL→URI | DOI→String\])_ url or doi to the source of the resource definition
 * <a id="source"></a>`source` _(optional Union\[URI→String | RelativeLocalPath→Path\])_ url or local relative path to the source of the resource
 * <a id="tags"></a>`tags` _(optional List\[String\])_ A list of tags.
-* <a id="version"></a>`version` _(optional StrictVersion→String)_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
+* <a id="version"></a>`version` _(optional Version→String)_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
 

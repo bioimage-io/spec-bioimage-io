@@ -155,5 +155,5 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(optional Dataset)_ in-place definition of [dataset RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_0_2.md)
     1.  _(optional LinkedDataset)_   is a Dict with the following keys:
         * <a id="training_data:id"></a>`id` _(optional String)_ dataset id
-* <a id="version"></a>`version` _(optional StrictVersion→String)_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
+* <a id="version"></a>`version` _(optional Version→String)_ The version number of the model. The version number format must be a string in `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), e.g. the initial version number should be `0.1.0`.
 
