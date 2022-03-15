@@ -5,7 +5,7 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 import dataclasses
-import distutils.version
+import packaging.version
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -108,7 +108,7 @@ class RDF(ResourceDescription):
         format_version: FormatVersion,
         name: str,
         type: str = missing,
-        version: Union[_Missing, distutils.version.StrictVersion] = missing,
+        version: Union[_Missing, packaging.version.Version] = missing,
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
         authors: Union[_Missing, List[Author]] = missing,

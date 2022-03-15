@@ -30,6 +30,7 @@ setup(
         "marshmallow-union",
         "marshmallow>=3.6.0,<4.0",
         "numpy",
+        "packaging>=17.0",
         "requests;platform_system!='Emscripten'",
         "ruamel.yaml;platform_system!='Emscripten'",
         "tqdm;platform_system!='Emscripten'",

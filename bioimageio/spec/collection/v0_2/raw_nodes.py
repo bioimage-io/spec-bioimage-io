@@ -4,7 +4,7 @@ raw nodes are the deserialized equivalent to the content of any RDF.
 serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
-import distutils.version
+import packaging.version
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, NewType, Union
@@ -51,7 +51,7 @@ class Collection(RDF):
         format_version: FormatVersion,
         name: str,
         type: str = missing,
-        version: Union[_Missing, distutils.version.StrictVersion] = missing,
+        version: Union[_Missing, packaging.version.Version] = missing,
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
         authors: Union[_Missing, List[Author]] = missing,

@@ -220,7 +220,7 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     kwargs = fields.Kwargs(
         bioimageio_description="Keyword arguments for the implementation specified by `architecture`."
     )
-    pytorch_version = fields.StrictVersion()
+    pytorch_version = fields.Version()
 
     @validates_schema
     def sha_for_source_code_file(self, data, **kwargs):
@@ -253,7 +253,7 @@ class TorchscriptWeightsEntry(_WeightsEntryBase):
 
     bioimageio_description = "Torchscript weights format"
     weights_format = fields.String(validate=field_validators.Equal("torchscript"), required=True, load_only=True)
-    pytorch_version = fields.StrictVersion()
+    pytorch_version = fields.Version()
 
 
 WeightsEntry = typing.Union[

@@ -1,4 +1,4 @@
-import distutils.version
+import packaging.version
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -95,7 +95,7 @@ class _WeightsEntryBase(RawNode):
 @dataclass
 class KerasHdf5WeightsEntry(_WeightsEntryBase):
     weights_format_name = "Keras HDF5"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+    tensorflow_version: Union[_Missing, packaging.version.Version] = missing
 
 
 @dataclass
@@ -117,13 +117,13 @@ class PytorchScriptWeightsEntry(_WeightsEntryBase):
 @dataclass
 class TensorflowJsWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Tensorflow.js"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+    tensorflow_version: Union[_Missing, packaging.version.Version] = missing
 
 
 @dataclass
 class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Tensorflow Saved Model"
-    tensorflow_version: Union[_Missing, distutils.version.StrictVersion] = missing
+    tensorflow_version: Union[_Missing, packaging.version.Version] = missing
     # tag: Union[_Missing, str] = missing  # todo: do we need the tag??
 
 
