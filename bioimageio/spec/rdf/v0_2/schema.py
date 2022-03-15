@@ -263,7 +263,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         if value != schema_type:
             self.warn("type", f"Unrecognized type '{value}'. Validating as {schema_type}.")
 
-    version = fields.StrictVersion(
+    version = fields.Version(
         bioimageio_description="The version number of the model. The version number format must be a string in "
         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/), "
         "e.g. the initial version number should be `0.1.0`."

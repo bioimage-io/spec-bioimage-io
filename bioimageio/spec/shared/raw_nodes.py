@@ -5,7 +5,7 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 import dataclasses
-import distutils.version
+import packaging.version
 import pathlib
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Sequence, Union
@@ -47,7 +47,7 @@ class ResourceDescription(RawNode):
     format_version: str = missing
     name: str = missing
     type: str = missing
-    version: Union[_Missing, distutils.version.StrictVersion] = missing
+    version: Union[_Missing, packaging.version.Version] = missing
     root_path: pathlib.Path = pathlib.Path()  # note: `root_path` is not officially part of the spec,
     #                                                  but any RDF has it as it is the folder containing the rdf.yaml
 

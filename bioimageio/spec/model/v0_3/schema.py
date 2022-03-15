@@ -405,7 +405,7 @@ class _WeightsEntryBase(_BioImageIOSchema):
 class KerasHdf5WeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Keras HDF5 weights format"
     weights_format = fields.String(validate=field_validators.Equal("keras_hdf5"), required=True, load_only=True)
-    tensorflow_version = fields.StrictVersion()
+    tensorflow_version = fields.Version()
 
 
 class OnnxWeightsEntry(_WeightsEntryBase):
@@ -427,7 +427,7 @@ class PytorchScriptWeightsEntry(_WeightsEntryBase):
 class TensorflowJsWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "Tensorflow Javascript weights format"
     weights_format = fields.String(validate=field_validators.Equal("tensorflow_js"), required=True, load_only=True)
-    tensorflow_version = fields.StrictVersion()
+    tensorflow_version = fields.Version()
 
 
 class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase):
@@ -435,7 +435,7 @@ class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase):
     weights_format = fields.String(
         validate=field_validators.Equal("tensorflow_saved_model_bundle"), required=True, load_only=True
     )
-    tensorflow_version = fields.StrictVersion()
+    tensorflow_version = fields.Version()
 
 
 WeightsEntry = typing.Union[

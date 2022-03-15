@@ -1,6 +1,6 @@
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 import datetime
-import distutils.version
+import packaging.version
 import logging
 import pathlib
 import typing
@@ -513,7 +513,7 @@ class SHA256(String):
         return value_str
 
 
-class StrictVersion(String):
+class Version(String):
     def _deserialize(
         self,
         value: typing.Any,
@@ -521,7 +521,7 @@ class StrictVersion(String):
         data: typing.Optional[typing.Mapping[str, typing.Any]],
         **kwargs,
     ):
-        return distutils.version.StrictVersion(str(value))
+        return packaging.version.Version(str(value))
 
 
 class URI(String):
