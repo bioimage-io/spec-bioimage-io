@@ -2,7 +2,7 @@ import os
 import pathlib
 import tempfile
 import warnings
-from typing import Generic, Optional, Sequence
+from typing import Generic, Iterable, Optional, Sequence
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -31,6 +31,24 @@ else:
                 return super().dump(data, stream, transform=transform)
 
     yaml = MyYAML(typ="safe")
+
+
+try:
+    from tqdm import tqdm  # not available in pyodide
+except ImportError:
+
+    class tqdm:  # type: ignore
+        """no-op tqdm"""
+
+        def __init__(self, iterable: Optional[Iterable] = None, *args, **kwargs):
+            self.iterable = iterable
+
+        def __iter__(self):
+            if self.iterable is not None:
+                yield from self.iterable
+
+        def update(self, *args, **kwargs):
+            pass
 
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
