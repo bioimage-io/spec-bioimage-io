@@ -8,7 +8,7 @@ import warnings
 import zipfile
 from functools import singledispatch
 from io import BytesIO, StringIO
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from urllib.request import url2pathname, urlopen
 
 from marshmallow import ValidationError
@@ -344,18 +344,19 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 
 def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None) -> pathlib.Path:
     if output is not None:
-        local_path: typing.Optional[pathlib.Path] = pathlib.Path(output)
+        local_path = pathlib.Path(output)
     elif BIOIMAGEIO_NO_CACHE:
-        local_path = None
+        tmp_dir = TemporaryDirectory()
+        no_cache_tmp_list.append(tmp_dir)  # keep temporary file until process ends
+        local_path = pathlib.Path(tmp_dir.name) / "file"
     else:
         # todo: proper caching
         local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
 
-    if isinstance(local_path, pathlib.Path) and local_path.exists():
+    if local_path.exists():
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
     else:
-        if isinstance(local_path, pathlib.Path):
-            local_path.parent.mkdir(parents=True, exist_ok=True)
+        local_path.parent.mkdir(parents=True, exist_ok=True)
 
         import requests  # not available in pyodide
 
@@ -368,21 +369,18 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
             t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
-            f = NamedTemporaryFile()
-            for data in r.iter_content(block_size):
-                t.update(len(data))
-                f.write(data)
+            tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
+            with tmp_path.open("wb") as f:
+                for data in r.iter_content(block_size):
+                    t.update(len(data))
+                    f.write(data)
 
+            t.close()
             if total_size != 0 and hasattr(t, "n") and t.n != total_size:
                 # todo: check more carefully and raise on real issue
                 warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
 
-            if local_path is None:
-                no_cache_tmp_list.append(f)  # keep temporary file until process ends
-                local_path = pathlib.Path(f.name)
-            else:
-                shutil.move(f.name, str(local_path))
-                f.close()
+            shutil.move(f.name, str(local_path))
         except Exception as e:
             raise RuntimeError(f"Failed to download {uri} ({e})")
 
