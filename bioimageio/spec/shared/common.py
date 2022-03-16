@@ -2,7 +2,7 @@ import os
 import pathlib
 import tempfile
 import warnings
-from typing import Generic, Iterable, Optional, Sequence
+from typing import Any, Generic, Iterable, List, Optional, Sequence
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -54,6 +54,13 @@ except ImportError:
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
+BIOIMAGEIO_NO_CACHE = bool(os.getenv("BIOIMAGEIO_NO_CACHE", "False").title())
+
+# keep a reference to temporary directories and files.
+# These temporary locations are used instead of paths in BIOIMAGEIO_CACHE_PATH if BIOIMAGEIO_NO_CACHE is true,
+# so that we guarantee that these temporary directories/file objects are not garbage collected too early
+# and thus their content removed from disk, while we still have a pathlib.Path pointing there
+no_cache_tmp_list: List[Any] = []
 
 BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
 BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-io/collection.json"
