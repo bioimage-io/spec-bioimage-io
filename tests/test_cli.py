@@ -1,3 +1,4 @@
+import os
 import subprocess
 import zipfile
 
@@ -16,6 +17,20 @@ def test_cli_validate_model_url():
             "validate",
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
         ]
+    )
+    assert ret.returncode == 0
+
+
+def test_cli_validate_model_url_wo_cache():
+    env = os.environ.copy()
+    env["BIOIMAGEIO_NO_CACHE"] = "True"
+    ret = subprocess.run(
+        [
+            "bioimageio",
+            "validate",
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        ],
+        env=env,
     )
     assert ret.returncode == 0
 
