@@ -8,6 +8,7 @@ import warnings
 import zipfile
 from hashlib import sha256
 from io import StringIO
+from tempfile import TemporaryDirectory
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
@@ -16,10 +17,12 @@ from marshmallow import missing
 from bioimageio.spec.shared import RDF_NAMES, raw_nodes, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
+    BIOIMAGEIO_NO_CACHE,
     get_class_name_from_type,
     get_format_version_module,
     get_latest_format_version,
     get_latest_format_version_module,
+    no_cache_tmp_list,
     yaml,
 )
 from bioimageio.spec.shared.node_transformer import (
@@ -80,10 +83,14 @@ def extract_resource_package(
     if isinstance(root, bytes):
         raise NotImplementedError("package source was bytes")
 
-    cache_folder = BIOIMAGEIO_CACHE_PATH / "extracted_packages"
-    cache_folder.mkdir(exist_ok=True, parents=True)
+    if BIOIMAGEIO_NO_CACHE:
+        tmp_dir = TemporaryDirectory()
+        no_cache_tmp_list.append(tmp_dir)
+        package_path = pathlib.Path(tmp_dir.name)
+    else:
+        package_path = BIOIMAGEIO_CACHE_PATH / "extracted_packages" / sha256(str(root).encode("utf-8")).hexdigest()
+        package_path.mkdir(exist_ok=True, parents=True)
 
-    package_path = cache_folder / sha256(str(root).encode("utf-8")).hexdigest()
     if isinstance(root, raw_nodes.URI):
         for rdf_name in RDF_NAMES:
             if (package_path / rdf_name).exists():
