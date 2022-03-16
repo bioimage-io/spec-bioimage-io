@@ -49,6 +49,18 @@ def test_cli_validate_model_package(unet2d_nuclei_broad_latest_path, tmpdir):
     assert ret.returncode == 0
 
 
+def test_cli_validate_model_package_wo_cache(unet2d_nuclei_broad_latest_path, tmpdir):
+    env = os.environ.copy()
+    env["BIOIMAGEIO_NO_CACHE"] = "True"
+
+    zf_path = tmpdir / "package.zip"
+    with zipfile.ZipFile(zf_path, "w") as zf:
+        zf.write(unet2d_nuclei_broad_latest_path, "rdf.yaml")
+
+    ret = subprocess.run(["bioimageio", "validate", str(zf_path)], env=env)
+    assert ret.returncode == 0
+
+
 def test_cli_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
     in_path = tmp_path / "rdf.yaml"
     save_raw_resource_description(load_raw_resource_description(unet2d_nuclei_broad_before_latest), in_path)
