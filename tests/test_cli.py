@@ -23,7 +23,7 @@ def test_cli_validate_model_url():
 
 def test_cli_validate_model_url_wo_cache():
     env = os.environ.copy()
-    env["BIOIMAGEIO_NO_CACHE"] = "True"
+    env["BIOIMAGEIO_USE_CACHE"] = "false"
     ret = subprocess.run(
         [
             "bioimageio",
@@ -51,7 +51,7 @@ def test_cli_validate_model_package(unet2d_nuclei_broad_latest_path, tmpdir):
 
 def test_cli_validate_model_package_wo_cache(unet2d_nuclei_broad_latest_path, tmpdir):
     env = os.environ.copy()
-    env["BIOIMAGEIO_NO_CACHE"] = "True"
+    env["BIOIMAGEIO_USE_CACHE"] = "false"
 
     zf_path = tmpdir / "package.zip"
     with zipfile.ZipFile(zf_path, "w") as zf:

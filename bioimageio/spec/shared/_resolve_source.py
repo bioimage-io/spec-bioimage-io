@@ -17,7 +17,7 @@ from . import fields, raw_nodes
 from .common import (
     BIOIMAGEIO_CACHE_PATH,
     BIOIMAGEIO_COLLECTION_URL,
-    BIOIMAGEIO_NO_CACHE,
+    BIOIMAGEIO_USE_CACHE,
     BIOIMAGEIO_SITE_CONFIG_URL,
     DOI_REGEX,
     no_cache_tmp_list,
@@ -345,13 +345,13 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None) -> pathlib.Path:
     if output is not None:
         local_path = pathlib.Path(output)
-    elif BIOIMAGEIO_NO_CACHE:
+    elif BIOIMAGEIO_USE_CACHE:
+        # todo: proper caching
+        local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
+    else:
         tmp_dir = TemporaryDirectory()
         no_cache_tmp_list.append(tmp_dir)  # keep temporary file until process ends
         local_path = pathlib.Path(tmp_dir.name) / "file"
-    else:
-        # todo: proper caching
-        local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
 
     if local_path.exists():
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")

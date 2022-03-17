@@ -17,7 +17,7 @@ from marshmallow import missing
 from bioimageio.spec.shared import RDF_NAMES, raw_nodes, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 from bioimageio.spec.shared.common import (
     BIOIMAGEIO_CACHE_PATH,
-    BIOIMAGEIO_NO_CACHE,
+    BIOIMAGEIO_USE_CACHE,
     get_class_name_from_type,
     get_format_version_module,
     get_latest_format_version,
@@ -83,13 +83,13 @@ def extract_resource_package(
     if isinstance(root, bytes):
         raise NotImplementedError("package source was bytes")
 
-    if BIOIMAGEIO_NO_CACHE:
+    if BIOIMAGEIO_USE_CACHE:
+        package_path = BIOIMAGEIO_CACHE_PATH / "extracted_packages" / sha256(str(root).encode("utf-8")).hexdigest()
+        package_path.mkdir(exist_ok=True, parents=True)
+    else:
         tmp_dir = TemporaryDirectory()
         no_cache_tmp_list.append(tmp_dir)
         package_path = pathlib.Path(tmp_dir.name)
-    else:
-        package_path = BIOIMAGEIO_CACHE_PATH / "extracted_packages" / sha256(str(root).encode("utf-8")).hexdigest()
-        package_path.mkdir(exist_ok=True, parents=True)
 
     if isinstance(root, raw_nodes.URI):
         for rdf_name in RDF_NAMES:
