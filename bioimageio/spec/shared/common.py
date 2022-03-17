@@ -54,7 +54,7 @@ except ImportError:
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
-BIOIMAGEIO_USE_CACHE = os.getenv("BIOIMAGEIO_USE_CACHE", "true").lower() in ("false", "no")
+BIOIMAGEIO_USE_CACHE = os.getenv("BIOIMAGEIO_USE_CACHE", "true").lower() in ("true", "yes", "1")
 
 # keep a reference to temporary directories and files.
 # These temporary locations are used instead of paths in BIOIMAGEIO_CACHE_PATH if BIOIMAGEIO_USE_CACHE is true,
