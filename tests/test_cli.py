@@ -1,3 +1,4 @@
+import os
 import subprocess
 import zipfile
 
@@ -20,6 +21,20 @@ def test_cli_validate_model_url():
     assert ret.returncode == 0
 
 
+def test_cli_validate_model_url_wo_cache():
+    env = os.environ.copy()
+    env["BIOIMAGEIO_USE_CACHE"] = "false"
+    ret = subprocess.run(
+        [
+            "bioimageio",
+            "validate",
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        ],
+        env=env,
+    )
+    assert ret.returncode == 0
+
+
 def test_cli_validate_model_doi():
     ret = subprocess.run(["bioimageio", "validate", "10.5281/zenodo.5744489"])
     assert ret.returncode == 0
@@ -31,6 +46,18 @@ def test_cli_validate_model_package(unet2d_nuclei_broad_latest_path, tmpdir):
         zf.write(unet2d_nuclei_broad_latest_path, "rdf.yaml")
 
     ret = subprocess.run(["bioimageio", "validate", str(zf_path)])
+    assert ret.returncode == 0
+
+
+def test_cli_validate_model_package_wo_cache(unet2d_nuclei_broad_latest_path, tmpdir):
+    env = os.environ.copy()
+    env["BIOIMAGEIO_USE_CACHE"] = "false"
+
+    zf_path = tmpdir / "package.zip"
+    with zipfile.ZipFile(zf_path, "w") as zf:
+        zf.write(unet2d_nuclei_broad_latest_path, "rdf.yaml")
+
+    ret = subprocess.run(["bioimageio", "validate", str(zf_path)], env=env)
     assert ret.returncode == 0
 
 
