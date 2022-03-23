@@ -365,6 +365,7 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
             # Streaming, so we can iterate over the response.
             r = requests.get(str(uri), stream=True)
+            r.raise_for_status()
             # Total size in bytes.
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
