@@ -25,6 +25,7 @@ from .common import (
     tqdm,
     yaml,
 )
+from .raw_nodes import URI
 
 
 def _is_path(s: typing.Any) -> bool:
@@ -55,7 +56,14 @@ def resolve_rdf_source(
         root: typing.Union[pathlib.Path, raw_nodes.URI, bytes] = source.parent
     elif isinstance(source, dict):
         source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
-        root = pathlib.Path()
+        source = dict(source)
+        given_root = source.pop("root_path", pathlib.Path())
+        if _is_path(given_root):
+            root = pathlib.Path(given_root)
+        elif isinstance(given_root, str):
+            root = URI(uri_string=given_root)
+        else:
+            raise ValueError(f"Encountered invalid root {given_root}")
     elif isinstance(source, (str, bytes)):
         source_name = str(source[:120]) + "..."
         # string might be path or yaml string; for yaml string (or bytes) set root to cwd
