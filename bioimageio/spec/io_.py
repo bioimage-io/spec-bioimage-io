@@ -124,9 +124,8 @@ def extract_resource_package(
     return source, source_name, package_path
 
 
-def _replace_relative_paths_for_remote_source(
-    raw_rd: RawResourceDescription, root: Union[pathlib.Path, raw_nodes.URI, bytes]
-) -> RawResourceDescription:
+def _replace_relative_paths_for_remote_source(raw_rd: RawResourceDescription) -> RawResourceDescription:
+    root = raw_rd.root_path
     if isinstance(root, raw_nodes.URI):
         # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
         raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
@@ -198,7 +197,7 @@ def load_raw_resource_description(
     raw_rd = schema.load(data)
     raw_rd.root_path = root
 
-    raw_rd = _replace_relative_paths_for_remote_source(raw_rd, raw_rd.root_path)
+    raw_rd = _replace_relative_paths_for_remote_source(raw_rd)
 
     return raw_rd
 
