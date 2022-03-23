@@ -60,6 +60,8 @@ def resolve_rdf_source(
         given_root = source.pop("root_path", pathlib.Path())
         if _is_path(given_root):
             root = pathlib.Path(given_root)
+        elif isinstance(given_root, URI):
+            root = given_root
         elif isinstance(given_root, str):
             root = URI(uri_string=given_root)
         else:
