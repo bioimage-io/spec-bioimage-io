@@ -2,7 +2,7 @@ import os
 import pathlib
 import tempfile
 import warnings
-from typing import Generic, Optional, Sequence
+from typing import Any, Generic, Iterable, List, Optional, Sequence
 
 try:
     from typing import Literal, get_args, get_origin, Protocol
@@ -33,9 +33,34 @@ else:
     yaml = MyYAML(typ="safe")
 
 
+try:
+    from tqdm import tqdm  # not available in pyodide
+except ImportError:
+
+    class tqdm:  # type: ignore
+        """no-op tqdm"""
+
+        def __init__(self, iterable: Optional[Iterable] = None, *args, **kwargs):
+            self.iterable = iterable
+
+        def __iter__(self):
+            if self.iterable is not None:
+                yield from self.iterable
+
+        def update(self, *args, **kwargs):
+            pass
+
+
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
+BIOIMAGEIO_USE_CACHE = os.getenv("BIOIMAGEIO_USE_CACHE", "true").lower() in ("true", "yes", "1")
+
+# keep a reference to temporary directories and files.
+# These temporary locations are used instead of paths in BIOIMAGEIO_CACHE_PATH if BIOIMAGEIO_USE_CACHE is true,
+# so that we guarantee that these temporary directories/file objects are not garbage collected too early
+# and thus their content removed from disk, while we still have a pathlib.Path pointing there
+no_cache_tmp_list: List[Any] = []
 
 BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
 BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-io/collection.json"

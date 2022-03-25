@@ -8,6 +8,7 @@ import warnings
 import zipfile
 from functools import singledispatch
 from io import BytesIO, StringIO
+from tempfile import TemporaryDirectory
 from urllib.request import url2pathname, urlopen
 
 from marshmallow import ValidationError
@@ -16,11 +17,15 @@ from . import fields, raw_nodes
 from .common import (
     BIOIMAGEIO_CACHE_PATH,
     BIOIMAGEIO_COLLECTION_URL,
+    BIOIMAGEIO_USE_CACHE,
     BIOIMAGEIO_SITE_CONFIG_URL,
     DOI_REGEX,
+    no_cache_tmp_list,
     RDF_NAMES,
+    tqdm,
     yaml,
 )
+from .raw_nodes import URI
 
 
 def _is_path(s: typing.Any) -> bool:
@@ -51,7 +56,16 @@ def resolve_rdf_source(
         root: typing.Union[pathlib.Path, raw_nodes.URI, bytes] = source.parent
     elif isinstance(source, dict):
         source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
-        root = pathlib.Path()
+        source = dict(source)
+        given_root = source.pop("root_path", pathlib.Path())
+        if _is_path(given_root):
+            root = pathlib.Path(given_root)
+        elif isinstance(given_root, URI):
+            root = given_root
+        elif isinstance(given_root, str):
+            root = URI(uri_string=given_root)
+        else:
+            raise ValueError(f"Encountered invalid root {given_root}")
     elif isinstance(source, (str, bytes)):
         source_name = str(source[:120]) + "..."
         # string might be path or yaml string; for yaml string (or bytes) set root to cwd
@@ -341,9 +355,13 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None) -> pathlib.Path:
     if output is not None:
         local_path = pathlib.Path(output)
-    else:
+    elif BIOIMAGEIO_USE_CACHE:
         # todo: proper caching
         local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
+    else:
+        tmp_dir = TemporaryDirectory()
+        no_cache_tmp_list.append(tmp_dir)  # keep temporary file until process ends
+        local_path = pathlib.Path(tmp_dir.name) / "file"
 
     if local_path.exists():
         warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
@@ -351,27 +369,29 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
         import requests  # not available in pyodide
-        from tqdm import tqdm  # not available in pyodide
 
         try:
             # download with tqdm adapted from:
             # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
             # Streaming, so we can iterate over the response.
             r = requests.get(str(uri), stream=True)
+            r.raise_for_status()
             # Total size in bytes.
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
-            t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=local_path.name)
+            t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
             tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
             with tmp_path.open("wb") as f:
                 for data in r.iter_content(block_size):
                     t.update(len(data))
                     f.write(data)
+
             t.close()
-            shutil.move(str(tmp_path), str(local_path))
-            if total_size != 0 and t.n != total_size:
+            if total_size != 0 and hasattr(t, "n") and t.n != total_size:
                 # todo: check more carefully and raise on real issue
                 warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
+
+            shutil.move(f.name, str(local_path))
         except Exception as e:
             raise RuntimeError(f"Failed to download {uri} ({e})")
 

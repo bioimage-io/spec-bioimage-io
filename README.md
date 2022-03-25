@@ -121,6 +121,9 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.4.4post2
+- fix unresolved ImportableSourceFile
+
 #### bioimageio.spec 0.4.4post1
 - fix collection RDF conversion for type field
 

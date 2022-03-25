@@ -46,29 +46,47 @@ class NodeVisitor:
 
 
 class Transformer:
-    def transform(self, node: typing.Any) -> typing.Any:
+    def transform(self, node: typing.Any, **kwargs) -> typing.Any:
         method = "transform_" + node.__class__.__name__
 
-        transformer: typing.Callable[[typing.Any], typing.Any] = getattr(self, method, self.generic_transformer)
+        transformer = getattr(self, method, self.generic_transformer)
 
-        return transformer(node)
+        return transformer(node, **kwargs)  # noqa
 
-    def generic_transformer(self, node: typing.Any) -> typing.Any:
+    def generic_transformer(self, node: typing.Any, **kwargs) -> typing.Any:
         return node
 
-    def transform_list(self, node: list) -> list:
-        return [self.transform(subnode) for subnode in node]
+    def transform_list(self, node: list, **kwargs) -> list:
+        return [self.transform(subnode, **kwargs) for subnode in node]
 
-    def transform_dict(self, node: dict) -> dict:
-        return {key: self.transform(value) for key, value in node.items()}
+    def transform_dict(self, node: dict, **kwargs) -> dict:
+        return {key: self.transform(value, **kwargs) for key, value in node.items()}
 
 
 class NodeTransformer(Transformer):
-    def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
+    def generic_transformer(self, node: GenericRawNode, **kwargs) -> GenericRawNode:
         if isinstance(node, raw_nodes.RawNode):
-            return dataclasses.replace(node, **{name: self.transform(value) for name, value in iter_fields(node)})
+            return dataclasses.replace(
+                node, **{name: self.transform(value, **kwargs) for name, value in iter_fields(node)}
+            )
         else:
-            return super().generic_transformer(node)
+            return super().generic_transformer(node, **kwargs)
+
+
+class NodeTransformerKnownParent(NodeTransformer):
+    def generic_transformer(
+        self,
+        node: GenericRawNode,
+        name: typing.Optional[str] = None,
+        parent: typing.Optional[raw_nodes.RawNode] = None,
+        **kwargs,
+    ) -> GenericRawNode:
+        if isinstance(node, raw_nodes.RawNode):
+            return dataclasses.replace(
+                node, **{n: self.transform(value, name=n, parent=node) for n, value in iter_fields(node)}
+            )
+        else:
+            return super().generic_transformer(node, name=name, parent=parent)
 
 
 class PathToRemoteUriTransformer(NodeTransformer):
@@ -159,10 +177,10 @@ class RawNodePackageTransformer(NodeTransformer):
 
         return pathlib.Path(conflict_free_name)
 
-    def generic_transformer(self, node: GenericRawNode) -> GenericRawNode:
+    def generic_transformer(self, node: GenericRawNode, **kwargs) -> GenericRawNode:
         if isinstance(node, raw_nodes.RawNode):
             resolved_data = {
-                field.name: self.transform(getattr(node, field.name)) for field in dataclasses.fields(node)
+                field.name: self.transform(getattr(node, field.name), **kwargs) for field in dataclasses.fields(node)
             }
             for incl_field in node._include_in_package:
                 field_value = resolved_data[incl_field]
@@ -171,32 +189,38 @@ class RawNodePackageTransformer(NodeTransformer):
 
             return dataclasses.replace(node, **resolved_data)
         else:
-            return super().generic_transformer(node)
+            return super().generic_transformer(node, **kwargs)
 
 
-class UriNodeTransformer(NodeTransformer):
-    def __init__(self, *, root_path: os.PathLike):
+class UriNodeTransformer(NodeTransformerKnownParent):
+    def __init__(self, *, root_path: os.PathLike, uri_only_if_in_package: bool = False):
         self.root_path = pathlib.Path(root_path).resolve()
+        self.uri_only_if_in_package = uri_only_if_in_package
 
-    def transform_URI(self, node: raw_nodes.URI) -> pathlib.Path:
-        local_path = _resolve_source(node, root_path=self.root_path)
-        return local_path
+    def transform_URI(
+        self, node: raw_nodes.URI, name: typing.Optional[str] = None, parent: typing.Optional[raw_nodes.RawNode] = None
+    ) -> typing.Union[raw_nodes.URI, pathlib.Path]:
+        if self.uri_only_if_in_package and ((name is None or parent is None) or name not in parent._include_in_package):
+            return node
+        else:
+            local_path = _resolve_source(node, root_path=self.root_path)
+            return local_path
 
     def transform_ImportableSourceFile(
-        self, node: raw_nodes.ImportableSourceFile
+        self, node: raw_nodes.ImportableSourceFile, **kwargs
     ) -> raw_nodes.ResolvedImportableSourceFile:
         return raw_nodes.ResolvedImportableSourceFile(
             source_file=_resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
         )
 
-    def transform_ImportableModule(self, node: raw_nodes.ImportableModule) -> raw_nodes.LocalImportableModule:
+    def transform_ImportableModule(self, node: raw_nodes.ImportableModule, **kwargs) -> raw_nodes.LocalImportableModule:
         return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
 
     def _transform_Path(self, leaf: pathlib.Path):
         return self.root_path / leaf
 
-    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> pathlib.Path:
+    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> pathlib.Path:
         return self._transform_Path(leaf)
 
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> pathlib.Path:
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> pathlib.Path:
         return self._transform_Path(leaf)
