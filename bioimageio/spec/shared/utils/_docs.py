@@ -4,6 +4,7 @@ import warnings
 from typing import Callable, Union
 from urllib.parse import urlparse
 
+
 try:
     from typing import Literal
 except ImportError:
@@ -65,3 +66,11 @@ def resolve_bioimageio_descrcription(descr: Union[Callable[[], str], str]):
         return descr()
     else:
         return descr
+
+
+def get_error_json_schema(form_data: dict):
+    from bioimageio.spec.commands import validate
+
+    val_summary = validate(form_data)
+    error = val_summary["error"]
+    # status, error, warnings, traceback, nested_errors, bioimageio_spec_version
