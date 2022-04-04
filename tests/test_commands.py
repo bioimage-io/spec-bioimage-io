@@ -3,7 +3,8 @@ from copy import copy
 from io import BytesIO, StringIO
 
 from bioimageio.spec import load_raw_resource_description
-from bioimageio.spec.model import format_version
+from bioimageio.spec.model import format_version, raw_nodes
+from bioimageio.spec.shared import yaml
 
 
 def test_validate_dataset(dataset_rdf):
@@ -175,3 +176,53 @@ def test_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
     assert path.exists()
     model = load_raw_resource_description(path)
     assert model.format_version == format_version
+
+
+def test_update_rdf_using_paths(unet2d_nuclei_broad_base_path, tmp_path):
+    from bioimageio.spec.commands import update_rdf
+
+    in_path = unet2d_nuclei_broad_base_path / "rdf.yaml"
+    assert in_path.exists()
+    update_path = tmp_path / "update.yaml"
+    yaml.dump(dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}]), update_path)
+    out_path = tmp_path / "output.yaml"
+    update_rdf(in_path, update_path, out_path)
+    actual = yaml.load(out_path)
+    assert actual["name"] == "updated"
+    assert actual["outputs"][0]["name"] == "updated"
+    assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
+
+
+def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
+    from bioimageio.spec.commands import update_rdf
+
+    source = unet2d_nuclei_broad_latest
+    update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
+    actual = update_rdf(source, update)
+    assert actual["name"] == "updated"
+    assert actual["outputs"][0]["name"] == "updated"
+    assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
+
+
+def test_update_rdf_using_dicts_in_place(unet2d_nuclei_broad_latest):
+    from bioimageio.spec.commands import update_rdf
+
+    source = unet2d_nuclei_broad_latest
+    update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
+    update_rdf(source, update, output=source)
+    actual = source
+    assert actual["name"] == "updated"
+    assert actual["outputs"][0]["name"] == "updated"
+    assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
+
+
+def test_update_rdf_using_rd(unet2d_nuclei_broad_latest):
+    from bioimageio.spec.commands import update_rdf
+
+    source = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
+    actual = update_rdf(source, update)
+    assert isinstance(actual, raw_nodes.Model)
+    assert actual.name == "updated"
+    assert actual.outputs[0].name == "updated"
+    assert actual.outputs[0].halo == [0, 0, 9, 9]

@@ -3,6 +3,7 @@ import subprocess
 import zipfile
 
 from bioimageio.spec.io_ import load_raw_resource_description, save_raw_resource_description
+from bioimageio.spec.shared import yaml
 
 
 def test_cli_validate_model(unet2d_nuclei_broad_latest_path):
@@ -69,3 +70,17 @@ def test_cli_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
     ret = subprocess.run(["bioimageio", "update-format", str(in_path), str(path)])
     assert ret.returncode == 0
     assert path.exists()
+
+
+def test_update_rdf(unet2d_nuclei_broad_base_path, tmp_path):
+    in_path = unet2d_nuclei_broad_base_path / "rdf.yaml"
+    assert in_path.exists()
+    update_path = tmp_path / "update.yaml"
+    yaml.dump(dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}]), update_path)
+    out_path = tmp_path / "output.yaml"
+    ret = subprocess.run(["bioimageio", "update-rdf", str(in_path), str(update_path), str(out_path)])
+    assert ret.returncode == 0
+    actual = yaml.load(out_path)
+    assert actual["name"] == "updated"
+    assert actual["outputs"][0]["name"] == "updated"
+    assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
