@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from pprint import pprint
 
 import typer
@@ -64,7 +65,7 @@ def update_format(
         commands.update_format(rdf_source, path)
         ret_code = 0
     except Exception as e:
-        print(f"update_format failed with {e}")
+        print(f"update-format failed with {e}")
         ret_code = 1
     sys.exit(ret_code)
 
@@ -72,8 +73,23 @@ def update_format(
 update_format.__doc__ == commands.update_format.__doc__
 
 
-# note: single command requires additional (dummy) callback
-# see: https://typer.tiangolo.com/tutorial/commands/one-or-multiple/#one-command-and-one-callback
+@app.command()
+def update_rdf(
+    source: str = typer.Argument(..., help="relative file path or URI to RDF source"),
+    update: str = typer.Argument(..., help="relative file path or URI to (partial) RDF as update"),
+    output: Path = typer.Argument(..., help="Path to save the updated RDF to"),
+    validate: bool = typer.Option(True, help="Whether or not to validate the updated RDF"),
+):
+    """Update a given RDF with a (partial) RDF-like update"""
+    try:
+        commands.update_rdf(source, update, output, validate)
+        ret_code = 0
+    except Exception as e:
+        print(f"update-rdf failed with {e}")
+        ret_code = 1
+    sys.exit(ret_code)
+
+
 @app.callback()
 def callback():
     typer.echo(help_version)
