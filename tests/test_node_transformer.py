@@ -3,9 +3,11 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from packaging.version import Version
 
 from bioimageio.spec.shared import raw_nodes
 from bioimageio.spec.shared.node_transformer import NodeTransformer, NodeVisitor, iter_fields
+from bioimageio.spec.shared.raw_nodes import ResourceDescription
 
 
 @dataclass
@@ -71,3 +73,35 @@ def test_resolve_remote_relative_path():
         str(uri) == "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
         "unet2d_nuclei_broad/unet2d.py"
     )
+
+
+@pytest.mark.parametrize(
+    "data_update_expected",
+    [
+        ({"a": 1, "b": 2}, {"a": {"c": 1}}, {"a": {"c": 1}, "b": 2}),
+        ({"a": [0, 1, 2, 3]}, {"a": [5]}, {"a": [5, 1, 2, 3]}),
+        ([0, 1, 2, 3], [5], [5, 1, 2, 3]),
+        ([0, {"a": [1]}, 2, 3], ["DROP", {"a": ["KEEP", 2]}], [{"a": [1, 2]}, 2, 3]),
+        (
+            ResourceDescription(
+                format_version="0.1.0",
+                name="resource",
+                type="test",
+                version=Version("0.1.0"),
+            ),
+            {"name": "updated resource"},
+            ResourceDescription(
+                format_version="0.1.0",
+                name="updated resource",
+                type="test",
+                version=Version("0.1.0"),
+            ),
+        ),
+    ],
+)
+def test_update_nested(data_update_expected):
+    from bioimageio.spec.shared import update_nested
+
+    data, update, expected = data_update_expected
+    actual = update_nested(data, update)
+    assert actual == expected

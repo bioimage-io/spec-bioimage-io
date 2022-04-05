@@ -63,6 +63,79 @@ class Transformer:
         return {key: self.transform(value, **kwargs) for key, value in node.items()}
 
 
+class NestedUpdateTransformer:
+    """update a nested dict/list/raw_node with a nested dict/list update"""
+
+    DROP = "DROP"
+    KEEP = "KEEP"
+
+    def transform(self, node: typing.Any, update: typing.Any) -> typing.Any:
+        if update == self.KEEP:
+            return node
+
+        if isinstance(update, raw_nodes.RawNode):
+            raise TypeError("updating with raw node is not allowed")
+
+        method = "transform_" + node.__class__.__name__
+        transformer = getattr(self, method, self.generic_transformer)
+
+        return transformer(node, update)  # noqa
+
+    def generic_transformer(self, node: typing.Any, update: typing.Any) -> typing.Any:
+        if isinstance(node, raw_nodes.RawNode):
+            return self.transform_node(node, update)
+        else:
+            return update
+
+    def transform_node(
+        self, node: raw_nodes.RawNode, update: typing.Union[dict, typing.Any]
+    ) -> typing.Union[raw_nodes.RawNode, typing.Any]:
+        if isinstance(update, dict):
+            updated_kwargs = {
+                name: self.transform(value, update.get(name, self.KEEP)) for name, value in iter_fields(node)
+            }
+
+            if "format_version" in update:
+                # add new fields
+                for k in set(update) - set(updated_kwargs):
+                    updated_kwargs[k] = update[k]
+
+                # todo: resolve raw node for updated format_version
+                raise NotImplementedError("Updating format_version not yet implemented")
+            else:
+                invalid_updates = set(update) - set(updated_kwargs)
+                if invalid_updates:
+                    raise ValueError(f"Got unexpected updates for non-existing fields: {invalid_updates}")
+
+            return dataclasses.replace(node, **updated_kwargs)
+        else:
+            return update
+
+    def transform_list(self, node: list, update: typing.Union[list, typing.Any]) -> typing.Union[list, typing.Any]:
+        if isinstance(update, list):
+            if len(update) < len(node):
+                update = update + [self.KEEP] * (len(node) - len(update))
+
+            if len(node) < len(update):
+                node = node + [self.DROP] * (len(update) - len(node))
+
+            node = [self.transform(n, u) for n, u in zip(node, update)]
+            return [e for e in node if e != self.DROP]
+        else:
+            return update
+
+    def transform_dict(self, node: dict, update: typing.Union[dict, typing.Any]) -> typing.Union[dict, typing.Any]:
+        if isinstance(update, dict):
+            ret = {k: self.transform(v, update.get(k, self.KEEP)) for k, v in node.items()}
+            for k, v in update.items():
+                if k not in ret:
+                    ret[k] = v
+
+            return {k: v for k, v in ret.items() if v != self.DROP}
+        else:
+            return update
+
+
 class NodeTransformer(Transformer):
     def generic_transformer(self, node: GenericRawNode, **kwargs) -> GenericRawNode:
         if isinstance(node, raw_nodes.RawNode):

@@ -16,6 +16,7 @@ from ._resolve_source import (
     resolve_source,
     source_available,
 )
+from ._update_nested import update_nested
 from .common import get_args, yaml  # noqa
 
 _license_file = Path(__file__).parent.parent / "static" / "licenses.json"

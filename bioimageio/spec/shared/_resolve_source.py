@@ -38,9 +38,15 @@ def _is_path(s: typing.Any) -> bool:
         return False
 
 
+class RDF_Source(typing.NamedTuple):
+    data: dict
+    name: str
+    root: typing.Union[pathlib.Path, raw_nodes.URI, bytes]
+
+
 def resolve_rdf_source(
-    source: typing.Union[dict, os.PathLike, typing.IO, str, bytes, raw_nodes.URI]
-) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes]]:
+    source: typing.Union[dict, os.PathLike, typing.IO, str, bytes, URI, raw_nodes.ResourceDescription]
+) -> RDF_Source:
     # reduce possible source types
     if isinstance(source, (BytesIO, StringIO)):
         source = source.read()
@@ -48,6 +54,10 @@ def resolve_rdf_source(
         source = pathlib.Path(source)
     elif isinstance(source, raw_nodes.URI):
         source = str(source)
+    elif isinstance(source, raw_nodes.ResourceDescription):
+        from bioimageio.spec.io_ import serialize_raw_resource_description_to_dict
+
+        source = serialize_raw_resource_description_to_dict(source)
 
     assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
 
@@ -184,7 +194,7 @@ def resolve_rdf_source(
         source = yaml.load(source)
 
     assert isinstance(source, dict), source
-    return source, source_name, root
+    return RDF_Source(source, source_name, root)
 
 
 def resolve_rdf_source_and_type(
