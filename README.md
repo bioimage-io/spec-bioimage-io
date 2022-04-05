@@ -121,6 +121,9 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.4.4post7
+- add command `commands.update_rdf()`/`update-rdf`(cli)
+
 #### bioimageio.spec 0.4.4post2
 - fix unresolved ImportableSourceFile
 
