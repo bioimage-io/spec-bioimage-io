@@ -17,8 +17,7 @@ def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
         v = f"_{request.param}"
 
     f_name = f"rdf{v}.yaml"
-    path = unet2d_nuclei_broad_base_path / f_name
-    return yaml.load(path)
+    return unet2d_nuclei_broad_base_path / f_name
 
 
 @pytest.fixture(params=["v0_3_0", "v0_3_1", "v0_3_2", "v0_3_3", "v0_3_6", "v0_4_0", "v0_4_5"])
@@ -42,18 +41,18 @@ def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request):
 
 
 @pytest.fixture
-def unet2d_nuclei_broad_latest_path(unet2d_nuclei_broad_base_path):
-    return unet2d_nuclei_broad_base_path / "rdf.yaml"
-
-
-@pytest.fixture
 def invalid_rdf_v0_4_0_duplicate_tensor_names(unet2d_nuclei_broad_base_path):
-    return yaml.load(unet2d_nuclei_broad_base_path / "invalid_rdf_v0_4_0_duplicate_tensor_names.yaml")
+    return unet2d_nuclei_broad_base_path / "invalid_rdf_v0_4_0_duplicate_tensor_names.yaml"
 
 
 @pytest.fixture
 def unet2d_nuclei_broad_collection():
-    return yaml.load(pathlib.Path(__file__).parent / "../example_specs/collections/unet2d_nuclei_broad_coll/rdf.yaml")
+    return pathlib.Path(__file__).parent / "../example_specs/collections/unet2d_nuclei_broad_coll/rdf.yaml"
+
+
+@pytest.fixture
+def partner_collection_path():
+    return pathlib.Path(__file__).parent / "../example_specs/collections/partner_collection/rdf.yaml"
 
 
 @pytest.fixture
