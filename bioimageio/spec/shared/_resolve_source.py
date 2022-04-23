@@ -415,10 +415,11 @@ def _resolve_json_from_url(
     url: str,
     expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
     warning_msg: str = "Failed to fetch {url}: {error}",
+    encoding: typing.Optional[str] = None,
 ) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
     try:
         p = resolve_source(url)
-        with p.open() as f:
+        with p.open(encoding=encoding) as f:
             data = json.load(f)
 
         assert isinstance(data, expected_type)
@@ -433,8 +434,10 @@ def _resolve_json_from_url(
     return data, error
 
 
-BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(BIOIMAGEIO_SITE_CONFIG_URL)
-BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL)
+BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(
+    BIOIMAGEIO_SITE_CONFIG_URL, encoding="utf-8"
+)
+BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL, encoding="utf-8")
 if BIOIMAGEIO_COLLECTION is None:
     BIOIMAGEIO_COLLECTION_ENTRIES: typing.Optional[typing.Dict[str, typing.Tuple[str, str]]] = None
 else:
