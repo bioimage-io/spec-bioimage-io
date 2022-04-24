@@ -5,6 +5,8 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 import dataclasses
+import pathlib
+
 import packaging.version
 import warnings
 from dataclasses import dataclass
@@ -109,6 +111,7 @@ class RDF(ResourceDescription):
         name: str,
         type: str = missing,
         version: Union[_Missing, packaging.version.Version] = missing,
+        root_path: pathlib.Path = pathlib.Path(),
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
         authors: Union[_Missing, List[Author]] = missing,
@@ -148,12 +151,11 @@ class RDF(ResourceDescription):
         self.rdf_source = rdf_source
         self.source = source
         self.tags = tags
-        super().__init__(format_version=format_version, name=name, type=type, version=version)
+        super().__init__(format_version=format_version, name=name, type=type, version=version, root_path=root_path)
 
         if unknown_kwargs:
             # make sure we didn't forget a defined field
             field_names = set(f.name for f in dataclasses.fields(self))
-            field_names.remove("root_path")  # ignore internal root_path field
             for uk in unknown_kwargs:
                 assert uk not in field_names, uk
 

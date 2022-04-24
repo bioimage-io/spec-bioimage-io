@@ -4,11 +4,12 @@ raw nodes are the deserialized equivalent to the content of any RDF.
 serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
-import packaging.version
-from dataclasses import dataclass, field
+import pathlib
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, NewType, Union
+from typing import Any, Dict, List, Union
 
+import packaging.version
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
@@ -52,6 +53,7 @@ class Collection(RDF):
         name: str,
         type: str = missing,
         version: Union[_Missing, packaging.version.Version] = missing,
+        root_path: pathlib.Path = pathlib.Path(),
         # RDF
         attachments: Union[_Missing, Dict[str, Any]] = missing,
         authors: Union[_Missing, List[Author]] = missing,
@@ -90,6 +92,7 @@ class Collection(RDF):
             tags=tags,
             type=type,
             version=version,
+            root_path=root_path,
         )
         self.unknown = unknown or {}
         self.unknown.update(implicitly_unknown)
