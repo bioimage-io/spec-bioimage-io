@@ -51,7 +51,7 @@ def unet2d_nuclei_broad_collection():
 
 
 @pytest.fixture
-def partner_collection_path():
+def partner_collection():
     return pathlib.Path(__file__).parent / "../example_specs/collections/partner_collection/rdf.yaml"
 
 

@@ -1,10 +1,12 @@
 """check for meaningful validation errors for various invalid input"""
+from bioimageio.spec.shared import yaml
 
 
 def test_list_instead_of_nested_schema(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = unet2d_nuclei_broad_latest
+    data = yaml.load(unet2d_nuclei_broad_latest)
+
     # set wrong run_mode (list)
     data["run_mode"] = [{"name": "something"}]
 
