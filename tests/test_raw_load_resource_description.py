@@ -1,4 +1,5 @@
 from bioimageio.spec.model import raw_nodes
+from bioimageio.spec import collection
 
 
 def test_load_raw_model(unet2d_nuclei_broad_any):
@@ -72,3 +73,16 @@ def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
             to_format = ".".join(map(str, target))
             raw_model = load_raw_resource_description(unet2d_nuclei_broad_before_latest, update_to_format=to_format)
             assert raw_model.format_version[: raw_model.format_version.rfind(".")] == to_format
+
+
+def test_collection_with_relative_path_in_rdf_source_of_an_entry(partner_collection):
+    from bioimageio.spec import load_raw_resource_description
+    from bioimageio.spec.collection.utils import resolve_collection_entries
+
+    coll = load_raw_resource_description(partner_collection)
+    assert isinstance(coll, collection.raw_nodes.Collection)
+    resolved_entries = resolve_collection_entries(coll)
+    for entry_data, entry_error in resolved_entries:
+        assert entry_data["documentation"].endswith(
+            "example_specs/collections/partner_collection/datasets/dummy-dataset/README.md"
+        )
