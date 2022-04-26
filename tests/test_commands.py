@@ -1,9 +1,11 @@
 import zipfile
-from copy import copy
 from io import BytesIO, StringIO
 
-from bioimageio.core import serialize_raw_resource_description
-from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
+from bioimageio.spec import (
+    load_raw_resource_description,
+    serialize_raw_resource_description,
+    serialize_raw_resource_description_to_dict,
+)
 from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
 
@@ -226,10 +228,11 @@ def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
-    source = serialize_raw_resource_description_to_dict(raw_rd)
+    source = serialize_raw_resource_description_to_dict(raw_rd, convert_absolute_paths=False)
 
     update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
     actual = update_rdf(source, update)
+    assert isinstance(actual, dict)
     assert actual["name"] == "updated"
     assert actual["outputs"][0]["name"] == "updated"
     assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
@@ -240,7 +243,7 @@ def test_update_rdf_using_dicts_in_place(unet2d_nuclei_broad_latest):
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
-    source = serialize_raw_resource_description_to_dict(raw_rd)
+    source = serialize_raw_resource_description_to_dict(raw_rd, convert_absolute_paths=False)
 
     update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
     update_rdf(source, update, output=source)

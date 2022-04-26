@@ -3,7 +3,11 @@ import subprocess
 import zipfile
 from typing import Sequence
 
-from bioimageio.spec.io_ import load_raw_resource_description, save_raw_resource_description
+from bioimageio.spec.io_ import (
+    load_raw_resource_description,
+    save_raw_resource_description,
+    serialize_raw_resource_description,
+)
 from bioimageio.spec.shared import yaml
 
 
@@ -48,8 +52,13 @@ def test_cli_validate_model_doi():
 
 def test_cli_validate_model_package(unet2d_nuclei_broad_latest, tmpdir):
     zf_path = tmpdir / "package.zip"
+
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    rdf_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
     with zipfile.ZipFile(zf_path, "w") as zf:
-        zf.write(unet2d_nuclei_broad_latest, "rdf.yaml")
+        zf.writestr("rdf.yaml", rdf_str)
 
     ret = run_subprocess(["bioimageio", "validate", str(zf_path)])
     assert ret.returncode == 0
@@ -59,9 +68,13 @@ def test_cli_validate_model_package_wo_cache(unet2d_nuclei_broad_latest, tmpdir)
     env = os.environ.copy()
     env["BIOIMAGEIO_USE_CACHE"] = "false"
 
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    rdf_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
     zf_path = tmpdir / "package.zip"
     with zipfile.ZipFile(zf_path, "w") as zf:
-        zf.write(unet2d_nuclei_broad_latest, "rdf.yaml")
+        zf.writestr("rdf.yaml", rdf_str)
 
     ret = run_subprocess(["bioimageio", "validate", str(zf_path)], env=env)
     assert ret.returncode == 0
