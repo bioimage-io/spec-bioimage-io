@@ -24,7 +24,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         * <a id="cite:text"></a>`text` _(String)_ free text description
         * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/
 * <a id="description"></a>`description` _(required String)_ A string containing a brief description.
-* <a id="documentation"></a>`documentation` _(required Union\[URL→URI | RelativeLocalPath→Path\])_ Relative path or URL to file with additional documentation in markdown. The file must be in markdown format with `.md` file name extensionIt is recommended to use `README.md` as the documentation name.
+* <a id="documentation"></a>`documentation` _(required Union\[URL→URI | Path→String\])_ Relative path or URL to file with additional documentation in markdown. The file must be in markdown format with `.md` file name extensionIt is recommended to use `README.md` as the documentation name.
 * <a id="inputs"></a>`inputs` _(required List\[InputTensor\])_ Describes the input tensors expected by this model.
     1.  _(InputTensor)_   is a Dict with the following keys:
         * <a id="inputs:axes"></a>`axes` _(Axes→String)_ Axes identifying characters from: bitczyx. Same length and order as the axes in `shape`.
@@ -52,19 +52,19 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _(Kwargs→Dict\[String, Any\])_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_4.md).
 * <a id="license"></a>`license` _(required String)_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
 * <a id="name"></a>`name` _(required String)_ Name of this model. It should be human-readable and only contain letters, numbers, underscore '_', minus '-' or spaces and not be longer than 64 characters.
-* <a id="test_inputs"></a>`test_inputs` _(required List\[Union\[URI→String | RelativeLocalPath→Path\]\])_ List of URIs or local relative paths to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
-* <a id="test_outputs"></a>`test_outputs` _(required List\[Union\[URI→String | RelativeLocalPath→Path\]\])_ Analog to test_inputs.
+* <a id="test_inputs"></a>`test_inputs` _(required List\[Union\[URI→String | Path→String\]\])_ List of URIs or local relative paths to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
+* <a id="test_outputs"></a>`test_outputs` _(required List\[Union\[URI→String | Path→String\]\])_ Analog to test_inputs.
 * <a id="timestamp"></a>`timestamp` _(required DateTime)_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
 * <a id="weights"></a>`weights` _(required Dict\[String, Union\[KerasHdf5WeightsEntry | OnnxWeightsEntry | PytorchStateDictWeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | TorchscriptWeightsEntry\]\])_ 
     1.  _(String)_ Format of this set of weights. One of: pytorch_state_dict, torchscript, keras_hdf5, tensorflow_js, tensorflow_saved_model_bundle, onnx
     1.  _(Union\[KerasHdf5WeightsEntry | OnnxWeightsEntry | PytorchStateDictWeightsEntry | TensorflowJsWeightsEntry | TensorflowSavedModelBundleWeightsEntry | TorchscriptWeightsEntry\])_ The weights for this model. Weights can be given for different formats, but should otherwise be equivalent. See [weight_formats_spec_0_4.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/weight_formats_spec_0_4.md) for the required and optional fields per weight format. The available weight formats determine which consumers can use this model.
 * <a id="attachments"></a>`attachments` _(optional Attachments)_ Additional unknown keys are allowed. Attachments is a Dict with the following keys:
-    * <a id="attachments:files"></a>`files` _(optional List\[Union\[URI→String | RelativeLocalPath→Path\]\])_ File attachments; included when packaging the resource.
+    * <a id="attachments:files"></a>`files` _(optional List\[Union\[URI→String | Path→String\]\])_ File attachments; included when packaging the resource.
 * <a id="badges"></a>`badges` _(optional List\[Badge\])_ a list of badges
     1.  _(Badge)_ Custom badge. Badge is a Dict with the following keys:
         * <a id="badges:label"></a>`label` _(String)_ e.g. 'Open in Colab'
         * <a id="badges:icon"></a>`icon` _(String)_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
-        * <a id="badges:url"></a>`url` _(Union\[URL→URI | RelativeLocalPath→Path\])_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+        * <a id="badges:url"></a>`url` _(Union\[URL→URI | Path→String\])_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 * <a id="config"></a>`config` _(optional YamlDict→Dict\[Any, Any\])_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
     
@@ -96,7 +96,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
           runtime: 78.8s # Time it took to run the model
           pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
     ```
-* <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | RelativeLocalPath→Path\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
+* <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | Path→String\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * <a id="download_url"></a>`download_url` _(optional URL→URI)_ optional url to download the resource from
 * <a id="git_repo"></a>`git_repo` _(optional URL→URI)_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _(optional String)_ an icon for the resource
@@ -143,13 +143,13 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="parent"></a>`parent` _(optional ModelParent)_ The model from which this model is derived, e.g. by fine-tuning the weights. ModelParent is a Dict with the following keys:
     * <a id="parent:id"></a>`id` _(optional BioImageIO_ID→String)_ ID as shown on resource card on bioimage.io
     * <a id="parent:sha256"></a>`sha256` _(optional SHA256→String)_ Hash of the parent model RDF. Note: the hash is not validated
-    * <a id="parent:uri"></a>`uri` _(optional Union\[URI→String | RelativeLocalPath→Path\])_ URL or local relative path of a model RDF
+    * <a id="parent:uri"></a>`uri` _(optional Union\[URI→String | Path→String\])_ URL or local relative path of a model RDF
 * <a id="rdf_source"></a>`rdf_source` _(optional Union\[URL→URI | DOI→String\])_ url or doi to the source of the resource definition
 * <a id="run_mode"></a>`run_mode` _(optional RunMode)_ Custom run mode for this model: for more complex prediction procedures like test time data augmentation that currently cannot be expressed in the specification. No standard run modes are defined yet. RunMode is a Dict with the following keys:
     * <a id="run_mode:name"></a>`name` _(required String)_ The name of the `run_mode`
     * <a id="run_mode:kwargs"></a>`kwargs` _(optional Kwargs→Dict\[String, Any\])_ Key word arguments.
-* <a id="sample_inputs"></a>`sample_inputs` _(optional List\[Union\[URI→String | RelativeLocalPath→Path\]\])_ List of URIs/local relative paths to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. The model is not tested with these sample files that serve to inform a human user about an example use case.
-* <a id="sample_outputs"></a>`sample_outputs` _(optional List\[Union\[URI→String | RelativeLocalPath→Path\]\])_ List of URIs/local relative paths to sample outputs corresponding to the `sample_inputs`.
+* <a id="sample_inputs"></a>`sample_inputs` _(optional List\[Union\[URI→String | Path→String\]\])_ List of URIs/local relative paths to sample inputs to illustrate possible inputs for the model, for example stored as png or tif images. The model is not tested with these sample files that serve to inform a human user about an example use case.
+* <a id="sample_outputs"></a>`sample_outputs` _(optional List\[Union\[URI→String | Path→String\]\])_ List of URIs/local relative paths to sample outputs corresponding to the `sample_inputs`.
 * <a id="tags"></a>`tags` _(optional List\[String\])_ A list of tags.
 * <a id="training_data"></a>`training_data` _(optional Union\[Dataset | LinkedDataset\])_ 
     1.  _(optional Dataset)_ in-place definition of [dataset RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_0_2.md)
