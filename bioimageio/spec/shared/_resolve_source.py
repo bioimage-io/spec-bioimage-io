@@ -20,6 +20,7 @@ from .common import (
     BIOIMAGEIO_USE_CACHE,
     BIOIMAGEIO_SITE_CONFIG_URL,
     DOI_REGEX,
+    get_spec_type_from_type,
     no_cache_tmp_list,
     RDF_NAMES,
     tqdm,
@@ -49,7 +50,7 @@ def resolve_rdf_source(
 ) -> RDF_Source:
     # reduce possible source types
     if isinstance(source, (BytesIO, StringIO)):
-        source = source.read()
+        source = source.getvalue()
     elif isinstance(source, os.PathLike):
         source = pathlib.Path(source)
     elif isinstance(source, raw_nodes.URI):
@@ -59,7 +60,8 @@ def resolve_rdf_source(
 
         source = serialize_raw_resource_description_to_dict(source)
 
-    assert isinstance(source, (dict, pathlib.Path, str, bytes)), type(source)
+    if not isinstance(source, (dict, pathlib.Path, str, bytes)):
+        raise TypeError(f"Unexpected source type {type(source)}")
 
     if isinstance(source, pathlib.Path):
         source_name = str(source)
@@ -193,7 +195,9 @@ def resolve_rdf_source(
 
         source = yaml.load(source)
 
-    assert isinstance(source, dict), source
+    if not isinstance(source, dict):
+        raise TypeError(f"Expected dict type for loaded source, but got: {type(source)}")
+
     return RDF_Source(source, source_name, root)
 
 
@@ -202,9 +206,7 @@ def resolve_rdf_source_and_type(
 ) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes], str]:
     data, source_name, root = resolve_rdf_source(source)
 
-    type_ = data.get("type", "rdf")
-    if type_ not in ("rdf", "model", "collection"):
-        type_ = "rdf"
+    type_ = get_spec_type_from_type(data.get("type"))
     return data, source_name, root, type_
 
 

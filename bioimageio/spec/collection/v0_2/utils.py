@@ -1,9 +1,12 @@
+import os
+import pathlib
 from typing import List, Optional, Tuple, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from . import raw_nodes, schema
+from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 
 
 def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
@@ -11,10 +14,9 @@ def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
 
 
 def resolve_collection_entries(
-    collection: raw_nodes.Collection, collection_id: Optional[str] = None
-) -> List[Tuple[dict, Optional[str]]]:
-    from bioimageio.spec import serialize_raw_resource_description_to_dict
-    from bioimageio.spec.shared import resolve_rdf_source
+    collection: raw_nodes.Collection, collection_id: Optional[str] = None, update_to_format: Optional[str] = None
+) -> List[Tuple[Optional[RawResourceDescription], Optional[str]]]:
+    from bioimageio.spec import serialize_raw_resource_description_to_dict, load_raw_resource_description
 
     ret = []
     seen_ids = set()
@@ -31,14 +33,20 @@ def resolve_collection_entries(
         # update rdf entry with entry's rdf_source
         sub_id: Union[str, _Missing] = missing
         if entry.rdf_source is not missing:
+            rdf_source = entry.rdf_source
+            if isinstance(rdf_source, str) and not rdf_source.startswith("http") or isinstance(rdf_source, os.PathLike):
+                # a relative rdf_source path is relative to collection.root_path
+                rdf_source = collection.root_path / pathlib.Path(rdf_source)
+
             try:
-                remote_rdf_update, _, _ = resolve_rdf_source(entry.rdf_source)
+                source_entry_rd = load_raw_resource_description(rdf_source)
             except Exception as e:
                 entry_error = f"collection[{idx}]: {id_info}Invalid rdf_source: {e}"
             else:
-                sub_id = remote_rdf_update.pop("id", missing)
-                assert missing not in remote_rdf_update.values()
-                rdf_data.update(remote_rdf_update)
+                source_entry_data = serialize_raw_resource_description_to_dict(source_entry_rd)
+                sub_id = source_entry_data.pop("id", missing)
+                assert missing not in source_entry_data.values()
+                rdf_data.update(source_entry_data)
 
         # update rdf entry with fields specified directly in the entry
         rdf_update = schema.CollectionEntry().dump(entry)
@@ -51,14 +59,29 @@ def resolve_collection_entries(
         else:
             seen_ids.add(sub_id)
 
-        rdf_data.update(rdf_update)
-        if root_id is None:
-            rdf_data["id"] = sub_id
-        else:
-            rdf_data["id"] = f"{root_id}/{sub_id}"
+        rdf = None
+        if entry_error is None:
+            rdf_data.update(rdf_update)
+            if root_id is None:
+                rdf_data["id"] = sub_id
+            else:
+                rdf_data["id"] = f"{root_id}/{sub_id}"
 
-        rdf_data.pop("rdf_source", None)  # remove rdf_source as we return a plain dict that has no simple source file
-        assert missing not in rdf_data.values()
-        ret.append((rdf_data, entry_error))
+            # Convert simple links to links with collection id prepended
+            if "links" in rdf_data:
+                for i in range(len(rdf_data["links"])):
+                    link = rdf_data["links"][i]
+                    if "/" not in link:
+                        rdf_data["links"][i] = collection.id + "/" + link
+
+            rdf_data.pop("rdf_source", None)  # remove absorbed rdf_source
+            rdf_data["root_path"] = collection.root_path  # collection entry always has the same root as the collection
+            assert missing not in rdf_data.values()
+            try:
+                rdf = load_raw_resource_description(rdf_data, update_to_format=update_to_format)
+            except Exception as e:
+                entry_error = str(e)
+
+        ret.append((rdf, entry_error))
 
     return ret

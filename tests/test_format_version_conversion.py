@@ -1,13 +1,14 @@
 from dataclasses import asdict
 
 from bioimageio.spec.model import schema
+from bioimageio.spec.shared import yaml
 
 
 def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet2d_nuclei_broad_latest):
     from bioimageio.spec.model.converters import maybe_convert
 
-    old_model_data = unet2d_nuclei_broad_before_latest
-    model_data = unet2d_nuclei_broad_latest
+    old_model_data = yaml.load(unet2d_nuclei_broad_before_latest)
+    model_data = yaml.load(unet2d_nuclei_broad_latest)
 
     expected = asdict(schema.Model().load(model_data))
     converted_data = maybe_convert(old_model_data)

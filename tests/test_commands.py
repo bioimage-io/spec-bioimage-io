@@ -1,8 +1,11 @@
 import zipfile
-from copy import copy
 from io import BytesIO, StringIO
 
-from bioimageio.spec import load_raw_resource_description
+from bioimageio.spec import (
+    load_raw_resource_description,
+    serialize_raw_resource_description,
+    serialize_raw_resource_description_to_dict,
+)
 from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
 
@@ -87,48 +90,67 @@ def test_validate_model_as_bioimageio_resource_id_zenodo():
     assert summary["status"] == "passed", summary["error"]
 
 
-def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest_path):
+def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = BytesIO(unet2d_nuclei_broad_latest_path.read_bytes())
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
+    data = BytesIO(data_str.encode("utf-8"))
     data.seek(0)
     assert not validate(data, update_format=True, update_format_inner=False)["error"]
     data.seek(0)
     assert not validate(data, update_format=False, update_format_inner=False)["error"]
 
 
-def test_validate_model_as_string_io(unet2d_nuclei_broad_latest_path):
+def test_validate_model_as_string_io(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = StringIO(unet2d_nuclei_broad_latest_path.read_text())
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
+    data = StringIO(data_str)
     data.seek(0)
     assert not validate(data, update_format=True, update_format_inner=False)["error"]
     data.seek(0)
     assert not validate(data, update_format=False, update_format_inner=False)["error"]
 
 
-def test_validate_model_as_bytes(unet2d_nuclei_broad_latest_path):
+def test_validate_model_as_bytes(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = unet2d_nuclei_broad_latest_path.read_bytes()
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
+    data = data_str.encode("utf-8")
     assert not validate(data, update_format=True, update_format_inner=False)["error"]
     assert not validate(data, update_format=False, update_format_inner=False)["error"]
 
 
-def test_validate_model_as_string(unet2d_nuclei_broad_latest_path):
+def test_validate_model_as_string(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = unet2d_nuclei_broad_latest_path.read_text()
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
+
     assert not validate(data, update_format=True, update_format_inner=False)["error"]
     assert not validate(data, update_format=False, update_format_inner=False)["error"]
 
 
-def test_validate_model_package_as_bytes(unet2d_nuclei_broad_latest_path):
+def test_validate_model_package_as_bytes(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
+
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    rdf_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
 
     data = BytesIO()
     with zipfile.ZipFile(data, "w") as zf:
-        zf.write(unet2d_nuclei_broad_latest_path, "rdf.yaml")
+        zf.writestr("rdf.yaml", rdf_str)
 
     data.seek(0)
     assert not validate(data, update_format=True, update_format_inner=False)["error"]
@@ -136,12 +158,16 @@ def test_validate_model_package_as_bytes(unet2d_nuclei_broad_latest_path):
     assert not validate(data, update_format=False, update_format_inner=False)["error"]
 
 
-def test_validate_model_package_on_disk(unet2d_nuclei_broad_latest_path, tmpdir):
+def test_validate_model_package_on_disk(unet2d_nuclei_broad_latest, tmpdir):
     from bioimageio.spec.commands import validate
+
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    rdf_str = serialize_raw_resource_description(raw_rd, convert_absolute_paths=False)
 
     zf_path = tmpdir / "package.zip"
     with zipfile.ZipFile(zf_path, "w") as zf:
-        zf.write(unet2d_nuclei_broad_latest_path, "rdf.yaml")
+        zf.writestr("rdf.yaml", rdf_str)
 
     assert not validate(zf_path, update_format=True, update_format_inner=False)["error"]
     assert not validate(zf_path, update_format=False, update_format_inner=False)["error"]
@@ -150,7 +176,10 @@ def test_validate_model_package_on_disk(unet2d_nuclei_broad_latest_path, tmpdir)
 def test_validate_invalid_model(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = copy(unet2d_nuclei_broad_latest)
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data = serialize_raw_resource_description_to_dict(raw_rd)
+
     del data["test_inputs"]  # invalidate data
     assert validate(data, update_format=True, update_format_inner=False)["error"]
     assert validate(data, update_format=False, update_format_inner=False)["error"]
@@ -159,7 +188,8 @@ def test_validate_invalid_model(unet2d_nuclei_broad_latest):
 def test_validate_generates_warnings(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import validate
 
-    data = copy(unet2d_nuclei_broad_latest)
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    data = serialize_raw_resource_description_to_dict(raw_rd)
     data["license"] = "BSD-2-Clause-FreeBSD"
     data["run_mode"] = {"name": "fancy"}
     summary = validate(data, update_format=True, update_format_inner=False)
@@ -178,10 +208,10 @@ def test_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
     assert model.format_version == format_version
 
 
-def test_update_rdf_using_paths(unet2d_nuclei_broad_base_path, tmp_path):
+def test_update_rdf_using_paths(unet2d_nuclei_broad_latest, tmp_path):
     from bioimageio.spec.commands import update_rdf
 
-    in_path = unet2d_nuclei_broad_base_path / "rdf.yaml"
+    in_path = unet2d_nuclei_broad_latest
     assert in_path.exists()
     update_path = tmp_path / "update.yaml"
     yaml.dump(dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}]), update_path)
@@ -196,9 +226,13 @@ def test_update_rdf_using_paths(unet2d_nuclei_broad_base_path, tmp_path):
 def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import update_rdf
 
-    source = unet2d_nuclei_broad_latest
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    source = serialize_raw_resource_description_to_dict(raw_rd, convert_absolute_paths=False)
+
     update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
     actual = update_rdf(source, update)
+    assert isinstance(actual, dict)
     assert actual["name"] == "updated"
     assert actual["outputs"][0]["name"] == "updated"
     assert actual["outputs"][0]["halo"] == [0, 0, 9, 9]
@@ -207,7 +241,10 @@ def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
 def test_update_rdf_using_dicts_in_place(unet2d_nuclei_broad_latest):
     from bioimageio.spec.commands import update_rdf
 
-    source = unet2d_nuclei_broad_latest
+    # load from path and serialize with absolute paths
+    raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
+    source = serialize_raw_resource_description_to_dict(raw_rd, convert_absolute_paths=False)
+
     update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])
     update_rdf(source, update, output=source)
     actual = source

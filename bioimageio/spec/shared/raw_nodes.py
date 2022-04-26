@@ -116,9 +116,6 @@ class Dependencies(RawNode):
     file: Union[URI, pathlib.Path] = missing
 
     def __str__(self):
-        if isinstance(self.file, pathlib.Path):
-            assert not self.file.is_absolute(), self.file
-
         return f"{self.manager}:{self.file}"
 
 

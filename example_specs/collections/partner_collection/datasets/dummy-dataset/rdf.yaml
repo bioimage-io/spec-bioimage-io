@@ -1,0 +1,12 @@
+authors:
+- name: Fynn Beuttenmüller
+cite: []
+covers: []
+description: Dummy dataset for testing purposes only.
+documentation: README.md
+format_version: 0.2.2
+license: MIT
+name: Dummy Data
+tags: [dummy]
+type: dataset
+id: dummy-dataset

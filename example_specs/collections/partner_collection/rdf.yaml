@@ -1,0 +1,10 @@
+format_version: 0.2.2
+type: collection
+name: Partner Collection
+tags: [bioimage.io, partner-software]
+description: "Resources for BioImgage.IO curated by the partner team."
+id: partner
+collection:
+  - rdf_source: datasets/dummy-dataset/rdf.yaml
+
+

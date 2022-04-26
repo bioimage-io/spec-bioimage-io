@@ -82,10 +82,9 @@ def validate(
     nested_errors: Dict[str, dict] = {}
     if isinstance(rdf_source, RawResourceDescription):
         source_name = rdf_source.name
-        root = rdf_source.root_path
     else:
         try:
-            rdf_source, source_name, root = resolve_rdf_source(rdf_source)
+            rdf_source_preview, source_name, root = resolve_rdf_source(rdf_source)
         except Exception as e:
             error = str(e)
             tb = traceback.format_tb(e.__traceback__)
@@ -94,10 +93,8 @@ def validate(
             except Exception as e:
                 source_name = str(e)
         else:
-            if not isinstance(rdf_source, dict):
-                error = (
-                    f"expected loaded resource to be a dictionary, but got type {type(rdf_source)}: {str(rdf_source)}"
-                )
+            if not isinstance(rdf_source_preview, dict):
+                error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source_preview)}"
 
     raw_rd = None
     format_version = ""
@@ -120,18 +117,18 @@ def validate(
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
-                for idx, (rdf_data, entry_error) in enumerate(resolve_collection_entries(raw_rd)):  # type: ignore
+                for idx, (entry_rdf, entry_error) in enumerate(resolve_collection_entries(raw_rd)):  # type: ignore
                     if entry_error:
-                        entry_summary = {"error": entry_error}
+                        entry_summary: Union[Dict[str, str], ValidationSummary] = {"error": entry_error}
                     else:
-                        # apparently a mypy bug: TypedDict is not a dict.
-                        entry_summary = validate(  # type: ignore
-                            rdf_data, update_format=update_format, update_format_inner=update_format_inner
+                        assert isinstance(entry_rdf, RawResourceDescription)
+                        entry_summary = validate(
+                            entry_rdf, update_format=update_format, update_format_inner=update_format_inner
                         )
 
                         wrns: Union[str, dict] = entry_summary.get("warnings", {})
                         assert isinstance(wrns, dict)
-                        id_info = f"(id={rdf_data['id']}) " if "id" in rdf_data else ""
+                        id_info = f"(id={entry_rdf.id}) " if hasattr(entry_rdf, "id") else ""  # type: ignore
                         for k, v in wrns.items():
                             warnings.warn(f"collection[{idx}]:{k}: {id_info}{v}", category=ValidationWarning)
 
@@ -183,20 +180,18 @@ def update_rdf(
         ValidationError: if `validate_output` and the updated rdf does not pass validation
     """
     if isinstance(source, RawResourceDescription):
-        src_data = source
-        src_name = source.name
-        root = source.root_path
+        src = source
     else:
-        src_data, src_name, root = resolve_rdf_source(source)
+        src = load_raw_resource_description(source)
 
     up = resolve_rdf_source(update)
 
-    if root != up.root and not validate:
+    if src.root_path != up.root and not validate_output:
         warnings.warn(
-            f"root path of source {src_name} and update {up.name} differ. Relative paths might be invalid in the output."
+            f"root path of source {src.name} and update {up.name} differ. Relative paths might be invalid in the output."
         )
 
-    out_data = update_nested(src_data, up.data)
+    out_data = update_nested(src, up.data)
     assert isinstance(out_data, (RawResourceDescription, dict))
     if validate_output:
         summary = validate(out_data)
@@ -216,11 +211,25 @@ def update_rdf(
             output = {}
 
     if isinstance(output, dict):
+        if isinstance(out_data, RawResourceDescription):
+            out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=False)
+
         assert isinstance(out_data, dict)
         output.update(out_data)
         return output
     else:
         assert yaml is not None
         output = Path(output)
+        if isinstance(out_data, RawResourceDescription):
+            out_data.root_path = output.parent
+            try:
+                out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=True)
+            except ValueError as e:
+                warnings.warn(
+                    f"Failed to convert paths in updated rdf to relative paths with root {output}; error: {e}"
+                )
+                warnings.warn(f"updated rdf at {output} contains absolute paths and is thus invalid!")
+                out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=False)
+
         yaml.dump(out_data, output)
         return output

@@ -86,7 +86,7 @@ class WithUnknown(SharedBioImageIOSchema):
 class Dependencies(SharedBioImageIOSchema):
     manager = fields.String(bioimageio_description="Dependency manager For example: 'conda', 'maven', or 'pip'")
     file = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()],
+        [fields.URI(), fields.Path()],
         bioimageio_description="Dependency file. For example: 'environment.yaml', 'pom.xml', or 'requirements.txt'",
     )
 

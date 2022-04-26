@@ -1,4 +1,6 @@
 from bioimageio.spec.model import raw_nodes
+from bioimageio.spec import collection
+from bioimageio.spec.shared import yaml
 
 
 def test_load_raw_model(unet2d_nuclei_broad_any):
@@ -64,11 +66,28 @@ def test_load_raw_model_unet2d_keras_tf(unet2d_keras_tf):
 def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
     from bioimageio.spec import load_raw_resource_description
 
+    data = yaml.load(unet2d_nuclei_broad_before_latest)
+    data["root_path"] = unet2d_nuclei_broad_before_latest.parent
     format_targets = [(0, 3), (0, 4)]
-    format_version = tuple(map(int, unet2d_nuclei_broad_before_latest["format_version"].split(".")[:2]))
+    format_version = tuple(map(int, data["format_version"].split(".")[:2]))
 
     for target in format_targets:
         if format_version <= target:
             to_format = ".".join(map(str, target))
-            raw_model = load_raw_resource_description(unet2d_nuclei_broad_before_latest, update_to_format=to_format)
+            raw_model = load_raw_resource_description(data, update_to_format=to_format)
             assert raw_model.format_version[: raw_model.format_version.rfind(".")] == to_format
+
+
+def test_collection_with_relative_path_in_rdf_source_of_an_entry(partner_collection):
+    from bioimageio.spec import load_raw_resource_description
+    from bioimageio.spec.collection.utils import resolve_collection_entries
+    from bioimageio.spec.dataset.v0_2.raw_nodes import Dataset
+
+    coll = load_raw_resource_description(partner_collection)
+    assert isinstance(coll, collection.raw_nodes.Collection)
+    resolved_entries = resolve_collection_entries(coll)
+    for entry_rdf, entry_error in resolved_entries:
+        assert isinstance(entry_rdf, Dataset)
+        assert entry_rdf.documentation.as_posix().endswith(
+            "example_specs/collections/partner_collection/datasets/dummy-dataset/README.md"
+        )
