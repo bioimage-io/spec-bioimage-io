@@ -283,7 +283,7 @@ class LinkedDataset(_BioImageIOSchema):
 class ModelParent(_BioImageIOSchema):
     id = fields.BioImageIO_ID(resource_type="model")
     uri = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()], bioimageio_description="URL or local relative path of a model RDF"
+        [fields.URI(), fields.Path()], bioimageio_description="URL or local relative path of a model RDF"
     )
     sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF. Note: the hash is not validated")
 
@@ -351,7 +351,7 @@ config:
     documentation = fields.Union(
         [
             fields.URL(),
-            fields.RelativeLocalPath(
+            fields.Path(
                 validate=field_validators.Attribute(
                     "suffix",
                     field_validators.Equal(
@@ -504,21 +504,21 @@ is in an unsupported format version. The current format version described here i
     )
 
     sample_inputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URI(), fields.Path()]),
         validate=field_validators.Length(min=1),
         bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
         "the model, for example stored as png or tif images. "
         "The model is not tested with these sample files that serve to inform a human user about an example use case.",
     )
     sample_outputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URI(), fields.Path()]),
         validate=field_validators.Length(min=1),
         bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
         "`sample_inputs`.",
     )
 
     test_inputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URI(), fields.Path()]),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
@@ -529,7 +529,7 @@ is in an unsupported format version. The current format version described here i
         "The extension must be '.npy'.",
     )
     test_outputs = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URI(), fields.Path()]),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="Analog to test_inputs.",

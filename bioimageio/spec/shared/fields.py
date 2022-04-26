@@ -327,7 +327,7 @@ class ImportableSource(String):
             source_file_field = Union(
                 [
                     URL(),
-                    RelativeLocalPath(
+                    Path(
                         validate=field_validators.Attribute(
                             "suffix",
                             field_validators.Equal(

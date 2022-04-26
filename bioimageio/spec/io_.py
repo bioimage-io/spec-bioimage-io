@@ -26,10 +26,12 @@ from bioimageio.spec.shared.common import (
     yaml,
 )
 from bioimageio.spec.shared.node_transformer import (
+    AbsoluteToRelativePathTransformer,
     GenericRawNode,
     GenericRawRD,
     PathToRemoteUriTransformer,
     RawNodePackageTransformer,
+    RelativeToAbsolutePathTransformer,
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
@@ -136,7 +138,7 @@ def _replace_relative_paths_for_remote_source(raw_rd: RawResourceDescription) ->
         else:
             root_path = root
     elif isinstance(root, bytes):
-        raise NotImplementedError("root as bytes (io)")
+        root_path = pathlib.Path()
     else:
         raise TypeError(root)
 
@@ -198,16 +200,25 @@ def load_raw_resource_description(
     raw_rd.root_path = root
 
     raw_rd = _replace_relative_paths_for_remote_source(raw_rd)
+    raw_rd = RelativeToAbsolutePathTransformer(root_path=raw_rd.root_path).transform(raw_rd)
 
     return raw_rd
 
 
-def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -> dict:
-    """serialize a raw nodes resource description to a dict with the content of a resource description file (RDF)"""
+def serialize_raw_resource_description_to_dict(
+    raw_rd: RawResourceDescription, convert_absolute_paths: bool = False
+) -> dict:
+    """serialize a raw nodes resource description to a dict with the content of a resource description file (RDF).
+    If 'convert_absolute_paths' all absolute paths are converted to paths relative to raw_rd.root_path before
+    serialization.
+    """
     class_name = get_class_name_from_type(raw_rd.type)
     sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
-
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
+
+    if convert_absolute_paths:
+        raw_rd = AbsoluteToRelativePathTransformer(root_path=raw_rd.root_path).transform(raw_rd)
+
     serialized = schema.dump(raw_rd)
     assert isinstance(serialized, dict)
     assert missing not in serialized.values()
@@ -215,11 +226,11 @@ def serialize_raw_resource_description_to_dict(raw_rd: RawResourceDescription) -
     return serialized
 
 
-def serialize_raw_resource_description(raw_rd: RawResourceDescription) -> str:
+def serialize_raw_resource_description(raw_rd: RawResourceDescription, convert_absolute_paths: bool = True) -> str:
     if yaml is None:
         raise RuntimeError("'serialize_raw_resource_description' requires yaml")
 
-    serialized = serialize_raw_resource_description_to_dict(raw_rd)
+    serialized = serialize_raw_resource_description_to_dict(raw_rd, convert_absolute_paths=convert_absolute_paths)
 
     with StringIO() as stream:
         yaml.dump(serialized, stream)

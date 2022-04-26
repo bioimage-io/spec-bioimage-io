@@ -7,7 +7,7 @@ from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from . import raw_nodes
-from ._resolve_source import resolve_source as _resolve_source
+from ._resolve_source import resolve_local_source, resolve_source as _resolve_source
 
 try:
     from typing import Literal
@@ -265,9 +265,54 @@ class RawNodePackageTransformer(NodeTransformer):
             return super().generic_transformer(node, **kwargs)
 
 
-class UriNodeTransformer(NodeTransformerKnownParent):
-    def __init__(self, *, root_path: os.PathLike, uri_only_if_in_package: bool = False):
+class AbsoluteToRelativePathTransformer(NodeTransformer):
+    def __init__(self, *, root_path: os.PathLike):
         self.root_path = pathlib.Path(root_path).resolve()
+
+    def transform_ImportableSourceFile(
+        self, node: raw_nodes.ImportableSourceFile, **kwargs
+    ) -> raw_nodes.ImportableSourceFile:
+        assert isinstance(node.source_file, pathlib.Path)
+        sf = node.source_file.relative_to(self.root_path) if node.source_file.is_absolute() else node.source_file
+        return raw_nodes.ImportableSourceFile(source_file=sf, callable_name=node.callable_name)
+
+    def _transform_Path(self, leaf: pathlib.Path):
+        if leaf.is_absolute():
+            return leaf.relative_to(self.root_path)
+        else:
+            return leaf
+
+    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> pathlib.Path:
+        return self._transform_Path(leaf)
+
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> pathlib.Path:
+        return self._transform_Path(leaf)
+
+
+class RelativeToAbsolutePathTransformer(NodeTransformer):
+    def __init__(self, *, root_path: os.PathLike):
+        self.root_path = pathlib.Path(root_path).resolve()
+
+    def transform_ImportableSourceFile(
+        self, node: raw_nodes.ImportableSourceFile, **kwargs
+    ) -> raw_nodes.ImportableSourceFile:
+        return raw_nodes.ImportableSourceFile(
+            source_file=resolve_local_source(node.source_file, self.root_path), callable_name=node.callable_name
+        )
+
+    def _transform_Path(self, leaf: pathlib.Path):
+        return self.root_path / leaf
+
+    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> pathlib.Path:
+        return self._transform_Path(leaf)
+
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> pathlib.Path:
+        return self._transform_Path(leaf)
+
+
+class UriNodeTransformer(NodeTransformerKnownParent, RelativeToAbsolutePathTransformer):
+    def __init__(self, *, root_path: os.PathLike, uri_only_if_in_package: bool = False):
+        super().__init__(root_path=root_path)
         self.uri_only_if_in_package = uri_only_if_in_package
 
     def transform_URI(
@@ -288,12 +333,3 @@ class UriNodeTransformer(NodeTransformerKnownParent):
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule, **kwargs) -> raw_nodes.LocalImportableModule:
         return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
-
-    def _transform_Path(self, leaf: pathlib.Path):
-        return self.root_path / leaf
-
-    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> pathlib.Path:
-        return self._transform_Path(leaf)
-
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> pathlib.Path:
-        return self._transform_Path(leaf)

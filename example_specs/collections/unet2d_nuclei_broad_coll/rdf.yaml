@@ -65,9 +65,9 @@ sample_outputs: [test_output.npy]
 version: 0.1.0
 
 collection:
-  - id: with_rdf_source_url
-    rdf_source: https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml
-    name: UNet 2D Nuclei Broad (latest)
+#  - id: with_rdf_source_url
+#    rdf_source: https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml
+#    name: UNet 2D Nuclei Broad (latest)
   - id: in_place_0.4.0
     format_version: 0.4.0
     type: model
@@ -93,27 +93,27 @@ collection:
        source: weights.pt
        parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
-  - id: in_place_0.4.1
-    format_version: 0.4.1
-    type: model
-    weights:
-      pytorch_state_dict:
-       authors:
-         - name: "Constantin Pape;@bioimage-io"
-           affiliation: "EMBL Heidelberg"
-           orcid: "0000-0001-6562-7187"
-       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-       source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-       architecture: unet2d_.py:UNet2d
-       architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
-       kwargs: {input_channels: 1, output_channels: 1}
-       dependencies: conda:environment.yaml
-      onnx:
-       sha256: 5bf14c4e65e8601ab551db99409ba7981ff0e501719bc2b0ee625ca9a9375b32
-       source: weights.onnx
-       opset_version: 12
-       parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-      torchscript:
-       sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
-       source: weights.pt
-       parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+#  - id: in_place_0.4.1
+#    format_version: 0.4.1
+#    type: model
+#    weights:
+#      pytorch_state_dict:
+#       authors:
+#         - name: "Constantin Pape;@bioimage-io"
+#           affiliation: "EMBL Heidelberg"
+#           orcid: "0000-0001-6562-7187"
+#       sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+#       source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+#       architecture: unet2d_.py:UNet2d
+#       architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
+#       kwargs: {input_channels: 1, output_channels: 1}
+#       dependencies: conda:environment.yaml
+#      onnx:
+#       sha256: 5bf14c4e65e8601ab551db99409ba7981ff0e501719bc2b0ee625ca9a9375b32
+#       source: weights.onnx
+#       opset_version: 12
+#       parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+#      torchscript:
+#       sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
+#       source: weights.pt
+#       parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch

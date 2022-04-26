@@ -20,7 +20,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 
 class Attachments(_BioImageIOSchema, WithUnknown):
     files = fields.List(
-        fields.Union([fields.URI(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URI(), fields.Path()]),
         bioimageio_description="File attachments; included when packaging the resource.",
     )
 
@@ -56,7 +56,7 @@ class Badge(_BioImageIOSchema):
     label = fields.String(required=True, bioimageio_description="e.g. 'Open in Colab'")
     icon = fields.String(bioimageio_description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
     url = fields.Union(
-        [fields.URL(), fields.RelativeLocalPath()],
+        [fields.URL(), fields.Path()],
         bioimageio_description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
     )
 
@@ -126,7 +126,7 @@ E.g. the citation for the model architecture and/or the training data used."""
     config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
-        fields.Union([fields.URL(), fields.RelativeLocalPath()]),
+        fields.Union([fields.URL(), fields.Path()]),
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
@@ -137,7 +137,7 @@ E.g. the citation for the model architecture and/or the training data used."""
     documentation = fields.Union(
         [
             fields.URL(),
-            fields.RelativeLocalPath(
+            fields.Path(
                 validate=field_validators.Attribute(
                     "suffix",
                     field_validators.Equal(
@@ -225,7 +225,7 @@ E.g. the citation for the model architecture and/or the training data used."""
         [fields.URL(), fields.DOI()], bioimageio_description="url or doi to the source of the resource definition"
     )
     source = fields.Union(
-        [fields.URI(), fields.RelativeLocalPath()],
+        [fields.URI(), fields.Path()],
         bioimageio_description="url or local relative path to the source of the resource",
     )
 
