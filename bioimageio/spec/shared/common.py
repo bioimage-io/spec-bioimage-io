@@ -138,8 +138,8 @@ def get_patched_format_version(type_: str, format_version: str):
     return version_mod.format_version
 
 
-def get_spec_type_from_type(type_: str):
-    if type_ in ("model", "collection"):
+def get_spec_type_from_type(type_: Optional[str]):
+    if type_ in ("model", "collection", "dataset"):
         return type_
     else:
         return "rdf"

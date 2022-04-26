@@ -20,6 +20,7 @@ from .common import (
     BIOIMAGEIO_USE_CACHE,
     BIOIMAGEIO_SITE_CONFIG_URL,
     DOI_REGEX,
+    get_spec_type_from_type,
     no_cache_tmp_list,
     RDF_NAMES,
     tqdm,
@@ -205,9 +206,7 @@ def resolve_rdf_source_and_type(
 ) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes], str]:
     data, source_name, root = resolve_rdf_source(source)
 
-    type_ = data.get("type", "rdf")
-    if type_ not in ("rdf", "model", "collection"):
-        type_ = "rdf"
+    type_ = get_spec_type_from_type(data.get("type"))
     return data, source_name, root, type_
 
 
