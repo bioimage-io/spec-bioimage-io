@@ -121,7 +121,7 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
-#### bioimageio.spec 0.4.6
+#### bioimageio.spec 0.5.4.post8
 - any field previously expecting a local relative path is now also accepting an absolute path
 - load_raw_resource_description returns a raw resource description which has no relative paths (any relative paths are converted to absolute paths).
 
