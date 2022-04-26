@@ -43,7 +43,7 @@ class CollectionEntry(RawNode):
 @dataclass
 class Collection(RDF):
     collection: List[CollectionEntry] = missing
-
+    unknown: Dict[str, Any] = missing
     # manual __init__ to allow for unknown kwargs
     def __init__(
         self,
@@ -74,6 +74,8 @@ class Collection(RDF):
         **implicitly_unknown,
     ):
         self.collection = collection
+        self.unknown = unknown or {}
+        self.unknown.update(implicitly_unknown)
         super().__init__(
             attachments=attachments,
             authors=authors,
@@ -94,5 +96,3 @@ class Collection(RDF):
             version=version,
             root_path=root_path,
         )
-        self.unknown = unknown or {}
-        self.unknown.update(implicitly_unknown)
