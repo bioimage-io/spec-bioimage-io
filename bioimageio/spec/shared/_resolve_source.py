@@ -416,7 +416,7 @@ T = typing.TypeVar("T")
 def _resolve_json_from_url(
     url: str,
     expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
-    warning_msg: str = "Failed to fetch {url}: {error}",
+    warning_msg: typing.Optional[str] = "Failed to fetch {url}: {error}",
     encoding: typing.Optional[str] = None,
 ) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
     try:
@@ -437,9 +437,11 @@ def _resolve_json_from_url(
 
 
 BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(
-    BIOIMAGEIO_SITE_CONFIG_URL, encoding="utf-8"
+    BIOIMAGEIO_SITE_CONFIG_URL, encoding="utf-8", warning_msg=None
 )
-BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL, encoding="utf-8")
+BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(
+    BIOIMAGEIO_COLLECTION_URL, encoding="utf-8", warning_msg=None
+)
 if BIOIMAGEIO_COLLECTION is None:
     BIOIMAGEIO_COLLECTION_ENTRIES: typing.Optional[typing.Dict[str, typing.Tuple[str, str]]] = None
 else:
