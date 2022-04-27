@@ -121,6 +121,9 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.5.4.post10
+- fix loading of collection RDF with id (id used to be ignored)
+
 #### bioimageio.spec 0.5.4.post9
 - support loading bioimageio resources by their animal nickname (currently only models have nicknames).
 
