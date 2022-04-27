@@ -15,5 +15,5 @@ def test_load_animal_nickname():
     nickname = "impartial-shrimp"
     model = load_raw_resource_description(nickname)
     assert isinstance(model, Model04)
-    assert model.format_version.split(".")[:2] == (0, 4)
+    assert ".".join(model.format_version.split(".")[:2]) == "0.4"
     assert model.config["bioimageio"]["nickname"] == nickname
