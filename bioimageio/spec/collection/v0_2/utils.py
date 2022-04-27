@@ -1,5 +1,6 @@
 import os
 import pathlib
+import warnings
 from typing import List, Optional, Tuple, Union
 
 from marshmallow import missing
@@ -17,6 +18,9 @@ def resolve_collection_entries(
     collection: raw_nodes.Collection, collection_id: Optional[str] = None, update_to_format: Optional[str] = None
 ) -> List[Tuple[Optional[RawResourceDescription], Optional[str]]]:
     from bioimageio.spec import serialize_raw_resource_description_to_dict, load_raw_resource_description
+
+    if collection.id is missing:
+        warnings.warn("Collection has no id; links may not be resolved.")
 
     ret = []
     seen_ids = set()
@@ -71,7 +75,7 @@ def resolve_collection_entries(
             if "links" in rdf_data:
                 for i in range(len(rdf_data["links"])):
                     link = rdf_data["links"][i]
-                    if "/" not in link:
+                    if "/" not in link and collection.id is not missing:
                         rdf_data["links"][i] = collection.id + "/" + link
 
             rdf_data.pop("rdf_source", None)  # remove absorbed rdf_source
