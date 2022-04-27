@@ -91,12 +91,12 @@ def resolve_rdf_source(
         raise TypeError(source)
 
     if isinstance(source, str):
-        # source might be bioimageio id, doi, url or file path -> resolve to pathlib.Path
+        # source might be bioimageio nickname, id, doi, url or file path -> resolve to pathlib.Path
 
         bioimageio_rdf_source: typing.Optional[str] = (BIOIMAGEIO_COLLECTION_ENTRIES or {}).get(source, (None, None))[1]
 
         if bioimageio_rdf_source is not None:
-            # source is bioimageio id
+            # source is bioimageio id or bioimageio nickname
             source = bioimageio_rdf_source
         elif re.fullmatch(DOI_REGEX, source):  # turn doi into url
             import requests  # not available in pyodide
@@ -416,7 +416,7 @@ T = typing.TypeVar("T")
 def _resolve_json_from_url(
     url: str,
     expected_type: typing.Union[typing.Type[dict], typing.Type[T]] = dict,
-    warning_msg: str = "Failed to fetch {url}: {error}",
+    warning_msg: typing.Optional[str] = "Failed to fetch {url}: {error}",
     encoding: typing.Optional[str] = None,
 ) -> typing.Tuple[typing.Optional[T], typing.Optional[str]]:
     try:
@@ -437,28 +437,28 @@ def _resolve_json_from_url(
 
 
 BIOIMAGEIO_SITE_CONFIG, BIOIMAGEIO_SITE_CONFIG_ERROR = _resolve_json_from_url(
-    BIOIMAGEIO_SITE_CONFIG_URL, encoding="utf-8"
+    BIOIMAGEIO_SITE_CONFIG_URL, encoding="utf-8", warning_msg=None
 )
-BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(BIOIMAGEIO_COLLECTION_URL, encoding="utf-8")
+BIOIMAGEIO_COLLECTION, BIOIMAGEIO_COLLECTION_ERROR = _resolve_json_from_url(
+    BIOIMAGEIO_COLLECTION_URL, encoding="utf-8", warning_msg=None
+)
 if BIOIMAGEIO_COLLECTION is None:
     BIOIMAGEIO_COLLECTION_ENTRIES: typing.Optional[typing.Dict[str, typing.Tuple[str, str]]] = None
 else:
-    BIOIMAGEIO_COLLECTION_ENTRIES = {
-        cr["id"]: (cr["type"], cr["rdf_source"])
-        for cr in BIOIMAGEIO_COLLECTION.get("collection", [])
-        if "id" in cr and "rdf_source" in cr and "type" in cr
-    }
-    # add resource versions explicitly
-    BIOIMAGEIO_COLLECTION_ENTRIES.update(
-        {
-            f"{cr['id']}/{cv}": (
+    BIOIMAGEIO_COLLECTION_ENTRIES = {}
+    for cr in BIOIMAGEIO_COLLECTION.get("collection", []):
+        if "id" in cr and "rdf_source" in cr and "type" in cr:
+            entry = (cr["type"], cr["rdf_source"])
+            BIOIMAGEIO_COLLECTION_ENTRIES[cr["id"]] = entry
+
+            if "nickname" in cr:
+                BIOIMAGEIO_COLLECTION_ENTRIES[cr["nickname"]] = entry
+
+        # add resource versions explicitly
+        for cv in cr.get("versions", []):
+            BIOIMAGEIO_COLLECTION_ENTRIES[f"{cr['id']}/{cv}"] = (
                 cr["type"],
                 cr["rdf_source"].replace(
                     f"/{cr['versions'][0]}", f"/{cv}"
                 ),  # todo: improve this replace-version-monkeypatch
             )
-            for cr in BIOIMAGEIO_COLLECTION.get("collection", [])
-            for cv in cr.get("versions", [])
-            if "id" in cr and "rdf_source" in cr and "type" in cr
-        }
-    )
