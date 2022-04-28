@@ -32,7 +32,7 @@ The specifications are also available as json schemas:
 Besides the general RDF spec, the [`Model Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
 
 Here is a list of model RDF Examples:
- - [UNet 2D Nuclei Broad](https://github.com/bioimage-io/pytorch-bioimage-io/blob/master/specs/models/unet2d_nuclei_broad/UNet2DNucleiBroad.model.yaml).
+ - [Model RDF Examples](https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models).
 
 
 ## [Collection Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)
