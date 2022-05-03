@@ -59,7 +59,10 @@ def test_dataset_rdf_round_trip(dataset_rdf):
     assert data == serialized
 
 
-@pytest.mark.skipif(platform.system() == "Windows")
+# todo: fix test on windows
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="OSError: [WinError 1314] A required privilege is not held by the client"
+)
 def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
@@ -80,7 +83,10 @@ def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
     assert serialized["documentation"] == "docs.md"
 
 
-@pytest.mark.skipif(platform.system() == "Windows")
+# todo: fix test on windows
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="OSError: [WinError 1314] A required privilege is not held by the client"
+)
 def test_serialize_with_link_in_root(dataset_rdf, tmp_path: Path):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
