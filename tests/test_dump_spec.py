@@ -1,3 +1,8 @@
+import platform
+from pathlib import Path
+
+import pytest
+
 from bioimageio.spec.shared import yaml
 
 
@@ -45,23 +50,58 @@ def test_spec_round_trip_w_attachments(unet2d_nuclei_broad_latest):
     assert raw_model_from_serialized == raw_model
 
 
-def test_dataset_rdf_round_trip():
+def test_dataset_rdf_round_trip(dataset_rdf):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
-    data = dict(
-        id="platynereis_em_training_data",
-        authors=[{"name": "Constantin Pape"}],
-        cite=[{"doi": "https://doi.org/10.1016/j.cell.2021.07.017", "text": "Vergara, Pape, Meechan et al."}],
-        covers=["https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy-cover0.png"],
-        description="Training data for EM segmentation of cellular membranes, nuclei, cuticle and cilia in Platynereis.",
-        documentation="https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/platy.md",
-        format_version="0.2.2",
-        license="CC-BY-4.0",
-        name="Platynereis EM Traning Data",
-        source="https://doi.org/10.5281/zenodo.3675220",
-        tags=["electron-microscopy", "platynereis", "cells", "cilia", "nuclei", "instance-segmentation", "3D"],
-        type="dataset",
-    )
+    data = yaml.load(dataset_rdf)
     raw = load_raw_resource_description(data)
     serialized = serialize_raw_resource_description_to_dict(raw)
     assert data == serialized
+
+
+# todo: fix test on windows
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="OSError: [WinError 1314] A required privilege is not held by the client"
+)
+def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
+    from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
+
+    data = load_raw_resource_description(dataset_rdf)
+
+    true_root = tmp_path / "root"
+    true_root.mkdir()
+    linked_root = tmp_path / "link"
+    linked_root.symlink_to(true_root, target_is_directory=True)
+
+    doc_path = linked_root / "docs.md"
+    doc_path.write_text("# Documentation")
+
+    data.root_path = true_root
+    data.documentation = doc_path  # doc path only in root through link
+
+    serialized = serialize_raw_resource_description_to_dict(data, convert_absolute_paths=True)
+    assert serialized["documentation"] == "docs.md"
+
+
+# todo: fix test on windows
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="OSError: [WinError 1314] A required privilege is not held by the client"
+)
+def test_serialize_with_link_in_root(dataset_rdf, tmp_path: Path):
+    from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
+
+    data = load_raw_resource_description(dataset_rdf)
+
+    true_root = tmp_path / "root"
+    true_root.mkdir()
+    linked_root = tmp_path / "link"
+    linked_root.symlink_to(true_root, target_is_directory=True)
+
+    doc_path = true_root / "docs.md"
+    doc_path.write_text("# Documentation")
+
+    data.root_path = linked_root  # root path is symlink to true root
+    data.documentation = doc_path
+
+    serialized = serialize_raw_resource_description_to_dict(data, convert_absolute_paths=True)
+    assert serialized["documentation"] == "docs.md"
