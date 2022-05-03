@@ -1,4 +1,7 @@
+import platform
 from pathlib import Path
+
+import pytest
 
 from bioimageio.spec.shared import yaml
 
@@ -56,6 +59,7 @@ def test_dataset_rdf_round_trip(dataset_rdf):
     assert data == serialized
 
 
+@pytest.mark.skipif(platform.system() == "Windows")
 def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
@@ -64,7 +68,7 @@ def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
     true_root = tmp_path / "root"
     true_root.mkdir()
     linked_root = tmp_path / "link"
-    linked_root.symlink_to(true_root)
+    linked_root.symlink_to(true_root, target_is_directory=True)
 
     doc_path = linked_root / "docs.md"
     doc_path.write_text("# Documentation")
