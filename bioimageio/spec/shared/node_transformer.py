@@ -278,7 +278,8 @@ class AbsoluteToRelativePathTransformer(NodeTransformer):
 
     def _transform_Path(self, leaf: pathlib.Path):
         if leaf.is_absolute():
-            return leaf.relative_to(self.root_path)
+            # to make leaf relative to root, leaf needs to be resolved, because root is resolved
+            return leaf.resolve().relative_to(self.root_path)
         else:
             return leaf
 
