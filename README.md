@@ -121,6 +121,9 @@ bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 
 
 ## Changelog
+#### bioimageio.spec 0.5.4.post11
+- resolve symlinks when transforming absolute to relative paths during serialization; see [#438](https://github.com/bioimage-io/spec-bioimage-io/pull/438)
+
 #### bioimageio.spec 0.5.4.post10
 - fix loading of collection RDF with id (id used to be ignored)
 
