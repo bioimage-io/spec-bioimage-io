@@ -140,6 +140,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec 0.5.4.post12
+ - new env var `BIOIMAGEIO_CACHE_WARNINGS_LIMIT` (default: 3) to avoid spam from cache hit warnings
+ - more robust conversion of ImportableSourceFile for absolute paths to relative paths (don't fail on non-path source file)
+ 
 #### bioimageio.spec 0.5.4.post11
 - resolve symlinks when transforming absolute to relative paths during serialization; see [#438](https://github.com/bioimage-io/spec-bioimage-io/pull/438)
 
