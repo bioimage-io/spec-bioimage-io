@@ -16,13 +16,14 @@ from marshmallow import ValidationError
 from . import fields, raw_nodes
 from .common import (
     BIOIMAGEIO_CACHE_PATH,
+    BIOIMAGEIO_CACHE_WARNINGS_LIMIT,
     BIOIMAGEIO_COLLECTION_URL,
-    BIOIMAGEIO_USE_CACHE,
     BIOIMAGEIO_SITE_CONFIG_URL,
+    BIOIMAGEIO_USE_CACHE,
     DOI_REGEX,
+    RDF_NAMES,
     get_spec_type_from_type,
     no_cache_tmp_list,
-    RDF_NAMES,
     tqdm,
     yaml,
 )
@@ -364,7 +365,12 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
     return available
 
 
+cache_warnings_count = 0
+
+
 def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None) -> pathlib.Path:
+    global cache_warnings_count
+
     if output is not None:
         local_path = pathlib.Path(output)
     elif BIOIMAGEIO_USE_CACHE:
@@ -376,7 +382,12 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
         local_path = pathlib.Path(tmp_dir.name) / "file"
 
     if local_path.exists():
-        warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
+        cache_warnings_count += 1
+        if cache_warnings_count <= BIOIMAGEIO_CACHE_WARNINGS_LIMIT:
+            warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
+            if cache_warnings_count == BIOIMAGEIO_CACHE_WARNINGS_LIMIT:
+                warnings.warn(f"Reached cache warnings limit. No more warnings about cache hits will be issued.")
+
     else:
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
