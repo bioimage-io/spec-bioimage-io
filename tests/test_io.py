@@ -1,3 +1,8 @@
+import pathlib
+
+from bioimageio.spec.shared import yaml
+
+
 def test_get_resource_package_content(unet2d_nuclei_broad_latest, unet2d_nuclei_broad_url):
     from bioimageio.spec import get_resource_package_content
 
@@ -17,3 +22,16 @@ def test_load_animal_nickname():
     assert isinstance(model, Model04)
     assert ".".join(model.format_version.split(".")[:2]) == "0.4"
     assert model.config["bioimageio"]["nickname"] == nickname
+
+
+def test_resolve_download_url(unet2d_nuclei_broad_latest):
+    from bioimageio.spec import load_raw_resource_description
+    from bioimageio.spec.model.v0_4.raw_nodes import Model as Model04
+
+    data = yaml.load(unet2d_nuclei_broad_latest)
+    data["root_path"] = unet2d_nuclei_broad_latest.parent  # set root path manually as we load from the manipulated dict
+    data["download_url"] = "relative_path_to.zip"
+
+    model = load_raw_resource_description(data)
+    assert isinstance(model, Model04)
+    assert isinstance(model.download_url, pathlib.Path)
