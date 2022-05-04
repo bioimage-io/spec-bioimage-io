@@ -97,7 +97,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
           pixel_size: [9.658E-4µmx9.658E-4µm] # Size of the pixels of the input
     ```
 * <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | Path→String\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
-* <a id="download_url"></a>`download_url` _(optional URL→URI)_ optional url to download the resource from
+* <a id="download_url"></a>`download_url` _(optional Union\[URL→URI | Path→String\])_ optional url to download the resource from
 * <a id="git_repo"></a>`git_repo` _(optional URL→URI)_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _(optional String)_ an icon for the resource
 * <a id="id"></a>`id` _(optional String)_ Unique id within a collection of resources.

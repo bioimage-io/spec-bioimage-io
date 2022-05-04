@@ -200,8 +200,16 @@
                     ]
                 },
                 "download_url": {
-                    "title": "download_url",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "title": "",
+                            "type": "string"
+                        },
+                        {
+                            "title": "",
+                            "type": "string"
+                        }
+                    ]
                 },
                 "format_version": {
                     "title": "format_version",

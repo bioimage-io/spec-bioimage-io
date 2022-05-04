@@ -140,7 +140,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         ```
 * <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | Path→String\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * <a id="dependencies"></a>`dependencies` _(optional Dependencies→String)_ Dependency manager and dependency file, specified as `<dependency manager>:<relative path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'
-* <a id="download_url"></a>`download_url` _(optional URL→URI)_ optional url to download the resource from
+* <a id="download_url"></a>`download_url` _(optional Union\[URL→URI | Path→String\])_ optional url to download the resource from
 * <a id="framework"></a>`framework` _(optional String)_ The deep learning framework of the source code. One of: pytorch, tensorflow. This field is only required if the field `source` is present.
 * <a id="git_repo"></a>`git_repo` _(optional String)_ A url to the git repository, e.g. to Github or Gitlab.If the model is contained in a subfolder of a git repository, then a url to the exact folder(which contains the configuration yaml file) should be used.
 * <a id="icon"></a>`icon` _(optional String)_ an icon for the resource
