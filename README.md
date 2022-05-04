@@ -69,21 +69,11 @@ In order to make it available in https://bioimage.io, you can submit the RDF pac
  * Use the [bioimage.io spec validator](#bioimageio-spec-validator) to verify your YAML file
  * Store the yaml file in a version controlled Git repository (e.g. Github or Gitlab)
  * Use or upgrade to the latest format version
+ 
 
-
-# BioImage.IO CLI
-The BioImage.IO command line tool provides makes it easy to work with BioImage.IO RDFs. 
-It can be installed with either `pip` or `conda`:
-
-```
-# pip
-pip install -U bioimageio.spec
-
-# conda
-conda install -c conda-forge bioimageio.spec
-```
-
-Alternatively you can install the extended [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python#installation) CLI. 
+# bioimageio command-line interface (CLI) 
+The BioImage.IO command line tool makes it easy to work with BioImage.IO RDFs. 
+A basic version of it, documented here, is provided by the [bioimageio.spec package](bioimageio-python-package), which is extended by the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package.
 
 
 ## validate
@@ -119,6 +109,35 @@ to the latest applicable format version, but saves the result in a file for furt
 bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 ```
 
+# bioimageio.spec Python package
+The bioimageio.spec package allows to work with BioImage.IO RDFs within Python.
+The commands on which the bioimageio CLI is based can be used as functions.
+Additionally, IO functions are provided to work with BioImage.IO RDFs as 'raw nodes' Python objects, e.g. the raw representation of a model RDF 0.4 at [bioimageio.spec.model.v0_4.raw_nodes](bioimageio/spec/model/v0_4/raw_nodes.py#L122-L140).
+The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package extends this 'raw' representation for more convenience.
+
+[//]: # (TODO: documentation for bioimageio.spec)
+
+
+## installation
+bioimageio.spec can be installed with either `pip` or `conda`:
+
+```
+# pip
+pip install -U bioimageio.spec
+
+# conda
+conda install -c conda-forge bioimageio.spec
+```
+
+As a dependency it is included in [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python#installation) library, which extends bioimageio.spec with more powerful commands like 'predict'. 
+
+## Environment variables
+
+| Name | Default | Description |
+|---|---|---|
+| BIOIMAGEIO_USE_CACHE | "true" | Enables simple URL to file cache. possible, case-insensitive, positive values are: "true", "yes", "1". Any other value is interpreted as "false" |
+| BIOIMAGEIO_CACHE_PATH | generated tmp folder  | File path for simple URL to file cache; changes of URL source are not detected. |
+| BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
 #### bioimageio.spec 0.5.4.post11
