@@ -272,9 +272,11 @@ class AbsoluteToRelativePathTransformer(NodeTransformer):
     def transform_ImportableSourceFile(
         self, node: raw_nodes.ImportableSourceFile, **kwargs
     ) -> raw_nodes.ImportableSourceFile:
-        assert isinstance(node.source_file, pathlib.Path)
-        sf = node.source_file.relative_to(self.root_path) if node.source_file.is_absolute() else node.source_file
-        return raw_nodes.ImportableSourceFile(source_file=sf, callable_name=node.callable_name)
+        if isinstance(node.source_file, pathlib.Path) and node.source_file.is_absolute():
+            sf = node.source_file.relative_to(self.root_path)
+            return raw_nodes.ImportableSourceFile(source_file=sf, callable_name=node.callable_name)
+        else:
+            return node
 
     def _transform_Path(self, leaf: pathlib.Path):
         if leaf.is_absolute():
