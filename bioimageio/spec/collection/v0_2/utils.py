@@ -1,7 +1,7 @@
 import os
 import pathlib
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
@@ -15,8 +15,24 @@ def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
 
 
 def resolve_collection_entries(
-    collection: raw_nodes.Collection, collection_id: Optional[str] = None, update_to_format: Optional[str] = None
+    collection: raw_nodes.Collection,
+    collection_id: Optional[str] = None,
+    update_to_format: Optional[str] = None,
+    enrich_partial_rdf: Callable[[dict], dict] = lambda p_rdf: p_rdf,
 ) -> List[Tuple[Optional[RawResourceDescription], Optional[str]]]:
+    """
+
+    Args:
+        collection: collection node to resolve entries of
+        collection_id: (optional)ly overwrite collection.id
+        update_to_format: (optional) format version the resolved entries should be updated to
+        enrich_partial_rdf: (optional) callable to enrich the partial base rdf (inherited from collection) and the
+            partial entry rdf (only the fields specified in an entry of the collection.collection list of entries)
+
+    Returns:
+        A list of resolved entries consisting each of a resolved 'raw node' and error=None or 'raw node'=None
+        and an error message.
+    """
     from bioimageio.spec import serialize_raw_resource_description_to_dict, load_raw_resource_description
 
     if collection.id is missing:
@@ -24,16 +40,21 @@ def resolve_collection_entries(
 
     ret = []
     seen_ids = set()
+
+    # rdf entries are based on collection RDF...
+    rdf_data_base = serialize_raw_resource_description_to_dict(collection)
+    assert missing not in rdf_data_base.values()
+    rdf_data_base.pop("collection")  # ... without the collection field to avoid recursion
+
+    rdf_data_base = enrich_partial_rdf(rdf_data_base)  # enrich the rdf base
+
+    root_id = rdf_data_base.pop("id", None) if collection_id is None else collection_id
     for idx, entry in enumerate(collection.collection):  # type: ignore
+        rdf_data = dict(rdf_data_base)
+
         entry_error: Optional[str] = None
         id_info = f"(id={entry.rdf_update['id']}) " if "id" in entry.rdf_update else ""
 
-        # rdf entries are based on collection RDF...
-        rdf_data = serialize_raw_resource_description_to_dict(collection)
-        assert missing not in rdf_data.values()
-        rdf_data.pop("collection")  # ... without the collection field to avoid recursion
-
-        root_id = rdf_data.pop("id", None) if collection_id is None else collection_id
         # update rdf entry with entry's rdf_source
         sub_id: Union[str, _Missing] = missing
         if entry.rdf_source is not missing:
@@ -50,6 +71,7 @@ def resolve_collection_entries(
                 source_entry_data = serialize_raw_resource_description_to_dict(source_entry_rd)
                 sub_id = source_entry_data.pop("id", missing)
                 assert missing not in source_entry_data.values()
+                source_entry_data = enrich_partial_rdf(source_entry_data)  # enrich entry data
                 rdf_data.update(source_entry_data)
 
         # update rdf entry with fields specified directly in the entry

@@ -4,12 +4,12 @@ from pprint import pprint
 
 import typer
 
-from bioimageio.spec import __version__, commands, model, rdf
+from bioimageio.spec import __version__, collection, commands, model, rdf
 
 help_version = (
     f"bioimageio.spec {__version__}"
     "\nimplementing:"
-    f"\n\tcollection RDF {rdf.format_version}"
+    f"\n\tcollection RDF {collection.format_version}"
     f"\n\tgeneral RDF {rdf.format_version}"
     f"\n\tmodel RDF {model.format_version}"
 )

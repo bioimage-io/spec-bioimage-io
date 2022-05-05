@@ -2,7 +2,7 @@ import os
 import traceback
 import warnings
 from pathlib import Path
-from typing import Any, Dict, IO, List, Optional, Union
+from typing import Any, Callable, Dict, IO, List, Optional, Union
 
 from marshmallow import ValidationError
 
@@ -50,6 +50,7 @@ def validate(
     update_format: bool = False,
     update_format_inner: bool = None,
     verbose: bool = "deprecated",  # type: ignore
+    enrich_partial_rdf: Callable[[dict], dict] = lambda p_rdf: p_rdf,
 ) -> ValidationSummary:
     """Validate a BioImage.IO Resource Description File (RDF).
 
@@ -58,6 +59,8 @@ def validate(
         update_format: weather or not to apply auto-conversion to the latest format version before validation
         update_format_inner: (applicable to `collections` resources only) `update_format` for nested resources
         verbose: deprecated
+        enrich_partial_rdf: (optional) callable to customize RDF data on the fly.
+                            Don't use this if you don't know exactly what to do with it.
 
     Returns:
         A summary dict with keys:
@@ -116,7 +119,7 @@ def validate(
 
             if raw_rd is not None and raw_rd.type == "collection":
                 assert hasattr(raw_rd, "collection")
-                for idx, (entry_rdf, entry_error) in enumerate(resolve_collection_entries(raw_rd)):  # type: ignore
+                for idx, (entry_rdf, entry_error) in enumerate(resolve_collection_entries(raw_rd, enrich_partial_rdf=enrich_partial_rdf)):  # type: ignore
                     if entry_error:
                         entry_summary: Union[Dict[str, str], ValidationSummary] = {"error": entry_error}
                     else:
