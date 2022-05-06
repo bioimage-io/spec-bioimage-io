@@ -213,10 +213,10 @@ def test_model_with_expanded_output(model_dict):
             "description": "Output 1",
             "data_type": "float32",
             "axes": "xyzc",
-            "reference_tensor": "input_1",
             "shape": dict(
                 scale=[1, 1, None, 1],
                 offset=[0, 0, 7, 0],
+                reference_tensor="input_1",
             ),
         }
     ]
