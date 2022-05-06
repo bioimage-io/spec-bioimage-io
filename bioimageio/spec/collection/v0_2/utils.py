@@ -14,11 +14,15 @@ def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
     return raw_rd
 
 
+def default_enrich_partial_rdf(partial_rdf: dict, root: Union[raw_nodes.URI, pathlib.Path]) -> dict:
+    return partial_rdf
+
+
 def resolve_collection_entries(
     collection: raw_nodes.Collection,
     collection_id: Optional[str] = None,
     update_to_format: Optional[str] = None,
-    enrich_partial_rdf: Callable[[dict, Union[raw_nodes.URI, pathlib.Path]], dict] = lambda p_rdf, root: p_rdf,
+    enrich_partial_rdf: Callable[[dict, Union[raw_nodes.URI, pathlib.Path]], dict] = default_enrich_partial_rdf,
 ) -> List[Tuple[Optional[RawResourceDescription], Optional[str]]]:
     """
 
