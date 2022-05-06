@@ -140,6 +140,9 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec 0.5.4.post15
+- pass root to `enrich_partial_rdf` arg of `resolve_collection_entries()`
+
 #### bioimageio.spec 0.5.4.post14
 - keep `ResourceDescrption.root_path` as URI for remote resources. This fixes the collection RDF as the collection entries are resolved after the collection RDF has been loaded.
 

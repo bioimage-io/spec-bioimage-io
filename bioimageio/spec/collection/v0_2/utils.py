@@ -18,7 +18,7 @@ def resolve_collection_entries(
     collection: raw_nodes.Collection,
     collection_id: Optional[str] = None,
     update_to_format: Optional[str] = None,
-    enrich_partial_rdf: Callable[[dict], dict] = lambda p_rdf: p_rdf,
+    enrich_partial_rdf: Callable[[dict, Union[raw_nodes.URI, pathlib.Path]], dict] = lambda p_rdf, root: p_rdf,
 ) -> List[Tuple[Optional[RawResourceDescription], Optional[str]]]:
     """
 
@@ -46,7 +46,7 @@ def resolve_collection_entries(
     assert missing not in rdf_data_base.values()
     rdf_data_base.pop("collection")  # ... without the collection field to avoid recursion
 
-    rdf_data_base = enrich_partial_rdf(rdf_data_base)  # enrich the rdf base
+    rdf_data_base = enrich_partial_rdf(rdf_data_base, collection.root_path)  # enrich the rdf base
 
     root_id = rdf_data_base.pop("id", None) if collection_id is None else collection_id
     for idx, entry in enumerate(collection.collection):  # type: ignore
@@ -71,12 +71,12 @@ def resolve_collection_entries(
                 source_entry_data = serialize_raw_resource_description_to_dict(source_entry_rd)
                 sub_id = source_entry_data.pop("id", missing)
                 assert missing not in source_entry_data.values()
-                source_entry_data = enrich_partial_rdf(source_entry_data)  # enrich entry data
+                source_entry_data = enrich_partial_rdf(source_entry_data, collection.root_path)  # enrich entry data
                 rdf_data.update(source_entry_data)
 
         # update rdf entry with fields specified directly in the entry
         rdf_update = schema.CollectionEntry().dump(entry)
-        rdf_update = enrich_partial_rdf(rdf_update)  # enrich rdf update from entry
+        rdf_update = enrich_partial_rdf(rdf_update, collection.root_path)  # enrich rdf update from entry
         assert missing not in rdf_update.values()
         sub_id = rdf_update.pop("id", sub_id)
         if sub_id is missing:

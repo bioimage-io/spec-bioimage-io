@@ -1,10 +1,13 @@
-from typing import Any, Dict
+import warnings
+from pathlib import Path
+from typing import Any, Dict, Union
 
 from bioimageio.spec.shared import resolve_rdf_source
 from .imjoy_plugin_parser import get_plugin_as_rdf  # type: ignore
+from ..shared.raw_nodes import URI
 
 
-def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any]) -> Dict[str, Any]:
+def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any], root: Union[URI, Path]) -> Dict[str, Any]:
     """
     a (partial) rdf may have 'rdf_resource' or 'source' which resolve to rdf data that may be overwritten.
     Due to resolving imjoy plugins this is not done in bioimageio.spec.collection atm
@@ -20,8 +23,14 @@ def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any]) -> Dict[st
         else:
             # rdf_source is an actual rdf
             if not isinstance(rdf_source, dict):
-                rdf_source, rdf_source_name, rdf_source_root = resolve_rdf_source(rdf_source)
-                rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
+                try:
+                    rdf_source = root / rdf_source
+                    rdf_source, rdf_source_name, rdf_source_root = resolve_rdf_source(rdf_source)
+                except Exception as e:
+                    warnings.warn(f"Failed to resolve `rdf_source`: {e}")
+                    rdf_source = {}
+                else:
+                    rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
 
         assert isinstance(rdf_source, dict)
         enriched_rdf.update(rdf_source)
