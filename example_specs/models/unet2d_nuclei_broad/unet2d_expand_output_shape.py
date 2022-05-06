@@ -70,4 +70,7 @@ class UNet2d(nn.Module):
             # postprocessing
             x = torch.sigmoid(x)
 
-        return x.expand((1,) + tuple(x.shape))
+        # expand the shape across z
+        out_shape = tuple(x.shape)
+        expanded_shape = out_shape[:2] + (1,) + out_shape[2:]
+        return x.expand(expanded_shape)

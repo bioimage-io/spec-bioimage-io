@@ -47,14 +47,14 @@ inputs:
 outputs:
   - name: probability
     description: probability in [0,1]
-    axes: bcyx
+    axes: bczyx
     data_type: float32
     data_range: [-.inf, .inf]
-    halo: [0, 0, 32, 32]
+    halo: [0, 0, 0, 32, 32]
     shape:
       reference_tensor: raw
-      scale: [null, 1.0, 1.0, 1.0, 1.0]
-      offset: [0.5, 0.0, 0.0, 0.0, 0.0]
+      scale: [1.0, 1.0, null, 1.0, 1.0]
+      offset: [0.0, 0.0, 0.5, 0.0, 0.0]
 
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
