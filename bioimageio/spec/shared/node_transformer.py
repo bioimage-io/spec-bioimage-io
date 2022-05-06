@@ -7,7 +7,8 @@ from marshmallow import missing
 from marshmallow.utils import _Missing
 
 from . import raw_nodes
-from ._resolve_source import resolve_local_source, resolve_source as _resolve_source
+from ._resolve_source import resolve_source as _resolve_source
+from .raw_nodes import URI
 
 try:
     from typing import Literal
@@ -17,7 +18,6 @@ except ImportError:
 GenericResolvedNode = typing.TypeVar("GenericResolvedNode", bound=raw_nodes.RawNode)
 GenericRawNode = typing.TypeVar("GenericRawNode", bound=raw_nodes.RawNode)
 GenericRawRD = typing.TypeVar("GenericRawRD", bound=raw_nodes.ResourceDescription)
-URI_Type = typing.TypeVar("URI_Type", bound=raw_nodes.URI)
 
 
 def iter_fields(node: GenericRawNode):
@@ -162,54 +162,17 @@ class NodeTransformerKnownParent(NodeTransformer):
             return super().generic_transformer(node, name=name, parent=parent)
 
 
-class PathToRemoteUriTransformer(NodeTransformer):
-    def __init__(self, *, remote_source: URI_Type):
-        remote_path = pathlib.PurePosixPath(remote_source.path).parent.as_posix()
-        self.remote_root = dataclasses.replace(remote_source, path=remote_path, uri_string=None)
-
-    def transform_URI(self, node: URI_Type) -> URI_Type:
-        if node.scheme == "file":
-            assert not node.authority
-            assert not node.query
-            assert not node.fragment
-            return self._transform_Path(pathlib.Path(node.path))
-
-        return node
-
-    def _transform_Path(self, leaf: pathlib.PurePath):
-        assert not leaf.is_absolute()
-        path = pathlib.PurePosixPath(self.remote_root.path) / leaf
-        return dataclasses.replace(self.remote_root, path=path.as_posix(), uri_string=None)
-
-    def transform_PurePath(self, leaf: pathlib.PurePath) -> raw_nodes.URI:
-        return self._transform_Path(leaf)
-
-    def transform_PurePosixPath(self, leaf: pathlib.PurePosixPath) -> raw_nodes.URI:
-        return self._transform_Path(leaf)
-
-    def transform_PureWindowsPath(self, leaf: pathlib.PureWindowsPath) -> raw_nodes.URI:
-        return self._transform_Path(leaf)
-
-    def transform_PosixPath(self, leaf: pathlib.PosixPath) -> raw_nodes.URI:
-        return self._transform_Path(leaf)
-
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath) -> raw_nodes.URI:
-        return self._transform_Path(leaf)
-
-
 class RawNodePackageTransformer(NodeTransformer):
     """Transforms raw node fields specified by <node>._include_in_package to local relative paths.
     Adds remote resources to given dictionary."""
 
-    def __init__(
-        self, remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, raw_nodes.URI]], root: pathlib.Path
-    ):
+    def __init__(self, remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, URI]], root: pathlib.Path):
         super().__init__()
         self.remote_resources = remote_resources
         self.root = root
 
     def _transform_resource(
-        self, resource: typing.Union[list, pathlib.PurePath, raw_nodes.URI]
+        self, resource: typing.Union[list, pathlib.PurePath, URI]
     ) -> typing.Union[typing.List[pathlib.Path], _Missing, pathlib.Path]:
         if isinstance(resource, list):
             return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
@@ -227,7 +190,7 @@ class RawNodePackageTransformer(NodeTransformer):
 
                 resource = self.root / resource
 
-        elif isinstance(resource, raw_nodes.URI):
+        elif isinstance(resource, URI):
             name_from = pathlib.PurePath(resource.path or "unknown")
             folder_in_package = ""
         else:
@@ -266,22 +229,29 @@ class RawNodePackageTransformer(NodeTransformer):
 
 
 class AbsoluteToRelativePathTransformer(NodeTransformer):
-    def __init__(self, *, root_path: os.PathLike):
-        self.root_path = pathlib.Path(root_path).resolve()
+    def __init__(self, *, root: typing.Union[os.PathLike, URI]):
+        if isinstance(root, URI):
+            self.root: typing.Union[pathlib.Path, URI] = root
+        else:
+            self.root = pathlib.Path(root).resolve()
 
     def transform_ImportableSourceFile(
         self, node: raw_nodes.ImportableSourceFile, **kwargs
     ) -> raw_nodes.ImportableSourceFile:
         if isinstance(node.source_file, pathlib.Path) and node.source_file.is_absolute():
-            sf = node.source_file.relative_to(self.root_path)
+            if not isinstance(self.root, pathlib.Path):
+                raise TypeError(f"Cannot convert absolute path '{node.source_file}' with URI root '{self.root}'")
+            sf = node.source_file.relative_to(self.root)
             return raw_nodes.ImportableSourceFile(source_file=sf, callable_name=node.callable_name)
         else:
             return node
 
     def _transform_Path(self, leaf: pathlib.Path):
         if leaf.is_absolute():
+            if not isinstance(self.root, pathlib.Path):
+                raise TypeError(f"Cannot convert absolute path '{leaf}' with URI root '{self.root}'")
             # to make leaf relative to root, leaf needs to be resolved, because root is resolved
-            return leaf.resolve().relative_to(self.root_path)
+            return leaf.resolve().relative_to(self.root)
         else:
             return leaf
 
@@ -292,47 +262,84 @@ class AbsoluteToRelativePathTransformer(NodeTransformer):
         return self._transform_Path(leaf)
 
 
-class RelativeToAbsolutePathTransformer(NodeTransformer):
-    def __init__(self, *, root_path: os.PathLike):
-        self.root_path = pathlib.Path(root_path).resolve()
+class RelativePathTransformer(NodeTransformer):
+    def __init__(self, *, root: typing.Union[os.PathLike, URI]):
+        if isinstance(root, URI):
+            self.root: typing.Union[pathlib.Path, URI] = root
+        else:
+            self.root = pathlib.Path(root).resolve()
+
+    def transform_URI(self, node: URI, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        if node.scheme == "file":
+            assert not node.authority
+            assert not node.query
+            assert not node.fragment
+            return self._transform_Path(pathlib.Path(node.path))
+
+        return node
+
+    def _transform_Path(self, leaf: pathlib.PurePath):
+        return self.root / leaf
+
+    def transform_PurePath(self, leaf: pathlib.PurePath, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        return self._transform_Path(leaf)
+
+    def transform_PurePosixPath(self, leaf: pathlib.PurePosixPath, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        return self._transform_Path(leaf)
+
+    def transform_PureWindowsPath(self, leaf: pathlib.PureWindowsPath, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        return self._transform_Path(leaf)
+
+    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        return self._transform_Path(leaf)
+
+    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> typing.Union[URI, pathlib.Path]:
+        return self._transform_Path(leaf)
 
     def transform_ImportableSourceFile(
         self, node: raw_nodes.ImportableSourceFile, **kwargs
     ) -> raw_nodes.ImportableSourceFile:
-        return raw_nodes.ImportableSourceFile(
-            source_file=resolve_local_source(node.source_file, self.root_path), callable_name=node.callable_name
-        )
+        if isinstance(node.source_file, URI):
+            return node
+        elif isinstance(node.source_file, pathlib.Path):
+            if node.source_file.is_absolute():
+                return node
+            else:
+                return raw_nodes.ImportableSourceFile(
+                    source_file=self.root / node.source_file, callable_name=node.callable_name
+                )
+        else:
+            raise TypeError(
+                f"Unexpected type '{type(node.source_file)}' for raw_nodes.ImportableSourceFile.source_file '{node.source_file}'"
+            )
 
-    def _transform_Path(self, leaf: pathlib.Path):
-        return self.root_path / leaf
 
-    def transform_PosixPath(self, leaf: pathlib.PosixPath, **kwargs) -> pathlib.Path:
-        return self._transform_Path(leaf)
-
-    def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> pathlib.Path:
-        return self._transform_Path(leaf)
-
-
-class UriNodeTransformer(NodeTransformerKnownParent, RelativeToAbsolutePathTransformer):
+class UriNodeTransformer(NodeTransformerKnownParent, RelativePathTransformer):
     def __init__(self, *, root_path: os.PathLike, uri_only_if_in_package: bool = False):
-        super().__init__(root_path=root_path)
+        super().__init__(root=root_path)
         self.uri_only_if_in_package = uri_only_if_in_package
 
     def transform_URI(
-        self, node: raw_nodes.URI, name: typing.Optional[str] = None, parent: typing.Optional[raw_nodes.RawNode] = None
-    ) -> typing.Union[raw_nodes.URI, pathlib.Path]:
+        self,
+        node: URI,
+        *,
+        name: typing.Optional[str] = None,
+        parent: typing.Optional[raw_nodes.RawNode] = None,
+        **kwargs,
+    ) -> typing.Union[URI, pathlib.Path]:
         if self.uri_only_if_in_package and ((name is None or parent is None) or name not in parent._include_in_package):
             return node
         else:
-            local_path = _resolve_source(node, root_path=self.root_path)
+            local_path = _resolve_source(node, root_path=self.root)
             return local_path
 
     def transform_ImportableSourceFile(
         self, node: raw_nodes.ImportableSourceFile, **kwargs
     ) -> raw_nodes.ResolvedImportableSourceFile:
         return raw_nodes.ResolvedImportableSourceFile(
-            source_file=_resolve_source(node.source_file, self.root_path), callable_name=node.callable_name
+            source_file=_resolve_source(node.source_file, self.root), callable_name=node.callable_name
         )
 
     def transform_ImportableModule(self, node: raw_nodes.ImportableModule, **kwargs) -> raw_nodes.LocalImportableModule:
-        return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=self.root_path)
+        r = self.root if isinstance(self.root, pathlib.Path) else pathlib.Path()
+        return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=r)

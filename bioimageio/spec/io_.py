@@ -29,9 +29,8 @@ from bioimageio.spec.shared.node_transformer import (
     AbsoluteToRelativePathTransformer,
     GenericRawNode,
     GenericRawRD,
-    PathToRemoteUriTransformer,
     RawNodePackageTransformer,
-    RelativeToAbsolutePathTransformer,
+    RelativePathTransformer,
 )
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
@@ -126,27 +125,6 @@ def extract_resource_package(
     return source, source_name, package_path
 
 
-def _replace_relative_paths_for_remote_source(raw_rd: RawResourceDescription) -> RawResourceDescription:
-    root = raw_rd.root_path
-    if isinstance(root, raw_nodes.URI):
-        # for a remote source relative paths are invalid; replace all relative file paths in source with URLs
-        raw_rd = PathToRemoteUriTransformer(remote_source=root).transform(raw_rd)
-        root_path = pathlib.Path()  # root_path cannot be URI
-    elif isinstance(root, pathlib.Path):
-        if zipfile.is_zipfile(root):
-            _, _, root_path = extract_resource_package(root)
-        else:
-            root_path = root
-    elif isinstance(root, bytes):
-        root_path = pathlib.Path()
-    else:
-        raise TypeError(root)
-
-    assert isinstance(root_path, pathlib.Path)
-    raw_rd.root_path = root_path.resolve()
-    return raw_rd
-
-
 def load_raw_resource_description(
     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
     update_to_format: Optional[str] = None,
@@ -197,10 +175,17 @@ def load_raw_resource_description(
 
     data = sub_spec.converters.maybe_convert(data)
     raw_rd = schema.load(data)
-    raw_rd.root_path = root
 
-    raw_rd = _replace_relative_paths_for_remote_source(raw_rd)
-    raw_rd = RelativeToAbsolutePathTransformer(root_path=raw_rd.root_path).transform(raw_rd)
+    if isinstance(root, pathlib.Path):
+        root = root.resolve()
+        if zipfile.is_zipfile(root):
+            # set root to extracted zip package
+            _, _, root = extract_resource_package(root)
+    elif isinstance(root, bytes):
+        root = pathlib.Path().resolve()
+
+    raw_rd.root_path = root
+    raw_rd = RelativePathTransformer(root=root).transform(raw_rd)
 
     return raw_rd
 
@@ -217,7 +202,7 @@ def serialize_raw_resource_description_to_dict(
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
     if convert_absolute_paths:
-        raw_rd = AbsoluteToRelativePathTransformer(root_path=raw_rd.root_path).transform(raw_rd)
+        raw_rd = AbsoluteToRelativePathTransformer(root=raw_rd.root_path).transform(raw_rd)
 
     serialized = schema.dump(raw_rd)
     assert isinstance(serialized, dict)

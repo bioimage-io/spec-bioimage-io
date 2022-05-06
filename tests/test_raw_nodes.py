@@ -61,6 +61,31 @@ def test_uri_is_url():
     assert str(uri) == url
 
 
+def test_uri_truediv():
+    from bioimageio.spec.shared.raw_nodes import URI
+
+    url = "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad?download=1"
+    rel_path = "test_input.npy"
+    expected = URI(
+        f"https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/{rel_path}?download=1"
+    )
+    uri = URI(url)
+    assert expected == uri / rel_path
+    assert expected == uri / rel_path  # ensure we did not change uri in-place
+
+
+def test_uri_parent():
+    from bioimageio.spec.shared.raw_nodes import URI
+
+    url = "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/test_input.npy?download=1"
+    expected = URI(
+        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad?download=1"
+    )
+    uri = URI(url)
+    assert expected == uri.parent
+    assert expected == uri.parent  # ensure we did not change uri in-place
+
+
 def test_general_rdf_accepts_unknown_fields():
     from bioimageio.spec.rdf.raw_nodes import RDF
 

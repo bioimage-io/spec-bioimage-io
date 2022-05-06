@@ -5,6 +5,8 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 import dataclasses
+import os
+
 import packaging.version
 import pathlib
 from dataclasses import dataclass
@@ -38,21 +40,6 @@ class RawNode:
 
 
 @dataclass
-class ResourceDescription(RawNode):
-    """Bare minimum for resource description nodes usable with the shared IO_Base class.
-    This is not part of any specification for the BioImage.IO Model Zoo and, e.g.
-    not to be confused with the definition of the general RDF.
-    """
-
-    format_version: str = missing
-    name: str = missing
-    type: str = missing
-    version: Union[_Missing, packaging.version.Version] = missing
-    root_path: pathlib.Path = pathlib.Path()  # note: `root_path` is not officially part of the spec,
-    #                                                  but any RDF has it as it is the folder containing the rdf.yaml
-
-
-@dataclass
 class URI(RawNode):
     """URI as scheme:[//authority]path[?query][#fragment]"""
 
@@ -74,6 +61,29 @@ class URI(RawNode):
             + ("?" + self.query if self.query else "")
             + ("#" + self.fragment if self.fragment else "")
         )
+
+    def __truediv__(self, other):
+        """Analog to pathlib.Path truediv concatenates the path element of a URI with a string or relative path.
+        Absolute paths or URIs are not concatenated, but returned instead of self analog to pathlib.Path() / <abs path>
+        """
+        if isinstance(other, (str, os.PathLike)):
+            other = pathlib.Path(other)
+            if other.is_absolute():
+                return other
+            else:
+                other = pathlib.PurePosixPath(other)
+                return dataclasses.replace(
+                    self, path=(pathlib.PurePosixPath(self.path) / other).as_posix(), uri_string=None
+                )
+        elif isinstance(other, URI):
+            return other
+        else:
+            raise TypeError(f"Unexpected type {type(other)} of {other}.")
+
+    @property
+    def parent(self):
+        path_parent = pathlib.PurePosixPath(self.path).parent.as_posix()
+        return dataclasses.replace(self, path=path_parent, uri_string=None)
 
     def __post_init__(self):
         uri_string = self.uri_string  # should be InitVar, see comment at definition above
@@ -106,6 +116,21 @@ class URI(RawNode):
             raise ValueError(f"Invalid URI scheme of len 1: {self.scheme}")  # fail for windows paths with drive letter
 
         super().__post_init__()
+
+
+@dataclass
+class ResourceDescription(RawNode):
+    """Bare minimum for resource description nodes usable with the shared IO_Base class.
+    This is not part of any specification for the BioImage.IO Model Zoo and, e.g.
+    not to be confused with the definition of the general RDF.
+    """
+
+    format_version: str = missing
+    name: str = missing
+    type: str = missing
+    version: Union[_Missing, packaging.version.Version] = missing
+    root_path: Union[pathlib.Path, URI] = pathlib.Path()  # note: `root_path` is not officially part of the spec,
+    #                                                    but any RDF has it as it is the folder containing the rdf.yaml
 
 
 @dataclass

@@ -59,7 +59,7 @@ class TestNodeVisitor:
 
 
 def test_resolve_remote_relative_path():
-    from bioimageio.spec.shared.node_transformer import PathToRemoteUriTransformer
+    from bioimageio.spec.shared.node_transformer import RelativePathTransformer
 
     remote_rdf = raw_nodes.URI(
         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
@@ -67,7 +67,7 @@ def test_resolve_remote_relative_path():
     )
     remote_relative_path = Path("unet2d.py")
 
-    uri = PathToRemoteUriTransformer(remote_source=remote_rdf).transform(remote_relative_path)
+    uri = RelativePathTransformer(root=remote_rdf.parent).transform(remote_relative_path)
 
     assert (
         str(uri) == "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/"
