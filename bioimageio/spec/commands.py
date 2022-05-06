@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, IO, List, Optional, Union
 
 from marshmallow import ValidationError
 
-from .collection.v0_2.utils import resolve_collection_entries
+from .collection.v0_2.utils import default_enrich_partial_rdf, resolve_collection_entries
 from .io_ import (
     load_raw_resource_description,
     resolve_rdf_source,
@@ -15,7 +15,7 @@ from .io_ import (
 )
 from .shared import update_nested
 from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict, yaml
-from .shared.raw_nodes import ResourceDescription as RawResourceDescription
+from .shared.raw_nodes import ResourceDescription as RawResourceDescription, URI
 from .v import __version__
 
 try:
@@ -50,7 +50,7 @@ def validate(
     update_format: bool = False,
     update_format_inner: bool = None,
     verbose: bool = "deprecated",  # type: ignore
-    enrich_partial_rdf: Callable[[dict], dict] = lambda p_rdf: p_rdf,
+    enrich_partial_rdf: Callable[[dict, Union[URI, Path]], dict] = default_enrich_partial_rdf,
 ) -> ValidationSummary:
     """Validate a BioImage.IO Resource Description File (RDF).
 
