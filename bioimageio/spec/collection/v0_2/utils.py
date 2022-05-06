@@ -79,7 +79,7 @@ def resolve_collection_entries(
                 rdf_data.update(source_entry_data)
 
         # update rdf entry with fields specified directly in the entry
-        rdf_update = schema.CollectionEntry().dump(entry)
+        rdf_update = entry.rdf_update
         rdf_update = enrich_partial_rdf(rdf_update, collection.root_path)  # enrich rdf update from entry
         assert missing not in rdf_update.values()
         sub_id = rdf_update.pop("id", sub_id)
