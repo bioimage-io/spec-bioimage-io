@@ -161,8 +161,9 @@ def resolve_rdf_source(
 
         assert isinstance(source, str)
         if source.startswith("http"):
-            root = raw_nodes.URI(uri_string=source)
-            source = _download_url(root)
+            source_url = raw_nodes.URI(uri_string=source)
+            source = _download_url(source_url)
+            root = source_url.parent
 
         if _is_path(source):
             source = pathlib.Path(source)
@@ -212,13 +213,15 @@ def resolve_rdf_source_and_type(
 
 
 @singledispatch  # todo: fix type annotations
-def resolve_source(source, root_path: os.PathLike = pathlib.Path(), output=None):
+def resolve_source(source, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output=None):
     raise TypeError(type(source))
 
 
 @resolve_source.register
 def _resolve_source_uri_node(
-    source: raw_nodes.URI, root_path: os.PathLike = pathlib.Path(), output: typing.Optional[os.PathLike] = None
+    source: raw_nodes.URI,
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
+    output: typing.Optional[os.PathLike] = None,
 ) -> pathlib.Path:
     path_or_remote_uri = resolve_local_source(source, root_path, output)
     if isinstance(path_or_remote_uri, raw_nodes.URI):
@@ -233,17 +236,23 @@ def _resolve_source_uri_node(
 
 @resolve_source.register
 def _resolve_source_str(
-    source: str, root_path: os.PathLike = pathlib.Path(), output: typing.Optional[os.PathLike] = None
+    source: str, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output: typing.Optional[os.PathLike] = None
 ) -> pathlib.Path:
     return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output)
 
 
 @resolve_source.register
 def _resolve_source_path(
-    source: pathlib.Path, root_path: os.PathLike = pathlib.Path(), output: typing.Optional[os.PathLike] = None
+    source: pathlib.Path,
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
+    output: typing.Optional[os.PathLike] = None,
 ) -> pathlib.Path:
     if not source.is_absolute():
-        source = pathlib.Path(root_path).absolute() / source
+        if isinstance(root_path, os.PathLike):
+            root_path = pathlib.Path(root_path).resolve()
+        source = root_path / source
+        if isinstance(source, URI):
+            return resolve_source(source, output=output)
 
     if output is None:
         return source
@@ -258,7 +267,7 @@ def _resolve_source_path(
 @resolve_source.register
 def _resolve_source_resolved_importable_path(
     source: raw_nodes.ResolvedImportableSourceFile,
-    root_path: os.PathLike = pathlib.Path(),
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
@@ -269,7 +278,7 @@ def _resolve_source_resolved_importable_path(
 @resolve_source.register
 def _resolve_source_importable_path(
     source: raw_nodes.ImportableSourceFile,
-    root_path: os.PathLike = pathlib.Path(),
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
@@ -280,7 +289,7 @@ def _resolve_source_importable_path(
 @resolve_source.register
 def _resolve_source_list(
     source: list,
-    root_path: os.PathLike = pathlib.Path(),
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
 ) -> typing.List[pathlib.Path]:
     assert output is None or len(output) == len(source)
@@ -302,37 +311,32 @@ def resolve_local_sources(
 
 def resolve_local_source(
     source: typing.Union[str, os.PathLike, raw_nodes.URI],
-    root_path: os.PathLike,
+    root_path: typing.Union[os.PathLike, URI],
     output: typing.Optional[os.PathLike] = None,
 ) -> typing.Union[pathlib.Path, raw_nodes.URI]:
     if isinstance(source, os.PathLike) or isinstance(source, str):
-        try:  # source as path from cwd
-            is_path_cwd = pathlib.Path(source).exists()
-        except OSError:
-            is_path_cwd = False
-
-        try:  # source as relative path from root_path
-            path_from_root = pathlib.Path(root_path) / source
-            is_path_rp = (path_from_root).exists()
-        except OSError:
-            is_path_rp = False
-        else:
-            if not is_path_cwd and is_path_rp:
-                source = path_from_root
-
-        if is_path_cwd or is_path_rp:
-            source = pathlib.Path(source)
-            if output is None:
-                return source
+        if isinstance(root_path, os.PathLike):
+            try:  # source as relative path from root_path
+                source_from_root = pathlib.Path(root_path) / source
+                is_path_rp = source_from_root.exists()
+            except OSError:
+                pass
             else:
-                try:
-                    shutil.copyfile(source, output)
-                except shutil.SameFileError:
-                    pass
-                return pathlib.Path(output)
+                if is_path_rp:
+                    source = source_from_root
 
-        elif isinstance(source, os.PathLike):
-            raise FileNotFoundError(f"Could neither find {source} nor {pathlib.Path(root_path) / source}")
+        source = pathlib.Path(source)
+        if not source.exists():
+            raise FileNotFoundError(f"Could not find {source}")
+
+        if output is None:
+            return source
+        else:
+            try:
+                shutil.copyfile(source, output)
+            except shutil.SameFileError:
+                pass
+            return pathlib.Path(output)
 
     if isinstance(source, str):
         uri = fields.URI().deserialize(source)
