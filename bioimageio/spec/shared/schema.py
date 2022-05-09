@@ -36,7 +36,7 @@ class SharedBioImageIOSchema(Schema):
 
     def warn(self, field: str, msg: str):
         """warn about a field with a ValidationWarning"""
-        simple_field_name = field.split("[")[0]  # field may include [idx]
+        # simple_field_name = field.split("[")[0]  # field may include [idx]
         # field_instance = self.fields[simple_field_name]  # todo: account for <field>:<nested field>
         assert ": " not in field
         # todo: add spec trail to field
@@ -113,7 +113,9 @@ class ParametrizedInputShape(SharedBioImageIOSchema):
 class ImplicitOutputShape(SharedBioImageIOSchema):
     reference_tensor = fields.String(required=True, bioimageio_description="Name of the reference tensor.")
     scale = fields.List(
-        fields.Float(), required=True, bioimageio_description="'output_pix/input_pix' for each dimension."
+        fields.Float(allow_none=True),
+        required=True,
+        bioimageio_description="'output_pix/input_pix' for each dimension.",
     )
     offset = fields.List(
         fields.Float(), required=True, bioimageio_description="Position of origin wrt to input. Multiple of 0.5."
@@ -125,6 +127,11 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
         offset = data["offset"]
         if len(scale) != len(offset):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
+        # if we have an expanded dimension, make sure that it's offet is not zero
+        if any(sc is None for sc in scale):
+            for sc, off in zip(scale, offset):
+                if sc is None and off == 0:
+                    raise ValidationError("Offset must not be 0 for scale null")
 
     @validates("offset")
     def double_offset_is_int(self, value: List[float]):

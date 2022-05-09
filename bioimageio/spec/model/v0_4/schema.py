@@ -456,23 +456,41 @@ is in an unsupported format version. The current format version described here i
             if isinstance(t.shape, raw_nodes.ParametrizedInputShape):
                 shape = numpy.array(t.shape.min)
             elif isinstance(t.shape, raw_nodes.ImplicitOutputShape):
-                shape = get_min_shape(tensors_by_name[t.shape.reference_tensor]) * t.shape.scale + 2 * numpy.array(
-                    t.shape.offset
-                )
+                scale = list(t.shape.scale)
+                ref_shape = get_min_shape(tensors_by_name[t.shape.reference_tensor])
+
+                if any(sc is None for sc in scale):
+                    expanded_dims = tuple(idx for idx, sc in enumerate(scale) if sc is None)
+                    new_ref_shape = []
+                    for idx in range(len(scale)):
+                        ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
+                        new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
+                    ref_shape = numpy.array(new_ref_shape)
+                    assert len(ref_shape) == len(scale)
+                    scale = [0.0 if sc is None else sc for sc in scale]
+
+                offset = numpy.array(t.shape.offset)
+                shape = ref_shape * numpy.array(scale) + 2 * offset
             else:
                 shape = numpy.array(t.shape)
 
             return shape
 
         for out in outs:
-            if isinstance(out.shape, raw_nodes.ImplicitOutputShape) and len(out.shape) != len(
-                tensors_by_name[out.shape.reference_tensor].shape
-            ):
-                raise ValidationError(
-                    f"Referenced tensor {out.shape.reference_tensor} "
-                    f"with {len(tensors_by_name[out.shape.reference_tensor].shape)} dimensions does not match "
-                    f"output tensor {out.name} with {len(out.shape)} dimensions."
-                )
+            if isinstance(out.shape, raw_nodes.ImplicitOutputShape):
+                ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
+                ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
+                if ndim_ref != ndim_out_ref:
+                    expanded_dim_note = (
+                        f" Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
+                        if None in out.shape.scale
+                        else ""
+                    )
+                    raise ValidationError(
+                        f"Referenced tensor {out.shape.reference_tensor} "
+                        f"with {ndim_ref} dimensions does not match "
+                        f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
+                    )
 
             min_out_shape = get_min_shape(out)
             if out.halo:
@@ -487,8 +505,8 @@ is in an unsupported format version. The current format version described here i
 
     packaged_by = fields.List(
         fields.Nested(rdf.schema.Author()),
-        bioimageio_description=f"The persons that have packaged and uploaded this model. Only needs to be specified if "
-        f"different from `authors` in root or any entry in `weights`.",
+        bioimageio_description="The persons that have packaged and uploaded this model. Only needs to be specified if "
+        "different from `authors` in root or any entry in `weights`.",
     )
 
     parent = fields.Nested(
@@ -588,7 +606,7 @@ is in an unsupported format version. The current format version described here i
         outs = data.get("outputs", [])
         if not isinstance(ins, list) or not isinstance(outs, list):
             raise ValidationError(
-                f"Failed to validate reference tensor names due to other validation errors in inputs/outputs."
+                "Failed to validate reference tensor names due to other validation errors in inputs/outputs."
             )
 
         for t in outs:

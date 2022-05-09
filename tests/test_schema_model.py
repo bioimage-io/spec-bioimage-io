@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 from marshmallow import ValidationError
 
+from bioimageio.spec.model.v0_4 import raw_nodes as raw_nodes_m04
 from bioimageio.spec.shared import yaml
 
 
@@ -191,7 +192,7 @@ def test_model_has_parent_with_uri(model_dict):
     model_dict["parent"] = dict(uri="https://doi.org/10.5281/zenodo.5744489")
 
     valid_data = Model().load(model_dict)
-    assert valid_data
+    assert isinstance(valid_data, raw_nodes_m04.Model)
 
 
 def test_model_has_parent_with_id(model_dict):
@@ -200,4 +201,26 @@ def test_model_has_parent_with_id(model_dict):
     model_dict["parent"] = dict(id="10.5281/zenodo.5764892")
 
     valid_data = Model().load(model_dict)
-    assert valid_data
+    assert isinstance(valid_data, raw_nodes_m04.Model)
+
+
+def test_model_with_expanded_output(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_dict["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyzc",
+            "shape": dict(
+                scale=[1, 1, None, 1],
+                offset=[0, 0, 7, 0],
+                reference_tensor="input_1",
+            ),
+        }
+    ]
+
+    model = Model().load(model_dict)
+    assert isinstance(model, raw_nodes_m04.Model)
+    assert model.outputs[0].shape.scale == [1, 1, None, 1]

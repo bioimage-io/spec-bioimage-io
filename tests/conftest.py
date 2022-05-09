@@ -2,8 +2,6 @@ import pathlib
 
 import pytest
 
-from bioimageio.spec.shared import yaml
-
 
 @pytest.fixture
 def unet2d_nuclei_broad_base_path():
@@ -78,6 +76,11 @@ def unet2d_fixed_shape():
 @pytest.fixture
 def unet2d_multi_tensor():
     return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_multi_tensor/rdf.yaml"
+
+
+@pytest.fixture
+def unet2d_expanded_output_shape():
+    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_nuclei_broad/rdf_expand_output_shape.yaml"
 
 
 @pytest.fixture
