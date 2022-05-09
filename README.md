@@ -140,32 +140,32 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
-#### bioimageio.spec 0.5.4.post16
+#### bioimageio.spec 0.4.5post16
 - fix rdf_update of entries in `resolve_collection_entries()`
 
-#### bioimageio.spec 0.5.4.post15
+#### bioimageio.spec 0.4.5post15
 - pass root to `enrich_partial_rdf` arg of `resolve_collection_entries()`
 
-#### bioimageio.spec 0.5.4.post14
+#### bioimageio.spec 0.4.5post14
 - keep `ResourceDescrption.root_path` as URI for remote resources. This fixes the collection RDF as the collection entries are resolved after the collection RDF has been loaded.
 
-#### bioimageio.spec 0.5.4.post13
+#### bioimageio.spec 0.4.5post13
 - new bioimageio.spec.partner module adding validate-partner-collection command if optional 'lxml' dependency is available
 
-#### bioimageio.spec 0.5.4.post12
+#### bioimageio.spec 0.4.5post12
 - new env var `BIOIMAGEIO_CACHE_WARNINGS_LIMIT` (default: 3) to avoid spam from cache hit warnings
 - more robust conversion of ImportableSourceFile for absolute paths to relative paths (don't fail on non-path source file)
  
-#### bioimageio.spec 0.5.4.post11
+#### bioimageio.spec 0.4.5post11
 - resolve symlinks when transforming absolute to relative paths during serialization; see [#438](https://github.com/bioimage-io/spec-bioimage-io/pull/438)
 
-#### bioimageio.spec 0.5.4.post10
+#### bioimageio.spec 0.4.5post10
 - fix loading of collection RDF with id (id used to be ignored)
 
-#### bioimageio.spec 0.5.4.post9
+#### bioimageio.spec 0.4.5post9
 - support loading bioimageio resources by their animal nickname (currently only models have nicknames).
 
-#### bioimageio.spec 0.5.4.post8
+#### bioimageio.spec 0.4.5post8
 - any field previously expecting a local relative path is now also accepting an absolute path
 - load_raw_resource_description returns a raw resource description which has no relative paths (any relative paths are converted to absolute paths).
 
