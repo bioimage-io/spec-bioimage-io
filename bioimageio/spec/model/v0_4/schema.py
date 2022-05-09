@@ -479,12 +479,13 @@ is in an unsupported format version. The current format version described here i
         for out in outs:
             if isinstance(out.shape, raw_nodes.ImplicitOutputShape):
                 ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
-                ndim_out = len([scale for scale in out.shape.scale if scale is not None])
-                if ndim_ref != ndim_out:
+                ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
+                if ndim_ref != ndim_out_ref:
                     raise ValidationError(
                         f"Referenced tensor {out.shape.reference_tensor} "
                         f"with {ndim_ref} dimensions does not match "
-                        f"output tensor {out.name} with {ndim_out} dimensions."
+                        f"output tensor {out.name} with {ndim_out_ref} dimensions."
+                        f"Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
                     )
 
             min_out_shape = get_min_shape(out)

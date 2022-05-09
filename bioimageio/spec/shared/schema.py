@@ -127,6 +127,11 @@ class ImplicitOutputShape(SharedBioImageIOSchema):
         offset = data["offset"]
         if len(scale) != len(offset):
             raise ValidationError(f"scale {scale} has to have same length as offset {offset}!")
+        # if we have an expanded dimension, make sure that it's offet is not zero
+        if any(sc is None for sc in scale):
+            for sc, off in zip(scale, offset):
+                if sc is None and off == 0:
+                    raise ValidationError("Offset must not be 0 for scale null")
 
     @validates("offset")
     def double_offset_is_int(self, value: List[float]):
