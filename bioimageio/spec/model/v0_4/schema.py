@@ -481,11 +481,15 @@ is in an unsupported format version. The current format version described here i
                 ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
                 ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
                 if ndim_ref != ndim_out_ref:
+                    expanded_dim_note = (
+                        f" Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
+                        if None in out.shape.scale
+                        else ""
+                    )
                     raise ValidationError(
                         f"Referenced tensor {out.shape.reference_tensor} "
                         f"with {ndim_ref} dimensions does not match "
-                        f"output tensor {out.name} with {ndim_out_ref} dimensions."
-                        f"Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
+                        f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
                     )
 
             min_out_shape = get_min_shape(out)
