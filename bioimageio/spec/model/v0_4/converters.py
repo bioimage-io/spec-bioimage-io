@@ -79,6 +79,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if data["format_version"] == "0.4.4":
         data = convert_model_from_v0_4_4_to_0_4_5(data)
 
+    if data["format_version"] == "0.4.5":
+        data["format_version"] = "0.4.6"
+
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
     if config.get("future") == {}:
