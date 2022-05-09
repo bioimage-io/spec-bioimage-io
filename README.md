@@ -210,6 +210,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
+#### model RDF 0.4.6
+- Non-breaking changes
+  - Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.  
+
 #### model RDF 0.4.5
 - Breaking changes that are fully auto-convertible
   - `parent` field changed to hold a string that is a BioImage.IO ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
