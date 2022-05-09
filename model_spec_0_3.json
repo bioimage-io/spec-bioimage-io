@@ -122,7 +122,10 @@
                     "items": {
                         "format": "float",
                         "title": "scale",
-                        "type": "number"
+                        "type": [
+                            "number",
+                            "null"
+                        ]
                     },
                     "title": "scale",
                     "type": "array"
