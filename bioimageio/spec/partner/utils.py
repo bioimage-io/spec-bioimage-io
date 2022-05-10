@@ -24,11 +24,15 @@ def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any], root: Unio
             # rdf_source is an actual rdf
             if not isinstance(rdf_source, dict):
                 try:
-                    rdf_source = root / rdf_source
                     rdf_source, rdf_source_name, rdf_source_root = resolve_rdf_source(rdf_source)
                 except Exception as e:
-                    warnings.warn(f"Failed to resolve `rdf_source`: {e}")
-                    rdf_source = {}
+                    try:
+                        rdf_source, rdf_source_name, rdf_source_root = resolve_rdf_source(root / rdf_source)
+                    except Exception as ee:
+                        rdf_source = {}
+                        warnings.warn(f"Failed to resolve `rdf_source`: 1. {e}\n2. {ee}")
+                    else:
+                        rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
                 else:
                     rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
 
