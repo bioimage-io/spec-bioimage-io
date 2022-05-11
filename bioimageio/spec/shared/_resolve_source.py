@@ -355,10 +355,10 @@ def resolve_local_source(
 
 
 def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_path: pathlib.Path) -> bool:
-    import requests  # not available in pyodide
-
     local_path_or_remote_uri = resolve_local_source(source, root_path)
     if isinstance(local_path_or_remote_uri, raw_nodes.URI):
+        import requests  # not available in pyodide
+
         response = requests.head(str(local_path_or_remote_uri))
         available = response.status_code == 200
     elif isinstance(local_path_or_remote_uri, pathlib.Path):
