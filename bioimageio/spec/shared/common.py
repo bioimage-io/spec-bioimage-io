@@ -2,12 +2,12 @@ import os
 import pathlib
 import tempfile
 import warnings
-from typing import Any, Generic, Iterable, List, Optional, Sequence
+from typing import Any, Dict, Generic, Iterable, List, Optional, Sequence, Union
 
 try:
-    from typing import Literal, get_args, get_origin, Protocol
+    from typing import Literal, get_args, get_origin, Protocol, TypedDict
 except ImportError:
-    from typing_extensions import Literal, get_args, get_origin, Protocol  # type: ignore
+    from typing_extensions import Literal, get_args, get_origin, Protocol, TypedDict  # type: ignore
 
 
 try:
@@ -116,6 +116,17 @@ class ValidationWarning(UserWarning):
             add_to_summary(summary, keys, msg)
 
         return summary
+
+
+class ValidationSummary(TypedDict):
+    bioimageio_spec_version: str
+    error: Union[None, str, Dict[str, Any]]
+    name: str
+    nested_errors: Dict[str, dict]
+    source_name: str
+    status: Union[Literal["passed", "failed"], str]
+    traceback: Optional[List[str]]
+    warnings: dict
 
 
 def get_format_version_module(type_: str, format_version: str):
