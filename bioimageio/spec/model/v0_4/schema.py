@@ -362,8 +362,10 @@ config:
         ],
         required=True,
         bioimageio_description="Relative path or URL to file with additional documentation in markdown. "
-        "The file must be in markdown format with `.md` file name extension"
-        "It is recommended to use `README.md` as the documentation name.",
+        "The file must be in markdown format with `.md` file name extension. "
+        "It is recommended to use `README.md` as the documentation name. "
+        "The documentation should include a (sub)section '[#[#]]# Validation' with details on how to quantitatively "
+        "validate the model on unseen data. ",
     )
 
     format_version = fields.String(
