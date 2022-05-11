@@ -198,7 +198,10 @@ def resolve_rdf_source(
         source = yaml.load(source)
 
     if not isinstance(source, dict):
-        raise TypeError(f"Expected dict type for loaded source, but got: {type(source)}")
+        raise TypeError(
+            f"Expected dict type for loaded source, but got: {type(source)}. "
+            f"If '{str(source)}' is a file path, does it exist?"
+        )
 
     return RDF_Source(source, source_name, root)
 
