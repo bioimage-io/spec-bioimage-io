@@ -14,14 +14,9 @@ from .io_ import (
     serialize_raw_resource_description_to_dict,
 )
 from .shared import update_nested
-from .shared.common import ValidationWarning, nested_default_dict_as_nested_dict, yaml
+from .shared.common import ValidationSummary, ValidationWarning, nested_default_dict_as_nested_dict, yaml
 from .shared.raw_nodes import ResourceDescription as RawResourceDescription, URI
 from .v import __version__
-
-try:
-    from typing import TypedDict, Literal
-except ImportError:
-    from typing_extensions import TypedDict, Literal  # type: ignore
 
 
 def update_format(
@@ -32,17 +27,6 @@ def update_format(
     """Update a BioImage.IO resource"""
     raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
     save_raw_resource_description(raw, Path(path))
-
-
-class ValidationSummary(TypedDict):
-    bioimageio_spec_version: str
-    error: Union[None, str, Dict[str, Any]]
-    name: str
-    nested_errors: Dict[str, dict]
-    source_name: str
-    status: Union[Literal["passed", "failed"], str]
-    traceback: Optional[List[str]]
-    warnings: dict
 
 
 def validate(
