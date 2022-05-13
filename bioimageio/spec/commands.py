@@ -66,7 +66,7 @@ def validate(
     error: Union[None, str, Dict[str, Any]] = None
     tb = None
     nested_errors: Dict[str, dict] = {}
-    with warnings.catch_warnings(record=True) as all_warnings:
+    with warnings.catch_warnings(record=True) as warnings1:
         if isinstance(rdf_source, RawResourceDescription):
             source_name = rdf_source.name
         else:
@@ -83,14 +83,12 @@ def validate(
                 if not isinstance(rdf_source_preview, dict):
                     error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source_preview)}"
 
-        other_warnings = list(all_warnings)
+        all_warnings = warnings1 or []
     raw_rd = None
     format_version = ""
     resource_type = ""
-    if error:
-        validation_warnings = []
-    else:
-        with warnings.catch_warnings(record=True) as all_warnings:
+    if not error:
+        with warnings.catch_warnings(record=True) as warnings2:
             try:
                 raw_rd = load_raw_resource_description(rdf_source, update_to_format="latest" if update_format else None)
             except ValidationError as e:
@@ -130,11 +128,7 @@ def validate(
                     # todo: make short error message and refer to 'nested_errors' or deprecated 'nested_errors'
                     error = nested_errors
 
-        validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
-        other_warnings += [w for w in all_warnings if not issubclass(w.category, ValidationWarning)]
-    curated_warnings = ValidationWarning.get_warning_summary(validation_warnings)
-    if other_warnings:
-        curated_warnings["_non-validation_warnings"] = list(set(str(w.message) for w in other_warnings))
+            all_warnings += warnings2 or []
 
     return {
         "bioimageio_spec_version": __version__,
@@ -147,7 +141,7 @@ def validate(
         "source_name": source_name,
         "status": "passed" if error is None else "failed",
         "traceback": tb,
-        "warnings": curated_warnings,
+        "warnings": ValidationWarning.get_warning_summary(all_warnings),
     }
 
 

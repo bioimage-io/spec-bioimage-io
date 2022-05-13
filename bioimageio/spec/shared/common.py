@@ -82,7 +82,7 @@ class ValidationWarning(UserWarning):
     def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]) -> dict:
         """Summarize warning messages of the ValidationWarning category"""
 
-        def add_to_summary(s, keys, msg):
+        def add_val_warn_to_summary(s, keys, msg):
             key = keys.pop(0)
             if "[" in key:
                 key, rest = key.split("[")
@@ -104,20 +104,26 @@ class ValidationWarning(UserWarning):
 
             if keys:
                 assert isinstance(s, dict), (keys, s)
-                add_to_summary(s, keys, msg)
+                add_val_warn_to_summary(s, keys, msg)
 
         summary: dict = {}
+        nvw: set = set()
         for vw in val_warns:
-            assert issubclass(vw.category, ValidationWarning)
             msg = str(vw.message)
-            if ": " in msg:
-                keys_, *rest = msg.split(": ")
-                msg = ": ".join(rest)
-                keys = keys_.split(":")
-            else:
-                keys = []
+            if issubclass(vw.category, ValidationWarning):
+                if ": " in msg:
+                    keys_, *rest = msg.split(": ")
+                    msg = ": ".join(rest)
+                    keys = keys_.split(":")
+                else:
+                    keys = []
 
-            add_to_summary(summary, keys, msg)
+                add_val_warn_to_summary(summary, keys, msg)
+            else:
+                nvw.add(msg)
+
+        if nvw:
+            summary["non-validation-warnings"] = list(nvw)
 
         return summary
 
@@ -126,7 +132,7 @@ class ValidationSummary(TypedDict):
     bioimageio_spec_version: str
     error: Union[None, str, Dict[str, Any]]
     name: str
-    nested_errors: Dict[str, dict]
+    nested_errors: Dict[str, dict]  # todo: mark as not required: typing_extensions.NotRequired (typing py 3.11)
     source_name: str
     status: Union[Literal["passed", "failed"], str]
     traceback: Optional[List[str]]
