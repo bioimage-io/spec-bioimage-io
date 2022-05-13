@@ -365,7 +365,11 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 
         response = requests.head(str(local_path_or_remote_uri))
         for n_redirect in range(100):
-            if response.status_code == 302 and response.next is not None and response.next.url is not None:
+            if (
+                response.status_code in (301, 302, 307, 308)
+                and response.next is not None
+                and response.next.url is not None
+            ):
                 response = requests.head(response.next.url)
             else:
                 break
