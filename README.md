@@ -147,6 +147,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec 0.4.6post3
+- Make CLI output more readable
+- find redirected URLs when checking for URL availability
+
 #### bioimageio.spec 0.4.6post2
 - Improve error message for non-existing RDF file path given as string
 - Improve documentation for model RDF's `documentation` field 
