@@ -66,22 +66,24 @@ def validate(
     error: Union[None, str, Dict[str, Any]] = None
     tb = None
     nested_errors: Dict[str, dict] = {}
-    if isinstance(rdf_source, RawResourceDescription):
-        source_name = rdf_source.name
-    else:
-        try:
-            rdf_source_preview, source_name, root = resolve_rdf_source(rdf_source)
-        except Exception as e:
-            error = str(e)
-            tb = traceback.format_tb(e.__traceback__)
-            try:
-                source_name = str(rdf_source)
-            except Exception as e:
-                source_name = str(e)
+    with warnings.catch_warnings(record=True) as all_warnings:
+        if isinstance(rdf_source, RawResourceDescription):
+            source_name = rdf_source.name
         else:
-            if not isinstance(rdf_source_preview, dict):
-                error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source_preview)}"
+            try:
+                rdf_source_preview, source_name, root = resolve_rdf_source(rdf_source)
+            except Exception as e:
+                error = str(e)
+                tb = traceback.format_tb(e.__traceback__)
+                try:
+                    source_name = str(rdf_source)
+                except Exception as e:
+                    source_name = str(e)
+            else:
+                if not isinstance(rdf_source_preview, dict):
+                    error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source_preview)}"
 
+        other_warnings = list(all_warnings)
     raw_rd = None
     format_version = ""
     resource_type = ""
@@ -129,6 +131,10 @@ def validate(
                     error = nested_errors
 
         validation_warnings = [w for w in all_warnings if issubclass(w.category, ValidationWarning)]
+        other_warnings += [w for w in all_warnings if not issubclass(w.category, ValidationWarning)]
+    curated_warnings = ValidationWarning.get_warning_summary(validation_warnings)
+    if other_warnings:
+        curated_warnings["_non-validation_warnings"] = list(set(str(w.message) for w in other_warnings))
 
     return {
         "bioimageio_spec_version": __version__,
@@ -141,7 +147,7 @@ def validate(
         "source_name": source_name,
         "status": "passed" if error is None else "failed",
         "traceback": tb,
-        "warnings": ValidationWarning.get_warning_summary(validation_warnings),
+        "warnings": curated_warnings,
     }
 
 

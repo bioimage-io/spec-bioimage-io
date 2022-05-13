@@ -6,7 +6,7 @@ from marshmallow import RAISE, ValidationError, missing as missing_, post_load, 
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
-from bioimageio.spec.shared.common import get_args, get_args_flat
+from bioimageio.spec.shared.common import ValidationWarning, get_args, get_args_flat
 from bioimageio.spec.shared.schema import (
     ImplicitOutputShape,
     ParametrizedInputShape,
@@ -757,10 +757,16 @@ is in an unsupported format version. The current format version described here i
                 )
                 if weights_entry.tensorflow_version is missing_:
                     # todo: raise ValidationError (allow -> require)?
-                    warnings.warn(f"missing 'tensorflow_version' entry for weights format {weights_format}")
+                    warnings.warn(
+                        f"weights:{weights_format}: missing 'tensorflow_version' entry for weights format {weights_format}",
+                        category=ValidationWarning,
+                    )
 
             if weights_format == "onnx":
                 assert isinstance(weights_entry, raw_nodes.OnnxWeightsEntry)
                 if weights_entry.opset_version is missing_:
                     # todo: raise ValidationError?
-                    warnings.warn(f"missing 'opset_version' entry for weights format {weights_format}")
+                    warnings.warn(
+                        f"weights:{weights_format}: missing 'opset_version' entry for weights format {weights_format}",
+                        category=ValidationWarning,
+                    )
