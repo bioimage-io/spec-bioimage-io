@@ -79,7 +79,7 @@ class ValidationWarning(UserWarning):
     """a warning category to warn with during RDF validation"""
 
     @staticmethod
-    def get_warning_summary(val_warns: Sequence[warnings.WarningMessage]) -> dict:
+    def get_warning_summary(val_warns: Optional[Sequence[warnings.WarningMessage]]) -> dict:
         """Summarize warning messages of the ValidationWarning category"""
 
         def add_val_warn_to_summary(s, keys, msg):
@@ -108,7 +108,7 @@ class ValidationWarning(UserWarning):
 
         summary: dict = {}
         nvw: set = set()
-        for vw in val_warns:
+        for vw in val_warns or []:
             msg = str(vw.message)
             if issubclass(vw.category, ValidationWarning):
                 if ": " in msg:
