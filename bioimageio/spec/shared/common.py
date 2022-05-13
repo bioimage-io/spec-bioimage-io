@@ -51,6 +51,10 @@ except ImportError:
             pass
 
 
+class CacheWarning(RuntimeWarning):
+    pass
+
+
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
 )
