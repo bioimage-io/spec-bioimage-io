@@ -20,6 +20,7 @@ from .common import (
     BIOIMAGEIO_COLLECTION_URL,
     BIOIMAGEIO_SITE_CONFIG_URL,
     BIOIMAGEIO_USE_CACHE,
+    CacheWarning,
     DOI_REGEX,
     RDF_NAMES,
     get_spec_type_from_type,
@@ -391,9 +392,12 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
     if local_path.exists():
         cache_warnings_count += 1
         if cache_warnings_count <= BIOIMAGEIO_CACHE_WARNINGS_LIMIT:
-            warnings.warn(f"found cached {local_path}. Skipping download of {uri}.")
+            warnings.warn(f"found cached {local_path}. Skipping download of {uri}.", category=CacheWarning)
             if cache_warnings_count == BIOIMAGEIO_CACHE_WARNINGS_LIMIT:
-                warnings.warn(f"Reached cache warnings limit. No more warnings about cache hits will be issued.")
+                warnings.warn(
+                    f"Reached cache warnings limit. No more warnings about cache hits will be issued.",
+                    category=CacheWarning,
+                )
 
     else:
         local_path.parent.mkdir(parents=True, exist_ok=True)
