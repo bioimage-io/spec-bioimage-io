@@ -364,6 +364,12 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
         import requests  # not available in pyodide
 
         response = requests.head(str(local_path_or_remote_uri))
+        for n_redirect in range(100):
+            if response.status_code == 302 and response.next is not None and response.next.url is not None:
+                response = requests.head(response.next.url)
+            else:
+                break
+
         available = response.status_code == 200
     elif isinstance(local_path_or_remote_uri, pathlib.Path):
         available = local_path_or_remote_uri.exists()
