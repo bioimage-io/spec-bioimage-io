@@ -222,6 +222,34 @@ class String(DocumentedField, marshmallow_fields.String):
     pass
 
 
+class Name(String):
+    def __init__(
+        self,
+        *,
+        validate: typing.Optional[
+            typing.Union[
+                typing.Callable[[typing.Any], typing.Any], typing.Iterable[typing.Callable[[typing.Any], typing.Any]]
+            ]
+        ] = None,
+        **kwargs,
+    ) -> None:
+        if validate is None:
+            validate = []
+
+        if isinstance(validate, typing.Iterable):
+            validate = list(validate)
+        else:
+            validate = [validate]
+
+        validate.append(
+            field_validators.Predicate("__contains__", "/", invert_output=True, error="may not contain '/'")
+        )
+        validate.append(
+            field_validators.Predicate("__contains__", "\\", invert_output=True, error="may not contain '\\'")
+        )
+        super().__init__(validate=validate, **kwargs)
+
+
 class DOI(String):
     pass
 
