@@ -76,6 +76,9 @@ class Predicate(MarshmallowPredicate):
         self.args = args
         self.invert_output = invert_output
 
+    def _format_error(self, value: typing.Any) -> str:
+        return self.error.format(input=value, method=self.method, args=self.args, invert_output=self.invert_output)
+
     def _repr_args(self) -> str:
         return "method={!r}, invert_output={!r}, args={!r}, kwargs={!r}".format(
             self.method, self.invert_output, self.args, self.kwargs
