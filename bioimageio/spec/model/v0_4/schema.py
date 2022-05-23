@@ -407,7 +407,7 @@ is in an unsupported format version. The current format version described here i
         bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
     )
 
-    name = fields.String(
+    name = fields.Name(
         required=True,
         bioimageio_description="Name of this model. It should be human-readable and only contain letters, numbers, "
         "underscore '_', minus '-' or spaces and not be longer than 64 characters.",

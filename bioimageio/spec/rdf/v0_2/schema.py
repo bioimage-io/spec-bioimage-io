@@ -211,7 +211,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
-    name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+    name = fields.Name(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     @validates
     def warn_about_long_name(self, value: str):
