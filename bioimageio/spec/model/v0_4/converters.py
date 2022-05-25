@@ -3,6 +3,8 @@ from typing import Any, Dict
 
 from marshmallow import missing
 
+from bioimageio.spec.rdf.v0_2.converters import remove_slash_from_names
+
 
 def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
     from bioimageio.spec.model import v0_3
@@ -67,9 +69,7 @@ def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> Dict[str, Any]:
 def convert_model_from_v0_4_6_to_0_4_7(data: Dict[str, Any]) -> Dict[str, Any]:
     data = dict(data)
 
-    name = data.pop("name", None)
-    if name and isinstance(name, str):
-        data["name"] = name.replace("/", "").replace("\\", "")
+    remove_slash_from_names(data)
 
     data["format_version"] = "0.4.7"
     return data
