@@ -105,6 +105,24 @@ def test_model_schema_raises_invalid_name(model_dict):
         model_schema.load(model_dict)
 
 
+def test_model_schema_raises_invalid_input_name(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_schema = Model()
+    model_dict["inputs"][0]["name"] = "invalid/name"
+    with pytest.raises(ValidationError):
+        model_schema.load(model_dict)
+
+
+def test_model_schema_raises_invalid_output_name(model_dict):
+    from bioimageio.spec.model.schema import Model
+
+    model_schema = Model()
+    model_dict["outputs"][0]["name"] = "invalid/name"
+    with pytest.raises(ValidationError):
+        model_schema.load(model_dict)
+
+
 def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate_tensor_names):
     from bioimageio.spec.model.schema import Model
     from bioimageio.spec.model.v0_3.schema import Model as Model_v03

@@ -13,4 +13,10 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if data.get("format_version") in ("0.2.0", "0.2.1"):
         data["format_version"] = "0.2.2"
 
+    if data.get("format_version") in ("0.2.2",):
+        if "name" in data and isinstance(data["name"], str):
+            data["name"] = data["name"].replace("/", "").replace("\\", "")
+
+        data["format_version"] = "0.2.3"
+
     return data

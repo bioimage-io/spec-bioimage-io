@@ -24,7 +24,7 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 FormatVersion = Literal[
-    "0.2.0", "0.2.1", "0.2.2"
+    "0.2.0", "0.2.1", "0.2.2", "0.2.3"
 ]  # newest format needs to be last (used to determine latest format version)
 
 

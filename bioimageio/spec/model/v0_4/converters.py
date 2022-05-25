@@ -64,6 +64,17 @@ def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
+def convert_model_from_v0_4_6_to_0_4_7(data: Dict[str, Any]) -> Dict[str, Any]:
+    data = dict(data)
+
+    name = data.pop("name", None)
+    if name and isinstance(name, str):
+        data["name"] = name.replace("/", "").replace("\\", "")
+
+    data["format_version"] = "0.4.7"
+    return data
+
+
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     major, minor, patch = map(int, data.get("format_version", "0.3.0").split("."))
@@ -81,6 +92,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data["format_version"] == "0.4.5":
         data["format_version"] = "0.4.6"
+
+    if data["format_version"] == "0.4.6":
+        data = convert_model_from_v0_4_6_to_0_4_7(data)
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
