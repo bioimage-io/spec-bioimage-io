@@ -26,7 +26,7 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if data.get("format_version") in ("0.2.0", "0.2.1"):
         data["format_version"] = "0.2.2"
 
-    if data.get("format_version") in ("0.2.2",):
+    if data.get("format_version") == "0.2.2":
         remove_slash_from_names(data)
         data["format_version"] = "0.2.3"
 

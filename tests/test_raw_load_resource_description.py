@@ -85,10 +85,12 @@ def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
             assert raw_model.format_version[: raw_model.format_version.rfind(".")] == to_format
 
 
-def test_load_raw_model_converts_invalid_name(unet2d_nuclei_broad_v0_4):
+def test_load_raw_model_converts_invalid_name(unet2d_nuclei_broad_base_path):
     from bioimageio.spec.model.raw_nodes import Model
     from bioimageio.spec import load_raw_resource_description
 
+    model_dict = yaml.load(unet2d_nuclei_broad_base_path / "rdf_v0_4_0.yaml")
+    model_dict["root_path"] = unet2d_nuclei_broad_base_path
     model_dict["name"] = "invalid/name"
     model = load_raw_resource_description(model_dict)
     assert isinstance(model, Model)
