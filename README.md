@@ -28,7 +28,7 @@ The specifications are also available as json schemas:
 
 [Here](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/rdf-examples.md) you can find some examples for using RDF to describe applications, notebooks, datasets etc.
 
-## [Model Resource Description File Specification](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
+## Model Resource Description File Specification
 
 Besides the general RDF spec, the `Model Resource Description File Specification`(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
 
