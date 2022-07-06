@@ -9,6 +9,7 @@ from ._resolve_source import (
     BIOIMAGEIO_SITE_CONFIG,
     BIOIMAGEIO_SITE_CONFIG_ERROR,
     RDF_NAMES,
+    DownloadCancelled,
     _resolve_json_from_url,
     resolve_local_source,
     resolve_rdf_source,
