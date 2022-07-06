@@ -20,9 +20,9 @@ from .common import (
     BIOIMAGEIO_COLLECTION_URL,
     BIOIMAGEIO_SITE_CONFIG_URL,
     BIOIMAGEIO_USE_CACHE,
-    CacheWarning,
     DOI_REGEX,
     RDF_NAMES,
+    CacheWarning,
     get_spec_type_from_type,
     no_cache_tmp_list,
     tqdm,
@@ -34,6 +34,7 @@ from .raw_nodes import URI
 class DownloadCancelled(Exception):
     # raise this exception to stop _download_url
     pass
+
 
 def _is_path(s: typing.Any) -> bool:
     if not isinstance(s, (str, os.PathLike)):
@@ -235,6 +236,7 @@ def resolve_source(source, root_path: typing.Union[os.PathLike, URI] = pathlib.P
     """
     raise TypeError(type(source))
 
+
 @resolve_source.register
 def _resolve_source_uri_node(
     source: raw_nodes.URI,
@@ -255,7 +257,10 @@ def _resolve_source_uri_node(
 
 @resolve_source.register
 def _resolve_source_str(
-    source: str, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output: typing.Optional[os.PathLike] = None, pbar=None
+    source: str,
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
+    output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> pathlib.Path:
     return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output)
 
@@ -289,7 +294,7 @@ def _resolve_source_resolved_importable_path(
     source: raw_nodes.ResolvedImportableSourceFile,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
-    pbar=None
+    pbar=None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
         callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output)
