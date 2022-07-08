@@ -1,3 +1,4 @@
+import getpass
 import os
 import pathlib
 import tempfile
@@ -56,7 +57,7 @@ class CacheWarning(RuntimeWarning):
 
 
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
-    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / "bioimageio_cache")
+    os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / getpass.getuser() / "bioimageio_cache")
 )
 BIOIMAGEIO_USE_CACHE = os.getenv("BIOIMAGEIO_USE_CACHE", "true").lower() in ("true", "yes", "1")
 BIOIMAGEIO_CACHE_WARNINGS_LIMIT = int(os.getenv("BIOIMAGEIO_CACHE_WARNINGS_LIMIT", 3))
