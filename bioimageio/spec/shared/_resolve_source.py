@@ -226,13 +226,13 @@ def resolve_source(source, root_path: typing.Union[os.PathLike, URI] = pathlib.P
     """Resolve sources to local files
 
     Args:
-        source: resource description as path, or uri
+        source: e.g. a path or uri
         root_path: path to model-rdf - used to resolve relative paths
         output: file path to write contents to - if not given a file path is created
         pbar: progress bar sharing a minimal tqdm interface, if none given, tqdm is used.
           pbar is only used in the case of downloading resources. Specifying a custom pbar here
           helps adding features like progress reporting (outside the cmd) and cancellation
-          (by raising CancelledError).
+          (by raising DownloadCancelled).
     """
     raise TypeError(type(source))
 
