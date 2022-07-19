@@ -262,7 +262,7 @@ def _resolve_source_str(
     output: typing.Optional[os.PathLike] = None,
     pbar=None,
 ) -> pathlib.Path:
-    return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output)
+    return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output, pbar)
 
 
 @resolve_source.register
@@ -277,7 +277,7 @@ def _resolve_source_path(
             root_path = pathlib.Path(root_path).resolve()
         source = root_path / source
         if isinstance(source, URI):
-            return resolve_source(source, output=output)
+            return resolve_source(source, output=output, pbar=pbar)
 
     if output is None:
         return source
@@ -297,7 +297,7 @@ def _resolve_source_resolved_importable_path(
     pbar=None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
-        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output)
+        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 
 
@@ -309,7 +309,7 @@ def _resolve_source_importable_path(
     pbar=None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
-        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output)
+        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 
 
@@ -318,10 +318,14 @@ def _resolve_source_list(
     source: list,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
-    pbar=None,
+    pbar: typing.Sequence = None,
 ) -> typing.List[pathlib.Path]:
     assert output is None or len(output) == len(source)
-    return [resolve_source(el, root_path, out) for el, out in zip(source, output or [None] * len(source))]
+    assert pbar is None or len(pbar) == len(source)
+    return [
+        resolve_source(el, root_path, out, pb)
+        for el, out, pb in zip(source, output or [None] * len(source), pbar or [None] * len(source))
+    ]
 
 
 def resolve_local_sources(
