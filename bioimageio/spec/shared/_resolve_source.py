@@ -20,15 +20,20 @@ from .common import (
     BIOIMAGEIO_COLLECTION_URL,
     BIOIMAGEIO_SITE_CONFIG_URL,
     BIOIMAGEIO_USE_CACHE,
-    CacheWarning,
     DOI_REGEX,
     RDF_NAMES,
+    CacheWarning,
     get_spec_type_from_type,
     no_cache_tmp_list,
     tqdm,
     yaml,
 )
 from .raw_nodes import URI
+
+
+class DownloadCancelled(Exception):
+    # raise this exception to stop _download_url
+    pass
 
 
 def _is_path(s: typing.Any) -> bool:
@@ -217,7 +222,18 @@ def resolve_rdf_source_and_type(
 
 
 @singledispatch  # todo: fix type annotations
-def resolve_source(source, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output=None):
+def resolve_source(source, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output=None, pbar=None):
+    """Resolve sources to local files
+
+    Args:
+        source: e.g. a path or uri
+        root_path: path to model-rdf - used to resolve relative paths
+        output: file path to write contents to - if not given a file path is created
+        pbar: progress bar sharing a minimal tqdm interface, if none given, tqdm is used.
+          pbar is only used in the case of downloading resources. Specifying a custom pbar here
+          helps adding features like progress reporting (outside the cmd) and cancellation
+          (by raising DownloadCancelled).
+    """
     raise TypeError(type(source))
 
 
@@ -226,10 +242,11 @@ def _resolve_source_uri_node(
     source: raw_nodes.URI,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> pathlib.Path:
     path_or_remote_uri = resolve_local_source(source, root_path, output)
     if isinstance(path_or_remote_uri, raw_nodes.URI):
-        local_path = _download_url(path_or_remote_uri, output)
+        local_path = _download_url(path_or_remote_uri, output, pbar=pbar)
     elif isinstance(path_or_remote_uri, pathlib.Path):
         local_path = path_or_remote_uri
     else:
@@ -240,9 +257,12 @@ def _resolve_source_uri_node(
 
 @resolve_source.register
 def _resolve_source_str(
-    source: str, root_path: typing.Union[os.PathLike, URI] = pathlib.Path(), output: typing.Optional[os.PathLike] = None
+    source: str,
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
+    output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> pathlib.Path:
-    return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output)
+    return resolve_source(fields.Union([fields.URI(), fields.Path()]).deserialize(source), root_path, output, pbar)
 
 
 @resolve_source.register
@@ -250,13 +270,14 @@ def _resolve_source_path(
     source: pathlib.Path,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> pathlib.Path:
     if not source.is_absolute():
         if isinstance(root_path, os.PathLike):
             root_path = pathlib.Path(root_path).resolve()
         source = root_path / source
         if isinstance(source, URI):
-            return resolve_source(source, output=output)
+            return resolve_source(source, output=output, pbar=pbar)
 
     if output is None:
         return source
@@ -273,9 +294,10 @@ def _resolve_source_resolved_importable_path(
     source: raw_nodes.ResolvedImportableSourceFile,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
-        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output)
+        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 
 
@@ -284,9 +306,10 @@ def _resolve_source_importable_path(
     source: raw_nodes.ImportableSourceFile,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
+    pbar=None,
 ) -> raw_nodes.ResolvedImportableSourceFile:
     return raw_nodes.ResolvedImportableSourceFile(
-        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output)
+        callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 
 
@@ -295,9 +318,14 @@ def _resolve_source_list(
     source: list,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
+    pbar: typing.Sequence = None,
 ) -> typing.List[pathlib.Path]:
     assert output is None or len(output) == len(source)
-    return [resolve_source(el, root_path, out) for el, out in zip(source, output or [None] * len(source))]
+    assert pbar is None or len(pbar) == len(source)
+    return [
+        resolve_source(el, root_path, out, pb)
+        for el, out, pb in zip(source, output or [None] * len(source), pbar or [None] * len(source))
+    ]
 
 
 def resolve_local_sources(
@@ -386,7 +414,7 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 cache_warnings_count = 0
 
 
-def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None) -> pathlib.Path:
+def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None, pbar=None) -> pathlib.Path:
     global cache_warnings_count
 
     if output is not None:
@@ -423,7 +451,10 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             # Total size in bytes.
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
-            t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+            if pbar:
+                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+            else:
+                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
             tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
             with tmp_path.open("wb") as f:
                 for data in r.iter_content(block_size):
@@ -436,8 +467,12 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
                 warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
 
             shutil.move(f.name, str(local_path))
+        except DownloadCancelled as e:
+            # let calling code handle this exception specifically -> allow for cancellation of
+            # long running downloads per user request
+            raise e
         except Exception as e:
-            raise RuntimeError(f"Failed to download {uri} ({e})")
+            raise RuntimeError(f"Failed to download {uri} ({e})") from e
 
     return local_path
 
