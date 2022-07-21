@@ -15,7 +15,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="authors:name"></a>`name` _(String)_ Full name.
         * <a id="authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="cite"></a>`cite` _(required List\[CiteEntry\])_ A list of citation entries.
     Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
@@ -40,7 +40,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -51,7 +51,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -62,7 +62,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -73,7 +73,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -84,7 +84,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -95,7 +95,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 1.  _(Author)_   is a Dict with the following keys:
                     * <a id="weights:authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
                     * <a id="weights:authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-                    * <a id="weights:authors:name"></a>`name` _(Name→String)_ Full name.
+                    * <a id="weights:authors:name"></a>`name` _(String)_ Full name.
                     * <a id="weights:authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
             * <a id="weights:parent"></a>`parent` _(String)_ The source weights used as input for converting the weights to this format. For example, if the weights were converted from the format `pytorch_state_dict` to `pytorch_script`, the parent is `pytorch_state_dict`. All weight entries except one (the initial set of weights resulting from training the model), need to have this field.
             * <a id="weights:sha256"></a>`sha256` _(String)_ SHA256 checksum of the source file specified. You can drag and drop your file to this [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate it in your browser. Or you can generate the SHA256 code for your model and weights by using for example, `hashlib` in Python. [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
@@ -177,7 +177,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(Maintainer)_   is a Dict with the following keys:
         * <a id="maintainers:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="maintainers:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="maintainers:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="maintainers:name"></a>`name` _(String)_ Full name.
         * <a id="maintainers:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="outputs"></a>`outputs` _(optional List\[OutputTensor\])_ Describes the output tensors from this model.
     1.  _(OutputTensor)_   is a Dict with the following keys:
@@ -209,7 +209,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="packaged_by:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="packaged_by:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="packaged_by:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="packaged_by:name"></a>`name` _(String)_ Full name.
         * <a id="packaged_by:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _(optional ModelParent)_ Parent model from which the trained weights of this model have been derived, e.g. by finetuning the weights of this model on a different dataset. For format changes of the same trained model checkpoint, see `weights`. ModelParent is a Dict with the following keys:
     * <a id="parent:sha256"></a>`sha256` _(optional SHA256→String)_ Hash of the parent model RDF.

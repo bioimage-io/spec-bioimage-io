@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.7
+# BioImage.IO Model Resource Description File Specification 0.4.6
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,12 +10,12 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     This is mandatory, and important for the consumer software to verify before parsing the fields.
     The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
     is in an unsupported format version. The current format version described here is
-    0.4.7
+    0.4.6
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="authors:name"></a>`name` _(String)_ Full name.
         * <a id="authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="cite"></a>`cite` _(required List\[CiteEntry\])_ A list of citation entries.
     Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
@@ -51,7 +51,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 * <a id="inputs:preprocessing:name"></a>`name` _(String)_ Name of preprocessing. One of: binarize, clip, scale_linear, sigmoid, zero_mean_unit_variance, scale_range.
                 * <a id="inputs:preprocessing:kwargs"></a>`kwargs` _(Kwargs→Dict\[String, Any\])_ Key word arguments as described in [preprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_0_4.md).
 * <a id="license"></a>`license` _(required String)_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.
-* <a id="name"></a>`name` _(required Name→String)_ Name of this model. It should be human-readable and only contain letters, numbers, underscore '_', minus '-' or spaces and not be longer than 64 characters.
+* <a id="name"></a>`name` _(required String)_ Name of this model. It should be human-readable and only contain letters, numbers, underscore '_', minus '-' or spaces and not be longer than 64 characters.
 * <a id="test_inputs"></a>`test_inputs` _(required List\[Union\[URI→String | Path→String\]\])_ List of URIs or local relative paths to test inputs as described in inputs for **a single test case**. This means if your model has more than one input, you should provide one URI for each input.Each test input should be a file with a ndarray in [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).The extension must be '.npy'.
 * <a id="test_outputs"></a>`test_outputs` _(required List\[Union\[URI→String | Path→String\]\])_ Analog to test_inputs.
 * <a id="timestamp"></a>`timestamp` _(required DateTime)_ Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format.
@@ -106,7 +106,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(Maintainer)_   is a Dict with the following keys:
         * <a id="maintainers:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="maintainers:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="maintainers:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="maintainers:name"></a>`name` _(String)_ Full name.
         * <a id="maintainers:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="outputs"></a>`outputs` _(optional List\[OutputTensor\])_ Describes the output tensors from this model.
     1.  _(OutputTensor)_   is a Dict with the following keys:
@@ -138,7 +138,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="packaged_by:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="packaged_by:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="packaged_by:name"></a>`name` _(Name→String)_ Full name.
+        * <a id="packaged_by:name"></a>`name` _(String)_ Full name.
         * <a id="packaged_by:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _(optional ModelParent)_ The model from which this model is derived, e.g. by fine-tuning the weights. ModelParent is a Dict with the following keys:
     * <a id="parent:id"></a>`id` _(optional BioImageIO_ID→String)_ ID as shown on resource card on bioimage.io
