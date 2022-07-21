@@ -228,6 +228,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
+#### RDF 0.2.2 and model RDF 0.4.7
+- Breaking changes that are fully auto-convertible
+  - name field may not include '/' or '\' (conversion removes these)
+
 #### model RDF 0.4.6
 - Non-breaking changes
   - Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.  

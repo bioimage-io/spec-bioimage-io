@@ -7,7 +7,7 @@ covers: ['https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/data
   'https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/covid-if-cover2.jpg']
 description: Training data for cell and nucleus segmentation as well as infection classification in IF data of Covid-19 infected cells.
 documentation: https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/covid-if.md
-format_version: 0.2.1
+format_version: 0.2.3
 license: CC-BY-4.0
 name: Covid-IF Training Data
 source: https://zenodo.org/record/5092850

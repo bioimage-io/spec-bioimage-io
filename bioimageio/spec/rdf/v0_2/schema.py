@@ -26,7 +26,7 @@ class Attachments(_BioImageIOSchema, WithUnknown):
 
 
 class _Person(_BioImageIOSchema):
-    name = fields.String(bioimageio_description="Full name.")
+    name = fields.Name(bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
     email = fields.Email()
     github_user = fields.String(bioimageio_description="GitHub user name.")  # todo: add validation?
@@ -44,7 +44,7 @@ class _Person(_BioImageIOSchema):
 
 
 class Author(_Person):
-    name = fields.String(require=True, bioimageio_description="Full name.")
+    name = fields.Name(require=True, bioimageio_description="Full name.")
 
 
 class Maintainer(_Person):
@@ -211,7 +211,7 @@ E.g. the citation for the model architecture and/or the training data used."""
 
     maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
-    name = fields.String(required=True, bioimageio_description="name of the resource, a human-friendly name")
+    name = fields.Name(required=True, bioimageio_description="name of the resource, a human-friendly name")
 
     @validates
     def warn_about_long_name(self, value: str):

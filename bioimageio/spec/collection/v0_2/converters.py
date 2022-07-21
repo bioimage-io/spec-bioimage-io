@@ -1,6 +1,8 @@
 import copy
 from typing import Any, Dict
 
+from bioimageio.spec.rdf.v0_2.converters import maybe_convert as maybe_convert_rdf
+
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     data = copy.deepcopy(data)
@@ -20,6 +22,4 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
             if id_ is not None:
                 data["id"] = id_
 
-        data["format_version"] = "0.2.2"
-
-    return data
+    return maybe_convert_rdf(data)
