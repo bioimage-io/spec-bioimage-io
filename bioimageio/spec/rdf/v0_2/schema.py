@@ -64,9 +64,12 @@ class Badge(_BioImageIOSchema):
 class CiteEntry(_BioImageIOSchema):
     text = fields.String(required=True, bioimageio_description="free text description")
     doi = fields.DOI(
-        bioimageio_maybe_required=True, bioimageio_description="digital object identifier, see https://www.doi.org/"
+        bioimageio_maybe_required=True,
+        bioimageio_description="digital object identifier, see https://www.doi.org/ (alternatively specify `url`)",
     )
-    url = fields.String(bioimageio_maybe_required=True)  # todo: change to fields.URL
+    url = fields.String(
+        bioimageio_maybe_required=True, bioimageio_description="url to cite (alternatively specify `doi`)"
+    )  # todo: change to fields.URL
 
     @validates_schema
     def doi_or_url(self, data, **kwargs):
