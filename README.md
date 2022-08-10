@@ -228,6 +228,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
+#### unreleased future model RDF (probably 0.4.8)  # todo: release
+- Non-breaking changes
+  - `cite` field is now optional
+
 #### RDF 0.2.2 and model RDF 0.4.7
 - Breaking changes that are fully auto-convertible
   - name field may not include '/' or '\' (conversion removes these)
