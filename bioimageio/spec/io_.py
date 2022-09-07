@@ -160,6 +160,14 @@ def load_raw_resource_description(
     class_name = get_class_name_from_type(type_)
 
     original_data_version = data.get("format_version")
+    if original_data_version is None:
+        odv: Optional[Version] = None
+    else:
+        try:
+            odv = Version(original_data_version)
+        except Exception as e:
+            raise ValueError(f"Invalid format version {original_data_version}.") from e
+
     if update_to_format is None:
         data_version = original_data_version or LATEST
     elif update_to_format == LATEST:
@@ -175,17 +183,21 @@ def load_raw_resource_description(
     try:
         sub_spec = _get_spec_submodule(type_, data_version)
     except ValueError as e:
+        if odv is None:
+            raise e  # raise original error; no second attempt with 'LATEST' format version
+
         try:
             sub_spec = _get_spec_submodule(type_, data_version=LATEST)
         except ValueError:
             raise e  # raise original error with desired data_version
 
-    try:
-        odv = Version(original_data_version)
-    except Exception as e:
-        raise ValueError(f"Invalid format version {original_data_version}.") from e
+        if odv <= Version(sub_spec.format_version):
+            # original format version is not a future version.
+            # => we should not fall back to latest format version.
+            # => 'format_version' may be invalid or the issue lies with 'type_'...
+            raise
 
-    if Version(sub_spec.format_version) < odv:
+    if odv and Version(sub_spec.format_version) < odv:
         warnings.warn(
             f"Loading future {type_} format version {original_data_version} as (latest known) "
             f"{sub_spec.format_version}."
@@ -200,8 +212,6 @@ def load_raw_resource_description(
             data["config"]["bioimageio"] = {}
 
         data["config"]["bioimageio"]["original_format_version"] = original_data_version
-    else:
-        raise  # data_version may be invalid or the issue lies elsewhere...
 
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
