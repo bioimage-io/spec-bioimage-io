@@ -13,6 +13,7 @@ from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
 from marshmallow import missing
+from packaging.version import Version
 
 from bioimageio.spec.shared import RDF_NAMES, raw_nodes, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
 from bioimageio.spec.shared.common import (
@@ -158,8 +159,9 @@ def load_raw_resource_description(
 
     class_name = get_class_name_from_type(type_)
 
+    original_data_version = data.get("format_version")
     if update_to_format is None:
-        data_version = data.get("format_version", LATEST)
+        data_version = original_data_version or LATEST
     elif update_to_format == LATEST:
         data_version = LATEST
     else:
@@ -170,7 +172,35 @@ def load_raw_resource_description(
                 f"(always updating to latest patch version)."
             )
 
-    sub_spec = _get_spec_submodule(type_, data_version)
+    try:
+        sub_spec = _get_spec_submodule(type_, data_version)
+    except ValueError as e:
+        try:
+            sub_spec = _get_spec_submodule(type_, data_version=LATEST)
+        except ValueError:
+            raise e  # raise original error with desired data_version
+
+        try:
+            odv = Version(original_data_version)
+        except Exception as e:
+            raise ValueError(f"Invalid format version {original_data_version}.") from e
+
+        if Version(sub_spec.format_version) < odv:
+            warnings.warn(
+                f"Loading future {type_} format version {original_data_version} as (latest known) "
+                f"{sub_spec.format_version}."
+            )
+            data["format_version"] = sub_spec.format_version
+            if "config" not in data:
+                data["config"] = {}
+
+            if "bioimageio" not in data["config"]:
+                data["config"]["bioimageio"] = {}
+
+            data["config"]["bioimageio"]["original_format_version"] = original_data_version
+        else:
+            raise  # data_version may be invalid or the issue lies elsewhere...
+
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
     data = sub_spec.converters.maybe_convert(data)
