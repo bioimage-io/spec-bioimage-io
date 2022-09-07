@@ -272,7 +272,7 @@ def _resolve_source_path(
     output: typing.Optional[os.PathLike] = None,
     pbar=None,
 ) -> pathlib.Path:
-    if not source.is_absolute():
+    if not os.path.isabs(source):
         if isinstance(root_path, os.PathLike):
             root_path = pathlib.Path(root_path).resolve()
         source = root_path / source
