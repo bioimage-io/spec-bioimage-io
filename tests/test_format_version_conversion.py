@@ -57,7 +57,7 @@ def test_forward_compatible(v_diff: Tuple[int, int, int], unet2d_nuclei_broad_la
 
     v_latest: Version = Version(format_version)
     v_future: str = ".".join(
-        [str(latest + diff) for latest, diff in zip([v_latest.major, v_latest.minor + 1, v_latest.micro], v_diff)]
+        [str(latest + diff) for latest, diff in zip([v_latest.major, v_latest.minor, v_latest.micro], v_diff)]
     )
 
     future_model_data = dict(model_data)
