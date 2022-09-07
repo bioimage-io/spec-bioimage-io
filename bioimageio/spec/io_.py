@@ -180,28 +180,28 @@ def load_raw_resource_description(
         except ValueError:
             raise e  # raise original error with desired data_version
 
-        try:
-            odv = Version(original_data_version)
-        except Exception as e:
-            raise ValueError(f"Invalid format version {original_data_version}.") from e
+    try:
+        odv = Version(original_data_version)
+    except Exception as e:
+        raise ValueError(f"Invalid format version {original_data_version}.") from e
 
-        if Version(sub_spec.format_version) < odv:
-            warnings.warn(
-                f"Loading future {type_} format version {original_data_version} as (latest known) "
-                f"{sub_spec.format_version}."
-            )
-            data["format_version"] = sub_spec.format_version  # set format_version to latest available
+    if Version(sub_spec.format_version) < odv:
+        warnings.warn(
+            f"Loading future {type_} format version {original_data_version} as (latest known) "
+            f"{sub_spec.format_version}."
+        )
+        data["format_version"] = sub_spec.format_version  # set format_version to latest available
 
-            # save original format version under config:bioimageio:original_format_version for reference
-            if "config" not in data:
-                data["config"] = {}
+        # save original format version under config:bioimageio:original_format_version for reference
+        if "config" not in data:
+            data["config"] = {}
 
-            if "bioimageio" not in data["config"]:
-                data["config"]["bioimageio"] = {}
+        if "bioimageio" not in data["config"]:
+            data["config"]["bioimageio"] = {}
 
-            data["config"]["bioimageio"]["original_format_version"] = original_data_version
-        else:
-            raise  # data_version may be invalid or the issue lies elsewhere...
+        data["config"]["bioimageio"]["original_format_version"] = original_data_version
+    else:
+        raise  # data_version may be invalid or the issue lies elsewhere...
 
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
