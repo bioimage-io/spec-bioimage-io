@@ -159,6 +159,7 @@ def load_raw_resource_description(
 
     class_name = get_class_name_from_type(type_)
 
+    # determine submodule's format version
     original_data_version = data.get("format_version")
     if original_data_version is None:
         odv: Optional[Version] = None
@@ -187,6 +188,7 @@ def load_raw_resource_description(
             raise e  # raise original error; no second attempt with 'LATEST' format version
 
         try:
+            # load latest spec submodule
             sub_spec = _get_spec_submodule(type_, data_version=LATEST)
         except ValueError:
             raise e  # raise original error with desired data_version
@@ -195,7 +197,7 @@ def load_raw_resource_description(
             # original format version is not a future version.
             # => we should not fall back to latest format version.
             # => 'format_version' may be invalid or the issue lies with 'type_'...
-            raise
+            raise e
 
     if odv and Version(sub_spec.format_version) < odv:
         warnings.warn(
