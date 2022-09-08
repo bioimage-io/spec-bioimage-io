@@ -231,7 +231,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
-#### unreleased future model RDF (probably 0.4.8)  # todo: release
+#### model RDF 0.4.8
 - Non-breaking changes
   - `cite` field is now optional
 
