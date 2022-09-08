@@ -147,6 +147,9 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec 0.4.7post1
+- add simple forward compatibility by treating future format versions as latest known (for the respective resource type)
+
 #### bioimageio.spec 0.4.6post3
 - Make CLI output more readable
 - find redirected URLs when checking for URL availability
