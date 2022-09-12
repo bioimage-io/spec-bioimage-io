@@ -319,8 +319,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     badges = missing  # todo: allow badges for Model (RDF has it)
     cite = fields.List(
         fields.Nested(rdf.schema.CiteEntry()),
-        required=True,  # todo: unify authors with RDF (optional or required?)
-        validate=field_validators.Length(min=1),
+        required=False,
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
 
