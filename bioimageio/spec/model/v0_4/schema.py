@@ -287,7 +287,7 @@ class ModelParent(_BioImageIOSchema):
     )
     sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF. Note: the hash is not validated")
 
-    @validates_schema()
+    @validates_schema
     def id_xor_uri(self, data, **kwargs):
         if ("id" in data) == ("uri" in data):
             raise ValidationError("Either 'id' or 'uri' are required (not both).")
@@ -322,6 +322,11 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         required=False,
         bioimageio_description=rdf.schema.RDF.cite_bioimageio_description,
     )
+
+    @validates_schema
+    def warn_on_missing_cite(self, data: dict, **kwargs):
+        if "cite" not in data:
+            self.warn("cite", "missing")
 
     config = fields.YamlDict(
         bioimageio_description=rdf.schema.RDF.config_bioimageio_description
