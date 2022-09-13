@@ -29,7 +29,8 @@ specified.
     E.g. the citation for the model architecture and/or the training data used.
     1.  _(CiteEntry)_   is a Dict with the following keys:
         * <a id="cite:text"></a>`text` _(String)_ free text description
-        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/
+        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/ (alternatively specify `url`)
+        * <a id="cite:url"></a>`url` _(String)_ url to cite (alternatively specify `doi`)
 * <a id="covers"></a>`covers` _(optional List\[Union\[URL→URI | Path→String\]\])_ A list of cover images provided by either a relative path to the model folder, or a hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.
 * <a id="documentation"></a>`documentation` _(optional Union\[URL→URI | Path→String\])_ URL or relative path to markdown file with additional documentation. For markdown files the recommended documentation file name is `README.md`.
 * <a id="download_url"></a>`download_url` _(optional Union\[URL→URI | Path→String\])_ optional url to download the resource from

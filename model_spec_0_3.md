@@ -22,7 +22,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     E.g. the citation for the model architecture and/or the training data used.
     1.  _(CiteEntry)_   is a Dict with the following keys:
         * <a id="cite:text"></a>`text` _(String)_ free text description
-        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/
+        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/ (alternatively specify `url`)
+        * <a id="cite:url"></a>`url` _(String)_ url to cite (alternatively specify `doi`)
 * <a id="description"></a>`description` _(required String)_ A string containing a brief description.
 * <a id="documentation"></a>`documentation` _(required Union\[URL→URI | Path→String\])_ Relative path to file with additional documentation in markdown. This means: 1) only relative file path is allowed 2) the file must be in markdown format with `.md` file name extension 3) URL is not allowed. It is recommended to use `README.md` as the documentation name.
 * <a id="license"></a>`license` _(required String)_ A [SPDX license identifier](https://spdx.org/licenses/)(e.g. `CC-BY-4.0`, `MIT`, `BSD-2-Clause`). We don't support custom license beyond the SPDX license list, if you need that please send an Github issue to discuss your intentions with the community.

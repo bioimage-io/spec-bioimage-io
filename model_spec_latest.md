@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.7
+# BioImage.IO Model Resource Description File Specification 0.4.8
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,19 +10,13 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     This is mandatory, and important for the consumer software to verify before parsing the fields.
     The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
     is in an unsupported format version. The current format version described here is
-    0.4.7
+    0.4.8
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="authors:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
         * <a id="authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
-* <a id="cite"></a>`cite` _(required List\[CiteEntry\])_ A list of citation entries.
-    Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-    E.g. the citation for the model architecture and/or the training data used.
-    1.  _(CiteEntry)_   is a Dict with the following keys:
-        * <a id="cite:text"></a>`text` _(String)_ free text description
-        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/
 * <a id="description"></a>`description` _(required String)_ A string containing a brief description.
 * <a id="documentation"></a>`documentation` _(required Union\[URL→URI | Path→String\])_ Relative path or URL to file with additional documentation in markdown. The file must be in markdown format with `.md` file name extension. It is recommended to use `README.md` as the documentation name. The documentation should include a (sub)section '[#[#]]# Validation' with details on how to quantitatively validate the model on unseen data.
 * <a id="inputs"></a>`inputs` _(required List\[InputTensor\])_ Describes the input tensors expected by this model.
@@ -65,6 +59,13 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         * <a id="badges:label"></a>`label` _(String)_ e.g. 'Open in Colab'
         * <a id="badges:icon"></a>`icon` _(String)_ e.g. 'https://colab.research.google.com/assets/colab-badge.svg'
         * <a id="badges:url"></a>`url` _(Union\[URL→URI | Path→String\])_ e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+* <a id="cite"></a>`cite` _(optional List\[CiteEntry\])_ A list of citation entries.
+    Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
+    E.g. the citation for the model architecture and/or the training data used.
+    1.  _(CiteEntry)_   is a Dict with the following keys:
+        * <a id="cite:text"></a>`text` _(String)_ free text description
+        * <a id="cite:doi"></a>`doi` _(DOI→String)_ digital object identifier, see https://www.doi.org/ (alternatively specify `url`)
+        * <a id="cite:url"></a>`url` _(String)_ url to cite (alternatively specify `doi`)
 * <a id="config"></a>`config` _(optional YamlDict→Dict\[Any, Any\])_ A custom configuration field that can contain any keys not present in the RDF spec. This means you should not store, for example, github repo URL in `config` since we already have the `git_repo` key defined in the spec.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, for example:
     
