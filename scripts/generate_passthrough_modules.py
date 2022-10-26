@@ -114,7 +114,7 @@ def parse_args():
         )
     )
     p.add_argument("command", choices=["check", "generate"])
-    target_choices = ["rdf", "collection", "model", "dataset"]
+    target_choices = ["rdf", "collection", "model", "dataset", "workflow"]
     p.add_argument(
         "--target-rdf",
         choices=target_choices,
