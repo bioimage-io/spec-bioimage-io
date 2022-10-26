@@ -6,6 +6,7 @@ RDF <--schema--> raw nodes
 """
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
@@ -14,7 +15,7 @@ from bioimageio.spec.rdf.v0_2.raw_nodes import FormatVersion, RDF as _RDF, URI
 from bioimageio.spec.shared.raw_nodes import RawNode
 
 try:
-    from typing import Any, Dict, List, Literal, Union
+    from typing import Literal
 except ImportError:
     from typing_extensions import Literal  # type: ignore
 
