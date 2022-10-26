@@ -19,11 +19,13 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 FormatVersion = FormatVersion
+ArgType = Literal["tensor", "string", "object"]
 
 
 @dataclass
-class Tensor(RawNode):
+class Arg(RawNode):
     name: str = missing
+    type: ArgType = missing
     description: Union[_Missing, str] = missing
 
 
@@ -40,8 +42,8 @@ class Step(RawNode):
 class Workflow(_RDF):
     type: Literal["workflow"] = missing
 
-    inputs: List[Tensor] = missing
-    outputs: List[Tensor] = missing
+    inputs: List[Arg] = missing
+    outputs: List[Arg] = missing
 
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing

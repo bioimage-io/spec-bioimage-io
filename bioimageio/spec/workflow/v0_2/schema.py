@@ -17,13 +17,18 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Tensor(_BioImageIOSchema):
+class Arg(_BioImageIOSchema):
     name = fields.String(
         required=True,
         validate=field_validators.Predicate("isidentifier"),
-        bioimageio_description="Tensor name. No duplicates are allowed.",
+        bioimageio_description="Argument/tensor name. No duplicates are allowed.",
     )
-    description = fields.String()
+    type = fields.String(
+        required=True,
+        validate=field_validators.OneOf(get_args(raw_nodes.ArgType)),
+        bioimageio_description=f"Argument type. One of: {get_args(raw_nodes.ArgType)}",
+    )
+    description = fields.String(bioimageio_description="Description of argument/tensor.")
 
 
 class Step(_BioImageIOSchema):
@@ -63,54 +68,54 @@ The workflow RDF YAML file contains mandatory and optional fields. In the follow
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 """
     inputs = fields.List(
-        fields.Nested(Tensor()),
+        fields.Nested(Arg()),
         validate=field_validators.Length(min=1),
         required=True,
-        bioimageio_description="Describes the input tensors expected by this model.",
+        bioimageio_description="Describes the inputs expected by this model.",
     )
 
     @validates("inputs")
-    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.Tensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.Tensor) for v in value):
-            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
+    def no_duplicate_input_names(self, value: typing.List[raw_nodes.Arg]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.Arg) for v in value):
+            raise ValidationError("Could not check for duplicate input names due to another validation error.")
 
         names = [t.name for t in value]
         if len(names) > len(set(names)):
-            raise ValidationError("Duplicate input tensor names are not allowed.")
+            raise ValidationError("Duplicate input names are not allowed.")
 
     outputs = fields.List(
-        fields.Nested(Tensor()),
+        fields.Nested(Arg()),
         validate=field_validators.Length(min=1),
-        bioimageio_description="Describes the output tensors from this model.",
+        bioimageio_description="Describes the outputs from this model.",
     )
 
     @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.Tensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.Tensor) for v in value):
-            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
+    def no_duplicate_output_names(self, value: typing.List[raw_nodes.Arg]):
+        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.Arg) for v in value):
+            raise ValidationError("Could not check for duplicate output names due to another validation error.")
 
         names = [t["name"] if isinstance(t, dict) else t.name for t in value]
         if len(names) > len(set(names)):
-            raise ValidationError("Duplicate output tensor names are not allowed.")
+            raise ValidationError("Duplicate output names are not allowed.")
 
     @validates_schema
     def inputs_and_outputs(self, data, **kwargs):
-        ipts: typing.List[raw_nodes.Tensor] = data.get("inputs")
-        outs: typing.List[raw_nodes.Tensor] = data.get("outputs")
+        ipts: typing.List[raw_nodes.Arg] = data.get("inputs")
+        outs: typing.List[raw_nodes.Arg] = data.get("outputs")
         if any(
             [
                 not isinstance(ipts, list),
                 not isinstance(outs, list),
-                not all(isinstance(v, raw_nodes.Tensor) for v in ipts),
-                not all(isinstance(v, raw_nodes.Tensor) for v in outs),
+                not all(isinstance(v, raw_nodes.Arg) for v in ipts),
+                not all(isinstance(v, raw_nodes.Arg) for v in outs),
             ]
         ):
-            raise ValidationError("Could not check for duplicate tensor names due to another validation error.")
+            raise ValidationError("Could not check for duplicate names due to another validation error.")
 
-        # no duplicate tensor names
+        # no duplicate names
         names = [t.name for t in ipts + outs]  # type: ignore
         if len(names) > len(set(names)):
-            raise ValidationError("Duplicate tensor names are not allowed.")
+            raise ValidationError("Duplicate names are not allowed.")
 
     test_inputs = fields.List(
         fields.Union([fields.URI(), fields.Path()]),
