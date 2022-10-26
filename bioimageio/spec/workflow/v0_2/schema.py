@@ -1,6 +1,6 @@
 import typing
 
-from marshmallow import ValidationError, validates, validates_schema
+from marshmallow import ValidationError, missing, validates, validates_schema
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared import field_validators, fields
@@ -126,15 +126,52 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
         "The extension must be '.npy'.",
     )
+
     test_outputs = fields.List(
         fields.Union([fields.URI(), fields.Path()]),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="Analog to test_inputs.",
     )
+
+    @validates_schema
+    def test_outputs_match(self, data, **kwargs):
+        steps = data.get("steps")
+        if not steps or not isinstance(steps, list) or not isinstance(steps[-1], raw_nodes.Step):
+            raise ValidationError("invalid 'steps'")
+
+        test_outputs = data.get("test_outputs")
+        if not isinstance(test_outputs, list):
+            raise ValidationError("invalid 'test_outputs'")
+
+        if steps[-1].op == "select_outputs":
+            if steps[-1].outputs:
+                raise ValidationError("Unexpected 'outputs' defined for op: 'select_outputs'. Did you mean 'inputs'?")
+            if len(test_outputs) != len(steps[-1].inputs):
+                raise ValidationError(f"Expected {len(steps[-1].inputs)} 'test_inputs', but found {len(test_outputs)}")
+
     steps = fields.List(
         fields.Nested(Step()),
         validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="Workflow steps to be executed consecutively.",
     )
+
+    @validates_schema
+    def step_input_references_exist(self, data, **kwargs):
+        inputs = data.get("inputs")
+        if not inputs or not isinstance(inputs, list) or not all(isinstance(ipt, raw_nodes.Arg) for ipt in inputs):
+            raise ValidationError("Missing/invalid 'inputs'")
+        steps = data.get("steps")
+        if not steps or not isinstance(steps, list) or not isinstance(steps[0], raw_nodes.Step):
+            raise ValidationError("Missing/invalid 'steps'")
+
+        references = {f"inputs.{ipt.name}" for ipt in inputs}
+        for step in steps:
+            if step.inputs:
+                for si in step.inputs:
+                    if si not in references:
+                        raise ValidationError(f"Invalid step input reference '{si}'")
+
+            if step.outputs:
+                references.update({f"{step.id}.outputs.{out}" for out in step.outputs})
