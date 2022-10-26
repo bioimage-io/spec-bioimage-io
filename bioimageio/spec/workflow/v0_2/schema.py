@@ -20,7 +20,6 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 class Arg(_BioImageIOSchema):
     name = fields.String(
         required=True,
-        validate=field_validators.Predicate("isidentifier"),
         bioimageio_description="Argument/tensor name. No duplicates are allowed.",
     )
     type = fields.String(
@@ -44,7 +43,6 @@ class Step(_BioImageIOSchema):
     )
     inputs = fields.List(
         fields.String(
-            validate=field_validators.Predicate("isidentifier"),
             bioimageio_description="named output of a previous step with the pattern '<step id>.outputs.<output name>'",
         ),
         required=False,

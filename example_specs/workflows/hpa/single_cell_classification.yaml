@@ -1,0 +1,44 @@
+name: HPA Single-cell Classification Example Workflow
+description: A workflow for running HPA single-cell classification
+format_version: 0.2.3
+type: workflow
+
+inputs:
+- name: nuclei
+  type: tensor
+- name: protein
+  type: tensor
+
+test_inputs:
+- nuclei.npy
+- protein.npy
+
+outputs:
+- name: cells
+  type: tensor
+- name: scores
+  type: tensor
+
+test_outputs:
+- cells.npy
+- scores.npy
+
+steps:
+- id: segmentation
+  op: model_inference
+  inputs: [inputs.nuclei]  # take the first output of step 1 (id: data) as the only input
+  outputs: [cells]
+  kwargs:
+    model_id: conscientious-seashell
+    preprocessing: true
+    postprocessing: false
+- id: classification
+  op: model_inference
+  inputs: [inputs.protein, segmentation.outputs.cells]  # take the second output of step1 and the output of step 2
+  outputs: [scores]
+  kwargs:
+    model_id: straightforward-crocodile
+    preprocessing: true
+    postprocessing: false
+- op: select_outputs
+  inputs: [segmentation.outputs.cells,  classification.outputs.scores]

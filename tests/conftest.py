@@ -101,3 +101,13 @@ def unet2d_keras_tf():
 @pytest.fixture
 def dataset_rdf():
     return pathlib.Path(__file__).parent / "../example_specs/datasets/covid_if_training_data/rdf.yaml"
+
+
+@pytest.fixture
+def stardist_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/stardist/stardist_example.yaml"
+
+
+@pytest.fixture
+def hpa_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/hpa/single_cell_classification.yaml"

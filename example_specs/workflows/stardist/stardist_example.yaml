@@ -1,0 +1,39 @@
+name: StarDist Example Workflow
+description: A workflow for running stardist
+format_version: 0.2.3
+type: workflow
+
+inputs:
+- name: raw
+  type: tensor
+  description: image with star-convex objects
+
+test_inputs:
+- raw.npy
+
+outputs:
+- name: labels
+  type: tensor
+- name: coord
+  type: tensor
+- name: points
+  type: tensor
+- name: prob
+  type: tensor
+
+test_outputs:
+- labels.npy
+- coord.npy
+- points.npy
+- prob.npy
+
+steps:
+- op: zero_mean_unit_variance
+- op: model_inference
+  kwargs:
+    model_id: fearless-crab
+    preprocessing: false # disable the preprocessing
+    postprocessing: false # disable the postprocessing
+- op: stardist_postprocessing
+  kwargs:
+    diameter: 2.3
