@@ -190,3 +190,5 @@ if __name__ == "__main__":
     export_markdown_doc(dist, bioimageio.spec.model.v0_4)
     export_markdown_doc(dist, bioimageio.spec.rdf)
     export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)
+    export_markdown_doc(dist, bioimageio.spec.workflow)
+    export_markdown_doc(dist, bioimageio.spec.workflow.v0_2)
