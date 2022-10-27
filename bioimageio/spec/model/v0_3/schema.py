@@ -251,6 +251,18 @@ class Postprocessing(Processing):
             validate=field_validators.Predicate("isidentifier"),
             bioimageio_description="Name of tensor to match.",
         )
+        axes = fields.Axes(
+            valid_axes="czyx",
+            bioimageio_description="The subset of axes to scale jointly. For example xy to normalize the two image "
+            "axes for 2d data jointly. The batch axis (b) is not valid here. "
+            "Default: scale all non-batch axes jointly.",
+        )
+        eps = fields.Float(
+            missing=1e-6,
+            bioimageio_description="Epsilon for numeric stability: "
+            "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean. "
+            "Default value: 10^-6.",
+        )
 
 
 class InputTensor(_TensorBase):
