@@ -8,9 +8,6 @@ inputs:
   type: tensor
   description: image with star-convex objects
 
-test_inputs:
-- raw.npy
-
 outputs:
 - name: labels
   type: tensor
@@ -21,19 +18,53 @@ outputs:
 - name: prob
   type: tensor
 
-test_outputs:
-- labels.npy
-- coord.npy
-- points.npy
-- prob.npy
+kwargs:
+- name: diameter
+  type: float
+  default: 2.3
 
 steps:
 - op: zero_mean_unit_variance
 - op: model_inference
   kwargs:
-    model_id: fearless-crab
+    rdf_source: fearless-crab
     preprocessing: false # disable the preprocessing
     postprocessing: false # disable the postprocessing
 - op: stardist_postprocessing
   kwargs:
-    diameter: 2.3
+    diameter: ${{ kwargs.diameter }}
+
+test_steps:
+- id: test_tensors
+  op: load_tensors
+  outputs:
+    - raw
+    - labels
+    - coord
+    - points
+    - prob
+  kwargs:
+    sources:
+    - raw.npy
+    - labels.npy
+    - coord.npy
+    - points.npy
+    - prob.npy
+- id: workflow
+  op: run_workflow
+  inputs: [test_tensors.outputs.raw]
+  outputs:
+    - labels
+    - coord
+    - points
+    - prob
+  kwargs:
+    rdf_source: ${{ self.rdf_source }}
+- op: assert_close
+  inputs: [test_tensors.outputs.labels, workflow.outputs.labels]
+- op: assert_close
+  inputs: [test_tensors.outputs.coord, workflow.outputs.coord]
+- op: assert_close
+  inputs: [test_tensors.outputs.points, workflow.outputs.points]
+- op: assert_close
+  inputs: [test_tensors.outputs.prob, workflow.outputs.prob]

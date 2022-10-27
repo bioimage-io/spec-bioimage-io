@@ -9,9 +9,11 @@ inputs:
 - name: protein
   type: tensor
 
-test_inputs:
-- nuclei.npy
-- protein.npy
+kwargs:
+- name: seg_prep
+  type: boolean
+  default: false
+
 
 outputs:
 - name: cells
@@ -19,26 +21,41 @@ outputs:
 - name: scores
   type: tensor
 
-test_outputs:
-- cells.npy
-- scores.npy
 
 steps:
+- op: set_
 - id: segmentation
   op: model_inference
   inputs: [inputs.nuclei]  # take the first output of step 1 (id: data) as the only input
   outputs: [cells]
   kwargs:
-    model_id: conscientious-seashell
-    preprocessing: true
+    rdf_source: conscientious-seashell
+    preprocessing: ${{ kwargs.seg_prep }}
     postprocessing: false
 - id: classification
   op: model_inference
   inputs: [inputs.protein, segmentation.outputs.cells]  # take the second output of step1 and the output of step 2
   outputs: [scores]
   kwargs:
-    model_id: straightforward-crocodile
+    rdf_source: straightforward-crocodile
     preprocessing: true
     postprocessing: false
 - op: select_outputs
   inputs: [segmentation.outputs.cells,  classification.outputs.scores]
+
+test_steps:
+- id: test_tensors
+  op: load_tensors
+  outputs: [nuclei, protein, cells, scores]
+  kwargs:
+    sources: [nuclei.npy, protein.npy, cells.npy, scores.npy]
+- id: workflow
+  op: run_workflow
+  inputs: [test_tensors.outputs.nuclei, test_tensors.outputs.protein]
+  outputs: [cells, scores]
+  kwargs:
+    rdf_source: ${{ self.rdf_source }}
+- op: assert_close
+  inputs: [test_tensors.outputs.cells, workflow.outputs.cells]
+- op: assert_close
+  inputs: [test_tensors.outputs.scores, workflow.outputs.scores]

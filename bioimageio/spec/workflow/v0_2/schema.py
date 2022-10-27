@@ -27,7 +27,64 @@ class Arg(_BioImageIOSchema):
         validate=field_validators.OneOf(get_args(raw_nodes.ArgType)),
         bioimageio_description=f"Argument type. One of: {get_args(raw_nodes.ArgType)}",
     )
+    default = fields.Raw(
+        required=False,
+        bioimageio_description="Default value compatible with type given by `type` field.",
+        allow_none=True,
+    )
+
+    @validates_schema
+    def default_has_compatible_type(self, data, **kwargs):
+        if data.get("default") is None:
+            return
+
+        arg_type_name = data.get("type")
+        if arg_type_name == "any":
+            return
+
+        default_type = type(data["default"])
+        type_name = raw_nodes.TYPE_NAME_MAP[default_type]
+        if type_name != arg_type_name:
+            raise ValidationError(
+                f"Default value of type {default_type} (type name: {type_name}) does not match type: {arg_type_name}"
+            )
+
     description = fields.String(bioimageio_description="Description of argument/tensor.")
+
+
+class WorkflowKwarg(_BioImageIOSchema):
+    name = fields.String(
+        required=True,
+        bioimageio_description="Key word argument name. No duplicates are allowed.",
+    )
+    type = fields.String(
+        required=True,
+        validate=field_validators.OneOf(get_args(raw_nodes.ArgType)),
+        bioimageio_description=f"Argument type. One of: {get_args(raw_nodes.ArgType)}",
+    )
+    default = fields.Raw(
+        required=True,
+        bioimageio_description="Default value compatible with type given by `type` field.",
+        allow_none=True,
+    )
+
+    @validates_schema
+    def default_has_compatible_type(self, data, **kwargs):
+        if data.get("default") is None:
+            return
+
+        arg_type_name = data.get("type")
+        if arg_type_name == "any":
+            return
+
+        default_type = type(data["default"])
+        type_name = raw_nodes.TYPE_NAME_MAP[default_type]
+        if type_name != arg_type_name:
+            raise ValidationError(
+                f"Default value of type {default_type} (type name: {type_name}) does not match type: {arg_type_name}"
+            )
+
+    description = fields.String(required=False, bioimageio_description="Description of key word argument.")
 
 
 class Step(_BioImageIOSchema):
@@ -69,7 +126,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         fields.Nested(Arg()),
         validate=field_validators.Length(min=1),
         required=True,
-        bioimageio_description="Describes the inputs expected by this model.",
+        bioimageio_description="Describes the inputs expected by this workflow.",
     )
 
     @validates("inputs")
@@ -84,7 +141,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     outputs = fields.List(
         fields.Nested(Arg()),
         validate=field_validators.Length(min=1),
-        bioimageio_description="Describes the outputs from this model.",
+        bioimageio_description="Describes the outputs from this workflow.",
     )
 
     @validates("outputs")
@@ -115,40 +172,11 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         if len(names) > len(set(names)):
             raise ValidationError("Duplicate names are not allowed.")
 
-    test_inputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
-        "**a single test case**. "
-        "This means if your workflow has more than one input, you should provide one URI for each input."
-        "Each test input should be a file with a ndarray in "
-        "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
-        "The extension must be '.npy'.",
+    kwargs = fields.List(
+        fields.Nested(WorkflowKwarg()),
+        required=False,
+        bioimageio_description="Key word arguments for this workflow.",
     )
-
-    test_outputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="Analog to test_inputs.",
-    )
-
-    @validates_schema
-    def test_outputs_match(self, data, **kwargs):
-        steps = data.get("steps")
-        if not steps or not isinstance(steps, list) or not isinstance(steps[-1], raw_nodes.Step):
-            raise ValidationError("invalid 'steps'")
-
-        test_outputs = data.get("test_outputs")
-        if not isinstance(test_outputs, list):
-            raise ValidationError("invalid 'test_outputs'")
-
-        if steps[-1].op == "select_outputs":
-            if steps[-1].outputs:
-                raise ValidationError("Unexpected 'outputs' defined for op: 'select_outputs'. Did you mean 'inputs'?")
-            if len(test_outputs) != len(steps[-1].inputs):
-                raise ValidationError(f"Expected {len(steps[-1].inputs)} 'test_inputs', but found {len(test_outputs)}")
 
     steps = fields.List(
         fields.Nested(Step()),
@@ -172,6 +200,29 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 for si in step.inputs:
                     if si not in references:
                         raise ValidationError(f"Invalid step input reference '{si}'")
+
+            if step.outputs:
+                references.update({f"{step.id}.outputs.{out}" for out in step.outputs})
+
+    test_steps = fields.List(
+        fields.Nested(Step()),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="Test steps to be executed consecutively.",
+    )
+
+    @validates_schema
+    def test_step_input_references_exist(self, data, **kwargs):
+        steps = data.get("test_steps")
+        if not steps or not isinstance(steps, list) or not isinstance(steps[0], raw_nodes.Step):
+            raise ValidationError("Missing/invalid 'test_steps'")
+
+        references = set()
+        for step in steps:
+            if step.inputs:
+                for si in step.inputs:
+                    if si not in references:
+                        raise ValidationError(f"Invalid test step input reference '{si}'")
 
             if step.outputs:
                 references.update({f"{step.id}.outputs.{out}" for out in step.outputs})

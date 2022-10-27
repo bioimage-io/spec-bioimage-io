@@ -82,6 +82,10 @@ class Array(DocumentedField, marshmallow_fields.Field):
             return value
 
 
+class Boolean(DocumentedField, marshmallow_fields.Boolean):
+    pass
+
+
 class DateTime(DocumentedField, marshmallow_fields.DateTime):
     """
     Parses datetime in ISO8601 or if value already has datetime.datetime type
