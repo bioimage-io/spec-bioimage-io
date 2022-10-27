@@ -23,6 +23,8 @@ Scale the tensor s.t. its mean and variance match a reference tensor.
 - key word arguments:
   - `mode` One of per_dataset (mean and variance are computed for the entire dataset), per_sample (mean and variance are computed for each sample individually)
   - `reference_tensor` Name of tensor to match.
+  - `[axes]` The subset of axes to scale jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here. Default: scale all non-batch axes jointly.
+  - `[eps]` Epsilon for numeric stability: `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean. Default value: 10^-6.
 - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L155-L157
 ### `scale_range`
 Scale with percentiles.
