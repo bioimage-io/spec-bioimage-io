@@ -21,44 +21,43 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 FormatVersion = FormatVersion
-ArgType = Literal["tensor", "int", "float", "string", "boolean", "list", "dict", "any"]
+ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "dict", "any"]
 DefaultType = Union[int, float, str, bool, list, dict, None]
 TYPE_NAME_MAP = {int: "int", float: "float", str: "string", bool: "boolean", list: "list", dict: "dict", None: "null"}
 
 
 @dataclass
-class Arg(RawNode):
+class Parameter(RawNode):
     name: str = missing
-    type: ArgType = missing
-    default: Union[_Missing, DefaultType] = missing
+    type: ParameterType = missing
     description: Union[_Missing, str] = missing
+    axes: Union[_Missing, str] = missing
 
 
 @dataclass
-class WorkflowKwarg(RawNode):
-    name: str = missing
-    type: ArgType = missing
-    default: DefaultType = missing
-    description: Union[_Missing, str] = missing
+class Input(Parameter):
+    default: Union[_Missing, DefaultType] = missing
+
+
+@dataclass
+class Output(Parameter):
+    pass
 
 
 @dataclass
 class Step(RawNode):
     id: Union[_Missing, str] = missing
     op: str = missing
-    inputs: Union[_Missing, List[str]] = missing
+    inputs: Union[_Missing, List[Any], Dict[str, Any]] = missing
     outputs: Union[_Missing, List[str]] = missing
-    kwargs: Union[_Missing, Dict[str, Any]] = missing
 
 
 @dataclass
 class Workflow(_RDF):
     type: Literal["workflow"] = missing
 
-    inputs: List[Arg] = missing
-    outputs: List[Arg] = missing
+    inputs: List[Input] = missing
+    outputs: List[Output] = missing
 
     steps: List[Step] = missing
     test_steps: List[Step] = missing
-
-    kwargs: Union[_Missing, List[WorkflowKwarg]] = missing
