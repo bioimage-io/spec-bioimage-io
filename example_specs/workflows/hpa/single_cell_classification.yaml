@@ -23,7 +23,6 @@ outputs:
 
 
 steps:
-- op: set_
 - id: segmentation
   op: model_inference
   inputs: [inputs.nuclei]  # take the first output of step 1 (id: data) as the only input
