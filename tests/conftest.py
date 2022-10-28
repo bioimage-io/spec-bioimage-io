@@ -111,3 +111,8 @@ def stardist_workflow_rdf():
 @pytest.fixture
 def hpa_workflow_rdf():
     return pathlib.Path(__file__).parent / "../example_specs/workflows/hpa/single_cell_classification.yaml"
+
+
+@pytest.fixture
+def dummy_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/dummy/rdf.yaml"

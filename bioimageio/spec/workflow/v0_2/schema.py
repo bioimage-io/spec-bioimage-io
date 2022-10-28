@@ -111,7 +111,9 @@ class Step(_BioImageIOSchema):
         bioimageio_description="output names for this step",
         required=False,
     )
-    kwargs = fields.Kwargs(bioimageio_description="Key word arguments for op.")
+    kwargs = fields.Kwargs(
+        bioimageio_description="Key word arguments for op. \n\nWorkflow kwargs can be refered to as ${{ kwargs.\<workflow kwarg name\> }}. \n\nOutputs of previous steps can be referenced as ${{ \<step id\>.outputs.\<output name\> }} (the previous step is required to specify `id` and `outputs`). \n\nThe workflow's `rdf_source` can be referenced as ${{ self.rdf_source }}. This will expand to the URL or file path of the workflow RDF."
+    )
 
 
 class Workflow(_BioImageIOSchema, RDF):
@@ -124,7 +126,6 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 """
     inputs = fields.List(
         fields.Nested(Arg()),
-        validate=field_validators.Length(min=1),
         required=True,
         bioimageio_description="Describes the inputs expected by this workflow.",
     )
@@ -178,6 +179,17 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description="Key word arguments for this workflow.",
     )
 
+    @validates("kwargs")
+    def unique_kwarg_names(self, kwargs):
+        if not isinstance(kwargs, list) or not all(isinstance(kw, raw_nodes.WorkflowKwarg) for kw in kwargs):
+            raise ValidationError("Invalid 'kwargs'.")
+
+        kwarg_names = set()
+        for kw in kwargs:
+            if kw.name in kwarg_names:
+                raise ValidationError(f"Duplicate kwarg name '{kw.name}'.")
+            kwarg_names.add(kw.name)
+
     steps = fields.List(
         fields.Nested(Step()),
         validate=field_validators.Length(min=1),
@@ -185,16 +197,37 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         bioimageio_description="Workflow steps to be executed consecutively.",
     )
 
+    @staticmethod
+    def get_kwarg_reference_names(data) -> typing.Set[str]:
+        refs: typing.Set[str] = set()
+        kwargs = data.get("kwargs")
+        if not isinstance(kwargs, list):
+            return refs
+
+        for kw in kwargs:
+            if isinstance(kw, raw_nodes.WorkflowKwarg):
+                refs.add(f"${{{{ kwargs.{kw.name} }}}}")
+
+        return refs
+
+    @staticmethod
+    def get_self_reference_names() -> typing.Set[str]:
+        return {"${{ self.rdf_source }}"}
+
     @validates_schema
     def step_input_references_exist(self, data, **kwargs):
         inputs = data.get("inputs")
-        if not inputs or not isinstance(inputs, list) or not all(isinstance(ipt, raw_nodes.Arg) for ipt in inputs):
+        if not isinstance(inputs, list) or not all(isinstance(ipt, raw_nodes.Arg) for ipt in inputs):
             raise ValidationError("Missing/invalid 'inputs'")
+
         steps = data.get("steps")
-        if not steps or not isinstance(steps, list) or not isinstance(steps[0], raw_nodes.Step):
+        if not steps or not isinstance(steps, list) or not all(isinstance(s, raw_nodes.Step) for s in steps):
             raise ValidationError("Missing/invalid 'steps'")
 
-        references = {f"inputs.{ipt.name}" for ipt in inputs}
+        references = {f"${{{{ inputs.{ipt.name} }}}}" for ipt in inputs}
+        references.update(self.get_kwarg_reference_names(data))
+        references.update(self.get_self_reference_names())
+
         for step in steps:
             if step.inputs:
                 for si in step.inputs:
@@ -214,10 +247,11 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     @validates_schema
     def test_step_input_references_exist(self, data, **kwargs):
         steps = data.get("test_steps")
-        if not steps or not isinstance(steps, list) or not isinstance(steps[0], raw_nodes.Step):
+        if not steps or not isinstance(steps, list) or not all(isinstance(s, raw_nodes.Step) for s in steps):
             raise ValidationError("Missing/invalid 'test_steps'")
 
-        references = set()
+        references = self.get_kwarg_reference_names(data)
+        references.update(self.get_self_reference_names())
         for step in steps:
             if step.inputs:
                 for si in step.inputs:
@@ -226,3 +260,23 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
             if step.outputs:
                 references.update({f"{step.id}.outputs.{out}" for out in step.outputs})
+
+    @validates_schema
+    def test_kwarg_references_are_valid(self, data, **kwargs):
+        for step_type in ["steps", "test_steps"]:
+            steps = data.get(step_type)
+            if not steps or not isinstance(steps, list) or not isinstance(steps[0], raw_nodes.Step):
+                raise ValidationError(f"Missing/invalid '{step_type}'")
+
+            references = self.get_kwarg_reference_names(data)
+            references.update(self.get_self_reference_names())
+            for step in steps:
+                if step.kwargs:
+                    for k, v in step.kwargs.items():
+                        if isinstance(v, str) and v.startswith("${{") and v.endswith("}}") and v not in references:
+                            raise ValidationError(
+                                f"Invalid {step_type[:-1].replace('_', ' ')} kwarg ({k}) referencing '{v}'"
+                            )
+
+                if step.outputs:
+                    references.update({f"${{{{ {step.id}.outputs.{out} }}}}" for out in step.outputs})
