@@ -76,8 +76,8 @@ def test_load_raw_model_unet2d_keras_tf2(unet2d_keras_tf2):
     raw_model = load_raw_resource_description(unet2d_keras_tf2, update_to_format="latest")
     assert isinstance(raw_model, raw_nodes.Model)
     # test attachments
-    assert len(raw_model.attachments.files) == 1
-    assert (raw_model.root_path / raw_model.attachments.files[0]).exists()
+    assert len(raw_model.attachments.files) == 3
+    assert all([(raw_model.root_path / attachment).exists() for attachment in raw_model.attachments.files])
 
 
 def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
