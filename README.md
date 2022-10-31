@@ -147,6 +147,9 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec 0.4.8post1
+- add `axes` and `eps` to `scale_mean_var`
+
 #### bioimageio.spec 0.4.7post1
 - add simple forward compatibility by treating future format versions as latest known (for the respective resource type)
 
