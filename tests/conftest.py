@@ -106,3 +106,8 @@ def unet2d_keras_tf2():
 @pytest.fixture
 def dataset_rdf():
     return pathlib.Path(__file__).parent / "../example_specs/datasets/covid_if_training_data/rdf.yaml"
+
+
+@pytest.fixture
+def upsamle_model_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/models/upsample_test_model/rdf.yaml"
