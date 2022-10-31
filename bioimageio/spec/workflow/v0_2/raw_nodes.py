@@ -36,6 +36,11 @@ class Parameter(RawNode):
 
 @dataclass
 class Input(Parameter):
+    pass
+
+
+@dataclass
+class Option(Parameter):
     default: Union[_Missing, DefaultType] = missing
 
 
@@ -57,6 +62,7 @@ class Workflow(_RDF):
     type: Literal["workflow"] = missing
 
     inputs: List[Input] = missing
+    options: List[Option] = missing
     outputs: List[Output] = missing
 
     steps: List[Step] = missing

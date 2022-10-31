@@ -6,7 +6,10 @@ type: workflow
 inputs:
 - name: shape
   type: list
-  default: [2, 3]
+- name: axes
+  type: str
+
+options:
 - name: threshold
   type: float
   default: 0.5
@@ -17,30 +20,37 @@ outputs:
 
 steps:
 - id: step0
-  op: generate_random_tensor
+  op: generate_random_uniform_tensor
   inputs:
     shape: ${{ inputs.shape }}
-    dtype: float
-    distribution: uniform
-    low: 0
-    high: 1
+    axes: ${{ inputs.axes }}
+#  options:
+#    low: 0
+#    high: 1
 - id: step1
   op: binarize
   inputs:
     threshold: ${{ inputs.threshold }}
 - op: log
-  kwargs:
+  options:
+    log_level: 50
     threshold: ${{ kwargs.threshold }}
     original: ${{ step0.outputs.random_tensor }}
-    binarized: ${{ step1.outputs.binarized }}
+#    binarized: ${{ step1.outputs.binarized }}
+
 
 test_steps:
 - id: wf
   op: run_workflow
-  outputs: [out0]
-  kwargs:
+  inputs:
     rdf_source: ${{ self.rdf_source }}
-    threshold: 0.5
+  options:
+    inputs:
+      shape: [2, 3]
+      axes: cx
+    options:
+      threshold: 0.5
+  outputs: [out0]
 - op: assert_shape
   inputs:
     tensor: ${{ wf.outputs.out0 }}
