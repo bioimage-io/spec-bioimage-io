@@ -94,17 +94,22 @@ class Processing(_BioImageIOSchema):
     class scale_linear(SharedProcessingSchema):
         bioimageio_description = "Fixed linear scaling."
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to scale jointly. "
             "For example xy to scale the two image axes for 2d data jointly. "
             "The batch axis (b) is not valid here.",
         )
         gain = fields.Array(
-            fields.Float(), missing=fields.Float(missing=1.0), bioimageio_description="multiplicative factor"
+            fields.Float(),
+            bioimageio_maybe_required=True,
+            missing=fields.Float(missing=1.0),
+            bioimageio_description="multiplicative factor",
         )  # todo: check if gain match input axes
         offset = fields.Array(
-            fields.Float(), missing=fields.Float(missing=0.0), bioimageio_description="additive term"
+            fields.Float(),
+            bioimageio_maybe_required=True,
+            missing=fields.Float(missing=0.0),
+            bioimageio_description="additive term",
         )  # todo: check if offset match input axes
 
         @validates_schema
@@ -142,7 +147,6 @@ class Processing(_BioImageIOSchema):
         bioimageio_description = "Subtract mean and divide by variance."
         mode = fields.ProcMode(required=True)
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
             "axes for 2d data jointly. The batch axis (b) is not valid here.",
@@ -191,7 +195,6 @@ class Preprocessing(Processing):
         bioimageio_description = "Scale with percentiles."
         mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
             "axes for 2d data jointly. The batch axis (b) is not valid here.",
