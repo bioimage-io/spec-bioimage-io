@@ -25,13 +25,82 @@ ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "
 DefaultType = Union[int, float, str, bool, list, dict, None]
 TYPE_NAME_MAP = {int: "int", float: "float", str: "string", bool: "boolean", list: "list", dict: "dict", None: "null"}
 
+# unit names from https://ngff.openmicroscopy.org/latest/#axes-md
+SpaceUnit = Literal[
+    "angstrom",
+    "attometer",
+    "centimeter",
+    "decimeter",
+    "exameter",
+    "femtometer",
+    "foot",
+    "gigameter",
+    "hectometer",
+    "inch",
+    "kilometer",
+    "megameter",
+    "meter",
+    "micrometer",
+    "mile",
+    "millimeter",
+    "nanometer",
+    "parsec",
+    "petameter",
+    "picometer",
+    "terameter",
+    "yard",
+    "yoctometer",
+    "yottameter",
+    "zeptometer",
+    "zettameter",
+]
+
+TimeUnit = Literal[
+    "attosecond",
+    "centisecond",
+    "day",
+    "decisecond",
+    "exasecond",
+    "femtosecond",
+    "gigasecond",
+    "hectosecond",
+    "hour",
+    "kilosecond",
+    "megasecond",
+    "microsecond",
+    "millisecond",
+    "minute",
+    "nanosecond",
+    "petasecond",
+    "picosecond",
+    "second",
+    "terasecond",
+    "yoctosecond",
+    "yottasecond",
+    "zeptosecond",
+    "zettasecond",
+]
+
+# this Axis definition is compatible with the NGFF draft from October 24, 2022
+# https://ngff.openmicroscopy.org/latest/#axes-md
+AxisType = Literal["batch", "channel", "index", "time", "space"]
+
+
+@dataclass
+class Axis:
+    name: str = missing
+    type: AxisType = missing
+    description: Union[_Missing, str] = missing
+    unit: Union[_Missing, SpaceUnit, TimeUnit, str] = missing
+    step: Union[_Missing, int] = missing
+
 
 @dataclass
 class Parameter(RawNode):
     name: str = missing
     type: ParameterType = missing
     description: Union[_Missing, str] = missing
-    axes: Union[_Missing, str] = missing
+    axes: Union[_Missing, List[Axis]] = missing
 
 
 @dataclass
@@ -51,9 +120,10 @@ class Output(Parameter):
 
 @dataclass
 class Step(RawNode):
-    id: Union[_Missing, str] = missing
     op: str = missing
-    inputs: Union[_Missing, List[Any], Dict[str, Any]] = missing
+    id: Union[_Missing, str] = missing
+    inputs: Union[_Missing, List[Any]] = missing
+    options: Union[_Missing, Dict[str, Any]] = missing
     outputs: Union[_Missing, List[str]] = missing
 
 
@@ -64,6 +134,5 @@ class Workflow(_RDF):
     inputs: List[Input] = missing
     options: List[Option] = missing
     outputs: List[Output] = missing
-
     steps: List[Step] = missing
     test_steps: List[Step] = missing

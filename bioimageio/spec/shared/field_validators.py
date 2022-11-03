@@ -4,6 +4,7 @@ from marshmallow.validate import (
     ContainsNoneOf,
     Equal,
     Length,
+    NoneOf,
     OneOf,
     Predicate as MarshmallowPredicate,
     Range,
@@ -15,6 +16,7 @@ from marshmallow.validate import (
 ContainsNoneOf = ContainsNoneOf
 Equal = Equal
 Length = Length
+NoneOf = NoneOf
 OneOf = OneOf
 Range = Range
 
