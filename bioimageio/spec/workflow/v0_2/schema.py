@@ -1,7 +1,7 @@
 import typing
-import warnings
 
-from marshmallow import ValidationError, missing, validates, validates_schema
+from marshmallow import ValidationError, validates, validates_schema
+from marshmallow.exceptions import SCHEMA
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared import field_validators, fields
@@ -18,7 +18,7 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
     raw_nodes = raw_nodes
 
 
-class Axis(SharedBioImageIOSchema):
+class Axis(_BioImageIOSchema):
     name = fields.String(
         required=True,
         bioimageio_description="A unique axis name (max 32 characters).",
@@ -70,7 +70,7 @@ class ChannelAxis(Axis):
             fields.List(fields.String(validate=field_validators.Length(max=32))),
             fields.String(validate=field_validators.Length(max=32)),
         ],
-        required=True,
+        required=False,
         bioimageio_description="Physical unit of data values (max 32 characters; per channel if list).",
     )
 
@@ -197,9 +197,15 @@ class Step(_BioImageIOSchema):
 
     inputs = fields.List(
         fields.Raw(),
-        bioimageio_description="A list of input parameters. Named outputs of previous steps may be referenced as '${{ \\<step id\\>.outputs.\\<output name\\> }}'"
+        bioimageio_description="A list of input parameters. Named outputs of previous steps may be referenced here as '${{ \\<step id\\>.outputs.\\<output name\\> }}'."
         "\n\nIf not set, the outputs of the previous step are used as inputs.",
     )
+    options = fields.YamlDict(
+        fields.String(validate=field_validators.Predicate("isidentifier")),
+        fields.Raw(),
+        bioimageio_description="Named options. Named outputs of previous steps may be referenced here as '${{ \\<step id\\>.outputs.\\<output name\\> }}'.",
+    )
+
     outputs = fields.List(
         fields.String(
             validate=field_validators.Predicate("isidentifier"),
@@ -232,7 +238,9 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         return params
 
     @staticmethod
-    def check_for_duplicate_param_names(params: typing.List[typing.Union[raw_nodes.Parameter]], param_name: str):
+    def check_for_duplicate_param_names(
+        params: typing.List[typing.Union[raw_nodes.Parameter]], param_name: str, field_name=SCHEMA
+    ):
         names = set()
         for t in params:
             if not isinstance(t, raw_nodes.Parameter):
@@ -241,7 +249,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 )
 
             if t.name in names:
-                raise ValidationError(f"Duplicate {param_name} name '{t.name}' not allowed.")
+                raise ValidationError(f"Duplicate {param_name} name '{t.name}' not allowed.", field_name)
 
             names.add(t.name)
 
@@ -258,7 +266,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         ipts = data.get("inputs", [])
         opts = data.get("options", [])
         if isinstance(ipts, list) and isinstance(opts, list):
-            self.check_for_duplicate_param_names(self.verify_param_list(ipts + opts), "input/option")
+            self.check_for_duplicate_param_names(self.verify_param_list(ipts + opts), "input/option", "inputs/options")
 
     outputs = fields.List(
         fields.Nested(Output()),
@@ -291,6 +299,13 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
         return refs
 
+    steps = fields.List(
+        fields.Nested(Step()),
+        validate=field_validators.Length(min=1),
+        required=True,
+        bioimageio_description="Workflow steps---a series of operators---to be executed consecutively.",
+    )
+
     test_steps = fields.List(
         fields.Nested(Step()),
         validate=field_validators.Length(min=1),
@@ -309,7 +324,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
             for step in steps:
                 if isinstance(step.inputs, list):
                     for si in step.inputs:
-                        if isinstance(si, str) and si.startswith("${{") and si.endwith("}}") and si not in references:
+                        if isinstance(si, str) and si.startswith("${{") and si.endswith("}}") and si not in references:
                             raise ValidationError(f"Invalid reference '{si}'")
 
                 if step.options:

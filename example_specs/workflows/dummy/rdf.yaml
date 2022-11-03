@@ -6,8 +6,7 @@ type: workflow
 inputs:
 - name: shape
   type: list
-- name: axes
-  type: str
+  description: two integer to describe a 2d shape
 
 options:
 - name: threshold
@@ -17,41 +16,39 @@ options:
 outputs:
 - name: nonsense
   type: tensor
+  axes:
+    - name: fantasy time
+      type: time
+    - name: x
+      type: space
 
 steps:
 - id: step0
   op: generate_random_uniform_tensor
-  inputs:
-    shape: ${{ inputs.shape }}
-    axes: ${{ inputs.axes }}
+  inputs: ["${{ self.inputs.shape }}", ['fantasy time', 'x']]
 #  options:
 #    low: 0
 #    high: 1
+  outputs: [tensor]
 - id: step1
   op: binarize
-  inputs:
-    threshold: ${{ inputs.threshold }}
+  inputs: ["${{ step0.outputs.tensor }}", "${{ self.options.threshold }}"]
 - op: log
   options:
     log_level: 50
-    threshold: ${{ kwargs.threshold }}
-    original: ${{ step0.outputs.random_tensor }}
-#    binarized: ${{ step1.outputs.binarized }}
+    threshold: "${{ self.options.threshold }}"
+    original: "${{ step0.outputs.tensor }}"
+#    binarized: "{{ step1.outputs.binarized }}"  # given implicitly as arg already
 
 
 test_steps:
 - id: wf
   op: run_workflow
-  inputs:
-    rdf_source: ${{ self.rdf_source }}
+  inputs: ["${{ self.rdf_source }}"]
   options:
-    inputs:
-      shape: [2, 3]
-      axes: cx
+    inputs: [&test-shape [2, 3]]
     options:
       threshold: 0.5
   outputs: [out0]
 - op: assert_shape
-  inputs:
-    tensor: ${{ wf.outputs.out0 }}
-    shape: ${{ inputs.shape }}
+  inputs: ["${{ wf.outputs.out0 }}", *test-shape]

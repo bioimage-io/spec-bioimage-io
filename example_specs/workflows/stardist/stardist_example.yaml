@@ -7,64 +7,88 @@ inputs:
 - name: raw
   type: tensor
   description: image with star-convex objects
+  axes:
+  - type: batch
+  - name: gray scale
+    type: channel
+  - name: x
+    type: space
+  - name: y
+    type: space
 
-outputs:
-- name: labels
-  type: tensor
-- name: coord
-  type: tensor
-- name: points
-  type: tensor
-- name: prob
-  type: tensor
-
-kwargs:
+options:
 - name: diameter
   type: float
   default: 2.3
 
+outputs:
+- name: labels
+  type: tensor
+  axes:
+  - type: batch
+  - name: label id
+    type: channel
+  - name: x
+    type: space
+  - name: y
+    type: space
+- name: coord
+  type: list
+- name: points
+  type: list
+- name: prob
+  type: tensor
+  axes:
+  - type: batch
+  - name: probability
+    type: channel
+  - name: x
+    type: space
+  - name: y
+    type: space
+
 steps:
 - op: zero_mean_unit_variance
 - op: model_inference
-  kwargs:
+  options:
     rdf_source: fearless-crab
     preprocessing: false # disable the preprocessing
     postprocessing: false # disable the postprocessing
 - op: stardist_postprocessing
-  kwargs:
-    diameter: ${{ kwargs.diameter }}
+  options:
+    diameter: "${{ self.options.diameter }}"
 
 test_steps:
 - id: test_tensors
   op: load_tensors
-  outputs:
-    - raw
-    - labels
-    - coord
-    - points
-    - prob
-  kwargs:
+  options:
     sources:
     - raw.npy
     - labels.npy
     - coord.npy
     - points.npy
     - prob.npy
+  outputs:
+    - raw
+    - labels
+    - coord
+    - points
+    - prob
 - id: workflow
   op: run_workflow
-  inputs: [test_tensors.outputs.raw]
+  inputs: [ "${{ test_tensors.outputs.raw }}" ]
+  options:
+    rdf_source: "${{ self.rdf_source }}"
   outputs:
     - labels
     - coord
     - points
     - prob
-  kwargs:
-    rdf_source: ${{ self.rdf_source }}
 - op: assert_close
-  inputs: [test_tensors.outputs.labels, workflow.outputs.labels]
+  inputs: ["${{ test_tensors.outputs.labels }}", "${{ workflow.outputs.labels }}"]
 - op: assert_close
-  inputs: [test_tensors.outputs.coord, workflow.outputs.coord]
+  inputs: ["${{ test_tensors.outputs.coord }}", "${{ workflow.outputs.coord }}"]
 - op: assert_close
-  inputs: [test_tensors.outputs.points, workflow.outputs.points]
+  inputs: ["${{ test_tensors.outputs.points }}", "${{ workflow.outputs.points }}"]
 - op: assert_close
-  inputs: [test_tensors.outputs.prob, workflow.outputs.prob]
+  inputs: ["${{ test_tensors.outputs.prob }}", "${{ workflow.outputs.prob }}"]

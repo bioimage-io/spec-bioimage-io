@@ -88,11 +88,48 @@ AxisType = Literal["batch", "channel", "index", "time", "space"]
 
 @dataclass
 class Axis:
-    name: str = missing
     type: AxisType = missing
+    name: Union[_Missing, str, List[str]] = missing
     description: Union[_Missing, str] = missing
-    unit: Union[_Missing, SpaceUnit, TimeUnit, str] = missing
+    unit: Union[_Missing, SpaceUnit, TimeUnit, str, List[str]] = missing
     step: Union[_Missing, int] = missing
+
+
+@dataclass
+class BatchAxis(Axis):
+    type: Literal["batch"] = "batch"
+    name: _Missing = missing
+    description: _Missing = missing
+    unit: _Missing = missing
+    step: _Missing = missing
+
+
+@dataclass
+class ChannelAxis(Axis):
+    type: Literal["channel"] = "channel"
+    step: _Missing = missing
+
+
+@dataclass
+class IndexAxis(Axis):
+    type: Literal["index"] = "index"
+    name: Union[_Missing, str] = missing
+    unit: Union[_Missing, str] = missing
+    step: _Missing = missing
+
+
+@dataclass
+class SpaceAxis(Axis):
+    type: Literal["space"] = "space"
+    name: Literal["x", "y", "z"] = missing
+    unit: Union[_Missing, str, SpaceUnit] = missing
+
+
+@dataclass
+class TimeAxis(Axis):
+    type: Literal["time"] = "time"
+    name: Union[_Missing, str] = missing
+    unit: Union[_Missing, str, TimeUnit] = missing
 
 
 @dataclass
