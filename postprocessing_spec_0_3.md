@@ -14,7 +14,7 @@ Set tensor values below min to min and above max to max.
 ### `scale_linear`
 Fixed linear scaling.
 - key word arguments:
-  - `axes` The subset of axes to scale jointly. For example xy to scale the two image axes for 2d data jointly. The batch axis (b) is not valid here.
+  - `[axes]` The subset of axes to scale jointly. For example xy to scale the two image axes for 2d data jointly. The batch axis (b) is not valid here.
   - `[gain]` multiplicative factor
   - `[offset]` additive term
 - reference implementation: https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L151-L174
@@ -29,8 +29,8 @@ Scale the tensor s.t. its mean and variance match a reference tensor.
 ### `scale_range`
 Scale with percentiles.
 - key word arguments:
-  - `axes` The subset of axes to normalize jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here.
   - `mode` One of per_dataset (mean and variance are computed for the entire dataset), per_sample (mean and variance are computed for each sample individually)
+  - `[axes]` The subset of axes to normalize jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here.
   - `[eps]` Epsilon for numeric stability: `out = (tensor - v_lower) / (v_upper - v_lower + eps)`; with `v_lower,v_upper` values at the respective percentiles. Default value: 10^-6.
   - `[max_percentile]` The upper percentile used for normalization, in range 1 to 100. Has to be bigger than min_percentile. Default value: 100. The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0.
   - `[min_percentile]` The lower percentile used for normalization, in range 0 to 100. Default value: 0.
@@ -42,8 +42,8 @@ Scale with percentiles.
 ### `zero_mean_unit_variance`
 Subtract mean and divide by variance.
 - key word arguments:
-  - `axes` The subset of axes to normalize jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here.
   - `mode` One of fixed (fixed values for mean and variance), per_dataset (mean and variance are computed for the entire dataset), per_sample (mean and variance are computed for each sample individually)
+  - `[axes]` The subset of axes to normalize jointly. For example xy to normalize the two image axes for 2d data jointly. The batch axis (b) is not valid here.
   - `[eps]` epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`. Default value: 10^-6.
   - `[mean]` The mean value(s) to use for `mode == fixed`. For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image where the channels are not normalized jointly.
   - `[std]` The standard deviation values to use for `mode == fixed`. Analogous to mean.
