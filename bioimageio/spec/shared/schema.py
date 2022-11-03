@@ -49,8 +49,11 @@ class SharedBioImageIOSchema(Schema):
 class SharedProcessingSchema(Schema):
     """Used to generate Pre- and Postprocessing documentation.
 
-    Define Pre-/Postprocessing schemas in the Preprocessing/Postprocessing schema that inherite from this class
-    and they will be rendered in the documentation."""
+    Define Pre-/Postprocessing operator schemas in the Preprocessing/Postprocessing schema that inherit from this class,
+    and they will be rendered in the documentation (scripts/generate_processing_docs.py).
+
+    example: bioimageio.spec.model.v0_3.schema.Processing.binarize
+    """
 
     bioimageio_description: ClassVar[str]
 
