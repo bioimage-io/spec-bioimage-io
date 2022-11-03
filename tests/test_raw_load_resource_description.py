@@ -10,6 +10,13 @@ def test_load_raw_model(unet2d_nuclei_broad_any):
     assert raw_model
 
 
+def test_load_upsample_raw_model(upsamle_model_rdf):
+    from bioimageio.spec import load_raw_resource_description
+
+    raw_model = load_raw_resource_description(upsamle_model_rdf)
+    assert raw_model
+
+
 def test_loaded_remote_raw_model_is_valid(unet2d_nuclei_broad_url):
     from bioimageio.spec import load_raw_resource_description
 
