@@ -33,12 +33,13 @@ steps:
 - id: step1
   op: binarize
   inputs: ["${{ step0.outputs.tensor }}", "${{ self.options.threshold }}"]
+  outputs: [binarized]
 - op: log
   options:
     log_level: 50
     threshold: "${{ self.options.threshold }}"
     original: "${{ step0.outputs.tensor }}"
-#    binarized: "{{ step1.outputs.binarized }}"  # given implicitly as arg already
+    binarized: "${{ step1.outputs.binarized }}"
 
 
 test_steps:
