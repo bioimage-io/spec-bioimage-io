@@ -22,7 +22,7 @@ class Axis(_BioImageIOSchema):
     name = fields.String(
         required=True,
         bioimageio_description="A unique axis name (max 32 characters).",
-        validate=field_validators.Length(max=32),
+        validate=field_validators.Length(min=1, max=32),
     )
     type = fields.String(
         required=True,
@@ -30,7 +30,7 @@ class Axis(_BioImageIOSchema):
         bioimageio_description=f"One of: {get_args(raw_nodes.AxisType)}",
     )
     description = fields.String(
-        validate=field_validators.Length(max=128),
+        validate=field_validators.Length(min=1, max=128),
         bioimageio_description="Description of axis (max 128 characters).",
     )
     unit = fields.String(bioimageio_description="Physical unit of this axis.", bioimageio_maybe_required=True)
@@ -59,16 +59,16 @@ class ChannelAxis(Axis):
     type = fields.String(required=True, validate=field_validators.Equal("channel"), bioimageio_description="'channel'")
     name = fields.Union(
         [
-            fields.List(fields.String(validate=field_validators.Length(max=32))),
-            fields.String(validate=field_validators.Length(max=32)),
+            fields.List(fields.String(validate=field_validators.Length(min=1, max=32))),
+            fields.String(validate=field_validators.Length(min=1, max=32)),
         ],
         required=True,
         bioimageio_description="A unique axis name (max 32 characters; per channel if list).",
     )
     unit = fields.Union(
         [
-            fields.List(fields.String(validate=field_validators.Length(max=32))),
-            fields.String(validate=field_validators.Length(max=32)),
+            fields.List(fields.String(validate=field_validators.Length(min=1, max=32))),
+            fields.String(validate=field_validators.Length(min=1, max=32)),
         ],
         required=False,
         bioimageio_description="Physical unit of data values (max 32 characters; per channel if list).",
@@ -132,7 +132,7 @@ class ParameterSpec(_BioImageIOSchema):
         bioimageio_description="Axis specifications (only required for type 'tensor').",
     )
     description = fields.String(
-        bioimageio_description="Description (max 128 characters).", validate=field_validators.Length(max=128)
+        bioimageio_description="Description (max 128 characters).", validate=field_validators.Length(min=1, max=128)
     )
 
     @validates_schema

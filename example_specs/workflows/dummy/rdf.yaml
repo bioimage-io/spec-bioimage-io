@@ -6,7 +6,7 @@ type: workflow
 inputs_spec:
 - name: shape
   type: list
-  description: two integer to describe a 2d shape
+  description: two integers to describe a 2d shape
 
 options_spec:
 - name: threshold
