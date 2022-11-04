@@ -1,6 +1,6 @@
 import typing
 
-from marshmallow import ValidationError, validates, validates_schema
+from marshmallow import ValidationError, missing, validates, validates_schema
 from marshmallow.exceptions import SCHEMA
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
@@ -314,6 +314,28 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
         required=True,
         bioimageio_description="Test steps to be executed consecutively.",
     )
+
+    @staticmethod
+    def unique_step_ids_impl(steps: typing.List[raw_nodes.Step], field_name: str):
+        if not steps or not isinstance(steps, list) or not all(isinstance(s, raw_nodes.Step) for s in steps):
+            raise ValidationError("Could not check for unique step ids due to other validation errors.", field_name)
+
+        ids = set()
+        for step in steps:
+            if step.id is missing:
+                continue
+            if step.id in ids:
+                raise ValidationError(f"Duplicated step id {step.id}", field_name)
+
+            ids.add(step.id)
+
+    @validates("steps")
+    def unique_step_ids(self, value):
+        self.unique_step_ids_impl(value, "steps")
+
+    @validates("test_steps")
+    def unique_test_step_ids(self, value):
+        self.unique_step_ids_impl(value, "test_steps")
 
     @validates_schema
     def step_inputs_and_options_are_valid(self, data, **kwargs):
