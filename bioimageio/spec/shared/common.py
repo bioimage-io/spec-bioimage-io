@@ -162,7 +162,7 @@ def get_patched_format_version(type_: str, format_version: str):
 
 
 def get_spec_type_from_type(type_: Optional[str]):
-    if type_ in ("model", "collection", "dataset"):
+    if type_ in ("model", "collection", "dataset", "workflow"):
         return type_
     else:
         return "rdf"
