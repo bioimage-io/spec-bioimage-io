@@ -107,7 +107,7 @@ class TimeAxis(Axis):
             self.warn("unit", f"unknown time unit {value}. Recommend units are: {recommended_units}")
 
 
-class Parameter(_BioImageIOSchema):
+class ParameterSpec(_BioImageIOSchema):
     name = fields.String(
         required=True,
         bioimageio_description="Parameter name. No duplicates are allowed.",
@@ -143,11 +143,11 @@ class Parameter(_BioImageIOSchema):
             raise ValidationError("'axes' required for input type 'tensor'.")
 
 
-class Input(Parameter):
+class InputSpec(ParameterSpec):
     pass
 
 
-class Option(Parameter):
+class OptionSpec(ParameterSpec):
     default = fields.Raw(
         required=True,
         bioimageio_description="Default value compatible with type given by `type` field."
@@ -173,7 +173,7 @@ class Option(Parameter):
             )
 
 
-class Output(Parameter):
+class OutputSpec(ParameterSpec):
     pass
 
 
@@ -224,26 +224,26 @@ The workflow RDF YAML file contains mandatory and optional fields. In the follow
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 
 """
-    inputs = fields.List(
-        fields.Nested(Input()),
+    inputs_spec = fields.List(
+        fields.Nested(InputSpec()),
         required=True,
         bioimageio_description="Describes the inputs expected by this workflow.",
     )
 
     @staticmethod
-    def verify_param_list(params: typing.Any) -> typing.List[typing.Union[raw_nodes.Parameter]]:
-        if not isinstance(params, list) or not all(isinstance(v, raw_nodes.Parameter) for v in params):
+    def verify_param_list(params: typing.Any) -> typing.List[typing.Union[raw_nodes.ParameterSpec]]:
+        if not isinstance(params, list) or not all(isinstance(v, raw_nodes.ParameterSpec) for v in params):
             raise ValidationError("Could not check for duplicate parameter names due to another validation error.")
 
         return params
 
     @staticmethod
     def check_for_duplicate_param_names(
-        params: typing.List[typing.Union[raw_nodes.Parameter]], param_name: str, field_name=SCHEMA
+        params: typing.List[typing.Union[raw_nodes.ParameterSpec]], param_name: str, field_name=SCHEMA
     ):
         names = set()
         for t in params:
-            if not isinstance(t, raw_nodes.Parameter):
+            if not isinstance(t, raw_nodes.ParameterSpec):
                 raise ValidationError(
                     f"Could not check for duplicate {param_name} name due to other validation errors."
                 )
@@ -253,8 +253,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
             names.add(t.name)
 
-    options = fields.List(
-        fields.Nested(Option()),
+    options_spec = fields.List(
+        fields.Nested(OptionSpec()),
         required=True,
         bioimageio_description="Describes the options that may be given to this workflow.",
     )
@@ -263,38 +263,40 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     def no_duplicate_input_and_option_names(self, data, **kwargs):
         if not isinstance(data, dict):
             return
-        ipts = data.get("inputs", [])
-        opts = data.get("options", [])
+        ipts = data.get("inputs_spec", [])
+        opts = data.get("options_spec", [])
         if isinstance(ipts, list) and isinstance(opts, list):
-            self.check_for_duplicate_param_names(self.verify_param_list(ipts + opts), "input/option", "inputs/options")
+            self.check_for_duplicate_param_names(
+                self.verify_param_list(ipts + opts), "input/option", "inputs_spec/options_spec"
+            )
 
-    outputs = fields.List(
-        fields.Nested(Output()),
+    outputs_spec = fields.List(
+        fields.Nested(OutputSpec()),
         validate=field_validators.Length(min=1),
         bioimageio_description="Describes the outputs of this workflow.",
     )
 
-    @validates("outputs")
-    def no_duplicate_output_names(self, outs: typing.List[raw_nodes.Output]):
-        self.check_for_duplicate_param_names(self.verify_param_list(outs), "output")
+    @validates("outputs_spec")
+    def no_duplicate_output_names(self, outs: typing.List[raw_nodes.OutputSpec]):
+        self.check_for_duplicate_param_names(self.verify_param_list(outs), "output_spec")
 
     @staticmethod
     def get_initial_reference_names(data) -> typing.Set[str]:
         refs = {"${{ self.rdf_source }}"}
-        inputs = data.get("inputs")
+        inputs = data.get("inputs_spec")
         if not isinstance(inputs, list):
             return refs
 
         for ipt in inputs:
-            if isinstance(ipt, raw_nodes.Input):
+            if isinstance(ipt, raw_nodes.InputSpec):
                 refs.add(f"${{{{ self.inputs.{ipt.name} }}}}")
 
-        options = data.get("options")
+        options = data.get("options_spec")
         if not isinstance(options, list):
             return refs
 
         for opt in options:
-            if isinstance(opt, raw_nodes.Option):
+            if isinstance(opt, raw_nodes.OptionSpec):
                 refs.add(f"${{{{ self.options.{opt.name} }}}}")
 
         return refs

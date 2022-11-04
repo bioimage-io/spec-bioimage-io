@@ -133,7 +133,7 @@ class TimeAxis(Axis):
 
 
 @dataclass
-class Parameter(RawNode):
+class ParameterSpec(RawNode):
     name: str = missing
     type: ParameterType = missing
     description: Union[_Missing, str] = missing
@@ -141,17 +141,17 @@ class Parameter(RawNode):
 
 
 @dataclass
-class Input(Parameter):
+class InputSpec(ParameterSpec):
     pass
 
 
 @dataclass
-class Option(Parameter):
+class OptionSpec(ParameterSpec):
     default: Union[_Missing, DefaultType] = missing
 
 
 @dataclass
-class Output(Parameter):
+class OutputSpec(ParameterSpec):
     pass
 
 
@@ -168,8 +168,8 @@ class Step(RawNode):
 class Workflow(_RDF):
     type: Literal["workflow"] = missing
 
-    inputs: List[Input] = missing
-    options: List[Option] = missing
-    outputs: List[Output] = missing
+    inputs_spec: List[InputSpec] = missing
+    options_spec: List[OptionSpec] = missing
+    outputs_spec: List[OutputSpec] = missing
     steps: List[Step] = missing
     test_steps: List[Step] = missing

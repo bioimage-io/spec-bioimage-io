@@ -3,7 +3,7 @@ description: A workflow for running stardist
 format_version: 0.2.3
 type: workflow
 
-inputs:
+inputs_spec:
 - name: raw
   type: tensor
   description: image with star-convex objects
@@ -16,12 +16,12 @@ inputs:
   - name: y
     type: space
 
-options:
+options_spec:
 - name: diameter
   type: float
   default: 2.3
 
-outputs:
+outputs_spec:
 - name: labels
   type: tensor
   axes:

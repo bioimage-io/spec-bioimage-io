@@ -3,7 +3,7 @@ description: A workflow for running HPA single-cell classification
 format_version: 0.2.3
 type: workflow
 
-inputs:
+inputs_spec:
 - name: nuclei
   type: tensor
   axes:
@@ -25,13 +25,13 @@ inputs:
   - name: y
     type: space
 
-options:
+options_spec:
 - name: seg_prep
   type: boolean
   default: false
 
 
-outputs:
+outputs_spec:
 - name: cells
   type: tensor
   axes:

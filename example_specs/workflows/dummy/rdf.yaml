@@ -3,17 +3,17 @@ description: A workflow to produce some nonsense
 format_version: 0.2.3
 type: workflow
 
-inputs:
+inputs_spec:
 - name: shape
   type: list
   description: two integer to describe a 2d shape
 
-options:
+options_spec:
 - name: threshold
   type: float
   default: 0.5
 
-outputs:
+outputs_spec:
 - name: nonsense
   type: tensor
   axes:
