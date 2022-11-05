@@ -12,6 +12,7 @@ from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from . import raw_nodes
 from .raw_nodes import FormatVersion
+from bioimageio.spec.shared.validation_helpers import validate_markdown
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
@@ -152,6 +153,10 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description="URL or relative path to markdown file with additional documentation. "
         "For markdown files the recommended documentation file name is `README.md`.",
     )
+
+    @validates("documentation")
+    def validate_md_doc(self, doc_source):
+        validate_markdown(doc_source, field_name="documentation", root=self.context["root"])
 
     download_url = fields.Union(
         [fields.URL(), fields.Path()], bioimageio_description="optional url to download the resource from"
