@@ -155,7 +155,10 @@ def load_raw_resource_description(
 
     data, source_name, _root, type_ = resolve_rdf_source_and_type(source)
     if root is None:
-        root = _root
+        if isinstance(_root, bytes):
+            root = pathlib.Path()
+        else:
+            root = _root
 
     class_name = get_class_name_from_type(type_)
 
@@ -216,7 +219,7 @@ def load_raw_resource_description(
 
         data["config"]["bioimageio"]["original_format_version"] = original_data_version
 
-    schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
+    schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)(context=dict(root=root))
 
     data = sub_spec.converters.maybe_convert(data)
     try:
