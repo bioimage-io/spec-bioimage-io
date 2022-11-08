@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 from types import ModuleType
 from typing import Dict, IO, Optional, Sequence, Tuple, Union
 
-from marshmallow import missing
+from marshmallow import ValidationError, missing
 from packaging.version import Version
 
 from bioimageio.spec.shared import RDF_NAMES, raw_nodes, resolve_rdf_source, resolve_rdf_source_and_type, resolve_source
@@ -199,7 +199,8 @@ def load_raw_resource_description(
             # => 'format_version' may be invalid or the issue lies with 'type_'...
             raise e
 
-    if odv and Version(sub_spec.format_version) < odv:
+    downgrade_format_version = odv and Version(sub_spec.format_version) < odv
+    if downgrade_format_version:
         warnings.warn(
             f"Loading future {type_} format version {original_data_version} as (latest known) "
             f"{sub_spec.format_version}."
@@ -218,7 +219,16 @@ def load_raw_resource_description(
     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
     data = sub_spec.converters.maybe_convert(data)
-    raw_rd = schema.load(data)
+    try:
+        raw_rd = schema.load(data)
+    except ValidationError as e:
+        if downgrade_format_version:
+            e.messages["format_version"] = (
+                f"Other errors may be caused by a possibly incompatible future format version {original_data_version} "
+                f"treated as {sub_spec.format_version}."
+            )
+
+        raise e
 
     if isinstance(root, pathlib.Path):
         root = root.resolve()

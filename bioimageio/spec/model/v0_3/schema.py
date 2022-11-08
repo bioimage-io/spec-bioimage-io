@@ -71,7 +71,6 @@ class _TensorBase(_BioImageIOSchema):
         axes = data["axes"]
         processing_list = data.get(self.processing_name, [])
         for processing in processing_list:
-            name = processing.name
             kwargs = processing.kwargs or {}
             kwarg_axes = kwargs.get("axes", "")
             if any(a not in axes for a in kwarg_axes):
@@ -94,17 +93,22 @@ class Processing(_BioImageIOSchema):
     class scale_linear(SharedProcessingSchema):
         bioimageio_description = "Fixed linear scaling."
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to scale jointly. "
             "For example xy to scale the two image axes for 2d data jointly. "
             "The batch axis (b) is not valid here.",
         )
         gain = fields.Array(
-            fields.Float(), missing=fields.Float(missing=1.0), bioimageio_description="multiplicative factor"
+            fields.Float(),
+            bioimageio_maybe_required=True,
+            missing=fields.Float(missing=1.0),
+            bioimageio_description="multiplicative factor",
         )  # todo: check if gain match input axes
         offset = fields.Array(
-            fields.Float(), missing=fields.Float(missing=0.0), bioimageio_description="additive term"
+            fields.Float(),
+            bioimageio_maybe_required=True,
+            missing=fields.Float(missing=0.0),
+            bioimageio_description="additive term",
         )  # todo: check if offset match input axes
 
         @validates_schema
@@ -140,9 +144,8 @@ class Processing(_BioImageIOSchema):
 
     class zero_mean_unit_variance(SharedProcessingSchema):
         bioimageio_description = "Subtract mean and divide by variance."
-        mode = fields.ProcMode(required=True)
+        mode = fields.ProcMode()
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
             "axes for 2d data jointly. The batch axis (b) is not valid here.",
@@ -164,12 +167,12 @@ class Processing(_BioImageIOSchema):
 
         @validates_schema
         def mean_and_std_match_mode(self, data, **kwargs):
-            if data["mode"] == "fixed" and ("mean" not in data or "std" not in data):
+            if data.get("mode", "fixed") == "fixed" and ("mean" not in data or "std" not in data):
                 raise ValidationError(
                     "`kwargs` for 'zero_mean_unit_variance' preprocessing with `mode` 'fixed' require additional "
                     "`kwargs`: `mean` and `std`."
                 )
-            elif data["mode"] != "fixed" and ("mean" in data or "std" in data):
+            elif data.get("mode", "fixed") != "fixed" and ("mean" in data or "std" in data):
                 raise ValidationError(
                     "`kwargs`: `mean` and `std` for 'zero_mean_unit_variance' preprocessing are only valid for `mode` 'fixed'."
                 )
@@ -189,9 +192,8 @@ class Preprocessing(Processing):
 
     class scale_range(SharedProcessingSchema):
         bioimageio_description = "Scale with percentiles."
-        mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
+        mode = fields.ProcMode(valid_modes=("per_dataset", "per_sample"))
         axes = fields.Axes(
-            required=True,
             valid_axes="czyx",
             bioimageio_description="The subset of axes to normalize jointly. For example xy to normalize the two image "
             "axes for 2d data jointly. The batch axis (b) is not valid here.",
@@ -245,7 +247,7 @@ class Postprocessing(Processing):
 
     class scale_mean_variance(SharedProcessingSchema):
         bioimageio_description = "Scale the tensor s.t. its mean and variance match a reference tensor."
-        mode = fields.ProcMode(required=True, valid_modes=("per_dataset", "per_sample"))
+        mode = fields.ProcMode(valid_modes=("per_dataset", "per_sample"))
         reference_tensor = fields.String(
             required=True,
             validate=field_validators.Predicate("isidentifier"),

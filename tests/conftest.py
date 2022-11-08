@@ -109,6 +109,11 @@ def dataset_rdf():
 
 
 @pytest.fixture
+def upsamle_model_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/models/upsample_test_model/rdf.yaml"
+
+
+@pytest.fixture
 def stardist_workflow_rdf():
     return pathlib.Path(__file__).parent / "../example_specs/workflows/stardist/stardist_example.yaml"
 

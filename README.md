@@ -147,6 +147,9 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 | BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
 
 ## Changelog
+#### bioimageio.spec tbd
+- make pre-/postprocessing kwargs `mode` and `axes` always optional for model RDF 0.3 and 0.4
+
 #### bioimageio.spec 0.4.8post1
 - add `axes` and `eps` to `scale_mean_var`
 
