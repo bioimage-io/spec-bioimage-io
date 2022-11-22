@@ -1,5 +1,6 @@
 import typing
 from copy import deepcopy
+from types import ModuleType
 
 import numpy
 from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
@@ -23,7 +24,7 @@ from . import raw_nodes
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar[ModuleType] = raw_nodes
 
 
 class _TensorBase(_BioImageIOSchema):
@@ -184,7 +185,7 @@ class OutputTensor(_TensorBase):
 
 
 class _WeightsEntryBase(_WeightsEntryBase03):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar[ModuleType] = raw_nodes
     dependencies = fields.Dependencies(
         bioimageio_description="Dependency manager and dependency file, specified as `<dependency manager>:<relative "
         "path to file>`. For example: 'conda:./environment.yaml', 'maven:./pom.xml', or 'pip:./requirements.txt'. "
@@ -249,7 +250,7 @@ class Dataset(_Dataset):
 
 
 class TorchscriptWeightsEntry(_WeightsEntryBase):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar[ModuleType] = raw_nodes
 
     bioimageio_description = "Torchscript weights format"
     weights_format = fields.String(validate=field_validators.Equal("torchscript"), required=True, load_only=True)
@@ -294,7 +295,7 @@ class ModelParent(_BioImageIOSchema):
 
 
 class Model(rdf.schema.RDF):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar = raw_nodes
 
     class Meta:
         unknown = RAISE
@@ -433,7 +434,7 @@ is in an unsupported format version. The current format version described here i
             raise ValidationError("Duplicate output tensor names are not allowed.")
 
     @validates_schema
-    def inputs_and_outputs(self, data, **kwargs):
+    def inputs_and_outputs(self, data, **kwargs) -> None:
         ipts: typing.List[raw_nodes.InputTensor] = data.get("inputs")
         outs: typing.List[raw_nodes.OutputTensor] = data.get("outputs")
         if any(
@@ -603,7 +604,7 @@ is in an unsupported format version. The current format version described here i
         return data
 
     @validates_schema
-    def validate_reference_tensor_names(self, data, **kwargs):
+    def validate_reference_tensor_names(self, data, **kwargs) -> None:
         def get_tnames(tname: str):
             return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
 
@@ -649,7 +650,7 @@ is in an unsupported format version. The current format version described here i
                     raise ValidationError(f"invalid self reference for preprocessing of tensor {t.name}")
 
     @validates_schema
-    def weights_entries_match_weights_formats(self, data, **kwargs):
+    def weights_entries_match_weights_formats(self, data, **kwargs) -> None:
         weights: typing.Dict[str, WeightsEntry] = data.get("weights", {})
         for weights_format, weights_entry in weights.items():
             if not isinstance(weights_entry, get_args(raw_nodes.WeightsEntry)):

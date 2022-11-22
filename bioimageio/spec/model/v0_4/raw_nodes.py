@@ -40,7 +40,9 @@ except ImportError:
 
 # reassign to use imported classes
 ImplicitOutputShape = ImplicitOutputShape
+InputTensor = InputTensor
 Maintainer = Maintainer
+OutputTensor = OutputTensor
 ParametrizedInputShape = ParametrizedInputShape
 Postprocessing = Postprocessing
 PostprocessingName = PostprocessingName

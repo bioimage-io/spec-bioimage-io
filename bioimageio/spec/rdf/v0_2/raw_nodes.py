@@ -91,7 +91,7 @@ class RDF_Base(ResourceDescription):
     description: str = missing
     documentation: Union[_Missing, Path, URI] = missing
     download_url: Union[_Missing, Path, URI] = missing
-    format_version: FormatVersion = missing
+    format_version: str = missing
     git_repo: Union[_Missing, str] = missing
     id: Union[_Missing, str] = missing
     icon: Union[_Missing, str] = missing
@@ -107,7 +107,7 @@ class RDF_Base(ResourceDescription):
         self,
         *,
         # ResourceDescription
-        format_version: FormatVersion,
+        format_version: str,
         name: str,
         type: str = missing,
         version: Union[_Missing, packaging.version.Version] = missing,
@@ -166,3 +166,8 @@ class RDF_Base(ResourceDescription):
             self.type = self.__class__.__name__.lower()
 
         super().__post_init__()
+
+
+@dataclass(init=False)
+class RDF(RDF_Base):
+    format_version: FormatVersion = missing

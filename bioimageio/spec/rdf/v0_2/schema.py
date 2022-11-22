@@ -1,3 +1,6 @@
+from types import ModuleType
+from typing import ClassVar
+
 from marshmallow import EXCLUDE, ValidationError, validates, validates_schema
 
 from bioimageio.spec.shared import (
@@ -15,7 +18,7 @@ from .raw_nodes import FormatVersion
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: ClassVar[ModuleType] = raw_nodes
 
 
 class Attachments(_BioImageIOSchema, WithUnknown):

@@ -1,6 +1,7 @@
 import typing
 import warnings
 from copy import deepcopy
+from types import ModuleType
 
 from marshmallow import RAISE, ValidationError, missing as missing_, post_load, pre_dump, pre_load, validates_schema
 
@@ -21,7 +22,7 @@ CiteEntry = rdf.schema.CiteEntry
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar[ModuleType] = raw_nodes
 
 
 class RunMode(_BioImageIOSchema):
@@ -474,7 +475,7 @@ class ModelParent(_BioImageIOSchema):
 
 
 class Model(rdf.schema.RDF):
-    raw_nodes = raw_nodes
+    raw_nodes: typing.ClassVar[ModuleType] = raw_nodes
 
     class Meta:
         unknown = RAISE
@@ -758,7 +759,7 @@ is in an unsupported format version. The current format version described here i
                     raise ValidationError(f"{ref_tensor} not found in inputs")
 
     @validates_schema
-    def weights_entries_match_weights_formats(self, data, **kwargs):
+    def weights_entries_match_weights_formats(self, data, **kwargs) -> None:
         weights: typing.Dict[str, _WeightsEntryBase] = data["weights"]
         for weights_format, weights_entry in weights.items():
             if weights_format in ["keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle"]:

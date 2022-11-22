@@ -28,6 +28,7 @@ def test_resolve_download_url(unet2d_nuclei_broad_latest):
     from bioimageio.spec import load_raw_resource_description
     from bioimageio.spec.model.v0_4.raw_nodes import Model as Model04
 
+    assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_latest)
     data["root_path"] = unet2d_nuclei_broad_latest.parent  # set root path manually as we load from the manipulated dict
     data["download_url"] = "relative_path_to.zip"

@@ -11,6 +11,7 @@ from bioimageio.spec.shared import yaml
 def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet2d_nuclei_broad_latest):
     from bioimageio.spec.model.converters import maybe_convert
 
+    assert yaml is not None
     old_model_data = yaml.load(unet2d_nuclei_broad_before_latest)
     model_data = yaml.load(unet2d_nuclei_broad_latest)
 
@@ -53,6 +54,7 @@ def test_forward_compatible(v_diff: Tuple[int, int, int], unet2d_nuclei_broad_la
 
     fv_key = "format_version"
 
+    assert yaml is not None
     model_data = yaml.load(unet2d_nuclei_broad_latest)
 
     v_latest: Version = Version(format_version)

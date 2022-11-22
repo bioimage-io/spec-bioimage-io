@@ -4,11 +4,13 @@ from pathlib import Path
 import pytest
 
 from bioimageio.spec.shared import yaml
+from spec.dataset.raw_nodes import Dataset
 
 
 def test_spec_round_trip(unet2d_nuclei_broad_any_minor):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
+    assert yaml is not None
     expected = yaml.load(unet2d_nuclei_broad_any_minor)
     # monkeypatch: yaml.load already converts timestamp to datetime.datetime, while we serialize it to ISO 8601
     if "timestamp" in expected:
@@ -30,6 +32,7 @@ def test_spec_round_trip(unet2d_nuclei_broad_any_minor):
 def test_spec_round_trip_w_attachments(unet2d_nuclei_broad_latest):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
+    assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_latest)
     data["root_path"] = unet2d_nuclei_broad_latest.parent
 
@@ -53,6 +56,7 @@ def test_spec_round_trip_w_attachments(unet2d_nuclei_broad_latest):
 def test_dataset_rdf_round_trip(dataset_rdf):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
+    assert yaml is not None
     data = yaml.load(dataset_rdf)
     raw = load_raw_resource_description(data)
     serialized = serialize_raw_resource_description_to_dict(raw)
@@ -67,7 +71,7 @@ def test_serialize_with_link_in_path(dataset_rdf, tmp_path: Path):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
     data = load_raw_resource_description(dataset_rdf)
-
+    assert isinstance(data, Dataset)
     true_root = tmp_path / "root"
     true_root.mkdir()
     linked_root = tmp_path / "link"
@@ -91,6 +95,7 @@ def test_serialize_with_link_in_root(dataset_rdf, tmp_path: Path):
     from bioimageio.spec import load_raw_resource_description, serialize_raw_resource_description_to_dict
 
     data = load_raw_resource_description(dataset_rdf)
+    assert isinstance(data, Dataset)
 
     true_root = tmp_path / "root"
     true_root.mkdir()

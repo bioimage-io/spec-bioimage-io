@@ -94,6 +94,7 @@ def test_update_rdf(unet2d_nuclei_broad_base_path, tmp_path):
     in_path = unet2d_nuclei_broad_base_path / "rdf.yaml"
     assert in_path.exists()
     update_path = tmp_path / "update.yaml"
+    assert yaml is not None
     yaml.dump(dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}]), update_path)
     out_path = tmp_path / "output.yaml"
     ret = run_subprocess(["bioimageio", "update-rdf", str(in_path), str(update_path), str(out_path)])

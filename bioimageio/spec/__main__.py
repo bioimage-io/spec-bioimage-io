@@ -1,11 +1,14 @@
 import sys
 from pathlib import Path
 from pprint import pprint
+from typing import Any, Callable, Dict, Optional, Union
 
 import typer
 
 from bioimageio.spec import __version__, collection, commands, model, rdf
+from spec.shared.raw_nodes import URI
 
+enrich_partial_rdf_with_imjoy_plugin: Optional[Callable[[Dict[str, Any], Union[URI, Path]], Dict[str, Any]]]
 try:
     from bioimageio.spec.partner.utils import enrich_partial_rdf_with_imjoy_plugin
 except ImportError:
@@ -81,6 +84,7 @@ if enrich_partial_rdf_with_imjoy_plugin is not None:
         ),
         verbose: bool = typer.Option(False, help="show traceback of unexpected (no ValidationError) exceptions"),
     ):
+        assert enrich_partial_rdf_with_imjoy_plugin is not None
         summary = commands.validate(
             rdf_source, update_format, update_format_inner, enrich_partial_rdf=enrich_partial_rdf_with_imjoy_plugin
         )
@@ -101,10 +105,12 @@ if enrich_partial_rdf_with_imjoy_plugin is not None:
 
         sys.exit(ret_code)
 
+    cmd_doc = commands.validate.__doc__
+    assert cmd_doc is not None
     validate_partner_collection.__doc__ = (
         "A special version of the bioimageio validate command that enriches the RDFs defined in collections by parsing any "
         "associated imjoy plugins. This is implemented using the 'enrich_partial_rdf' of the regular validate command:\n"
-        + commands.validate.__doc__
+        + cmd_doc
     )
 
 

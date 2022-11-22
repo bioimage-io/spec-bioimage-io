@@ -1,3 +1,4 @@
+# type: ignore
 import torch
 import torch.nn as nn
 
@@ -292,8 +293,8 @@ class MultiTensorUNet(UNetBase):
         sampler_impl=Upsampler2d,
         **conv_block_kwargs,
     ):
-        features_encoder = [in_channels] + [initial_features * gain ** i for i in range(depth)]
-        features_decoder = [initial_features * gain ** i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
         scale_factors = depth * [2]
 
         if return_side_outputs:
