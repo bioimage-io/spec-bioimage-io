@@ -7,7 +7,7 @@ from typing import Any, ClassVar, Dict, List, Tuple, Union
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, CommonRDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF_Base
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
@@ -146,7 +146,7 @@ class ModelParent(RawNode):
 
 
 @dataclass
-class Model(CommonRDF):
+class Model(RDF_Base):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs")
 
     authors: List[Author] = missing  # type: ignore  # base RDF has List[Union[Author, str]], but should change soon
