@@ -81,7 +81,7 @@ class Badge(RawNode):
 
 
 @dataclass
-class RDF(ResourceDescription):
+class CommonRDF(ResourceDescription):
     attachments: Union[_Missing, Attachments] = missing
     authors: Union[_Missing, List[Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing

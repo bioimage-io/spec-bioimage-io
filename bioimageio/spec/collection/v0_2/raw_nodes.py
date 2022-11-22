@@ -13,7 +13,7 @@ import packaging.version
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Maintainer, RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Badge, CiteEntry, Maintainer, CommonRDF
 from bioimageio.spec.shared.raw_nodes import RawNode, URI
 
 try:
@@ -41,7 +41,7 @@ class CollectionEntry(RawNode):
 
 
 @dataclass
-class Collection(RDF):
+class Collection(CommonRDF):
     collection: List[CollectionEntry] = missing
     unknown: Dict[str, Any] = missing
     # manual __init__ to allow for unknown kwargs

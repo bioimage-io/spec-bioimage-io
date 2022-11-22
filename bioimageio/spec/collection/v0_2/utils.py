@@ -10,7 +10,7 @@ from . import raw_nodes, schema
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 
 
-def filter_resource_description(raw_rd: raw_nodes.RDF) -> raw_nodes.RDF:
+def filter_resource_description(raw_rd: raw_nodes.CommonRDF) -> raw_nodes.CommonRDF:
     return raw_rd
 
 
