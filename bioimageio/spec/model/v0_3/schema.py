@@ -391,7 +391,8 @@ class _WeightsEntryBase(_BioImageIOSchema):
     source = fields.Union(
         [fields.URI(), fields.Path()],
         required=True,
-        bioimageio_description="URI or path to the weights file. Preferably a url.",
+        bioimageio_description="URI or path to the weights file. Preferably a url. For multi-file weights "
+        "(`tensorflow_saved_model_bundle`) this should be a zip archive with all required files/folders.",
     )
     weights_format = fields.String(
         validate=field_validators.OneOf(get_args(raw_nodes.WeightsFormat)), required=True, load_only=True
