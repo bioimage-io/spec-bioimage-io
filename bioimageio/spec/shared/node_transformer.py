@@ -235,14 +235,14 @@ class AbsoluteToRelativePathTransformer(NodeTransformer):
         else:
             self.root = pathlib.Path(root).resolve()
 
-    def transform_ImportableSourceFile(
-        self, node: raw_nodes.ImportableSourceFile, **kwargs
-    ) -> raw_nodes.ImportableSourceFile:
+    def transform_CallableFromSourceFile(
+        self, node: raw_nodes.CallableFromSourceFile, **kwargs
+    ) -> raw_nodes.CallableFromSourceFile:
         if isinstance(node.source_file, pathlib.Path) and node.source_file.is_absolute():
             if not isinstance(self.root, pathlib.Path):
                 raise TypeError(f"Cannot convert absolute path '{node.source_file}' with URI root '{self.root}'")
             sf = node.source_file.relative_to(self.root)
-            return raw_nodes.ImportableSourceFile(source_file=sf, callable_name=node.callable_name)
+            return raw_nodes.CallableFromSourceFile(source_file=sf, callable_name=node.callable_name)
         else:
             return node
 
@@ -296,21 +296,21 @@ class RelativePathTransformer(NodeTransformer):
     def transform_WindowsPath(self, leaf: pathlib.WindowsPath, **kwargs) -> typing.Union[URI, pathlib.Path]:
         return self._transform_Path(leaf)
 
-    def transform_ImportableSourceFile(
-        self, node: raw_nodes.ImportableSourceFile, **kwargs
-    ) -> raw_nodes.ImportableSourceFile:
+    def transform_CallableFromSourceFile(
+        self, node: raw_nodes.CallableFromSourceFile, **kwargs
+    ) -> raw_nodes.CallableFromSourceFile:
         if isinstance(node.source_file, URI):
             return node
         elif isinstance(node.source_file, pathlib.Path):
             if node.source_file.is_absolute():
                 return node
             else:
-                return raw_nodes.ImportableSourceFile(
+                return raw_nodes.CallableFromSourceFile(
                     source_file=self.root / node.source_file, callable_name=node.callable_name
                 )
         else:
             raise TypeError(
-                f"Unexpected type '{type(node.source_file)}' for raw_nodes.ImportableSourceFile.source_file '{node.source_file}'"
+                f"Unexpected type '{type(node.source_file)}' for raw_nodes.CallableFromSourceFile.source_file '{node.source_file}'"
             )
 
 
@@ -333,13 +333,13 @@ class UriNodeTransformer(NodeTransformerKnownParent, RelativePathTransformer):
             local_path = _resolve_source(node, root_path=self.root)
             return local_path
 
-    def transform_ImportableSourceFile(
-        self, node: raw_nodes.ImportableSourceFile, **kwargs
-    ) -> raw_nodes.ResolvedImportableSourceFile:
-        return raw_nodes.ResolvedImportableSourceFile(
+    def transform_CallableFromSourceFile(
+        self, node: raw_nodes.CallableFromSourceFile, **kwargs
+    ) -> raw_nodes.ResolvedCallableFromSourceFile:
+        return raw_nodes.ResolvedCallableFromSourceFile(
             source_file=_resolve_source(node.source_file, self.root), callable_name=node.callable_name
         )
 
-    def transform_ImportableModule(self, node: raw_nodes.ImportableModule, **kwargs) -> raw_nodes.LocalImportableModule:
+    def transform_CallableFromModule(self, node: raw_nodes.CallableFromModule, **kwargs) -> raw_nodes.LocalCallableFromModule:
         r = self.root if isinstance(self.root, pathlib.Path) else pathlib.Path()
-        return raw_nodes.LocalImportableModule(**dataclasses.asdict(node), root_path=r)
+        return raw_nodes.LocalCallableFromModule(**dataclasses.asdict(node), root_path=r)

@@ -323,7 +323,7 @@ class ExplicitShape(List):
         super().__init__(Integer(), **super_kwargs)
 
 
-class ImportableSource(String):
+class CallableSource(String):
     @staticmethod
     def _is_import(path):
         return ":" not in path
@@ -342,15 +342,15 @@ class ImportableSource(String):
 
             if not module_name:
                 raise ValidationError(
-                    f"Missing module name in importable source: {source_str}. Is it just missing a dot?"
+                    f"Missing module name in callable source: {source_str}."
                 )
 
             if not object_name:
                 raise ValidationError(
-                    f"Missing object/callable name in importable source: {source_str}. Is it just missing a dot?"
+                    f"Missing object/callable name in callable source: {source_str}. Is it just missing a dot?"
                 )
 
-            return raw_nodes.ImportableModule(callable_name=object_name, module_name=module_name)
+            return raw_nodes.CallableFromModule(callable_name=object_name, module_name=module_name)
 
         elif self._is_filepath(source_str):
             *module_uri_parts, object_name = source_str.split(":")
@@ -369,7 +369,7 @@ class ImportableSource(String):
                     ),
                 ]
             )
-            return raw_nodes.ImportableSourceFile(
+            return raw_nodes.CallableFromSourceFile(
                 callable_name=object_name, source_file=source_file_field.deserialize(module_uri)
             )
         else:
@@ -378,9 +378,9 @@ class ImportableSource(String):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
         if value is None:
             return None
-        elif isinstance(value, raw_nodes.ImportableModule):
+        elif isinstance(value, raw_nodes.CallableFromModule):
             return f"{value.module_name}.{value.callable_name}"
-        elif isinstance(value, raw_nodes.ImportableSourceFile):
+        elif isinstance(value, raw_nodes.CallableFromSourceFile):
             return f"{value.source_file}:{value.callable_name}"
         else:
             raise TypeError(f"{value} has unexpected type {type(value)}")
