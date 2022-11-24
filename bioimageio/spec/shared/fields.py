@@ -179,6 +179,12 @@ class List(DocumentedField, marshmallow_fields.List):
         super().__init__(instance, *super_args, **super_kwargs)
         self.type_name += f"\\[{self.inner.type_name}\\]"  # add type of list elements
 
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.List[typing.Any]]:
+        if isinstance(value, str):
+            raise TypeError("Avoiding bugs by prohibiting to serialize a list from a string.")
+
+        return super()._serialize(value, attr, obj, **kwargs)
+
 
 class Number(DocumentedField, marshmallow_fields.Number):
     pass
