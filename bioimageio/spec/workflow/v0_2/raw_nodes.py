@@ -19,9 +19,19 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 FormatVersion = FormatVersion
-DefaultType = Union[int, float, str, bool, list, dict, None]
 ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "dict", "any"]
-TYPE_NAME_MAP = {int: "int", float: "float", str: "string", bool: "boolean", list: "list", dict: "dict", None: "null"}
+
+DefaultType = Union[int, float, str, bool, list, dict, None]
+# mapping of types of possible default values
+DEFAULT_TYPE_NAME_MAP = {
+    int: "int",
+    float: "float",
+    str: "string",
+    bool: "boolean",
+    list: "list",
+    dict: "dict",
+    None: "null",
+}
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -82,6 +92,7 @@ TimeUnit = Literal[
 # this Axis definition is compatible with the NGFF draft from October 24, 2022
 # https://ngff.openmicroscopy.org/latest/#axes-md
 AxisType = Literal["batch", "channel", "index", "time", "space"]
+ArbitraryAxes = Literal["arbitrary"]
 
 
 @dataclass
@@ -94,62 +105,25 @@ class Axis:
 
 
 @dataclass
-class BatchAxis(Axis):
-    type: Literal["batch"] = "batch"
-    name: _Missing = missing
-    description: _Missing = missing
-    unit: _Missing = missing
-    step: _Missing = missing
-
-
-@dataclass
-class ChannelAxis(Axis):
-    type: Literal["channel"] = "channel"
-    step: _Missing = missing
-
-
-@dataclass
-class IndexAxis(Axis):
-    type: Literal["index"] = "index"
-    name: Union[_Missing, str] = missing
-    unit: Union[_Missing, str] = missing
-    step: _Missing = missing
-
-
-@dataclass
-class SpaceAxis(Axis):
-    type: Literal["space"] = "space"
-    name: Literal["x", "y", "z"] = missing
-    unit: Union[_Missing, str, SpaceUnit] = missing
-
-
-@dataclass
-class TimeAxis(Axis):
-    type: Literal["time"] = "time"
-    name: Union[_Missing, str] = missing
-    unit: Union[_Missing, str, TimeUnit] = missing
-
-
-@dataclass
-class ParameterSpec(RawNode):
+class Parameter(RawNode):
     name: str = missing
     type: ParameterType = missing
     description: Union[_Missing, str] = missing
-    axes: Union[_Missing, List[Axis]] = missing
+    axes: Union[_Missing, List[Axis], ArbitraryAxes] = missing
 
 
 @dataclass
-class InputSpec(ParameterSpec):
+class Input(Parameter):
     pass
 
 
 @dataclass
-class OptionSpec(ParameterSpec):
+class Option(Parameter):
     default: Union[_Missing, DefaultType] = missing
 
 
 @dataclass
-class OutputSpec(ParameterSpec):
+class Output(Parameter):
     pass
 
 
@@ -157,6 +131,6 @@ class OutputSpec(ParameterSpec):
 class Workflow(_RDF):
     type: Literal["workflow"] = missing
 
-    inputs_spec: List[InputSpec] = missing
-    options_spec: List[OptionSpec] = missing
-    outputs_spec: List[OutputSpec] = missing
+    inputs: List[Input] = missing
+    options: List[Option] = missing
+    outputs: List[Output] = missing

@@ -1,6 +1,6 @@
 import typing
 
-from marshmallow import ValidationError, missing, validates, validates_schema
+from marshmallow import ValidationError, validates, validates_schema
 from marshmallow.exceptions import SCHEMA
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
@@ -19,10 +19,24 @@ class _BioImageIOSchema(SharedBioImageIOSchema):
 
 
 class Axis(_BioImageIOSchema):
-    name = fields.String(
-        required=True,
-        bioimageio_description="A unique axis name (max 32 characters).",
-        validate=field_validators.Length(min=1, max=32),
+    # name = fields.String(
+    #     required=True,
+    #     bioimageio_description="A unique axis name (max 32 characters).",
+    #     validate=field_validators.Length(min=1, max=32),
+    # )
+    name = fields.Union(
+        [
+            fields.String(
+                validate=(field_validators.Length(min=1, max=32), field_validators.ContainsNoneOf([","])),
+                bioimageio_description="Axis name. Indexed for channel axis, e.g. RGB -> RGB[0],RGB[1],RGB[2]",
+            ),
+            fields.List(
+                fields.String(validate=field_validators.Length(min=1, max=32)),
+                bioimageio_description="For channel axis only: Name per channel, e.g. [red, green, blue]",
+            ),
+        ],
+        bioimageio_maybe_required=True,
+        bioimageio_description="A unique axis name (max 32 characters)",
     )
     type = fields.String(
         required=True,
@@ -32,11 +46,36 @@ class Axis(_BioImageIOSchema):
     description = fields.String(
         validate=field_validators.Length(min=1, max=128),
         bioimageio_description="Description of axis (max 128 characters).",
+        bioimageio_maybe_required=True,
     )
-    unit = fields.String(bioimageio_description="Physical unit of this axis.", bioimageio_maybe_required=True)
+    unit = fields.Union(
+        [
+            fields.String(validate=(field_validators.Length(min=1, max=32), field_validators.ContainsNoneOf([","]))),
+            fields.List(
+                fields.String(validate=field_validators.Length(min=1, max=32)),
+                bioimageio_description="For channel axis only: unit of data values (max 32 characters; per channel if list).",
+            ),
+        ],
+        bioimageio_description="Physical unit of this axis (max 32 characters).",
+        bioimageio_maybe_required=True,
+    )
+    # unit = fields.String(bioimageio_description="Physical unit of this axis.", bioimageio_maybe_required=True)
     # Recommendations:\n\n for type: 'space' one of:\n\n\t{get_args(raw_nodes.SpaceUnit)}\n\n for type: 'time' one of:\n\n\t{get_args(raw_nodes.TimeUnit)}")
-    step = fields.Integer(
-        bioimageio_description="One 'pixel' along this axis corresponds to 'step'+'unit'. If specified 'unit' is mandatory."
+    step = fields.Float(
+        bioimageio_description="One 'pixel' along this axis corresponds to 'step' 'unit'. (Invalid for channel axis.)"
+    )
+    scaling_factor = fields.Union(
+        [
+            fields.Float(
+                validate=field_validators.Range(min=0, min_inclusive=False),
+                bioimageio_description="Scaling factor for all channels.",
+            ),
+            fields.List(
+                fields.Float(validate=field_validators.Range(min=0, min_inclusive=False)),
+                bioimageio_description="Scaling factor per channel.",
+            ),
+        ],
+        bioimageio_description="For channel axis only: Scaling factor (per channel). Values are given in 'scaling_factor' 'unit'.",
     )
 
     @validates_schema
@@ -44,70 +83,40 @@ class Axis(_BioImageIOSchema):
         if "step" in data and not "unit" in data:
             raise ValidationError("Missing 'unit' for specified 'step'.", "unit")
 
+    @validates_schema
+    def validate_type_specifics(self, data, **kwargs):
+        type_ = data.get("type")
+        unit = data.get("unit")
+        for invalid in dict(
+            batch=["scaling_factor", "step", "unit", "description", "name"],
+            channel=["step"],
+            index=["unit", "step", "scaling_factor"],
+            space=["scaling_factor"],
+            time=["scaling_factor"],
+        ).get(type_, []):
+            if invalid in data:
+                raise ValidationError(f"'{invalid}' invalid for {type_} axis")
 
-class BatchAxis(Axis):
-    class Meta:
-        exclude = ("name", "description", "unit", "step")
+        if type_ != "channel" and isinstance(data.get("name"), list):
+            raise ValidationError(
+                f"A list of names is only valid for axis type channel, not axis type {data.get('type')}."
+            )
 
-    type = fields.String(required=True, validate=field_validators.Equal("batch"), bioimageio_description="'batch'")
+        if type_ == "space":
+            if data.get("name") not in "xyz":
+                raise ValidationError("For a space axis only the names 'x', 'y', or 'z' are allowed.")
 
+            recommended_units = get_args(raw_nodes.SpaceUnit)
+            if unit not in recommended_units:
+                self.warn("unit", f"unknown unit '{unit}' for space axis. Recommend units are: {recommended_units}.")
 
-class ChannelAxis(Axis):
-    class Meta:
-        exclude = ("step",)
-
-    type = fields.String(required=True, validate=field_validators.Equal("channel"), bioimageio_description="'channel'")
-    name = fields.Union(
-        [
-            fields.List(fields.String(validate=field_validators.Length(min=1, max=32))),
-            fields.String(validate=field_validators.Length(min=1, max=32)),
-        ],
-        required=True,
-        bioimageio_description="A unique axis name (max 32 characters; per channel if list).",
-    )
-    unit = fields.Union(
-        [
-            fields.List(fields.String(validate=field_validators.Length(min=1, max=32))),
-            fields.String(validate=field_validators.Length(min=1, max=32)),
-        ],
-        required=False,
-        bioimageio_description="Physical unit of data values (max 32 characters; per channel if list).",
-    )
-
-
-class IndexAxis(Axis):
-    class Meta:
-        exclude = ("step", "unit")
-
-    type = fields.String(required=True, validate=field_validators.Equal("index"), bioimageio_description="'index'")
+        if type_ == "time":
+            recommended_units = get_args(raw_nodes.TimeUnit)
+            if unit not in recommended_units:
+                self.warn("unit", f"unknown unit '{unit}' for time axis. Recommend units are: {recommended_units}.")
 
 
-class SpaceAxis(Axis):
-    name = fields.String(
-        validate=field_validators.OneOf(["x", "y", "z"]),
-        required=True,
-        bioimageio_description="One of: ['x', 'y', 'z'].",
-    )
-    type = fields.String(required=True, validate=field_validators.Equal("space"), bioimageio_description="'space'")
-
-    @validates("unit")
-    def recommend_unit(self, value: str):
-        recommended_units = get_args(raw_nodes.SpaceUnit)
-        if not value in recommended_units:
-            self.warn("unit", f"unknown space unit {value}. Recommend units are: {recommended_units}")
-
-
-class TimeAxis(Axis):
-    type = fields.String(required=True, validate=field_validators.Equal("time"), bioimageio_description="'time'")
-
-    @validates("unit")
-    def recommend_unit(self, value: str):
-        recommended_units = get_args(raw_nodes.TimeUnit)
-        if not value in recommended_units:
-            self.warn("unit", f"unknown time unit {value}. Recommend units are: {recommended_units}")
-
-
-class ParameterSpec(_BioImageIOSchema):
+class Parameter(_BioImageIOSchema):
     name = fields.String(
         required=True,
         bioimageio_description="Parameter name. No duplicates are allowed.",
@@ -117,16 +126,14 @@ class ParameterSpec(_BioImageIOSchema):
         validate=field_validators.OneOf(get_args(raw_nodes.ParameterType)),
         bioimageio_description=f"One of: {get_args(raw_nodes.ParameterType)}",
     )
-    axes = fields.List(
-        fields.Union(
-            [
-                fields.Nested(BatchAxis()),
-                fields.Nested(ChannelAxis()),
-                fields.Nested(IndexAxis()),
-                fields.Nested(SpaceAxis()),
-                fields.Nested(TimeAxis()),
-            ]
-        ),
+    axes = fields.Union(
+        [
+            fields.List(fields.Nested(Axis())),
+            fields.String(
+                bioimageio_description="Arbitrary combination of valid axis types.",
+                validate=field_validators.Equal(get_args(raw_nodes.ArbitraryAxes)[0]),
+            ),
+        ],
         required=False,
         bioimageio_maybe_required=True,
         bioimageio_description="Axis specifications (only required for type 'tensor').",
@@ -143,11 +150,11 @@ class ParameterSpec(_BioImageIOSchema):
             raise ValidationError("'axes' required for input type 'tensor'.")
 
 
-class InputSpec(ParameterSpec):
+class Input(Parameter):
     pass
 
 
-class OptionSpec(ParameterSpec):
+class Option(Parameter):
     default = fields.Raw(
         required=True,
         bioimageio_description="Default value compatible with type given by `type` field."
@@ -166,14 +173,14 @@ class OptionSpec(ParameterSpec):
             return
 
         default_type = type(data["default"])
-        type_name = raw_nodes.TYPE_NAME_MAP[default_type]
+        type_name = raw_nodes.DEFAULT_TYPE_NAME_MAP[default_type]
         if type_name != input_type_name:
             raise ValidationError(
                 f"Default value of type {default_type} (type name: {type_name}) does not match type: {input_type_name}"
             )
 
 
-class OutputSpec(ParameterSpec):
+class Output(Parameter):
     pass
 
 
@@ -186,26 +193,26 @@ The workflow RDF YAML file contains mandatory and optional fields. In the follow
 _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
 
 """
-    inputs_spec = fields.List(
-        fields.Nested(InputSpec()),
+    inputs = fields.List(
+        fields.Nested(Input()),
         required=True,
         bioimageio_description="Describes the inputs expected by this workflow.",
     )
 
     @staticmethod
-    def verify_param_list(params: typing.Any) -> typing.List[typing.Union[raw_nodes.ParameterSpec]]:
-        if not isinstance(params, list) or not all(isinstance(v, raw_nodes.ParameterSpec) for v in params):
+    def verify_param_list(params: typing.Any) -> typing.List[raw_nodes.Parameter]:
+        if not isinstance(params, list) or not all(isinstance(v, raw_nodes.Parameter) for v in params):
             raise ValidationError("Could not check for duplicate parameter names due to another validation error.")
 
         return params
 
     @staticmethod
     def check_for_duplicate_param_names(
-        params: typing.List[typing.Union[raw_nodes.ParameterSpec]], param_name: str, field_name=SCHEMA
+        params: typing.List[typing.Union[raw_nodes.Parameter]], param_name: str, field_name=SCHEMA
     ):
         names = set()
         for t in params:
-            if not isinstance(t, raw_nodes.ParameterSpec):
+            if not isinstance(t, raw_nodes.Parameter):
                 raise ValidationError(
                     f"Could not check for duplicate {param_name} name due to other validation errors."
                 )
@@ -215,8 +222,8 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 
             names.add(t.name)
 
-    options_spec = fields.List(
-        fields.Nested(OptionSpec()),
+    options = fields.List(
+        fields.Nested(Option()),
         required=True,
         bioimageio_description="Describes the options that may be given to this workflow.",
     )
@@ -225,40 +232,38 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     def no_duplicate_input_and_option_names(self, data, **kwargs):
         if not isinstance(data, dict):
             return
-        ipts = data.get("inputs_spec", [])
-        opts = data.get("options_spec", [])
+        ipts = data.get("inputs", [])
+        opts = data.get("options", [])
         if isinstance(ipts, list) and isinstance(opts, list):
-            self.check_for_duplicate_param_names(
-                self.verify_param_list(ipts + opts), "input/option", "inputs_spec/options_spec"
-            )
+            self.check_for_duplicate_param_names(self.verify_param_list(ipts + opts), "input/option", "inputs/options")
 
-    outputs_spec = fields.List(
-        fields.Nested(OutputSpec()),
+    outputs = fields.List(
+        fields.Nested(Output()),
         validate=field_validators.Length(min=1),
         bioimageio_description="Describes the outputs of this workflow.",
     )
 
-    @validates("outputs_spec")
-    def no_duplicate_output_names(self, outs: typing.List[raw_nodes.OutputSpec]):
-        self.check_for_duplicate_param_names(self.verify_param_list(outs), "output_spec")
+    @validates("outputs")
+    def no_duplicate_output_names(self, outs: typing.List[raw_nodes.Output]):
+        self.check_for_duplicate_param_names(self.verify_param_list(outs), "outputs")
 
     @staticmethod
     def get_initial_reference_names(data) -> typing.Set[str]:
         refs = {"${{ self.rdf_source }}"}
-        inputs = data.get("inputs_spec")
+        inputs = data.get("inputs")
         if not isinstance(inputs, list):
             return refs
 
         for ipt in inputs:
-            if isinstance(ipt, raw_nodes.InputSpec):
+            if isinstance(ipt, raw_nodes.Input):
                 refs.add(f"${{{{ self.inputs.{ipt.name} }}}}")
 
-        options = data.get("options_spec")
+        options = data.get("options")
         if not isinstance(options, list):
             return refs
 
         for opt in options:
-            if isinstance(opt, raw_nodes.OptionSpec):
+            if isinstance(opt, raw_nodes.Option):
                 refs.add(f"${{{{ self.options.{opt.name} }}}}")
 
         return refs
