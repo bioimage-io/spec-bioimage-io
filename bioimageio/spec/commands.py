@@ -32,7 +32,7 @@ def update_format(
 def validate(
     rdf_source: Union[RawResourceDescription, dict, os.PathLike, IO, str, bytes],
     update_format: bool = False,
-    update_format_inner: bool = None,
+    update_format_inner: Optional[bool] = None,
     verbose: bool = "deprecated",  # type: ignore
     enrich_partial_rdf: Callable[[dict, Union[URI, Path]], dict] = default_enrich_partial_rdf,
 ) -> ValidationSummary:
@@ -148,7 +148,7 @@ def validate(
 def update_rdf(
     source: Union[RawResourceDescription, dict, os.PathLike, IO, str, bytes],
     update: Union[RawResourceDescription, dict, os.PathLike, IO, str, bytes],
-    output: Union[dict, os.PathLike] = None,
+    output: Union[None, dict, os.PathLike] = None,
     validate_output: bool = True,
 ) -> Union[dict, Path, RawResourceDescription]:
     """
@@ -215,6 +215,7 @@ def update_rdf(
                     f"Failed to convert paths in updated rdf to relative paths with root {output}; error: {e}"
                 )
                 warnings.warn(f"updated rdf at {output} contains absolute paths and is thus invalid!")
+                assert isinstance(out_data, RawResourceDescription)
                 out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=False)
 
         yaml.dump(out_data, output)

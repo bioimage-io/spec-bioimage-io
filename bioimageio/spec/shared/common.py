@@ -133,7 +133,9 @@ class ValidationSummary(TypedDict):
     bioimageio_spec_version: str
     error: Union[None, str, Dict[str, Any]]
     name: str
-    nested_errors: Dict[str, dict]  # todo: mark as not required: typing_extensions.NotRequired (typing py 3.11)
+    nested_errors: Optional[
+        Dict[str, dict]
+    ]  # todo: mark as not required: typing_extensions.NotRequired (typing py 3.11)
     source_name: str
     status: Union[Literal["passed", "failed"], str]
     traceback: Optional[List[str]]

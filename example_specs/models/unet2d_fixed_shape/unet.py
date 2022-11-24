@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 import torch.nn as nn
 
@@ -404,8 +406,8 @@ class UNet2d(UNetBase):
         postprocessing=None,
         **conv_block_kwargs,
     ):
-        features_encoder = [in_channels] + [initial_features * gain ** i for i in range(depth)]
-        features_decoder = [initial_features * gain ** i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
         scale_factors = depth * [2]
 
         if return_side_outputs:
@@ -413,7 +415,7 @@ class UNet2d(UNetBase):
                 out_channels = [out_channels] * depth
             if len(out_channels) != depth:
                 raise ValueError()
-            out_conv = nn.ModuleList(
+            out_conv: Optional[nn.Module] = nn.ModuleList(
                 [nn.Conv2d(feat, outc, 1) for feat, outc in zip(features_decoder[1:], out_channels)]
             )
         else:
@@ -486,15 +488,15 @@ class AnisotropicUNet(UNetBase):
         **conv_block_kwargs,
     ):
         depth = len(scale_factors)
-        features_encoder = [in_channels] + [initial_features * gain ** i for i in range(depth)]
-        features_decoder = [initial_features * gain ** i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
 
         if return_side_outputs:
             if isinstance(out_channels, int) or out_channels is None:
                 out_channels = [out_channels] * depth
             if len(out_channels) != depth:
                 raise ValueError()
-            out_conv = nn.ModuleList(
+            out_conv: Optional[nn.Module] = nn.ModuleList(
                 [nn.Conv3d(feat, outc, 1) for feat, outc in zip(features_decoder[1:], out_channels)]
             )
         else:

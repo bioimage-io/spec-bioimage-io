@@ -81,7 +81,7 @@ def extract_resource_package(
     source: Union[os.PathLike, IO, str, bytes, raw_nodes.URI]
 ) -> Tuple[dict, str, pathlib.Path]:
     """extract a zip source to BIOIMAGEIO_CACHE_PATH"""
-    source, source_name, root = resolve_rdf_source(source)
+    src, source_name, root = resolve_rdf_source(source)
     if isinstance(root, bytes):
         raise NotImplementedError("package source was bytes")
 
@@ -123,7 +123,7 @@ def extract_resource_package(
             warnings.warn(f"Could not remove download {download} due to {e}")
 
     assert isinstance(package_path, pathlib.Path)
-    return source, source_name, package_path
+    return src, source_name, package_path
 
 
 def load_raw_resource_description(
@@ -292,7 +292,7 @@ def get_resource_package_content_wo_rdf(
     raw_rd: Union[GenericRawRD, raw_nodes.URI, str, pathlib.Path],
     *,
     weights_priority_order: Optional[Sequence[str]] = None,  # model only
-) -> Tuple[GenericRawNode, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
+) -> Tuple[raw_nodes.ResourceDescription, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
     """
     Args:
         raw_rd: raw resource description
@@ -305,25 +305,27 @@ def get_resource_package_content_wo_rdf(
         keyed by file names.
         Important note: the serialized rdf.yaml is not included.
     """
-    if not isinstance(raw_rd, raw_nodes.ResourceDescription):
-        raw_rd = load_raw_resource_description(raw_rd)
+    if isinstance(raw_rd, raw_nodes.ResourceDescription):
+        r_rd = raw_rd
+    else:
+        r_rd = load_raw_resource_description(raw_rd)
 
-    sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
-    if raw_rd.type == "model":
+    sub_spec = _get_spec_submodule(r_rd.type, r_rd.format_version)
+    if r_rd.type == "model":
         filter_kwargs = dict(weights_priority_order=weights_priority_order)
     else:
         filter_kwargs = {}
 
-    raw_rd = sub_spec.utils.filter_resource_description(raw_rd, **filter_kwargs)
+    r_rd = sub_spec.utils.filter_resource_description(r_rd, **filter_kwargs)
 
-    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI, str]] = {}
-    raw_rd = RawNodePackageTransformer(content, raw_rd.root_path).transform(raw_rd)
+    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI]] = {}
+    r_rd = RawNodePackageTransformer(content, r_rd.root_path).transform(r_rd)
     assert "rdf.yaml" not in content
-    return raw_rd, content
+    return r_rd, content
 
 
 def get_resource_package_content(
-    raw_rd: Union[GenericRawNode, raw_nodes.URI, str, pathlib.Path],
+    raw_rd: Union[raw_nodes.ResourceDescription, raw_nodes.URI, str, pathlib.Path],
     *,
     weights_priority_order: Optional[Sequence[str]] = None,  # model only
 ) -> Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]:
@@ -343,7 +345,5 @@ def get_resource_package_content(
             "without yaml"
         )
 
-    content: Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]
-    raw_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
-    content["rdf.yaml"] = serialize_raw_resource_description(raw_rd)
-    return content
+    r_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
+    return {**content, **{"rdf.yaml": serialize_raw_resource_description(r_rd)}}

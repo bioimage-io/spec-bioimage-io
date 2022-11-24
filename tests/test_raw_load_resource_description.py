@@ -1,3 +1,5 @@
+import pathlib
+
 from bioimageio.spec.model import raw_nodes
 from bioimageio.spec import collection
 from bioimageio.spec.shared import yaml
@@ -74,7 +76,9 @@ def test_load_raw_model_unet2d_keras_tf(unet2d_keras_tf):
     assert isinstance(raw_model, raw_nodes.Model)
     # test attachments
     assert len(raw_model.attachments.files) == 1
-    assert (raw_model.root_path / raw_model.attachments.files[0]).exists()
+    attachment = raw_model.attachments.files[0]
+    assert isinstance(attachment, pathlib.Path)
+    assert (raw_model.root_path / attachment).exists()
 
 
 def test_load_raw_model_unet2d_keras_tf2(unet2d_keras_tf2):
@@ -84,12 +88,14 @@ def test_load_raw_model_unet2d_keras_tf2(unet2d_keras_tf2):
     assert isinstance(raw_model, raw_nodes.Model)
     # test attachments
     assert len(raw_model.attachments.files) == 3
-    assert all([(raw_model.root_path / attachment).exists() for attachment in raw_model.attachments.files])
+    attachments = raw_model.attachments.files
+    assert all(isinstance(at, pathlib.Path) and (raw_model.root_path / at).exists() for at in attachments)
 
 
 def test_load_raw_model_to_format(unet2d_nuclei_broad_before_latest):
     from bioimageio.spec import load_raw_resource_description
 
+    assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_before_latest)
     data["root_path"] = unet2d_nuclei_broad_before_latest.parent
     format_targets = [(0, 3), (0, 4)]
@@ -106,6 +112,7 @@ def test_load_raw_model_converts_invalid_name(unet2d_nuclei_broad_base_path):
     from bioimageio.spec.model.raw_nodes import Model
     from bioimageio.spec import load_raw_resource_description
 
+    assert yaml is not None
     model_dict = yaml.load(unet2d_nuclei_broad_base_path / "rdf_v0_4_0.yaml")
     model_dict["root_path"] = unet2d_nuclei_broad_base_path
     model_dict["name"] = "invalid/name"
@@ -124,6 +131,6 @@ def test_collection_with_relative_path_in_rdf_source_of_an_entry(partner_collect
     resolved_entries = resolve_collection_entries(coll)
     for entry_rdf, entry_error in resolved_entries:
         assert isinstance(entry_rdf, Dataset)
-        assert entry_rdf.documentation.as_posix().endswith(
+        assert isinstance(entry_rdf.documentation, pathlib.Path) and entry_rdf.documentation.as_posix().endswith(
             "example_specs/collections/partner_collection/datasets/dummy-dataset/README.md"
         )

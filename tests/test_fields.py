@@ -1,5 +1,6 @@
 import pathlib
 from datetime import datetime, timezone
+from typing import Any, Dict
 
 import numpy
 import pytest
@@ -86,7 +87,7 @@ class TestShape:
         assert actual == expected
 
     def test_output_shape(self):
-        data = {"reference_tensor": "in1", "scale": [1, 2, 3], "offset": [0, 1, 3]}
+        data: Dict[str, Any] = {"reference_tensor": "in1", "scale": [1, 2, 3], "offset": [0, 1, 3]}
         expected = raw_nodes.ImplicitOutputShape(**data)
         actual = fields.Union(
             [fields.ExplicitShape(), fields.Nested(schema.ImplicitOutputShape())], required=True

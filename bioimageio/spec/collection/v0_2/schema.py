@@ -1,4 +1,7 @@
-from marshmallow import missing, validates
+from types import ModuleType
+from typing import ClassVar, List, Union
+
+from marshmallow import INCLUDE, missing, validates
 
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared import fields
@@ -6,13 +9,13 @@ from bioimageio.spec.shared.schema import SharedBioImageIOSchema, WithUnknown
 from . import raw_nodes
 
 try:
-    from typing import List, Union, get_args
+    from typing import get_args
 except ImportError:
     from typing_extensions import get_args  # type: ignore
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: ClassVar[ModuleType] = raw_nodes
 
 
 class CollectionEntry(_BioImageIOSchema, WithUnknown):
@@ -21,6 +24,9 @@ class CollectionEntry(_BioImageIOSchema, WithUnknown):
 
 
 class Collection(_BioImageIOSchema, WithUnknown, RDF):
+    class Meta:
+        unknown = INCLUDE
+
     bioimageio_description = f"""# BioImage.IO Collection Resource Description File Specification {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing collections of other resources.
 These fields are typically stored in a YAML file which we call Collection Resource Description File or `collection RDF`.
