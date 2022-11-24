@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
+from bioimageio.spec.dataset.raw_nodes import Dataset
 from bioimageio.spec.shared import yaml
-from spec.dataset.raw_nodes import Dataset
 
 
 def test_spec_round_trip(unet2d_nuclei_broad_any_minor):

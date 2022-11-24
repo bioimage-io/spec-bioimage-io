@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Optional, Union
 import typer
 
 from bioimageio.spec import __version__, collection, commands, model, rdf
-from spec.shared.raw_nodes import URI
+from bioimageio.spec.shared.raw_nodes import URI
 
 enrich_partial_rdf_with_imjoy_plugin: Optional[Callable[[Dict[str, Any], Union[URI, Path]], Dict[str, Any]]]
 try:
