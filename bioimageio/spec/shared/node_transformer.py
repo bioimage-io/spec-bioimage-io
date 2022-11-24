@@ -340,6 +340,8 @@ class UriNodeTransformer(NodeTransformerKnownParent, RelativePathTransformer):
             source_file=_resolve_source(node.source_file, self.root), callable_name=node.callable_name
         )
 
-    def transform_CallableFromModule(self, node: raw_nodes.CallableFromModule, **kwargs) -> raw_nodes.LocalCallableFromModule:
+    def transform_CallableFromModule(
+        self, node: raw_nodes.CallableFromModule, **kwargs
+    ) -> raw_nodes.LocalCallableFromModule:
         r = self.root if isinstance(self.root, pathlib.Path) else pathlib.Path()
         return raw_nodes.LocalCallableFromModule(**dataclasses.asdict(node), root_path=r)

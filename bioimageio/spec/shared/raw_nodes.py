@@ -203,4 +203,6 @@ class ResolvedCallableFromSourceFile(CallableFromSourceFile):
     source_file: pathlib.Path = missing
 
 
-CallableSource = Union[CallableFromModule, CallableFromSourceFile, ResolvedCallableFromSourceFile, LocalCallableFromModule]
+CallableSource = Union[
+    CallableFromModule, CallableFromSourceFile, ResolvedCallableFromSourceFile, LocalCallableFromModule
+]

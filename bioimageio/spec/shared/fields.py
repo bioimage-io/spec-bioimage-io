@@ -341,9 +341,7 @@ class CallableSource(String):
             object_name = source_str[last_dot_idx + 1 :]
 
             if not module_name:
-                raise ValidationError(
-                    f"Missing module name in callable source: {source_str}."
-                )
+                raise ValidationError(f"Missing module name in callable source: {source_str}.")
 
             if not object_name:
                 raise ValidationError(
