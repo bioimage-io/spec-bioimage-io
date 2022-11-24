@@ -177,44 +177,6 @@ class OutputSpec(ParameterSpec):
     pass
 
 
-class Step(_BioImageIOSchema):
-    op = fields.String(
-        required=True,
-        validate=field_validators.Predicate("isidentifier"),
-        bioimageio_description="Name of operation. Must be implemented in bioimageio.core or bioimageio.contrib.",
-    )
-    id = fields.String(
-        required=False,
-        bioimageio_maybe_required=True,
-        validate=[field_validators.Predicate("isidentifier"), field_validators.NoneOf(["self"])],
-        bioimageio_description="Step id for referencing the steps' outputs (must not be 'self').",
-    )
-
-    @validates_schema
-    def has_id_if_outputs(self, data, **kwargs):
-        if data.get("outputs") and "id" not in data:
-            raise ValidationError("'id' required if 'outputs' are named.")
-
-    inputs = fields.List(
-        fields.Raw(),
-        bioimageio_description="A list of input parameters. Named outputs of previous steps may be referenced here as '${{ \\<step id\\>.outputs.\\<output name\\> }}'."
-        "\n\nIf not set, the outputs of the previous step are used as inputs.",
-    )
-    options = fields.YamlDict(
-        fields.String(validate=field_validators.Predicate("isidentifier")),
-        fields.Raw(),
-        bioimageio_description="Named options. Named outputs of previous steps may be referenced here as '${{ \\<step id\\>.outputs.\\<output name\\> }}'.",
-    )
-
-    outputs = fields.List(
-        fields.String(
-            validate=field_validators.Predicate("isidentifier"),
-        ),
-        required=False,
-        bioimageio_description="Output names for this step for later referencing.",
-    )
-
-
 class Workflow(_BioImageIOSchema, RDF):
     bioimageio_description = f"""# BioImage.IO Workflow Resource Description File {get_args(raw_nodes.FormatVersion)[-1]}
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing workflows.

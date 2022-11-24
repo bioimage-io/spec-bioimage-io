@@ -1,18 +1,16 @@
-""" raw nodes for the dataset RDF spec
+""" raw nodes for the workflow RDF spec
 
 raw nodes are the deserialized equivalent to the content of any RDF.
 serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
-import typing
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import FormatVersion, RDF as _RDF, URI
+from bioimageio.spec.rdf.v0_2.raw_nodes import FormatVersion, RDF as _RDF
 from bioimageio.spec.shared.raw_nodes import RawNode
 
 try:
@@ -21,7 +19,6 @@ except ImportError:
     from typing_extensions import Literal, get_args  # type: ignore
 
 FormatVersion = FormatVersion
-ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "dict", "any"]
 DefaultType = Union[int, float, str, bool, list, dict, None]
 TYPE_NAME_MAP = {int: "int", float: "float", str: "string", bool: "boolean", list: "list", dict: "dict", None: "null"}
 
@@ -135,7 +132,7 @@ class TimeAxis(Axis):
 @dataclass
 class ParameterSpec(RawNode):
     name: str = missing
-    type: ParameterType = missing
+    type: str = missing
     description: Union[_Missing, str] = missing
     axes: Union[_Missing, List[Axis]] = missing
 
@@ -153,15 +150,6 @@ class OptionSpec(ParameterSpec):
 @dataclass
 class OutputSpec(ParameterSpec):
     pass
-
-
-@dataclass
-class Step(RawNode):
-    op: str = missing
-    id: Union[_Missing, str] = missing
-    inputs: Union[_Missing, List[Any]] = missing
-    options: Union[_Missing, Dict[str, Any]] = missing
-    outputs: Union[_Missing, List[str]] = missing
 
 
 @dataclass
