@@ -323,14 +323,10 @@ class ExplicitShape(List):
         super().__init__(Integer(), **super_kwargs)
 
 
-class CallableSource(String):
+class CallableFromModule(String):
     @staticmethod
     def _is_import(path):
         return ":" not in path
-
-    @staticmethod
-    def _is_filepath(path):
-        return ":" in path
 
     def _deserialize(self, *args, **kwargs) -> typing.Any:
         source_str: str = super()._deserialize(*args, **kwargs)
@@ -349,8 +345,26 @@ class CallableSource(String):
                 )
 
             return raw_nodes.CallableFromModule(callable_name=object_name, module_name=module_name)
+        else:
+            raise ValidationError(source_str)
 
-        elif self._is_filepath(source_str):
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        if value is None:
+            return None
+        elif isinstance(value, raw_nodes.CallableFromModule):
+            return f"{value.module_name}.{value.callable_name}"
+        else:
+            raise TypeError(f"{value} has unexpected type {type(value)}")
+
+
+class CallableFromSourceFile(String):
+    @staticmethod
+    def _is_filepath(path):
+        return ":" in path
+
+    def _deserialize(self, *args, **kwargs) -> typing.Any:
+        source_str: str = super()._deserialize(*args, **kwargs)
+        if self._is_filepath(source_str):
             *module_uri_parts, object_name = source_str.split(":")
             module_uri = ":".join(module_uri_parts).strip(":")
 
@@ -376,12 +390,15 @@ class CallableSource(String):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
         if value is None:
             return None
-        elif isinstance(value, raw_nodes.CallableFromModule):
-            return f"{value.module_name}.{value.callable_name}"
         elif isinstance(value, raw_nodes.CallableFromSourceFile):
             return f"{value.source_file}:{value.callable_name}"
         else:
             raise TypeError(f"{value} has unexpected type {type(value)}")
+
+
+class CallableSource(Union):
+    def __init__(self, **kwargs):
+        super().__init__([CallableFromModule(), CallableFromSourceFile()], **kwargs)
 
 
 class Kwargs(Dict):
