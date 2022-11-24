@@ -5,7 +5,7 @@ serialization and deserialization are defined in schema:
 RDF <--schema--> raw nodes
 """
 from dataclasses import dataclass
-from typing import Any, Dict, List, Union
+from typing import List, Union
 
 from marshmallow import missing
 from marshmallow.utils import _Missing
@@ -20,6 +20,7 @@ except ImportError:
 
 FormatVersion = FormatVersion
 DefaultType = Union[int, float, str, bool, list, dict, None]
+ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "dict", "any"]
 TYPE_NAME_MAP = {int: "int", float: "float", str: "string", bool: "boolean", list: "list", dict: "dict", None: "null"}
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
@@ -132,7 +133,7 @@ class TimeAxis(Axis):
 @dataclass
 class ParameterSpec(RawNode):
     name: str = missing
-    type: str = missing
+    type: ParameterType = missing
     description: Union[_Missing, str] = missing
     axes: Union[_Missing, List[Axis]] = missing
 
@@ -159,5 +160,3 @@ class Workflow(_RDF):
     inputs_spec: List[InputSpec] = missing
     options_spec: List[OptionSpec] = missing
     outputs_spec: List[OutputSpec] = missing
-    steps: List[Step] = missing
-    test_steps: List[Step] = missing
