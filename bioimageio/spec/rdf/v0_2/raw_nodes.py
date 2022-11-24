@@ -165,4 +165,7 @@ class RDF(ResourceDescription):
         if self.type is missing:
             self.type = self.__class__.__name__.lower()
 
+        if self.format_version is missing:
+            self.format_version = get_args(FormatVersion)[-1]
+
         super().__post_init__()
