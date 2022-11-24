@@ -149,6 +149,12 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 ## Changelog
 #### bioimageio.spec tbd
 - make pre-/postprocessing kwargs `mode` and `axes` always optional for model RDF 0.3 and 0.4
+- rename 
+  - `ImportableSource`→`CallableSource`
+  - `ImportableModule`→`CallableFromModule`
+  - `ImportableSourceFile`→`CallableFromSourceFile`
+  - `ResolvedImportableSourceFile`→`ResolvedCallableFromSourceFile`
+  - `LocalImportableModule`→`LocalCallableFromModule`
 
 #### bioimageio.spec 0.4.8post1
 - add `axes` and `eps` to `scale_mean_var`
