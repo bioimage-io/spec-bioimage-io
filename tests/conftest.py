@@ -125,4 +125,4 @@ def hpa_workflow_rdf():
 
 @pytest.fixture
 def dummy_workflow_rdf():
-    return pathlib.Path(__file__).parent / "../example_specs/workflows/dummy/rdf.yaml"
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/hello.yaml"

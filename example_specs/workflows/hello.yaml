@@ -1,0 +1,39 @@
+name: dummy workflow printing msg
+description: This dummy workflow is intended as a demonstration and for testing.
+type: workflow
+format_version: 0.2.3
+cite:
+- text: BioImage.IO
+  url: 'https://doi.org/10.1101/2022.06.07.495102'
+
+inputs: []
+
+options:
+- name: msg
+  type: string
+  description: Message
+  default: Hello!
+- name: tensor_a
+  type: tensor
+  description: tensor_a whose shape is added to message
+  default: null
+  axes: arbitrary
+- name: tensor_b
+  type: tensor
+  description: tensor_b whose shape is added to message
+  default: null
+  axes:
+  - type: batch
+  - type: space
+    name: x
+    description: x dimension
+    step: 1.5
+    unit: millimeter
+  - type: index
+    name: demo index
+    description: a special index axis
+
+outputs:
+- name: msg
+  type: string
+  description: A possibly manipulated message.
