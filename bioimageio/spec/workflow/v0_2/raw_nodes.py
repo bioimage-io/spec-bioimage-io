@@ -100,7 +100,7 @@ TimeUnit = Literal[
 # this Axis definition is compatible with the NGFF draft from October 24, 2022
 # https://ngff.openmicroscopy.org/latest/#axes-md
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-ArbitraryAxes = Literal["arbitrary"]
+UnknownAxes = Literal["unknown"]
 
 
 @dataclass
@@ -117,7 +117,7 @@ class Parameter(RawNode):
     name: str = missing
     type: ParameterType = missing
     description: Union[_Missing, str] = missing
-    axes: Union[_Missing, List[Axis], ArbitraryAxes] = missing
+    axes: Union[_Missing, List[Axis], UnknownAxes] = missing
 
 
 @dataclass

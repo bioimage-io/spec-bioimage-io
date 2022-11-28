@@ -130,8 +130,8 @@ class Parameter(_BioImageIOSchema):
         [
             fields.List(fields.Nested(Axis())),
             fields.String(
-                bioimageio_description="Arbitrary combination of valid axis types.",
-                validate=field_validators.Equal(get_args(raw_nodes.ArbitraryAxes)[0]),
+                bioimageio_description="Arbitrary or unknown combination of valid axis types.",
+                validate=field_validators.Equal(get_args(raw_nodes.UnknownAxes)[0]),
             ),
         ],
         required=False,
