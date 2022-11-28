@@ -173,7 +173,7 @@ class Option(Parameter):
             return
 
         default_type = type(data["default"])
-        type_name = raw_nodes.DEFAULT_TYPE_NAME_MAP[default_type]
+        type_name = raw_nodes.TYPE_NAMES[default_type]
         if type_name != input_type_name:
             raise ValidationError(
                 f"Default value of type {default_type} (type name: {type_name}) does not match type: {input_type_name}"

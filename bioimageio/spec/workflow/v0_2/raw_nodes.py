@@ -23,7 +23,7 @@ ParameterType = Literal["tensor", "int", "float", "string", "boolean", "list", "
 
 DefaultType = Union[int, float, str, bool, list, dict, None]
 # mapping of types of possible default values
-DEFAULT_TYPE_NAME_MAP = {
+TYPE_NAMES = {
     int: "int",
     float: "float",
     str: "string",
@@ -32,7 +32,15 @@ DEFAULT_TYPE_NAME_MAP = {
     dict: "dict",
     None: "null",
 }
-
+TYPE_NAME_TYPES = dict(
+    int=int,
+    float=float,
+    string=str,
+    boolean=bool,
+    list=list,
+    dict=dict,
+    null=None,
+)
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
     "angstrom",
