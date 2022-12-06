@@ -206,3 +206,8 @@ class ResolvedCallableFromSourceFile(CallableFromSourceFile):
 CallableSource = Union[
     CallableFromModule, CallableFromSourceFile, ResolvedCallableFromSourceFile, LocalCallableFromModule
 ]
+# some aliases for backward compatibility
+ImportableModule = CallableFromModule
+LocalImportableModule = LocalCallableFromModule
+ImportableSourceFile = CallableFromSourceFile
+ResolvedImportableSourceFile = ResolvedCallableFromSourceFile
