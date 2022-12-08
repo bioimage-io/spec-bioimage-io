@@ -211,3 +211,7 @@ def nested_default_dict_as_nested_dict(nested_dd):
         return [nested_default_dict_as_nested_dict(value) for value in nested_dd]
     else:
         return nested_dd
+
+
+AXIS_LETTER_TO_NAME = dict(b="batch", t="time", c="channel", i="index")
+AXIS_NAME_TO_LETTER = {v: k for k, v in AXIS_LETTER_TO_NAME.items()}
