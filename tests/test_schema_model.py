@@ -10,6 +10,7 @@ from bioimageio.spec.shared import yaml
 def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):
     from bioimageio.spec.rdf.schema import RDF
 
+    assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_latest)
     data["root_path"] = unet2d_nuclei_broad_latest.parent
 
@@ -19,6 +20,7 @@ def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):
 def test_model_does_not_accept_unknown_fields(unet2d_nuclei_broad_latest):
     from bioimageio.spec.model.schema import Model
 
+    assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_latest)
     data["root_path"] = unet2d_nuclei_broad_latest.parent
 
@@ -127,6 +129,7 @@ def test_model_0_4_raises_on_duplicate_tensor_names(invalid_rdf_v0_4_0_duplicate
     from bioimageio.spec.model.schema import Model
     from bioimageio.spec.model.v0_3.schema import Model as Model_v03
 
+    assert yaml is not None
     data = yaml.load(invalid_rdf_v0_4_0_duplicate_tensor_names)
 
     model_schema = Model()
@@ -250,4 +253,6 @@ def test_model_with_expanded_output(model_dict):
 
     model = Model().load(model_dict)
     assert isinstance(model, raw_nodes_m04.Model)
-    assert model.outputs[0].shape.scale == [1, 1, None, 1]
+    out0_shape = model.outputs[0].shape
+    assert isinstance(out0_shape, raw_nodes_m04.ImplicitOutputShape)
+    assert out0_shape.scale == [1, 1, None, 1]

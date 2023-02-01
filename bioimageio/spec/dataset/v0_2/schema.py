@@ -1,3 +1,6 @@
+from types import ModuleType
+from typing import ClassVar
+
 from bioimageio.spec.rdf.v0_2.schema import RDF
 from bioimageio.spec.shared.schema import SharedBioImageIOSchema
 from . import raw_nodes
@@ -9,7 +12,7 @@ except ImportError:
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: ClassVar[ModuleType] = raw_nodes
 
 
 class Dataset(_BioImageIOSchema, RDF):

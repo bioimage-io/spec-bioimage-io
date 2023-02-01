@@ -1,6 +1,6 @@
 import copy
 import pathlib
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from marshmallow import Schema
 
@@ -62,7 +62,7 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
                 assert isinstance(orig_doc, str)
                 if orig_doc.startswith("http"):
                     if orig_doc.endswith(".md"):
-                        doc = raw_nodes.URI(orig_doc)
+                        doc: Union[raw_nodes.URI, str, pathlib.Path] = raw_nodes.URI(orig_doc)
                     else:
                         doc = f"Find documentation at {orig_doc}"
                 else:

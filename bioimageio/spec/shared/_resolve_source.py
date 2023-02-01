@@ -49,7 +49,7 @@ def _is_path(s: typing.Any) -> bool:
 class RDF_Source(typing.NamedTuple):
     data: dict
     name: str
-    root: typing.Union[pathlib.Path, raw_nodes.URI, bytes]
+    root: typing.Union[pathlib.Path, raw_nodes.URI]
 
 
 def resolve_rdf_source(
@@ -72,7 +72,7 @@ def resolve_rdf_source(
 
     if isinstance(source, pathlib.Path):
         source_name = str(source)
-        root: typing.Union[pathlib.Path, raw_nodes.URI, bytes] = source.parent
+        root: typing.Union[pathlib.Path, raw_nodes.URI] = source.parent
     elif isinstance(source, dict):
         source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
         source = dict(source)
@@ -197,8 +197,12 @@ def resolve_rdf_source(
                 else:
                     raise ValueError(f"Missing 'rdf.yaml' in package {source_name}")
 
+                if isinstance(source, os.PathLike):
+                    root = pathlib.Path(source)
+                else:
+                    root = pathlib.Path()
+
                 assert isinstance(source, (pathlib.Path, bytes))
-                root = source
                 source = BytesIO(zf.read(rdf_name))
 
         source = yaml.load(source)
@@ -213,8 +217,8 @@ def resolve_rdf_source(
 
 
 def resolve_rdf_source_and_type(
-    source: typing.Union[os.PathLike, str, dict, raw_nodes.URI]
-) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI, bytes], str]:
+    source: typing.Union[os.PathLike, typing.IO, bytes, str, dict, raw_nodes.URI]
+) -> typing.Tuple[dict, str, typing.Union[pathlib.Path, raw_nodes.URI], str]:
     data, source_name, root = resolve_rdf_source(source)
 
     type_ = get_spec_type_from_type(data.get("type"))
@@ -318,7 +322,7 @@ def _resolve_source_list(
     source: list,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
-    pbar: typing.Sequence = None,
+    pbar: typing.Optional[typing.Sequence] = None,
 ) -> typing.List[pathlib.Path]:
     assert output is None or len(output) == len(source)
     assert pbar is None or len(pbar) == len(source)

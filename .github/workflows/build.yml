@@ -46,7 +46,7 @@ jobs:
       if: ${{ matrix.python-version != '3.7' }}
       run: |
         mkdir -p .mypy-cache
-        mypy . --install-types --non-interactive --cache-dir .mypy-cache
+        mypy . --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs
 
   conda-build:
     runs-on: ubuntu-latest

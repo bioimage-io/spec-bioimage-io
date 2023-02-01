@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from marshmallow import missing
 
-from bioimageio.spec.rdf.v0_2.raw_nodes import FormatVersion, RDF as _RDF
+from bioimageio.spec.rdf.v0_2.raw_nodes import FormatVersion, RDF_Base as _RDF
 
 try:
     from typing import Literal

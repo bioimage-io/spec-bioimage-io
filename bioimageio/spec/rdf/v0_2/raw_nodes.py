@@ -81,7 +81,7 @@ class Badge(RawNode):
 
 
 @dataclass
-class RDF(ResourceDescription):
+class RDF_Base(ResourceDescription):
     attachments: Union[_Missing, Attachments] = missing
     authors: Union[_Missing, List[Author]] = missing
     badges: Union[_Missing, List[Badge]] = missing
@@ -91,7 +91,7 @@ class RDF(ResourceDescription):
     description: str = missing
     documentation: Union[_Missing, Path, URI] = missing
     download_url: Union[_Missing, Path, URI] = missing
-    format_version: FormatVersion = missing
+    format_version: str = missing
     git_repo: Union[_Missing, str] = missing
     id: Union[_Missing, str] = missing
     icon: Union[_Missing, str] = missing
@@ -107,7 +107,7 @@ class RDF(ResourceDescription):
         self,
         *,
         # ResourceDescription
-        format_version: FormatVersion,
+        format_version: str,
         name: str,
         type: str = missing,
         version: Union[_Missing, packaging.version.Version] = missing,
@@ -169,3 +169,8 @@ class RDF(ResourceDescription):
             self.format_version = get_args(FormatVersion)[-1]
 
         super().__post_init__()
+
+
+@dataclass(init=False)
+class RDF(RDF_Base):
+    format_version: FormatVersion = missing

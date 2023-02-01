@@ -70,7 +70,13 @@ class Array(DocumentedField, marshmallow_fields.Field):
         else:
             return self.inner.deserialize(value)
 
-    def deserialize(self, value: typing.Any, attr: str = None, data: typing.Mapping[str, typing.Any] = None, **kwargs):
+    def deserialize(
+        self,
+        value: typing.Any,
+        attr: typing.Optional[str] = None,
+        data: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        **kwargs,
+    ):
         value = self._deserialize_inner(value)
 
         if isinstance(value, list):

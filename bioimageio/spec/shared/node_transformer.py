@@ -40,9 +40,11 @@ class NodeVisitor:
             for field, value in iter_fields(node):
                 self.visit(value)
         elif isinstance(node, dict):
-            [self.visit(subnode) for subnode in node.values()]
+            for subnode in node.values():
+                self.visit(subnode)
         elif isinstance(node, (tuple, list)):
-            [self.visit(subnode) for subnode in node]
+            for subnode in node:
+                self.visit(subnode)
 
 
 class Transformer:
@@ -166,18 +168,22 @@ class RawNodePackageTransformer(NodeTransformer):
     """Transforms raw node fields specified by <node>._include_in_package to local relative paths.
     Adds remote resources to given dictionary."""
 
-    def __init__(self, remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, URI]], root: pathlib.Path):
+    def __init__(
+        self,
+        remote_resources: typing.Dict[str, typing.Union[pathlib.PurePath, URI]],
+        root: typing.Union[pathlib.Path, URI],
+    ):
         super().__init__()
         self.remote_resources = remote_resources
         self.root = root
 
     def _transform_resource(
-        self, resource: typing.Union[list, pathlib.PurePath, URI]
+        self, resource: typing.Union[typing.List[typing.Union[pathlib.PurePath, URI]], pathlib.PurePath, URI]
     ) -> typing.Union[typing.List[pathlib.Path], _Missing, pathlib.Path]:
         if isinstance(resource, list):
-            return [self._transform_resource(r) for r in resource]  # type: ignore  # todo: improve annotation
+            return [self._transform_resource(r) for r in resource]
         elif resource is missing:
-            return resource
+            return missing
         elif isinstance(resource, pathlib.PurePath):
             name_from = resource
             if resource.is_absolute():

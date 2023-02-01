@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 import torch.nn as nn
 
@@ -287,8 +289,8 @@ class ResizeUNet(UNetBase):
         sampler_impl=Upsampler2d,
         **conv_block_kwargs,
     ):
-        features_encoder = [in_channels] + [initial_features * gain ** i for i in range(depth)]
-        features_decoder = [initial_features * gain ** i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
         scale_factors = depth * [2]
 
         if return_side_outputs:
@@ -296,7 +298,7 @@ class ResizeUNet(UNetBase):
                 out_channels = [out_channels] * depth
             if len(out_channels) != depth:
                 raise ValueError()
-            out_conv = nn.ModuleList(
+            out_conv: Optional[nn.Module] = nn.ModuleList(
                 [nn.Conv2d(feat, outc, 1) for feat, outc in zip(features_decoder[1:], out_channels)]
             )
         else:
