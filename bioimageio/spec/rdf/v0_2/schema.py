@@ -257,7 +257,7 @@ E.g. the citation for the model architecture and/or the training data used."""
             else:
                 error = None
                 if missing_categories:
-                    self.warn("tags", f"Missing tags for categories: {missing_categories}")
+                    self.warn("tags", f"Missing tags corresponding to bioimage.io categories: {missing_categories}")
 
         if error is not None:
             self.warn("tags", f"could not check tag categories ({error})")
