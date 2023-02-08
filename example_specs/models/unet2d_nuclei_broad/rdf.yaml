@@ -1,5 +1,5 @@
 # TODO physical scale of the data
-format_version: 0.4.8
+format_version: 0.4.9
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
