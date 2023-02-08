@@ -99,6 +99,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if data["format_version"] == "0.4.7":
         data["format_version"] = "0.4.8"
 
+    if data["format_version"] == "0.4.8":
+        data["format_version"] = "0.4.9"
+
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
     if config.get("future") == {}:
