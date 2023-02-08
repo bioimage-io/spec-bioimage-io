@@ -33,9 +33,10 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'pip' # caching pip dependencies
     - name: Install dependencies
-      run: pip install tox tox-gh-actions mypy
+      run: |
+        pip install --upgrade pip
+        pip install tox tox-gh-actions mypy
     - name: Test with tox
       run: tox
     - name: Check passthrough models
