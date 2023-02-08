@@ -21,7 +21,9 @@ jobs:
           python-version: "3.8"
           cache: 'pip'
       - name: Install dependencies
-        run: pip install -e .[test]
+        run: |
+          pip install wheel
+          pip install -e .[test]
       - name: Test with pytest
         run: pytest tests
       - name: Check passthrough models
