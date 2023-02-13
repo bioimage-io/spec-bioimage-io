@@ -1,4 +1,4 @@
-# BioImage.IO Model Resource Description File Specification 0.4.8
+# BioImage.IO Model Resource Description File Specification 0.4.9
 This specification defines the fields used in a BioImage.IO-compliant resource description file (`RDF`) for describing AI models with pretrained weights.
 These fields are typically stored in YAML files which we call Model Resource Description Files or `model RDF`.
 The model RDFs can be downloaded or uploaded to the bioimage.io website, produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website).
@@ -10,7 +10,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     This is mandatory, and important for the consumer software to verify before parsing the fields.
     The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
     is in an unsupported format version. The current format version described here is
-    0.4.8
+    0.4.9
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
