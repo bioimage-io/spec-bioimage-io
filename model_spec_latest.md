@@ -14,6 +14,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
+        * <a id="authors:email"></a>`email` _(Email)_ E-Mail
         * <a id="authors:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
         * <a id="authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
@@ -106,6 +107,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="maintainers"></a>`maintainers` _(optional List\[Maintainer\])_ Maintainers of this resource.
     1.  _(Maintainer)_   is a Dict with the following keys:
         * <a id="maintainers:affiliation"></a>`affiliation` _(String)_ Affiliation.
+        * <a id="maintainers:email"></a>`email` _(Email)_ E-Mail
         * <a id="maintainers:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="maintainers:name"></a>`name` _(Name→String)_ Full name.
         * <a id="maintainers:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
@@ -138,6 +140,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="packaged_by"></a>`packaged_by` _(optional List\[Author\])_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any entry in `weights`.
     1.  _(Author)_   is a Dict with the following keys:
         * <a id="packaged_by:affiliation"></a>`affiliation` _(String)_ Affiliation.
+        * <a id="packaged_by:email"></a>`email` _(Email)_ E-Mail
         * <a id="packaged_by:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="packaged_by:name"></a>`name` _(Name→String)_ Full name.
         * <a id="packaged_by:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
