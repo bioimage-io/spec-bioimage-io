@@ -27,7 +27,7 @@ except ImportError:
 Maintainer = Maintainer
 
 FormatVersion = Literal[
-    "0.3.0", "0.3.1", "0.3.2", "0.3.3", "0.3.4", "0.3.5", "0.3.6"
+    "0.3.0", "0.3.1", "0.3.2", "0.3.3", "0.3.4", "0.3.5", "0.3.6", "0.3.7"
 ]  # newest format needs to be last (used in __init__.py)
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]

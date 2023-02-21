@@ -4,6 +4,7 @@ from typing import Any, Dict, Union
 
 from marshmallow import Schema
 
+from bioimageio.spec.rdf.v0_2.converters import cast_version_value_to_string
 from . import raw_nodes, schema
 
 AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
@@ -90,6 +91,12 @@ def convert_model_v0_3_2_to_v0_3_3(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
+def cast_tf_version_to_string(data: Dict[str, Any]) -> None:
+    for wf in data.get("weights", []):
+        if "tensorflow_version" in wf:
+            wf["tensorflow_version"] = str(wf["tensorflow_version"])
+
+
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
 
@@ -107,6 +114,11 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data["format_version"] in ("0.3.3", "0.3.4", "0.3.5"):
         data["format_version"] = "0.3.6"
+
+    if data["format_version"] == "0.3.6":
+        cast_tf_version_to_string(data)
+        cast_version_value_to_string(data)
+        data["format_version"] = "0.3.7"
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
