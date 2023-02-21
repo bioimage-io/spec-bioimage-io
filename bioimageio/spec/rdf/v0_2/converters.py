@@ -15,6 +15,11 @@ def remove_slash_from_names(data: Dict[str, Any]) -> None:
             p["name"] = p["name"].replace("/", "").replace("\\", "")
 
 
+def cast_version_value_to_string(data: Dict[str, Any]) -> None:
+    if "version" in data:
+        data["version"] = str(data["version"])
+
+
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     data = copy.deepcopy(data)
 
@@ -29,5 +34,9 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     if data.get("format_version") == "0.2.2":
         remove_slash_from_names(data)
         data["format_version"] = "0.2.3"
+
+    if data.get("format_version") == "0.2.3":
+        cast_version_value_to_string(data)
+        data["format_version"] = "0.2.4"
 
     return data
