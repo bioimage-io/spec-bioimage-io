@@ -5,6 +5,8 @@ from marshmallow import missing
 
 from bioimageio.spec.rdf.v0_2.converters import remove_slash_from_names
 
+from bioimageio.spec.rdf.v0_2.converters import cast_version_value_to_string
+
 
 def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
     from bioimageio.spec.model import v0_3
@@ -75,6 +77,13 @@ def convert_model_from_v0_4_6_to_0_4_7(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
+def cast_framework_versions_to_string(data: Dict[str, Any]) -> None:
+    for wf in data.get("weights", []):
+        for v in ["pytorch_version", "tensorflow_version"]:
+            if v in wf:
+                wf[v] = str(wf[v])
+
+
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     major, minor, patch = map(int, data.get("format_version", "0.3.0").split("."))
@@ -101,6 +110,11 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
 
     if data["format_version"] == "0.4.8":
         data["format_version"] = "0.4.9"
+
+    if data["format_version"] == "0.4.9":
+        cast_version_value_to_string(data)
+        cast_framework_versions_to_string(data)
+        data["format_version"] = "0.4.10"
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
