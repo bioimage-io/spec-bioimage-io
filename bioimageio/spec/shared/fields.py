@@ -555,7 +555,13 @@ class Version(String):
         data: typing.Optional[typing.Mapping[str, typing.Any]],
         **kwargs,
     ):
-        return packaging.version.Version(str(value))
+        if not isinstance(value, str):
+            raise ValidationError(
+                f"version {value} not given as string. "
+                f"Interpreting version as float might truncate zeros. "
+                f"Please use an explicit 'string'."
+            )
+        return packaging.version.Version(value)
 
 
 class URI(String):
