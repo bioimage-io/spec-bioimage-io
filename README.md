@@ -239,7 +239,24 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
-#### bioimageio.spec 0.4.9
+#### RDF 0.2.4
+- Breaking changes that are fully auto-convertible
+  - `version` needs to be specified as string (not int or float) to avoid truncating zeros (in case of floats like 2.10)
+    auto-conversion casts previous version values blindly to string
+
+
+#### model RDF 0.4.10
+- Breaking changes that are fully auto-convertible
+  - `version`, `pytorch_version`, and `tensorflow_version` need to be specified as string (not int or float) to avoid truncating zeros (in case of floats like 2.10)
+    auto-conversion casts previous version values blindly to string
+
+#### model RDF 0.3.7
+- Breaking changes that are fully auto-convertible
+  - `version` and `tensorflow_version` need to be specified as string (not int or float) to avoid truncating zeros (in case of floats like 2.10)
+    auto-conversion casts previous version values blindly to string
+
+
+#### model RDF 0.4.9
 - Non-breaking changes
   - make pre-/postprocessing kwargs `mode` and `axes` always optional for model RDF 0.3 and 0.4
 
