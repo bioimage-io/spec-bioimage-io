@@ -140,11 +140,15 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 ## Environment variables
 
-| Name | Default | Description |
-|---|---|---|
-| BIOIMAGEIO_USE_CACHE | "true" | Enables simple URL to file cache. possible, case-insensitive, positive values are: "true", "yes", "1". Any other value is interpreted as "false" |
-| BIOIMAGEIO_CACHE_PATH | generated tmp folder  | File path for simple URL to file cache; changes of URL source are not detected. |
-| BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3" | Maximum number of warnings generated for simple cache hits. |
+| Name                            | Default               | Description                                                                                                                                                                                      |
+|---------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BIOIMAGEIO_USE_CACHE            | "true"                | Enables simple URL to file cache. possible, case-insensitive, positive values are: "true", "yes", "1". Any other value is interpreted as "false"                                                 |
+| BIOIMAGEIO_CACHE_PATH           | generated tmp folder  | File path for simple URL to file cache; changes of URL source are not detected.                                                                                                                  |
+| BIOIMAGEIO_CACHE_WARNINGS_LIMIT | "3"                   | Maximum number of warnings generated for simple cache hits.                                                                                                                                      |
+| BIOIMAGEIO_COUNT_RDF_DOWNLOADS  | "true"                | Enables to report RDF downloads. No personal data is uploaded. Only the model id and, if set 'BIOIMAGEIO_CONSUMER_ID' and 'BIOIMAGEIO_CONSUMER_VERSION'.                                         |
+| BIOIMAGEIO_CONSUMER_ID          | "python"              | Software consumer ID in whose context bioimageio.spec is being used, e.g. "ilastik"                                                                                                              |
+| BIOIMAGEIO_CONSUMER_VERSION     | null                  | Version of the software consumer ID in whose context bioimageio.spec is being used, e.g. "1.4.0". For 'BIOIMAGEIO_CONSUMER_ID' "python" the active Python version's major.minor version is used. |
+
 
 ## Changelog
 #### bioimageio.spec 0.4.9
