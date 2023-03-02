@@ -70,11 +70,12 @@ def resolve_rdf_source(
     if not isinstance(source, (dict, pathlib.Path, str, bytes)):
         raise TypeError(f"Unexpected source type {type(source)}")
 
+    # check for local/in-memory sources
     if isinstance(source, pathlib.Path):
         source_name = str(source)
         root: typing.Union[pathlib.Path, raw_nodes.URI] = source.parent
     elif isinstance(source, dict):
-        source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
+        source_name = f"{{name: {source.get('name', '<unknown>')}, " + str(source)[1:100]
         source = dict(source)
         given_root = source.pop("root_path", pathlib.Path())
         if _is_path(given_root):
@@ -97,6 +98,7 @@ def resolve_rdf_source(
     else:
         raise TypeError(source)
 
+    # source might be remote
     if isinstance(source, str):
         # source might be bioimageio nickname, id, doi, url or file path -> resolve to pathlib.Path
 
