@@ -243,6 +243,10 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 
 ### RDF Format Versions
+#### bioimageio.spec 0.4.9
+- Non-breaking changes
+  - make pre-/postprocessing kwargs `mode` and `axes` always optional for model RDF 0.3 and 0.4
+
 #### model RDF 0.4.8
 - Non-breaking changes
   - `cite` field is now optional

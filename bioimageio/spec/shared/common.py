@@ -51,6 +51,9 @@ except ImportError:
         def update(self, *args, **kwargs):
             pass
 
+        def close(self):
+            pass
+
 
 class CacheWarning(RuntimeWarning):
     pass

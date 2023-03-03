@@ -1,4 +1,6 @@
 import typing
+from types import ModuleType
+from typing import ClassVar
 
 from marshmallow import ValidationError, validates, validates_schema
 from marshmallow.exceptions import SCHEMA
@@ -15,7 +17,7 @@ except ImportError:
 
 
 class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes = raw_nodes
+    raw_nodes: ClassVar[ModuleType] = raw_nodes
 
 
 class Axis(_BioImageIOSchema):
