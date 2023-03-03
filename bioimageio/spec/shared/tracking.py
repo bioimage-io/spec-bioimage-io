@@ -12,8 +12,9 @@ def report_resource_download(resource_id: str):
 
 
 if __name__ == "__main__":
-    model_doi = "10.5281/zenodo.7614645"
+    model_doi = "test3"
     report_resource_download(model_doi)
+    # summary is not real-time
     print(
-        f"https://bioimage.matomo.cloud/?module=API&method=Actions.getDownload&downloadUrl=https://doi.org/{model_doi}&idSite=1&period=day&date=yesterday&format=JSON&token_auth=anonymous"
+        f"https://bioimage.matomo.cloud/?module=API&method=Actions.getDownload&downloadUrl=https://doi.org/{model_doi}&idSite=1&idCustomReport=1&period=year&date=2023-03-01&format=JSON&token_auth=anonymous"
     )
