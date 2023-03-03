@@ -15,6 +15,7 @@ def report_resource_download(resource_id: str):
 
 
 def main(model_doi: str = "test3"):
+    print(f"reporting download of '{model_doi}' ...")
     report_resource_download(model_doi)
     print(
         "report available at:\n"
