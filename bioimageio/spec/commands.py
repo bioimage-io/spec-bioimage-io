@@ -24,7 +24,7 @@ def update_format(
     path: Union[os.PathLike, str],
     update_to_format: str = "latest",
 ):
-    """Update a BioImage.IO resource"""
+    """Auto-update fields of a BioImage.IO resource"""
     raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
     save_raw_resource_description(raw, Path(path))
 
