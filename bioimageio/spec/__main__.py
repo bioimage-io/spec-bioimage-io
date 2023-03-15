@@ -128,7 +128,7 @@ def update_format(
     sys.exit(ret_code)
 
 
-update_format.__doc__ == commands.update_format.__doc__
+update_format.__doc__ = commands.update_format.__doc__
 
 
 @app.command()
