@@ -15,7 +15,9 @@ except ImportError:
     enrich_partial_rdf_with_imjoy_plugin = None
     partner_help = ""
 else:
-    partner_help = f"\n+\nbioimageio.spec.partner {__version__}\nimplementing:\n\tpartner collection RDF {collection.format_version}"
+    partner_help = (
+        f"\nbioimageio.spec.partner {__version__}\nimplementing:\n\tpartner collection RDF {collection.format_version}"
+    )
 
 help_version = (
     f"bioimageio.spec {__version__}"
