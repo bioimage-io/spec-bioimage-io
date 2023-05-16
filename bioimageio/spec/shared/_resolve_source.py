@@ -317,6 +317,16 @@ def _resolve_source_importable_path(
     )
 
 
+def get_resolved_source_path(source, root_path: typing.Union[os.PathLike, URI], pbar=None) -> pathlib.Path:
+    resolved = resolve_source(source, root_path=root_path, pbar=pbar)
+    if isinstance(resolved, os.PathLike):
+        return pathlib.Path(resolved)
+    elif isinstance(resolved, raw_nodes.ResolvedImportableSourceFile):
+        return resolved.source_file
+    else:
+        raise NotImplementedError(type(resolved))
+
+
 @resolve_source.register
 def _resolve_source_list(
     source: list,
