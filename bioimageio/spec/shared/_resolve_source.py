@@ -317,6 +317,21 @@ def _resolve_source_importable_path(
     )
 
 
+@resolve_source.register
+def _resolve_source_list(
+    source: list,
+    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
+    output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
+    pbar: typing.Optional[typing.Sequence] = None,
+) -> typing.List[pathlib.Path]:
+    assert output is None or len(output) == len(source)
+    assert pbar is None or len(pbar) == len(source)
+    return [
+        resolve_source(el, root_path, out, pb)
+        for el, out, pb in zip(source, output or [None] * len(source), pbar or [None] * len(source))
+    ]
+
+
 def get_resolved_source_path(
     source: typing.Union[
         raw_nodes.URI, str, pathlib.Path, raw_nodes.ResolvedImportableSourceFile, raw_nodes.ImportableSourceFile
@@ -331,21 +346,6 @@ def get_resolved_source_path(
         return resolved.source_file
     else:
         raise NotImplementedError(type(resolved))
-
-
-@resolve_source.register
-def _resolve_source_list(
-    source: list,
-    root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
-    output: typing.Optional[typing.Sequence[typing.Optional[os.PathLike]]] = None,
-    pbar: typing.Optional[typing.Sequence] = None,
-) -> typing.List[pathlib.Path]:
-    assert output is None or len(output) == len(source)
-    assert pbar is None or len(pbar) == len(source)
-    return [
-        resolve_source(el, root_path, out, pb)
-        for el, out, pb in zip(source, output or [None] * len(source), pbar or [None] * len(source))
-    ]
 
 
 def resolve_local_sources(
