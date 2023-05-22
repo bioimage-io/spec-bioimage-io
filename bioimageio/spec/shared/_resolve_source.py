@@ -332,6 +332,22 @@ def _resolve_source_list(
     ]
 
 
+def get_resolved_source_path(
+    source: typing.Union[
+        raw_nodes.URI, str, pathlib.Path, raw_nodes.ResolvedImportableSourceFile, raw_nodes.ImportableSourceFile
+    ],
+    root_path: typing.Union[os.PathLike, URI],
+    pbar=None,
+) -> pathlib.Path:
+    resolved = resolve_source(source, root_path=root_path, pbar=pbar)
+    if isinstance(resolved, os.PathLike):
+        return pathlib.Path(resolved)
+    elif isinstance(resolved, raw_nodes.ResolvedImportableSourceFile):
+        return resolved.source_file
+    else:
+        raise NotImplementedError(type(resolved))
+
+
 def resolve_local_sources(
     sources: typing.Sequence[typing.Union[str, os.PathLike, raw_nodes.URI]],
     root_path: os.PathLike,
