@@ -47,11 +47,11 @@ class _Person(_BioImageIOSchema):
 
 
 class Author(_Person):
-    name = fields.Name(require=True, bioimageio_description="Full name.")
+    name = fields.Name(required=True, bioimageio_description="Full name.")
 
 
 class Maintainer(_Person):
-    github_user = fields.String(require=True, bioimageio_description="GitHub user name.")
+    github_user = fields.String(required=True, bioimageio_description="GitHub user name.")
 
 
 class Badge(_BioImageIOSchema):
