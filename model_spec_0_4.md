@@ -13,10 +13,10 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     0.4.9
 * <a id="authors"></a>`authors` _(required List\[Author\])_ A list of authors. The authors are the creators of the specifications and the primary points of contact.
     1.  _(Author)_   is a Dict with the following keys:
+        * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
         * <a id="authors:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="authors:email"></a>`email` _(Email)_ E-Mail
         * <a id="authors:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="authors:name"></a>`name` _(Name→String)_ Full name.
         * <a id="authors:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="description"></a>`description` _(required String)_ A string containing a brief description.
 * <a id="documentation"></a>`documentation` _(required Union\[URL→URI | Path→String\])_ Relative path or URL to file with additional documentation in markdown. The file must be in markdown format with `.md` file name extension. It is recommended to use `README.md` as the documentation name. The documentation should include a (sub)section '[#[#]]# Validation' with details on how to quantitatively validate the model on unseen data.
@@ -106,9 +106,9 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
 * <a id="links"></a>`links` _(optional List\[String\])_ links to other bioimage.io resources
 * <a id="maintainers"></a>`maintainers` _(optional List\[Maintainer\])_ Maintainers of this resource.
     1.  _(Maintainer)_   is a Dict with the following keys:
+        * <a id="maintainers:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="maintainers:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="maintainers:email"></a>`email` _(Email)_ E-Mail
-        * <a id="maintainers:github_user"></a>`github_user` _(String)_ GitHub user name.
         * <a id="maintainers:name"></a>`name` _(Name→String)_ Full name.
         * <a id="maintainers:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="outputs"></a>`outputs` _(optional List\[OutputTensor\])_ Describes the output tensors from this model.
@@ -139,10 +139,10 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
                 * <a id="outputs:postprocessing:kwargs"></a>`kwargs` _(Kwargs→Dict\[String, Any\])_ Key word arguments as described in [postprocessing spec](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_0_4.md).
 * <a id="packaged_by"></a>`packaged_by` _(optional List\[Author\])_ The persons that have packaged and uploaded this model. Only needs to be specified if different from `authors` in root or any entry in `weights`.
     1.  _(Author)_   is a Dict with the following keys:
+        * <a id="packaged_by:name"></a>`name` _(Name→String)_ Full name.
         * <a id="packaged_by:affiliation"></a>`affiliation` _(String)_ Affiliation.
         * <a id="packaged_by:email"></a>`email` _(Email)_ E-Mail
         * <a id="packaged_by:github_user"></a>`github_user` _(String)_ GitHub user name.
-        * <a id="packaged_by:name"></a>`name` _(Name→String)_ Full name.
         * <a id="packaged_by:orcid"></a>`orcid` _(String)_ [orcid](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID) id in hyphenated groups of 4 digits, e.g. '0000-0001-2345-6789' (and [valid](https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier) as per ISO 7064 11,2.)
 * <a id="parent"></a>`parent` _(optional ModelParent)_ The model from which this model is derived, e.g. by fine-tuning the weights. ModelParent is a Dict with the following keys:
     * <a id="parent:id"></a>`id` _(optional BioImageIO_ID→String)_ ID as shown on resource card on bioimage.io

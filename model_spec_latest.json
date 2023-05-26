@@ -40,7 +40,6 @@
                     "type": "string"
                 },
                 "name": {
-                    "require": true,
                     "title": "name",
                     "type": "string"
                 },
@@ -50,6 +49,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "name"
+            ],
             "type": "object"
         },
         "Badge": {
@@ -472,7 +474,6 @@
                     "type": "string"
                 },
                 "github_user": {
-                    "require": true,
                     "title": "github_user",
                     "type": "string"
                 },
@@ -486,6 +487,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "github_user"
+            ],
             "type": "object"
         },
         "Model": {
