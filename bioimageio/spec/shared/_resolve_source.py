@@ -3,6 +3,7 @@ import os
 import pathlib
 import re
 import shutil
+import sys
 import typing
 import warnings
 import zipfile
@@ -11,6 +12,7 @@ from io import BytesIO, StringIO
 from tempfile import TemporaryDirectory
 from urllib.request import url2pathname, urlopen
 
+import pooch
 from marshmallow import ValidationError
 
 from . import fields, raw_nodes
@@ -434,8 +436,35 @@ def source_available(source: typing.Union[pathlib.Path, raw_nodes.URI], root_pat
 cache_warnings_count = 0
 
 
-def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None, pbar=None) -> pathlib.Path:
+def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = None, pbar=None, known_hash: typing.Optional[str] = None) -> pathlib.Path:
     global cache_warnings_count
+    if pbar:
+        # create progress bar analog to pooch's default
+        progress = pbar(
+            total=None,
+            ncols=79,
+            ascii=sys.platform == "win32",  # not always full unicode support on windows
+            unit="B",
+            unit_scale=True,
+            leave=True,
+        )
+    else:
+        progress = True
+
+    if output is None:
+        path = BIOIMAGEIO_CACHE_PATH
+        fname: typing.Optional[str] = None
+    else:
+        output = pathlib.Path(output)
+        path = output.parent
+        fname = output.name
+
+    pooch.retrieve(
+        known_hash=known_hash,
+        fname=fname,
+        path=path,
+        progressbar=progress
+    )
 
     if output is not None:
         local_path = pathlib.Path(output)
@@ -461,38 +490,14 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
         import requests  # not available in pyodide
+    try:
 
-        try:
-            # download with tqdm adapted from:
-            # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
-            # Streaming, so we can iterate over the response.
-            r = requests.get(str(uri), stream=True)
-            r.raise_for_status()
-            # Total size in bytes.
-            total_size = int(r.headers.get("content-length", 0))
-            block_size = 1024  # 1 Kibibyte
-            if pbar:
-                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
-            else:
-                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
-            tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
-            with tmp_path.open("wb") as f:
-                for data in r.iter_content(block_size):
-                    t.update(len(data))
-                    f.write(data)
-
-            t.close()
-            if total_size != 0 and hasattr(t, "n") and t.n != total_size:
-                # todo: check more carefully and raise on real issue
-                warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
-
-            shutil.move(f.name, str(local_path))
-        except DownloadCancelled as e:
-            # let calling code handle this exception specifically -> allow for cancellation of
-            # long running downloads per user request
-            raise e
-        except Exception as e:
-            raise RuntimeError(f"Failed to download {uri} ({e})") from e
+    except DownloadCancelled as e:
+        # let calling code handle this exception specifically -> allow for cancellation of
+        # long running downloads per user request
+        raise e
+    except Exception as e:
+        raise RuntimeError(f"Failed to download {uri} ({e})") from e
 
     return local_path
 
