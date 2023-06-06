@@ -78,8 +78,10 @@ def convert_model_from_v0_4_6_to_0_4_7(data: Dict[str, Any]) -> Dict[str, Any]:
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
     """auto converts model 'data' to newest format"""
     major, minor, patch = map(int, data.get("format_version", "0.3.0").split("."))
-    if major == 0 and minor < 4:
+    if (major, minor) < (0, 4):
         data = convert_model_from_v0_3_to_0_4_0(data)
+    elif (major, minor) > (0, 4):
+        return data
 
     if data["format_version"] == "0.4.0":
         data = convert_model_from_v0_4_0_to_0_4_1(data)
