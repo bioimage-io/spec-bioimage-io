@@ -1,3 +1,4 @@
+# DEPRECATED
 """shared raw nodes that shared transformers act on
 
 raw nodes are the deserialized equivalent to the content of any RDF.

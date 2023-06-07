@@ -1,3 +1,5 @@
+# type: ignore
+# DEPRECATED
 from typing import TypeVar, Union
 
 from .node_transformer import NestedUpdateTransformer

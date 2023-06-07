@@ -1,3 +1,4 @@
+# DEPRECATED
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 import datetime
 import packaging.version

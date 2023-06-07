@@ -37,6 +37,7 @@ else:
 try:
     from tqdm import tqdm  # not available in pyodide
 except ImportError:
+    # todo: tqdm = None
 
     class tqdm:  # type: ignore
         """no-op tqdm"""
@@ -86,7 +87,7 @@ class ValidationWarning(UserWarning):
     def get_warning_summary(val_warns: Optional[Sequence[warnings.WarningMessage]]) -> dict:
         """Summarize warning messages of the ValidationWarning category"""
 
-        def add_val_warn_to_summary(s, keys, msg):
+        def add_val_warn_to_summary(s, keys: List[str], msg: str):
             key = keys.pop(0)
             if "[" in key:
                 key, rest = key.split("[")
@@ -196,6 +197,7 @@ def get_class_name_from_type(type_: str):
 
 
 def get_args_flat(tp):
+    """DEPRECATED"""
     flat_args = []
     for a in get_args(tp):
         orig = get_origin(a)
@@ -208,6 +210,7 @@ def get_args_flat(tp):
 
 
 def nested_default_dict_as_nested_dict(nested_dd):
+    """DEPRECATED"""
     if isinstance(nested_dd, dict):
         return {key: (nested_default_dict_as_nested_dict(value)) for key, value in nested_dd.items()}
     elif isinstance(nested_dd, list):

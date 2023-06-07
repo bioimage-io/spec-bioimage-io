@@ -31,7 +31,7 @@ class Attachments(_BioImageIOSchema, WithUnknown):
 class _Person(_BioImageIOSchema):
     name = fields.Name(bioimageio_description="Full name.")
     affiliation = fields.String(bioimageio_description="Affiliation.")
-    email = fields.Email(bioimageio_description="E-Mail")
+    email = fields.Email(bioimageio_description="Email")
     github_user = fields.String(bioimageio_description="GitHub user name.")  # todo: add validation?
     orcid = fields.String(
         validate=[

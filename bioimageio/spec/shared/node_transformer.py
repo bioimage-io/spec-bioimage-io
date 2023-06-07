@@ -1,3 +1,5 @@
+# type: ignore
+# DEPRECATED
 import dataclasses
 import os
 import pathlib

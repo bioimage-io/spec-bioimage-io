@@ -1,5 +1,7 @@
+# DEPRECATED
 import typing
 
+from marshmallow.exceptions import ValidationError
 from marshmallow.validate import (
     ContainsNoneOf,
     Equal,
@@ -8,7 +10,6 @@ from marshmallow.validate import (
     Predicate as MarshmallowPredicate,
     Range,
     URL as MarshmallowURL,
-    ValidationError,
     Validator,
 )
 
@@ -20,7 +21,6 @@ Range = Range
 
 
 class Attribute(Validator):
-
     default_message = "Invalid input."
 
     def __init__(
