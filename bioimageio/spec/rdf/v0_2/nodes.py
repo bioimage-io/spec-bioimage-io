@@ -2,16 +2,28 @@
 
 nodes represent the content of any RDF.
 """
-import dataclasses
+# from __future__ import annotations
 import pathlib
 
 import packaging.version
 import warnings
-from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union, Annotated
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Type, Union, Annotated, get_args
 
-from pydantic import EmailStr, Extra, Field, FilePath, HttpUrl, ValidationError, constr, validator
+from pydantic import (
+    EmailStr,
+    Extra,
+    FilePath,
+    HttpUrl,
+    ValidationError,
+    constr,
+    field_validator,
+    validator,
+    DirectoryPath,
+    VERSION as PYDANTIC_VERSION,
+)
+
+from bioimageio.spec.shared.fields import RelativePath, Version, Field
+
 from bioimageio.spec.shared.nodes import Node
 
 from typing import Literal
@@ -19,13 +31,15 @@ from typing import Literal
 from bioimageio.spec.shared.types_ import RawMapping
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 
+
 FormatVersion = Literal[
     "0.2.0", "0.2.1", "0.2.2", "0.2.3"
 ]  # newest format needs to be last (used to determine latest format version)
 
 
-class Attachments(Node, extra=Extra.allow):
-    files: Union[Tuple[Union[HttpUrl, PurePosixPath], ...], None] = Field(
+class Attachments(Node):
+    model_config = Node.model_config | dict(extra=Extra.allow)
+    files: Union[Tuple[Union[HttpUrl, RelativePath], ...], None] = Field(
         description="File attachments; included when packaging the resource.", in_package=True
     )
 
@@ -75,100 +89,63 @@ class CiteEntry(Node):
         return url
 
 
-class Badge(Node):
-    label: str
-    icon: Union[HttpUrl, Annotated[str, constr(min_length=1, max_length=2), PurePosixPath], None] = None
-    url: HttpUrl
+class Badge(Node, title="Custom badge"):
+    label: str = Field(..., description="e.g. 'Open in Colab'")
+    icon: Optional[HttpUrl] = Field(None, description="e.g. 'https://colab.research.google.com/assets/colab-badge.svg'")
+    url: HttpUrl = Field(
+        ...,
+        description="e.g. 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'",
+    )
 
 
-# @dataclass
-# class RDF_Base(ResourceDescription):
-#     attachments: Union[_Missing, Attachments] = missing
-#     authors: Union[_Missing, List[Author]] = missing
-#     badges: Union[_Missing, List[Badge]] = missing
-#     cite: Union[_Missing, List[CiteEntry]] = missing
-#     config: Union[_Missing, dict] = missing
-#     covers: Union[_Missing, List[Union[URI, Path]]] = missing
-#     description: str = missing
-#     documentation: Union[_Missing, Path, URI] = missing
-#     download_url: Union[_Missing, Path, URI] = missing
-#     format_version: str = missing
-#     git_repo: Union[_Missing, str] = missing
-#     id: Union[_Missing, str] = missing
-#     icon: Union[_Missing, str] = missing
-#     license: Union[_Missing, str] = missing
-#     links: Union[_Missing, List[str]] = missing
-#     maintainers: Union[_Missing, List[Maintainer]] = missing
-#     rdf_source: Union[_Missing, URI] = missing
-#     source: Union[_Missing, URI, Path] = missing
-#     tags: Union[_Missing, List[str]] = missing
+class RDF_Base(Node):
+    format_version: Version
+    name: str = Field(..., description="a human-friendly name of the resource")
+    type: str = Field(None, description="Type of the resource")
 
-#     # manual __init__ to allow for unknown kwargs
-#     def __init__(
-#         self,
-#         *,
-#         # ResourceDescription
-#         format_version: str,
-#         name: str,
-#         type: str = missing,
-#         version: Union[_Missing, packaging.version.Version] = missing,
-#         root_path: pathlib.Path = pathlib.Path(),
-#         # RDF
-#         attachments: Union[_Missing, Dict[str, Any]] = missing,
-#         authors: Union[_Missing, List[Author]] = missing,
-#         badges: Union[_Missing, List[Badge]] = missing,
-#         cite: Union[_Missing, List[CiteEntry]] = missing,
-#         config: Union[_Missing, dict] = missing,
-#         covers: Union[_Missing, List[Union[URI, Path]]] = missing,
-#         description: str,
-#         documentation: Union[_Missing, Path, URI] = missing,
-#         download_url: Union[_Missing, Path, URI] = missing,
-#         git_repo: Union[_Missing, str] = missing,
-#         id: Union[_Missing, str] = missing,
-#         icon: Union[_Missing, str] = missing,
-#         license: Union[_Missing, str] = missing,
-#         links: Union[_Missing, List[str]] = missing,
-#         maintainers: Union[_Missing, List[Maintainer]] = missing,
-#         rdf_source: Union[_Missing, URI] = missing,
-#         source: Union[_Missing, URI, Path] = missing,
-#         tags: Union[_Missing, List[str]] = missing,
-#         **unknown_kwargs,
-#     ):
-#         self.attachments = attachments
-#         self.authors = authors
-#         self.badges = badges
-#         self.cite = cite
-#         self.config = config
-#         self.covers = covers
-#         self.description = description
-#         self.documentation = documentation
-#         self.download_url = download_url
-#         self.git_repo = git_repo
-#         self.id = id
-#         self.icon = icon
-#         self.license = license
-#         self.links = links
-#         self.maintainers = maintainers
-#         self.rdf_source = rdf_source
-#         self.source = source
-#         self.tags = tags
-#         super().__init__(format_version=format_version, name=name, type=type, version=version, root_path=root_path)
-
-#         if unknown_kwargs:
-#             # make sure we didn't forget a defined field
-#             field_names = set(f.name for f in dataclasses.fields(self))
-#             for uk in unknown_kwargs:
-#                 assert uk not in field_names, uk
-
-#             warnings.warn(f"discarding unknown RDF fields: {unknown_kwargs}")
-
-#     def __post_init__(self):
-#         if self.type is missing:
-#             self.type = self.__class__.__name__.lower()
-
-#         super().__post_init__()
+    # @validator("type", pre=True)
+    @field_validator("type", mode="before")
+    @classmethod
+    def set_type_default(cls, value: Optional[Any]):
+        if value is None:
+            return cls.__name__.lower()
 
 
-# @dataclass(init=False)
+#     version: Optional[packaging.version.Version] = Field(
+#         None,
+#         description="The version number of the resource. Its format must be a string in "
+#         "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/). "
+#         "The initial version number should be `0.1.0`.",
+#     )
+#     root_path: Union[HttpUrl, DirectoryPath] = Field(
+#         pathlib.Path(), description="Base for any relative paths specified in the RDF"
+#     )
+#     # attachments: Union[_Missing, Attachments] = missing
+#     # authors: Union[_Missing, List[Author]] = missing
+#     # badges: Union[_Missing, List[Badge]] = missing
+#     # cite: Union[_Missing, List[CiteEntry]] = missing
+#     # config: Union[_Missing, dict] = missing
+#     # covers: Union[_Missing, List[Union[URI, Path]]] = missing
+#     # description: str = missing
+#     # documentation: Union[_Missing, Path, URI] = missing
+#     # download_url: Union[_Missing, Path, URI] = missing
+#     # git_repo: Union[_Missing, str] = missing
+#     # id: Union[_Missing, str] = missing
+#     # icon: Union[_Missing, str] = missing
+#     # license: Union[_Missing, str] = missing
+#     # links: Union[_Missing, List[str]] = missing
+#     # maintainers: Union[_Missing, List[Maintainer]] = missing
+#     # rdf_source: Union[_Missing, URI] = missing
+#     # source: Union[_Missing, URI, Path] = missing
+#     # tags: Union[_Missing, List[str]] = missing
+
+
+# #     def __post_init__(self):
+# #         if self.type is missing:
+# #             self.type = self.__class__.__name__.lower()
+
+# #         super().__post_init__()
+
+
 # class RDF(RDF_Base):
-#     format_version: FormatVersion = missing
+#     format_version: Version = Field(get_args(FormatVersion)[-1], const=get_args(FormatVersion)[-1])

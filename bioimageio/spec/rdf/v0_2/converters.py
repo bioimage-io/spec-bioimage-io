@@ -9,19 +9,31 @@ def remove_slash_from_names(data: Dict[str, Any]) -> None:
     # remove slashes in author/maintainer name
     authors = data.get("authors")
     maintainers = data.get("maintainers")
-    persons = (authors if isinstance(authors, list) else []) + (maintainers if isinstance(maintainers, list) else [])
+    persons: list[Any] = (authors if isinstance(authors, list) else []) + (
+        maintainers if isinstance(maintainers, list) else []
+    )
     for p in persons:
-        if isinstance(p, dict) and "name" in p:
-            p["name"] = p["name"].replace("/", "").replace("\\", "")
+        if isinstance(p, dict):
+            v = p.get("name")  # type: ignore
+            if isinstance(v, str):
+                p["name"] = v.replace("/", "").replace("\\", "")
 
 
 def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
+    # check if we have future format version
+    try:
+        fv = data.get("format_version", "0.2.0")
+        if tuple(map(int, fv.split(".")[:2])) >= (0, 3):
+            return data
+    except Exception:
+        pass
+
     data = copy.deepcopy(data)
 
-    # we unofficially accept strings as author entries...
+    # we unofficially accept strings as author entries
     authors = data.get("authors")
     if isinstance(authors, list):
-        data["authors"] = [{"name": a} if isinstance(a, str) else a for a in authors]
+        data["authors"] = [{"name": a} if isinstance(a, str) else a for a in authors]  # type: ignore
 
     if data.get("format_version") in ("0.2.0", "0.2.1"):
         data["format_version"] = "0.2.2"

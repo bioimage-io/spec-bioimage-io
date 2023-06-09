@@ -10,7 +10,7 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 
-def snake_case_to_camel_case(string: str) -> str:
+def snake_case_to_camel_case(string: str) -> str:  # todo: use pydantic for this
     return "".join([s.title() for s in string.split("_")])
 
 
