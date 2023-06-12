@@ -1,9 +1,4 @@
-# from . import nodes
-# from .nodes import FormatVersion
+from . import nodes
+from typing import get_args
 
-# try:
-#     from typing import get_args
-# except ImportError:
-#     from typing_extensions import get_args  # type: ignore
-
-# format_version = get_args(FormatVersion)[-1]
+format_version: nodes.LatestFormatVersion = get_args(nodes.LatestFormatVersion)[-1]

@@ -16,29 +16,17 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bioimage-io/spec-bioimage-io",
-    author="Bioimage Team",
-    classifiers=[  # Optional
+    author="BioImage.IO Team",
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
-    install_requires=[
-        "marshmallow-jsonschema",
-        "marshmallow-union",
-        "marshmallow>=3.6.0,<4.0",
-        "numpy",
-        "packaging>=17.0",
-        "requests;platform_system!='Emscripten'",
-        "ruamel.yaml;platform_system!='Emscripten'",
-        "tqdm;platform_system!='Emscripten'",
-        "typer",
-        "typing-extensions",
-    ],
-    entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
-    extras_require={"test": ["black", "mypy", "pytest"], "dev": ["pre-commit"]},
+    install_requires=["packaging>=17.0", "typing-extensions", "pydantic>=2.0", "annotated-types"],
+    extras_require={"test": ["black", "pyright"], "dev": ["pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",
         "scripts/generate_processing_docs.py",
@@ -46,7 +34,7 @@ setup(
         "scripts/generate_weight_formats_docs.py",
     ],
     include_package_data=True,
-    project_urls={  # Optional
+    project_urls={
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",
         "Source": "https://github.com/bioimage-io/spec-bioimage-io",
     },

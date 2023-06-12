@@ -5,11 +5,9 @@ import annotated_types
 
 import pydantic
 from pydantic.networks import AnyUrl
-import packaging.version
 import pathlib
-from pydantic_core import PydanticCustomError, core_schema
+from pydantic_core import core_schema
 from pydantic.networks import AnyUrl
-import pydantic_core
 
 
 # slimmed down version of pydantic.Field with explicit extras
@@ -145,24 +143,6 @@ class RelativePath(pathlib.PurePosixPath):
 
 
 Sha256 = Annotated[str, annotated_types.Len(256, 256)]
-
-
-class Version(packaging.version.Version):
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source_type: Any, _handler: pydantic.GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        return core_schema.general_plain_validator_function(cls.validate)
-
-    @classmethod
-    def validate(cls, value: Union[int, float, str], _: core_schema.ValidationInfo):
-        try:
-            value = str(value)
-        except TypeError as e:
-            raise ValidationTypeError from e
-
-        return cls(value)
-
 
 # DEPRECATED
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""

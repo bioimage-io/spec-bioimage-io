@@ -1,5 +1,6 @@
-import pydantic
+from typing import Any, Hashable, Union
 
+import pydantic
 
 # if pydantic.VERSION == "2.0b2":
 
@@ -10,8 +11,14 @@ class Node(
     model_config = dict(
         extra=pydantic.Extra.forbid,
         frozen=True,
-        validate_assignment=True,
     )
+
+    @pydantic.field_validator("*", mode="after")
+    def unique_sequence_entries(cls, value: Union[tuple[Hashable, ...], list[Hashable], Any]):
+        if isinstance(value, (tuple, list)) and len(value) != len(set(value)):
+            raise ValueError("Expected unique values")
+
+        return value
 
 
 # else:

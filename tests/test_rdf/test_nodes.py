@@ -1,12 +1,11 @@
 from __future__ import annotations
+
 from pathlib import Path
-import unittest
+
 from pydantic import HttpUrl
-from bioimageio.spec.rdf.v0_2.nodes import Attachments, Author, CiteEntry, RdfBase
-from bioimageio.spec.rdf.v0_2.nodes import Maintainer
 
+from bioimageio.spec.rdf.v0_2.nodes import LATEST_FORMAT_VERSION, Attachments, Author, CiteEntry, Maintainer, Rdf
 from bioimageio.spec.shared.fields import RelativePath
-
 from tests.unittest_utils import BaseTestCases
 
 
@@ -18,7 +17,11 @@ class TestAttachments(BaseTestCases.TestNode):
         dict(files=(__file__, "http:example.com")),
         dict(only="other stuff"),
     ]
-    invalid_kwargs = [dict(files=__file__), dict(files=(__file__, "example.com")), dict(files=(123,))]
+    invalid_kwargs = [
+        dict(files=__file__),
+        dict(files=["non-existing-file"]),
+        dict(files=[123]),
+    ]
 
 
 class TestAuthor(BaseTestCases.TestNode):
@@ -58,9 +61,36 @@ class TestCiteEntry(BaseTestCases.TestNode):
     invalid_kwargs = [dict(text="lala"), dict(url="https://example.com")]
 
 
-class TestRdfBase(BaseTestCases.TestNode):
-    NodeClass = RdfBase
+class TestRdf(BaseTestCases.TestNode):
+    NodeClass = Rdf
     context = None
     valid_kwargs = [
-        dict(root=Path(__file__).parent, format_version="0.2.0", version="0.1.0", type="my_type", name="my name")
+        dict(
+            authors=[{"name": "Me"}],
+            format_version=LATEST_FORMAT_VERSION,
+            name="my name",
+            root=Path(__file__).parent,
+            type="my_type",
+            version="0.1.0",
+        ),
+        dict(
+            attachments={"files": [Path(__file__)], "something": 42},
+            authors=[{"name": "Me"}],
+            format_version=LATEST_FORMAT_VERSION,
+            name="your name",
+            root="https://example.com",
+            type="my_type",
+            version="0.1.0",
+        ),
+    ]
+    invalid_kwargs = [
+        dict(format_version=LATEST_FORMAT_VERSION, version="0.1.0", type="my_type", name="their name"),
+        dict(
+            root="https://example.com",
+            format_version=LATEST_FORMAT_VERSION,
+            version="0.1.0",
+            type="my_type",
+            name="its name",
+            attachments={"files": [Path(__file__), "missing"], "something": 42},
+        ),
     ]
