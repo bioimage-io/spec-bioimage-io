@@ -2,7 +2,7 @@ import copy
 from typing import Any, Dict
 
 
-def remove_slash_from_names(data: Dict[str, Any]) -> None:
+def _remove_slash_from_names(data: Dict[str, Any]) -> None:
     if "name" in data and isinstance(data["name"], str):
         data["name"] = data["name"].replace("/", "").replace("\\", "")
 
@@ -39,7 +39,7 @@ def maybe_convert(data: Dict[str, Any]) -> Dict[str, Any]:
         data["format_version"] = "0.2.2"
 
     if data.get("format_version") == "0.2.2":
-        remove_slash_from_names(data)
+        _remove_slash_from_names(data)
         data["format_version"] = "0.2.3"
 
     return data

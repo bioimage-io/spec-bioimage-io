@@ -1,5 +1,5 @@
 # from . import collection, model, rdf, shared
-from . import rdf
+from . import general
 
 # from .commands import update_format, update_rdf, validate
 # from .io_ import (

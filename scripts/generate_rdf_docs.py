@@ -6,10 +6,7 @@ from pathlib import Path
 import bioimageio.spec.rdf
 from bioimageio.spec.shared import fields
 
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args  # type: ignore
+from typing import get_args
 
 
 @dataclasses.dataclass

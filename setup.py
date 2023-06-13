@@ -26,7 +26,7 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=["packaging>=17.0", "typing-extensions", "pydantic>=2.0", "annotated-types"],
-    extras_require={"test": ["black", "pyright"], "dev": ["pre-commit"]},
+    extras_require={"test": ["black", "pyright", "ruff", "pdoc"], "dev": ["pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",
         "scripts/generate_processing_docs.py",
