@@ -19,6 +19,7 @@ from pathlib import Path
 #     source_available,
 # )
 
+# license file copied from https: //github.com/spdx/license-list-data/blob/v3.20/json/licenses.json
 _license_file = Path(__file__).parent.parent / "static" / "licenses.json"
 _license_data = json.loads(_license_file.read_text(encoding="utf-8"))
 
