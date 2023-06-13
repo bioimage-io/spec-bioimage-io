@@ -45,23 +45,25 @@ class GeneralDescriptionBaseNoSource(Node):
     format_version: str
     type: Union[KnownGeneralDescriptionTypes, str] = Field(examples=list(get_args(KnownGeneralDescriptionTypes)))
     """Type of the resource"""
+
     name: str
     """A human-friendly name of the resource description"""
+
     description: str
     """A string containing a brief description."""
 
     attachments: Union[Attachments, None] = None
     """attachments"""
+
     authors: Annotated[
         tuple[Author],
         annotated_types.Len(min_length=1),
-    ] = Field(
-        description=(
-            "A list of authors. The authors are the creators of the specifications and the primary points of contact."
-        )
-    )
+    ]
+    """The authors are the creators of the RDF and the primary points of contact."""
 
     badges: Union[list[Badge], None] = None
+    """badges associated with this resource"""
+
     # cite: Union[_Missing, List[CiteEntry]] = Field(None, description=)
     # config: Union[_Missing, dict] = Field(None, description=)
     # covers: Union[_Missing, List[Union[URI, Path]]] = Field(None, description=)
@@ -228,6 +230,7 @@ class GeneralDescriptionBase(GeneralDescriptionBaseNoSource):
     source: Union[HttpUrl, RelativePath, None] = Field(
         None, description="URL or relative path to the source of the resource"
     )
+    """The primary source of the resource"""
 
 
 class GeneralDescription(GeneralDescriptionBase):
@@ -237,12 +240,14 @@ class GeneralDescription(GeneralDescriptionBase):
     Note that models are described with an extended model RDF specification.
     """
 
-    # pydantic model_config
     model_config = GeneralDescriptionBase.model_config | dict(
         title=f"BioImage.IO Resource Description File Specification {get_args(FormatVersion)[-1]}", extra=Extra.ignore
     )
+    """pydantic model_config"""
+
     format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
-    """This specification's format version; not to be confused with the resource's version `version`"""
+    """The format version of this RDF specification
+    (not the `GeneralDescription.version` of the resource described by it)"""
 
 
 class Attachments(Node):
@@ -304,8 +309,14 @@ class Badge(Node, title="Custom badge"):
 
 class CiteEntry(Node):
     text: str
+    """free text description"""
+
     doi: Optional[str] = Field(None, pattern=DOI_REGEX)
+    """A digital object identifier (DOI) is the prefered citation reference.
+    See https://www.doi.org/ for details. (alternatively specify `url`)"""
+
     url: Optional[str] = None
+    """URL to cite (preferably specify a `doi` instead)"""
 
     @model_validator(mode="before")
     def check_doi_or_url(cls, data: RawMapping):

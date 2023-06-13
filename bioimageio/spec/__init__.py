@@ -1,11 +1,15 @@
-# from . import collection, model, rdf, shared
-from . import general
+import json
+import pathlib
 
-# from .commands import update_format, update_rdf, validate
-# from .io_ import (
-#     get_resource_package_content,
-#     load_raw_resource_description,
-#     serialize_raw_resource_description,
-#     serialize_raw_resource_description_to_dict,
-# )
-from .v import __version__
+with (pathlib.Path(__file__).parent / "VERSION").open() as f:
+    __version__ = json.load(f)["version"]
+
+from . import collection, general, model, shared
+
+__all__ = [
+    "__version__",
+    "collection",
+    "general",
+    "model",
+    "shared",
+]

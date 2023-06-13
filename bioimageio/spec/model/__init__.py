@@ -1,15 +1,7 @@
-from . import v0_3, v0_4
-
 # autogen: start
-from . import converters, raw_nodes, schema, utils
-from .raw_nodes import FormatVersion
+from . import v0_4, v0_5
+from .v0_5 import LATEST_FORMAT_VERSION, FormatVersion, Model, LatestFormatVersion
 
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args  # type: ignore
-
-
-format_version = get_args(FormatVersion)[-1]
+__all__ = ["v0_4", "v0_5", "LATEST_FORMAT_VERSION", "FormatVersion", "Model", "LatestFormatVersion"]
 
 # autogen: stop
