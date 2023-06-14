@@ -12,14 +12,15 @@ VERSION = json.loads(VERSION_FILE.read_text(encoding="utf-8"))["version"]
 setup(
     name="bioimageio.spec",
     version=VERSION,
-    description="Parser and validator library for BioImage.IO specifications",
+    description="Parser and validator library for bioimage.io specifications",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bioimage-io/spec-bioimage-io",
-    author="BioImage.IO Team",
+    author="bioimage.io Team",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",

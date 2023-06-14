@@ -5,7 +5,8 @@ from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from black import format_str, Mode as BlackMode, parse_pyproject_toml, TargetVersion as BlackTargetVersion
+import black.files
+import black.mode
 
 ROOT_PATH = Path(__file__).parent.parent
 
@@ -63,7 +64,7 @@ class Info:
 
 def process(info: Info, check: bool):
     package_init = info.package_path / "__init__.py"
-    print(f"Updating {package_init}")
+    print(f"{'Checking' if check else 'Updating'} {package_init}")
 
     init_content = package_init.read_text()
     pattern = AUTOGEN_START + ".*" + AUTOGEN_STOP
@@ -74,12 +75,11 @@ def process(info: Info, check: bool):
         )
 
     updated = re.sub(pattern, AUTOGEN_START + AUTOGEN_BODY.format(info=info) + AUTOGEN_STOP, init_content, flags=flags)
-    black_config = parse_pyproject_toml(str(ROOT_PATH / "pyproject.toml"))
-    print(black_config)
+    black_config = black.files.parse_pyproject_toml(str(ROOT_PATH / "pyproject.toml"))
     black_config["target_versions"] = set(
-        (getattr(BlackTargetVersion, tv.upper()) for tv in black_config.pop("target_version"))
+        (getattr(black.mode.TargetVersion, tv.upper()) for tv in black_config.pop("target_version"))
     )
-    updated = format_str(updated, mode=BlackMode(**black_config))
+    updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
 
     if check:
         if init_content == updated:

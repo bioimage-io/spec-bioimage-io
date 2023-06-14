@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import re
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar, Union, get_args
@@ -23,7 +22,7 @@ from pydantic import (
 from bioimageio.spec.shared.common import DOI_REGEX
 from bioimageio.spec.shared.fields import Field, RelativePath
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types_ import RawMapping
+from bioimageio.spec.shared.types_ import RawMapping, RawValue
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 
 
@@ -33,51 +32,162 @@ FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
 LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 IN_PACKAGE_MESSAGE = " (included when packaging the resource)"
 
-KnownGeneralDescriptionTypes = Literal["application", "notebook"]
 
-
-class GeneralDescriptionBaseNoSource(Node):
-    """GeneralDescriptionBase without a source field
+class ResourceDescriptionBaseNoSource(Node):
+    """ResourceDescriptionBase without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
     """
 
     format_version: str
-    type: Union[KnownGeneralDescriptionTypes, str] = Field(examples=list(get_args(KnownGeneralDescriptionTypes)))
-    """Type of the resource"""
+    """The format version of this RDF specification
+    (not the `version` of the resource described by it)"""
+
+    type: str = Field(examples=list(get_args(["application", "notebook"])))
+    """The resource type assigns a broad category to the resource
+    and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
 
     name: str
     """A human-friendly name of the resource description"""
+    # todo warn about capitalization
+    @field_validator("name", mode="after")
+    @classmethod
+    def check_name(cls, name: str) -> str:
+        return name.capitalize()
 
     description: str
     """A string containing a brief description."""
 
-    attachments: Union[Attachments, None] = None
-    """attachments"""
+    covers: tuple[Union[HttpUrl, RelativePath], ...] = Field((), examples=[])
+    """Cover images.
+    Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.
+    The supported image formats are: 'jpg', 'png', 'gif'"""
+    @field_validator("covers", mode="after")
+    @classmethod
+    def check_cover_suffixes(cls, value: Union[HttpUrl, RelativePath, None]) -> Union[HttpUrl, RelativePath, None]
+        if value is not None and not str(value).endswith(".md"):
+            raise ValueError("Expected markdown file with '.md' suffix")
 
-    authors: Annotated[
-        tuple[Author],
-        annotated_types.Len(min_length=1),
-    ]
+        return value
+
+    documentation: Union[HttpUrl, RelativePath, None] = Field(
+        None,
+        examples=[
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+            "README.md",
+        ],
+    )
+    """URL or relative path to a markdown file with additional documentation.
+    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
+    @field_validator("documentation", mode="after")
+    @classmethod
+    def check_documentation_suffix(cls, value: Union[HttpUrl, RelativePath, None]) -> Union[HttpUrl, RelativePath, None]
+        if value is not None and not str(value).endswith(".md"):
+            raise ValueError("Expected markdown file with '.md' suffix")
+
+        return value
+
+    id: Union[str, None] = None
+    """bioimage.io wide, unique identifier assigned by the
+    [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
+
+    authors: tuple[Author, ...] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
-    badges: Union[list[Badge], None] = None
+    attachments: Union[Attachments, None] = None
+    """file and other attachments"""
+
+    badges: tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    # cite: Union[_Missing, List[CiteEntry]] = Field(None, description=)
-    # config: Union[_Missing, dict] = Field(None, description=)
-    # covers: Union[_Missing, List[Union[URI, Path]]] = Field(None, description=)
-    # documentation: Union[_Missing, Path, URI] = Field(None, description=)
+    cite: tuple[CiteEntry, ...] = ()
+    """citations"""
+
+    config: Union[dict[str, RawValue], None] = Field(None, examples=[])
+    """A field for custom configuration that can contain any keys not present in the RDF spec.
+    This means you should not store, for example, a github repo URL in `config` since we already have the
+    `git_repo` field defined in the spec.
+    Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
+    it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
+    for example:
+    ```yaml
+    config:
+        bioimage_io:  # here is the domain name
+            my_custom_key: 3837283
+            another_key:
+                nested: value
+        imagej:       # config specific to ImageJ
+            macro_dir: path/to/macro/file
+    ```
+    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+    You may want to list linked files additionally under `attachments` to include them when packaging a resource
+    (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
+    an altered rdf.yaml file with local references to the downloaded files)"""
+
     # download_url: Union[_Missing, Path, URI] = Field(None, description=)
-    # git_repo: Union[_Missing, str] = Field(None, description=)
-    # icon: Union[_Missing, str] = Field(None, description=)
-    # id: Union[_Missing, str] = Field(None, description=)
-    # license: Union[_Missing, str] = Field(None, description=)
-    # links: Union[_Missing, List[str]] = Field(None, description=)
-    # maintainers: Union[_Missing, List[Maintainer]] = Field(None, description=)
-    # rdf_source: Union[_Missing, URI] = Field(None, description=)
-    root: Union[DirectoryPath, AnyUrl] = pydantic.Field(description="Base for any relative paths specified in the RDF")
-    # tags: Union[_Missing, List[str]] = Field(None, description=)
+
+    git_repo: Union[str, None] = Field(
+        None,
+        examples=["https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"],
+    )
+    """A URL to the Git repository where the resource is being developed."""
+
+    icon: Union[HttpUrl, RelativePath, Annotated[str, annotated_types.Len(min_length=1, max_length=2)], None] = None
+    """an icon for illustration"""
+
+    # todo: make license mandatory
+    license: Union[str, None] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    """A [SPDX license identifier](https://spdx.org/licenses/).
+    We do notsupport custom license beyond the SPDX license list, if you need that please
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
+    to discuss your intentions with the community."""
+
+    links: tuple[str, ...] = Field(
+        (),
+        examples=[
+            (
+                "ilastik/ilastik",
+                "deepimagej/deepimagej",
+                "zero/notebook_u-net_3d_zerocostdl4mic",
+            )
+        ],
+    )
+    """IDs of other bioimage.io resources"""
+
+    maintainers: tuple[Maintainer, ...] = ()
+    """Maintainers of this resource.
+    If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
+
+    rdf_source: Union[HttpUrl, None] = None
+    """resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from"""
+
+    root: Union[DirectoryPath, AnyUrl] = pydantic.Field(description="")
+    """Base path or URL for any relative paths specified in the RDF"""
+
+    tags: tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
+    """"Associated tags"""
+
+    # todo warn about tags
+    # @field_validator("tags")
+    # def warn_about_tag_categories(self, value):
+    #     missing_categories = []
+    #     try:
+    #         categories = {
+    #             c["type"]: c.get("tag_categories", {}) for c in BIOIMAGEIO_SITE_CONFIG["resource_categories"]
+    #         }.get(self.__class__.__name__.lower(), {})
+    #         for cat, entries in categories.items():
+    #             if not any(e in value for e in entries):
+    #                 missing_categories.append({cat: entries})
+    #     except Exception as e:
+    #         error = str(e)
+    #     else:
+    #         error = None
+    #         if missing_categories:
+    #             self.warn("tags", f"Missing tags corresponding to bioimage.io categories: {missing_categories}")
+
+    #     if error is not None:
+    #         self.warn("tags", f"could not check tag categories ({error})")
+
     version: Union[str, None] = Field(
         None,
         description="The version number of the resource. Its format must be a string in "
@@ -87,10 +197,14 @@ class GeneralDescriptionBaseNoSource(Node):
         "The initial version number should be `0.1.0`.",
     )
 
-    def __init__(self, **data: Any) -> None:
-        # set 'root' context from 'root' kwarg when constructing an Rdf
+    def __init__(self, *, _context: Optional[dict[str, Any]] = None, **data: Any) -> None:
+        # set 'root' context from 'root' kwarg when constructing an RescourceDescription
         given_root = self._validate_root(data.get("root"), raise_=False, allow_none=True)
-        self.__pydantic_validator__.validate_python(data, self_instance=self, context=dict(root=given_root))  # type: ignore
+        context = _context or {}
+        if given_root is not None:
+            context["root"] = given_root
+
+        self.__pydantic_validator__.validate_python(data, self_instance=self, context=context)
 
     @classmethod
     def _validate_root(cls, value: Any, *, raise_: bool, allow_none: bool):
@@ -159,13 +273,13 @@ class GeneralDescriptionBaseNoSource(Node):
 
     @classmethod
     def model_validate(
-        cls: type[DescriptionNode],
+        cls: type[ResourceDescription],
         obj: dict[str, Any],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Optional[dict[str, Any]] = None,
-    ) -> DescriptionNode:
+    ) -> ResourceDescription:
         """Validate RDF content `obj` and create an RDF instance.
 
         Also sets 'root' context from 'root' in `obj` (or vice versa)
@@ -223,37 +337,44 @@ class GeneralDescriptionBaseNoSource(Node):
             )
 
 
-DescriptionNode = TypeVar("DescriptionNode", bound=GeneralDescriptionBaseNoSource)
+ResourceDescription = TypeVar("ResourceDescription", bound=ResourceDescriptionBaseNoSource)
 
 
-class GeneralDescriptionBase(GeneralDescriptionBaseNoSource):
+class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
     source: Union[HttpUrl, RelativePath, None] = Field(
         None, description="URL or relative path to the source of the resource"
     )
     """The primary source of the resource"""
 
+    def __init__(self, *, _context: Union[dict[str, Any], None] = None, **data: Any) -> None:
+        super().__init__(_context=_context, **data)
 
-class GeneralDescription(GeneralDescriptionBase):
-    """Specification of the fields used in a general BioImage.IO-compliant resource description file (RDF).
+
+class GenericDescription(ResourceDescriptionBase):
+    """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
     Note that models are described with an extended model RDF specification.
     """
 
-    model_config = GeneralDescriptionBase.model_config | dict(
-        title=f"BioImage.IO Resource Description File Specification {get_args(FormatVersion)[-1]}", extra=Extra.ignore
-    )
+    model_config = {
+        **ResourceDescriptionBase.model_config,
+        **dict(title=f"bioimage.io generic RDF {get_args(FormatVersion)[-1]}", extra=Extra.ignore),
+    }
     """pydantic model_config"""
 
     format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
-    """The format version of this RDF specification
-    (not the `GeneralDescription.version` of the resource described by it)"""
+
+    @field_validator("type", mode="after")
+    @classmethod
+    def check_specific_types(cls, value: str):
+        TODO
 
 
 class Attachments(Node):
-    model_config = Node.model_config | dict(extra=Extra.allow)
+    model_config = {**Node.model_config, **dict(extra=Extra.allow)}
     """update pydantic model config to allow additional unknown keys"""
-    files: Optional[tuple[Union[HttpUrl, RelativePath], ...]] = Field(None, in_package=True)
+    files: tuple[Union[HttpUrl, RelativePath], ...] = Field((), in_package=True)
     """File attachments"""
 
 
@@ -297,8 +418,10 @@ class Badge(Node, title="Custom badge"):
 
     label: str = Field(examples=["Open in Colab"])
     """badge label to display on hover"""
-    icon: Optional[HttpUrl] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
+
+    icon: Union[HttpUrl, None] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
     """badge icon"""
+
     url: HttpUrl = Field(
         examples=[
             "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
@@ -328,6 +451,6 @@ class CiteEntry(Node):
 
 # because we define higher level pydantic models at the top of the file,
 # we need to rebuild them now that all forward references are known
-GeneralDescriptionBaseNoSource.model_rebuild()
-GeneralDescriptionBase.model_rebuild()
-GeneralDescription.model_rebuild()
+ResourceDescriptionBaseNoSource.model_rebuild()
+ResourceDescriptionBase.model_rebuild()
+GenericDescription.model_rebuild()

@@ -42,6 +42,6 @@ test:
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io
-  summary: BioImage.IO Spec Validator and specifications package
+  summary: bioimage.io Spec Validator and specifications package
   license: MIT
   license_file: LICENSE

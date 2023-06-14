@@ -3,10 +3,8 @@ import pathlib
 import warnings
 from typing import Callable, List, Optional, Tuple, Union
 
-from marshmallow import missing
-from marshmallow.utils import _Missing
 
-from . import raw_nodes, schema
+from . import raw_nodes
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 
 

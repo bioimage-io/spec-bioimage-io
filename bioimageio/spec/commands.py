@@ -24,7 +24,7 @@ def update_format(
     path: Union[os.PathLike, str],
     update_to_format: str = "latest",
 ):
-    """Auto-update fields of a BioImage.IO resource"""
+    """Auto-update fields of a bioimage.io resource"""
     raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
     save_raw_resource_description(raw, Path(path))
 
@@ -36,7 +36,7 @@ def validate(
     verbose: bool = "deprecated",  # type: ignore
     enrich_partial_rdf: Callable[[dict, Union[URI, Path]], dict] = default_enrich_partial_rdf,
 ) -> ValidationSummary:
-    """Validate a BioImage.IO Resource Description File (RDF).
+    """Validate a bioimage.io resource description file (RDF).
 
     Args:
         rdf_source: resource description as path, url or bytes of an RDF or packaged resource, or as yaml string or dict

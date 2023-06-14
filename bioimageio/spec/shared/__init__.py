@@ -25,3 +25,6 @@ _license_data = json.loads(_license_file.read_text(encoding="utf-8"))
 
 LICENSES = {x["licenseId"]: x for x in _license_data["licenses"]}
 LICENSE_DATA_VERSION = _license_data["licenseListVersion"]
+
+_tag_categories_file = Path(__file__).parent.parent / "static" / "tag_categories.json"
+TAG_CATEGORIES = json.loads(_tag_categories_file.read_text(encoding="utf-8"))

@@ -633,7 +633,7 @@ Sha256 = Annotated[str, annotated_types.Len(256, 256)]
 #             validate = [validate]
 
 #         if BIOIMAGEIO_COLLECTION_ENTRIES is not None:
-#             error_msg = "'{input}' is not a valid BioImage.IO ID"
+#             error_msg = "'{input}' is not a valid bioimage.io ID"
 #             if resource_type is not None:
 #                 error_msg += f" of type {resource_type}"
 

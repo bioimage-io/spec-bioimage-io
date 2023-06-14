@@ -2,3 +2,4 @@ include bioimageio/spec/VERSION
 include README.md
 include LICENSE
 include bioimageio/spec/static/licenses.json
+include bioimageio/spec/static/tag_categories.json

@@ -72,7 +72,6 @@ BIOIMAGEIO_CACHE_WARNINGS_LIMIT = int(os.getenv("BIOIMAGEIO_CACHE_WARNINGS_LIMIT
 # and thus their content removed from disk, while we still have a pathlib.Path pointing there
 no_cache_tmp_list: List[Any] = []
 
-BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
 BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-io/collection.json"
 
 

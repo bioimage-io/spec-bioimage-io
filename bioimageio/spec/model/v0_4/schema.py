@@ -363,7 +363,7 @@ config:
         validate=field_validators.OneOf(get_args_flat(raw_nodes.FormatVersion)),
         required=True,
         bioimageio_description_order=0,
-        bioimageio_description=f"""Version of the BioImage.IO Model Resource Description File Specification used.
+        bioimageio_description=f"""Version of the bioimage.io Model Resource Description File Specification used.
 This is mandatory, and important for the consumer software to verify before parsing the fields.
 The recommended behavior for the implementation is to keep backward compatibility and throw an error if the model yaml
 is in an unsupported format version. The current format version described here is

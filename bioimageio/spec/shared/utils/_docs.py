@@ -10,10 +10,6 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 
 
-def snake_case_to_camel_case(string: str) -> str:  # todo: use pydantic for this
-    return "".join([s.title() for s in string.split("_")])
-
-
 def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url: str) -> str:
     """get github url with line range fragment to reference implementation from non-raw github file url
 
@@ -58,10 +54,3 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
         raise ValueError(f"{type_} {name} not found in {github_file_url}")
 
     return f"{github_file_url}#L{start}-L{stop}"
-
-
-def resolve_bioimageio_descrcription(descr: Union[Callable[[], str], str]):
-    if callable(descr):
-        return descr()
-    else:
-        return descr

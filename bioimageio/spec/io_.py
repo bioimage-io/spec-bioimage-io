@@ -130,7 +130,7 @@ def load_raw_resource_description(
     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
     update_to_format: Optional[str] = None,
 ) -> RawResourceDescription:
-    """load a raw python representation from a BioImage.IO resource description.
+    """load a raw python representation from a bioimage.io resource description.
     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
     and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
     a local file path.
@@ -139,7 +139,7 @@ def load_raw_resource_description(
         source: resource description or resource description file (RDF)
         update_to_format: update resource to specific major.minor format version; ignoring patch version.
     Returns:
-        raw BioImage.IO resource
+        raw bioimage.io resource
     """
     root = None
     if isinstance(source, RawResourceDescription):

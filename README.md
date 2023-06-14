@@ -1,36 +1,36 @@
 ![License](https://img.shields.io/github/license/bioimage-io/spec-bioimage-io.svg)
 ![PyPI](https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout)
 ![conda-version](https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg)
-# Specifications for BioImage.IO
+# Specifications for bioimage.io
 
-This repository contains specifications defined by the BioImage.IO community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by BioImage.IO-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a general RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
+This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by bioimage.io-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model RDF`) and a general RDF specification. The model RDF is a RDF with additional fields that specifically designed for describing AI models.
 
 
-All the BioImage.IO-compatible RDF must fulfill the following rules:
+All the bioimage.io-compatible RDF must fulfill the following rules:
  * Must be a YAML file encoded as UTF-8; If yaml syntax version is not specified to be 1.1 in the first line by `% YAML 1.1` it must be equivalent in yaml 1.1 and yaml 1.2. For differences see https://yaml.readthedocs.io/en/latest/pyyaml.html#differences-with-pyyaml.
  * The RDF file extension must be `.yaml` (not `.yml`)
  * The RDF file can be saved in a folder (or virtual folder) or in a zip package, the following additional rules must apply:
    1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
    2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
 
-As a general guideline, please follow the model RDF spec to describe AI models and use the general RDF spec for other resource types including `dataset`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is BioImage.IO-compliant is to run the BioImage.IO Validator against it.
+As a general guideline, please follow the model RDF spec to describe AI models and use the general RDF spec for other resource types including `dataset`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is bioimage.io-compliant is to run the bioimage.io Validator against it.
 
 ## Resource Description File Specification
 
-A BioImage.IO-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields. 
+A bioimage.io-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields.
 
-You can find detailed field definitions here: 
+You can find detailed field definitions here:
    - [general RDF spec (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_latest.md)
    - [general RDF spec (0.2.x)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_0_2.md)
 
-The specifications are also available as json schemas: 
+The specifications are also available as json schemas:
    - [general RDF spec (0.2.x, json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/rdf_spec_0_2.json)
 
 [Here](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/rdf-examples.md) you can find some examples for using RDF to describe applications, notebooks, datasets etc.
 
 ## Model Resource Description File Specification
 
-Besides the general RDF spec, the `Model Resource Description File Specification`(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [BioImage.IO](https://bioimage.io) model repository site.
+Besides the general RDF spec, the `Model Resource Description File Specification`(`model RDF`) defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [bioimage.io](https://bioimage.io) model repository site.
 
 You can find the latest `model RDF` here:
    - [model RDF spec (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
@@ -41,7 +41,7 @@ Here is a list of model RDF Examples:
 
 ## Collection Resource Description File Specification
 
-The [`Collection Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection RDF`) defines a file format for representing collections of resources for the [BioImage.IO](https://bioimage.io) website.
+The [`Collection Resource Description File Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection RDF`) defines a file format for representing collections of resources for the [bioimage.io](https://bioimage.io) website.
 
 You can find the latest `collection RDF` here:
  - [collection RDF spec (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)
@@ -76,10 +76,10 @@ In order to make it available in https://bioimage.io, you can submit the RDF pac
  * Use the [bioimage.io spec validator](#bioimageio-spec-validator) to verify your YAML file
  * Store the yaml file in a version controlled Git repository (e.g. Github or Gitlab)
  * Use or upgrade to the latest format version
- 
 
-# bioimageio command-line interface (CLI) 
-The BioImage.IO command line tool makes it easy to work with BioImage.IO RDFs. 
+
+# bioimageio command-line interface (CLI)
+The bioimage.io command line tool makes it easy to work with bioimage.io RDFs.
 A basic version of it, documented here, is provided by the [bioimageio.spec package](bioimageio-python-package), which is extended by the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package.
 
 
@@ -110,16 +110,16 @@ or if the field `test_inputs` does not contain a list, it would print:
 ```
 
 ## update-format
-Similar to the `validate` command with `--update-format` flag the `update-format` command attempts to convert an RDF 
+Similar to the `validate` command with `--update-format` flag the `update-format` command attempts to convert an RDF
 to the latest applicable format version, but saves the result in a file for further manual editing:
 ```
 bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
 ```
 
 # bioimageio.spec Python package
-The bioimageio.spec package allows to work with BioImage.IO RDFs within Python.
+The bioimageio.spec package allows to work with bioimage.io RDFs within Python.
 The commands on which the bioimageio CLI is based can be used as functions.
-Additionally, IO functions are provided to work with BioImage.IO RDFs as 'raw nodes' Python objects, e.g. the raw representation of a model RDF 0.4 at [bioimageio.spec.model.v0_4.raw_nodes](bioimageio/spec/model/v0_4/raw_nodes.py#L122-L140).
+Additionally, IO functions are provided to work with bioimage.io RDFs as 'raw nodes' Python objects, e.g. the raw representation of a model RDF 0.4 at [bioimageio.spec.model.v0_4.raw_nodes](bioimageio/spec/model/v0_4/raw_nodes.py#L122-L140).
 The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package extends this 'raw' representation for more convenience.
 
 [//]: # (TODO: documentation for bioimageio.spec)
@@ -136,7 +136,7 @@ pip install -U bioimageio.spec
 conda install -c conda-forge bioimageio.spec
 ```
 
-As a dependency it is included in [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python#installation) library, which extends bioimageio.spec with more powerful commands like 'predict'. 
+As a dependency it is included in [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python#installation) library, which extends bioimageio.spec with more powerful commands like 'predict'.
 
 ## Environment variables
 
@@ -150,7 +150,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 #### bioimageio.spec 0.4.9
 - small bugixes
 - better type hints
-- improved tests 
+- improved tests
 
 #### bioimageio.spec 0.4.8post1
 - add `axes` and `eps` to `scale_mean_var`
@@ -164,7 +164,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 #### bioimageio.spec 0.4.6post2
 - Improve error message for non-existing RDF file path given as string
-- Improve documentation for model RDF's `documentation` field 
+- Improve documentation for model RDF's `documentation` field
 
 #### bioimageio.spec 0.4.6post1
 - fix enrich_partial_rdf_with_imjoy_plugin (see https://github.com/bioimage-io/spec-bioimage-io/pull/452)
@@ -184,7 +184,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 #### bioimageio.spec 0.4.5post12
 - new env var `BIOIMAGEIO_CACHE_WARNINGS_LIMIT` (default: 3) to avoid spam from cache hit warnings
 - more robust conversion of ImportableSourceFile for absolute paths to relative paths (don't fail on non-path source file)
- 
+
 #### bioimageio.spec 0.4.5post11
 - resolve symlinks when transforming absolute to relative paths during serialization; see [#438](https://github.com/bioimage-io/spec-bioimage-io/pull/438)
 
@@ -210,20 +210,20 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 #### bioimageio.spec 0.4.3post1
 - fix to shape validation for model RDF 0.4: output shape now needs to be bigger than halo
 - moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared\[.node_transformer\]
-- additional keys to validation summary: bioimageio_spec_version, status 
+- additional keys to validation summary: bioimageio_spec_version, status
 
 #### bioimageio.spec 0.4.2post4
 - fixes to general RDF:
   - ignore value of field `root_path` if present in yaml. This field is used internally and always present in RDF nodes.
 
 #### bioimageio.spec 0.4.1.post5
-- fixes to collection RDF: 
+- fixes to collection RDF:
   - RDFs specified directly in collection RDF are validated correctly even if their source field does not point to an RDF.
   - nesting of collection RDF allowed
 
 #### bioimageio.spec 0.4.1.post4
 - fixed missing field `icon` in general RDF's raw node
-- fixes to collection RDF: 
+- fixes to collection RDF:
   - RDFs specified directly in collection RDF are validated correctly
   - no nesting of collection RDF allowed for now
   - `links` is no longer an explicit collection entry field ("moved" to unknown)
@@ -253,11 +253,11 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 #### model RDF 0.4.6
 - Non-breaking changes
-  - Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.  
+  - Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.
 
 #### model RDF 0.4.5
 - Breaking changes that are fully auto-convertible
-  - `parent` field changed to hold a string that is a BioImage.IO ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
+  - `parent` field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
 
 #### model RDF 0.4.4
 - Non-breaking changes
@@ -271,7 +271,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 - Non-breaking changes
   - add optional field `download_url`
   - add optional field `dependencies` to all weight formats (not only pytorch_state_dict)
-  - add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats 
+  - add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats
 
 #### model RDF 0.4.2
 - Bug fixes:
@@ -281,7 +281,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 - Non-breaking changes
   - make `authors`, `cite`, `documentation` and `tags` optional
 - Breaking changes that are fully auto-convertible
-  - Simplifies collection RDF 0.2.1 by merging resource type fields together to a `collection` field, 
+  - Simplifies collection RDF 0.2.1 by merging resource type fields together to a `collection` field,
     holindg a list of all resources in the specified collection.
 
 #### (general) RDF 0.2.2 / model RDF 0.3.6 / model RDF 0.4.2
@@ -290,7 +290,7 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
   - `id` new optional field
 
 #### collection RDF 0.2.1
-- First official release, extends general RDF with fields `application`, `model`, `dataset`, `notebook` and (nested) 
+- First official release, extends general RDF with fields `application`, `model`, `dataset`, `notebook` and (nested)
   `collection`, which hold lists linking to respective resources.
 
 #### (general) RDF 0.2.1
@@ -311,11 +311,11 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 #### model RDF 0.4.0
 - Breaking changes
   - model inputs and outputs may not use duplicated names.
-  - model field `sha256` is required if `pytorch_state_dict` weights are defined. 
+  - model field `sha256` is required if `pytorch_state_dict` weights are defined.
     and is now moved to the `pytroch_state_dict` entry as `architecture_sha256`.
 - Breaking changes that are fully auto-convertible
   - model fields language and framework are removed.
-  - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict` 
+  - model field `source` is renamed `architecture` and is moved together with `kwargs` to the `pytorch_state_dict`
     weights entry (if it exists, otherwise they are removed).
   - the weight format `pytorch_script` was renamed to `torchscript`.
 - Other changes
@@ -327,13 +327,13 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 
 #### model RDF 0.3.4
 - Non-breaking changes
-   - Add optional parameter `eps` to `scale_range` postprocessing. 
+   - Add optional parameter `eps` to `scale_range` postprocessing.
 
 #### model RDF 0.3.3
 - Breaking changes that are fully auto-convertible
   - `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
 
-#### model RDF 0.3.2 
+#### model RDF 0.3.2
 - Breaking changes
   - The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
   - Change `authors` and `packaged_by` fields from List[str] to List[Author] with Author consisting of a dictionary `{name: '<Full name>', affiliation: '<Affiliation>', orcid: 'optional orcid id'}`;
@@ -342,4 +342,4 @@ As a dependency it is included in [bioimageio.core](https://github.com/bioimage-
 - Other changes
   - Add optional `version` field (default 0.1.0) to keep track of model changes;
   - Allow the values in the `attachments` list to be any values besides URI;
-  
+
