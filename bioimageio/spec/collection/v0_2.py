@@ -1,25 +1,22 @@
 import collections.abc
-from multiprocessing import RawValue
-from typing import Annotated, Any, Literal, Union
+from typing import Annotated, Any, ClassVar, Literal, Union
+
 import annotated_types
-
-from pydantic import HttpUrl, Extra, TypeAdapter, model_validator
+from pydantic import Extra, HttpUrl, TypeAdapter, model_validator
 from pydantic_core.core_schema import ValidationInfo
-from bioimageio.spec.dataset.v0_2 import Dataset
-from bioimageio.spec.model.v0_4 import Model
 
-from bioimageio.spec.shared.utils import ensure_raw
-from bioimageio.spec.shared.fields import Field
+from bioimageio.spec.dataset.v0_2 import Dataset
+from bioimageio.spec.generic.v0_2 import (
+    LATEST_FORMAT_VERSION,
+    FormatVersion,
+    GenericDescription,
+    LatestFormatVersion,
+    ResourceDescriptionBase,
+)
+from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types_ import RawMapping, RawValue
-from ..general.v0_2 import (
-    ResourceDescriptionBase,
-    LatestFormatVersion,
-    FormatVersion,
-    LATEST_FORMAT_VERSION,
-    ResourceDescription,
-)
-
+from bioimageio.spec.shared.utils import ensure_raw
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 
@@ -48,7 +45,7 @@ class CollectionEntry(Node):
     def rdf_update(self) -> dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_validator: ClassVar[TypeAdapter] = TypeAdapter(Union[Model, Dataset, ResourceDescription])
+    entry_validator: ClassVar = TypeAdapter(Union[Model, Dataset, GenericDescription])
 
     @model_validator(mode="before")
     @classmethod
@@ -58,7 +55,7 @@ class CollectionEntry(Node):
             # without external rdf_source we expect a valid resource description
             entry_data = dict(info.context["collection_base_content"])
             entry_data.update(extra)
-            entry_validator = TypeAdapter()
+            cls.entry_validator.validate_python(data, context=info.context)
         else:
             # cannot validate entry without resolving 'rdf_source'
             # to validate, load 'rdf_content' as extra fields to CollectionEntry
@@ -107,7 +104,7 @@ class Collection(ResourceDescriptionBase):
 
             for group in ["application", "model", "dataset", "notebook"]:
                 if group in data:
-                    data["collection"] += data[group]
+                    data["collection"] += data[group]  # type: ignore
                     data["collection"][-1]["type"] = group
 
             config = data.get("config")
@@ -117,3 +114,32 @@ class Collection(ResourceDescriptionBase):
                     data["id"] = id_
 
         return super().convert_from_older_format(data)
+
+    # @validates("collection")
+    # def unique_ids(self, value: List[Union[dict, raw_nodes.CollectionEntry]]):
+    #     ids = [
+    #         (v.get("id", missing), v.get("rdf_source", missing))
+    #         if isinstance(v, dict)
+    #         else (v.rdf_update.get("id", missing), v.rdf_source)
+    #         for v in value
+    #     ]
+    #     # skip check for id only specified in remote source
+    #     ids = [vid for vid, vs in ids if not (vid is missing and vs is not missing)]
+
+    #     if missing in ids:
+    #         raise ValueError(f"Missing ids in collection entries")
+
+    #     non_string_ids = [v for v in ids if not isinstance(v, str)]
+    #     if non_string_ids:
+    #         raise ValueError(f"Non-string ids in collection: {non_string_ids}")
+
+    #     seen = set()
+    #     duplicates = []
+    #     for v in ids:
+    #         if v in seen:
+    #             duplicates.append(v)
+    #         else:
+    #             seen.add(v)
+
+    #     if duplicates:
+    #         raise ValueError(f"Duplicate ids in collection: {duplicates}")

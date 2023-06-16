@@ -28,7 +28,7 @@ VERSION_MODULE_PATTERN = r"v(?P<major>\d+)_(?P<minor>\d+).py"
 
 def main():
     args = parse_args()
-    for target in ["general", "model", "dataset", "collection"]:
+    for target in ["generic", "model", "dataset", "collection"]:
         process(
             Info(target=target, all_version_modules=get_ordered_version_submodules(target)),
             check=args.command == "check",
@@ -55,7 +55,7 @@ class Info:
     package_path: Path = field(init=False)
 
     def __post_init__(self):
-        self.target_node = dict(general="GeneralDescription").get(self.target, self.target.capitalize())
+        self.target_node = dict(generic="GenericDescription").get(self.target, self.target.capitalize())
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_quoted = ",\n".join(f'"{vm}"' for vm in self.all_version_modules)
         self.all_version_modules_plain = ", ".join(self.all_version_modules)

@@ -1,11 +1,10 @@
 from __future__ import annotations
-import re
+
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar, Union, get_args
 
-from collections.abc import Mapping, Sequence
 import annotated_types
-import packaging.version
 import pydantic
 from pydantic import (
     AnyUrl,
@@ -20,17 +19,100 @@ from pydantic import (
 )
 
 from bioimageio.spec.shared.common import DOI_REGEX
-from bioimageio.spec.shared.fields import Field, RelativePath
+from bioimageio.spec.shared.fields import Field
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types_ import RawMapping, RawValue
+from bioimageio.spec.shared.types_ import RawMapping
+from bioimageio.spec.shared.types_annotated import RawMappingField, Version
+from bioimageio.spec.shared.types_custom import RelativeFilePath
 from bioimageio.spec.shared.utils import is_valid_orcid_id
-
 
 LatestFormatVersion = Literal["0.2.3"]
 FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
 
 LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 IN_PACKAGE_MESSAGE = " (included when packaging the resource)"
+_VALID_COVER_IMAGE_EXTENSIONS = ["jpg", "png", "gif", "jpeg"]
+
+KnownGenericResourceType = Literal["application", "notebook"]
+KnownSpecializedResourceType = Literal["model", "collection", "dataset"]
+
+
+class Attachments(Node):
+    model_config = {**Node.model_config, **dict(extra=Extra.allow)}
+    """update pydantic model config to allow additional unknown keys"""
+    files: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field((), in_package=True)
+    """File attachments"""
+
+
+class Person(Node):
+    name: Optional[str] = None
+    """Full name"""
+    affiliation: Optional[str] = None
+    """Affiliation"""
+    email: Optional[EmailStr] = None
+    """Email"""
+    github_user: Optional[str] = None
+    """GitHub user name"""
+    orcid: Optional[str] = Field(None, examples=["0000-0001-2345-6789"])
+    """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID)
+    in hyphenated groups of 4 digits, (and [valid](
+    https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
+    ) as per ISO 7064 11,2.)
+    """
+
+    @field_validator("orcid")
+    @classmethod
+    def check_orcid(cls, orcid: Optional[str]):
+        if orcid is not None and (
+            len(orcid) != 19
+            or any(orcid[idx] != "-" for idx in [4, 9, 14])
+            or not is_valid_orcid_id(orcid.replace("-", ""))
+        ):
+            raise ValueError(f"'{orcid} is not a valid ORCID iD in hyphenated groups of 4 digits")
+
+
+class Author(Person):
+    name: str = Field(..., description="Full name")
+
+
+class Maintainer(Person):
+    github_user: str = Field(..., description="GitHub user name")
+
+
+class Badge(Node, title="Custom badge"):
+    """A custom badge"""
+
+    label: str = Field(examples=["Open in Colab"])
+    """badge label to display on hover"""
+
+    icon: Union[HttpUrl, None] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
+    """badge icon"""
+
+    url: HttpUrl = Field(
+        examples=[
+            "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
+        ]
+    )
+    """target URL"""
+
+
+class CiteEntry(Node):
+    text: str
+    """free text description"""
+
+    doi: Optional[str] = Field(None, pattern=DOI_REGEX)
+    """A digital object identifier (DOI) is the prefered citation reference.
+    See https://www.doi.org/ for details. (alternatively specify `url`)"""
+
+    url: Optional[str] = None
+    """URL to cite (preferably specify a `doi` instead)"""
+
+    @model_validator(mode="before")
+    def check_doi_or_url(cls, data: RawMapping):
+        if not data.get("doi") and not data.get("url"):
+            raise ValueError("Either 'doi' or 'url' is required")
+
+        return data
 
 
 class ResourceDescriptionBaseNoSource(Node):
@@ -43,12 +125,13 @@ class ResourceDescriptionBaseNoSource(Node):
     """The format version of this RDF specification
     (not the `version` of the resource described by it)"""
 
-    type: str = Field(examples=list(get_args(["application", "notebook"])))
+    type: Union[KnownGenericResourceType, str] = Field(examples=list(get_args(KnownGenericResourceType)))
     """The resource type assigns a broad category to the resource
     and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
 
     name: str
     """A human-friendly name of the resource description"""
+
     # todo warn about capitalization
     @field_validator("name", mode="after")
     @classmethod
@@ -58,19 +141,29 @@ class ResourceDescriptionBaseNoSource(Node):
     description: str
     """A string containing a brief description."""
 
-    covers: tuple[Union[HttpUrl, RelativePath], ...] = Field((), examples=[])
-    """Cover images.
-    Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.
-    The supported image formats are: 'jpg', 'png', 'gif'"""
+    covers: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
+        (),
+        examples=[],
+        description=f"Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: {_VALID_COVER_IMAGE_EXTENSIONS}",
+    )
+    """Cover images."""
+
     @field_validator("covers", mode="after")
     @classmethod
-    def check_cover_suffixes(cls, value: Union[HttpUrl, RelativePath, None]) -> Union[HttpUrl, RelativePath, None]
-        if value is not None and not str(value).endswith(".md"):
-            raise ValueError("Expected markdown file with '.md' suffix")
+    def check_cover_suffix(
+        cls, value: Sequence[Union[HttpUrl, RelativeFilePath, None]]
+    ) -> Sequence[Union[HttpUrl, RelativeFilePath, None]]:
+        for v in value:
+            if (
+                v is not None
+                and not "." in str(v)
+                and not str(v).split(".")[-1].lower() in _VALID_COVER_IMAGE_EXTENSIONS
+            ):
+                raise ValueError("Expected markdown file with '.md' suffix")
 
         return value
 
-    documentation: Union[HttpUrl, RelativePath, None] = Field(
+    documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
         None,
         examples=[
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -79,9 +172,12 @@ class ResourceDescriptionBaseNoSource(Node):
     )
     """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
+
     @field_validator("documentation", mode="after")
     @classmethod
-    def check_documentation_suffix(cls, value: Union[HttpUrl, RelativePath, None]) -> Union[HttpUrl, RelativePath, None]
+    def check_documentation_suffix(
+        cls, value: Union[HttpUrl, RelativeFilePath, None]
+    ) -> Union[HttpUrl, RelativeFilePath, None]:
         if value is not None and not str(value).endswith(".md"):
             raise ValueError("Expected markdown file with '.md' suffix")
 
@@ -103,7 +199,7 @@ class ResourceDescriptionBaseNoSource(Node):
     cite: tuple[CiteEntry, ...] = ()
     """citations"""
 
-    config: Union[dict[str, RawValue], None] = Field(None, examples=[])
+    config: Union[RawMappingField, None] = Field(None, examples=[])
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a github repo URL in `config` since we already have the
     `git_repo` field defined in the spec.
@@ -132,7 +228,7 @@ class ResourceDescriptionBaseNoSource(Node):
     )
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[HttpUrl, RelativePath, Annotated[str, annotated_types.Len(min_length=1, max_length=2)], None] = None
+    icon: Union[HttpUrl, RelativeFilePath, Annotated[str, annotated_types.Len(min_length=1, max_length=2)], None] = None
     """an icon for illustration"""
 
     # todo: make license mandatory
@@ -188,14 +284,12 @@ class ResourceDescriptionBaseNoSource(Node):
     #     if error is not None:
     #         self.warn("tags", f"could not check tag categories ({error})")
 
-    version: Union[str, None] = Field(
-        None,
-        description="The version number of the resource. Its format must be a string in "
-        "`MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/). "
-        "Hyphens and plus signs are not allowed to be compatible with "
-        "https://packaging.pypa.io/en/stable/version.html. "
-        "The initial version number should be `0.1.0`.",
-    )
+    version: Union[Version, None] = Field(None, examples=["0.1.0"])
+    """The version number of the resource. Its format must be a string in
+    `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
+    Hyphens and plus signs are not allowed to be compatible with
+    https://packaging.pypa.io/en/stable/version.html.
+    The initial version should be `"0.1.0"`."""
 
     def __init__(self, *, _context: Optional[dict[str, Any]] = None, **data: Any) -> None:
         # set 'root' context from 'root' kwarg when constructing an RescourceDescription
@@ -324,24 +418,12 @@ class ResourceDescriptionBaseNoSource(Node):
         else:
             return value
 
-    @field_validator("version", mode="after")
-    @classmethod
-    def check_version(cls, value: Optional[str]) -> Optional[str]:
-        if value is None:
-            return None
-
-        if not re.fullmatch(r"^\s*" + packaging.version.VERSION_PATTERN + r"\s*$", value, re.VERBOSE | re.IGNORECASE):
-            raise ValueError(
-                f"'{value}' is not a valid version string, "
-                "see https://packaging.pypa.io/en/stable/version.html for help"
-            )
-
 
 ResourceDescription = TypeVar("ResourceDescription", bound=ResourceDescriptionBaseNoSource)
 
 
 class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
-    source: Union[HttpUrl, RelativePath, None] = Field(
+    source: Union[HttpUrl, RelativeFilePath, None] = Field(
         None, description="URL or relative path to the source of the resource"
     )
     """The primary source of the resource"""
@@ -367,90 +449,10 @@ class GenericDescription(ResourceDescriptionBase):
 
     @field_validator("type", mode="after")
     @classmethod
-    def check_specific_types(cls, value: str):
-        TODO
+    def check_specific_types(cls, value: str) -> str:
+        if value in get_args(KnownSpecializedResourceType):
+            raise ValueError(
+                "Use the {value} Description instead of the generic Description for resources of type {value}."
+            )
 
-
-class Attachments(Node):
-    model_config = {**Node.model_config, **dict(extra=Extra.allow)}
-    """update pydantic model config to allow additional unknown keys"""
-    files: tuple[Union[HttpUrl, RelativePath], ...] = Field((), in_package=True)
-    """File attachments"""
-
-
-class Person(Node):
-    name: Optional[str] = None
-    """Full name"""
-    affiliation: Optional[str] = None
-    """Affiliation"""
-    email: Optional[EmailStr] = None
-    """Email"""
-    github_user: Optional[str] = None
-    """GitHub user name"""
-    orcid: Optional[str] = Field(None, examples=["0000-0001-2345-6789"])
-    """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID)
-    in hyphenated groups of 4 digits, (and [valid](
-    https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
-    ) as per ISO 7064 11,2.)
-    """
-
-    @field_validator("orcid")
-    @classmethod
-    def check_orcid(cls, orcid: Optional[str]):
-        if orcid is not None and (
-            len(orcid) != 19
-            or any(orcid[idx] != "-" for idx in [4, 9, 14])
-            or not is_valid_orcid_id(orcid.replace("-", ""))
-        ):
-            raise ValueError(f"'{orcid} is not a valid ORCID iD in hyphenated groups of 4 digits")
-
-
-class Author(Person):
-    name: str = Field(..., description="Full name")
-
-
-class Maintainer(Person):
-    github_user: str = Field(..., description="GitHub user name")
-
-
-class Badge(Node, title="Custom badge"):
-    """A custom badge"""
-
-    label: str = Field(examples=["Open in Colab"])
-    """badge label to display on hover"""
-
-    icon: Union[HttpUrl, None] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
-    """badge icon"""
-
-    url: HttpUrl = Field(
-        examples=[
-            "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
-        ]
-    )
-    """target URL"""
-
-
-class CiteEntry(Node):
-    text: str
-    """free text description"""
-
-    doi: Optional[str] = Field(None, pattern=DOI_REGEX)
-    """A digital object identifier (DOI) is the prefered citation reference.
-    See https://www.doi.org/ for details. (alternatively specify `url`)"""
-
-    url: Optional[str] = None
-    """URL to cite (preferably specify a `doi` instead)"""
-
-    @model_validator(mode="before")
-    def check_doi_or_url(cls, data: RawMapping):
-        if not data.get("doi") and not data.get("url"):
-            raise ValueError("Either 'doi' or 'url' is required")
-
-        return data
-
-
-# because we define higher level pydantic models at the top of the file,
-# we need to rebuild them now that all forward references are known
-ResourceDescriptionBaseNoSource.model_rebuild()
-ResourceDescriptionBase.model_rebuild()
-GenericDescription.model_rebuild()
+        return value

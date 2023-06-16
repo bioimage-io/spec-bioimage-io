@@ -87,62 +87,60 @@ def Field(  # noqa C901  NOSONAR: S107
 
 # A TypeError is not converted to pydantic.ValidatonError,
 # therefore we use a custom 'ValidationTypeError' instead
-class ValidationTypeError(AssertionError):
-    pass
-    # todo: set 'error_type' somehow...
-    # note that 'raise partial(PydanticCustomError, error_type="type_error") from e' is not supported
-    # and "'PydanticCustomError' is not an acceptable base type"
-    # and "raise pydantic.ValidationError from e" raises "TypeError: No constructor defined"
-    # error_type = "type_error"
+# class ValidationTypeError(AssertionError):
+#     pass
+# todo: set 'error_type' somehow...
+# note that 'raise partial(PydanticCustomError, error_type="type_error") from e' is not supported
+# and "'PydanticCustomError' is not an acceptable base type"
+# and "raise pydantic.ValidationError from e" raises "TypeError: No constructor defined"
+# error_type = "type_error"
 
 
-class RelativePath(pathlib.PurePosixPath):
-    """A relative path/URL.
+# class RelativePath(pathlib.PurePosixPath):
+#     """A relative path/URL.
 
-    If the 'root' context is given, the 'absolute' attribute holds the absolute local path or full URL.
-    """
+#     If the 'root' context is given, the 'absolute' attribute holds the absolute local path or full URL.
+#     """
 
-    absolute: Union[pathlib.Path, AnyUrl, None] = None
+#     absolute: Union[pathlib.Path, AnyUrl, None] = None
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source_type: Any, _handler: pydantic.GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        return core_schema.general_plain_validator_function(cls.validate)
+#     @classmethod
+#     def __get_pydantic_core_schema__(
+#         cls, _source_type: Any, _handler: pydantic.GetCoreSchemaHandler
+#     ) -> core_schema.CoreSchema:
+#         return core_schema.general_plain_validator_function(cls.validate)
 
-    @classmethod
-    def validate(cls, value: str, info: core_schema.ValidationInfo):
-        try:
-            p = cls(value)
-        except TypeError as e:
-            raise ValidationTypeError from e
+#     @classmethod
+#     def validate(cls, value: str, info: core_schema.ValidationInfo):
+#         try:
+#             p = cls(value)
+#         except TypeError as e:
+#             raise ValidationTypeError from e
 
-        if p.is_absolute():
-            raise ValueError(f"{value} is absolute, expected a relative path")
+#         if p.is_absolute():
+#             raise ValueError(f"{value} is absolute, expected a relative path")
 
-        if info.context is None or "root" not in info.context:  # info.context can be None! #  type: ignore
-            raise pydantic.PydanticUserError("missing 'root' context for RelativePath", code=None)
+#         if info.context is None or "root" not in info.context:  # info.context can be None! #  type: ignore
+#             raise pydantic.PydanticUserError("missing 'root' context for RelativePath", code=None)
 
-        root: Any = info.context["root"]
+#         root: Any = info.context["root"]
 
-        if isinstance(root, pathlib.Path):
-            if not (root / p).exists():
-                raise ValueError(f"Path {root / p} does not point to a file")
+#         if isinstance(root, pathlib.Path):
+#             if not (root / p).exists():
+#                 raise ValueError(f"Path {root / p} does not point to a file")
 
-            p.absolute = root / p
+#             p.absolute = root / p
 
-        elif isinstance(root, AnyUrl):
-            p.absolute = AnyUrl(urljoin(str(root), str(p)))
-        else:
-            raise ValueError(
-                "RelativePath expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
-                f"but got {root} of type '{type(root)}'"
-            )
+#         elif isinstance(root, AnyUrl):
+#             p.absolute = AnyUrl(urljoin(str(root), str(p)))
+#         else:
+#             raise ValueError(
+#                 "RelativePath expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
+#                 f"but got {root} of type '{type(root)}'"
+#             )
 
-        return p
+#         return p
 
-
-Sha256 = Annotated[str, annotated_types.Len(256, 256)]
 
 # DEPRECATED
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""

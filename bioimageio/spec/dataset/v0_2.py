@@ -1,6 +1,11 @@
 from typing import Literal
-from ..general.v0_2 import ResourceDescriptionBase, LatestFormatVersion, FormatVersion, LATEST_FORMAT_VERSION
 
+from bioimageio.spec.generic.v0_2 import (
+    LATEST_FORMAT_VERSION,
+    FormatVersion,
+    LatestFormatVersion,
+    ResourceDescriptionBase,
+)
 
 __all__ = ["Dataset", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 

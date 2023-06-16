@@ -1,6 +1,5 @@
 from typing import Any, Literal, get_args
-from bioimageio.spec.general.v0_2 import ResourceDescriptionBaseNoSource
-from bioimageio.spec.shared.fields import Field
+from bioimageio.spec.generic.v0_2 import ResourceDescriptionBaseNoSource
 from bioimageio.spec.shared.types_ import RawMapping
 
 LatestFormatVersion = Literal["0.4.9"]

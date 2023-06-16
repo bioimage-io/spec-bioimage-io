@@ -17,26 +17,6 @@ from . import raw_nodes
 from .raw_nodes import FormatVersion
 
 
-class _BioImageIOSchema(SharedBioImageIOSchema):
-    raw_nodes: ClassVar[ModuleType] = raw_nodes
-
-
-class CiteEntry(_BioImageIOSchema):
-    text = fields.String(required=True, bioimageio_description="free text description")
-    doi = fields.DOI(
-        bioimageio_maybe_required=True,
-        bioimageio_description="digital object identifier, see https://www.doi.org/ (alternatively specify `url`)",
-    )
-    url = fields.String(
-        bioimageio_maybe_required=True, bioimageio_description="url to cite (alternatively specify `doi`)"
-    )  # todo: change to fields.URL
-
-    @validates_schema
-    def doi_or_url(self, data, **kwargs):
-        if data.get("doi") is None and data.get("url") is None:
-            raise ValidationError("doi or url needs to be specified in a citation")
-
-
 class RDF(_BioImageIOSchema):
     class Meta:
         unknown = EXCLUDE
@@ -52,40 +32,7 @@ If no specialized RDF exists for the specified type (like model RDF for type='mo
 specified.
 """
 
-    attachments = fields.Nested(Attachments(), bioimageio_description="Additional unknown keys are allowed.")
-
-    authors_bioimageio_description = (
-        "A list of authors. The authors are the creators of the specifications and the primary points of contact."
-    )
-    authors = fields.List(fields.Nested(Author()), bioimageio_description=authors_bioimageio_description)
-
-    badges = fields.List(fields.Nested(Badge()), bioimageio_description="a list of badges")
-
-    cite_bioimageio_description = """A list of citation entries.
-Each entry contains a mandatory `text` field and either one or both of `doi` and `url`.
-E.g. the citation for the model architecture and/or the training data used."""
-    cite = fields.List(fields.Nested(CiteEntry()), bioimageio_description=cite_bioimageio_description)
-
-    config_bioimageio_description = (
-        "A custom configuration field that can contain any keys not present in the RDF spec. "
-        "This means you should not store, for example, github repo URL in `config` since we already have the "
-        "`git_repo` key defined in the spec.\n"
-        "Keys in `config` may be very specific to a tool or consumer software. To avoid conflicted definitions, "
-        "it is recommended to wrap configuration into a sub-field named with the specific domain or tool name, "
-        """for example:
-
-```yaml
-   config:
-      bioimage_io:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-           nested: value
-      imagej:
-        macro_dir: /path/to/macro/file
-```
-"""
-        "If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`."
-    )
+    config_bioimageio_description = ()
     config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
 
     covers = fields.List(
@@ -93,22 +40,6 @@ E.g. the citation for the model architecture and/or the training data used."""
         bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
         "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
-    )
-
-    documentation = fields.Union(
-        [
-            fields.URL(),
-            fields.Path(
-                validate=field_validators.Attribute(
-                    "suffix",
-                    field_validators.Equal(
-                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
-                    ),
-                )
-            ),
-        ],
-        bioimageio_description="URL or relative path to markdown file with additional documentation. "
-        "For markdown files the recommended documentation file name is `README.md`.",
     )
 
     download_url = fields.Union(
@@ -149,10 +80,6 @@ E.g. the citation for the model architecture and/or the training data used."""
 
             if not license_info.get("isFsfLibre", False):
                 self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
-
-    links = fields.List(fields.String(), bioimageio_description="links to other bioimage.io resources")
-
-    maintainers = fields.List(fields.Nested(Maintainer()), bioimageio_description="Maintainers of this resource.")
 
     name = fields.Name(required=True, bioimageio_description="name of the resource, a human-friendly name")
 

@@ -25,22 +25,6 @@ except ImportError:
 
 
 @dataclass
-class RawNode:
-    _include_in_package: ClassVar[Sequence[str]] = tuple()  # todo: move to field meta data
-
-    def __post_init__(self):
-        for f in dataclasses.fields(self):
-            if getattr(self, f.name) is missing and (
-                get_origin(f.type) is not Union or not isinstance(missing, get_args(f.type))
-            ):
-                raise TypeError(f"{self.__class__}.__init__() missing required argument: '{f.name}'")
-
-        field_names = [f.name for f in dataclasses.fields(self)]
-        for incl_in_package in self._include_in_package:
-            assert incl_in_package in field_names
-
-
-@dataclass
 class Dependencies(RawNode):
     _include_in_package = ("file",)
 
@@ -80,16 +64,6 @@ class ImportableModule(RawNode):
 
 
 @dataclass
-class LocalImportableModule(ImportableModule):
-    """intermediate between raw_nodes.ImportableModule and core.resource_io.nodes.ImportedSource.
-
-    Used by SourceNodeTransformer
-    """
-
-    root_path: pathlib.Path = missing
-
-
-@dataclass
 class ImportableSourceFile(RawNode):
     _include_in_package = ("source_file",)
 
@@ -98,16 +72,6 @@ class ImportableSourceFile(RawNode):
 
     def __str__(self):
         return f"{self.source_file}:{self.callable_name}"
-
-
-@dataclass
-class ResolvedImportableSourceFile(ImportableSourceFile):
-    """intermediate between raw_nodes.ImportableSourceFile and core.resource_io.nodes.ImportedSource.
-
-    Used by SourceNodeTransformer
-    """
-
-    source_file: pathlib.Path = missing
 
 
 ImportableSource = Union[ImportableModule, ImportableSourceFile, ResolvedImportableSourceFile, LocalImportableModule]

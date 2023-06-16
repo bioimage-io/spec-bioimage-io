@@ -4,15 +4,22 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.rdf.v0_2.nodes import LATEST_FORMAT_VERSION, Attachments, Author, CiteEntry, Maintainer, Rdf
-from bioimageio.spec.shared.fields import RelativePath
+from bioimageio.spec.generic.v0_2 import (
+    LATEST_FORMAT_VERSION,
+    Attachments,
+    Author,
+    CiteEntry,
+    GenericDescription,
+    Maintainer,
+)
+from bioimageio.spec.shared.types_custom import RelativeFilePath
 from tests.unittest_utils import BaseTestCases
 
 
 class TestAttachments(BaseTestCases.TestNode):
     NodeClass = Attachments
     valid_kwargs = [
-        dict(files=(RelativePath(__file__), HttpUrl("https://example.com")), another_attachment=5),
+        dict(files=(RelativeFilePath(__file__), HttpUrl("https://example.com")), another_attachment=5),
         dict(files=(__file__, "https://example.com"), extra=dict(more="of this")),
         dict(files=(__file__, "http:example.com")),
         dict(only="other stuff"),
@@ -61,23 +68,25 @@ class TestCiteEntry(BaseTestCases.TestNode):
     invalid_kwargs = [dict(text="lala"), dict(url="https://example.com")]
 
 
-class TestRdf(BaseTestCases.TestNode):
-    NodeClass = Rdf
+class TestGenericDescription(BaseTestCases.TestNode):
+    NodeClass = GenericDescription
     context = None
     valid_kwargs = [
         dict(
-            authors=[{"name": "Me"}],
             format_version=LATEST_FORMAT_VERSION,
             name="my name",
+            description="my description",
+            authors=[{"name": "Me"}],
             root=Path(__file__).parent,
             type="my_type",
             version="0.1.0",
         ),
         dict(
-            attachments={"files": [Path(__file__)], "something": 42},
-            authors=[{"name": "Me"}],
             format_version=LATEST_FORMAT_VERSION,
             name="your name",
+            description="my description",
+            attachments={"files": [Path(__file__)], "something": 42},
+            authors=[{"name": "Me"}],
             root="https://example.com",
             type="my_type",
             version="0.1.0",
