@@ -42,20 +42,6 @@ specified.
         "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
     )
 
-    download_url = fields.Union(
-        [fields.URL(), fields.Path()], bioimageio_description="optional url to download the resource from"
-    )
-
-    format_version = fields.String(
-        required=True,
-        bioimageio_description_order=0,
-        bioimageio_description=(
-            "Version of the bioimage.io Resource Description File Specification used."
-            f"The current general format version described here is {get_args(FormatVersion)[-1]}. "
-            "Note: The general RDF format is not to be confused with specialized RDF format like the Model RDF format."
-        ),
-    )
-
     @validates_schema
     def format_version_matches_type(self, data, **kwargs):
         format_version = data.get("format_version")

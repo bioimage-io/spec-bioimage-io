@@ -144,7 +144,10 @@ class ResourceDescriptionBaseNoSource(Node):
     covers: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
         (),
         examples=[],
-        description=f"Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. The supported image formats are: {_VALID_COVER_IMAGE_EXTENSIONS}",
+        description=(
+            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
+            f"The supported image formats are: {_VALID_COVER_IMAGE_EXTENSIONS}"
+        ),
     )
     """Cover images."""
 
@@ -156,8 +159,8 @@ class ResourceDescriptionBaseNoSource(Node):
         for v in value:
             if (
                 v is not None
-                and not "." in str(v)
-                and not str(v).split(".")[-1].lower() in _VALID_COVER_IMAGE_EXTENSIONS
+                and "." not in str(v)
+                and str(v).split(".")[-1].lower() not in _VALID_COVER_IMAGE_EXTENSIONS
             ):
                 raise ValueError("Expected markdown file with '.md' suffix")
 
@@ -220,7 +223,8 @@ class ResourceDescriptionBaseNoSource(Node):
     (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
     an altered rdf.yaml file with local references to the downloaded files)"""
 
-    # download_url: Union[_Missing, Path, URI] = Field(None, description=)
+    download_url: Union[HttpUrl, None] = None
+    """optional URL to download the resource from (deprecated)"""
 
     git_repo: Union[str, None] = Field(
         None,
@@ -367,13 +371,13 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @classmethod
     def model_validate(
-        cls: type[ResourceDescription],
+        cls: type[ResourceDescriptionType],
         obj: dict[str, Any],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Optional[dict[str, Any]] = None,
-    ) -> ResourceDescription:
+    ) -> ResourceDescriptionType:
         """Validate RDF content `obj` and create an RDF instance.
 
         Also sets 'root' context from 'root' in `obj` (or vice versa)
@@ -419,10 +423,11 @@ class ResourceDescriptionBaseNoSource(Node):
             return value
 
 
-ResourceDescription = TypeVar("ResourceDescription", bound=ResourceDescriptionBaseNoSource)
+ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=ResourceDescriptionBaseNoSource)
 
 
 class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
+    model_config = {**ResourceDescriptionBaseNoSource.model_config, **dict(extra=Extra.ignore)}
     source: Union[HttpUrl, RelativeFilePath, None] = Field(
         None, description="URL or relative path to the source of the resource"
     )
@@ -441,7 +446,7 @@ class GenericDescription(ResourceDescriptionBase):
 
     model_config = {
         **ResourceDescriptionBase.model_config,
-        **dict(title=f"bioimage.io generic RDF {get_args(FormatVersion)[-1]}", extra=Extra.ignore),
+        **dict(title=f"bioimage.io generic RDF {get_args(FormatVersion)[-1]}"),
     }
     """pydantic model_config"""
 
