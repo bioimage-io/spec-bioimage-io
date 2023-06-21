@@ -78,6 +78,11 @@ BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-i
 DOI_REGEX = r"10\.[0-9]{4}.+"  # lax DOI regex validating the first 7 DOI characters only
 RDF_NAMES = ("rdf.yaml", "model.yaml")
 
+SHA256_HINT = """You can drag and drop your file to this
+[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.
+Or you can generate a SHA256 checksum with Python's `hashlib`,
+[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."""
+
 
 class ValidationWarning(UserWarning):
     """a warning category to warn with during RDF validation"""

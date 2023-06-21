@@ -1,16 +1,48 @@
 import collections.abc
+import contextlib
+import dataclasses
+from keyword import iskeyword
+from multiprocessing import context
 import re
 from functools import partial
-from typing import Any, Callable, Literal, Mapping, Sequence, Union, get_args
+import sys
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Generic,
+    Literal,
+    Mapping,
+    Sequence,
+    Type,
+    Union,
+    get_args,
+    TypeVar,
+    get_origin,
+)
+from annotated_types import BaseMetadata, GroupedMetadata, MinLen
+import annotated_types
 
 import packaging.version
-from pydantic import ValidationInfo
+from pydantic import GetCoreSchemaHandler, TypeAdapter, ValidationInfo
 from pydantic._internal._decorators import inspect_validator
-from pydantic._internal._internal_dataclass import slots_dataclass  # std dataclass but with slots=True for py>=3.10
-from pydantic.functional_validators import AfterValidator
+from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
-
+from pydantic_core import core_schema
 from bioimageio.spec.shared.types_ import RawLeafValue, RawMapping
+
+WARNINGS_CONTEXT_KEY: Literal["warnings"] = "warnings"
+RAISE_WARNINGS_VALUE: Literal["raise"] = "raise"
+
+if sys.version_info < (3, 10):
+    # EllipsisType = type(Ellipsis)
+    # KW_ONLY = {}
+    SLOTS = {}
+else:
+    # from types import EllipsisType
+
+    # KW_ONLY = {"kw_only": True}
+    SLOTS = {"slots": True}
 
 # somehow it does't work to use runtime checkable Protocols to determine
 # if a functional validator takes the info arg or not..
@@ -28,44 +60,79 @@ from bioimageio.spec.shared.types_ import RawLeafValue, RawMapping
 
 ValidatorFunction = Union[NoInfoValidatorFunction, GeneralValidatorFunction]
 
+AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
-def warn(
-    validate_func: Union[ValidatorFunction, None] = None,
+
+# class WithWarning(Generic[T, W]):
+#     """Allows to add a warning as type W to a type T"""
+
+#     def __init__(self, fail_on: T, warn_on: W) -> None:
+#         super().__init__()
+#         self.validator = TypeAdapter(fail_on)
+#         self.warner = TypeAdapter(warn_on)
+
+#     def __get_pydantic_core_schema__(self, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+#         return core_schema.general_plain_validator_function(self._validate)
+
+#     def _validate(self, value: Any, info: ValidationInfo) -> Union[T, W]:
+#         valid = self.validator.validate_python(value)
+#         if info.context["warnings"] == "raise":
+#             valid = self.warner.validate_python(valid)
+
+#         return valid
+
+
+def warn(typ: Union[AnnotationMetaData, Any]):
+    """treat a type or its annotation metadata as a warning condition"""
+    assert get_origin(AnnotationMetaData) is Union
+    if isinstance(typ, get_args(AnnotationMetaData)):
+        typ = Annotated[Any, typ]
+
+    validator = TypeAdapter(typ)
+    return BeforeWarner(validator.validate_python)
+
+
+def as_warning(
+    func: ValidatorFunction,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-) -> Union[GeneralValidatorFunction, Callable[[ValidatorFunction], GeneralValidatorFunction]]:
-    """turn validation function into a no-op, unless `context["warnings"] == "raise"`"""
-    if validate_func is None:
-        return partial(warn, mode=mode)  # type: ignore
+) -> GeneralValidatorFunction:
+    """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
 
     def wrapper(value: Any, info: ValidationInfo) -> Any:
-        if info.context["warnings"] == "raise":
-            assert validate_func is not None
-            info_arg = inspect_validator(validate_func, "after")
+        if info.context[WARNINGS_CONTEXT_KEY] == RAISE_WARNINGS_VALUE:
+            assert func is not None
+            info_arg = inspect_validator(func, mode)
             if info_arg:
-                return validate_func(value, info)  # type: ignore
+                func(value, info)  # type: ignore
             else:
-                return validate_func(value)  # type: ignore
+                func(value)  # type: ignore
 
-            # somehow does not work, see commented Protocols above
-            # if isinstance(validate_func, GeneralValidatorFunction):
-            #     return validate_func(value, info)
-            # else:
-            #     return validate_func(value)
-        else:
-            return value
+        return value
 
     return wrapper
 
 
-@slots_dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True, **SLOTS)
 class AfterWarner(AfterValidator):
-    """wraps validation `func` with the `warn` decorator"""
+    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
         if __name == "func":
-            return warn(ret)
+            return as_warning(ret)
+        else:
+            return ret
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class BeforeWarner(BeforeValidator):
+    """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
+
+    def __getattribute__(self, __name: str) -> Any:
+        ret = super().__getattribute__(__name)
+        if __name == "func":
+            return as_warning(ret)
         else:
             return ret
 
@@ -76,6 +143,19 @@ def validate_version(v: str) -> str:
             f"'{v}' is not a valid version string, " "see https://packaging.pypa.io/en/stable/version.html for help"
         )
     return v
+
+
+def validate_identifier(s: str, info: ValidationInfo) -> str:
+    if not s.isidentifier():
+        raise ValueError(
+            f"'{s}' is not a valid (Python) identifier, "
+            "see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for details."
+        )
+
+    if info.context[WARNINGS_CONTEXT_KEY] == RAISE_WARNINGS_VALUE and iskeyword(s):
+        raise ValueError(f"'{s}' is a Python keword.")
+
+    return s
 
 
 # def validate_relative_path(value: Union[Path, str], info: ValidationInfo):

@@ -4,7 +4,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar, Union, get_args
 
-import annotated_types
+from annotated_types import Len, MinLen
 import pydantic
 from pydantic import (
     AnyUrl,
@@ -25,6 +25,7 @@ from bioimageio.spec.shared.types_ import RawMapping
 from bioimageio.spec.shared.types_annotated import RawMappingField, Version
 from bioimageio.spec.shared.types_custom import RelativeFilePath
 from bioimageio.spec.shared.utils import is_valid_orcid_id
+from bioimageio.spec.shared.validation import warn
 
 LatestFormatVersion = Literal["0.2.3"]
 FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
@@ -141,6 +142,26 @@ class ResourceDescriptionBaseNoSource(Node):
     description: str
     """A string containing a brief description."""
 
+    documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
+        None,
+        examples=[
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+            "README.md",
+        ],
+    )
+    """URL or relative path to a markdown file with additional documentation.
+    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
+
+    @field_validator("documentation", mode="after")
+    @classmethod
+    def check_documentation_suffix(
+        cls, value: Union[HttpUrl, RelativeFilePath, None]
+    ) -> Union[HttpUrl, RelativeFilePath, None]:
+        if value is not None and not str(value).endswith(".md"):
+            raise ValueError("Expected markdown file with '.md' suffix")
+
+        return value
+
     covers: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
         (),
         examples=[],
@@ -162,27 +183,7 @@ class ResourceDescriptionBaseNoSource(Node):
                 and "." not in str(v)
                 and str(v).split(".")[-1].lower() not in _VALID_COVER_IMAGE_EXTENSIONS
             ):
-                raise ValueError("Expected markdown file with '.md' suffix")
-
-        return value
-
-    documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
-        None,
-        examples=[
-            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-            "README.md",
-        ],
-    )
-    """URL or relative path to a markdown file with additional documentation.
-    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
-
-    @field_validator("documentation", mode="after")
-    @classmethod
-    def check_documentation_suffix(
-        cls, value: Union[HttpUrl, RelativeFilePath, None]
-    ) -> Union[HttpUrl, RelativeFilePath, None]:
-        if value is not None and not str(value).endswith(".md"):
-            raise ValueError("Expected markdown file with '.md' suffix")
+                raise ValueError(f"Expected markdown file with suffix in {_VALID_COVER_IMAGE_EXTENSIONS}")
 
         return value
 
@@ -199,7 +200,7 @@ class ResourceDescriptionBaseNoSource(Node):
     badges: tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: tuple[CiteEntry, ...] = ()
+    cite: Annotated[tuple[CiteEntry, ...], warn(Annotated[tuple[CiteEntry, ...], MinLen(1)])] = ()
     """citations"""
 
     config: Union[RawMappingField, None] = Field(None, examples=[])
@@ -232,7 +233,7 @@ class ResourceDescriptionBaseNoSource(Node):
     )
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[HttpUrl, RelativeFilePath, Annotated[str, annotated_types.Len(min_length=1, max_length=2)], None] = None
+    icon: Union[HttpUrl, RelativeFilePath, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """an icon for illustration"""
 
     # todo: make license mandatory

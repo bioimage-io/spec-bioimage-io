@@ -78,7 +78,7 @@ class Collection(ResourceDescriptionBase):
 
     collection: Annotated[
         tuple[CollectionEntry, ...],
-        annotated_types.Len(min_length=1),
+        annotated_types.MinLen(1),
     ]
     """Collection entries"""
 

@@ -49,65 +49,6 @@ PostprocessingName = PostprocessingName
 Preprocessing = Preprocessing
 PreprocessingName = PreprocessingName
 
-FormatVersion = Literal[
-    "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.4.5", "0.4.6", "0.4.7", "0.4.8", "0.4.9"
-]  # newest format needs to be last (used in __init__.py)
-WeightsFormat = Literal[
-    "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
-]
-
-ImportableSource = Union[ImportableSourceFile, ImportableModule]
-
-
-@dataclass
-class _WeightsEntryBase(_WeightsEntryBase03):
-    dependencies: Union[_Missing, Dependencies] = missing
-
-
-@dataclass
-class KerasHdf5WeightsEntry(_WeightsEntryBase, KerasHdf5WeightsEntry03):
-    pass
-
-
-@dataclass
-class OnnxWeightsEntry(_WeightsEntryBase, OnnxWeightsEntry03):
-    pass
-
-
-@dataclass
-class PytorchStateDictWeightsEntry(_WeightsEntryBase):
-    weights_format_name = "Pytorch State Dict"
-    architecture: ImportableSource = missing
-    architecture_sha256: Union[_Missing, str] = missing
-    kwargs: Union[_Missing, Dict[str, Any]] = missing
-    pytorch_version: Union[_Missing, packaging.version.Version] = missing
-
-
-@dataclass
-class TensorflowJsWeightsEntry(_WeightsEntryBase, TensorflowJsWeightsEntry03):
-    pass
-
-
-@dataclass
-class TensorflowSavedModelBundleWeightsEntry(_WeightsEntryBase, TensorflowSavedModelBundleWeightsEntry03):
-    pass
-
-
-@dataclass
-class TorchscriptWeightsEntry(_WeightsEntryBase):
-    weights_format_name = "Torchscript"
-    pytorch_version: Union[_Missing, packaging.version.Version] = missing
-
-
-WeightsEntry = Union[
-    KerasHdf5WeightsEntry,
-    OnnxWeightsEntry,
-    PytorchStateDictWeightsEntry,
-    TensorflowJsWeightsEntry,
-    TensorflowSavedModelBundleWeightsEntry,
-    TorchscriptWeightsEntry,
-]
-
 
 @dataclass
 class LinkedDataset(RawNode):
@@ -125,7 +66,6 @@ class ModelParent(RawNode):
 class Model(_RDF):
     _include_in_package = ("covers", "documentation", "test_inputs", "test_outputs", "sample_inputs", "sample_outputs")
 
-    format_version: FormatVersion = missing
     inputs: List[InputTensor] = missing
     license: str = missing
     outputs: List[OutputTensor] = missing
