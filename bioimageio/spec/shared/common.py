@@ -84,59 +84,6 @@ Or you can generate a SHA256 checksum with Python's `hashlib`,
 [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."""
 
 
-class ValidationWarning(UserWarning):
-    """a warning category to warn with during RDF validation"""
-
-    @staticmethod
-    def get_warning_summary(val_warns: Optional[Sequence[warnings.WarningMessage]]) -> dict:
-        """Summarize warning messages of the ValidationWarning category"""
-
-        def add_val_warn_to_summary(s, keys: List[str], msg: str):
-            key = keys.pop(0)
-            if "[" in key:
-                key, rest = key.split("[")
-                assert rest[-1] == "]"
-                idx = int(rest[:-1])
-            else:
-                idx = None
-
-            if key not in s:
-                s[key] = {} if keys or idx is not None else msg
-
-            s = s[key]
-
-            if idx is not None:
-                if idx not in s:
-                    s[idx] = {} if keys else {"warning": msg}
-
-                s = s[idx]
-
-            if keys:
-                assert isinstance(s, dict), (keys, s)
-                add_val_warn_to_summary(s, keys, msg)
-
-        summary: dict = {}
-        nvw: set = set()
-        for vw in val_warns or []:
-            msg = str(vw.message)
-            if issubclass(vw.category, ValidationWarning):
-                if ": " in msg:
-                    keys_, *rest = msg.split(": ")
-                    msg = ": ".join(rest)
-                    keys = keys_.split(":")
-                else:
-                    keys = []
-
-                add_val_warn_to_summary(summary, keys, msg)
-            else:
-                nvw.add(msg)
-
-        if nvw:
-            summary["non-validation-warnings"] = list(nvw)
-
-        return summary
-
-
 class ValidationSummary(TypedDict):
     bioimageio_spec_version: str
     error: Union[None, str, Dict[str, Any]]

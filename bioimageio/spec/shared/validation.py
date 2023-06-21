@@ -1,35 +1,25 @@
 import collections.abc
-import contextlib
 import dataclasses
-from keyword import iskeyword
-from multiprocessing import context
 import re
-from functools import partial
 import sys
+from keyword import iskeyword
 from typing import (
     Annotated,
     Any,
-    Callable,
-    Generic,
     Literal,
     Mapping,
     Sequence,
-    Type,
     Union,
     get_args,
-    TypeVar,
     get_origin,
 )
-from annotated_types import BaseMetadata, GroupedMetadata, MinLen
-import annotated_types
 
 import packaging.version
-from pydantic import GetCoreSchemaHandler, TypeAdapter, ValidationInfo
+from annotated_types import BaseMetadata, GroupedMetadata
+from pydantic import TypeAdapter, ValidationInfo
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
-from pydantic_core import core_schema
-from bioimageio.spec.shared.types_ import RawLeafValue, RawMapping
 
 WARNINGS_CONTEXT_KEY: Literal["warnings"] = "warnings"
 RAISE_WARNINGS_VALUE: Literal["raise"] = "raise"
@@ -37,7 +27,7 @@ RAISE_WARNINGS_VALUE: Literal["raise"] = "raise"
 if sys.version_info < (3, 10):
     # EllipsisType = type(Ellipsis)
     # KW_ONLY = {}
-    SLOTS = {}
+    SLOTS: dict[str, Any] = {}
 else:
     # from types import EllipsisType
 
@@ -100,7 +90,7 @@ def as_warning(
     """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
 
     def wrapper(value: Any, info: ValidationInfo) -> Any:
-        if info.context[WARNINGS_CONTEXT_KEY] == RAISE_WARNINGS_VALUE:
+        if info.context.get(WARNINGS_CONTEXT_KEY) == RAISE_WARNINGS_VALUE:
             assert func is not None
             info_arg = inspect_validator(func, mode)
             if info_arg:
@@ -152,7 +142,7 @@ def validate_identifier(s: str, info: ValidationInfo) -> str:
             "see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for details."
         )
 
-    if info.context[WARNINGS_CONTEXT_KEY] == RAISE_WARNINGS_VALUE and iskeyword(s):
+    if info.context.get(WARNINGS_CONTEXT_KEY) == RAISE_WARNINGS_VALUE and iskeyword(s):
         raise ValueError(f"'{s}' is a Python keword.")
 
     return s
@@ -189,6 +179,8 @@ def is_valid_raw_value(value: Any) -> bool:
 
 
 def is_valid_raw_leaf_value(value: Any) -> bool:
+    from bioimageio.spec.shared.types_ import RawLeafValue
+
     return isinstance(value, get_args(RawLeafValue))
 
 
@@ -200,10 +192,3 @@ def is_valid_raw_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
 
 def is_valid_raw_sequence(value: Union[Any, Sequence[Any]]) -> bool:
     return isinstance(value, collections.abc.Sequence) and all(is_valid_raw_value(v) for v in value)
-
-
-def validate_raw_mapping(value: Mapping[str, Any]) -> RawMapping:
-    if not is_valid_raw_mapping(value):
-        raise AssertionError(f"{value} is not not valid RawMapping")
-
-    return value

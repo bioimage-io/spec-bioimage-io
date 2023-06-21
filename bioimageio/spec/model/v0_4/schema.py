@@ -27,50 +27,7 @@ from . import raw_nodes
 #     short_bioimageio_description = "in-place definition of [dataset RDF](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_0_2.md)"
 
 
-class ModelParent(_BioImageIOSchema):
-    id = fields.BioImageIO_ID(resource_type="model")
-    uri = fields.Union(
-        [fields.URI(), fields.Path()], bioimageio_description="URL or local relative path of a model RDF"
-    )
-    sha256 = fields.SHA256(bioimageio_description="Hash of the parent model RDF. Note: the hash is not validated")
-
-    @validates_schema
-    def id_xor_uri(self, data, **kwargs):
-        if ("id" in data) == ("uri" in data):
-            raise ValidationError("Either 'id' or 'uri' are required (not both).")
-
-
 class Model(rdf.schema.RDF):
-    @validates("inputs")
-    def no_duplicate_input_tensor_names(self, value: typing.List[raw_nodes.InputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.InputTensor) for v in value):
-            raise ValidationError("Could not check for duplicate input tensor names due to another validation error.")
-
-        names = [t.name for t in value]
-        if len(names) > len(set(names)):
-            raise ValidationError("Duplicate input tensor names are not allowed.")
-
-    license = fields.String(
-        validate=field_validators.OneOf(LICENSES),
-        required=True,
-        bioimageio_description=rdf.schema.RDF.license_bioimageio_description,
-    )
-
-    outputs = fields.List(
-        fields.Nested(OutputTensor()),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="Describes the output tensors from this model.",
-    )
-
-    @validates("outputs")
-    def no_duplicate_output_tensor_names(self, value: typing.List[raw_nodes.OutputTensor]):
-        if not isinstance(value, list) or not all(isinstance(v, raw_nodes.OutputTensor) for v in value):
-            raise ValidationError("Could not check for duplicate output tensor names due to another validation error.")
-
-        names = [t["name"] if isinstance(t, dict) else t.name for t in value]
-        if len(names) > len(set(names)):
-            raise ValidationError("Duplicate output tensor names are not allowed.")
-
     @validates_schema
     def inputs_and_outputs(self, data, **kwargs) -> None:
         ipts: typing.List[raw_nodes.InputTensor] = data.get("inputs")

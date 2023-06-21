@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Annotated, Any, Literal, Optional, TypeVar, Union, get_args
+from typing import Annotated, Any, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, MinLen
-import pydantic
 from pydantic import (
     AnyUrl,
     DirectoryPath,
@@ -20,9 +19,9 @@ from pydantic import (
 
 from bioimageio.spec.shared.common import DOI_REGEX
 from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types_ import RawMapping
-from bioimageio.spec.shared.types_annotated import RawMappingField, Version
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.types_ import LicenseId, RawMapping
+from bioimageio.spec.shared.types_annotated import Version
 from bioimageio.spec.shared.types_custom import RelativeFilePath
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from bioimageio.spec.shared.validation import warn
@@ -41,7 +40,7 @@ KnownSpecializedResourceType = Literal["model", "collection", "dataset"]
 class Attachments(Node):
     model_config = {**Node.model_config, **dict(extra=Extra.allow)}
     """update pydantic model config to allow additional unknown keys"""
-    files: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field((), in_package=True)
+    files: Tuple[Union[HttpUrl, RelativeFilePath], ...] = Field((), in_package=True)
     """File attachments"""
 
 
@@ -162,7 +161,7 @@ class ResourceDescriptionBaseNoSource(Node):
 
         return value
 
-    covers: tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
+    covers: Tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
         (),
         examples=[],
         description=(
@@ -191,19 +190,19 @@ class ResourceDescriptionBaseNoSource(Node):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: tuple[Author, ...] = ()
+    authors: Tuple[Author, ...] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Union[Attachments, None] = None
     """file and other attachments"""
 
-    badges: tuple[Badge, ...] = ()
+    badges: Tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: Annotated[tuple[CiteEntry, ...], warn(Annotated[tuple[CiteEntry, ...], MinLen(1)])] = ()
+    cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)])] = ()
     """citations"""
 
-    config: Union[RawMappingField, None] = Field(None, examples=[])
+    config: Union[FrozenDictNode, None] = Field(None, examples=[])
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a github repo URL in `config` since we already have the
     `git_repo` field defined in the spec.
@@ -237,13 +236,13 @@ class ResourceDescriptionBaseNoSource(Node):
     """an icon for illustration"""
 
     # todo: make license mandatory
-    license: Union[str, None] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    license: Union[LicenseId, str, None] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    links: tuple[str, ...] = Field(
+    links: Tuple[str, ...] = Field(
         (),
         examples=[
             (
@@ -255,17 +254,17 @@ class ResourceDescriptionBaseNoSource(Node):
     )
     """IDs of other bioimage.io resources"""
 
-    maintainers: tuple[Maintainer, ...] = ()
+    maintainers: Tuple[Maintainer, ...] = ()
     """Maintainers of this resource.
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
     rdf_source: Union[HttpUrl, None] = None
     """resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from"""
 
-    root: Union[DirectoryPath, AnyUrl] = pydantic.Field(description="")
+    root: Union[DirectoryPath, AnyUrl]
     """Base path or URL for any relative paths specified in the RDF"""
 
-    tags: tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
+    tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
     """"Associated tags"""
 
     # todo warn about tags
@@ -397,6 +396,7 @@ class ResourceDescriptionBaseNoSource(Node):
             The validated RDF instance.
 
         """
+        assert isinstance(obj, dict)
         if from_attributes:
             raise NotImplementedError("from_attributes")
 
@@ -409,11 +409,13 @@ class ResourceDescriptionBaseNoSource(Node):
             )
 
         if given_root and not context_root:
-            context = (context or {}) | dict(root=given_root)
+            context = {**(context or {}), "root": given_root}
         elif context_root and not given_root:
-            obj = dict(obj) | dict(root=context_root)
+            obj = dict(obj)
+            obj["root"] = context_root
 
-        return super().model_validate(obj, strict=strict, from_attributes=from_attributes, context=context)
+        data = cls.convert_from_older_format(obj)
+        return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=context)
 
     @field_validator("type", mode="before")
     @classmethod

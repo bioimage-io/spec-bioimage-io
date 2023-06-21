@@ -1,26 +1,34 @@
 from __future__ import annotations
+
 from string import ascii_letters, digits
-from typing import Annotated, Any, Callable, ClassVar, Literal, Optional, Sequence, Type, TypeVar, Union, get_args
-from typing_extensions import LiteralString, TypeAlias
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    ClassVar,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    get_args,
+)
+
+from annotated_types import Ge, Len, MinLen, MultipleOf, Predicate
 from pydantic import (
-    AliasChoices,
     AllowInfNan,
     HttpUrl,
-    ValidationInfo,
-    field_validator,
     model_serializer,
     model_validator,
 )
-from bioimageio.spec.generic.v0_2 import Attachments, Author, CiteEntry, ResourceDescriptionBaseNoSource
+
+from bioimageio.spec.generic.v0_2 import Attachments, Author, ResourceDescriptionBaseNoSource
 from bioimageio.spec.shared.common import SHA256_HINT
 from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types_ import RawMapping
-from bioimageio.spec.shared.types_annotated import CapitalStr, Identifier, NonEmptyStr, RawMappingField, Sha256, Version
+from bioimageio.spec.shared.nodes import Kwargs, Node
+from bioimageio.spec.shared.types_ import LicenseId, RawMapping
+from bioimageio.spec.shared.types_annotated import CapitalStr, Identifier, NonEmpty, Sha256, Version
 from bioimageio.spec.shared.types_custom import RelativeFilePath
-from bioimageio.spec.shared.validation import AfterWarner, as_warning, warn
-import collections.abc
-from annotated_types import Len, MinLen, MultipleOf, Ge, Predicate
+from bioimageio.spec.shared.validation import AfterWarner, warn
 
 LatestFormatVersion = Literal["0.4.9"]
 FormatVersion = Literal[
@@ -90,7 +98,7 @@ CustomCallable = Union[CallableFromSourceFile, CallableFromDepencencies]
 
 
 class Dependencies(StringNodeBase):
-    manager: NonEmptyStr = Field(examples=["conda", "maven", "pip"])
+    manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
     """Dependency manager"""
 
     file: Union[HttpUrl, RelativeFilePath] = Field(
@@ -133,7 +141,7 @@ class WeightsEntryBase(Node):
     attachments: Union[Attachments, None] = None
     """Attachments that are specific to this weights entry."""
 
-    authors: Union[tuple[Author, ...], None] = None
+    authors: Union[Tuple[Author, ...], None] = None
     """Authors:
     If this is the initial weights entry (in other words: it does not have a `parent` field):
         the person(s) that have trained this model.
@@ -199,7 +207,7 @@ class PytorchStateDictEntry(WeightsEntryBase):
 
         return data
 
-    kwargs: dict[NonEmptyStr, Any] = Field(default_factory=dict)
+    kwargs: dict[NonEmpty[str], Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Union[Version, None] = None
@@ -247,32 +255,32 @@ WeightsEntry = Annotated[
 class ParametrizedInputShape(Node):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
-    min: Annotated[tuple[int, ...], MinLen(1)]
+    min: Annotated[Tuple[int, ...], MinLen(1)]
     """The minimum input shape"""
 
-    step: Annotated[tuple[int, ...], MinLen(1)]
+    step: Annotated[Tuple[int, ...], MinLen(1)]
     """The minimum shape change"""
 
     @model_validator(mode="after")
-    def matching_lengths(self, data: Any):
-        if len(data["min"]) != len(data["step"]):
+    def matching_lengths(self):
+        if len(self.min) != len(self.step):
             raise ValueError("`min` and `step` required to have the same length")
 
-        return data
+        return self
 
 
 class ImplicitOutputShape(Node):
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
-    reference_tensor: NonEmptyStr
+    reference_tensor: NonEmpty[str]
     """Name of the reference tensor."""
 
-    scale: Annotated[tuple[Union[float, None], ...], MinLen(1)]
+    scale: Annotated[Tuple[Union[float, None], ...], MinLen(1)]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: Annotated[tuple[Annotated[float, MultipleOf(0.5)], ...], MinLen(1)]
+    offset: Annotated[Tuple[Annotated[float, MultipleOf(0.5)], ...], MinLen(1)]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -315,7 +323,7 @@ class TensorBase(Node):
     data_type: str
     """The data type of this tensor."""
 
-    data_range: Optional[tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]] = None
+    data_range: Optional[Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]] = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
@@ -337,7 +345,7 @@ class Preprocessing(Node):
     name: PreprocessingName
     """Preprocessing name"""
 
-    kwargs: RawMappingField = Field(
+    kwargs: Kwargs = Field(
         default_factory=dict,
         description=(
             f"Key word arguments as described in [preprocessing spec]"
@@ -351,7 +359,7 @@ class Preprocessing(Node):
 class Postprocessing(Node):
     name: PostprocessingName
     """Postprocessing name"""
-    kwargs: RawMappingField = Field(
+    kwargs: Kwargs = Field(
         default_factory=dict,
         description=(
             f"Key word arguments as described in [postprocessing spec]"
@@ -368,36 +376,36 @@ class InputTensor(TensorBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
-    shape: Union[tuple[int, ...], ParametrizedInputShape] = Field(
+    shape: Union[Tuple[int, ...], ParametrizedInputShape] = Field(
         examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
     )
     """Specification of input tensor shape."""
 
-    preprocessing: tuple[Preprocessing, ...] = ()
+    preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
-    def zero_batch_step_and_one_batch_size(self, data: Any):
-        axes = data["axes"]
-        shape = data["shape"]
-        bidx = axes.find("b")
+    def zero_batch_step_and_one_batch_size(self):
+        bidx = self.axes.find("b")
         if bidx == -1:
-            return data
+            return self
 
-        if isinstance(shape, ParametrizedInputShape):
-            step = shape.step
-            shape = shape.min
+        if isinstance(self.shape, ParametrizedInputShape):
+            step = self.shape.step
+            shape = self.shape.min
             if step[bidx] != 0:
                 raise ValueError(
                     "Input shape step has to be zero in the batch dimension (the batch dimension can always be "
                     "increased, but `step` should specify how to increase the minimal shape to find the largest "
                     "single batch shape)"
                 )
+        else:
+            shape = self.shape
 
         if shape[bidx] != 1:
             raise ValueError("Input shape has to be 1 in the batch dimension b.")
 
-        return data
+        return self
 
 
 class OutputTensor(TensorBase):
@@ -406,15 +414,15 @@ class OutputTensor(TensorBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
-    shape: Union[tuple[int, ...], ImplicitOutputShape]
+    shape: Union[Tuple[int, ...], ImplicitOutputShape]
     """Output tensor shape."""
 
-    halo: Optional[tuple[int, ...]] = None
+    halo: Optional[Tuple[int, ...]] = None
     """The `halo` that should be cropped from the output tensor to avoid boundary effects.
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: tuple[Postprocessing, ...] = ()
+    postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -428,7 +436,7 @@ class OutputTensor(TensorBase):
 
 
 class LinkedDataset(Node):
-    id: NonEmptyStr
+    id: NonEmpty[str]
     """dataset Id"""
 
 
@@ -439,7 +447,7 @@ class RunMode(Node):
     name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode)]
     """Run mode name"""
 
-    kwargs: RawMappingField = Field(default_factory=dict)
+    kwargs: Kwargs = Field(default_factory=dict)
     """Run mode specific key word arguments"""
 
     # @validates("name")
@@ -449,7 +457,7 @@ class RunMode(Node):
 
 
 class ModelParent(Node):
-    id: Optional[NonEmptyStr] = None  # todo: annotate known ids
+    id: Optional[NonEmpty[str]] = None  # todo: annotate known ids
     """A bioimage.io model Id (mutually exclusive with `rdf_source`)"""
 
     rdf_source: Union[HttpUrl, RelativeFilePath, None] = Field(None, alias="uri")
@@ -459,7 +467,7 @@ class ModelParent(Node):
     """SHA256 checksum of the parent model RDF specified under `rdf_source`."""
 
     @model_validator(mode="after")
-    def id_xor_uri(self, info: ValidationInfo):
+    def id_xor_uri(self):
         if (self.id is None) == (self.rdf_source is None):
             raise ValueError("Please specify either `id` or `rdf_source` (not both).")
 
@@ -489,11 +497,11 @@ class Model(ResourceDescriptionBaseNoSource):
 
     type: Literal["model"] = "model"
 
-    name: Annotated[
-        CapitalStr, AfterWarner(lambda n: all(s in ascii_letters + digits + "_- " for s in n)), warn(Len(max_length=64))
-    ]
-    """"A human-readable name of this model.
-    It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
+    authors: Annotated[Tuple[Author, ...], MinLen(1)]
+    """The authors are the creators of the model RDF and the primary points of contact."""
+
+    badges: ClassVar[tuple] = ()  # type: ignore
+    """Badges are not allowed for model RDFs"""
 
     documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
         None,
@@ -507,16 +515,25 @@ class Model(ResourceDescriptionBaseNoSource):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    authors: Annotated[tuple[Author, ...], MinLen(1)]
-    """The authors are the creators of the model RDF and the primary points of contact."""
-
-    badges: ClassVar[tuple] = ()  # type: ignore
-    """Badges are not allowed for model RDFs"""
-
-    inputs: Annotated[tuple[InputTensor, ...], MinLen(1)]
+    inputs: Annotated[Tuple[InputTensor, ...], MinLen(1)]
     """Describes the input tensors expected by this model."""
 
-    packaged_by: tuple[Author, ...] = ()
+    license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    """A [SPDX license identifier](https://spdx.org/licenses/).
+    We do notsupport custom license beyond the SPDX license list, if you need that please
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
+    to discuss your intentions with the community."""
+
+    name: Annotated[
+        CapitalStr, AfterWarner(lambda n: all(s in ascii_letters + digits + "_- " for s in n)), warn(Len(max_length=64))
+    ]
+    """"A human-readable name of this model.
+    It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
+
+    outputs: Annotated[Tuple[OutputTensor, ...], MinLen(1)]
+    """Describes the output tensors."""
+
+    packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 

@@ -1,7 +1,9 @@
-from typing import TYPE_CHECKING, Any, Hashable, Union
-from typing_extensions import Literal
+from typing import Any, Dict, Literal, Sequence, Union
 
 import pydantic
+
+from bioimageio.spec.shared.types_ import RawValue
+from bioimageio.spec.shared.validation import is_valid_raw_mapping
 
 IncEx = Union[set[int], set[str], dict[int, "IncEx"], dict[str, "IncEx"], None]
 
@@ -19,16 +21,17 @@ class Node(
     """pydantic model config"""
 
     @pydantic.field_validator("*", mode="after")
-    def unique_sequence_entries(cls, value: Union[tuple[Hashable, ...], list[Hashable], Any]):
-        if isinstance(value, (tuple, list)) and len(value) != len(set(value)):
-            raise ValueError("Expected unique values")
+    def unique_sequence_entries(cls, value: Union[Sequence[Any], Any]):
+        if isinstance(value, (list, tuple)):
+            if len(value) != len(set(value)):
+                raise ValueError("Expected unique values")
 
         return value
 
     def model_dump(
         self,
         *,
-        mode: str = "python",
+        mode: Union[Literal["json", "python"], str] = "json",  # pydantic default: "python"
         include: IncEx = None,
         exclude: IncEx = None,
         by_alias: bool = False,
@@ -37,7 +40,7 @@ class Node(
         exclude_none: bool = False,
         round_trip: bool = False,
         warnings: bool = True,
-    ) -> dict[str, Any]:
+    ) -> Dict[str, RawValue]:
         return super().model_dump(
             mode=mode,
             include=include,
@@ -74,3 +77,24 @@ class Node(
             round_trip=round_trip,
             warnings=warnings,
         )
+
+
+class FrozenDictNode(Node):
+    model_config = {**Node.model_config, **dict(extra=pydantic.Extra.allow)}
+
+    def __getitem__(self, item: str):
+        return getattr(self, item)
+
+    def keys(self):
+        return self.model_fields_set
+
+    @pydantic.model_validator(mode="after")
+    def validate_raw_mapping(self):
+        if not is_valid_raw_mapping(self):
+            raise AssertionError(f"{self} contains values unrepresentable in JSON/YAML")
+
+        return self
+
+
+class Kwargs(FrozenDictNode):
+    pass
