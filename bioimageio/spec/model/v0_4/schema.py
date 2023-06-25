@@ -105,56 +105,6 @@ class Model(rdf.schema.RDF):
             if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
                 raise ValidationError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
 
-    parent = fields.Nested(
-        ModelParent(),
-        bioimageio_description="The model from which this model is derived, e.g. by fine-tuning the weights.",
-    )
-
-    run_mode = fields.Nested(
-        RunMode(),
-        bioimageio_description="Custom run mode for this model: for more complex prediction procedures like test time "
-        "data augmentation that currently cannot be expressed in the specification. "
-        "No standard run modes are defined yet.",
-    )
-
-    sample_inputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample inputs to illustrate possible inputs for "
-        "the model, for example stored as png or tif images. "
-        "The model is not tested with these sample files that serve to inform a human user about an example use case.",
-    )
-    sample_outputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        bioimageio_description="List of URIs/local relative paths to sample outputs corresponding to the "
-        "`sample_inputs`.",
-    )
-
-    test_inputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="List of URIs or local relative paths to test inputs as described in inputs for "
-        "**a single test case**. "
-        "This means if your model has more than one input, you should provide one URI for each input."
-        "Each test input should be a file with a ndarray in "
-        "[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format)."
-        "The extension must be '.npy'.",
-    )
-    test_outputs = fields.List(
-        fields.Union([fields.URI(), fields.Path()]),
-        validate=field_validators.Length(min=1),
-        required=True,
-        bioimageio_description="Analog to test_inputs.",
-    )
-
-    timestamp = fields.DateTime(
-        required=True,
-        bioimageio_description="Timestamp of the initial creation of this model in [ISO 8601]"
-        "(#https://en.wikipedia.org/wiki/ISO_8601) format.",
-    )
-
     training_data = fields.Union([fields.Nested(Dataset()), fields.Nested(LinkedDataset())])
 
     weights = fields.Dict(

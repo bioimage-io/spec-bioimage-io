@@ -1,6 +1,6 @@
-from typing import Any, Union
-
 import pydantic
+
+from typing import Any, Union
 
 
 def is_valid_orcid_id(orcid_id: str):

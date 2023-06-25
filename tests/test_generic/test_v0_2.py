@@ -12,94 +12,129 @@ from bioimageio.spec.generic.v0_2 import (
     GenericDescription,
     Maintainer,
 )
-from bioimageio.spec.shared.types_custom import RelativeFilePath
-from tests.unittest_utils import BaseTestCases
+from bioimageio.spec.shared.types import RelativeFilePath
+from bioimageio.spec.shared.validation import RAISE_WARNINGS, WARNINGS_ACTION_KEY
+from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
 
 class TestAttachments(BaseTestCases.TestNode):
-    NodeClass = Attachments
-    valid_kwargs = [
-        dict(files=(RelativeFilePath(__file__), HttpUrl("https://example.com")), another_attachment=5),
-        dict(files=(__file__, "https://example.com"), extra=dict(more="of this")),
-        dict(files=(__file__, "http:example.com")),
-        dict(only="other stuff"),
-    ]
-    invalid_kwargs = [
-        dict(files=__file__),
-        dict(files=["non-existing-file"]),
-        dict(files=[123]),
+    default_node_class = Attachments
+    sub_tests = [
+        Valid(dict(files=(RelativeFilePath(__file__), HttpUrl("https://example.com")), another_attachment=5)),
+        Valid(dict(files=(__file__, "https://example.com"), extra=Valid(dict(more="of this")))),
+        Valid(dict(files=(__file__, "http:example.com"))),
+        Valid(dict(only="other stuff")),
+        Invalid(dict(files=__file__)),
+        Invalid(dict(files=["non-existing-file"])),
+        Invalid(dict(files=[123])),
     ]
 
 
 class TestAuthor(BaseTestCases.TestNode):
-    NodeClass = Author
-    valid_kwargs = [
-        dict(name="only_name"),
-        dict(
-            name="Me", affiliation="Paradise", email="me@example.com", github_user="ghuser", orcid="0000-0001-2345-6789"
+    default_node_class = Author
+    sub_tests = [
+        Valid(dict(name="only_name")),
+        Valid(
+            dict(
+                name="Me",
+                affiliation="Paradise",
+                email="me@example.com",
+                github_user="ghuser",
+                orcid="0000-0001-2345-6789",
+            )
         ),
-    ]
-    invalid_kwargs = [
-        dict(affiliation="Paradise", email="me@example.com", github_user="ghuser", orcid="0000-0001-2345-6789"),
-        dict(
-            name="Me", affiliation="Paradise", email="me@example.com", github_user="ghuser", orcid="0000-0001-2345-6788"
+        Invalid(
+            dict(affiliation="Paradise", email="you@example.com", github_user="ghuser", orcid="0000-0001-2345-6789")
         ),
-        dict(name=5),
+        Invalid(
+            dict(
+                name="Me",
+                affiliation="Paradise",
+                email="me@example.com",
+                github_user="ghuser",
+                orcid="0000-0001-2345-6788",
+            )
+        ),
+        Invalid(dict(name=5)),
     ]
 
 
 class TestMaintainer(BaseTestCases.TestNode):
-    NodeClass = Maintainer
-    valid_kwargs = [
-        dict(github_user="ghuser_only"),
-        dict(
-            name="Me", affiliation="Paradise", email="me@example.com", github_user="ghuser", orcid="0000-0001-2345-6789"
+    default_node_class = Maintainer
+    sub_tests = [
+        Valid(dict(github_user="ghuser_only")),
+        Valid(
+            dict(
+                name="Me",
+                affiliation="Paradise",
+                email="me@example.com",
+                github_user="ghuser",
+                orcid="0000-0001-2345-6789",
+            )
         ),
-    ]
-    invalid_kwargs = [
-        dict(name="only_name"),
-        dict(github_user=5.5),
+        Invalid(dict(name="only_name")),
+        Invalid(dict(github_user=5.5)),
     ]
 
 
 class TestCiteEntry(BaseTestCases.TestNode):
-    NodeClass = CiteEntry
-    valid_kwargs = [dict(text="lala", url="https://example.com"), dict(text="lala", doi="10.1234fakedoi")]
-    invalid_kwargs = [dict(text="lala"), dict(url="https://example.com")]
+    default_node_class = CiteEntry
+    sub_tests = [
+        Valid(dict(text="lala", url="https://example.com")),
+        Valid(dict(text="lala", doi="10.1234fakedoi")),
+        Invalid(dict(text="lala")),
+        Invalid(dict(url="https://example.com")),
+    ]
 
 
 class TestGenericDescription(BaseTestCases.TestNode):
-    NodeClass = GenericDescription
-    context = None
-    valid_kwargs = [
-        dict(
-            format_version=LATEST_FORMAT_VERSION,
-            name="my name",
-            description="my description",
-            authors=[{"name": "Me"}],
-            root=Path(__file__).parent,
-            type="my_type",
-            version="0.1.0",
+    default_node_class = GenericDescription
+    sub_tests = [
+        Valid(
+            dict(
+                format_version=LATEST_FORMAT_VERSION,
+                name="my name",
+                description="my description",
+                authors=[{"name": "Me"}],
+                root=Path(__file__).parent.parent,
+                type="my_type",
+                version="1.0",
+                license="BSD-2-Clause-FreeBSD",
+            )
         ),
-        dict(
-            format_version=LATEST_FORMAT_VERSION,
-            name="your name",
-            description="my description",
-            attachments={"files": [Path(__file__)], "something": 42},
-            authors=[{"name": "Me"}],
-            root="https://example.com",
-            type="my_type",
-            version="0.1.0",
+        Invalid(
+            dict(
+                format_version=LATEST_FORMAT_VERSION,
+                name="my name",
+                description="my description",
+                authors=[{"name": "Me"}],
+                root=Path(__file__).parent,
+                type="my_type",
+                version="1.0",
+                license="BSD-2-Clause-FreeBSD",
+            ),
+            context={WARNINGS_ACTION_KEY: RAISE_WARNINGS, "root": Path(__file__).parent},
         ),
-    ]
-    invalid_kwargs = [
-        dict(format_version=LATEST_FORMAT_VERSION, version="0.1.0", type="my_type", name="their name"),
-        dict(
-            root="https://example.com",
-            format_version=LATEST_FORMAT_VERSION,
-            version="0.1.0",
-            type="my_type",
-            name="its name",
-            attachments={"files": [Path(__file__), "missing"], "something": 42},
+        Valid(
+            dict(
+                format_version=LATEST_FORMAT_VERSION,
+                name="your name",
+                description="my description",
+                attachments={"files": [Path(__file__)], "something": 42},
+                root="https://example.com",
+                type="my_type",
+                version="0.1.0",
+            ),
+            context={},
+        ),
+        Invalid(dict(format_version=LATEST_FORMAT_VERSION, version="0.1.0", type="my_type", name="their name")),
+        Invalid(
+            dict(
+                format_version=LATEST_FORMAT_VERSION,
+                version="0.1.0",
+                type="my_type",
+                name="its name",
+                attachments={"files": [Path(__file__), "missing"], "something": 42},
+            )
         ),
     ]

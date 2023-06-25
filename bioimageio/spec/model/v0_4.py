@@ -1,13 +1,17 @@
 from __future__ import annotations
-
+from datetime import datetime
 from string import ascii_letters, digits
+import collections.abc
 from typing import (
     Annotated,
     Any,
-    Callable,
     ClassVar,
+    Dict,
+    List,
     Literal,
+    Mapping,
     Optional,
+    Sequence,
     Tuple,
     Union,
     get_args,
@@ -17,18 +21,37 @@ from annotated_types import Ge, Len, MinLen, MultipleOf, Predicate
 from pydantic import (
     AllowInfNan,
     HttpUrl,
-    model_serializer,
+    field_validator,
     model_validator,
 )
+from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 
-from bioimageio.spec.generic.v0_2 import Attachments, Author, ResourceDescriptionBaseNoSource
+from bioimageio.spec.generic.v0_2 import (
+    Attachments,
+    Author,
+    LinkedResource,
+    ResourceDescriptionBaseNoSource,
+)
 from bioimageio.spec.shared.common import SHA256_HINT
 from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import Kwargs, Node
-from bioimageio.spec.shared.types_ import LicenseId, RawMapping
-from bioimageio.spec.shared.types_annotated import CapitalStr, Identifier, NonEmpty, Sha256, Version
-from bioimageio.spec.shared.types_custom import RelativeFilePath
-from bioimageio.spec.shared.validation import AfterWarner, warn
+from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
+from bioimageio.spec.shared.types import (
+    CapitalStr,
+    FileSource,
+    Identifier,
+    LicenseId,
+    NonEmpty,
+    RawMapping,
+    RelativeFilePath,
+    Sha256,
+    Version,
+)
+from bioimageio.spec.shared.validation import (
+    AfterWarner,
+    validate_datetime_iso8601,
+    validate_suffix,
+    warn,
+)
 
 LatestFormatVersion = Literal["0.4.9"]
 FormatVersion = Literal[
@@ -45,41 +68,22 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 
 
-class StringNodeBase(Node):
-    """Base class for nodes defined as a single string in a pattern '<a><split_on><b>' -> dict(a=<a>, b=<b>)"""
-
-    __str__: Callable[..., str]
-
-    split_on: ClassVar[str] = ":"
-
-    @model_serializer
-    def serialize(self) -> str:
-        return str(self)
-
-    @classmethod
-    def sanitize(cls, data: Any) -> str:
-        if not isinstance(data, str) or cls.split_on not in data:
-            raise AssertionError(f"Expected a string including '{cls.split_on}', but got {type(data)} instead.")
-
-        return data
-
-
-class CallableFromDepencencies(StringNodeBase):
+class CallableFromDepencency(StringNode):
     module_name: str
     callable_name: str
 
-    def __str__(self):
-        return f"{self.module_name}{self.split_on}{self.callable_name}"
+    must_include = (".",)
 
     @model_validator(mode="before")
     @classmethod
     def load(cls, data: Any) -> dict[str, str]:
-        data = cls.sanitize(data)
-        modnane, callname = data.split(cls.split_on)
+        str_data = cls.sanitize(data)
+        *mods, callname = str_data.split(".")
+        modnane = ".".join(mods)
         return dict(module_name=modnane, callable_name=callname)
 
 
-class CallableFromSourceFile(StringNodeBase):
+class CallableFromSourceFile(StringNode):
     source_file: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
     callable_name: str
 
@@ -89,15 +93,15 @@ class CallableFromSourceFile(StringNodeBase):
     @model_validator(mode="before")
     @classmethod
     def load(cls, data: Any) -> dict[str, str]:
-        data = cls.sanitize(data)
-        *file_parts, callname = data.split(cls.split_on)
+        str_data = cls.sanitize(data)
+        *file_parts, callname = str_data.split(cls.split_on)
         return dict(source_file=cls.split_on.join(file_parts), callable_name=callname)
 
 
-CustomCallable = Union[CallableFromSourceFile, CallableFromDepencencies]
+CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
 
 
-class Dependencies(StringNodeBase):
+class Dependencies(StringNode):
     manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
     """Dependency manager"""
 
@@ -128,6 +132,7 @@ WeightsFormat = Literal[
 
 
 class WeightsEntryBase(Node):
+    model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
     type: WeightsFormat
     """weights format of this entry"""
@@ -164,21 +169,21 @@ class WeightsEntryBase(Node):
 
 
 class KerasHdf5Entry(WeightsEntryBase):
-    type: Literal["keras_hdf5"] = "keras_hdf5"
+    type: Literal["keras_hdf5"] = Field("keras_hdf5", exclude=True)
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Union[Version, None] = None
     """TensorFlow version used to create these weights"""
 
 
 class OnnxEntry(WeightsEntryBase):
-    type: Literal["onnx"] = "onnx"
+    type: Literal["onnx"] = Field("onnx", exclude=True)
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Union[Annotated[int, warn(Ge(7))], None] = None
     """ONNX opset version"""
 
 
 class PytorchStateDictEntry(WeightsEntryBase):
-    type: Literal["pytorch_state_dict"] = "pytorch_state_dict"
+    type: Literal["pytorch_state_dict"] = Field("pytorch_state_dict", exclude=True)
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
     """callable returning a torch.nn.Module instance.
@@ -217,12 +222,12 @@ class PytorchStateDictEntry(WeightsEntryBase):
 
 
 class TorchscriptEntry(WeightsEntryBase):
-    type: Literal["torchscript"] = "torchscript"
+    type: Literal["torchscript"] = Field("torchscript", exclude=True)
     weights_format_name: ClassVar[str] = "TorchScript"
 
 
 class TensorflowJsEntry(WeightsEntryBase):
-    type: Literal["tensorflow_js"] = "tensorflow_js"
+    type: Literal["tensorflow_js"] = Field("tensorflow_js", exclude=True)
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Union[Version, None] = None
     """Version of the TensorFlow library used."""
@@ -233,7 +238,7 @@ class TensorflowJsEntry(WeightsEntryBase):
 
 
 class TensorflowSavedModelBundleEntry(WeightsEntryBase):
-    type: Literal["tensorflow_saved_model_bundle"] = "tensorflow_saved_model_bundle"
+    type: Literal["tensorflow_saved_model_bundle"] = Field("tensorflow_saved_model_bundle", exclude=True)
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Union[Version, None] = None
     """Version of the TensorFlow library used."""
@@ -287,24 +292,22 @@ class ImplicitOutputShape(Node):
         return len(self.scale)
 
     @model_validator(mode="after")
-    def matching_lengths(self, data: Any):
-        scale = data["scale"]
-        offset = data["offset"]
-        if len(scale) != len(offset):
-            raise ValueError(f"scale {scale} has to have same length as offset {offset}!")
+    def matching_lengths(self):
+        if len(self.scale) != len(self.offset):
+            raise ValueError(f"scale {self.scale} has to have same length as offset {self.offset}!")
         # if we have an expanded dimension, make sure that it's offet is not zero
-        for sc, off in zip(scale, offset):
+        for sc, off in zip(self.scale, self.offset):
             if sc is None and not off:
                 raise ValueError("`offset` must not be zero if `scale` is none/zero")
 
-        return data
+        return self
 
 
 class TensorBase(Node):
     name: Identifier  # todo: validate duplicates
     """Tensor name. No duplicates are allowed."""
 
-    description: str
+    description: str = ""
     """Brief descripiton of the tensor"""
 
     axes: Annotated[str, Predicate(lambda axs: all(a in "bitczyx" for a in axs))]
@@ -426,18 +429,11 @@ class OutputTensor(TensorBase):
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
-    def matching_halo_length(self, data: Any):
-        shape = data["shape"]
-        halo = data["halo"]
-        if halo and len(halo) != len(shape):
-            raise ValueError(f"halo {halo} has to have same length as shape {shape}!")
+    def matching_halo_length(self):
+        if self.halo and len(self.halo) != len(self.shape):
+            raise ValueError(f"halo {self.halo} has to have same length as shape {self.shape}!")
 
-        return data
-
-
-class LinkedDataset(Node):
-    id: NonEmpty[str]
-    """dataset Id"""
+        return self
 
 
 KnownRunMode = Literal["deepimagej"]
@@ -456,22 +452,19 @@ class RunMode(Node):
     #         self.warn("name", f"Unrecognized run mode '{value}'")
 
 
-class ModelParent(Node):
-    id: Optional[NonEmpty[str]] = None  # todo: annotate known ids
-    """A bioimage.io model Id (mutually exclusive with `rdf_source`)"""
+class ModelRdf(Node):
+    rdf_source: Union[FileSource, None] = Field(None, alias="uri")
+    """URL or relative path of a model RDF"""
 
-    rdf_source: Union[HttpUrl, RelativeFilePath, None] = Field(None, alias="uri")
-    """URL or relative path of a model RDF (mutually exclusive with `id`)"""
+    sha256: Sha256
+    """SHA256 checksum of the model RDF specified under `rdf_source`."""
 
-    sha256: Optional[Sha256] = None
-    """SHA256 checksum of the parent model RDF specified under `rdf_source`."""
 
-    @model_validator(mode="after")
-    def id_xor_uri(self):
-        if (self.id is None) == (self.rdf_source is None):
-            raise ValueError("Please specify either `id` or `rdf_source` (not both).")
+class LinkedModel(LinkedResource):
+    """Reference to a bioimage.io model."""
 
-        return self
+    id: NonEmpty[str]
+    """A valid model `id` from the bioimage.io collection."""
 
 
 class Model(ResourceDescriptionBaseNoSource):
@@ -484,7 +477,7 @@ class Model(ResourceDescriptionBaseNoSource):
 
     model_config = {
         **ResourceDescriptionBaseNoSource.model_config,
-        **dict(title=f"bioimage.io Model Resource Description File Specification {LATEST_FORMAT_VERSION}"),
+        **dict(title=f"bioimage.io model RDF spec {LATEST_FORMAT_VERSION}"),
     }
     """pydantic model_config"""
 
@@ -503,7 +496,7 @@ class Model(ResourceDescriptionBaseNoSource):
     badges: ClassVar[tuple] = ()  # type: ignore
     """Badges are not allowed for model RDFs"""
 
-    documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
+    documentation: Union[FileSource, None] = Field(
         None,
         examples=[
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -533,12 +526,197 @@ class Model(ResourceDescriptionBaseNoSource):
     outputs: Annotated[Tuple[OutputTensor, ...], MinLen(1)]
     """Describes the output tensors."""
 
+    @field_validator("inputs", "outputs")
+    @classmethod
+    def unique_tensor_names(cls, value: Sequence[Union[InputTensor, OutputTensor]]):
+        unique_names = {v.name for v in value}
+        if len(unique_names) != len(value):
+            raise ValueError("Duplicate tensor names")
+        return value
+
+    @model_validator(mode="after")
+    def unique_io_names(self):
+        unique_names = {ss.name for s in (self.inputs, self.outputs) for ss in s}
+        if len(unique_names) != (len(self.inputs) + len(self.outputs)):
+            raise ValueError("Duplicate tensor names across inputs/outputs")
+
+        return self
+
+    @model_validator(mode="after")
+    def minimum_shape2valid_output(self):
+        tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]] = {t.name: t for t in self.inputs + self.outputs}
+
+        # output with subtracted halo has to result in meaningful output even for the minimal input
+        # see https://github.com/bioimage-io/spec-bioimage-io/issues/392
+        def get_min_shape(t: Union[InputTensor, OutputTensor]) -> Tuple[int, ...]:
+            if isinstance(t.shape, tuple):
+                return t.shape
+
+            if isinstance(t.shape, ParametrizedInputShape):
+                return t.shape.min
+
+            if isinstance(t.shape, ImplicitOutputShape):
+                ref_shape = get_min_shape(tensors_by_name[t.shape.reference_tensor])
+
+                if None not in t.shape.scale:
+                    scale: Sequence[float, ...] = t.shape.scale  # type: ignore
+                else:
+                    expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
+                    new_ref_shape: List[int] = []
+                    for idx in range(len(t.shape.scale)):
+                        ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
+                        new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
+                    ref_shape = tuple(new_ref_shape)
+                    assert len(ref_shape) == len(t.shape.scale)
+                    scale = [0.0 if sc is None else sc for sc in t.shape.scale]
+
+                offset = t.shape.offset
+                assert len(offset) == len(scale)
+                return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
+
+        for out in outs:
+            if isinstance(out.shape, ImplicitOutputShape):
+                ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
+                ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
+                if ndim_ref != ndim_out_ref:
+                    expanded_dim_note = (
+                        f" Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
+                        if None in out.shape.scale
+                        else ""
+                    )
+                    raise ValidationError(
+                        f"Referenced tensor {out.shape.reference_tensor} "
+                        f"with {ndim_ref} dimensions does not match "
+                        f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
+                    )
+
+            min_out_shape = get_min_shape(out)
+            if out.halo:
+                halo = out.halo
+                halo_msg = f" for halo {out.halo}"
+            else:
+                halo = [0] * len(min_out_shape)
+                halo_msg = ""
+
+            if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
+                raise ValidationError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
+
+    @validates_schema
+    def validate_reference_tensor_names(self, data, **kwargs) -> None:
+        def get_tnames(tname: str):
+            return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
+
+        valid_input_tensor_references = get_tnames("inputs")
+        ins = data.get("inputs", [])
+        outs = data.get("outputs", [])
+        if not isinstance(ins, list) or not isinstance(outs, list):
+            raise ValidationError(
+                "Failed to validate reference tensor names due to other validation errors in inputs/outputs."
+            )
+
+        for t in outs:
+            if not isinstance(t, OutputTensor):
+                raise ValidationError("Failed to validate reference tensor names due to validation errors in outputs")
+
+            if t.postprocessing is missing:
+                continue
+
+            for postpr in t.postprocessing:
+                if postpr.kwargs is missing:
+                    continue
+
+                ref_tensor = postpr.kwargs.get("reference_tensor", missing)
+                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
+                    raise ValidationError(f"{ref_tensor} not found in inputs")
+
+        for t in ins:
+            if not isinstance(t, InputTensor):
+                raise ValidationError("Failed to validate reference tensor names due to validation errors in inputs")
+
+            if t.preprocessing is missing:
+                continue
+
+            for prep in t.preprocessing:
+                if prep.kwargs is missing:
+                    continue
+
+                ref_tensor = prep.kwargs.get("reference_tensor", missing)
+                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
+                    raise ValidationError(f"{ref_tensor} not found in inputs")
+
+                if ref_tensor == t.name:
+                    raise ValidationError(f"invalid self reference for preprocessing of tensor {t.name}")
+
     packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[ModelParent] = None
+    parent: Optional[Union[LinkedModel, ModelRdf]] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
+
+    run_mode: Optional[RunMode] = None
+    """Custom run mode for this model: for more complex prediction procedures like test time
+    data augmentation that currently cannot be expressed in the specification.
+    No standard run modes are defined yet."""
+
+    sample_inputs: NonEmpty[Tuple[FileSource, ...]]
+    """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
+    for example stored as PNG or TIFF images.
+    The sample files primarily serve to inform a human user about an example use case"""
+
+    sample_outputs: NonEmpty[Tuple[FileSource, ...]]
+    """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
+
+    test_inputs: NonEmpty[Tuple[FileSource, ...]]
+    """URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
+    This means if your model has more than one input, you should provide one URL/relative path for each input.
+    Each test input should be a file with an ndarray in
+    [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
+    The extension must be '.npy'."""
+
+    test_outputs: NonEmpty[Tuple[FileSource, ...]]
+    """Analog to `test_inputs`."""
+
+    @field_validator("test_inputs", "test_outputs", mode="after")
+    @classmethod
+    def check_suffix(cls, value: NonEmpty[Tuple[FileSource, ...]]):
+        return tuple(validate_suffix(v, ".npy") for v in value)
+
+    timestamp: datetime
+    """Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format."""
+
+    @field_validator("timestamp", mode="plain")
+    @classmethod
+    def check_datetime(cls, value: Any) -> datetime:
+        """only accept iso 8601 string and datetime, but no other valid datetime input like int or float"""
+        return validate_datetime_iso8601(value)
+
+    training_data: Union[LinkedDataset, Dataset, None] = None
+    """The dataset used to train this model"""
+
+    weights: FrozenDictNode[WeightsFormat, WeightsEntry]
+    """The weights for this model.
+    Weights can be given for different formats, but should otherwise be equivalent.
+    The available weight formats determine which consumers can use this model."""
+
+    @field_validator("weights", mode="before")
+    @classmethod
+    def weights_type_from_key(
+        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[str, Any]]]]
+    ) -> Union[Any, Dict[Union[Any, str], Dict[str, Any]]]:
+        if not isinstance(data, collections.abc.Mapping):
+            return data
+
+        ret: Dict[Union[Any, str], Dict[str, Any]] = dict()
+        for key, value in data.items():
+            ret[key] = dict(value)
+            if isinstance(key, str) and isinstance(value, collections.abc.Mapping):
+                if "type" in value:
+                    raise ValueError(f"`type` should not be specified (redundantly) in weights entry {key}.")
+
+                ret[key]["type"] = key  # set type to descriminate weights entry union
+
+        return ret
 
     @staticmethod
     def convert_model_from_v0_4_0_to_0_4_1(data: dict[str, Any]):

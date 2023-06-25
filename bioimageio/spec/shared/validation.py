@@ -1,9 +1,12 @@
 import collections.abc
 import dataclasses
+from datetime import datetime
+from logging import INFO, getLogger
 import re
 import sys
 from keyword import iskeyword
 from typing import (
+    TYPE_CHECKING,
     Annotated,
     Any,
     Literal,
@@ -15,14 +18,21 @@ from typing import (
 )
 
 import packaging.version
-from annotated_types import BaseMetadata, GroupedMetadata
-from pydantic import TypeAdapter, ValidationInfo
+from annotated_types import BaseMetadata, GroupedMetadata, Interval
+from pydantic import TypeAdapter, ValidationInfo, AnyUrl
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
 
-WARNINGS_CONTEXT_KEY: Literal["warnings"] = "warnings"
-RAISE_WARNINGS_VALUE: Literal["raise"] = "raise"
+if TYPE_CHECKING:
+    from bioimageio.spec.shared.types import FileSource
+
+
+WARNINGS_ACTION_KEY = "warnings_action"
+WARNINGS_ACTION = Literal["raise", "log"]
+RAISE_WARNINGS: WARNINGS_ACTION = "raise"
+LOG_WARNINGS: WARNINGS_ACTION = "log"
+
 
 if sys.version_info < (3, 10):
     # EllipsisType = type(Ellipsis)
@@ -72,31 +82,37 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 #         return valid
 
 
-def warn(typ: Union[AnnotationMetaData, Any]):
+def warn(typ: Union[AnnotationMetaData, Any], severity: Annotated[int, Interval(ge=0, le=50)] = INFO):
     """treat a type or its annotation metadata as a warning condition"""
     assert get_origin(AnnotationMetaData) is Union
     if isinstance(typ, get_args(AnnotationMetaData)):
         typ = Annotated[Any, typ]
 
     validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python)
+    return BeforeWarner(validator.validate_python, severity=severity)
 
 
 def as_warning(
     func: ValidatorFunction,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
+    severity: Annotated[int, Interval(ge=0, le=50)] = INFO,
 ) -> GeneralValidatorFunction:
     """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
 
     def wrapper(value: Any, info: ValidationInfo) -> Any:
-        if info.context.get(WARNINGS_CONTEXT_KEY) == RAISE_WARNINGS_VALUE:
-            assert func is not None
-            info_arg = inspect_validator(func, mode)
-            if info_arg:
-                func(value, info)  # type: ignore
-            else:
-                func(value)  # type: ignore
+        logger = getLogger("node")
+        if logger.level <= severity:
+            try:
+                info_arg = inspect_validator(func, mode)
+                if info_arg:
+                    func(value, info)  # type: ignore
+                else:
+                    func(value)  # type: ignore
+            except Exception as e:
+                logger.log(severity, e)
+                if info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
+                    raise e  # from None ?
 
         return value
 
@@ -104,27 +120,25 @@ def as_warning(
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class AfterWarner(AfterValidator):
-    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
+class _WarnerMixin:
+    severity: Annotated[int, Interval(ge=0, le=50)] = INFO
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
         if __name == "func":
-            return as_warning(ret)
+            return as_warning(ret, severity=self.severity)
         else:
             return ret
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class BeforeWarner(BeforeValidator):
-    """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
+class AfterWarner(_WarnerMixin, AfterValidator):
+    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
 
-    def __getattribute__(self, __name: str) -> Any:
-        ret = super().__getattribute__(__name)
-        if __name == "func":
-            return as_warning(ret)
-        else:
-            return ret
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class BeforeWarner(_WarnerMixin, BeforeValidator):
+    """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
 
 
 def validate_version(v: str) -> str:
@@ -142,36 +156,10 @@ def validate_identifier(s: str, info: ValidationInfo) -> str:
             "see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for details."
         )
 
-    if info.context.get(WARNINGS_CONTEXT_KEY) == RAISE_WARNINGS_VALUE and iskeyword(s):
+    if info.context.get(WARNINGS_ACTION_KEY) == "raise" and iskeyword(s):
         raise ValueError(f"'{s}' is a Python keword.")
 
     return s
-
-
-# def validate_relative_path(value: Union[Path, str], info: ValidationInfo):
-#     return _validate_relative_path_impl(value, info, RelativePath)
-
-
-# def validate_relative_file_path(value: Union[Path, str], info: ValidationInfo):
-#     return _validate_relative_path_impl(value, info, RelativeFilePath)
-
-
-# def validate_relative_directory(value: Union[Path, str], info: ValidationInfo):
-#     return _validate_relative_path_impl(value, info, RelativeDirectory)
-
-
-# def _validate_relative_path_impl(value: Union[Path, str], info: ValidationInfo, klass: Type[RelativePath]):
-#     if "root" not in info.context:
-#         raise PydanticUserError("missing 'root' context for {klass}", code=None)
-
-#     root = info.context["root"]
-#     if not isinstance(root, (AnyUrl, Path)):
-#         raise ValueError(
-#             "{klass} expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
-#             f"but got {root} of type '{type(root)}'"
-#         )
-
-#     return klass(value, root=root)
 
 
 def is_valid_raw_value(value: Any) -> bool:
@@ -179,7 +167,7 @@ def is_valid_raw_value(value: Any) -> bool:
 
 
 def is_valid_raw_leaf_value(value: Any) -> bool:
-    from bioimageio.spec.shared.types_ import RawLeafValue
+    from bioimageio.spec.shared.types import RawLeafValue
 
     return isinstance(value, get_args(RawLeafValue))
 
@@ -192,3 +180,28 @@ def is_valid_raw_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
 
 def is_valid_raw_sequence(value: Union[Any, Sequence[Any]]) -> bool:
     return isinstance(value, collections.abc.Sequence) and all(is_valid_raw_value(v) for v in value)
+
+
+def validate_datetime_iso8601(value: Union[datetime, str, Any]) -> datetime:
+    if isinstance(value, datetime):
+        return value
+    elif isinstance(value, str):
+        return datetime.fromisoformat(value)
+    else:
+        raise ValueError(f"Got invalid datetime {value}")
+
+
+def validate_suffix(value: "FileSource", *suffixes: str) -> "FileSource":
+    assert all(suff.startswith(".") for suff in suffixes)
+    if isinstance(value, AnyUrl):
+        if value.path is None or "." not in value.path:
+            suffix = None
+        else:
+            suffix = "." + value.path.split(".")[-1]
+    else:
+        suffix = value.relative.suffixes[-1]
+
+    if suffix not in suffixes:
+        raise ValueError(f"{suffix} not in {suffixes}")
+
+    return value

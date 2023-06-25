@@ -10,54 +10,6 @@ from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
 
 
-def test_validate_dataset(dataset_rdf):
-    from bioimageio.spec.commands import validate
-
-    summary = validate(dataset_rdf, update_format=True, update_format_inner=False)
-    assert summary["status"] == "passed", summary
-    summary = validate(dataset_rdf, update_format=False, update_format_inner=False)
-    assert summary["status"] == "passed", summary
-
-
-def test_validate_model_as_dict(unet2d_nuclei_broad_any):
-    from bioimageio.spec.commands import validate
-
-    assert not validate(unet2d_nuclei_broad_any, update_format=True, update_format_inner=False)["error"]
-    assert not validate(unet2d_nuclei_broad_any, update_format=False, update_format_inner=False)["error"]
-
-
-def test_validate_model_as_url():
-    from bioimageio.spec.commands import validate
-
-    assert not validate(
-        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
-        update_format=True,
-        update_format_inner=False,
-    )["error"]
-    assert not validate(
-        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml",
-        update_format=False,
-        update_format_inner=False,
-    )["error"]
-
-
-def test_validate_model_as_zenodo_sandbox_doi():
-    from bioimageio.spec.commands import validate
-
-    doi = "10.5281/zenodo.5744489"
-    assert not validate(doi, update_format=False, update_format_inner=False)["error"]
-
-
-def test_validate_model_as_zenodo_doi():
-    from bioimageio.spec.commands import validate
-
-    doi = "10.5281/zenodo.5744490"
-    assert not validate(doi, update_format=False, update_format_inner=False)["error"]
-
-    # expecting UnconvertibleError due to missing sha256
-    assert validate(doi, update_format=True, update_format_inner=False)["error"]
-
-
 def test_validate_model_as_bioimageio_full_version_id_partner():
     from bioimageio.spec.commands import validate
 

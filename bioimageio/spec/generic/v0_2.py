@@ -2,29 +2,29 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Annotated, Any, Literal, Optional, Tuple, TypeVar, Union, get_args
+from typing import Annotated, Any, ClassVar, Dict, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, MinLen
 from pydantic import (
     AnyUrl,
     DirectoryPath,
     EmailStr,
-    Extra,
+    FieldValidationInfo,
     HttpUrl,
     TypeAdapter,
     ValidationError,
+    ValidationInfo,
     field_validator,
     model_validator,
 )
 
+from bioimageio.spec.shared import LICENSES
 from bioimageio.spec.shared.common import DOI_REGEX
 from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
-from bioimageio.spec.shared.types_ import LicenseId, RawMapping
-from bioimageio.spec.shared.types_annotated import Version
-from bioimageio.spec.shared.types_custom import RelativeFilePath
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node, StringNode
+from bioimageio.spec.shared.types import FileSource, LicenseId, RawMapping, RelativeFilePath, Version
 from bioimageio.spec.shared.utils import is_valid_orcid_id
-from bioimageio.spec.shared.validation import warn
+from bioimageio.spec.shared.validation import warn  # RAISE_WARNINGS_VALUE, TREAT_WARNINGS_CONTEXT_KEY, as_warning, warn
 
 LatestFormatVersion = Literal["0.2.3"]
 FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
@@ -38,9 +38,9 @@ KnownSpecializedResourceType = Literal["model", "collection", "dataset"]
 
 
 class Attachments(Node):
-    model_config = {**Node.model_config, **dict(extra=Extra.allow)}
+    model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: Tuple[Union[HttpUrl, RelativeFilePath], ...] = Field((), in_package=True)
+    files: Tuple[FileSource, ...] = Field((), in_package=True)
     """File attachments"""
 
 
@@ -107,12 +107,25 @@ class CiteEntry(Node):
     url: Optional[str] = None
     """URL to cite (preferably specify a `doi` instead)"""
 
-    @model_validator(mode="before")
-    def check_doi_or_url(cls, data: RawMapping):
-        if not data.get("doi") and not data.get("url"):
+    @field_validator("url", mode="after")
+    @classmethod
+    def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo):
+        if not info.data.get("doi") and not value:
             raise ValueError("Either 'doi' or 'url' is required")
 
-        return data
+        return value
+
+
+# class ResourceId(StringNode):
+
+#     type: ClassVar[Union[KnownGenericResourceType, KnownSpecializedResourceType, None]] = None
+
+
+class LinkedResource(Node):
+    """Reference to a bioimage.io resource"""
+
+    id: str
+    """A valid resource `id` from the bioimage.io collection."""
 
 
 class ResourceDescriptionBaseNoSource(Node):
@@ -141,7 +154,7 @@ class ResourceDescriptionBaseNoSource(Node):
     description: str
     """A string containing a brief description."""
 
-    documentation: Union[HttpUrl, RelativeFilePath, None] = Field(
+    documentation: Union[FileSource, None] = Field(
         None,
         examples=[
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -153,15 +166,13 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @field_validator("documentation", mode="after")
     @classmethod
-    def check_documentation_suffix(
-        cls, value: Union[HttpUrl, RelativeFilePath, None]
-    ) -> Union[HttpUrl, RelativeFilePath, None]:
+    def check_documentation_suffix(cls, value: Union[FileSource, None]) -> Union[FileSource, None]:
         if value is not None and not str(value).endswith(".md"):
             raise ValueError("Expected markdown file with '.md' suffix")
 
         return value
 
-    covers: Tuple[Union[HttpUrl, RelativeFilePath], ...] = Field(
+    covers: Tuple[FileSource, ...] = Field(
         (),
         examples=[],
         description=(
@@ -173,9 +184,7 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @field_validator("covers", mode="after")
     @classmethod
-    def check_cover_suffix(
-        cls, value: Sequence[Union[HttpUrl, RelativeFilePath, None]]
-    ) -> Sequence[Union[HttpUrl, RelativeFilePath, None]]:
+    def check_cover_suffix(cls, value: Sequence[Union[FileSource, None]]) -> Sequence[Union[FileSource, None]]:
         for v in value:
             if (
                 v is not None
@@ -186,14 +195,14 @@ class ResourceDescriptionBaseNoSource(Node):
 
         return value
 
-    id: Union[str, None] = None
+    id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
     authors: Tuple[Author, ...] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
-    attachments: Union[Attachments, None] = None
+    attachments: Optional[Attachments] = None
     """file and other attachments"""
 
     badges: Tuple[Badge, ...] = ()
@@ -202,7 +211,15 @@ class ResourceDescriptionBaseNoSource(Node):
     cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)])] = ()
     """citations"""
 
-    config: Union[FrozenDictNode, None] = Field(None, examples=[])
+    config: Optional[FrozenDictNode] = Field(
+        None,
+        examples=[
+            dict(
+                bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                imagej={"macro_dir": "path/to/macro/file"},
+            )
+        ],
+    )
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a github repo URL in `config` since we already have the
     `git_repo` field defined in the spec.
@@ -226,21 +243,40 @@ class ResourceDescriptionBaseNoSource(Node):
     download_url: Union[HttpUrl, None] = None
     """optional URL to download the resource from (deprecated)"""
 
-    git_repo: Union[str, None] = Field(
+    git_repo: Optional[str] = Field(
         None,
         examples=["https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"],
     )
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[HttpUrl, RelativeFilePath, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """an icon for illustration"""
 
     # todo: make license mandatory
     license: Union[LicenseId, str, None] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
-    We do notsupport custom license beyond the SPDX license list, if you need that please
+    We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
+
+    # @as_warning
+    # @field_validator("license", mode="after")
+    # @classmethod
+    # def deprecated_spdx_license(cls, value: Optional[str], info: ValidationInfo):
+    #     if value is None or info.context.get(TREAT_WARNINGS_CONTEXT_KEY) != RAISE_WARNINGS_VALUE:
+    #         return value
+
+    #     if value not in LICENSES:
+    #         raise ValueError(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
+
+    #     license_info = LICENSES[value]
+    #     if license_info.get("isDeprecatedLicenseId", False):
+    #         raise ValueError(f"{value} ({license_info['name']}) is deprecated.")
+
+    #     # if not license_info.get("isFsfLibre", False):
+    #     #     self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
+
+    #     return value
 
     links: Tuple[str, ...] = Field(
         (),
@@ -430,10 +466,8 @@ ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=ResourceDescr
 
 
 class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
-    model_config = {**ResourceDescriptionBaseNoSource.model_config, **dict(extra=Extra.ignore)}
-    source: Union[HttpUrl, RelativeFilePath, None] = Field(
-        None, description="URL or relative path to the source of the resource"
-    )
+    model_config = {**ResourceDescriptionBaseNoSource.model_config, "extra": "ignore"}
+    source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
 
     def __init__(self, *, _context: Union[dict[str, Any], None] = None, **data: Any) -> None:
@@ -460,7 +494,7 @@ class GenericDescription(ResourceDescriptionBase):
     def check_specific_types(cls, value: str) -> str:
         if value in get_args(KnownSpecializedResourceType):
             raise ValueError(
-                "Use the {value} Description instead of the generic Description for resources of type {value}."
+                f"Use the {value} description instead of the generic description for resources of type {value}."
             )
 
         return value

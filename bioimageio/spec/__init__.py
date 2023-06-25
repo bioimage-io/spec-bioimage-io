@@ -1,7 +1,6 @@
 import json
 import pathlib
 from typing import Annotated, Union
-from bioimageio.spec.generic.v0_2 import ResourceDescriptionBase
 
 from bioimageio.spec.shared.fields import Field
 
@@ -26,7 +25,7 @@ SpecializedDescription = Annotated[
         collection.v0_2.Collection,
         dataset.v0_2.Dataset,
         model.v0_4.Model,
-        model.v0_5.Model,
+        # model.v0_5.Model,
     ],
     Field(discriminator="type"),
 ]

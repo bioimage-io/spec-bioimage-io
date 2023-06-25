@@ -1,7 +1,8 @@
 authors:
 - {name: William Patton}
+- {name: Fynn Beuttenmüller}
 cite:
-- {doi: NA, text: Test}
+- {url: "https://example.com", text: Test}
 covers: []
 description: test model for scaling
 documentation: docs.md
@@ -9,7 +10,7 @@ format_version: 0.4.6
 inputs:
 - axes: bcyx
   data_range: [-.inf, .inf]
-  data_type: float64
+  data_type: float32
   name: input
   shape:
     min: [1, 1, 5, 5]

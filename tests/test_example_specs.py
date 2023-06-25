@@ -5,7 +5,7 @@ from ruamel.yaml import YAML
 
 import bioimageio.spec
 from bioimageio.spec.shared.nodes import Node
-from tests.unittest_utils import BaseTestCases, Invalid, SubTest, Valid
+from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
 yaml = YAML(typ="safe")
 

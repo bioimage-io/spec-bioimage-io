@@ -1,15 +1,37 @@
-"""types that cannot be used directly in pydantic schemas
-use their equivalent from bioimageio.spec.shared.types_annotated instead
-"""
 from __future__ import annotations
+
 import pathlib
-from typing import Any, TypeVar, Union
+from typing import Any, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
-from pydantic import AnyUrl, GetCoreSchemaHandler, PydanticUserError, ValidationInfo
+import annotated_types
+from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo
+from pydantic.functional_validators import AfterValidator
 from pydantic_core import core_schema
+from typing_extensions import Annotated, LiteralString
+
+from bioimageio.spec.shared.validation import (
+    validate_identifier,
+    validate_version,
+)
+
+from ._generated_spdx_license_type import LicenseId
 
 T = TypeVar("T")
+
+NonEmpty = Annotated[T, annotated_types.MinLen(1)]
+
+
+CapitalStr = Annotated[NonEmpty[str], AfterValidator(lambda s: s.capitalize())]
+Identifier = Annotated[NonEmpty[str], AfterValidator(validate_identifier)]
+LicenseId = LicenseId
+RawLeafValue = Union[int, float, str, bool, None]
+RawMapping = Mapping[str, "RawValue"]
+RawSequence = Sequence["RawValue"]
+RawValue = Union[RawLeafValue, RawSequence, RawMapping]
+Sha256 = Annotated[str, annotated_types.Len(64, 64)]
+UniqueTuple = Annotated[Tuple[T], annotated_types.Predicate(lambda s: (len(s) == len(set(s))))]
+Version = Annotated[str, AfterValidator(validate_version)]
 
 
 class RelativePath:
@@ -17,7 +39,6 @@ class RelativePath:
 
     _relative: pathlib.PurePosixPath
     _root: Union[AnyUrl, pathlib.Path]
-    _absolute: Union[AnyUrl, pathlib.Path]
 
     def __init__(
         self, path: Union[str, pathlib.Path, RelativePath], /, *, root: Union[AnyUrl, pathlib.Path] = pathlib.Path()
@@ -25,6 +46,16 @@ class RelativePath:
         self._relative = path._relative if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
         self._root = root
         self._check_exists()
+
+    @property
+    def __members(self):
+        return (self._relative, self._root)
+
+    def __eq__(self, __value: object) -> bool:
+        return type(__value) is type(self) and self.__members == __value.__members
+
+    def __hash__(self) -> int:
+        return hash(self.__members)
 
     def __str__(self) -> str:
         return str(self._relative)
@@ -50,24 +81,9 @@ class RelativePath:
     def relative(self):
         return self._relative
 
-    # @relative.setter
-    # def relative(self, value: Union[pathlib.PurePath, str]):
-    #     p = pathlib.PurePosixPath(value)
-    #     if p.is_absolute():
-    #         raise ValueError(f"{p} is absolute, expected a relative path")
-
-    #     self._relative = p
-    #     self._check_exists()
-
     @property
     def root(self):
         return self._root
-
-    # @root.setter
-    # def root(self, value: Union[pathlib.Path, AnyUrl]):
-    #     assert isinstance(value, (pathlib.Path, AnyUrl))
-    #     self._root = value
-    #     self._check_exists()
 
     @property
     def absolute(self):
@@ -105,3 +121,8 @@ class RelativeDirectory(RelativePath):
     def _check_exists(self) -> None:
         if isinstance((p := self.absolute), pathlib.Path) and not p.is_dir():
             raise ValueError(f"{p} does not point to an existing directory")
+
+
+Lit = TypeVar("Lit", bound=LiteralString)
+
+FileSource = Union[HttpUrl, RelativeFilePath]

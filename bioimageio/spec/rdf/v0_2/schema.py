@@ -18,43 +18,6 @@ from .raw_nodes import FormatVersion
 
 
 class RDF(_BioImageIOSchema):
-    class Meta:
-        unknown = EXCLUDE
-
-    bioimageio_description = f"""# bioimage.io Resource Description File Specification {get_args(FormatVersion)[-1]}
-This specification defines the fields used in a general bioimage.io-compliant resource description file (`RDF`).
-An RDF is stored as a YAML file and describes resources such as models, datasets, applications and notebooks.
-Note that models are described with an extended Model RDF specification.
-
-The RDF contains mandatory and optional fields. In the following description, optional fields are indicated by
-_optional_. _optional*_ with an asterisk indicates the field is optional depending on the value in another field.
-If no specialized RDF exists for the specified type (like model RDF for type='model') additional fields may be
-specified.
-"""
-
-    config_bioimageio_description = ()
-    config = fields.YamlDict(bioimageio_descriptio=config_bioimageio_description)
-
-    covers = fields.List(
-        fields.Union([fields.URL(), fields.Path()]),
-        bioimageio_description="A list of cover images provided by either a relative path to the model folder, or a "
-        "hyperlink starting with 'http[s]'. Please use an image smaller than 500KB and an aspect ratio width to height "
-        "of 2:1. The supported image formats are: 'jpg', 'png', 'gif'.",  # todo: field_validators image format
-    )
-
-    @validates_schema
-    def format_version_matches_type(self, data, **kwargs):
-        format_version = data.get("format_version")
-        type_ = data.get("type")
-        try:
-            patched_format_version = get_patched_format_version(type_, format_version)
-            if format_version.split(".") > patched_format_version.split("."):
-                raise ValueError(
-                    f"Unknown format_version {format_version} (latest patch: {patched_format_version}; latest format version: )"
-                )
-        except Exception as e:
-            raise ValidationError(f"Invalid format_version {format_version} for RDF type {type_}. (error: {e})")
-
     @validates("license")
     def warn_about_deprecated_spdx_license(self, value: str):
         license_info = LICENSES.get(value)

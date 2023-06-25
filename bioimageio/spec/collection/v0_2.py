@@ -15,7 +15,7 @@ from bioimageio.spec.generic.v0_2 import (
 )
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types_ import RawMapping, RawValue
+from bioimageio.spec.shared.types import RawMapping, RawValue
 from bioimageio.spec.shared.utils import ensure_raw
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
@@ -31,7 +31,7 @@ class CollectionEntry(Node):
     is composed of the collection RDF `id` and the entry's 'sub-'`id` specified in-place
     such that `final_entry_id = <collection_id>/<entry_id>`"""
 
-    model_config = {**Node.model_config, **dict(extra=Extra.allow)}
+    model_config = {**Node.model_config, "extra": "allow"}
     """pydantic model config set to allow additional keys"""
 
     id: str
