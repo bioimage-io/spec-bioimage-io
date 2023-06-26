@@ -1,5 +1,4 @@
-from abc import ABC
-from typing import Any, ClassVar, Dict, Generator, Iterable, Iterator, KeysView, Literal, Sequence, Set, Tuple, Union
+from typing import Any, ClassVar, Dict, Iterator, Literal, Sequence, Set, Union
 
 import pydantic
 import collections.abc
@@ -16,10 +15,10 @@ class Node(
     """Subpart of a resource description"""
 
     model_config = pydantic.ConfigDict(
-        populate_by_name=True,
         extra="forbid",
         frozen=True,
-        validate_default=True
+        populate_by_name=True,
+        validate_default=True,
         validate_return=True,
     )
     """pydantic model config"""
