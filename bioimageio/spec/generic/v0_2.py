@@ -160,6 +160,7 @@ class ResourceDescriptionBaseNoSource(Node):
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
+        in_package=True,
     )
     """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
@@ -179,6 +180,7 @@ class ResourceDescriptionBaseNoSource(Node):
             "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
             f"The supported image formats are: {_VALID_COVER_IMAGE_EXTENSIONS}"
         ),
+        in_package=True,
     )
     """Cover images."""
 

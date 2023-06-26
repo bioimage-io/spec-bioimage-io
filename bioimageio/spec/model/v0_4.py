@@ -266,6 +266,9 @@ class ParametrizedInputShape(Node):
     step: Annotated[Tuple[int, ...], MinLen(1)]
     """The minimum shape change"""
 
+    def __len__(self) -> int:
+        return len(self.min)
+
     @model_validator(mode="after")
     def matching_lengths(self):
         if len(self.min) != len(self.step):
@@ -502,6 +505,7 @@ class Model(ResourceDescriptionBaseNoSource):
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
+        in_package=True,
     )
     """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
@@ -555,36 +559,37 @@ class Model(ResourceDescriptionBaseNoSource):
             if isinstance(t.shape, ParametrizedInputShape):
                 return t.shape.min
 
-            if isinstance(t.shape, ImplicitOutputShape):
-                ref_shape = get_min_shape(tensors_by_name[t.shape.reference_tensor])
+            assert isinstance(t.shape, ImplicitOutputShape)
+            ref_shape = get_min_shape(tensors_by_name[t.shape.reference_tensor])
 
-                if None not in t.shape.scale:
-                    scale: Sequence[float, ...] = t.shape.scale  # type: ignore
-                else:
-                    expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
-                    new_ref_shape: List[int] = []
-                    for idx in range(len(t.shape.scale)):
-                        ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
-                        new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
-                    ref_shape = tuple(new_ref_shape)
-                    assert len(ref_shape) == len(t.shape.scale)
-                    scale = [0.0 if sc is None else sc for sc in t.shape.scale]
+            if None not in t.shape.scale:
+                scale: Sequence[float, ...] = t.shape.scale  # type: ignore
+            else:
+                expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
+                new_ref_shape: List[int] = []
+                for idx in range(len(t.shape.scale)):
+                    ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
+                    new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
+                ref_shape = tuple(new_ref_shape)
+                assert len(ref_shape) == len(t.shape.scale)
+                scale = [0.0 if sc is None else sc for sc in t.shape.scale]
 
-                offset = t.shape.offset
-                assert len(offset) == len(scale)
-                return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
+            offset = t.shape.offset
+            assert len(offset) == len(scale)
+            return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
 
-        for out in outs:
+        for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
                 ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
                 ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
                 if ndim_ref != ndim_out_ref:
                     expanded_dim_note = (
-                        f" Note that expanded dimensions (scale: null) are not counted for {out.name}'s dimensionality."
+                        f" Note that expanded dimensions (`scale`: null) are not counted for {out.name}'s"
+                        "dimensionality here."
                         if None in out.shape.scale
                         else ""
                     )
-                    raise ValidationError(
+                    raise ValueError(
                         f"Referenced tensor {out.shape.reference_tensor} "
                         f"with {ndim_ref} dimensions does not match "
                         f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
@@ -599,53 +604,37 @@ class Model(ResourceDescriptionBaseNoSource):
                 halo_msg = ""
 
             if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
-                raise ValidationError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
+                raise ValueError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
 
-    @validates_schema
-    def validate_reference_tensor_names(self, data, **kwargs) -> None:
-        def get_tnames(tname: str):
-            return [t.get("name") if isinstance(t, dict) else t.name for t in data.get(tname, [])]
+        return self
 
-        valid_input_tensor_references = get_tnames("inputs")
-        ins = data.get("inputs", [])
-        outs = data.get("outputs", [])
-        if not isinstance(ins, list) or not isinstance(outs, list):
-            raise ValidationError(
-                "Failed to validate reference tensor names due to other validation errors in inputs/outputs."
-            )
-
-        for t in outs:
-            if not isinstance(t, OutputTensor):
-                raise ValidationError("Failed to validate reference tensor names due to validation errors in outputs")
-
-            if t.postprocessing is missing:
-                continue
-
-            for postpr in t.postprocessing:
-                if postpr.kwargs is missing:
+    @model_validator(mode="after")
+    def validate_tensor_references_in_inputs(self):
+        for t in self.inputs:
+            for proc in t.preprocessing:
+                if "reference_tensor" not in proc.kwargs:
                     continue
 
-                ref_tensor = postpr.kwargs.get("reference_tensor", missing)
-                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
-                    raise ValidationError(f"{ref_tensor} not found in inputs")
-
-        for t in ins:
-            if not isinstance(t, InputTensor):
-                raise ValidationError("Failed to validate reference tensor names due to validation errors in inputs")
-
-            if t.preprocessing is missing:
-                continue
-
-            for prep in t.preprocessing:
-                if prep.kwargs is missing:
-                    continue
-
-                ref_tensor = prep.kwargs.get("reference_tensor", missing)
-                if ref_tensor is not missing and ref_tensor not in valid_input_tensor_references:
-                    raise ValidationError(f"{ref_tensor} not found in inputs")
+                ref_tensor = proc.kwargs["reference_tensor"]
+                if ref_tensor not in {t.name for t in self.inputs}:
+                    raise ValueError(f"'{ref_tensor}' not found in inputs")
 
                 if ref_tensor == t.name:
-                    raise ValidationError(f"invalid self reference for preprocessing of tensor {t.name}")
+                    raise ValueError(f"invalid self reference for preprocessing of tensor {t.name}")
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_tensor_references_in_outputs(self):
+        for t in self.outputs:
+            for proc in t.postprocessing:
+                if "reference_tensor" not in proc.kwargs:
+                    continue
+                ref_tensor = proc.kwargs["reference_tensor"]
+                if ref_tensor not in {t.name for t in self.inputs}:
+                    raise ValueError(f"{ref_tensor} not found in inputs")
+
+        return self
 
     packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
@@ -659,22 +648,22 @@ class Model(ResourceDescriptionBaseNoSource):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: NonEmpty[Tuple[FileSource, ...]]
+    sample_inputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: NonEmpty[Tuple[FileSource, ...]]
+    sample_outputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NonEmpty[Tuple[FileSource, ...]]
+    test_inputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
     """URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NonEmpty[Tuple[FileSource, ...]]
+    test_outputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
     """Analog to `test_inputs`."""
 
     @field_validator("test_inputs", "test_outputs", mode="after")
