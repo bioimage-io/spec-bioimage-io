@@ -15,10 +15,12 @@ class Node(
 ):
     """Subpart of a resource description"""
 
-    model_config = dict(
+    model_config = pydantic.ConfigDict(
         populate_by_name=True,
         extra="forbid",
         frozen=True,
+        validate_default=True
+        validate_return=True,
     )
     """pydantic model config"""
 

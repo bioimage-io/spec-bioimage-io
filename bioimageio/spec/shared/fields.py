@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Annotated, Any, Callable, Union, Optional
+from typing import Annotated, Any, Callable, Dict, Union, Optional
 from urllib.parse import urljoin
 import annotated_types
 
@@ -11,26 +11,16 @@ from pydantic.networks import AnyUrl
 
 
 # slimmed down version of pydantic.Field with explicit extras
-def Field(  # noqa C901  NOSONAR: S107
+def Field(  # noqa C901  NOSONAR: S1542
     default: Any = ...,
     *,
     default_factory: Optional[Callable[[], Any]] = None,
     alias: Optional[str] = None,
-    # alias_priority: Optional[int] = None,
     validation_alias: Union[str, pydantic.AliasPath, pydantic.AliasChoices, None] = None,
-    # serialization_alias: Optional[str] = None,
-    # title: Optional[str] = None,
     description: Optional[str] = None,
     examples: Optional[list[Any]] = None,
     exclude: Optional[bool] = None,
-    # include: Optional[bool] = None,
     discriminator: Optional[str] = None,
-    # json_schema_extra: Optional[dict[str, Any]] = None,
-    # frozen: Optional[bool] = None,
-    # final: Optional[bool] = None,
-    # validate_default: Optional[bool] = None,
-    # repr: bool = True,
-    # init_var: Optional[bool] = None,
     kw_only: Optional[bool] = None,
     pattern: Optional[str] = None,
     strict: Optional[bool] = None,
@@ -44,30 +34,20 @@ def Field(  # noqa C901  NOSONAR: S107
     decimal_places: Optional[int] = None,
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
-    # explicit extras
+    # explicit extra fields (fixed here, but 'extra' for pydantic)
     in_package: bool = False,
-    # **extra: typing_extensions.Unpack[_EmptyKwargs],
 ) -> Any:
     """wrap pydantic.Field"""
-    return pydantic.Field(  # type: ignore
+    extra: Dict[str, Any] = dict(in_package=in_package)
+    return pydantic.Field(
         default,
         default_factory=default_factory,
         alias=alias,
-        alias_priority=None,
         validation_alias=validation_alias,
-        serialization_alias=None,
-        title=None,
         description=description,
         examples=examples,
         exclude=exclude,
-        include=None,
         discriminator=discriminator,
-        json_schema_extra=None,
-        frozen=True,
-        final=True,
-        validate_default=True,
-        repr=True,
-        init_var=None,
         kw_only=kw_only,
         pattern=pattern,
         strict=strict,
@@ -81,7 +61,7 @@ def Field(  # noqa C901  NOSONAR: S107
         decimal_places=decimal_places,
         min_length=min_length,
         max_length=max_length,
-        **dict(in_package=in_package),  # extra fields (fixed here, but 'extra' for pydantic)
+        **extra,
     )
 
 
