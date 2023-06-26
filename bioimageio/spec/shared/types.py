@@ -12,10 +12,11 @@ from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec.shared.validation import (
     validate_identifier,
+    validate_is_not_keyword,
     validate_version,
 )
 
-from ._generated_spdx_license_type import LicenseId
+from ._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 
 T = TypeVar("T")
 
@@ -23,7 +24,8 @@ NonEmpty = Annotated[T, annotated_types.MinLen(1)]
 
 
 CapitalStr = Annotated[NonEmpty[str], AfterValidator(lambda s: s.capitalize())]
-Identifier = Annotated[NonEmpty[str], AfterValidator(validate_identifier)]
+DeprecatedLicenseId = DeprecatedLicenseId
+Identifier = Annotated[NonEmpty[str], AfterValidator(validate_identifier), AfterValidator(validate_is_not_keyword)]
 LicenseId = LicenseId
 RawLeafValue = Union[int, float, str, bool, None]
 RawMapping = Mapping[str, "RawValue"]
@@ -98,7 +100,7 @@ class RelativePath:
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
-        if "root" not in info.context:
+        if info.context is None or "root" not in info.context:
             raise PydanticUserError("missing 'root' context for {klass}", code=None)
 
         root = info.context["root"]

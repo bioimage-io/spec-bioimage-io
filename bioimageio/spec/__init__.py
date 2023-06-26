@@ -1,6 +1,8 @@
 import json
 import pathlib
-from typing import Annotated, Union
+from typing import Union
+
+from typing_extensions import Annotated
 
 from bioimageio.spec.shared.fields import Field
 

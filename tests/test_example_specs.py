@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Type
 
 from ruamel.yaml import YAML
 
@@ -21,12 +21,12 @@ class TestExampleSpecs(BaseTestCases.TestNode):
 
             assert rdf.name.startswith("invalid_rdf") or rdf.name.startswith("rdf"), rdf.name
             with rdf.open(encoding="utf-8") as f:
-                data: dict[str, Any] = yaml.load(f)
+                data: Dict[str, Any] = yaml.load(f)
                 assert isinstance(data, dict)
                 assert all(isinstance(k, str) for k in data)
                 typ = data["type"]
                 if hasattr(bioimageio.spec, typ):
-                    node_class: type[Node] = getattr(getattr(bioimageio.spec, typ), typ.capitalize())
+                    node_class: Type[Node] = getattr(getattr(bioimageio.spec, typ), typ.capitalize())
                 else:
                     node_class = bioimageio.spec.generic.GenericDescription
 

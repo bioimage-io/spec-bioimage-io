@@ -16,12 +16,14 @@ from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import RAISE_WARNINGS, WARNINGS_ACTION_KEY
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
+EXAMPLE_DOT_COM = "https://example.com/"
+
 
 class TestAttachments(BaseTestCases.TestNode):
     default_node_class = Attachments
     sub_tests = [
-        Valid(dict(files=(RelativeFilePath(__file__), HttpUrl("https://example.com")), another_attachment=5)),
-        Valid(dict(files=(__file__, "https://example.com"), extra=Valid(dict(more="of this")))),
+        Valid(dict(files=(RelativeFilePath(__file__), HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5)),
+        Valid(dict(files=(__file__, EXAMPLE_DOT_COM), extra=Valid(dict(more="of this")))),
         Valid(dict(files=(__file__, "http:example.com"))),
         Valid(dict(only="other stuff")),
         Invalid(dict(files=__file__)),
@@ -38,7 +40,7 @@ class TestAuthor(BaseTestCases.TestNode):
             dict(
                 name="Me",
                 affiliation="Paradise",
-                email="me@example.com",
+                email="them@example.com",
                 github_user="ghuser",
                 orcid="0000-0001-2345-6789",
             )
@@ -80,10 +82,10 @@ class TestMaintainer(BaseTestCases.TestNode):
 class TestCiteEntry(BaseTestCases.TestNode):
     default_node_class = CiteEntry
     sub_tests = [
-        Valid(dict(text="lala", url="https://example.com")),
+        Valid(dict(text="lala", url=EXAMPLE_DOT_COM)),
         Valid(dict(text="lala", doi="10.1234fakedoi")),
         Invalid(dict(text="lala")),
-        Invalid(dict(url="https://example.com")),
+        Invalid(dict(url=EXAMPLE_DOT_COM)),
     ]
 
 
@@ -94,7 +96,7 @@ class TestGenericDescription(BaseTestCases.TestNode):
             dict(
                 format_version=LATEST_FORMAT_VERSION,
                 name="my name",
-                description="my description",
+                description="the description",
                 authors=[{"name": "Me"}],
                 root=Path(__file__).parent.parent,
                 type="my_type",
@@ -112,8 +114,10 @@ class TestGenericDescription(BaseTestCases.TestNode):
                 type="my_type",
                 version="1.0",
                 license="BSD-2-Clause-FreeBSD",
+                cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
             context={WARNINGS_ACTION_KEY: RAISE_WARNINGS, "root": Path(__file__).parent},
+            name="deprecated license",
         ),
         Valid(
             dict(
@@ -121,7 +125,7 @@ class TestGenericDescription(BaseTestCases.TestNode):
                 name="your name",
                 description="my description",
                 attachments={"files": [Path(__file__)], "something": 42},
-                root="https://example.com",
+                root=EXAMPLE_DOT_COM,
                 type="my_type",
                 version="0.1.0",
             ),

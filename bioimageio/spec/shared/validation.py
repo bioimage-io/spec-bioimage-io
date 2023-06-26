@@ -1,14 +1,14 @@
 import collections.abc
 import dataclasses
-from datetime import datetime
-from logging import INFO, getLogger
 import re
 import sys
+from datetime import datetime
 from keyword import iskeyword
+from logging import getLogger
 from typing import (
     TYPE_CHECKING,
-    Annotated,
     Any,
+    Dict,
     Literal,
     Mapping,
     Sequence,
@@ -19,67 +19,32 @@ from typing import (
 
 import packaging.version
 from annotated_types import BaseMetadata, GroupedMetadata, Interval
-from pydantic import TypeAdapter, ValidationInfo, AnyUrl
+from pydantic import AnyUrl, TypeAdapter, ValidationInfo
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
+from typing_extensions import Annotated
 
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import FileSource
 
 
 WARNINGS_ACTION_KEY = "warnings_action"
-WARNINGS_ACTION = Literal["raise", "log"]
-RAISE_WARNINGS: WARNINGS_ACTION = "raise"
-LOG_WARNINGS: WARNINGS_ACTION = "log"
+RAISE_WARNINGS = "raise"
 
+ALERT = 35  # no ALERT or worse -> RDF is worriless
+WARNING = 30  # no WARNING or worse -> RDF is watertight
+INFO = 20
 
 if sys.version_info < (3, 10):
-    # EllipsisType = type(Ellipsis)
-    # KW_ONLY = {}
-    SLOTS: dict[str, Any] = {}
+    SLOTS: Dict[str, Any] = {}
 else:
-    # from types import EllipsisType
-
-    # KW_ONLY = {"kw_only": True}
     SLOTS = {"slots": True}
-
-# somehow it does't work to use runtime checkable Protocols to determine
-# if a functional validator takes the info arg or not..
-# we use "from pydantic._internal._decorators import inspect_validator" instead
-# @runtime_checkable
-# class GeneralValidatorFunction(Protocol):
-#     def __call__(self, value: Any, /, info: ValidationInfo) -> Any:
-#         ...
-#
-# @runtime_checkable
-# class NoInfoValidatorFunction(Protocol):
-#     def __call__(self, value: Any, /) -> Any:
-#         ...
 
 
 ValidatorFunction = Union[NoInfoValidatorFunction, GeneralValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
-
-
-# class WithWarning(Generic[T, W]):
-#     """Allows to add a warning as type W to a type T"""
-
-#     def __init__(self, fail_on: T, warn_on: W) -> None:
-#         super().__init__()
-#         self.validator = TypeAdapter(fail_on)
-#         self.warner = TypeAdapter(warn_on)
-
-#     def __get_pydantic_core_schema__(self, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
-#         return core_schema.general_plain_validator_function(self._validate)
-
-#     def _validate(self, value: Any, info: ValidationInfo) -> Union[T, W]:
-#         valid = self.validator.validate_python(value)
-#         if info.context["warnings"] == "raise":
-#             valid = self.warner.validate_python(valid)
-
-#         return valid
 
 
 def warn(typ: Union[AnnotationMetaData, Any], severity: Annotated[int, Interval(ge=0, le=50)] = INFO):
@@ -93,7 +58,7 @@ def warn(typ: Union[AnnotationMetaData, Any], severity: Annotated[int, Interval(
 
 
 def as_warning(
-    func: ValidatorFunction,
+    func: GeneralValidatorFunction,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
     severity: Annotated[int, Interval(ge=0, le=50)] = INFO,
@@ -111,12 +76,22 @@ def as_warning(
                     func(value)  # type: ignore
             except Exception as e:
                 logger.log(severity, e)
-                if info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
+                if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
                     raise e  # from None ?
 
         return value
 
     return wrapper
+
+
+# def as_warning_with_kwargs(
+#     mode: Literal["after", "before", "plain", "wrap"] = "after",
+#     severity: Annotated[int, Interval(ge=0, le=50)] = INFO,
+# ):
+#     def decorated(cls, func: GeneralValidatorFunction):
+#         return as_warning(cls, func, mode=mode, severity=severity)
+
+#     return decorated
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
@@ -149,15 +124,19 @@ def validate_version(v: str) -> str:
     return v
 
 
-def validate_identifier(s: str, info: ValidationInfo) -> str:
+def validate_identifier(s: str) -> str:
     if not s.isidentifier():
         raise ValueError(
             f"'{s}' is not a valid (Python) identifier, "
             "see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for details."
         )
 
-    if info.context.get(WARNINGS_ACTION_KEY) == "raise" and iskeyword(s):
-        raise ValueError(f"'{s}' is a Python keword.")
+    return s
+
+
+def validate_is_not_keyword(s: str) -> str:
+    if iskeyword(s):
+        raise ValueError(f"'{s}' is a Python keyword and not allowed here.")
 
     return s
 

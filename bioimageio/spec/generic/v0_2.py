@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from functools import partial
 from pathlib import Path
-from typing import Annotated, Any, ClassVar, Dict, Literal, Optional, Tuple, TypeVar, Union, get_args
+from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
 
 from annotated_types import Len, MinLen
 from pydantic import (
@@ -15,16 +16,27 @@ from pydantic import (
     ValidationError,
     ValidationInfo,
     field_validator,
-    model_validator,
 )
+from typing_extensions import Annotated
 
 from bioimageio.spec.shared import LICENSES
 from bioimageio.spec.shared.common import DOI_REGEX
 from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node, StringNode
-from bioimageio.spec.shared.types import FileSource, LicenseId, RawMapping, RelativeFilePath, Version
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.types import (
+    DeprecatedLicenseId,
+    FileSource,
+    LicenseId,
+    RawMapping,
+    Version,
+)
 from bioimageio.spec.shared.utils import is_valid_orcid_id
-from bioimageio.spec.shared.validation import warn  # RAISE_WARNINGS_VALUE, TREAT_WARNINGS_CONTEXT_KEY, as_warning, warn
+from bioimageio.spec.shared.validation import (
+    INFO,
+    WARNING,
+    as_warning,
+    warn,
+)
 
 LatestFormatVersion = Literal["0.2.3"]
 FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
@@ -210,7 +222,7 @@ class ResourceDescriptionBaseNoSource(Node):
     badges: Tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)])] = ()
+    cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING)] = ()
     """citations"""
 
     config: Optional[FrozenDictNode] = Field(
@@ -254,31 +266,23 @@ class ResourceDescriptionBaseNoSource(Node):
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """an icon for illustration"""
 
-    # todo: make license mandatory
-    license: Union[LicenseId, str, None] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    license: Annotated[Union[LicenseId, DeprecatedLicenseId, str, None], warn(LicenseId, WARNING)] = Field(
+        None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]
+    )
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    # @as_warning
-    # @field_validator("license", mode="after")
-    # @classmethod
-    # def deprecated_spdx_license(cls, value: Optional[str], info: ValidationInfo):
-    #     if value is None or info.context.get(TREAT_WARNINGS_CONTEXT_KEY) != RAISE_WARNINGS_VALUE:
-    #         return value
+    @partial(as_warning, severity=WARNING)
+    @field_validator("license", mode="after")
+    @classmethod
+    def deprecated_spdx_license(cls, value: Optional[str], info: ValidationInfo):
+        license_info = LICENSES[value] if value in LICENSES else {}
+        if not license_info.get("isFsfLibre", False):
+            raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")
 
-    #     if value not in LICENSES:
-    #         raise ValueError(f"{value} is not a recognized SPDX license identifier. See https://spdx.org/licenses/")
-
-    #     license_info = LICENSES[value]
-    #     if license_info.get("isDeprecatedLicenseId", False):
-    #         raise ValueError(f"{value} ({license_info['name']}) is deprecated.")
-
-    #     # if not license_info.get("isFsfLibre", False):
-    #     #     self.warn("license", f"{value} ({license_info['name']}) is not FSF Free/libre.")
-
-    #     return value
+        return value
 
     links: Tuple[str, ...] = Field(
         (),
@@ -333,14 +337,14 @@ class ResourceDescriptionBaseNoSource(Node):
     https://packaging.pypa.io/en/stable/version.html.
     The initial version should be `"0.1.0"`."""
 
-    def __init__(self, *, _context: Optional[dict[str, Any]] = None, **data: Any) -> None:
-        # set 'root' context from 'root' kwarg when constructing an RescourceDescription
-        given_root = self._validate_root(data.get("root"), raise_=False, allow_none=True)
-        context = _context or {}
-        if given_root is not None:
-            context["root"] = given_root
+    # def __init__(self, *, context: Optional[dict[str, Any]] = None, **data: Any) -> None:
+    #     # set 'root' context from 'root' kwarg when constructing a RescourceDescription
+    #     given_root = self._validate_root(data.get("root"), raise_=False, allow_none=True)
+    #     context = context or {}
+    #     if given_root is not None:
+    #         context["root"] = given_root
 
-        self.__pydantic_validator__.validate_python(data, self_instance=self, context=context)
+    #     self.__pydantic_validator__.validate_python(data, self_instance=self, context=context)
 
     @classmethod
     def _validate_root(cls, value: Any, *, raise_: bool, allow_none: bool):
@@ -385,7 +389,7 @@ class ResourceDescriptionBaseNoSource(Node):
         return data
 
     @staticmethod
-    def _remove_slashes_from_names(data: dict[str, Any]) -> None:
+    def _remove_slashes_from_names(data: Dict[str, Any]) -> None:
         """edit `data` shallowly to remove slashes from names"""
         NAME = "name"
         if NAME in data and isinstance(data[NAME], str):
@@ -409,12 +413,12 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @classmethod
     def model_validate(
-        cls: type[ResourceDescriptionType],
-        obj: dict[str, Any],
+        cls: Type[ResourceDescriptionType],
+        obj: Union[ResourceDescriptionType, Dict[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
-        context: Optional[dict[str, Any]] = None,
+        context: Optional[Dict[str, Any]] = None,
     ) -> ResourceDescriptionType:
         """Validate RDF content `obj` and create an RDF instance.
 
@@ -434,12 +438,15 @@ class ResourceDescriptionBaseNoSource(Node):
             The validated RDF instance.
 
         """
-        assert isinstance(obj, dict)
+        if not isinstance(obj, dict):
+            obj = dict(obj)
+
         if from_attributes:
             raise NotImplementedError("from_attributes")
 
+        context = context or {}
         given_root = cls._validate_root(obj.get("root"), raise_=False, allow_none=True)
-        context_root = cls._validate_root((context or {}).get("root"), raise_=True, allow_none=True)
+        context_root = cls._validate_root(context.get("root"), raise_=True, allow_none=True)
 
         if given_root and context_root and (given_root != context_root):
             raise ValueError(
@@ -472,8 +479,8 @@ class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
     source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
 
-    def __init__(self, *, _context: Union[dict[str, Any], None] = None, **data: Any) -> None:
-        super().__init__(_context=_context, **data)
+    # def __init__(self, *, context: Union[dict[str, Any], None] = None, **data: Any) -> None:
+    #     super().__init__(context=context, **data)
 
 
 class GenericDescription(ResourceDescriptionBase):

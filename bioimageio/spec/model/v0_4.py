@@ -1,9 +1,9 @@
 from __future__ import annotations
+
+import collections.abc
 from datetime import datetime
 from string import ascii_letters, digits
-import collections.abc
 from typing import (
-    Annotated,
     Any,
     ClassVar,
     Dict,
@@ -24,8 +24,9 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
+from typing_extensions import Annotated
 
+from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
     Author,
@@ -76,7 +77,7 @@ class CallableFromDepencency(StringNode):
 
     @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> dict[str, str]:
+    def load(cls, data: Any) -> Dict[str, str]:
         str_data = cls.sanitize(data)
         *mods, callname = str_data.split(".")
         modnane = ".".join(mods)
@@ -92,7 +93,7 @@ class CallableFromSourceFile(StringNode):
 
     @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> dict[str, str]:
+    def load(cls, data: Any) -> Dict[str, str]:
         str_data = cls.sanitize(data)
         *file_parts, callname = str_data.split(cls.split_on)
         return dict(source_file=cls.split_on.join(file_parts), callable_name=callname)
@@ -115,7 +116,7 @@ class Dependencies(StringNode):
 
     @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> dict[str, str]:
+    def load(cls, data: Any) -> Dict[str, str]:
         data = cls.sanitize(data)
         manager, *file_parts = data.split(cls.split_on)
         return dict(manager=manager, file=cls.split_on.join(file_parts))
@@ -212,7 +213,7 @@ class PytorchStateDictEntry(WeightsEntryBase):
 
         return data
 
-    kwargs: dict[NonEmpty[str], Any] = Field(default_factory=dict)
+    kwargs: Dict[NonEmpty[str], Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Union[Version, None] = None
@@ -708,7 +709,7 @@ class Model(ResourceDescriptionBaseNoSource):
         return ret
 
     @staticmethod
-    def convert_model_from_v0_4_0_to_0_4_1(data: dict[str, Any]):
+    def convert_model_from_v0_4_0_to_0_4_1(data: Dict[str, Any]):
         # move dependencies from root to pytorch_state_dict weights entry
         deps = data.pop("dependencies", None)
         weights = data.get("weights", {})
@@ -720,7 +721,7 @@ class Model(ResourceDescriptionBaseNoSource):
         data["format_version"] = "0.4.1"
 
     @staticmethod
-    def convert_model_from_v0_4_4_to_0_4_5(data: dict[str, Any]) -> None:
+    def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> None:
         parent = data.pop("parent", None)
         if parent and "uri" in parent:
             data["parent"] = parent["uri"]

@@ -1,12 +1,24 @@
-from typing import Any, ClassVar, Dict, Iterator, Literal, Sequence, Set, Union
+import collections.abc
+import sys
+from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Sequence, Set, Tuple, Type, TypeVar, Union
 
 import pydantic
-import collections.abc
 
 from bioimageio.spec.shared.types import RawValue
 from bioimageio.spec.shared.validation import is_valid_raw_mapping
 
-IncEx = Union[set[int], set[str], dict[int, "IncEx"], dict[str, "IncEx"], None]
+IncEx = Union[Set[int], Set[str], Dict[int, "IncEx"], Dict[str, "IncEx"], None]
+
+K = TypeVar("K", bound=str)
+V = TypeVar("V")
+
+if sys.version_info < (3, 9):
+
+    class FrozenDictBase(collections.abc.Mapping, Generic[K, V]):
+        pass
+
+else:
+    FrozenDictBase = collections.abc.Mapping[K, V]
 
 
 class Node(
@@ -102,20 +114,20 @@ class StringNode(Node):
         self._data = data_string
 
 
-class FrozenDictNode(collections.abc.Mapping[str, Any], Node):
+class FrozenDictNode(FrozenDictBase[K, V], Node):
     model_config = {**Node.model_config, "extra": "allow"}
 
-    def __getitem__(self, item: str):
-        return getattr(self, item, None)
+    def __getitem__(self, item: K) -> V:
+        return getattr(self, item)
 
-    def __iter__(self) -> Iterator[str]:  # type: ignore
-        yield from self.model_fields_set
+    def __iter__(self) -> Iterator[K]:  # type: ignore  iterate over keys like a dict, not (key, value) tuples
+        yield from self.model_fields_set  # type: ignore
 
     def __len__(self) -> int:
         return len(self.model_fields_set)
 
-    def keys(self) -> Set[str]:  # type: ignore
-        return set(self.model_fields_set)
+    def keys(self) -> Set[K]:  # type: ignore
+        return set(self.model_fields_set)  # type: ignore
 
     @pydantic.model_validator(mode="after")
     def validate_raw_mapping(self):
@@ -125,5 +137,5 @@ class FrozenDictNode(collections.abc.Mapping[str, Any], Node):
         return self
 
 
-class Kwargs(FrozenDictNode):
+class Kwargs(FrozenDictNode[K, V]):
     pass

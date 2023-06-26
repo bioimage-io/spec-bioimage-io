@@ -1,6 +1,6 @@
-import pydantic
+from typing import Any, Dict, Union
 
-from typing import Any, Union
+import pydantic
 
 
 def is_valid_orcid_id(orcid_id: str):
@@ -11,7 +11,7 @@ def is_valid_orcid_id(orcid_id: str):
     return check == 1
 
 
-def ensure_raw(value: Union[pydantic.BaseModel, Any]) -> Union[dict[str, Any], Any]:
+def ensure_raw(value: Union[pydantic.BaseModel, Any]) -> Union[Dict[str, Any], Any]:
     if isinstance(value, pydantic.BaseModel):
         return value.model_dump(exclude_unset=True, exclude_defaults=False, exclude_none=False)
     else:

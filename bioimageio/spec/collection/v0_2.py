@@ -1,9 +1,10 @@
 import collections.abc
-from typing import Annotated, Any, ClassVar, Literal, Union
+from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 import annotated_types
-from pydantic import Extra, HttpUrl, TypeAdapter, model_validator
+from pydantic import HttpUrl, TypeAdapter, model_validator
 from pydantic_core.core_schema import ValidationInfo
+from typing_extensions import Annotated
 
 from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
@@ -12,11 +13,11 @@ from bioimageio.spec.generic.v0_2 import (
     GenericDescription,
     LatestFormatVersion,
     ResourceDescriptionBase,
+    ResourceDescriptionType,
 )
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import RawMapping, RawValue
-from bioimageio.spec.shared.utils import ensure_raw
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 
@@ -42,7 +43,7 @@ class CollectionEntry(Node):
     """resource description file (RDF) source to load entry from"""
 
     @property
-    def rdf_update(self) -> dict[str, RawValue]:
+    def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
     entry_validator: ClassVar = TypeAdapter(Union[Model, Dataset, GenericDescription])
@@ -77,17 +78,28 @@ class Collection(ResourceDescriptionBase):
     type: Literal["collection"] = "collection"
 
     collection: Annotated[
-        tuple[CollectionEntry, ...],
+        Tuple[CollectionEntry, ...],
         annotated_types.MinLen(1),
     ]
     """Collection entries"""
 
-    def __init__(self, *, _context: Union[dict[str, Any], None] = None, **data: Any) -> None:
-        context = _context or {}
-        context["collection_base_content"] = {k: ensure_raw(v) for k, v in data.items() if k != "collection"}
-        super().__init__(_context=context, **data)
+    # def __init__(self, *, context: Union[dict[str, Any], None] = None, **data: Any) -> None:
+    #     context = context or {}
+    #     context["collection_base_content"] = {k: ensure_raw(v) for k, v in data.items() if k != "collection"}
+    #     super().__init__(context=context, **data)
 
-    def get_collection_base_content(self) -> dict[str, RawValue]:
+    @classmethod
+    def model_validate(
+        cls,
+        obj: Union[ResourceDescriptionType, Dict[str, Any]],
+        *,
+        strict: Optional[bool] = None,
+        from_attributes: Optional[bool] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> ResourceDescriptionType:
+        return super().model_validate(obj, strict=strict, from_attributes=from_attributes, context=context)
+
+    def get_collection_base_content(self) -> Dict[str, RawValue]:
         """each collection entry is based on the collection content itself (without the 'collection' field)"""
         return self.model_dump(exclude={"collection"}, exclude_unset=True)
 

@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence, Type
 from unittest import TestCase
 
 from pydantic import ValidationError
@@ -11,10 +11,10 @@ from bioimageio.spec.shared.nodes import Node
 
 @dataclass
 class SubTest(ABC):
-    kwargs: dict[str, Any]
+    kwargs: Dict[str, Any]
     name: Optional[str] = None
-    context: Optional[dict[str, Any]] = None
-    node_class: Optional[type[Node]] = None
+    context: Optional[Dict[str, Any]] = None
+    node_class: Optional[Type[Node]] = None
 
     def __post_init__(self):
         if self.__class__ == SubTest:
@@ -23,13 +23,13 @@ class SubTest(ABC):
 
 @dataclass
 class Valid(SubTest):
-    expected_dump_raw: Optional[dict[str, Any]] = None
-    expected_dump_python: Optional[dict[str, Any]] = None
+    expected_dump_raw: Optional[Dict[str, Any]] = None
+    expected_dump_python: Optional[Dict[str, Any]] = None
 
 
 @dataclass
 class Invalid(SubTest):
-    expect: type[Exception] = ValidationError
+    expect: Type[Exception] = ValidationError
 
 
 class BaseTestCases:
@@ -38,8 +38,8 @@ class BaseTestCases:
     class TestNode(TestCase):
         """template to test any Node subclass with valid and invalid kwargs"""
 
-        default_node_class: type[Node]
-        default_context: dict[str, Any] = dict(root=Path(__file__).parent)
+        default_node_class: Type[Node]
+        default_context: Dict[str, Any] = dict(root=Path(__file__).parent)
 
         sub_tests: Sequence[SubTest]
 
@@ -58,8 +58,7 @@ class BaseTestCases:
                     ]:
                         with self.subTest(_dump_mode=mode):
                             actual = node.model_dump(mode=mode, round_trip=True)
-                            if expected is not None:
-                                assert actual == expected, (actual, expected)
+                            assert expected is None or actual == expected, (actual, expected)
 
         def test_invalid(self):
             for st in self.sub_tests:
@@ -71,17 +70,17 @@ class BaseTestCases:
                     nc = self.get_node_class(st)
                     self.assertRaises(st.expect, nc.model_validate, st.kwargs, context=self.get_context(st))
 
-        def get_context(self, st: SubTest) -> dict[str, Any]:
+        def get_context(self, st: SubTest) -> Dict[str, Any]:
             if st.context is None:
                 return self.default_context
             else:
                 return st.context
 
-        def get_node_class(self, st: SubTest) -> type[Node]:
+        def get_node_class(self, st: SubTest) -> Type[Node]:
             return st.node_class or self.default_node_class
 
         @staticmethod
-        def get_subtest_kwargs(st: SubTest) -> dict[str, Any]:
+        def get_subtest_kwargs(st: SubTest) -> Dict[str, Any]:
             if st.name is not None:
                 return dict(name=st.name)
             else:
