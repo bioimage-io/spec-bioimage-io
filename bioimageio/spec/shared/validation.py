@@ -164,10 +164,17 @@ def is_valid_raw_sequence(value: Union[Any, Sequence[Any]]) -> bool:
 def validate_datetime_iso8601(value: Union[datetime, str, Any]) -> datetime:
     if isinstance(value, datetime):
         return value
-    elif isinstance(value, str):
-        return datetime.fromisoformat(value)
-    else:
-        raise ValueError(f"Got invalid datetime {value}")
+
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+
+    raise ValueError(
+        f"Invalid isoformat string '{value}'. Please follow ISO 8601 with restrictions listed "
+        "[here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."
+    )
 
 
 def validate_suffix(value: "FileSource", *suffixes: str) -> "FileSource":

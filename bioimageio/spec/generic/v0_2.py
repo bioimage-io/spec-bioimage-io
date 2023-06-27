@@ -32,7 +32,7 @@ from bioimageio.spec.shared.types import (
 )
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from bioimageio.spec.shared.validation import (
-    INFO,
+    ALERT,
     WARNING,
     as_warning,
     warn,
@@ -150,7 +150,9 @@ class ResourceDescriptionBaseNoSource(Node):
     """The format version of this RDF specification
     (not the `version` of the resource described by it)"""
 
-    type: Union[KnownGenericResourceType, str] = Field(examples=list(get_args(KnownGenericResourceType)))
+    type: Annotated[Union[KnownGenericResourceType, str], warn(KnownGenericResourceType, ALERT)] = Field(
+        examples=list(get_args(KnownGenericResourceType))
+    )
     """The resource type assigns a broad category to the resource
     and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
 
@@ -225,7 +227,7 @@ class ResourceDescriptionBaseNoSource(Node):
     cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING)] = ()
     """citations"""
 
-    config: Optional[FrozenDictNode] = Field(
+    config: Optional[FrozenDictNode[str, Any]] = Field(
         None,
         examples=[
             dict(
@@ -274,10 +276,10 @@ class ResourceDescriptionBaseNoSource(Node):
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    @partial(as_warning, severity=WARNING)
+    @partial(as_warning, severity=WARNING)  # type: ignore
     @field_validator("license", mode="after")
     @classmethod
-    def deprecated_spdx_license(cls, value: Optional[str], info: ValidationInfo):
+    def deprecated_spdx_license(cls, value: Optional[str]):
         license_info = LICENSES[value] if value in LICENSES else {}
         if not license_info.get("isFsfLibre", False):
             raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")

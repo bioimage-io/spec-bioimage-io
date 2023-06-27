@@ -129,6 +129,9 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     def keys(self) -> Set[K]:  # type: ignore
         return set(self.model_fields_set)  # type: ignore
 
+    def __contains__(self, key: Any):
+        return key in self.model_fields_set
+
     @pydantic.model_validator(mode="after")
     def validate_raw_mapping(self):
         if not is_valid_raw_mapping(self):
@@ -137,5 +140,5 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
         return self
 
 
-class Kwargs(FrozenDictNode[K, V]):
+class Kwargs(FrozenDictNode[str, Any]):
     pass

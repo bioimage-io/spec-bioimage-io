@@ -18,7 +18,7 @@ git_repo: https://github.com/stardist/stardist
 inputs:
 - axes: byxc
   data_range: [-.inf, .inf]
-  data_type: uint16
+  data_type: "float32"
   name: input
   preprocessing:
   - kwargs: {axes: yx, max_percentile: 99.8, min_percentile: 1.0, mode: per_sample}

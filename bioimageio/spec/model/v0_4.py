@@ -649,12 +649,12 @@ class Model(ResourceDescriptionBaseNoSource):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
+    sample_inputs: Tuple[FileSource, ...] = Field((), in_package=True)
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
+    sample_outputs: Tuple[FileSource, ...] = Field((), in_package=True)
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
