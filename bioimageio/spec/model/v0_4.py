@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 from datetime import datetime
+from string import ascii_letters, digits
 from typing import (
     Any,
     ClassVar,

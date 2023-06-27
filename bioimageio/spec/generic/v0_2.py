@@ -461,14 +461,6 @@ class ResourceDescriptionBaseNoSource(Node):
         data = cls.convert_from_older_format(obj)
         return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=context)
 
-    @field_validator("type", mode="before")
-    @classmethod
-    def set_type_default(cls, value: Optional[str]) -> str:
-        if value is None:
-            return cls.__name__.lower()
-        else:
-            return value
-
 
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=ResourceDescriptionBaseNoSource)
 
@@ -479,7 +471,6 @@ class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
 
     source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
-
 
 
 class GenericDescription(ResourceDescriptionBase):
@@ -506,3 +497,12 @@ class GenericDescription(ResourceDescriptionBase):
             )
 
         return value
+
+
+class KnownGenericDescription(GenericDescription):
+    """A `GenericDescription` of a known, but generic type."""
+
+    type: KnownGenericResourceType = Field(examples=list(get_args(KnownGenericResourceType)))
+    """The resource type assigns a broad category to the resource.
+    Known, generic resource types are those with confirmed use-cases,
+    but no further spec specialization like for `type="model"."""
