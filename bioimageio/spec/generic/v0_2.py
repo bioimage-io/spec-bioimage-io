@@ -150,9 +150,10 @@ class ResourceDescriptionBaseNoSource(Node):
     """The format version of this RDF specification
     (not the `version` of the resource described by it)"""
 
-    type: Annotated[Union[KnownGenericResourceType, str], warn(KnownGenericResourceType, ALERT)] = Field(
-        examples=list(get_args(KnownGenericResourceType))
-    )
+    type: Annotated[
+        Union[KnownGenericResourceType, str],
+        warn(KnownGenericResourceType, WorrilessWarning, "'{value}' is not a known generic resource type."),
+    ] = Field(examples=list(get_args(KnownGenericResourceType)))
     """The resource type assigns a broad category to the resource
     and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
 
@@ -473,13 +474,7 @@ class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
     """The primary source of the resource"""
 
 
-class GenericDescription(ResourceDescriptionBase):
-    """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
-
-    An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
-    Note that models are described with an extended model RDF specification.
-    """
-
+class GenericDescriptionBase(ResourceDescriptionBase):
     model_config = {
         **ResourceDescriptionBase.model_config,
         **dict(title=f"bioimage.io generic RDF {get_args(FormatVersion)[-1]}"),
@@ -487,6 +482,14 @@ class GenericDescription(ResourceDescriptionBase):
     """pydantic model_config"""
 
     format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
+
+
+class GenericDescription(GenericDescriptionBase):
+    """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
+
+    An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
+    Note that models are described with an extended model RDF specification.
+    """
 
     @field_validator("type", mode="after")
     @classmethod
@@ -499,7 +502,7 @@ class GenericDescription(ResourceDescriptionBase):
         return value
 
 
-class KnownGenericDescription(GenericDescription):
+class KnownGenericDescription(GenericDescriptionBase):
     """A `GenericDescription` of a known, but generic type."""
 
     type: KnownGenericResourceType = Field(examples=list(get_args(KnownGenericResourceType)))
