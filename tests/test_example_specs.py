@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional, Type
 
 from ruamel.yaml import YAML
 
@@ -11,6 +11,9 @@ yaml = YAML(typ="safe")
 
 
 class TestExampleSpecs(BaseTestCases.TestNode):
+    # DEBUG_SUBTEST_NAME: Optional[str] = None
+    DEBUG_SUBTEST_NAME: Optional[str] = "hpa-densenet/rdf.yaml"  # limit subtests for debugging
+
     def __init__(self, methodName: str = "runTest") -> None:
         example_specs = Path(__file__).parent / "../example_specs"
         assert example_specs.exists(), example_specs
@@ -35,10 +38,13 @@ class TestExampleSpecs(BaseTestCases.TestNode):
                 else:
                     st_class = Invalid
 
+                name = str(rdf.relative_to(rdf.parent.parent).as_posix())
+                if self.DEBUG_SUBTEST_NAME is not None and self.DEBUG_SUBTEST_NAME != name:
+                    continue
                 self.sub_tests.append(
                     st_class(
                         kwargs=data,
-                        name=str(rdf.relative_to(rdf.parent.parent)),
+                        name=name,
                         context=dict(root=rdf.parent),
                         node_class=node_class,
                     )
