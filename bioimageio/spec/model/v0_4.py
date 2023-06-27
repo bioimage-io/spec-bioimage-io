@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections.abc
 from datetime import datetime
-from string import ascii_letters, digits
 from typing import (
     Any,
     ClassVar,
@@ -89,14 +88,14 @@ class CallableFromSourceFile(StringNode):
     callable_name: str
 
     def __str__(self):
-        return f"{self.source_file}{self.split_on}{self.callable_name}"
+        return f"{self.source_file}:{self.callable_name}"
 
     @model_validator(mode="before")
     @classmethod
     def load(cls, data: Any) -> Dict[str, str]:
         str_data = cls.sanitize(data)
-        *file_parts, callname = str_data.split(cls.split_on)
-        return dict(source_file=cls.split_on.join(file_parts), callable_name=callname)
+        *file_parts, callname = str_data.split(":")
+        return dict(source_file=":".join(file_parts), callable_name=callname)
 
 
 CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
@@ -493,6 +492,7 @@ class Model(ResourceDescriptionBaseNoSource):
     """
 
     type: Literal["model"] = "model"
+    """specialized type 'model'"""
 
     authors: Annotated[Tuple[Author, ...], MinLen(1)]
     """The authors are the creators of the model RDF and the primary points of contact."""

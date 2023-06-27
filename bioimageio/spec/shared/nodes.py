@@ -1,6 +1,6 @@
 import collections.abc
 import sys
-from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Sequence, Set, Tuple, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Optional, Sequence, Set, TypeVar, Union
 
 import pydantic
 
@@ -118,7 +118,10 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     model_config = {**Node.model_config, "extra": "allow"}
 
     def __getitem__(self, item: K) -> V:
-        return getattr(self, item)
+        try:
+            return getattr(self, item)
+        except AttributeError:
+            raise KeyError(item) from None
 
     def __iter__(self) -> Iterator[K]:  # type: ignore  iterate over keys like a dict, not (key, value) tuples
         yield from self.model_fields_set  # type: ignore
@@ -131,6 +134,9 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
 
     def __contains__(self, key: Any):
         return key in self.model_fields_set
+
+    def get(self, item: K, default: Optional[V] = None) -> Optional[V]:  # type: ignore
+        return getattr(self, item, default)
 
     @pydantic.model_validator(mode="after")
     def validate_raw_mapping(self):

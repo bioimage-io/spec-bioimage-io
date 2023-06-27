@@ -1,4 +1,5 @@
 import collections.abc
+from typing import Any
 from unittest import TestCase
 
 from bioimageio.spec.shared.nodes import FrozenDictNode
@@ -7,8 +8,8 @@ from bioimageio.spec.shared.nodes import FrozenDictNode
 class TestFrozenDict(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.empty = FrozenDictNode()
-        self.lala = FrozenDictNode(lala=3)  # type: ignore
+        self.empty = FrozenDictNode[Any, Any]()
+        self.lala = FrozenDictNode[str, int](lala=3)  # type: ignore
 
     def test_is_mapping(self):
         self.assertIsInstance(self.empty, collections.abc.Mapping)

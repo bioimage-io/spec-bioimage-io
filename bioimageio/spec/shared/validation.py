@@ -11,19 +11,22 @@ from typing import (
     Dict,
     Literal,
     Mapping,
+    Optional,
     Sequence,
+    Type,
     Union,
     get_args,
     get_origin,
 )
 
 import packaging.version
-from annotated_types import BaseMetadata, GroupedMetadata, Interval
-from pydantic import AnyUrl, TypeAdapter, ValidationInfo
+from annotated_types import BaseMetadata, GroupedMetadata
+from pydantic import AnyUrl, FieldValidationInfo, TypeAdapter, ValidationInfo
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
+from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
-from typing_extensions import Annotated
+from typing_extensions import Annotated, LiteralString
 
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import FileSource
@@ -47,61 +50,94 @@ ValidatorFunction = Union[NoInfoValidatorFunction, GeneralValidatorFunction]
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
 
-def warn(typ: Union[AnnotationMetaData, Any], severity: Annotated[int, Interval(ge=0, le=50)] = INFO):
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class Warning:
+    message_template: LiteralString
+    warning_type: LiteralString
+    severity: int
+    context: Optional[Dict[str, Any]] = None
+
+    def raise_(self):
+        raise PydanticCustomError(self.warning_type, self.message_template, self.context)
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class InfoWarning(Warning):
+    warning_type: Literal["info_warning"] = "info_warning"
+    severity: int = INFO
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class WorrilessWarning(Warning):
+    warning_type: Literal["worriless_warning"] = "worriless_warning"
+    severity: int = WARNING
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class WatertightWarning(Warning):
+    warning_type: Literal["watertight_warning"] = "watertight_warning"
+    severity: int = ALERT
+
+
+def warn(
+    typ: Union[AnnotationMetaData, Any],
+    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning,
+    msg: Optional[LiteralString] = None,
+):
     """treat a type or its annotation metadata as a warning condition"""
     assert get_origin(AnnotationMetaData) is Union
     if isinstance(typ, get_args(AnnotationMetaData)):
         typ = Annotated[Any, typ]
 
     validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python, severity=severity)
+    return BeforeWarner(validator.validate_python, warning_class=warning_class, msg=msg)
+
+
+def call_validator_func(
+    func: GeneralValidatorFunction, mode: Literal["after", "before", "plain", "wrap"], value: Any, info: ValidationInfo
+) -> Any:
+    info_arg = inspect_validator(func, mode)
+    if info_arg:
+        return func(value, info)  # type: ignore
+    else:
+        return func(value)  # type: ignore
 
 
 def as_warning(
     func: GeneralValidatorFunction,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-    severity: Annotated[int, Interval(ge=0, le=50)] = INFO,
+    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning,
+    msg: Optional[LiteralString] = None,
 ) -> GeneralValidatorFunction:
     """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
 
-    def wrapper(value: Any, info: ValidationInfo) -> Any:
-        logger = getLogger("node")
-        if logger.level <= severity:
-            try:
-                info_arg = inspect_validator(func, mode)
-                if info_arg:
-                    func(value, info)  # type: ignore
-                else:
-                    func(value)  # type: ignore
-            except Exception as e:
-                logger.log(severity, e)
-                if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
-                    raise e  # from None ?
+    def wrapper(value: Any, info: Union[FieldValidationInfo, ValidationInfo]) -> Any:
+        logger = getLogger(getattr(info, "field_name", "node"))
+        if logger.level > warning_class.severity:
+            return value
+
+        try:
+            call_validator_func(func, mode, value, info)
+        except (AssertionError, ValueError) as e:
+            logger.log(warning_class.severity, e)
+            if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
+                warning_class(msg or ",".join(e.args), context=dict(value=value)).raise_()
 
         return value
 
     return wrapper
 
 
-# def as_warning_with_kwargs(
-#     mode: Literal["after", "before", "plain", "wrap"] = "after",
-#     severity: Annotated[int, Interval(ge=0, le=50)] = INFO,
-# ):
-#     def decorated(cls, func: GeneralValidatorFunction):
-#         return as_warning(cls, func, mode=mode, severity=severity)
-
-#     return decorated
-
-
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class _WarnerMixin:
-    severity: Annotated[int, Interval(ge=0, le=50)] = INFO
+    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning
+    msg: Optional[LiteralString] = None
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
         if __name == "func":
-            return as_warning(ret, severity=self.severity)
+            return as_warning(ret, warning_class=self.warning_class, msg=self.msg)
         else:
             return ret
 

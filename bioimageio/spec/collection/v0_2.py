@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
@@ -10,14 +12,16 @@ from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
     LATEST_FORMAT_VERSION,
     FormatVersion,
-    GenericDescription,
+    KnownGenericDescription,
     LatestFormatVersion,
     ResourceDescriptionBase,
-    ResourceDescriptionType,
 )
 from bioimageio.spec.model.v0_4 import Model
+from bioimageio.spec.shared.fields import Field
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import RawMapping, RawValue
+from bioimageio.spec.shared.utils import ensure_raw
+from bioimageio.spec.shared.validation import WatertightWarning, warn
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 
@@ -32,31 +36,41 @@ class CollectionEntry(Node):
     is composed of the collection RDF `id` and the entry's 'sub-'`id` specified in-place
     such that `final_entry_id = <collection_id>/<entry_id>`"""
 
-    model_config = {**Node.model_config, "extra": "allow"}
+    model_config = {**Node.model_config, **dict(extra="allow")}
     """pydantic model config set to allow additional keys"""
 
     id: str
     """the collection entrie's sub-ID.
     Later referencing of an entry should be done as <collection's base ID>/<entrie's sub-ID>"""
 
-    rdf_source: Union[HttpUrl, None] = None
+    rdf_source: Annotated[
+        Union[HttpUrl, None], warn(None, WatertightWarning, "Cannot statically validate remote resource description.")
+    ] = None
     """resource description file (RDF) source to load entry from"""
 
     @property
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_validator: ClassVar = TypeAdapter(Union[Model, Dataset, GenericDescription])
+    entry_validator: ClassVar[TypeAdapter[Annotated[Union[Model, Dataset], Field(discriminator="type")]]] = TypeAdapter(
+        Annotated[Union[Model, Dataset], Field(discriminator="type")]
+    )
 
     @model_validator(mode="before")
     @classmethod
     def check_entry(cls, data: RawMapping, info: ValidationInfo) -> RawMapping:
-        extra = {k: v for k, v in data.items() if k != "rdf_source"}
+        extra = {k: v for k, v in data.items() if k not in ("rdf_source", "id")}
         if data.get("rdf_source") is None:
             # without external rdf_source we expect a valid resource description
             entry_data = dict(info.context["collection_base_content"])
             entry_data.update(extra)
-            cls.entry_validator.validate_python(data, context=info.context)
+            if not isinstance(entry_data["id"], (str, int, float)):
+                raise AssertionError(f"Expected {entry_data['id']} to be a string")
+            if not isinstance(data["id"], (str, int, float)):
+                raise AssertionError(f"Expected {data['id']} to be a string")
+
+            entry_data["id"] = f"{entry_data['id']}/{data['id']}"
+            cls.entry_validator.validate_python(entry_data, context=info.context)
         else:
             # cannot validate entry without resolving 'rdf_source'
             # to validate, load 'rdf_content' as extra fields to CollectionEntry
@@ -91,12 +105,18 @@ class Collection(ResourceDescriptionBase):
     @classmethod
     def model_validate(
         cls,
-        obj: Union[ResourceDescriptionType, Dict[str, Any]],
+        obj: Union[Any, Dict[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Optional[Dict[str, Any]] = None,
-    ) -> ResourceDescriptionType:
+    ) -> Collection:
+        if not isinstance(obj, dict):
+            obj = dict(obj)
+
+        context = context or {}
+        context["collection_base_content"] = {k: ensure_raw(v) for k, v in obj.items() if k != "collection"}
+
         return super().model_validate(obj, strict=strict, from_attributes=from_attributes, context=context)
 
     def get_collection_base_content(self) -> Dict[str, RawValue]:

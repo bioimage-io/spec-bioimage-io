@@ -47,7 +47,7 @@ def parse_args():
 @dataclass
 class Info:
     target: str
-    all_version_modules: List[str]
+    all_version_modules: list[str]
     target_node: str = field(init=False)
     latest_version_module: str = field(init=False)
     all_version_modules_quoted: str = field(init=False)

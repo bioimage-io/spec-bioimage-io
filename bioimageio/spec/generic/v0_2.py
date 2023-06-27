@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
+from typing import Any, Dict, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, MinLen
 from pydantic import (
@@ -14,7 +14,6 @@ from pydantic import (
     HttpUrl,
     TypeAdapter,
     ValidationError,
-    ValidationInfo,
     field_validator,
 )
 from typing_extensions import Annotated
@@ -32,8 +31,9 @@ from bioimageio.spec.shared.types import (
 )
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from bioimageio.spec.shared.validation import (
-    ALERT,
-    WARNING,
+    InfoWarning,
+    WatertightWarning,
+    WorrilessWarning,
     as_warning,
     warn,
 )
@@ -224,7 +224,12 @@ class ResourceDescriptionBaseNoSource(Node):
     badges: Tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: Annotated[Tuple[CiteEntry, ...], warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING)] = ()
+    cite: Annotated[
+        Tuple[CiteEntry, ...],
+        warn(
+            Annotated[Tuple[CiteEntry, ...], MinLen(1)], WorrilessWarning, "Please specify at least one `cite` entry."
+        ),
+    ] = ()
     """citations"""
 
     config: Optional[FrozenDictNode[str, Any]] = Field(
@@ -268,15 +273,16 @@ class ResourceDescriptionBaseNoSource(Node):
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """an icon for illustration"""
 
-    license: Annotated[Union[LicenseId, DeprecatedLicenseId, str, None], warn(LicenseId, WARNING)] = Field(
-        None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]
-    )
+    license: Annotated[
+        Union[LicenseId, DeprecatedLicenseId, str, None],
+        warn(LicenseId, WorrilessWarning, "'{value}' is a deprecated or unknown license identifier."),
+    ] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    @partial(as_warning, severity=WARNING)  # type: ignore
+    @partial(as_warning, warning_class=InfoWarning)  # type: ignore
     @field_validator("license", mode="after")
     @classmethod
     def deprecated_spdx_license(cls, value: Optional[str]):
@@ -338,15 +344,6 @@ class ResourceDescriptionBaseNoSource(Node):
     Hyphens and plus signs are not allowed to be compatible with
     https://packaging.pypa.io/en/stable/version.html.
     The initial version should be `"0.1.0"`."""
-
-    # def __init__(self, *, context: Optional[dict[str, Any]] = None, **data: Any) -> None:
-    #     # set 'root' context from 'root' kwarg when constructing a RescourceDescription
-    #     given_root = self._validate_root(data.get("root"), raise_=False, allow_none=True)
-    #     context = context or {}
-    #     if given_root is not None:
-    #         context["root"] = given_root
-
-    #     self.__pydantic_validator__.validate_python(data, self_instance=self, context=context)
 
     @classmethod
     def _validate_root(cls, value: Any, *, raise_: bool, allow_none: bool):
@@ -415,13 +412,13 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @classmethod
     def model_validate(
-        cls: Type[ResourceDescriptionType],
-        obj: Union[ResourceDescriptionType, Dict[str, Any]],
+        cls,
+        obj: Union[Any, Dict[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Optional[Dict[str, Any]] = None,
-    ) -> ResourceDescriptionType:
+    ):
         """Validate RDF content `obj` and create an RDF instance.
 
         Also sets 'root' context from 'root' in `obj` (or vice versa)
@@ -478,11 +475,11 @@ ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=ResourceDescr
 
 class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
     model_config = {**ResourceDescriptionBaseNoSource.model_config, "extra": "ignore"}
+    """pydantic model config"""
+
     source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
 
-    # def __init__(self, *, context: Union[dict[str, Any], None] = None, **data: Any) -> None:
-    #     super().__init__(context=context, **data)
 
 
 class GenericDescription(ResourceDescriptionBase):
