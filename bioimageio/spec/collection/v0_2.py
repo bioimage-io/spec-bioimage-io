@@ -19,7 +19,7 @@ from bioimageio.spec.generic.v0_2 import (
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.shared.fields import Field
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types import RawMapping, RawValue
+from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
 from bioimageio.spec.shared.utils import ensure_raw
 from bioimageio.spec.shared.validation import WatertightWarning, warn
 
@@ -39,12 +39,13 @@ class CollectionEntry(Node):
     model_config = {**Node.model_config, **dict(extra="allow")}
     """pydantic model config set to allow additional keys"""
 
-    id: str
-    """the collection entrie's sub-ID.
-    Later referencing of an entry should be done as <collection's base ID>/<entrie's sub-ID>"""
+    # id: str
+    # """the collection entrie's sub-ID.
+    # Later referencing of an entry should be done as <collection's base ID>/<entrie's sub-ID>"""
 
     rdf_source: Annotated[
-        Union[HttpUrl, None], warn(None, WatertightWarning, "Cannot statically validate remote resource description.")
+        Union[HttpUrl, RelativeFilePath, None],
+        warn(None, WatertightWarning, "Cannot statically validate remote resource description."),
     ] = None
     """resource description file (RDF) source to load entry from"""
 
@@ -52,24 +53,22 @@ class CollectionEntry(Node):
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_validator: ClassVar[TypeAdapter[Annotated[Union[Model, Dataset], Field(discriminator="type")]]] = TypeAdapter(
-        Annotated[Union[Model, Dataset], Field(discriminator="type")]
-    )
+    entry_validator: ClassVar[
+        TypeAdapter[Annotated[Union[Model, Dataset, KnownGenericDescription], Field(discriminator="type")]]
+    ] = TypeAdapter(Annotated[Union[Model, Dataset, KnownGenericDescription], Field(discriminator="type")])
 
     @model_validator(mode="before")
     @classmethod
     def check_entry(cls, data: RawMapping, info: ValidationInfo) -> RawMapping:
-        extra = {k: v for k, v in data.items() if k not in ("rdf_source", "id")}
+        in_place_fields = {k: v for k, v in data.items() if k not in ("rdf_source", "id")}
         if data.get("rdf_source") is None:
             # without external rdf_source we expect a valid resource description
             entry_data = dict(info.context["collection_base_content"])
-            entry_data.update(extra)
-            if not isinstance(entry_data["id"], (str, int, float)):
-                raise AssertionError(f"Expected {entry_data['id']} to be a string")
-            if not isinstance(data["id"], (str, int, float)):
-                raise AssertionError(f"Expected {data['id']} to be a string")
+            base_id = entry_data.pop("id", None)
+            entry_data.update(in_place_fields)
+            if isinstance(data.get("id"), (str, int, float)) and isinstance(base_id, (str, int, float)):
+                entry_data["id"] = f"{base_id}/{data['id']}"
 
-            entry_data["id"] = f"{entry_data['id']}/{data['id']}"
             cls.entry_validator.validate_python(entry_data, context=info.context)
         else:
             # cannot validate entry without resolving 'rdf_source'
