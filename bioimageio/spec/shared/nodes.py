@@ -114,6 +114,9 @@ class StringNode(Node):
         self._data = data_string
 
 
+D = TypeVar("D")
+
+
 class FrozenDictNode(FrozenDictBase[K, V], Node):
     model_config = {**Node.model_config, "extra": "allow"}
 
@@ -135,7 +138,7 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     def __contains__(self, key: Any):
         return key in self.model_fields_set
 
-    def get(self, item: K, default: Optional[V] = None) -> Optional[V]:  # type: ignore
+    def get(self, item: Any, default: D = None) -> Union[V, D]:  # type: ignore
         return getattr(self, item, default)
 
     @pydantic.model_validator(mode="after")

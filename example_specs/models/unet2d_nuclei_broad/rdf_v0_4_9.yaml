@@ -1,25 +1,26 @@
-format_version: 0.5.0
+# TODO physical scale of the data
+format_version: 0.4.9
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-- name: "Constantin Pape;@bioimage-io"
-  affiliation: "EMBL Heidelberg"
-  orcid: "0000-0001-6562-7187"
-- name: "Fynn Beuttenmueller"
-  affiliation: "EMBL Heidelberg"
-  orcid: "0000-0002-8567-6389"
+  - name: "Constantin Pape;@bioimage-io"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0001-6562-7187"
+  - name: "Fynn Beuttenmueller"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0002-8567-6389"
 maintainers:
-- name: "Constantin Pape"
-  github_user: constantinpape
+  - name: "Constantin Pape"
+    github_user: constantinpape
 
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
-- text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
-  doi: https://doi.org/10.1007/978-3-319-24574-4_28
-- text: "2018 Data Science Bowl"
-  url: https://www.kaggle.com/c/data-science-bowl-2018
+  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+    doi: https://doi.org/10.1007/978-3-319-24574-4_28
+  - text: "2018 Data Science Bowl"
+    url: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
@@ -31,37 +32,35 @@ attachments: {}
 timestamp: 2019-12-11T12:22:32Z  # ISO 8601
 
 inputs:
-- name: raw
-  description: raw input
-  shape: [1, 1, 512, 512]
-  axes:
-  - role: batch
-  - role: channel
-  - role: y
-  - role: x
-  data_type: float32
-  data_range: [-.inf, .inf]
-  test_tensor: test_input.npy
-  sample_tensor: test_input.npy
-  preprocessing:  # list of preprocessing steps
-    - name: zero_mean_unit_variance  # name of preprocessing step
-      kwargs:
-        mode: per_sample      # mode in [fixed, per_dataset, per_sample]
-        axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+  - name: raw
+    description: raw input
+    axes: bcyx  # letters of axes in btczyx
+    data_type: float32
+    data_range: [-.inf, .inf]
+    shape: [1, 1, 512, 512]
+    preprocessing:  # list of preprocessing steps
+      - name: zero_mean_unit_variance  # name of preprocessing step
+        kwargs:
+          mode: per_sample      # mode in [fixed, per_dataset, per_sample]
+          axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
 
 outputs:
-- name: probability
-  description: probability in [0,1]
-  axes: bcyx
-  data_type: float32
-  data_range: [-.inf, .inf]
-  halo: [0, 0, 32, 32]
-  test_tensor: test_output.npy
-  sample_tensor: test_output.npy
-  shape:
-    reference_tensor: raw
-    scale: [1.0, 1.0, 1.0, 1.0]
-    offset: [0.0, 0.0, 0.0, 0.0]
+  - name: probability
+    description: probability in [0,1]
+    axes: bcyx
+    data_type: float32
+    data_range: [-.inf, .inf]
+    halo: [0, 0, 32, 32]
+    shape:
+      reference_tensor: raw
+      scale: [1.0, 1.0, 1.0, 1.0]
+      offset: [0.0, 0.0, 0.0, 0.0]
+
+test_inputs: [test_input.npy]
+test_outputs: [test_output.npy]
+
+sample_inputs: [test_input.npy]
+sample_outputs: [test_output.npy]
 
 weights:
  pytorch_state_dict:

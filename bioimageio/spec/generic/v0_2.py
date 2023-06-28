@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple, TypeVar, Union, get_args
+from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
 
 from annotated_types import Len, MinLen
 from pydantic import (
@@ -413,13 +413,13 @@ class ResourceDescriptionBaseNoSource(Node):
 
     @classmethod
     def model_validate(
-        cls,
+        cls: Type[ResourceDescriptionType],
         obj: Union[Any, Dict[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> ResourceDescriptionType:
         """Validate RDF content `obj` and create an RDF instance.
 
         Also sets 'root' context from 'root' in `obj` (or vice versa)

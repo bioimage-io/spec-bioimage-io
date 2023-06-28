@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import collections.abc
-from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
+from types import MappingProxyType
+from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, TypedDict, Union, get_args
 
 import annotated_types
-from pydantic import HttpUrl, TypeAdapter, model_validator
+from pydantic import HttpUrl, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
 
@@ -12,13 +13,14 @@ from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
     LATEST_FORMAT_VERSION,
     FormatVersion,
+    GenericDescription,
     KnownGenericDescription,
+    KnownGenericResourceType,
     LatestFormatVersion,
     ResourceDescriptionBase,
 )
 from bioimageio.spec.model.v0_4 import Model
-from bioimageio.spec.shared.fields import Field
-from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
 from bioimageio.spec.shared.utils import ensure_raw
 from bioimageio.spec.shared.validation import WatertightWarning, warn
@@ -39,10 +41,6 @@ class CollectionEntry(Node):
     model_config = {**Node.model_config, **dict(extra="allow")}
     """pydantic model config set to allow additional keys"""
 
-    # id: str
-    # """the collection entrie's sub-ID.
-    # Later referencing of an entry should be done as <collection's base ID>/<entrie's sub-ID>"""
-
     rdf_source: Annotated[
         Union[HttpUrl, RelativeFilePath, None],
         warn(None, WatertightWarning, "Cannot statically validate remote resource description."),
@@ -53,9 +51,13 @@ class CollectionEntry(Node):
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_validator: ClassVar[
-        TypeAdapter[Annotated[Union[Model, Dataset, KnownGenericDescription], Field(discriminator="type")]]
-    ] = TypeAdapter(Annotated[Union[Model, Dataset, KnownGenericDescription], Field(discriminator="type")])
+    entry_classes: ClassVar[
+        MappingProxyType[
+            Literal["model", "dataset", KnownGenericResourceType], Type[Union[Model, Dataset, KnownGenericDescription]]
+        ]
+    ] = MappingProxyType(
+        dict(model=Model, dataset=Dataset, **{t: KnownGenericDescription for t in get_args(KnownGenericResourceType)})
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -69,10 +71,14 @@ class CollectionEntry(Node):
             if isinstance(data.get("id"), (str, int, float)) and isinstance(base_id, (str, int, float)):
                 entry_data["id"] = f"{base_id}/{data['id']}"
 
-            cls.entry_validator.validate_python(entry_data, context=info.context)
+            if (type_ := entry_data.get("type")) in cls.entry_classes:
+                entry_class = cls.entry_classes[type_]  # type: ignore
+            else:
+                entry_class = GenericDescription
+            entry_class.model_validate(entry_data, context=info.context)
         else:
-            # cannot validate entry without resolving 'rdf_source'
-            # to validate, load 'rdf_content' as extra fields to CollectionEntry
+            # Cannot validate entry without resolving 'rdf_source'.
+            # To validate, specify the content of rdf_source as extra fields.
             pass
 
         return data
@@ -95,11 +101,6 @@ class Collection(ResourceDescriptionBase):
         annotated_types.MinLen(1),
     ]
     """Collection entries"""
-
-    # def __init__(self, *, context: Union[dict[str, Any], None] = None, **data: Any) -> None:
-    #     context = context or {}
-    #     context["collection_base_content"] = {k: ensure_raw(v) for k, v in data.items() if k != "collection"}
-    #     super().__init__(context=context, **data)
 
     @classmethod
     def model_validate(

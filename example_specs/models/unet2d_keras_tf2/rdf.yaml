@@ -49,8 +49,8 @@ documentation: README.md
 format_version: 0.4.8
 inputs:
 - axes: bxyc
-  data_range: [0.0, 255.0]
-  data_type: uint8
+  data_range: [-inf, inf]
+  data_type: float32
   name: input
   preprocessing:
   - kwargs: {axes: xyc, max_percentile: 99.8, min_percentile: 1, mode: per_sample}
