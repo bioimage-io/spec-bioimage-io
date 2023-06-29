@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections.abc
-from datetime import datetime
 from string import ascii_letters, digits
 from typing import (
     Any,
@@ -17,9 +16,11 @@ from typing import (
     get_args,
 )
 
-from annotated_types import Ge, Len, MinLen, MultipleOf, Predicate
+from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
+    AfterValidator,
     AllowInfNan,
+    FieldValidationInfo,
     HttpUrl,
     field_validator,
     model_validator,
@@ -37,7 +38,10 @@ from bioimageio.spec.shared.common import SHA256_HINT
 from bioimageio.spec.shared.fields import Field
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
+    AxesInCZYX,
+    AxesStr,
     CapitalStr,
+    Datetime,
     FileSource,
     Identifier,
     LicenseId,
@@ -48,8 +52,7 @@ from bioimageio.spec.shared.types import (
     Version,
 )
 from bioimageio.spec.shared.validation import (
-    AfterWarner,
-    validate_datetime_iso8601,
+    RestrictCharacters,
     validate_suffix,
     warn,
 )
@@ -314,7 +317,7 @@ class TensorBase(Node):
     description: str = ""
     """Brief descripiton of the tensor"""
 
-    axes: Annotated[str, Predicate(lambda axs: all(a in "bitczyx" for a in axs))]
+    axes: AxesStr
     """Axes identifying characters. Same length and order as the axes in `shape`.
     | axis | description |
     | --- | --- |
@@ -348,33 +351,209 @@ class TensorBase(Node):
     #     return data
 
 
-class Preprocessing(Node):
-    name: PreprocessingName
-    """Preprocessing name"""
+_MODE_DESCR = """Mode for computing mean and variance.
+| mode | description |
+| --- | ---- |
+| fixed | fixed values for mean and variance |
+| per_dataset | mean and variance are computed for the entire dataset |
+| per_sample | mean and variance are computed for each sample individually |
+"""
+_MODE_DESCR_WO_FIXED = """Mode for computing mean and variance.
+| mode | description |
+| --- | ---- |
+| per_dataset | mean and variance are computed for the entire dataset |
+| per_sample | mean and variance are computed for each sample individually |
+"""
 
-    kwargs: Kwargs = Field(
-        default_factory=dict,
-        description=(
-            f"Key word arguments as described in [preprocessing spec]"
-            f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/preprocessing_spec_"
-            f"{'_'.join(LATEST_FORMAT_VERSION.split('.')[:2])}.md)."
-        ),
-    )
-    """Key word arguments"""
+
+class ProcessingKwargs(Kwargs):
+    """base class for pre-/postprocessing key word arguments"""
+
+    # mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
 
 
-class Postprocessing(Node):
-    name: PostprocessingName
-    """Postprocessing name"""
-    kwargs: Kwargs = Field(
-        default_factory=dict,
-        description=(
-            f"Key word arguments as described in [postprocessing spec]"
-            f"(https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/postprocessing_spec_"
-            f"{'_'.join(LATEST_FORMAT_VERSION.split('.')[:2])}.md)."
-        ),
-    )
-    """Key word arguments"""
+class Processing(Node):  # todo: add ABC
+    """abstract processing base class"""
+
+    name: Literal[PreprocessingName, PostprocessingName]
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_name_given_for_raw_input(cls, data: Union[Processing, RawMapping]) -> Union[Processing, RawMapping]:
+        if not isinstance(data, Processing) and "name" not in data:
+            raise AssertionError("'name' field mandatory for raw data input.")
+
+        return data
+
+    kwargs: ProcessingKwargs = ProcessingKwargs()
+    """key word arguments"""
+
+
+class BinarizeKwargs(ProcessingKwargs):
+    threshold: float
+    """The fixed threshold"""
+
+
+class Binarize(Processing):
+    """Binarize the tensor with a fixed threshold.
+    Values above the threshold will be set to one, values below the threshold to zero."""
+
+    name: Literal["binarize"] = "binarize"
+    kwargs: BinarizeKwargs
+
+
+class ClipKwargs(ProcessingKwargs):
+    min: float
+    """minimum value for clipping"""
+    max: float
+    """maximum value for clipping"""
+
+
+class Clip(Processing):
+    """Set tensor values below min to min and above max to max."""
+
+    name: Literal["clip"] = "clip"
+
+    kwargs: ClipKwargs
+
+
+class ScaleLinearKwargs(ProcessingKwargs):
+    axes: Optional[AxesInCZYX] = Field(None, examples=["xy"])
+    """The subset of axes to scale jointly.
+    For example xy to scale the two image axes for 2d data jointly."""
+
+    gain: Union[float, Tuple[float, ...]] = 1.0
+    """multiplicative factor"""
+
+    offset: Union[float, Tuple[float, ...]] = 0.0
+    """additive term"""
+
+    @model_validator(mode="after")
+    def either_gain_or_offset(self):
+        if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
+            self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
+        ):
+            raise ValueError("Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
+
+        return self
+
+
+class ScaleLinear(Processing):
+    """Fixed linear scaling."""
+
+    name: Literal["scale_linear"] = "scale_linear"
+    kwargs: ScaleLinearKwargs
+
+
+class Sigmoid(Processing):
+    """The logistic sigmoid funciton, a.k.a. expit function."""
+
+    name: Literal["sigmoid"] = "sigmoid"
+
+
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=_MODE_DESCR)
+    axes: AxesInCZYX = Field(examples=["xy"])
+    """The subset of axes to normalize jointly.
+    For example `xy` to normalize the two image axes for 2d data jointly."""
+
+    mean: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(1.1, 2.2, 3.3)])
+    """The mean value(s) to use for `mode: fixed`.
+    For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
+    # todo: check if means match input axes (for mode 'fixed')
+
+    std: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(0.1, 0.2, 0.3)])
+    """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
+
+    @model_validator(mode="after")
+    def mean_and_std_match_mode(self):
+        if self.mode == "fixed" and (self.mean is None or self.std is None):
+            raise ValueError("`mean` and `std` are required for `mode: fixed`.")
+        elif self.mode != "fixed" and (self.mean is not None or self.std is not None):
+            raise ValueError(f"`mean` and `std` not allowed for `mode: {self.mode}`")
+
+        return self
+
+
+class ZeroMeanUnitVariance(Processing):
+    """Subtract mean and divide by variance."""
+
+    name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    kwargs: ZeroMeanUnitVarianceKwargs
+
+
+class ScaleRangeKwargs(ProcessingKwargs):
+    mode: Literal["per_dataset", "per_sample"]
+    axes: AxesInCZYX = Field(examples=["xy"])
+    """The subset of axes to normalize jointly.
+    For example xy to normalize the two image axes for 2d data jointly."""
+
+    min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
+    """The lower percentile used for normalization."""
+
+    max_percentile: Annotated[float, Interval(gt=1, le=100)] = 100.0
+    """The upper percentile used for normalization
+    Has to be bigger than `min_percentile`.
+    The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """Epsilon for numeric stability.
+    `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
+    with `v_lower,v_upper` values at the respective percentiles."""
+
+    reference_tensor: Optional[Identifier] = None
+    """Tensor name to compute the percentiles from. Default: The tensor itself.
+    For any tensor in `inputs` only input tensor references are allowed.
+    For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
+
+    @field_validator("max_percentile", mode="after")
+    @classmethod
+    def min_smaller_max(cls, value: float, info: FieldValidationInfo):
+        if (min_p := info.data["min_percentile"]) >= value:
+            raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
+
+        return value
+
+
+class ScaleRange(Processing):
+    """Scale with percentiles."""
+
+    name: Literal["scale_range"] = "scale_range"
+    kwargs: ScaleRangeKwargs
+
+
+class ScaleMeanVarianceKwargs(ProcessingKwargs):
+    mode: Literal["per_dataset", "per_sample"]
+    reference_tensor: Identifier
+    """Name of tensor to match."""
+
+    axes: Optional[AxesInCZYX] = Field(None, examples=["xy"])
+    """The subset of axes to scale jointly.
+    For example xy to normalize the two image axes for 2d data jointly.
+    Default: scale all non-batch axes jointly."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """Epsilon for numeric stability:
+    "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
+
+
+class ScaleMeanVariance(Processing):
+    """Scale the tensor s.t. its mean and variance match a reference tensor."""
+
+    name: Literal["scale_mean_variance"] = "scale_mean_variance"
+    kwargs: ScaleMeanVarianceKwargs
+
+
+Preprocessing = Annotated[
+    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange], Field(discriminator="name")
+]
+Postprocessing = Annotated[
+    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+    Field(discriminator="name"),
+]
 
 
 class InputTensor(TensorBase):
@@ -450,11 +629,6 @@ class RunMode(Node):
     kwargs: Kwargs = Field(default_factory=dict)
     """Run mode specific key word arguments"""
 
-    # @validates("name")
-    # def warn_on_unrecognized_run_mode(self, value: str):
-    #     if isinstance(value, str):
-    #         self.warn("name", f"Unrecognized run mode '{value}'")
-
 
 class ModelRdf(Node):
     rdf_source: Union[FileSource, None] = Field(None, alias="uri")
@@ -524,7 +698,8 @@ class Model(ResourceDescriptionBaseNoSource):
     to discuss your intentions with the community."""
 
     name: Annotated[
-        CapitalStr, AfterWarner(lambda n: all(s in ascii_letters + digits + "_- " for s in n)), warn(Len(max_length=64))
+        CapitalStr,
+        warn(MaxLen(64)),
     ]
     """"A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
@@ -552,34 +727,6 @@ class Model(ResourceDescriptionBaseNoSource):
     def minimum_shape2valid_output(self):
         tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]] = {t.name: t for t in self.inputs + self.outputs}
 
-        # output with subtracted halo has to result in meaningful output even for the minimal input
-        # see https://github.com/bioimage-io/spec-bioimage-io/issues/392
-        def get_min_shape(t: Union[InputTensor, OutputTensor]) -> Tuple[int, ...]:
-            if isinstance(t.shape, tuple):
-                return t.shape
-
-            if isinstance(t.shape, ParametrizedInputShape):
-                return t.shape.min
-
-            assert isinstance(t.shape, ImplicitOutputShape)
-            ref_shape = get_min_shape(tensors_by_name[t.shape.reference_tensor])
-
-            if None not in t.shape.scale:
-                scale: Sequence[float, ...] = t.shape.scale  # type: ignore
-            else:
-                expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
-                new_ref_shape: List[int] = []
-                for idx in range(len(t.shape.scale)):
-                    ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
-                    new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
-                ref_shape = tuple(new_ref_shape)
-                assert len(ref_shape) == len(t.shape.scale)
-                scale = [0.0 if sc is None else sc for sc in t.shape.scale]
-
-            offset = t.shape.offset
-            assert len(offset) == len(scale)
-            return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
-
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
                 ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
@@ -597,7 +744,7 @@ class Model(ResourceDescriptionBaseNoSource):
                         f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
                     )
 
-            min_out_shape = get_min_shape(out)
+            min_out_shape = self._get_min_shape(out, tensors_by_name)
             if out.halo:
                 halo = out.halo
                 halo_msg = f" for halo {out.halo}"
@@ -609,6 +756,38 @@ class Model(ResourceDescriptionBaseNoSource):
                 raise ValueError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
 
         return self
+
+    @classmethod
+    def _get_min_shape(
+        cls, t: Union[InputTensor, OutputTensor], tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]]
+    ) -> Tuple[int, ...]:
+        """output with subtracted halo has to result in meaningful output even for the minimal input
+        see https://github.com/bioimage-io/spec-bioimage-io/issues/392
+        """
+        if isinstance(t.shape, tuple):
+            return t.shape
+
+        if isinstance(t.shape, ParametrizedInputShape):
+            return t.shape.min
+
+        assert isinstance(t.shape, ImplicitOutputShape)
+        ref_shape = cls._get_min_shape(tensors_by_name[t.shape.reference_tensor], tensors_by_name)
+
+        if None not in t.shape.scale:
+            scale: Sequence[float, ...] = t.shape.scale  # type: ignore
+        else:
+            expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
+            new_ref_shape: List[int] = []
+            for idx in range(len(t.shape.scale)):
+                ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
+                new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
+            ref_shape = tuple(new_ref_shape)
+            assert len(ref_shape) == len(t.shape.scale)
+            scale = [0.0 if sc is None else sc for sc in t.shape.scale]
+
+        offset = t.shape.offset
+        assert len(offset) == len(scale)
+        return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
 
     @model_validator(mode="after")
     def validate_tensor_references_in_inputs(self):
@@ -673,14 +852,9 @@ class Model(ResourceDescriptionBaseNoSource):
     def check_suffix(cls, value: NonEmpty[Tuple[FileSource, ...]]):
         return tuple(validate_suffix(v, ".npy") for v in value)
 
-    timestamp: datetime
-    """Timestamp of the initial creation of this model in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format."""
-
-    @field_validator("timestamp", mode="plain")
-    @classmethod
-    def check_datetime(cls, value: Any) -> datetime:
-        """only accept iso 8601 string and datetime, but no other valid datetime input like int or float"""
-        return validate_datetime_iso8601(value)
+    timestamp: Datetime
+    """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
+    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""

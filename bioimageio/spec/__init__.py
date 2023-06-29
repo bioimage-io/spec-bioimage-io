@@ -4,9 +4,8 @@ from typing import Union
 
 from typing_extensions import Annotated
 
+from bioimageio.spec import collection, dataset, generic, model, shared
 from bioimageio.spec.shared.fields import Field
-
-from . import collection, dataset, generic, model, shared
 
 __all__ = [
     "__version__",

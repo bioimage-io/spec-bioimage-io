@@ -1,7 +1,6 @@
 import ast
 import sys
 import warnings
-from typing import Callable, Union
 from urllib.parse import urlparse
 
 try:

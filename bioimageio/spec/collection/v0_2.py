@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 from types import MappingProxyType
-from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, TypedDict, Union, get_args
+from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, Union, get_args
 
 import annotated_types
 from pydantic import HttpUrl, model_validator
@@ -20,10 +20,10 @@ from bioimageio.spec.generic.v0_2 import (
     ResourceDescriptionBase,
 )
 from bioimageio.spec.model.v0_4 import Model
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
 from bioimageio.spec.shared.utils import ensure_raw
-from bioimageio.spec.shared.validation import WatertightWarning, warn
+from bioimageio.spec.shared.validation import ALERT, warn
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 
@@ -43,7 +43,7 @@ class CollectionEntry(Node):
 
     rdf_source: Annotated[
         Union[HttpUrl, RelativeFilePath, None],
-        warn(None, WatertightWarning, "Cannot statically validate remote resource description."),
+        warn(None, ALERT, "Cannot statically validate remote resource description."),
     ] = None
     """resource description file (RDF) source to load entry from"""
 

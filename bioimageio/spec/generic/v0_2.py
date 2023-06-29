@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from functools import partial
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
 
@@ -31,9 +30,7 @@ from bioimageio.spec.shared.types import (
 )
 from bioimageio.spec.shared.utils import is_valid_orcid_id
 from bioimageio.spec.shared.validation import (
-    InfoWarning,
-    WatertightWarning,
-    WorrilessWarning,
+    WARNING,
     as_warning,
     warn,
 )
@@ -152,7 +149,7 @@ class ResourceDescriptionBaseNoSource(Node):
 
     type: Annotated[
         Union[KnownGenericResourceType, str],
-        warn(KnownGenericResourceType, WorrilessWarning, "'{value}' is not a known generic resource type."),
+        warn(KnownGenericResourceType, WARNING, "'{value}' is not a known generic resource type."),
     ] = Field(examples=list(get_args(KnownGenericResourceType)))
     """The resource type assigns a broad category to the resource
     and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
@@ -227,9 +224,7 @@ class ResourceDescriptionBaseNoSource(Node):
 
     cite: Annotated[
         Tuple[CiteEntry, ...],
-        warn(
-            Annotated[Tuple[CiteEntry, ...], MinLen(1)], WorrilessWarning, "Please specify at least one `cite` entry."
-        ),
+        warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING, "Please specify at least one `cite` entry."),
     ] = ()
     """citations"""
 
@@ -276,14 +271,14 @@ class ResourceDescriptionBaseNoSource(Node):
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
-        warn(LicenseId, WorrilessWarning, "'{value}' is a deprecated or unknown license identifier."),
+        warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
     ] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    @partial(as_warning, warning_class=InfoWarning)  # type: ignore
+    @as_warning  # type: ignore
     @field_validator("license", mode="after")
     @classmethod
     def deprecated_spdx_license(cls, value: Optional[str]):

@@ -1,6 +1,7 @@
+from __future__ import annotations
 import collections.abc
 import sys
-from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Optional, Sequence, Set, TypeVar, Union
+from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Optional, Sequence, Set, Type, TypeVar, Union
 
 import pydantic
 
@@ -84,6 +85,22 @@ class Node(
             round_trip=round_trip,
             warnings=warnings,
         )
+
+    # @classmethod
+    # def generate_documentation(cls: Type[Node], lvl: int = 0):
+    #     cls.__na
+    # doc = f"{'#'*lvl} {cls.__name__}"
+    # doc = ""
+    # doc += f"# {cls.__name__}\n\n"
+    # doc += f"{cls.Doc.short_description}\n\n"
+    # doc += f"{cls.Doc.long_description}\n\n"
+    # doc += "## Fields\n\n"
+    # for name, field in cls.__fields__.items():
+    #     field_info: pd.fields.FieldInfo = field.field_info
+    #     doc += f"### {name}\n\n"
+    #     doc += f"{field_info.description}\n\n"
+    #     for constraint in field_info.get_constraints():
+    #         doc += f"* constraint : `{constraint} = {getattr(field_info, constraint)}`\n\n"
 
 
 class StringNode(Node):

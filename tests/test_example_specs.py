@@ -37,7 +37,7 @@ class TestExampleSpecs(BaseTestCases.TestNode):
                 else:
                     st_class = Invalid
 
-                name = str(rdf.relative_to(rdf.parent.parent).as_posix())
+                name = str(rdf.relative_to(example_specs).as_posix())
                 if self.DEBUG_SUBTEST_NAME is not None and self.DEBUG_SUBTEST_NAME != name:
                     continue
                 self.sub_tests.append(

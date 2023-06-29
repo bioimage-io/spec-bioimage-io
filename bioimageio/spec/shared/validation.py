@@ -5,10 +5,13 @@ import sys
 from datetime import datetime
 from keyword import iskeyword
 from logging import getLogger
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Dict,
+    Hashable,
     Literal,
     Mapping,
     Optional,
@@ -21,11 +24,15 @@ from typing import (
 
 import packaging.version
 from annotated_types import BaseMetadata, GroupedMetadata
-from pydantic import AnyUrl, FieldValidationInfo, TypeAdapter, ValidationInfo
+from pydantic import AnyUrl, FieldValidationInfo, GetCoreSchemaHandler, TypeAdapter, ValidationInfo
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
-from pydantic_core import PydanticCustomError
-from pydantic_core.core_schema import GeneralValidatorFunction, NoInfoValidatorFunction
+from pydantic_core import CoreSchema, PydanticCustomError
+from pydantic_core.core_schema import (
+    GeneralValidatorFunction,
+    NoInfoValidatorFunction,
+    no_info_after_validator_function,
+)
 from typing_extensions import Annotated, LiteralString
 
 if TYPE_CHECKING:
@@ -38,6 +45,7 @@ RAISE_WARNINGS = "raise"
 ALERT = 35  # no ALERT or worse -> RDF is worriless
 WARNING = 30  # no WARNING or worse -> RDF is watertight
 INFO = 20
+Severity = Literal[20, 30, 35]
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
@@ -53,35 +61,20 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class Warning:
     message_template: LiteralString
-    warning_type: LiteralString
-    severity: int
+    severity: Severity
     context: Optional[Dict[str, Any]] = None
 
+    severity2type: ClassVar[MappingProxyType[Severity, LiteralString]] = MappingProxyType(
+        {INFO: "info_warning", WARNING: "worriless_warning", ALERT: "watertight_warning"}
+    )
+
     def raise_(self):
-        raise PydanticCustomError(self.warning_type, self.message_template, self.context)
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class InfoWarning(Warning):
-    warning_type: Literal["info_warning"] = "info_warning"
-    severity: int = INFO
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class WorrilessWarning(Warning):
-    warning_type: Literal["worriless_warning"] = "worriless_warning"
-    severity: int = WARNING
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class WatertightWarning(Warning):
-    warning_type: Literal["watertight_warning"] = "watertight_warning"
-    severity: int = ALERT
+        raise PydanticCustomError(self.severity2type[self.severity], self.message_template, self.context)
 
 
 def warn(
     typ: Union[AnnotationMetaData, Any],
-    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning,
+    severity: Severity = 20,
     msg: Optional[LiteralString] = None,
 ):
     """treat a type or its annotation metadata as a warning condition"""
@@ -90,7 +83,7 @@ def warn(
         typ = Annotated[Any, typ]
 
     validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python, warning_class=warning_class, msg=msg)
+    return BeforeWarner(validator.validate_python, severity=severity, msg=msg)
 
 
 def call_validator_func(
@@ -107,22 +100,22 @@ def as_warning(
     func: GeneralValidatorFunction,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning,
+    severity: Severity = 20,
     msg: Optional[LiteralString] = None,
 ) -> GeneralValidatorFunction:
     """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
 
     def wrapper(value: Any, info: Union[FieldValidationInfo, ValidationInfo]) -> Any:
         logger = getLogger(getattr(info, "field_name", "node"))
-        if logger.level > warning_class.severity:
+        if logger.level > severity:
             return value
 
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
-            logger.log(warning_class.severity, e)
+            logger.log(severity, e)
             if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
-                warning_class(msg or ",".join(e.args), context=dict(value=value)).raise_()
+                Warning(msg or ",".join(e.args), severity=severity, context=dict(value=value)).raise_()
 
         return value
 
@@ -131,13 +124,13 @@ def as_warning(
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class _WarnerMixin:
-    warning_class: Type[Union[InfoWarning, WorrilessWarning, WatertightWarning]] = InfoWarning
+    severity: Severity = 20
     msg: Optional[LiteralString] = None
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
         if __name == "func":
-            return as_warning(ret, warning_class=self.warning_class, msg=self.msg)
+            return as_warning(ret, severity=self.severity, msg=self.msg)
         else:
             return ret
 
@@ -150,6 +143,42 @@ class AfterWarner(_WarnerMixin, AfterValidator):
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class BeforeWarner(_WarnerMixin, BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class RestrictCharacters:
+    alphabet: str
+
+    def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
+        if not self.alphabet:
+            raise ValueError("Alphabet may not be empty")
+        schema = handler(source)  # get the CoreSchema from the type / inner constraints
+        if schema["type"] != "str":
+            raise TypeError("RestrictCharacters can only be applied to strings")
+        return no_info_after_validator_function(
+            self.validate,
+            schema,
+        )
+
+    def validate(self, value: str) -> str:
+        if any(c not in self.alphabet for c in value):
+            raise ValueError(f"{value!r} is not restricted to {self.alphabet!r}")
+        return value
+
+
+def validate_datetime(dt: Union[datetime, str, Any]) -> Union[datetime, str]:
+    if isinstance(dt, datetime):
+        return dt
+    elif isinstance(dt, str):
+        return datetime.fromisoformat(dt.replace("Z", "+00:00"))
+
+    raise AssertionError(f"'{dt}' not a string or datetime.")
+
+
+def validate_unique_entries(seq: Sequence[Hashable]):
+    if len(seq) != len(set(seq)):
+        raise ValueError("Entries are not unique.")
+    return seq
 
 
 def validate_version(v: str) -> str:

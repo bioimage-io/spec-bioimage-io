@@ -16,8 +16,7 @@ try:
         @staticmethod
         def load(path: Path):
             with path.open() as f:
-                return _pyyaml_yaml.load(f, None)  # fmt: off
-
+                return _pyyaml_yaml.load(f, _pyyaml_yaml.SafeLoader)
 
 except ImportError:
     raise RuntimeError("Cannot compare yaml syntax without the pyyaml package")
@@ -37,20 +36,19 @@ def parse_args():
 
 
 def main(resource_description_path: Path):
-
     pyyaml = pyyaml_yaml.load(resource_description_path)
     assert isinstance(pyyaml, dict)
     ruamel = ruamel_yaml.load(resource_description_path)
     assert isinstance(ruamel, dict)
 
-    diff = {key: (value, ruamel[key]) for key, value in pyyaml.items() if value != ruamel[key]}
+    diff = {key: (value, ruamel[key]) for key, value in pyyaml.items() if value != ruamel[key]}  # type: ignore
     if diff:
         print(f"Found differences between yaml syntax 1.1/1.2 for {resource_description_path}:")
-        print(diff)
+        print(diff)  # type: ignore
     else:
         print(f"No differences found between yaml syntax 1.1/1.2 for {resource_description_path}:")
 
-    return len(diff)
+    return len(diff)  # type: ignore
 
 
 if __name__ == "__main__":

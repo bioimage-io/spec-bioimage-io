@@ -11,55 +11,6 @@ except ImportError:
     from typing_extensions import Literal, get_args, get_origin, Protocol, TypedDict  # type: ignore
 
 
-try:
-    from ruamel.yaml import YAML  # not available in pyodide
-except ImportError:
-    yaml: Optional["MyYAML"] = None
-else:
-
-    class MyYAML(YAML):
-        """add convenient improvements over YAML
-        improve dump:
-            - make sure to dump with utf-8 encoding. on windows encoding 'windows-1252' may otherwise be used
-            - expose indentation kwargs for dump
-        """
-
-        def dump(self, data, stream=None, *, transform=None):
-            if isinstance(stream, pathlib.Path):
-                with stream.open("wt", encoding="utf-8") as f:
-                    return super().dump(data, f, transform=transform)
-            else:
-                return super().dump(data, stream, transform=transform)
-
-    yaml = MyYAML(typ="safe")
-
-
-try:
-    from tqdm import tqdm  # not available in pyodide
-except ImportError:
-    # todo: tqdm = None
-
-    class tqdm:  # type: ignore
-        """no-op tqdm"""
-
-        def __init__(self, iterable: Optional[Iterable] = None, *args, **kwargs):
-            self.iterable = iterable
-
-        def __iter__(self):
-            if self.iterable is not None:
-                yield from self.iterable
-
-        def update(self, *args, **kwargs):
-            pass
-
-        def close(self):
-            pass
-
-
-class CacheWarning(RuntimeWarning):
-    pass
-
-
 BIOIMAGEIO_CACHE_PATH = pathlib.Path(
     os.getenv("BIOIMAGEIO_CACHE_PATH", pathlib.Path(tempfile.gettempdir()) / getpass.getuser() / "bioimageio_cache")
 )

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.model.v0_4 import ModelRdf, LinkedModel, OnnxEntry
+from bioimageio.spec.model.v0_4 import ModelRdf, LinkedModel, OnnxEntry, ScaleLinearKwargs
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import WARNINGS_ACTION_KEY
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
@@ -57,4 +57,18 @@ class TestOnnxEntry(BaseTestCases.TestNode):
         Invalid(
             dict(source="https://example.com", sha256="s"),
         ),
+    ]
+
+
+class TestScaleLinearKwargs(BaseTestCases.TestNode):
+    default_node_class = ScaleLinearKwargs
+    sub_tests = [
+        Valid(dict(axes="xy", gain=2.0, offset=0.5)),
+        Valid(dict(offset=2.0)),
+        Valid(dict(gain=2.0)),
+        Valid(dict(axes="xy", gain=[1.0, 2.0], offset=[0.5, 0.3])),
+        Valid(dict(gain=2.0, offset=0.5)),
+        Invalid(dict(), name="empty kwargs"),
+        Invalid(dict(gain=1.0)),
+        Invalid(dict(offset=0.0)),
     ]

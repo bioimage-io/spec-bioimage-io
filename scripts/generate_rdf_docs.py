@@ -1,30 +1,25 @@
+# todo: update
 import dataclasses
 import inspect
-import typing
+from types import ModuleType
 from pathlib import Path
+from typing import Type
 
 import bioimageio.spec.rdf
 from bioimageio.spec.shared import fields
 
-from typing import get_args
+from pydantic.alias_generators import to_pascal, to_snake
+
+from bioimageio.spec.shared.nodes import FrozenDictBase, Node
 
 
-@dataclasses.dataclass
-class DocNode:
-    type_name: str
-    short_description: str
-    description: str
-    sub_docs: typing.List[typing.Tuple[str, "DocNode"]]
-    details: typing.List["DocNode"]
-    many: bool  # expecting a list of the described sub spec
-    optional: bool
-    maybe_optional: bool
-
-    def __post_init__(self):
-        assert not (self.sub_docs and self.details)
+def doc_from_node(node: Type[Node]) -> DocNode:
 
 
-def doc_from_schema(obj, spec) -> DocNode:
+    if issubclass(node, FrozenDictBase):
+        return DocNode(node.__name__, short_description=node.model_config.get("title", ""), description=node.__doc__, sub_docs=[() for n])
+    for name, field in node:
+
     if obj is None:
         return DocNode(
             type_name="Any",
@@ -75,17 +70,17 @@ def doc_from_schema(obj, spec) -> DocNode:
             return f"{manual_order}{int(not nested_field.required)}{name}"
 
         sub_fields = sorted(obj.fields.items(), key=sort_key)
-        sub_docs = [(name, doc_from_schema(nested_field, spec)) for name, nested_field in sub_fields]
+        sub_docs = [(name, doc_from_node(nested_field, spec)) for name, nested_field in sub_fields]
     else:
         type_name += obj.type_name
         required = obj.required
         maybe_required = obj.bioimageio_maybe_required
         if isinstance(obj, fields.Union):
-            details = [doc_from_schema(opt, spec) for opt in obj._candidate_fields]
+            details = [doc_from_node(opt, spec) for opt in obj._candidate_fields]
         elif isinstance(obj, fields.Dict):
-            details = [doc_from_schema(obj.key_field, spec), doc_from_schema(obj.value_field, spec)]
-        elif isinstance(obj, fields.List):
-            details = [doc_from_schema(obj.inner, spec)]
+            details = [doc_from_node(obj.key_field, spec), doc_from_node(obj.value_field, spec)]
+        elif isinstance(obj, fields.list):
+            details = [doc_from_node(obj.inner, spec)]
         else:
             assert isinstance(obj, fields.DocumentedField), (type(obj), obj)
 
@@ -102,11 +97,11 @@ def doc_from_schema(obj, spec) -> DocNode:
 
 
 def markdown_from_doc(
-    doc: DocNode, parent_names: typing.Sequence[str] = tuple(), neither_opt_nor_req: bool = False, indent_lvl: int = 0
+    doc: DocNode, parent_names: Sequence[str] = tuple(), neither_opt_nor_req: bool = False, indent_lvl: int = 0
 ):
     if doc.sub_docs:
         sub_docs = [(name, sdn) for name, sdn in doc.sub_docs]
-        enumerate_symbol: typing.Optional[str] = "*"
+        enumerate_symbol: Optional[str] = "*"
     elif doc.details:
         sub_docs = [("", sdn) for sdn in doc.details]
         enumerate_symbol = "1."
@@ -114,7 +109,7 @@ def markdown_from_doc(
         sub_docs = []
         enumerate_symbol = None
 
-    n_o_n_r = neither_opt_nor_req or doc.type_name.startswith("List") or doc.type_name.startswith("Dict")
+    n_o_n_r = neither_opt_nor_req or doc.type_name.startswith("list") or doc.type_name.startswith("Dict")
     sub_doc = ""
     if not doc.short_description:
         for name, sdn in sub_docs:
@@ -147,43 +142,47 @@ def markdown_from_doc(
     return md_doc + "\n"
 
 
-def export_markdown_doc(folder: Path, spec) -> None:
-    type_or_version = spec.__name__.split(".")[-1]
-    format_version_wo_patch = "_".join(spec.format_version.split(".")[:2])
-    if type_or_version[1:] == format_version_wo_patch:
-        type_ = spec.__name__.split(".")[-2]
+def export_markdown_doc(folder: Path, node: Type[Node], as_latest: bool = False) -> None:
+    module = node.__module__.replace("bioimageio.spec.", "")
+    assert "." in module
+    module, version = module.split(".")
+    assert version.startswith("v")
+    if as_latest:
+        version = "latest"
     else:
-        format_version_wo_patch = "latest"
-        type_ = type_or_version
+        version = version[1:]
 
-    path = folder / f"{type_}_spec_{format_version_wo_patch}.md"
+    name = to_snake(node.__name__)
+    path = folder / f"{name}_spec_{version}.md"
 
-    if type_ == "rdf":
-        type_ = "RDF"
-    else:
-        type_ = type_.title()
-
-    doc = doc_from_schema(getattr(spec.schema, type_)(), spec)
+    doc = doc_from_node(node)
     md_doc = markdown_from_doc(doc)
     path.write_text(md_doc, encoding="utf-8")
+    print(f"written {path}")
+
+
+def export_markdown_docs(folder: Path, module: ModuleType):
+    node_name = to_pascal(module.__name__.split(".")[-1])
+    node_name = node_name.replace("Generic", "GenericDescription")
+
+    for v in dir(module):
+        if not v.startswith("v") or "_" not in v:
+            continue
+
+        v_module = getattr(module, v)
+        v_node = getattr(v_module, node_name)
+        export_markdown_doc(folder, v_node)
+
+    latest_node = getattr(module, node_name)
+    assert issubclass(latest_node, Node)
+    export_markdown_doc(folder, latest_node, as_latest=True)
 
 
 if __name__ == "__main__":
-    import bioimageio.spec.collection.v0_2
-    import bioimageio.spec.dataset.v0_2
-    import bioimageio.spec.model.v0_3
-    import bioimageio.spec.model.v0_4
-    import bioimageio.spec.rdf.v0_2
-
     dist = Path(__file__).parent / "../dist"
     dist.mkdir(exist_ok=True)
 
-    export_markdown_doc(dist, bioimageio.spec.collection)
-    export_markdown_doc(dist, bioimageio.spec.collection.v0_2)
-    export_markdown_doc(dist, bioimageio.spec.dataset)
-    export_markdown_doc(dist, bioimageio.spec.dataset.v0_2)
-    export_markdown_doc(dist, bioimageio.spec.model)
-    export_markdown_doc(dist, bioimageio.spec.model.v0_3)
-    export_markdown_doc(dist, bioimageio.spec.model.v0_4)
-    export_markdown_doc(dist, bioimageio.spec.rdf)
-    export_markdown_doc(dist, bioimageio.spec.rdf.v0_2)
+    export_markdown_docs(dist, bioimageio.spec.collection)
+    export_markdown_docs(dist, bioimageio.spec.dataset)
+    export_markdown_docs(dist, bioimageio.spec.generic)
+    export_markdown_docs(dist, bioimageio.spec.model)
