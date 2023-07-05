@@ -8,6 +8,7 @@ import annotated_types
 from pydantic import HttpUrl, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
+from bioimageio.spec import ResourceDescription
 
 from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
@@ -29,14 +30,14 @@ __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersio
 
 
 class CollectionEntry(Node):
-    """Each entry needs to specify a valid RDF with an `id`.
-    Each entry RDF is based on the collection RDF itself.
+    """A valid resource description (RD).
+    The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
-    and added/overwritten by any fields specified directly in the entry.
+    and finally added/overwritten by any fields specified directly in the entry.
     Except for the `id` field, fields are overwritten entirely, their content is not merged!
-    The `id` field in `rdf_source` is ignored and the final `id` for each collection entry
-    is composed of the collection RDF `id` and the entry's 'sub-'`id` specified in-place
-    such that `final_entry_id = <collection_id>/<entry_id>`"""
+    The final `id` for each collection entry is composed of the collection's `id`
+    and the entry's 'sub-'`id`, specified remotely as part of `rdf_source` or superseeded in-place,
+    such that the `final_entry_id = <collection_id>/<entry_id>`"""
 
     model_config = {**Node.model_config, **dict(extra="allow")}
     """pydantic model config set to allow additional keys"""
@@ -53,7 +54,7 @@ class CollectionEntry(Node):
 
     entry_classes: ClassVar[
         MappingProxyType[
-            Literal["model", "dataset", KnownGenericResourceType], Type[Union[Model, Dataset, KnownGenericDescription]]
+            KnownResourceType, Type[ResourceDescription]]
         ]
     ] = MappingProxyType(
         dict(model=Model, dataset=Dataset, **{t: KnownGenericDescription for t in get_args(KnownGenericResourceType)})

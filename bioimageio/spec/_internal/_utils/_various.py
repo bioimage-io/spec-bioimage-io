@@ -56,3 +56,10 @@ def Field(  # noqa C901  NOSONAR: S1542
         max_length=max_length,
         **extra,
     )
+
+
+def ensure_raw(value: Union[pydantic.BaseModel, Any]) -> Union[Dict[str, Any], Any]:
+    if isinstance(value, pydantic.BaseModel):
+        return value.model_dump(exclude_unset=True, exclude_defaults=False, exclude_none=False)
+    else:
+        return value

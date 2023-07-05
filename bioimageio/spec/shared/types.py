@@ -2,26 +2,28 @@ from __future__ import annotations
 
 import pathlib
 from datetime import datetime
-from typing import Any, Mapping, Sequence, Tuple, TypeVar, Union
+from typing import Any, Literal, Mapping, Sequence, Tuple, TypedDict, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
 from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo
 from pydantic.functional_validators import AfterValidator
 from pydantic_core import core_schema
-from typing_extensions import Annotated, LiteralString
+from pydantic_core.core_schema import ErrorType
+from typing_extensions import Annotated, LiteralString, NotRequired
 
+from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
+from bioimageio.spec._internal._warnings import WarningType
 from bioimageio.spec.shared.validation import (
     BeforeValidator,
     RestrictCharacters,
     validate_datetime,
     validate_identifier,
     validate_is_not_keyword,
+    validate_orcid_id,
     validate_unique_entries,
     validate_version,
 )
-
-from ._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 
 T = TypeVar("T")
 L = TypeVar("L", bound=LiteralString)
@@ -36,6 +38,7 @@ Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
+OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 DeprecatedLicenseId = DeprecatedLicenseId
 Identifier = Annotated[NonEmpty[str], AfterValidator(validate_identifier), AfterValidator(validate_is_not_keyword)]
 LicenseId = LicenseId
@@ -46,6 +49,29 @@ RawValue = Union[RawLeafValue, RawSequence, RawMapping]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
+
+
+class ValidationOutcome(TypedDict):
+    loc: str
+    msg: str
+
+
+class ValidationError(ValidationOutcome):
+    type: ErrorType
+
+
+class ValidationWarning(ValidationOutcome):
+    type: WarningType
+
+
+class ValidationSummary(TypedDict):
+    bioimageio_spec_version: str
+    error: Union[str, Sequence[ValidationError], None]
+    name: str
+    source_name: str
+    status: Union[Literal["passed", "failed"], str]
+    traceback: NotRequired[Sequence[str]]
+    warnings: NotRequired[Sequence[ValidationWarning]]
 
 
 class RelativePath:

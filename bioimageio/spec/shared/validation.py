@@ -4,145 +4,30 @@ import re
 import sys
 from datetime import datetime
 from keyword import iskeyword
-from logging import getLogger
-from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
-    ClassVar,
     Dict,
     Hashable,
-    Literal,
     Mapping,
-    Optional,
     Sequence,
     Type,
     Union,
     get_args,
-    get_origin,
 )
 
 import packaging.version
-from annotated_types import BaseMetadata, GroupedMetadata
-from pydantic import AnyUrl, FieldValidationInfo, GetCoreSchemaHandler, TypeAdapter, ValidationInfo
-from pydantic._internal._decorators import inspect_validator
-from pydantic.functional_validators import AfterValidator, BeforeValidator
-from pydantic_core import CoreSchema, PydanticCustomError
-from pydantic_core.core_schema import (
-    GeneralValidatorFunction,
-    NoInfoValidatorFunction,
-    no_info_after_validator_function,
-)
-from typing_extensions import Annotated, LiteralString
+from pydantic import AnyUrl, GetCoreSchemaHandler
+from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import FileSource
+    from .types import FileSource
 
-
-WARNINGS_ACTION_KEY = "warnings_action"
-RAISE_WARNINGS = "raise"
-
-ALERT = 35  # no ALERT or worse -> RDF is worriless
-WARNING = 30  # no WARNING or worse -> RDF is watertight
-INFO = 20
-Severity = Literal[20, 30, 35]
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
 else:
     SLOTS = {"slots": True}
-
-
-ValidatorFunction = Union[NoInfoValidatorFunction, GeneralValidatorFunction]
-
-AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class Warning:
-    message_template: LiteralString
-    severity: Severity
-    context: Optional[Dict[str, Any]] = None
-
-    severity2type: ClassVar[MappingProxyType[Severity, LiteralString]] = MappingProxyType(
-        {INFO: "info_warning", WARNING: "worriless_warning", ALERT: "watertight_warning"}
-    )
-
-    def raise_(self):
-        raise PydanticCustomError(self.severity2type[self.severity], self.message_template, self.context)
-
-
-def warn(
-    typ: Union[AnnotationMetaData, Any],
-    severity: Severity = 20,
-    msg: Optional[LiteralString] = None,
-):
-    """treat a type or its annotation metadata as a warning condition"""
-    assert get_origin(AnnotationMetaData) is Union
-    if isinstance(typ, get_args(AnnotationMetaData)):
-        typ = Annotated[Any, typ]
-
-    validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python, severity=severity, msg=msg)
-
-
-def call_validator_func(
-    func: GeneralValidatorFunction, mode: Literal["after", "before", "plain", "wrap"], value: Any, info: ValidationInfo
-) -> Any:
-    info_arg = inspect_validator(func, mode)
-    if info_arg:
-        return func(value, info)  # type: ignore
-    else:
-        return func(value)  # type: ignore
-
-
-def as_warning(
-    func: GeneralValidatorFunction,
-    *,
-    mode: Literal["after", "before", "plain", "wrap"] = "after",
-    severity: Severity = 20,
-    msg: Optional[LiteralString] = None,
-) -> GeneralValidatorFunction:
-    """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
-
-    def wrapper(value: Any, info: Union[FieldValidationInfo, ValidationInfo]) -> Any:
-        logger = getLogger(getattr(info, "field_name", "node"))
-        if logger.level > severity:
-            return value
-
-        try:
-            call_validator_func(func, mode, value, info)
-        except (AssertionError, ValueError) as e:
-            logger.log(severity, e)
-            if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
-                Warning(msg or ",".join(e.args), severity=severity, context=dict(value=value)).raise_()
-
-        return value
-
-    return wrapper
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class _WarnerMixin:
-    severity: Severity = 20
-    msg: Optional[LiteralString] = None
-
-    def __getattribute__(self, __name: str) -> Any:
-        ret = super().__getattribute__(__name)
-        if __name == "func":
-            return as_warning(ret, severity=self.severity, msg=self.msg)
-        else:
-            return ret
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class AfterWarner(_WarnerMixin, AfterValidator):
-    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class BeforeWarner(_WarnerMixin, BeforeValidator):
-    """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
@@ -256,3 +141,15 @@ def validate_suffix(value: "FileSource", *suffixes: str) -> "FileSource":
         raise ValueError(f"{suffix} not in {suffixes}")
 
     return value
+
+
+def validate_orcid_id(orcid_id: str):
+    if len(orcid_id) == 19 and all(orcid_id[idx] == "-" for idx in [4, 9, 14]):
+        check = 0
+        for n in orcid_id[:4] + orcid_id[5:9] + orcid_id[10:14] + orcid_id[15:]:
+            # adapted from stdnum.iso7064.mod_11_2.checksum()
+            check = (2 * check + int(10 if n == "X" else n)) % 11
+        if check == 1:
+            return orcid_id  # valid
+
+    raise ValueError(f"'{orcid_id} is not a valid ORCID iD in hyphenated groups of 4 digits.")

@@ -11,7 +11,7 @@ from bioimageio.spec.shared import yaml
 
 
 def test_validate_model_as_bioimageio_full_version_id_partner():
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     full_version_id = "ilastik/isbi2012_neuron_segmentation_challenge/latest"
     summary = validate(full_version_id, update_format=False, update_format_inner=False)
@@ -19,7 +19,7 @@ def test_validate_model_as_bioimageio_full_version_id_partner():
 
 
 def test_validate_model_as_bioimageio_full_version_id_zenodo():
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     full_version_id = "10.5281/zenodo.5874741/5874742"
     summary = validate(full_version_id, update_format=False, update_format_inner=False)
@@ -27,7 +27,7 @@ def test_validate_model_as_bioimageio_full_version_id_zenodo():
 
 
 def test_validate_model_as_bioimageio_resource_id_partner():
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     resource_id = "ilastik/isbi2012_neuron_segmentation_challenge"
     summary = validate(resource_id, update_format=False, update_format_inner=False)
@@ -35,7 +35,7 @@ def test_validate_model_as_bioimageio_resource_id_partner():
 
 
 def test_validate_model_as_bioimageio_resource_id_zenodo():
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     resource_id = "10.5281/zenodo.5874741"
     summary = validate(resource_id, update_format=False, update_format_inner=False)
@@ -43,7 +43,7 @@ def test_validate_model_as_bioimageio_resource_id_zenodo():
 
 
 def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -57,7 +57,7 @@ def test_validate_model_as_bytes_io(unet2d_nuclei_broad_latest):
 
 
 def test_validate_model_as_string_io(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -71,7 +71,7 @@ def test_validate_model_as_string_io(unet2d_nuclei_broad_latest):
 
 
 def test_validate_model_as_bytes(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -83,7 +83,7 @@ def test_validate_model_as_bytes(unet2d_nuclei_broad_latest):
 
 
 def test_validate_model_as_string(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -94,7 +94,7 @@ def test_validate_model_as_string(unet2d_nuclei_broad_latest):
 
 
 def test_validate_model_package_as_bytes(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -111,7 +111,7 @@ def test_validate_model_package_as_bytes(unet2d_nuclei_broad_latest):
 
 
 def test_validate_model_package_on_disk(unet2d_nuclei_broad_latest, tmpdir):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -126,7 +126,7 @@ def test_validate_model_package_on_disk(unet2d_nuclei_broad_latest, tmpdir):
 
 
 def test_validate_invalid_model(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -138,7 +138,7 @@ def test_validate_invalid_model(unet2d_nuclei_broad_latest):
 
 
 def test_validate_generates_warnings(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
     data = serialize_raw_resource_description_to_dict(raw_rd)
@@ -150,7 +150,7 @@ def test_validate_generates_warnings(unet2d_nuclei_broad_latest):
 
 
 def test_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
-    from bioimageio.spec.commands import update_format
+    from bioimageio.spec.utils import update_format
 
     path = tmp_path / "rdf_new.yaml"
     update_format(unet2d_nuclei_broad_before_latest, path)
@@ -161,7 +161,7 @@ def test_update_format(unet2d_nuclei_broad_before_latest, tmp_path):
 
 
 def test_update_rdf_using_paths(unet2d_nuclei_broad_latest, tmp_path):
-    from bioimageio.spec.commands import update_rdf
+    from bioimageio.spec.utils import update_rdf
 
     in_path = unet2d_nuclei_broad_latest
     assert in_path.exists()
@@ -177,7 +177,7 @@ def test_update_rdf_using_paths(unet2d_nuclei_broad_latest, tmp_path):
 
 
 def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import update_rdf
+    from bioimageio.spec.utils import update_rdf
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -192,7 +192,7 @@ def test_update_rdf_using_dicts(unet2d_nuclei_broad_latest):
 
 
 def test_update_rdf_using_dicts_in_place(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import update_rdf
+    from bioimageio.spec.utils import update_rdf
 
     # load from path and serialize with absolute paths
     raw_rd = load_raw_resource_description(unet2d_nuclei_broad_latest)
@@ -207,7 +207,7 @@ def test_update_rdf_using_dicts_in_place(unet2d_nuclei_broad_latest):
 
 
 def test_update_rdf_using_rd(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import update_rdf
+    from bioimageio.spec.utils import update_rdf
 
     source = load_raw_resource_description(unet2d_nuclei_broad_latest)
     update = dict(name="updated", outputs=[{"name": "updated", "halo": ["KEEP", "DROP", 0, 9, 9]}])

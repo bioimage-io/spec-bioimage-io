@@ -17,22 +17,22 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
-from bioimageio.spec.shared import LICENSES
-from bioimageio.spec.shared.common import DOI_REGEX
-from bioimageio.spec.shared.fields import Field
+from bioimageio.spec._internal import LICENSES
+from bioimageio.spec._internal._constants import DOI_REGEX
+from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._warnings import (
+    WARNING,
+    as_warning,
+    warn,
+)
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
+    OrcidId,
     RawMapping,
     Version,
-)
-from bioimageio.spec.shared.utils import is_valid_orcid_id
-from bioimageio.spec.shared.validation import (
-    WARNING,
-    as_warning,
-    warn,
 )
 
 LatestFormatVersion = Literal["0.2.3"]
@@ -42,8 +42,7 @@ LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 IN_PACKAGE_MESSAGE = " (included when packaging the resource)"
 _VALID_COVER_IMAGE_EXTENSIONS = ["jpg", "png", "gif", "jpeg"]
 
-KnownGenericResourceType = Literal["application", "notebook"]
-KnownSpecializedResourceType = Literal["model", "collection", "dataset"]
+KnownResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
 
 class Attachments(Node):
@@ -62,22 +61,12 @@ class Person(Node):
     """Email"""
     github_user: Optional[str] = None
     """GitHub user name"""
-    orcid: Optional[str] = Field(None, examples=["0000-0001-2345-6789"])
+    orcid: Optional[OrcidId] = Field(None, examples=["0000-0001-2345-6789"])
     """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID)
     in hyphenated groups of 4 digits, (and [valid](
     https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
     ) as per ISO 7064 11,2.)
     """
-
-    @field_validator("orcid")
-    @classmethod
-    def check_orcid(cls, orcid: Optional[str]):
-        if orcid is not None and (
-            len(orcid) != 19
-            or any(orcid[idx] != "-" for idx in [4, 9, 14])
-            or not is_valid_orcid_id(orcid.replace("-", ""))
-        ):
-            raise ValueError(f"'{orcid} is not a valid ORCID iD in hyphenated groups of 4 digits")
 
 
 class Author(Person):
@@ -123,11 +112,6 @@ class CiteEntry(Node):
             raise ValueError("Either 'doi' or 'url' is required")
 
         return value
-
-
-# class ResourceId(StringNode):
-
-#     type: ClassVar[Union[KnownGenericResourceType, KnownSpecializedResourceType, None]] = None
 
 
 class LinkedResource(Node):
@@ -304,7 +288,7 @@ class ResourceDescriptionBaseNoSource(Node):
     """Maintainers of this resource.
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
-    rdf_source: Union[HttpUrl, None] = None
+    rdf_source: Optional[FileSource] = None
     """resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from"""
 
     root: Union[DirectoryPath, AnyUrl]
@@ -469,7 +453,13 @@ class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
     """The primary source of the resource"""
 
 
-class GenericDescriptionBase(ResourceDescriptionBase):
+class Generic(ResourceDescriptionBase):
+    """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
+
+    An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
+    Note that models are described with an extended model RDF specification.
+    """
+
     model_config = {
         **ResourceDescriptionBase.model_config,
         **dict(title=f"bioimage.io generic RDF {get_args(FormatVersion)[-1]}"),
@@ -478,29 +468,12 @@ class GenericDescriptionBase(ResourceDescriptionBase):
 
     format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
 
-
-class GenericDescription(GenericDescriptionBase):
-    """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
-
-    An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
-    Note that models are described with an extended model RDF specification.
-    """
-
     @field_validator("type", mode="after")
     @classmethod
     def check_specific_types(cls, value: str) -> str:
-        if value in get_args(KnownSpecializedResourceType):
+        if value in get_args(KnownResourceType):
             raise ValueError(
                 f"Use the {value} description instead of the generic description for resources of type {value}."
             )
 
         return value
-
-
-class KnownGenericDescription(GenericDescriptionBase):
-    """A `GenericDescription` of a known, but generic type."""
-
-    type: KnownGenericResourceType = Field(examples=list(get_args(KnownGenericResourceType)))
-    """The resource type assigns a broad category to the resource.
-    Known, generic resource types are those with confirmed use-cases,
-    but no further spec specialization like for `type="model"."""

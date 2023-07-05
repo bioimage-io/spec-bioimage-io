@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections.abc
-from string import ascii_letters, digits
 from typing import (
     Any,
     ClassVar,
@@ -18,7 +17,6 @@ from typing import (
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
-    AfterValidator,
     AllowInfNan,
     FieldValidationInfo,
     HttpUrl,
@@ -27,6 +25,9 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal._constants import SHA256_HINT
+from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._warnings import warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
@@ -34,8 +35,6 @@ from bioimageio.spec.generic.v0_2 import (
     LinkedResource,
     ResourceDescriptionBaseNoSource,
 )
-from bioimageio.spec.shared.common import SHA256_HINT
-from bioimageio.spec.shared.fields import Field
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
     AxesInCZYX,
@@ -51,11 +50,7 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec.shared.validation import (
-    RestrictCharacters,
-    validate_suffix,
-    warn,
-)
+from bioimageio.spec.shared.validation import validate_suffix
 
 LatestFormatVersion = Literal["0.4.9"]
 FormatVersion = Literal[
@@ -351,19 +346,19 @@ class TensorBase(Node):
     #     return data
 
 
-_MODE_DESCR = """Mode for computing mean and variance.
-| mode | description |
-| --- | ---- |
-| fixed | fixed values for mean and variance |
-| per_dataset | mean and variance are computed for the entire dataset |
-| per_sample | mean and variance are computed for each sample individually |
-"""
 _MODE_DESCR_WO_FIXED = """Mode for computing mean and variance.
 | mode | description |
 | --- | ---- |
 | per_dataset | mean and variance are computed for the entire dataset |
 | per_sample | mean and variance are computed for each sample individually |
 """
+
+_MODE_DESCR = (
+    _MODE_DESCR_WO_FIXED
+    + """
+| fixed | fixed values for mean and variance |
+"""
+)
 
 
 class ProcessingKwargs(Kwargs):

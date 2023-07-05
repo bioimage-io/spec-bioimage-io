@@ -12,11 +12,10 @@ ROOT_PATH = Path(__file__).parent.parent
 
 AUTOGEN_START = "# autogen: start\n"
 AUTOGEN_BODY = """from . import {info.all_version_modules_plain}
-from .{info.latest_version_module} import LATEST_FORMAT_VERSION, FormatVersion, {info.target_node}, LatestFormatVersion
+from .{info.latest_version_module} import LATEST_FORMAT_VERSION, {info.target_node}, LatestFormatVersion
 
 __all__ = [{info.all_version_modules_quoted},
     "LATEST_FORMAT_VERSION",
-    "FormatVersion",
     "{info.target_node}",
     "LatestFormatVersion"
 ]
@@ -28,7 +27,7 @@ VERSION_MODULE_PATTERN = r"v(?P<major>\d+)_(?P<minor>\d+).py"
 
 def main():
     args = parse_args()
-    for target in ["generic", "model", "dataset", "collection"]:
+    for target in ["generic", "model", "dataset", "collection", "notebook", "application"]:
         process(
             Info(target=target, all_version_modules=get_ordered_version_submodules(target)),
             check=args.command == "check",
@@ -39,7 +38,7 @@ def main():
 
 def parse_args():
     p = ArgumentParser(description=("script that generates imports in bioimageio.spec resource description submodules"))
-    p.add_argument("command", choices=["check", "generate"])
+    p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
     args = p.parse_args()
     return args
 
@@ -55,7 +54,7 @@ class Info:
     package_path: Path = field(init=False)
 
     def __post_init__(self):
-        self.target_node = dict(generic="GenericDescription").get(self.target, self.target.capitalize())
+        self.target_node = dict(generic="Generic").get(self.target, self.target.capitalize())
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_quoted = ",\n".join(f'"{vm}"' for vm in self.all_version_modules)
         self.all_version_modules_plain = ", ".join(self.all_version_modules)

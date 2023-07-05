@@ -3,7 +3,7 @@ from bioimageio.spec.shared import yaml
 
 
 def test_list_instead_of_nested_schema(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     assert yaml is not None
     data = yaml.load(unet2d_nuclei_broad_latest)
@@ -18,7 +18,7 @@ def test_list_instead_of_nested_schema(unet2d_nuclei_broad_latest):
 
 
 def test_forward_compatibility_error(unet2d_fixed_shape):
-    from bioimageio.spec.commands import validate
+    from bioimageio.spec.utils import validate
 
     assert yaml is not None
     data = yaml.load(unet2d_fixed_shape)
