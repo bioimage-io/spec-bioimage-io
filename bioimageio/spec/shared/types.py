@@ -2,20 +2,17 @@ from __future__ import annotations
 
 import pathlib
 from datetime import datetime
-from typing import Any, Literal, Mapping, Sequence, Tuple, TypedDict, TypeVar, Union
+from typing import Any, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
 from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo
-from pydantic.functional_validators import AfterValidator
+from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core import core_schema
-from pydantic_core.core_schema import ErrorType
-from typing_extensions import Annotated, LiteralString, NotRequired
+from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
-from bioimageio.spec._internal._warnings import WarningType
-from bioimageio.spec.shared.validation import (
-    BeforeValidator,
+from bioimageio.spec._internal._validate import (
     RestrictCharacters,
     validate_datetime,
     validate_identifier,
@@ -49,29 +46,6 @@ RawValue = Union[RawLeafValue, RawSequence, RawMapping]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
-
-
-class ValidationOutcome(TypedDict):
-    loc: str
-    msg: str
-
-
-class ValidationError(ValidationOutcome):
-    type: ErrorType
-
-
-class ValidationWarning(ValidationOutcome):
-    type: WarningType
-
-
-class ValidationSummary(TypedDict):
-    bioimageio_spec_version: str
-    error: Union[str, Sequence[ValidationError], None]
-    name: str
-    source_name: str
-    status: Union[Literal["passed", "failed"], str]
-    traceback: NotRequired[Sequence[str]]
-    warnings: NotRequired[Sequence[ValidationWarning]]
 
 
 class RelativePath:
@@ -163,6 +137,5 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{p} does not point to an existing directory")
 
 
-Lit = TypeVar("Lit", bound=LiteralString)
-
 FileSource = Union[HttpUrl, RelativeFilePath]
+Loc = Tuple[Union[int, str], ...]

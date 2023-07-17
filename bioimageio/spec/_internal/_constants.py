@@ -8,6 +8,8 @@ from bioimageio.spec.shared.types import LicenseId
 
 DOI_REGEX = r"10\.[0-9]{4}.+"  # lax DOI regex validating the first 7 DOI characters only
 
+IN_PACKAGE_MESSAGE = "∈📦 "
+
 # license file generated with scripts/update_spdx_licenses.py
 _license_file = Path(__file__).parent.parent / "static" / "licenses.json"
 _license_data = json.loads(_license_file.read_text(encoding="utf-8"))

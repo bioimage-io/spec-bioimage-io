@@ -10,7 +10,7 @@ def Field(  # noqa C901  NOSONAR: S1542
     default_factory: Optional[Callable[[], Any]] = None,
     alias: Optional[str] = None,
     validation_alias: Union[str, pydantic.AliasPath, pydantic.AliasChoices, None] = None,
-    description: Optional[str] = None,
+    description: str = "",
     examples: Optional[List[Any]] = None,
     exclude: Optional[bool] = None,
     discriminator: Optional[str] = None,
@@ -27,17 +27,16 @@ def Field(  # noqa C901  NOSONAR: S1542
     decimal_places: Optional[int] = None,
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
-    # explicit extra fields (fixed here, but 'extra' for pydantic)
-    in_package: bool = False,
+    in_package: bool = False,  # bioimageio specific
 ) -> Any:
     """wrap pydantic.Field"""
-    extra: Dict[str, Any] = dict(in_package=in_package)
+    # extra: Dict[str, Any] = dict(in_package=in_package)
     return pydantic.Field(
         default,
         default_factory=default_factory,
         alias=alias,
         validation_alias=validation_alias,
-        description=description,
+        description=IN_PACKAGE_MESSAGE + description,
         examples=examples,
         exclude=exclude,
         discriminator=discriminator,
@@ -54,7 +53,7 @@ def Field(  # noqa C901  NOSONAR: S1542
         decimal_places=decimal_places,
         min_length=min_length,
         max_length=max_length,
-        **extra,
+        # json_schema_extra=extra,
     )
 
 

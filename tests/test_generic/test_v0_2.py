@@ -4,16 +4,16 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
+from bioimageio.spec._internal._warn import WARNING_ACTION_KEY, WARNING_ACTION_RAISE
 from bioimageio.spec.generic.v0_2 import (
     LATEST_FORMAT_VERSION,
     Attachments,
     Author,
     CiteEntry,
-    GenericDescription,
+    Generic,
     Maintainer,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import RAISE_WARNINGS, WARNINGS_ACTION_KEY
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -89,8 +89,8 @@ class TestCiteEntry(BaseTestCases.TestNode):
     ]
 
 
-class TestGenericDescription(BaseTestCases.TestNode):
-    default_node_class = GenericDescription
+class TestGeneric(BaseTestCases.TestNode):
+    default_node_class = Generic
     sub_tests = [
         Valid(
             dict(
@@ -116,7 +116,7 @@ class TestGenericDescription(BaseTestCases.TestNode):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
-            context={WARNINGS_ACTION_KEY: RAISE_WARNINGS, "root": Path(__file__).parent},
+            context={WARNING_ACTION_KEY: WARNING_ACTION_RAISE, "root": Path(__file__).parent},
             name="deprecated license",
         ),
         Valid(

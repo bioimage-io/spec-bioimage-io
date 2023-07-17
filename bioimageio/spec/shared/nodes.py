@@ -1,12 +1,12 @@
 from __future__ import annotations
 import collections.abc
 import sys
-from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Optional, Sequence, Set, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Sequence, Set, TypeVar, Union
 
 import pydantic
 
 from bioimageio.spec.shared.types import RawValue
-from bioimageio.spec.shared.validation import is_valid_raw_mapping
+from bioimageio.spec._internal._validate import is_valid_raw_mapping
 
 IncEx = Union[Set[int], Set[str], Dict[int, "IncEx"], Dict[str, "IncEx"], None]
 

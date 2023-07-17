@@ -2,12 +2,13 @@ import warnings
 from pathlib import Path
 from typing import Any, Dict, Union
 
+from pydantic import HttpUrl
+
 from bioimageio.spec.shared import resolve_rdf_source
 from .imjoy_plugin_parser import get_plugin_as_rdf  # type: ignore
-from ..shared.raw_nodes import URI
 
 
-def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any], root: Union[URI, Path]) -> Dict[str, Any]:
+def enrich_partial_rdf_with_imjoy_plugin(partial_rdf: Dict[str, Any], root: Union[HttpUrl, Path]) -> Dict[str, Any]:
     """
     a (partial) rdf may have 'rdf_resource' or 'source' which resolve to rdf data that may be overwritten.
     Due to resolving imjoy plugins this is not done in bioimageio.spec.collection atm

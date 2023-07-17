@@ -27,7 +27,7 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warnings import warn
+from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
@@ -50,7 +50,7 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec.shared.validation import validate_suffix
+from bioimageio.spec._internal._validate import validate_suffix
 
 LatestFormatVersion = Literal["0.4.9"]
 FormatVersion = Literal[

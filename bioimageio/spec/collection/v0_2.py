@@ -2,29 +2,29 @@ from __future__ import annotations
 
 import collections.abc
 from types import MappingProxyType
-from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, Union, get_args
+from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, Union
 
 import annotated_types
 from pydantic import HttpUrl, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
-from bioimageio.spec import ResourceDescription
 
+from bioimageio.spec.application.v0_2 import Application
+from bioimageio.spec.notebook.v0_2 import Notebook
 from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
+    Generic,
     LATEST_FORMAT_VERSION,
     FormatVersion,
-    GenericDescription,
-    KnownGenericDescription,
-    KnownGenericResourceType,
     LatestFormatVersion,
     ResourceDescriptionBase,
+    ResourceDescriptionBaseNoSource,
 )
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
-from bioimageio.spec.shared.utils import ensure_raw
-from bioimageio.spec.shared.validation import ALERT, warn
+from bioimageio.spec._internal._utils._various import ensure_raw
+from bioimageio.spec._internal._warn import ALERT, warn
 
 __all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
 
@@ -52,12 +52,8 @@ class CollectionEntry(Node):
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_classes: ClassVar[
-        MappingProxyType[
-            KnownResourceType, Type[ResourceDescription]]
-        ]
-    ] = MappingProxyType(
-        dict(model=Model, dataset=Dataset, **{t: KnownGenericDescription for t in get_args(KnownGenericResourceType)})
+    entry_classes: ClassVar[MappingProxyType[str, Type[ResourceDescriptionBaseNoSource]]] = MappingProxyType(
+        dict(model=Model, dataset=Dataset, application=Application, notebook=Notebook)
     )
 
     @model_validator(mode="before")
@@ -66,20 +62,22 @@ class CollectionEntry(Node):
         in_place_fields = {k: v for k, v in data.items() if k not in ("rdf_source", "id")}
         if data.get("rdf_source") is None:
             # without external rdf_source we expect a valid resource description
-            entry_data = dict(info.context["collection_base_content"])
-            base_id = entry_data.pop("id", None)
+            entry_data: Dict[str, Any] = dict(info.context["collection_base_content"])  # type: ignore
+            base_id: Any = entry_data.pop("id", None)
             entry_data.update(in_place_fields)
             if isinstance(data.get("id"), (str, int, float)) and isinstance(base_id, (str, int, float)):
                 entry_data["id"] = f"{base_id}/{data['id']}"
 
-            if (type_ := entry_data.get("type")) in cls.entry_classes:
-                entry_class = cls.entry_classes[type_]  # type: ignore
-            else:
-                entry_class = GenericDescription
+            type_ = entry_data.get("type")
+            if type_ == "collection":
+                raise ValueError(f"Collections may not be nested!")
+
+            entry_class = cls.entry_classes.get(type_, Generic) if isinstance(type_, str) else Generic
             entry_class.model_validate(entry_data, context=info.context)
         else:
             # Cannot validate entry without resolving 'rdf_source'.
-            # To validate, specify the content of rdf_source as extra fields.
+            # To validate, specify the content of 'rdf_source' as extra fields.
+            # warning is issued on 'rdf_source' field
             pass
 
         return data

@@ -2,25 +2,28 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
 
-from annotated_types import Len, MinLen
+from annotated_types import Len, LowerCase, MinLen
 from pydantic import (
     AnyUrl,
     DirectoryPath,
     EmailStr,
+    FieldSerializationInfo,
     FieldValidationInfo,
     HttpUrl,
+    PrivateAttr,
     TypeAdapter,
     ValidationError,
     field_validator,
+    model_serializer,
+    model_validator,
 )
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal import LICENSES
-from bioimageio.spec._internal._constants import DOI_REGEX
+from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warnings import (
+from bioimageio.spec._internal._warn import (
     WARNING,
     as_warning,
     warn,
@@ -34,15 +37,15 @@ from bioimageio.spec.shared.types import (
     RawMapping,
     Version,
 )
+from bioimageio.spec.shared.validation import ValidationSummary
 
 LatestFormatVersion = Literal["0.2.3"]
 FormatVersion = Literal["0.2.0", "0.2.1", "0.2.2", LatestFormatVersion]
-
 LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
-IN_PACKAGE_MESSAGE = " (included when packaging the resource)"
-_VALID_COVER_IMAGE_EXTENSIONS = ["jpg", "png", "gif", "jpeg"]
 
-KnownResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
+SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
+
+VALID_COVER_IMAGE_EXTENSIONS = ("jpg", "png", "gif", "jpeg")
 
 
 class Attachments(Node):
@@ -131,13 +134,6 @@ class ResourceDescriptionBaseNoSource(Node):
     """The format version of this RDF specification
     (not the `version` of the resource described by it)"""
 
-    type: Annotated[
-        Union[KnownGenericResourceType, str],
-        warn(KnownGenericResourceType, WARNING, "'{value}' is not a known generic resource type."),
-    ] = Field(examples=list(get_args(KnownGenericResourceType)))
-    """The resource type assigns a broad category to the resource
-    and determines wether type specific validation, e.g. for `type="model"`, is applicable"""
-
     name: str
     """A human-friendly name of the resource description"""
 
@@ -174,7 +170,7 @@ class ResourceDescriptionBaseNoSource(Node):
         examples=[],
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
-            f"The supported image formats are: {_VALID_COVER_IMAGE_EXTENSIONS}"
+            f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
         in_package=True,
     )
@@ -187,9 +183,9 @@ class ResourceDescriptionBaseNoSource(Node):
             if (
                 v is not None
                 and "." not in str(v)
-                and str(v).split(".")[-1].lower() not in _VALID_COVER_IMAGE_EXTENSIONS
+                and str(v).split(".")[-1].lower() not in VALID_COVER_IMAGE_EXTENSIONS
             ):
-                raise ValueError(f"Expected markdown file with suffix in {_VALID_COVER_IMAGE_EXTENSIONS}")
+                raise ValueError(f"Expected markdown file with suffix in {VALID_COVER_IMAGE_EXTENSIONS}")
 
         return value
 
@@ -318,6 +314,9 @@ class ResourceDescriptionBaseNoSource(Node):
     #     if error is not None:
     #         self.warn("tags", f"could not check tag categories ({error})")
 
+    validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
+    """validation summaries generated for this resource description."""
+
     version: Union[Version, None] = Field(None, examples=["0.1.0"])
     """The version number of the resource. Its format must be a string in
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
@@ -342,6 +341,17 @@ class ResourceDescriptionBaseNoSource(Node):
                 root = root.resolve()
 
         return root
+
+    @model_validator(mode="before")
+    @classmethod
+    def apply_convert_from_older_format(cls, data: RawMapping) -> RawMapping:
+        """pydantic validator calling `convert_from_older_format`.
+
+        This allows to control conversion order in child classes as needed,
+        avoid typing issues around pydantic model validator inheritance,
+        and calling `convert_from_older_format` outside pydantic validation logic.
+        """
+        return cls.convert_from_older_format(data)
 
     @classmethod
     def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
@@ -456,8 +466,9 @@ class ResourceDescriptionBase(ResourceDescriptionBaseNoSource):
 class Generic(ResourceDescriptionBase):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
-    An RDF is a YAML file that describes a resource such as a model, a dataset, an application or a notebook.
-    Note that models are described with an extended model RDF specification.
+    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
+    Note that those resources are described with a type-specific RDF.
+    Use this generic resource description, if none of the known specific types matches your resource.
     """
 
     model_config = {
@@ -468,12 +479,15 @@ class Generic(ResourceDescriptionBase):
 
     format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
 
+    type: Annotated[str, LowerCase]
+    """The resource type assigns a broad category to the resource."""
+
     @field_validator("type", mode="after")
     @classmethod
     def check_specific_types(cls, value: str) -> str:
-        if value in get_args(KnownResourceType):
+        if value in get_args(SpecificResourceType):
             raise ValueError(
-                f"Use the {value} description instead of the generic description for resources of type {value}."
+                f"Use the {value} description instead of this generic description for your '{value}' resource."
             )
 
         return value

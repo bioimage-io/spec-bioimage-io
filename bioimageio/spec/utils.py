@@ -1,232 +1,228 @@
+import dataclasses
+from importlib.resources import Resource
 import os
 import traceback
+from urllib.parse import urljoin
 import warnings
-from pathlib import Path
-from typing import Any, Callable, Dict, IO, List, Optional, Union
-from bioimageio.spec.shared.types import RawMapping
+from pathlib import Path, PurePath
+from typing import Any, Callable, Dict, IO, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
 
-from marshmallow import ValidationError
-
-from .collection.v0_2 import default_enrich_partial_rdf, resolve_collection_entries
-from .io_ import (
-    load_raw_resource_description,
-    resolve_rdf_source,
-    save_raw_resource_description,
-    serialize_raw_resource_description_to_dict,
+from pydantic import AnyUrl, HttpUrl, TypeAdapter
+import pydantic
+from bioimageio.spec import __version__
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal._utils import nest_locs
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.types import FileSource, RawMapping, RelativeFilePath
+from bioimageio.spec.shared.validation import (
+    LegacyValidationSummary,
+    ValidationContext,
+    ValidationSummary,
+    ValidationError,
+    ValidationWarning,
 )
-from .shared import update_nested
-from .shared.common import ValidationSummary, ValidationWarning, nested_default_dict_as_nested_dict, yaml
-from .shared.raw_nodes import ResourceDescription as RawResourceDescription, URI
-from .v import __version__
+
+from bioimageio.spec import (
+    LatestResourceDescription,
+    ResourceDescription,
+    generic,
+    application,
+    collection,
+    model,
+    dataset,
+    notebook,
+    __version__,
+)
+from bioimageio.spec._internal._warn import WarningType, WARNING_LEVEL_CONTEXT_KEY, WarningLevel
+
+# from .collection.v0_2 import default_enrich_partial_rdf, resolve_collection_entries
+# from .io_ import (
+#     load_raw_resource_description,
+#     resolve_rdf_source,
+#     save_raw_resource_description,
+#     serialize_raw_resource_description_to_dict,
+# )
+# from .shared import update_nested
+# from .shared.common import ValidationSummary, ValidationWarning, nested_default_dict_as_nested_dict, yaml
+# from .shared.raw_nodes import ResourceDescription as RawResourceDescription, URI
+# from .v import __version__
+
+LATEST: Literal["latest"] = "latest"
+
+
+def get_spec(type_: str, /, format_version: str = LATEST) -> ResourceDescription:
+    assert isinstance(format_version, str)
+    if format_version.count(".") == 0:
+        format_version = format_version + ".0"
+    elif format_version.count(".") == 2:
+        format_version = format_version[: format_version.rfind(".")]
+
+    spec = (
+        dict(
+            model={LATEST: model.Model, "0.4": model.v0_4.Model},
+            application={LATEST: application.Application, "0.2": application.v0_2.Application},
+            collection={LATEST: collection.Collection, "0.2": collection.v0_2.Collection},
+            dataset={LATEST: dataset.Dataset, "0.2": dataset.v0_2.Dataset},
+            notebook={LATEST: notebook.Notebook, "0.2": notebook.v0_2.Notebook},
+        )
+        .get(type_, {LATEST: generic.Generic, "0.2": generic.v0_2.Generic})
+        .get(format_version)
+    )
+    if spec is None:
+        raise NotImplementedError(f"{type_} spec {format_version} does not exist.")
+
+    return spec
 
 
 def update_format(
-    rdf_source: Union[dict, os.PathLike, IO, str, bytes],
-    path: Union[os.PathLike, str],
+    resource_description: RawMapping,
     update_to_format: str = "latest",
 ):
     """Auto-update fields of a bioimage.io resource"""
-    raw = load_raw_resource_description(rdf_source, update_to_format=update_to_format)
-    save_raw_resource_description(raw, Path(path))
+    assert isinstance(resource_description["type"], str)
+    spec = get_spec(resource_description["type"], update_to_format)
+    return spec.convert_from_older_format(resource_description)
 
 
-    # update_format_inner: Optional[bool] = None,
-    # load_rdf_source: Callable[[dict, Union[URI, Path]], dict] = default_enrich_partial_rdf,
+RD = TypeVar("RD", bound=ResourceDescription)
 
-        # update_format_inner: (applicable to `collections` resources only) `update_format` for nested resources
-        # enrich_partial_rdf: (optional) callable to customize RDF data on the fly.
-        #                     Don't use this if you don't know exactly what to do with it.
+# def _load_description_at_level(adapter: TypeAdapter[T], resource_description: RawMapping, original_context: ValidationContext, level: WarningLevel):
 
-    # if update_format_inner is None:
-    #     update_format_inner = update_format
+
+def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext):
+    rd: Optional[RD] = None
+    error: Union[List[ValidationError], str, None] = None
+    val_warnings: List[ValidationWarning] = []
+    tb: Optional[List[str]] = None
+    try:
+        rd = adapter.validate_python(resource_description, context=dataclasses.asdict(context))
+    except pydantic.ValidationError as e:
+        val_errors: List[ValidationError] = []
+        for ee in e.errors(include_url=False):
+            if (type_ := ee["type"]) in get_args(WarningType):
+                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
+            else:
+                val_errors.append(ValidationError(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
+
+        error = val_errors or None
+    except Exception as e:
+        error = str(e)
+        assert error
+        tb = traceback.format_tb(e.__traceback__)
+
+    return rd, error, tb, val_warnings
+
+
+def _load_description_from_adapter(
+    adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext
+) -> Union[RD, ValidationSummary]:
+    rd, error, tb, val_warnings = _load_descr_impl(
+        adapter, resource_description, dataclasses.replace(context, **{WARNING_LEVEL_CONTEXT_KEY: 50})
+    )  # ignore any warnings using warning level 50 ('ERROR'/'CRITICAL') on first loading attempt
+    if rd is None:
+        resource_type = resource_description.get("type", "unknown")
+        format_version = resource_description.get("format_version", "?.?.?")
+    else:
+        resource_type = rd.type
+        format_version = rd.format_version
+        assert error is None, "got rd, but also an error"
+        assert tb is None, "got rd, but also an error traceback"
+        assert not val_warnings, "got rd, but also already warnings"
+        _, error2, tb2, val_warnings = _load_descr_impl(
+            adapter, resource_description, context
+        )  # may not return rd due to raised warnings
+        assert error2 is None, "increasing warning level caused errors"
+        assert tb2 is None, "increasing warning level lead to error traceback"
+
+    summary = ValidationSummary(
+        bioimageio_spec_version=__version__,
+        error=error,
+        name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
+        source_name=(context.root / "rdf.yaml").as_posix()
+        if isinstance(context.root, PurePath)
+        else urljoin(str(context.root), "rdf.yaml"),
+        status="passed" if error is None else "failed",
+    )
+    if tb:
+        summary["traceback"] = tb
+
+    if val_warnings:
+        summary["warnings"] = val_warnings
+
+    if rd is None:
+        return summary
+    else:
+        rd.validation_summaries.append(summary)
+        return rd
+
+
+def load_description_as_latest(
+    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    context: ValidationContext = ValidationContext(),
+) -> Union[ValidationSummary, LatestResourceDescription]:
+    """load a resource description in the latest available format.
+
+    If `root` is a path, relative file paths are checked for existence"""
+
+    return _load_description_from_adapter(TypeAdapter(LatestResourceDescription), resource_description, context)
+
+
+def load_description(
+    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    context: ValidationContext = ValidationContext(),
+) -> Union[ValidationSummary, ResourceDescription]:
+    """Validate a bioimage.io resource description, i.e. the content of a resource description file (RDF)."""
+
+    return _load_description_from_adapter(TypeAdapter(ResourceDescription), resource_description, context)
+
 
 def validate(
-    resource_description: RawMapping,
-    update_format: bool = False,
+    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    context: ValidationContext = ValidationContext(),
+    update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
 ) -> ValidationSummary:
-    """Validate a bioimage.io resource description, i.e. the content of a resource description file (RDF).
-
-    Args:
-        resource_description: raw resource description (e.g. loaded from an rdf.yaml file).
-        update_format: weather or not to apply auto-conversion to the latest format version before validation
-
-    Returns:
-        A summary dict with keys:
-            bioimageio_spec_version,
-            error,
-            name,
-            nested_errors,
-            source_name,
-            status,
-            traceback,
-            warnings,
-    """
-
-    error: Union[None, str, Dict[str, Any]] = None
-    tb = None
-    nested_errors: Dict[str, Dict[str, Any]] = {}
-
-
-
-        if isinstance(rdf_source, RawResourceDescription):
-            source_name = rdf_source.name
-        else:
-            try:
-                rdf_source_preview, source_name, root = resolve_rdf_source(rdf_source)
-            except Exception as e:
-                error = str(e)
-                tb = traceback.format_tb(e.__traceback__)
-                try:
-                    source_name = str(rdf_source)
-                except Exception as e:
-                    source_name = str(e)
-            else:
-                if not isinstance(rdf_source_preview, dict):
-                    error = f"expected loaded resource to be a dictionary, but got type {type(rdf_source_preview)}"
-
-        all_warnings = warnings1 or []
-    raw_rd = None
-    format_version = ""
-    resource_type = ""
-    if not error:
-        with warnings.catch_warnings(record=True) as warnings2:
-            try:
-                raw_rd = load_raw_resource_description(rdf_source, update_to_format="latest" if update_format else None)
-            except ValidationError as e:
-                error = nested_default_dict_as_nested_dict(e.normalized_messages())
-            except Exception as e:
-                error = str(e)
-                tb = traceback.format_tb(e.__traceback__)
-
-            if raw_rd is not None:
-                format_version = raw_rd.format_version
-                resource_type = "general" if raw_rd.type == "rdf" else raw_rd.type
-
-            if raw_rd is not None and raw_rd.type == "collection":
-                assert hasattr(raw_rd, "collection")
-                for idx, (entry_rdf, entry_error) in enumerate(resolve_collection_entries(raw_rd, enrich_partial_rdf=enrich_partial_rdf)):  # type: ignore
-                    if entry_error:
-                        entry_summary: Union[Dict[str, str], ValidationSummary] = {"error": entry_error}
-                    else:
-                        assert isinstance(entry_rdf, RawResourceDescription)
-                        entry_summary = validate(
-                            entry_rdf, update_format=update_format, update_format_inner=update_format_inner
-                        )
-
-                        wrns: Union[str, dict] = entry_summary.get("warnings", {})
-                        assert isinstance(wrns, dict)
-                        id_info = f"(id={entry_rdf.id}) " if hasattr(entry_rdf, "id") else ""  # type: ignore
-                        for k, v in wrns.items():
-                            warnings.warn(f"collection[{idx}]:{k}: {id_info}{v}", category=ValidationWarning)
-
-                    if entry_summary["error"]:
-                        if "collection" not in nested_errors:
-                            nested_errors["collection"] = {}
-
-                        nested_errors["collection"][idx] = entry_summary["error"]
-
-                if nested_errors:
-                    # todo: make short error message and refer to 'nested_errors' or deprecated 'nested_errors'
-                    error = nested_errors
-
-            all_warnings += warnings2 or []
-
-    return {
-        "bioimageio_spec_version": __version__,
-        "error": error,
-        "name": (
-            f"bioimageio.spec static validation of {resource_type} RDF {format_version}"
-            f"{' with update to latest format version' if update_format else ''}"
-        ),
-        "nested_errors": nested_errors,
-        "source_name": source_name,
-        "status": "passed" if error is None else "failed",
-        "traceback": tb,
-        "warnings": ValidationWarning.get_warning_summary(all_warnings),
-    }
-
-
-def update_rdf(
-    source: Union[RawResourceDescription, dict, os.PathLike, IO, str, bytes],
-    update: Union[RawResourceDescription, dict, os.PathLike, IO, str, bytes],
-    output: Union[None, dict, os.PathLike] = None,
-    validate_output: bool = True,
-) -> Union[dict, Path, RawResourceDescription]:
-    """
-    Args:
-        source:  source of RDF
-        update:  a (partial) RDF used as update
-        output:  dict or path to write output to (default: return new dict)
-        validate_output: whether or not to validate the updated RDF
-
-    Returns:
-        The updated content of the source rdf as dict or,
-        if output is a path, that path (where the updated content is saved to).
-
-    Raises:
-        ValidationError: if `validate_output` and the updated rdf does not pass validation
-    """
-    if isinstance(source, RawResourceDescription):
-        src = source
+    if update_format:
+        out = load_description_as_latest(resource_description, context)
     else:
-        src = load_raw_resource_description(source)
+        out = load_description(resource_description, context)
 
-    up = resolve_rdf_source(update)
-
-    if src.root_path != up.root and not validate_output:
-        warnings.warn(
-            f"root path of source {src.name} and update {up.name} differ. Relative paths might be invalid in the output."
-        )
-
-    out_data = update_nested(src, up.data)
-    assert isinstance(out_data, (RawResourceDescription, dict))
-    if validate_output:
-        summary = validate(out_data)
-        if summary["warnings"]:
-            warnings.warn(f"updated rdf validation warnings\n: {summary['warnings']}")
-        if summary["status"] != "passed":
-            msg = f"updated rdf did not pass validation; status: {summary['status']}"
-            if summary["error"]:
-                msg += f"; error: {summary['error']}"
-
-            raise ValidationError(msg)
-
-    if output is None:
-        if isinstance(source, RawResourceDescription):
-            return load_raw_resource_description(out_data)
-        else:
-            output = {}
-
-    if isinstance(output, dict):
-        if isinstance(out_data, RawResourceDescription):
-            out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=False)
-
-        assert isinstance(out_data, dict)
-        output.update(out_data)
-        return output
+    if isinstance(out, ValidationSummary):
+        return out
     else:
-        assert yaml is not None
-        output = Path(output)
-        if isinstance(out_data, RawResourceDescription):
-            out_data.root_path = output.parent
-            try:
-                out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=True)
-            except ValueError as e:
-                warnings.warn(
-                    f"Failed to convert paths in updated rdf to relative paths with root {output}; error: {e}"
-                )
-                warnings.warn(f"updated rdf at {output} contains absolute paths and is thus invalid!")
-                assert isinstance(out_data, RawResourceDescription)
-                out_data = serialize_raw_resource_description_to_dict(out_data, convert_absolute_paths=False)
+        assert len(out.validation_summaries) == 1
+        return out.validation_summaries[0]
 
-        yaml.dump(out_data, output)
-        return output
+
+def validate_legacy(
+    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    context: ValidationContext = ValidationContext(),
+    update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
+) -> LegacyValidationSummary:
+    """Validate a bioimage.io resource description returning the legacy validaiton summary.
+
+    The legacy validation summary contains any errors and warnings as nested dict."""
+
+    vs = validate(resource_description, context, update_format)
+
+    error = vs["error"]
+    legacy_error = error if (error is None or isinstance(error, str)) else nest_locs([(e.loc, e.msg) for e in error])
+    tb = vs.get("traceback")
+    return LegacyValidationSummary(
+        bioimageio_spec_version=vs["bioimageio_spec_version"],
+        error=legacy_error,
+        name=vs["name"],
+        source_name=vs["source_name"],
+        status=vs["status"],
+        traceback=None if tb is None else list(tb),
+        warnings=nest_locs([(w.loc, w.msg) for w in vs["warnings"]]) if "warnings" in vs else {},
+    )
+
 
 def get_resource_package_content_wo_rdf(
-    raw_rd: Union[GenericRawRD, raw_nodes.URI, str, pathlib.Path],
+    rd: ResourceDescription,
     *,
     weights_priority_order: Optional[Sequence[str]] = None,  # model only
-) -> Tuple[raw_nodes.ResourceDescription, Dict[str, Union[pathlib.PurePath, raw_nodes.URI]]]:
+) -> Dict[str, Union[HttpUrl, Path]]:
     """
     Args:
         raw_rd: raw resource description
@@ -235,27 +231,46 @@ def get_resource_package_content_wo_rdf(
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        Tuple of updated raw resource description and package content of remote URIs, local file paths or text content
-        keyed by file names.
-        Important note: the serialized rdf.yaml is not included.
+        Package content mapping file names to URLs or local file paths.
+        Important note: the serialized resource description (= an rdf.yaml file) is not included.
     """
-    if isinstance(raw_rd, raw_nodes.ResourceDescription):
-        r_rd = raw_rd
-    else:
-        r_rd = load_raw_resource_description(raw_rd)
 
-    sub_spec = _get_spec_submodule(r_rd.type, r_rd.format_version)
-    if r_rd.type == "model":
-        filter_kwargs = dict(weights_priority_order=weights_priority_order)
-    else:
-        filter_kwargs = {}
 
-    r_rd = sub_spec.utils.filter_resource_description(r_rd, **filter_kwargs)
+def _extract_file_name_from_source(src: Union[HttpUrl, PurePath]) -> str:
+    if not isinstance(src, PurePath):
+        src = PurePath(src.path or "file")
 
-    content: Dict[str, Union[pathlib.PurePath, raw_nodes.URI]] = {}
-    r_rd = RawNodePackageTransformer(content, r_rd.root_path).transform(r_rd)
-    assert "rdf.yaml" not in content
-    return r_rd, content
+    return src.name
+
+
+def _fill_resource_package_content(
+    package_content: Dict[Tuple[Union[int, str], ...], Union[HttpUrl, Path]],
+    node: Node,
+    node_loc: Tuple[Union[int, str], ...],
+):
+    field_value: Union[Tuple[Any, ...], Node, Any]
+    for field_name, field_value in node:
+        loc = node_loc + (field_name,)
+        # nested node
+        if isinstance(field_value, Node):
+            if not isinstance(field_value, FrozenDictNode):
+                _fill_resource_package_content(package_content, field_value, loc)
+
+        # nested node in tuple
+        elif isinstance(field_value, tuple):
+            for i, fv in enumerate(field_value):
+                if isinstance(fv, Node) and not isinstance(fv, FrozenDictNode):
+                    _fill_resource_package_content(package_content, fv, loc + (i,))
+
+        elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
+            if isinstance(field_value, RelativeFilePath):
+                src = field_value.absolute
+            elif isinstance(field_value, AnyUrl):
+                src = field_value
+            else:
+                raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
+
+            package_content[loc] = src
 
 
 def get_resource_package_content(
@@ -281,8 +296,6 @@ def get_resource_package_content(
 
     r_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
     return {**content, **{"rdf.yaml": serialize_raw_resource_description(r_rd)}}
-
-
 
 
 def load_raw_resource_description(

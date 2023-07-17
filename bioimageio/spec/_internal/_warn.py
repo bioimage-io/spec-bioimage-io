@@ -23,13 +23,13 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-WARNINGS_ACTION_KEY = "warnings_action"
-RAISE_WARNINGS = "raise"
 
-ALERT = 35  # no ALERT or worse -> RDF is worriless
-WARNING = 30  # no WARNING or worse -> RDF is watertight
-INFO = 20
+WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 Severity = Literal[20, 30, 35]
+WarningLevel = Literal[Severity, 50]  # with warning level x raise warnings of severity >=x
+ALERT: Severity = 35  # no ALERT or worse -> RDF is worriless
+WARNING: Severity = 30  # no WARNING or worse -> RDF is watertight
+INFO: Severity = 20
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
@@ -86,15 +86,15 @@ def as_warning(
 
     def wrapper(value: Any, info: Union[FieldValidationInfo, ValidationInfo]) -> Any:
         logger = getLogger(getattr(info, "field_name", "node"))
-        if logger.level > severity:
+        assert info.context is not None
+        if info.context[WARNING_LEVEL_CONTEXT_KEY] > severity:
             return value
 
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
             logger.log(severity, e)
-            if info.context is not None and info.context.get(WARNINGS_ACTION_KEY) == RAISE_WARNINGS:
-                raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
+            raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
 
         return value
 
