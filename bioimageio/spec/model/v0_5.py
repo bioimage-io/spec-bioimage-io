@@ -1,13 +1,13 @@
 import collections
 from typing import Annotated, Any, Dict, List, Literal, Optional, Set, Tuple, Union, get_args
 
-from annotated_types import MaxLen, MinLen
+from annotated_types import Ge, Gt, MaxLen, MinLen, Predicate
 from pydantic import AfterValidator, AllowInfNan, FieldValidationInfo, field_validator, model_validator
 
 from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types import Identifier, RawMapping
+from bioimageio.spec.shared.types import Identifier, RawMapping, SiUnit
 
 from . import v0_4
 
@@ -75,57 +75,117 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 ShortId = Annotated[Identifier, MaxLen(16)]
+OtherTensorAxisId = Annotated[str, MaxLen(33)]
+TensorAxisId = Union[ShortId, OtherTensorAxisId]
 SAME_AS_TYPE = "<same as type>"
+
+
+class ParametrizedSize(Node):
+    min: Annotated[int, Gt(0)]
+    step: Annotated[int, Gt(0)]
+    step_with: Optional[TensorAxisId] = None
+    """name of another axis to resize jointly,
+    i.e. `n=n_other` for `size = min + n*step`, `size_other = min_other + n_other*step_other`.
+    To step with an axis of another tensor, use `step_with = <tensor name>.<axis name>`
+    """
 
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
 # https://ngff.openmicroscopy.org/latest/#axes-md
 class AxisBase(Node):
-    name: Union[ShortId, List[ShortId]] = SAME_AS_TYPE
-    """a unique name"""
-    description: Annotated[str, MaxLen(128)] = ""
-    # unit: Union[SpaceUnit, TimeUnit, ShortId, Tuple[ShortId, ...], None] = None
-    # step: Annotated[int, Gt(0)] = 1
+    type: Literal["batch", "channel", "index", "time", "space"]
 
-    @field_validator("name", mode="after")
-    @classmethod
-    def set_default_name(cls, value: str, info: FieldValidationInfo) -> str:
-        if value == SAME_AS_TYPE and isinstance(info.data["type"], str):
-            return info.data["type"]
+    name: Union[ShortId, Tuple[ShortId]]
+    """a unique name"""
+
+    description: Annotated[str, MaxLen(128)] = ""
+
+    size: Union[int, ParametrizedSize, TensorAxisId]
+    """The axis size.
+    To specify that this axis' size equals another, an axis name can be given.
+    Specify another tensor's axis as `<tensor name>.<axis name>`."""
+
+    @property
+    def name_string(self) -> str:
+        if isinstance(self.name, str):
+            return self.name
         else:
-            return value
+            return ",".join(self.name)
+
+
+class WithHalo(Node):
+    halo: Annotated[int, Ge(0)] = 0
 
 
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-
-
-MeasurementScale = Literal["nominal", "ordinal", "interval", "ratio"]
+    name: ShortId = "batch"
 
 
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
-    value_scale: Union[MeasurementScale, Tuple[MeasurementScale, ...]]
-    value_unit: Annotated[str, AfterValidator(lambda s: s.replace("×", "·").replace("*", "·"))] = Field(
-        pattern=SI_UNIT_REGEX, examples=["lx·s"]
-    )
-    """(composed) SI unit"""
+    name: Tuple[ShortId, ...]
 
 
 class IndexAxis(AxisBase):
     type: Literal["index"] = "index"
+    name: ShortId = "index"
 
 
 class TimeAxis(AxisBase):
     type: Literal["time"] = "time"
+    name: ShortId = "time"
+    unit: TimeUnit
+    step: Annotated[float, Gt(0)] = 1.0
 
 
 class SpaceAxis(AxisBase):
     type: Literal["space"] = "space"
     name: ShortId = Field("x", examples=["x", "y", "z"])
+    unit: SpaceUnit
+    step: Annotated[float, Gt(0)] = 1.0
 
 
 Axis = Annotated[Union[BatchAxis, ChannelAxis, IndexAxis, TimeAxis, SpaceAxis], Field(discriminator="type")]
+
+
+class OutputTimeAxis(TimeAxis, WithHalo):
+    pass
+
+
+class OutputSpaceAxis(SpaceAxis, WithHalo):
+    pass
+
+
+OutputAxis = Annotated[
+    Union[BatchAxis, ChannelAxis, IndexAxis, OutputTimeAxis, OutputSpaceAxis], Field(discriminator="type")
+]
+
+
+class NominalTensorValue(Node):
+    type: Literal["nominal"] = "nominal"
+
+
+class OrdinalTensorValue(Node):
+    type: Literal["ordinal"] = "ordinal"
+
+
+class IntervalTensorValue(Node):
+    type: Literal["interval"] = "interval"
+    unit: SiUnit
+    factor: float = 1.0
+
+
+class RatioTensorValue(Node):
+    type: Literal["ratio"] = "ratio"
+    unit: SiUnit
+    offset: float = 0.0
+    factor: float = 1.0
+
+
+TensorValue = Annotated[
+    Union[NominalTensorValue, OrdinalTensorValue, IntervalTensorValue, RatioTensorValue], Field(discriminator="type")
+]
 
 
 class TensorBase(Node):
@@ -136,6 +196,9 @@ class TensorBase(Node):
     """Brief descripiton of the tensor"""
 
     axes: Tuple[Axis, ...]
+
+    values: Union[TensorValue, Tuple[TensorValue, ...]]
+    """Description of values (optionally per channel)."""
 
     data_type: str
     """The data type of this tensor."""
@@ -190,6 +253,8 @@ class OutputTensor(TensorBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
+    axes: Tuple[OutputAxis, ...]
+
     # shape: Union[Tuple[int, ...], v0_4.ImplicitOutputShape]
     # """Output tensor shape."""
 
@@ -219,7 +284,7 @@ class OutputTensor(TensorBase):
         return self
 
 
-class Model(v0_4.Model):
+class Model(v0_4.Model):  # todo: do not inherite from v0_4.Model, e.g. 'inputs' are not compatible
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -236,8 +301,56 @@ class Model(v0_4.Model):
     inputs: Annotated[Tuple[InputTensor, ...], MinLen(1)]
     """Describes the input tensors expected by this model."""
 
+    @field_validator("inputs", mode="after")
+    @classmethod
+    def validate_input_axes(cls, inputs: Tuple[InputTensor]) -> Tuple[InputTensor]:
+        tensor_axes_names = [f"{ipt.name}.{a.name}" for ipt in inputs for a in ipt.axes if not isinstance(a.size, str)]
+        for i, ipt in enumerate(inputs):
+            valid_axes_references = (
+                [None] + [a.name for a in ipt.axes if not isinstance(a.size, str)] + tensor_axes_names
+            )
+            for a, ax in enumerate(ipt.axes):
+                if isinstance(ax.size, ParametrizedSize) and ax.size.step_with not in valid_axes_references:
+                    raise ValueError(
+                        f"Invalid tensor axis reference at inputs[{i}].axes[{a}].size.step_with: {ax.size.step_with}."
+                    )
+                if isinstance(ax.size, str) and ax.size not in valid_axes_references:
+                    raise ValueError(f"Invalid tensor axis reference at inputs[{i}].axes[{a}].size: {ax.size}.")
+
+        return inputs
+
     outputs: Annotated[Tuple[OutputTensor, ...], MinLen(1)]
     """Describes the output tensors."""
+
+    @field_validator("outputs", mode="after")
+    @classmethod
+    def validate_output_axes(cls, outputs: Tuple[OutputTensor], info: FieldValidationInfo) -> Tuple[OutputTensor]:
+        input_tensor_axes_names = [
+            f"{ipt.name}.{a.name}"
+            for ipt in info.data.get("inputs", ())
+            for a in ipt.axes
+            if not isinstance(a.size, str)
+        ]
+        output_tensor_axes_names = [
+            f"{out.name}.{a.name}" for out in outputs for a in out.axes if not isinstance(a.size, str)
+        ]
+
+        for i, out in enumerate(outputs):
+            valid_axes_references = (
+                [None]
+                + [a.name for a in out.axes if not isinstance(a.size, str)]
+                + input_tensor_axes_names
+                + output_tensor_axes_names
+            )
+            for a, ax in enumerate(out.axes):
+                if isinstance(ax.size, ParametrizedSize) and ax.size.step_with not in valid_axes_references:
+                    raise ValueError(
+                        f"Invalid tensor axis reference outputs[{i}].axes[{a}].size.step_with: {ax.size.step_with}."
+                    )
+                if isinstance(ax.size, str) and ax.size not in valid_axes_references:
+                    raise ValueError(f"Invalid tensor axis reference at outputs[{i}].axes[{a}].size: {ax.size}.")
+
+        return outputs
 
     @classmethod
     def convert_from_older_format(cls, data: RawMapping) -> RawMapping:

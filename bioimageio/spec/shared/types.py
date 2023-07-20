@@ -6,11 +6,12 @@ from typing import Any, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
-from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo
+from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo, constr
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core import core_schema
 from typing_extensions import Annotated, LiteralString
 
+from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 from bioimageio.spec._internal._validate import (
     RestrictCharacters,
@@ -21,7 +22,6 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
-from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 
 T = TypeVar("T")
 L = TypeVar("L", bound=LiteralString)
@@ -38,13 +38,21 @@ with a few restrictions listed [here](https://docs.python.org/3/library/datetime
 
 OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 DeprecatedLicenseId = DeprecatedLicenseId
-Identifier = Annotated[NonEmpty[str], AfterValidator(validate_identifier), AfterValidator(validate_is_not_keyword)]
+Identifier = Annotated[
+    NonEmpty[str],
+    annotated_types.LowerCase,
+    AfterValidator(validate_identifier),
+    AfterValidator(validate_is_not_keyword),
+]
 LicenseId = LicenseId
 RawLeafValue = Union[int, float, str, bool, None]
 RawMapping = Mapping[str, "RawValue"]
 RawSequence = Sequence["RawValue"]
 RawValue = Union[RawLeafValue, RawSequence, RawMapping]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
+SiUnit = Annotated[
+    constr(min_length=1, pattern=SI_UNIT_REGEX), AfterValidator(lambda s: s.replace("×", "·").replace("*", "·"))
+]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
 

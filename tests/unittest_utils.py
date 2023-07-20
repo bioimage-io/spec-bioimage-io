@@ -1,10 +1,10 @@
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Type
+from typing import Any, ClassVar, Dict, Optional, Sequence, Type
 from unittest import TestCase
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from bioimageio.spec.shared.nodes import Node
 
@@ -89,3 +89,26 @@ class BaseTestCases:
                     ret["context"] = st.context
 
                 return ret
+
+    class TestType(TestCase):
+        type_: ClassVar[Type[Any]]
+        valid: Sequence[Any]
+        invalid: Sequence[Any]
+        type_adapter: TypeAdapter[Any]
+
+        def setUp(self) -> None:
+            self.type_adapter = TypeAdapter(self.type_)
+            return super().setUp()
+
+        def test_valid(self):
+            for v in self.valid:
+                with self.subTest(v=v):
+                    try:
+                        self.type_adapter.validate_python(v)
+                    except Exception as e:
+                        self.fail(str(e))
+
+        def test_invalid(self):
+            for v in self.invalid:
+                with self.subTest(iv=v):
+                    self.assertRaises(ValidationError, self.type_adapter.validate_python, v)
