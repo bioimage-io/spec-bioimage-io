@@ -21,6 +21,7 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
+from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 
 T = TypeVar("T")
 L = TypeVar("L", bound=LiteralString)

@@ -332,19 +332,6 @@ class TensorBase(Node):
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
-    # todo: validate axes in processing
-    # @model_validator(mode="after")
-    # def validate_processing_kwargs(self, data: Any):
-    #     axes = data["axes"]
-    #     processing_list = data.get(self.processing_name, [])
-    #     for processing in processing_list:
-    #         kwargs = processing.kwargs or {}
-    #         kwarg_axes = kwargs.get("axes", "")
-    #         if any(a not in axes for a in kwarg_axes):
-    #             raise ValidationError("`kwargs.axes` needs to be subset of axes")
-
-    #     return data
-
 
 _MODE_DESCR_WO_FIXED = """Mode for computing mean and variance.
 | mode | description |
@@ -588,6 +575,15 @@ class InputTensor(TensorBase):
 
         return self
 
+    @model_validator(mode="after")
+    def validate_preprocessing_kwargs(self):
+        for p in self.preprocessing:
+            kwarg_axes = p.kwargs.get("axes", "")
+            if any(a not in self.axes for a in kwarg_axes):
+                raise ValueError("`kwargs.axes` needs to be subset of axes")
+
+        return self
+
 
 class OutputTensor(TensorBase):
     data_type: Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"]
@@ -610,6 +606,15 @@ class OutputTensor(TensorBase):
     def matching_halo_length(self):
         if self.halo and len(self.halo) != len(self.shape):
             raise ValueError(f"halo {self.halo} has to have same length as shape {self.shape}!")
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_postprocessing_kwargs(self):
+        for p in self.postprocessing:
+            kwarg_axes = p.kwargs.get("axes", "")
+            if any(a not in self.axes for a in kwarg_axes):
+                raise ValueError("`kwargs.axes` needs to be subset of axes")
 
         return self
 

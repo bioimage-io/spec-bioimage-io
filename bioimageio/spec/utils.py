@@ -13,7 +13,7 @@ from bioimageio.spec import __version__
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import nest_locs
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
-from bioimageio.spec.shared.types import FileSource, RawMapping, RelativeFilePath
+from bioimageio.spec.shared.types import FileSource, Loc, RawMapping, RelativeFilePath
 from bioimageio.spec.shared.validation import (
     LegacyValidationSummary,
     ValidationContext,
@@ -100,7 +100,7 @@ def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping,
         val_errors: List[ValidationError] = []
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningType):
-                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
+                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # tpe: ignore
             else:
                 val_errors.append(ValidationError(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
 
@@ -218,11 +218,11 @@ def validate_legacy(
     )
 
 
-def get_resource_package_content_wo_rdf(
+def prepare_to_package(
     rd: ResourceDescription,
     *,
     weights_priority_order: Optional[Sequence[str]] = None,  # model only
-) -> Dict[str, Union[HttpUrl, Path]]:
+) -> Tuple[ResourceDescription, Dict[str, Union[HttpUrl, Path]]]:
     """
     Args:
         raw_rd: raw resource description
@@ -231,9 +231,15 @@ def get_resource_package_content_wo_rdf(
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        Package content mapping file names to URLs or local file paths.
-        Important note: the serialized resource description (= an rdf.yaml file) is not included.
+        Modified resource description copy and associated package content mapping file names to URLs or local paths,
+        which are referenced in the modfieid resource description.
+        Important note: The serialized resource description itself (= an rdf.yaml file) is not included.
     """
+    package_content: Dict[Loc, Union[HttpUrl, Path]] = {}
+    _fill_resource_package_content(package_content, rd, node_loc=())
+    locs_of_file_names: Dict[str, Loc]
+    for loc, src in package_content.items():
+
 
 
 def _extract_file_name_from_source(src: Union[HttpUrl, PurePath]) -> str:
@@ -244,9 +250,9 @@ def _extract_file_name_from_source(src: Union[HttpUrl, PurePath]) -> str:
 
 
 def _fill_resource_package_content(
-    package_content: Dict[Tuple[Union[int, str], ...], Union[HttpUrl, Path]],
+    package_content: Dict[Loc, Union[HttpUrl, Path]],
     node: Node,
-    node_loc: Tuple[Union[int, str], ...],
+    node_loc: Loc,
 ):
     field_value: Union[Tuple[Any, ...], Node, Any]
     for field_name, field_value in node:

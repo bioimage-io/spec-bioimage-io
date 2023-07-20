@@ -1,6 +1,8 @@
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import pydantic
+
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 
 
 # slimmed down version of pydantic.Field with explicit extras
@@ -30,13 +32,12 @@ def Field(  # noqa C901  NOSONAR: S1542
     in_package: bool = False,  # bioimageio specific
 ) -> Any:
     """wrap pydantic.Field"""
-    # extra: Dict[str, Any] = dict(in_package=in_package)
     return pydantic.Field(
         default,
         default_factory=default_factory,
         alias=alias,
         validation_alias=validation_alias,
-        description=IN_PACKAGE_MESSAGE + description,
+        description=(IN_PACKAGE_MESSAGE if in_package else "") + description,
         examples=examples,
         exclude=exclude,
         discriminator=discriminator,
@@ -53,7 +54,6 @@ def Field(  # noqa C901  NOSONAR: S1542
         decimal_places=decimal_places,
         min_length=min_length,
         max_length=max_length,
-        # json_schema_extra=extra,
     )
 
 
@@ -62,3 +62,7 @@ def ensure_raw(value: Union[pydantic.BaseModel, Any]) -> Union[Dict[str, Any], A
         return value.model_dump(exclude_unset=True, exclude_defaults=False, exclude_none=False)
     else:
         return value
+
+
+def nest_locs(locs: Sequence[Tuple[Tuple[Union[int, str], ...], str]]) -> Dict[str, Any]:
+    return {}
