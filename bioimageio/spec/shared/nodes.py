@@ -1,5 +1,7 @@
 from __future__ import annotations
+import ast
 import collections.abc
+import inspect
 import sys
 from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Sequence, Set, TypeVar, Union
 
@@ -35,6 +37,11 @@ class Node(
         validate_return=True,
     )
     """pydantic model config"""
+
+    def model_post_init(self, __context: Any):
+        super().model_post_init(__context)
+        self._set_undefined_field_descriptions_from_var_docstrings()
+        self._set_defaults_for_undefined_field_descriptions()
 
     def model_dump(
         self,
@@ -85,6 +92,39 @@ class Node(
             round_trip=round_trip,
             warnings=warnings,
         )
+
+    def _set_undefined_field_descriptions_from_var_docstrings(self) -> None:
+        module = ast.parse(inspect.getsource(self.__class__))
+        assert isinstance(module, ast.Module)
+        class_def = module.body[0]
+        assert isinstance(class_def, ast.ClassDef)
+        if len(class_def.body) < 2:
+            return
+
+        for last, node in zip(class_def.body, class_def.body[1:]):
+            if not (
+                isinstance(last, ast.AnnAssign) and isinstance(last.target, ast.Name) and isinstance(node, ast.Expr)
+            ):
+                continue
+
+            info = self.model_fields[last.target.id]
+            if info.description is not None:
+                continue
+
+            doc_node = node.value
+            if isinstance(doc_node, ast.Constant):
+                docstring = doc_node.value  # 'regular' variable doc string
+            # elif isinstance(doc_node, (ast.JoinedStr, ast.FormattedValue)):
+            #     docstring = eval(ast.unparse(doc_node))  # evaluate f-string
+            else:
+                raise NotImplementedError(doc_node)
+
+            info.description = docstring
+
+    def _set_defaults_for_undefined_field_descriptions(self):
+        for name, info in self.model_fields.items():
+            if info.description is None:
+                info.description = name
 
     # @classmethod
     # def generate_documentation(cls: Type[Node], lvl: int = 0):

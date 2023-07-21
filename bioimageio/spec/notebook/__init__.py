@@ -1,7 +1,8 @@
 # autogen: start
 from . import v0_2
-from .v0_2 import LATEST_FORMAT_VERSION, Notebook, LatestFormatVersion
+from .v0_2 import Notebook
 
-__all__ = ["v0_2", "LATEST_FORMAT_VERSION", "Notebook", "LatestFormatVersion"]
+__all__ = ["v0_2", "AnyNotebook", "Notebook"]
 
+AnyNotebook = Notebook
 # autogen: stop

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 from datetime import datetime
-from typing import Any, Mapping, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
@@ -49,9 +49,11 @@ RawLeafValue = Union[int, float, str, bool, None]
 RawMapping = Mapping[str, "RawValue"]
 RawSequence = Sequence["RawValue"]
 RawValue = Union[RawLeafValue, RawSequence, RawMapping]
+RawDict = Dict[str, RawValue]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 SiUnit = Annotated[
-    constr(min_length=1, pattern=SI_UNIT_REGEX), AfterValidator(lambda s: s.replace("×", "·").replace("*", "·"))
+    constr(min_length=1, pattern=SI_UNIT_REGEX),
+    BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
 ]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]

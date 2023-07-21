@@ -33,7 +33,7 @@ from bioimageio.spec.generic.v0_2 import (
     Attachments,
     Author,
     LinkedResource,
-    ResourceDescriptionBaseNoSource,
+    GenericBaseNoSource,
 )
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
@@ -52,19 +52,12 @@ from bioimageio.spec.shared.types import (
 )
 from bioimageio.spec._internal._validate import validate_suffix
 
-LatestFormatVersion = Literal["0.4.9"]
-FormatVersion = Literal[
-    "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.4.5", "0.4.6", "0.4.7", "0.4.8", LatestFormatVersion
-]
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
-
-
-LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 
 
 class CallableFromDepencency(StringNode):
@@ -645,7 +638,7 @@ class LinkedModel(LinkedResource):
     """A valid model `id` from the bioimage.io collection."""
 
 
-class Model(ResourceDescriptionBaseNoSource):
+class Model(GenericBaseNoSource):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -654,12 +647,12 @@ class Model(ResourceDescriptionBaseNoSource):
     """
 
     model_config = {
-        **ResourceDescriptionBaseNoSource.model_config,
-        **dict(title=f"bioimage.io model RDF spec {LATEST_FORMAT_VERSION}"),
+        **GenericBaseNoSource.model_config,
+        **dict(title="bioimage.io model specification"),
     }
     """pydantic model_config"""
 
-    format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
+    format_version: Literal["0.4.9"] = "0.4.9"
     """Version of the bioimage.io model Resource Description File (RDF) specification used.
     This is important for any consumer software to understand how to parse the fields.
     The recommended behavior for the implementation is to keep backward compatibility and throw an error if the RDF

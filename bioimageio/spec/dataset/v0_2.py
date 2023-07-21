@@ -1,32 +1,24 @@
 from typing import Literal
 
 from bioimageio.spec.generic.v0_2 import (
-    LATEST_FORMAT_VERSION,
-    FormatVersion,
-    LatestFormatVersion,
     LinkedResource,
-    ResourceDescriptionBase,
+    GenericBase,
 )
 from bioimageio.spec.shared.types import NonEmpty
 
-__all__ = ["Dataset", "FormatVersion", "LATEST_FORMAT_VERSION", "LatestFormatVersion", "LinkedDataset"]
+__all__ = ["Dataset", "LinkedDataset"]
 
 
-class Dataset(ResourceDescriptionBase):
+class Dataset(GenericBase):
     """A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage
     processing.
     """
 
     model_config = {
-        **ResourceDescriptionBase.model_config,
-        **dict(title=f"bioimage.io Dataset RDF {LATEST_FORMAT_VERSION}"),
+        **GenericBase.model_config,
+        **dict(title="bioimage.io dataset specification"),
     }
     type: Literal["dataset"] = "dataset"
-
-
-# class DatasetId(ResourceId):
-
-#     type = "dataset"
 
 
 class LinkedDataset(LinkedResource):

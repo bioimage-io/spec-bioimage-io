@@ -9,24 +9,21 @@ from pydantic import HttpUrl, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal._utils._various import ensure_raw
+from bioimageio.spec._internal._warn import ALERT, warn
 from bioimageio.spec.application.v0_2 import Application
-from bioimageio.spec.notebook.v0_2 import Notebook
 from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import (
     Generic,
-    LATEST_FORMAT_VERSION,
-    FormatVersion,
-    LatestFormatVersion,
-    ResourceDescriptionBase,
-    ResourceDescriptionBaseNoSource,
+    GenericBase,
+    GenericBaseNoSource,
 )
 from bioimageio.spec.model.v0_4 import Model
+from bioimageio.spec.notebook.v0_2 import Notebook
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
-from bioimageio.spec._internal._utils._various import ensure_raw
-from bioimageio.spec._internal._warn import ALERT, warn
 
-__all__ = ["Collection", "CollectionEntry", "LatestFormatVersion", "FormatVersion", "LATEST_FORMAT_VERSION"]
+__all__ = ["Collection", "CollectionEntry"]
 
 
 class CollectionEntry(Node):
@@ -52,7 +49,7 @@ class CollectionEntry(Node):
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_classes: ClassVar[MappingProxyType[str, Type[ResourceDescriptionBaseNoSource]]] = MappingProxyType(
+    entry_classes: ClassVar[MappingProxyType[str, Type[GenericBaseNoSource]]] = MappingProxyType(
         dict(model=Model, dataset=Dataset, application=Application, notebook=Notebook)
     )
 
@@ -83,15 +80,15 @@ class CollectionEntry(Node):
         return data
 
 
-class Collection(ResourceDescriptionBase):
+class Collection(GenericBase):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
     """
 
     model_config = {
-        **ResourceDescriptionBase.model_config,
-        **dict(title=f"bioimage.io Collection RDF {LATEST_FORMAT_VERSION}"),
+        **GenericBase.model_config,
+        **dict(title="bioimage.io collection specification"),
     }
     type: Literal["collection"] = "collection"
 

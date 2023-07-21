@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
@@ -9,7 +8,6 @@ from annotated_types import Len, LowerCase, MinLen
 from pydantic import (
     AnyUrl,
     DirectoryPath,
-    EmailStr,
     FieldValidationInfo,
     HttpUrl,
     TypeAdapter,
@@ -17,120 +15,44 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic._internal._model_construction import ModelMetaclass
-from pydantic.fields import FieldInfo
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES
+from bioimageio.spec._internal._constants import LICENSES
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._warn import (
     WARNING,
     as_warning,
     warn,
 )
+from bioimageio.spec.generic import v0_2
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
     NonEmpty,
-    OrcidId,
-    RawDict,
     RawMapping,
+    Sha256,
     Version,
 )
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
-VALID_COVER_IMAGE_EXTENSIONS = ("jpg", "png", "gif", "jpeg")
 
-
-class Attachments(Node):
-    model_config = {**Node.model_config, "extra": "allow"}
-    """update pydantic model config to allow additional unknown keys"""
-    files: Tuple[FileSource, ...] = Field((), in_package=True)
-    """File attachments"""
-
-
-class Person(Node):
-    name: Optional[str] = None
-    """Full name"""
-    affiliation: Optional[str] = None
-    """Affiliation"""
-    email: Optional[EmailStr] = None
-    """Email"""
-    github_user: Optional[str] = None
-    """GitHub user name"""
-    orcid: Optional[OrcidId] = Field(None, examples=["0000-0001-2345-6789"])
-    """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID)
-    in hyphenated groups of 4 digits, (and [valid](
-    https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
-    ) as per ISO 7064 11,2.)
-    """
-
-
-class Author(Person):
-    name: str = Field(description="Full name")
-
-
-class Maintainer(Person):
-    github_user: str = Field(description="GitHub user name")
-
-
-class Badge(Node, title="Custom badge"):
-    """A custom badge"""
-
-    label: str = Field(examples=["Open in Colab"])
-    """badge label to display on hover"""
-
-    icon: Union[HttpUrl, None] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
-    """badge icon"""
-
-    url: HttpUrl = Field(
-        examples=[
-            "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
-        ]
-    )
-    """target URL"""
-
-
-class CiteEntry(Node):
-    text: str
-    """free text description"""
-
-    doi: Optional[str] = Field(None, pattern=DOI_REGEX)
-    """A digital object identifier (DOI) is the prefered citation reference.
-    See https://www.doi.org/ for details. (alternatively specify `url`)"""
-
-    url: Optional[str] = None
-    """URL to cite (preferably specify a `doi` instead)"""
-
-    @field_validator("url", mode="after")
-    @classmethod
-    def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo):
-        if not info.data.get("doi") and not value:
-            raise ValueError("Either 'doi' or 'url' is required")
-
-        return value
+class Attachment(Node):
+    source: FileSource = Field(in_package=True)
+    sha256: Annotated[Optional[Sha256], warn(Sha256)] = None
 
 
 class LinkedResource(Node):
     """Reference to a bioimage.io resource"""
 
     id: NonEmpty[str]
-    """A valid resource `id` from the bioimage.io collection."""
+    """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericBaseNoSourceMeta(ModelMetaclass):
-    model_fields: Dict[str, FieldInfo]
-
-    @property
-    def implemented_format_version(self) -> str:
-        return self.model_fields["format_version"].default
-
-
-class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
-    """ResourceDescriptionBase without a source field
+class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
+    """GenericBaseNoFormatVersion without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
     """
@@ -175,7 +97,7 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
         examples=[],
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
-            f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
+            f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
         ),
         in_package=True,
     )
@@ -188,9 +110,9 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
             if (
                 v is not None
                 and "." not in str(v)
-                and str(v).split(".")[-1].lower() not in VALID_COVER_IMAGE_EXTENSIONS
+                and str(v).split(".")[-1].lower() not in v0_2.VALID_COVER_IMAGE_EXTENSIONS
             ):
-                raise ValueError(f"Expected markdown file with suffix in {VALID_COVER_IMAGE_EXTENSIONS}")
+                raise ValueError(f"Expected markdown file with suffix in {v0_2.VALID_COVER_IMAGE_EXTENSIONS}")
 
         return value
 
@@ -198,19 +120,19 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: Tuple[Author, ...] = ()
+    authors: Tuple[v0_2.Author, ...] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
-    attachments: Optional[Attachments] = None
+    attachments: Tuple[Attachment, ...] = ()
     """file and other attachments"""
 
-    badges: Tuple[Badge, ...] = ()
+    badges: Tuple[v0_2.Badge, ...] = ()
     """badges associated with this resource"""
 
     cite: Annotated[
-        Tuple[CiteEntry, ...],
-        warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING, "Please specify at least one `cite` entry."),
-    ] = ()
+        Tuple[v0_2.CiteEntry, ...],
+        MinLen(1),
+    ]
     """citations"""
 
     config: Optional[FrozenDictNode[str, Any]] = Field(
@@ -255,9 +177,9 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
     """an icon for illustration"""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId, str, None],
+        Union[LicenseId, DeprecatedLicenseId],
         warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
-    ] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    ] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
@@ -285,9 +207,23 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
     )
     """IDs of other bioimage.io resources"""
 
-    maintainers: Tuple[Maintainer, ...] = ()
+    maintainers: Tuple[v0_2.Maintainer, ...] = ()
     """Maintainers of this resource.
-    If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
+    If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""
+
+    @field_validator("maintainers", mode="after")
+    @classmethod
+    def check_maintainers_exist(
+        cls, maintainers: Tuple[v0_2.Maintainer, ...], info: FieldValidationInfo
+    ) -> Tuple[v0_2.Maintainer, ...]:
+        if not maintainers:
+            authors: Tuple[v0_2.Author, ...] = info.data["authors"]
+            if all(a.github_user is None for a in authors):
+                raise ValueError(
+                    "Missing `maintainers` or any author in `authors` with a specified `github_user` name."
+                )
+
+        return maintainers
 
     rdf_source: Optional[FileSource] = None
     """resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from"""
@@ -377,8 +313,6 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
             cls._remove_slashes_from_names(data)
             data["format_version"] = "0.2.3"
 
-        data = cls._remove_doi_prefix(data)
-
         return data
 
     @staticmethod
@@ -403,30 +337,6 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
             persons = data.get(group)
             if isinstance(persons, Sequence):
                 data[group] = [rm_slashes_in_person_name(p) for p in persons]  # type: ignore
-
-    @staticmethod
-    def _remove_doi_prefix(data: RawDict) -> RawDict:
-        """we unofficially accept DOIs starting with "https://doi.org/"
-        here we remove this 'prefix'"""
-        DOI_PREFIX = "https://doi.org/"
-        cite = data.get("cite")
-        if isinstance(cite, collections.Sequence):
-            new_cite = list(cite)
-            for i in range(len(new_cite)):
-                cite_entry = new_cite[i]
-                if not isinstance(cite_entry, collections.Mapping):
-                    continue
-
-                doi = cite_entry.get("doi")
-                if not isinstance(doi, str) or not doi.startswith(DOI_PREFIX):
-                    continue
-
-                new_cite_entry = dict(cite_entry)
-                new_cite_entry["doi"] = doi[len(DOI_PREFIX) :]
-                new_cite[i] = new_cite_entry
-
-            data["cite"] = new_cite
-        return data
 
     @classmethod
     def model_validate(
@@ -484,6 +394,8 @@ ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNo
 
 
 class GenericBaseNoFormatVersion(GenericBaseNoSource):
+    """GenericBase without a format version"""
+
     source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
 

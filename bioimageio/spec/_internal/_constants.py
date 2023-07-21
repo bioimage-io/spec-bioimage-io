@@ -25,11 +25,11 @@ Or you can generate a SHA256 checksum with Python's `hashlib`,
 _tag_categories_file = Path(__file__).parent.parent / "static" / "tag_categories.json"
 TAG_CATEGORIES = json.loads(_tag_categories_file.read_text(encoding="utf-8"))
 
-# SI unit regex from https://stackoverflow.com/a/3573731
-_prefix = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y)"
+# SI unit regex adapted from https://stackoverflow.com/a/3573731
+_prefix = "(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)"
 _unit = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)"
-_power = r"(\^[+-]?[1-9]\d*)"
-_unit_w_prefix = "(" + _prefix + "?" + _unit + _power + "?" + "|1" + ")"
-_multiplied = _unit_w_prefix + "(?:·" + _unit_w_prefix + ")*"
-_with_denominator = _multiplied + r"(?:\/" + _multiplied + ")?"
-SI_UNIT_REGEX = _with_denominator
+_any_power = r"(\^[+-]?[1-9]\d*)"
+_pos_power = r"(\^+?[1-9]\d*)"
+_unit_ap = f"{_prefix}?{_unit}{_any_power}?"
+_unit_pp = f"{_prefix}?{_unit}{_pos_power}?"
+SI_UNIT_REGEX = f"{_unit_ap}((·{_unit_ap})|(/{_unit_pp}))*"

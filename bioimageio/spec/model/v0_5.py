@@ -1,21 +1,17 @@
 import collections
 from typing import Annotated, Any, Dict, List, Literal, Optional, Set, Tuple, Union, get_args
 
-from annotated_types import Ge, Gt, MaxLen, MinLen, Predicate
-from pydantic import AfterValidator, AllowInfNan, FieldValidationInfo, field_validator, model_validator
+from annotated_types import Ge, Gt, MaxLen, MinLen
+from pydantic import AllowInfNan, FieldValidationInfo, field_validator, model_validator
 
-from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types import Identifier, RawMapping, SiUnit
+from bioimageio.spec.shared.types import FileSource, Identifier, RawMapping, Sha256, SiUnit
+from bioimageio.spec._internal._warn import warn
+from bioimageio.spec import generic
 
 from . import v0_4
 
-LatestFormatVersion = Literal["0.5.0"]
-FormatVersion = Literal[LatestFormatVersion]
-
-
-LATEST_FORMAT_VERSION: LatestFormatVersion = get_args(LatestFormatVersion)[0]
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -284,7 +280,9 @@ class OutputTensor(TensorBase):
         return self
 
 
-class Model(v0_4.Model):  # todo: do not inherite from v0_4.Model, e.g. 'inputs' are not compatible
+class Model(
+    generic.v0_3.GenericBaseNoSource
+):  # todo: do not inherite from v0_4.Model, e.g. 'inputs' are not compatible
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -294,9 +292,11 @@ class Model(v0_4.Model):  # todo: do not inherite from v0_4.Model, e.g. 'inputs'
 
     model_config = {
         **v0_4.Model.model_config,
-        **dict(title=f"bioimage.io model RDF spec {LATEST_FORMAT_VERSION}"),
+        **dict(title="bioimage.io model specification"),
     }
     """pydantic model_config"""
+
+    format_version: Literal["0.5.0"] = "0.5.0"
 
     inputs: Annotated[Tuple[InputTensor, ...], MinLen(1)]
     """Describes the input tensors expected by this model."""

@@ -1,16 +1,15 @@
 from typing import Literal
-from bioimageio.spec.generic.v0_2 import LatestFormatVersion, ResourceDescriptionBase, LATEST_FORMAT_VERSION
+
+from bioimageio.spec.generic.v0_2 import GenericBase
 
 
-class Application(ResourceDescriptionBase):
+class Application(GenericBase):
     """Bioimage.io description of an application."""
 
     model_config = {
-        **ResourceDescriptionBase.model_config,
-        **dict(title=f"bioimage.io generic RDF {LATEST_FORMAT_VERSION} used to describe applications"),
+        **GenericBase.model_config,
+        **dict(title="bioimage.io application specification"),
     }
     """pydantic model_config"""
-
-    format_version: LatestFormatVersion = LATEST_FORMAT_VERSION
 
     type: Literal["application"] = "application"

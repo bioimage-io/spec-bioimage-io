@@ -2,16 +2,31 @@ import dataclasses
 from importlib.resources import Resource
 import os
 import traceback
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 import warnings
 from pathlib import Path, PurePath
-from typing import Any, Callable, Dict, IO, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
-
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    get_args,
+)
+from typing_extensions import LiteralString
 from pydantic import AnyUrl, HttpUrl, TypeAdapter
 import pydantic
 from bioimageio.spec import __version__
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal._utils import nest_locs
+from bioimageio.spec._internal._utils import nest_dict, nest_dict_with_narrow_first_key
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import FileSource, Loc, RawMapping, RelativeFilePath
 from bioimageio.spec.shared.validation import (
@@ -50,7 +65,7 @@ from bioimageio.spec._internal._warn import WarningType, WARNING_LEVEL_CONTEXT_K
 LATEST: Literal["latest"] = "latest"
 
 
-def get_spec(type_: str, /, format_version: str = LATEST) -> ResourceDescription:
+def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDescription]:
     assert isinstance(format_version, str)
     if format_version.count(".") == 0:
         format_version = format_version + ".0"
@@ -77,16 +92,15 @@ def get_spec(type_: str, /, format_version: str = LATEST) -> ResourceDescription
 def update_format(
     resource_description: RawMapping,
     update_to_format: str = "latest",
-):
-    """Auto-update fields of a bioimage.io resource"""
+) -> RawMapping:
+    """Auto-update fields of a bioimage.io resource without any validation"""
+    assert "type" in resource_description
     assert isinstance(resource_description["type"], str)
-    spec = get_spec(resource_description["type"], update_to_format)
-    return spec.convert_from_older_format(resource_description)
+    rd_class = get_rd_class(resource_description["type"], update_to_format)
+    return rd_class.convert_from_older_format(resource_description)
 
 
 RD = TypeVar("RD", bound=ResourceDescription)
-
-# def _load_description_at_level(adapter: TypeAdapter[T], resource_description: RawMapping, original_context: ValidationContext, level: WarningLevel):
 
 
 def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext):
@@ -100,7 +114,7 @@ def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping,
         val_errors: List[ValidationError] = []
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningType):
-                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # tpe: ignore
+                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
             else:
                 val_errors.append(ValidationError(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
 
@@ -115,7 +129,7 @@ def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping,
 
 def _load_description_from_adapter(
     adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext
-) -> Union[RD, ValidationSummary]:
+) -> Tuple[Optional[RD], ValidationSummary]:
     rd, error, tb, val_warnings = _load_descr_impl(
         adapter, resource_description, dataclasses.replace(context, **{WARNING_LEVEL_CONTEXT_KEY: 50})
     )  # ignore any warnings using warning level 50 ('ERROR'/'CRITICAL') on first loading attempt
@@ -149,17 +163,13 @@ def _load_description_from_adapter(
     if val_warnings:
         summary["warnings"] = val_warnings
 
-    if rd is None:
-        return summary
-    else:
-        rd.validation_summaries.append(summary)
-        return rd
+    return rd, summary
 
 
 def load_description_as_latest(
     resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
     context: ValidationContext = ValidationContext(),
-) -> Union[ValidationSummary, LatestResourceDescription]:
+) -> Tuple[LatestResourceDescription, ValidationSummary]:
     """load a resource description in the latest available format.
 
     If `root` is a path, relative file paths are checked for existence"""
@@ -170,7 +180,7 @@ def load_description_as_latest(
 def load_description(
     resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
     context: ValidationContext = ValidationContext(),
-) -> Union[ValidationSummary, ResourceDescription]:
+) -> Tuple[ResourceDescription, ValidationSummary]:
     """Validate a bioimage.io resource description, i.e. the content of a resource description file (RDF)."""
 
     return _load_description_from_adapter(TypeAdapter(ResourceDescription), resource_description, context)
@@ -189,8 +199,8 @@ def validate(
     if isinstance(out, ValidationSummary):
         return out
     else:
-        assert len(out.validation_summaries) == 1
-        return out.validation_summaries[0]
+        assert len(out._validation_summaries) == 1
+        return out._validation_summaries[0]
 
 
 def validate_legacy(
@@ -205,7 +215,9 @@ def validate_legacy(
     vs = validate(resource_description, context, update_format)
 
     error = vs["error"]
-    legacy_error = error if (error is None or isinstance(error, str)) else nest_locs([(e.loc, e.msg) for e in error])
+    legacy_error = (
+        error if (error is None or isinstance(error, str)) else nest_dict({e["loc"]: e["msg"] for e in error})
+    )
     tb = vs.get("traceback")
     return LegacyValidationSummary(
         bioimageio_spec_version=vs["bioimageio_spec_version"],
@@ -214,7 +226,7 @@ def validate_legacy(
         source_name=vs["source_name"],
         status=vs["status"],
         traceback=None if tb is None else list(tb),
-        warnings=nest_locs([(w.loc, w.msg) for w in vs["warnings"]]) if "warnings" in vs else {},
+        warnings=nest_dict({w["loc"]: w["msg"] for w in vs["warnings"]}) if "warnings" in vs else {},
     )
 
 
@@ -225,28 +237,56 @@ def prepare_to_package(
 ) -> Tuple[ResourceDescription, Dict[str, Union[HttpUrl, Path]]]:
     """
     Args:
-        raw_rd: raw resource description
+        rd: resource description
         # for model resources only:
-        weights_priority_order: If given only the first weights format present in the model is included.
-                                If none of the prioritized weights formats is found all are included.
+        weights_priority_order: If given, only the first weights format present in the model is included.
+                                If none of the prioritized weights formats is found a ValueError is raised.
 
     Returns:
         Modified resource description copy and associated package content mapping file names to URLs or local paths,
         which are referenced in the modfieid resource description.
         Important note: The serialized resource description itself (= an rdf.yaml file) is not included.
     """
+    if weights_priority_order is not None and isinstance(rd, model.AnyModel):
+        # select single weights entry
+        for w in weights_priority_order:
+            weights_entry = rd.weights.get(w)
+            if weights_entry is not None:
+                rd = rd.model_copy(update=dict(weights={w: weights_entry}))
+                break
+        else:
+            raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
+
     package_content: Dict[Loc, Union[HttpUrl, Path]] = {}
     _fill_resource_package_content(package_content, rd, node_loc=())
-    locs_of_file_names: Dict[str, Loc]
+    file_names: Dict[Loc, str] = {}
+    file_sources: Dict[str, Union[HttpUrl, Path]] = {}
     for loc, src in package_content.items():
+        file_name = _extract_file_name(src)
+        if file_name in file_sources and file_sources[file_name] != src:
+            for i in range(2, 10):
+                fn, *ext = file_name.split(".")
+                alternative_file_name = ".".join([f"{fn}_{i}", *ext])
+                if alternative_file_name not in file_sources or file_sources[alternative_file_name] == src:
+                    file_name = alternative_file_name
+                    break
+            else:
+                raise RuntimeError(f"Too many file name clashes for {file_name}")
+
+        file_sources[file_name] = src
+        file_names[loc] = file_name
+
+    # update resource description to point to local files
+    rd = rd.model_copy(update=nest_dict_with_narrow_first_key(file_names, str))
+
+    return rd, file_sources
 
 
-
-def _extract_file_name_from_source(src: Union[HttpUrl, PurePath]) -> str:
-    if not isinstance(src, PurePath):
-        src = PurePath(src.path or "file")
-
-    return src.name
+def _extract_file_name(src: Union[HttpUrl, PurePath]) -> str:
+    if isinstance(src, PurePath):
+        return src.name
+    else:
+        return urlparse(str(src)).path.split("/")[-1]
 
 
 def _fill_resource_package_content(
@@ -277,31 +317,6 @@ def _fill_resource_package_content(
                 raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
 
             package_content[loc] = src
-
-
-def get_resource_package_content(
-    raw_rd: Union[raw_nodes.ResourceDescription, raw_nodes.URI, str, pathlib.Path],
-    *,
-    weights_priority_order: Optional[Sequence[str]] = None,  # model only
-) -> Dict[str, Union[str, pathlib.PurePath, raw_nodes.URI]]:
-    """
-    Args:
-        raw_rd: raw resource description
-        # for model resources only:
-        weights_priority_order: If given only the first weights format present in the model is included.
-                                If none of the prioritized weights formats is found all are included.
-
-    Returns:
-        Package content of remote URIs, local file paths or text content keyed by file names.
-    """
-    if yaml is None:
-        raise RuntimeError(
-            "'get_resource_package_content' requires yaml; note that 'get_resource_package_content_wo_rdf' may be used "
-            "without yaml"
-        )
-
-    r_rd, content = get_resource_package_content_wo_rdf(raw_rd, weights_priority_order=weights_priority_order)
-    return {**content, **{"rdf.yaml": serialize_raw_resource_description(r_rd)}}
 
 
 def load_raw_resource_description(
