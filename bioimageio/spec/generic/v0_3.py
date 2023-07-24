@@ -6,11 +6,9 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypeVar, Uni
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
-    AfterValidator,
     AnyUrl,
     DirectoryPath,
     FieldValidationInfo,
-    HttpUrl,
     TypeAdapter,
     ValidationError,
     field_validator,
@@ -20,8 +18,8 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warn import WARNING, as_warning, warn, INFO
 from bioimageio.spec._internal._validate import WithSuffix
+from bioimageio.spec._internal._warn import WARNING, as_warning, warn
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (

@@ -1,33 +1,28 @@
 import collections
-from hashlib import sha256
-import string
-from typing import Annotated, Any, ClassVar, Dict, List, Literal, Optional, Set, Tuple, Union, get_args
+from typing import Annotated, Any, ClassVar, Dict, List, Literal, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, MaxLen, MinLen
-from pydantic import AllowInfNan, FieldValidationInfo, field_validator, model_validator
-from bioimageio.spec._internal._constants import SHA256_HINT
+from pydantic import FieldValidationInfo, field_validator, model_validator
 
+from bioimageio.spec import generic
+from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
     CapitalStr,
     FileSource,
     Identifier,
+    LicenseId,
     NonEmpty,
     RawLeafValue,
     RawMapping,
-    RawValue,
-    LicenseId,
     Sha256,
     SiUnit,
     Version,
 )
-from bioimageio.spec._internal._validate import RestrictCharacters
-from bioimageio.spec._internal._warn import warn
-from bioimageio.spec import generic
 
 from . import v0_4
-
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[

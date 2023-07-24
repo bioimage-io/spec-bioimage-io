@@ -26,13 +26,14 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warn import ALERT, warn, INFO
+from bioimageio.spec._internal._validate import validate_suffix
+from bioimageio.spec._internal._warn import ALERT, INFO, warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
     Author,
-    LinkedResource,
     GenericBaseNoSource,
+    LinkedResource,
 )
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
@@ -49,7 +50,6 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec._internal._validate import validate_suffix
 
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
