@@ -12,7 +12,6 @@ from typing import (
     Sequence,
     Tuple,
     Union,
-    get_args,
 )
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
@@ -27,7 +26,7 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warn import warn
+from bioimageio.spec._internal._warn import ALERT, warn, INFO
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
@@ -132,10 +131,12 @@ class WeightsEntryBase(Node):
     source: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
     """The weights file."""
 
-    sha256: Union[Sha256, None] = Field(None, description="SHA256 checksum of the source file\n" + SHA256_HINT)
+    sha256: Annotated[Union[Sha256, None], warn(Sha256)] = Field(
+        None, description="SHA256 checksum of the source file\n" + SHA256_HINT
+    )
     """SHA256 checksum of the source file"""
 
-    attachments: Union[Attachments, None] = None
+    attachments: Annotated[Union[Attachments, None], warn(None, ALERT)] = None
     """Attachments that are specific to this weights entry."""
 
     authors: Union[Tuple[Author, ...], None] = None
@@ -146,7 +147,7 @@ class WeightsEntryBase(Node):
         the person(s) who have converted the weights to this format.
     """
 
-    dependencies: Union[Dependencies, None] = Field(
+    dependencies: Annotated[Union[Dependencies, None], warn(None, ALERT)] = Field(
         None, examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]
     )
     """"Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
@@ -163,14 +164,14 @@ class WeightsEntryBase(Node):
 class KerasHdf5Entry(WeightsEntryBase):
     type: Literal["keras_hdf5"] = Field("keras_hdf5", exclude=True)
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Union[Version, None] = None
+    tensorflow_version: Annotated[Union[Version, None], warn(Version, ALERT)] = None
     """TensorFlow version used to create these weights"""
 
 
 class OnnxEntry(WeightsEntryBase):
     type: Literal["onnx"] = Field("onnx", exclude=True)
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Union[Annotated[int, warn(Ge(7))], None] = None
+    opset_version: Annotated[Union[Annotated[int, warn(Ge(7), ALERT)], None], warn(int, ALERT)] = None
     """ONNX opset version"""
 
 
@@ -204,24 +205,26 @@ class PytorchStateDictEntry(WeightsEntryBase):
 
         return data
 
-    kwargs: Dict[NonEmpty[str], Any] = Field(default_factory=dict)
+    kwargs: FrozenDictNode[NonEmpty[str], Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Union[Version, None] = None
+    pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the PyTorch library used.
-    If `depencencies` is specified it should include pytorch and the verison should match.
+    If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
 
 
 class TorchscriptEntry(WeightsEntryBase):
     type: Literal["torchscript"] = Field("torchscript", exclude=True)
     weights_format_name: ClassVar[str] = "TorchScript"
+    pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
+    """Version of the PyTorch library used."""
 
 
 class TensorflowJsEntry(WeightsEntryBase):
     type: Literal["tensorflow_js"] = Field("tensorflow_js", exclude=True)
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Union[Version, None] = None
+    tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
 
     source: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
@@ -232,7 +235,7 @@ class TensorflowJsEntry(WeightsEntryBase):
 class TensorflowSavedModelBundleEntry(WeightsEntryBase):
     type: Literal["tensorflow_saved_model_bundle"] = Field("tensorflow_saved_model_bundle", exclude=True)
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Union[Version, None] = None
+    tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
 
 
@@ -624,7 +627,7 @@ class RunMode(Node):
 
 
 class ModelRdf(Node):
-    rdf_source: Union[FileSource, None] = Field(None, alias="uri")
+    rdf_source: FileSource = Field(alias="uri")
     """URL or relative path of a model RDF"""
 
     sha256: Sha256
@@ -692,7 +695,7 @@ class Model(GenericBaseNoSource):
 
     name: Annotated[
         CapitalStr,
-        warn(MaxLen(64)),
+        warn(MaxLen(64), INFO),
     ]
     """"A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
@@ -860,7 +863,7 @@ class Model(GenericBaseNoSource):
     @field_validator("weights", mode="before")
     @classmethod
     def weights_type_from_key(
-        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[str, Any]]]]
+        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[Union[Any, str], Any]]]]
     ) -> Union[Any, Dict[Union[Any, str], Dict[str, Any]]]:
         if not isinstance(data, collections.abc.Mapping):
             return data

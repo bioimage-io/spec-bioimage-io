@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Sequence
 
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import LicenseId
@@ -23,7 +23,7 @@ Or you can generate a SHA256 checksum with Python's `hashlib`,
 [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."""
 
 _tag_categories_file = Path(__file__).parent.parent / "static" / "tag_categories.json"
-TAG_CATEGORIES = json.loads(_tag_categories_file.read_text(encoding="utf-8"))
+TAG_CATEGORIES: Mapping[str, Mapping[str, Sequence[str]]] = json.loads(_tag_categories_file.read_text(encoding="utf-8"))
 
 # SI unit regex adapted from https://stackoverflow.com/a/3573731
 _prefix = "(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)"

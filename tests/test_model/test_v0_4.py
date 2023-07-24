@@ -2,7 +2,6 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal._warn import WARNING_ACTION_KEY
 from bioimageio.spec.model.v0_4 import LinkedModel, ModelRdf, OnnxEntry, ScaleLinearKwargs
 from bioimageio.spec.shared.types import RelativeFilePath
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
@@ -51,9 +50,7 @@ class TestOnnxEntry(BaseTestCases.TestNode):
             dict(source="https://example.com", sha256="s" * 64),
             expected_dump_raw=dict(source="https://example.com/", sha256="s" * 64),
         ),
-        Invalid(
-            dict(opset_version=5, source="https://example.com", sha256="s" * 64), context={WARNING_ACTION_KEY: "raise"}
-        ),
+        Invalid(dict(opset_version=5, source="https://example.com", sha256="s" * 64)),
         Invalid(
             dict(source="https://example.com", sha256="s"),
         ),

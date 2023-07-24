@@ -124,7 +124,7 @@ class RelativePath:
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
         if info.context is None or "root" not in info.context:
-            raise PydanticUserError("missing 'root' context for {klass}", code=None)
+            raise PydanticUserError(f"missing 'root' context for {cls}", code=None)
 
         root = info.context["root"]
         if not isinstance(root, (AnyUrl, pathlib.Path)):

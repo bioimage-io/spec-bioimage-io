@@ -10,6 +10,6 @@ class TestSiUnitRegex(TestCase):
                 self.assertTrue(re.fullmatch(SI_UNIT_REGEX, unit))
 
     def test_invalid(self):
-        for unit in ["lxs", " kg"]:
+        for unit in ["lxs", " kg", "kg/m^-2"]:
             with self.subTest(unit=unit):
                 self.assertFalse(re.fullmatch(SI_UNIT_REGEX, unit))

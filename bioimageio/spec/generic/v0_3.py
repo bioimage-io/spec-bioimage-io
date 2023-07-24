@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
+from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
 
-from annotated_types import Len, LowerCase, MinLen
+from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
+    AfterValidator,
     AnyUrl,
     DirectoryPath,
     FieldValidationInfo,
@@ -17,13 +18,10 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import LICENSES
+from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._warn import (
-    WARNING,
-    as_warning,
-    warn,
-)
+from bioimageio.spec._internal._warn import WARNING, as_warning, warn, INFO
+from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
@@ -61,7 +59,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """The format version of this resource specification
     (not the `version` of the resource description)"""
 
-    name: str
+    name: Annotated[str, MaxLen(128)]
     """A human-friendly name of the resource description"""
 
     # todo warn about capitalization
@@ -70,10 +68,10 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     def check_name(cls, name: str) -> str:
         return name.capitalize()
 
-    description: str
+    description: Annotated[str, MaxLen(512), warn(MaxLen(256))]
     """A string containing a brief description."""
 
-    documentation: Union[FileSource, None] = Field(
+    documentation: Union[Annotated[FileSource, WithSuffix(".md", case_sensitive=True)], None] = Field(
         None,
         examples=[
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -84,15 +82,9 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
-    @field_validator("documentation", mode="after")
-    @classmethod
-    def check_documentation_suffix(cls, value: Union[FileSource, None]) -> Union[FileSource, None]:
-        if value is not None and not str(value).endswith(".md"):
-            raise ValueError("Expected markdown file with '.md' suffix")
-
-        return value
-
-    covers: Tuple[FileSource, ...] = Field(
+    covers: Tuple[
+        Annotated[FileSource, WithSuffix(v0_2.VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...
+    ] = Field(
         (),
         examples=[],
         description=(
@@ -103,24 +95,11 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     )
     """Cover images."""
 
-    @field_validator("covers", mode="after")
-    @classmethod
-    def check_cover_suffix(cls, value: Sequence[Union[FileSource, None]]) -> Sequence[Union[FileSource, None]]:
-        for v in value:
-            if (
-                v is not None
-                and "." not in str(v)
-                and str(v).split(".")[-1].lower() not in v0_2.VALID_COVER_IMAGE_EXTENSIONS
-            ):
-                raise ValueError(f"Expected markdown file with suffix in {v0_2.VALID_COVER_IMAGE_EXTENSIONS}")
-
-        return value
-
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: Tuple[v0_2.Author, ...] = ()
+    authors: Annotated[Tuple[v0_2.Author, ...], MinLen(1)]
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Tuple[Attachment, ...] = ()
@@ -164,9 +143,6 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
     an altered rdf.yaml file with local references to the downloaded files)"""
 
-    download_url: Union[HttpUrl, None] = None
-    """optional URL to download the resource from (deprecated)"""
-
     git_repo: Optional[str] = Field(
         None,
         examples=["https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"],
@@ -185,7 +161,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    @as_warning  # type: ignore
+    @as_warning
     @field_validator("license", mode="after")
     @classmethod
     def deprecated_spdx_license(cls, value: Optional[str]):
@@ -234,26 +210,18 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
     """"Associated tags"""
 
-    # todo warn about tags
-    # @field_validator("tags")
-    # def warn_about_tag_categories(self, value):
-    #     missing_categories = []
-    #     try:
-    #         categories = {
-    #             c["type"]: c.get("tag_categories", {}) for c in BIOIMAGEIO_SITE_CONFIG["resource_categories"]
-    #         }.get(self.__class__.__name__.lower(), {})
-    #         for cat, entries in categories.items():
-    #             if not any(e in value for e in entries):
-    #                 missing_categories.append({cat: entries})
-    #     except Exception as e:
-    #         error = str(e)
-    #     else:
-    #         error = None
-    #         if missing_categories:
-    #             self.warn("tags", f"Missing tags corresponding to bioimage.io categories: {missing_categories}")
+    @as_warning
+    @field_validator("tags")
+    @classmethod
+    def warn_about_tag_categories(cls, value: Tuple[str, ...], info: FieldValidationInfo):
+        categories = TAG_CATEGORIES.get(info.data["type"], {})
+        missing_categories: List[Mapping[str, Sequence[str]]] = []
+        for cat, entries in categories.items():
+            if not any(e in value for e in entries):
+                missing_categories.append({cat: entries})
 
-    #     if error is not None:
-    #         self.warn("tags", f"could not check tag categories ({error})")
+        if missing_categories:
+            raise ValueError("Missing tags from bioimage.io categories: {missing_categories}")
 
     version: Union[Version, None] = Field(None, examples=["0.1.0"])
     """The version number of the resource. Its format must be a string in
@@ -295,24 +263,12 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
-        fv = data.get("format_version", "0.2.0")
-        if isinstance(fv, str) and tuple(map(int, fv.split(".")[:2])) >= (0, 3):
-            return data
-
+        data = v0_2.GenericBaseNoSource.convert_from_older_format(data)
         data = dict(data)
 
-        # we unofficially accept strings as author entries
-        authors = data.get("authors")
-        if isinstance(authors, list):
-            data["authors"] = [{"name": a} if isinstance(a, str) else a for a in authors]  # type: ignore
+        data.pop("download_url", None)
 
-        if data.get("format_version") in ("0.2.0", "0.2.1"):
-            data["format_version"] = "0.2.2"
-
-        if data.get("format_version") == "0.2.2":
-            cls._remove_slashes_from_names(data)
-            data["format_version"] = "0.2.3"
-
+        data["format_version"] = "0.3.0"
         return data
 
     @staticmethod

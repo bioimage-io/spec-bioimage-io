@@ -4,9 +4,7 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal._warn import WARNING_ACTION_KEY, WARNING_ACTION_RAISE
 from bioimageio.spec.generic.v0_2 import (
-    LATEST_FORMAT_VERSION,
     Attachments,
     Author,
     CiteEntry,
@@ -94,7 +92,7 @@ class TestGeneric(BaseTestCases.TestNode):
     sub_tests = [
         Valid(
             dict(
-                format_version=LATEST_FORMAT_VERSION,
+                format_version=Generic.implemented_format_version,
                 name="my name",
                 description="the description",
                 authors=[{"name": "Me"}],
@@ -106,7 +104,7 @@ class TestGeneric(BaseTestCases.TestNode):
         ),
         Invalid(
             dict(
-                format_version=LATEST_FORMAT_VERSION,
+                format_version=Generic.implemented_format_version,
                 name="my name",
                 description="my description",
                 authors=[{"name": "Me"}],
@@ -116,12 +114,12 @@ class TestGeneric(BaseTestCases.TestNode):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
-            context={WARNING_ACTION_KEY: WARNING_ACTION_RAISE, "root": Path(__file__).parent},
+            context={"root": Path(__file__).parent},
             name="deprecated license",
         ),
         Valid(
             dict(
-                format_version=LATEST_FORMAT_VERSION,
+                format_version=Generic.implemented_format_version,
                 name="your name",
                 description="my description",
                 attachments={"files": [Path(__file__)], "something": 42},
@@ -131,10 +129,12 @@ class TestGeneric(BaseTestCases.TestNode):
             ),
             context={},
         ),
-        Invalid(dict(format_version=LATEST_FORMAT_VERSION, version="0.1.0", type="my_type", name="their name")),
+        Invalid(
+            dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name")
+        ),
         Invalid(
             dict(
-                format_version=LATEST_FORMAT_VERSION,
+                format_version=Generic.implemented_format_version,
                 version="0.1.0",
                 type="my_type",
                 name="its name",

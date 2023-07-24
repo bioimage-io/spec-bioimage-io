@@ -4,6 +4,7 @@ import re
 import sys
 from datetime import datetime
 from keyword import iskeyword
+from pathlib import PurePath
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -12,6 +13,7 @@ from typing import (
     Mapping,
     Sequence,
     Type,
+    TypeVar,
     Union,
     get_args,
 )
@@ -21,7 +23,7 @@ from pydantic import AnyUrl, GetCoreSchemaHandler
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import FileSource
+    from bioimageio.spec.shared.types import FileSource, RelativePath
 
 
 if sys.version_info < (3, 10):
@@ -49,6 +51,33 @@ class RestrictCharacters:
         if any(c not in self.alphabet for c in value):
             raise ValueError(f"{value!r} is not restricted to {self.alphabet!r}")
         return value
+
+
+@dataclasses.dataclass(frozen=True, **SLOTS)
+class WithSuffix:
+    suffix: Union[str, Sequence[str]]
+    case_sensitive: bool
+
+    def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
+        from bioimageio.spec.shared.types import FileSource, RelativePath
+
+        if not self.suffix:
+            raise ValueError("suffix may not be empty")
+
+        schema = handler(source)
+        if schema["type"] != str and source != FileSource and not issubclass(source, (RelativePath, PurePath)):
+            raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
+
+        return no_info_after_validator_function(
+            self.validate,
+            schema,
+        )
+
+    def validate(self, value: "FileSource") -> "FileSource":
+        if isinstance(self.suffix, str):
+            return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
+        else:
+            return validate_suffix(value, *self.suffix, case_sensitive=self.case_sensitive)
 
 
 def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
@@ -109,18 +138,33 @@ def is_valid_raw_value(value: Any) -> bool:
     return any(is_valid(value) for is_valid in (is_valid_raw_leaf_value, is_valid_raw_mapping, is_valid_raw_sequence))
 
 
-def validate_suffix(value: "FileSource", *suffixes: str) -> "FileSource":
+V_suffix = TypeVar("V_suffix", bound=Union[AnyUrl, PurePath, "RelativePath"])
+
+
+def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
+    """check final suffix"""
+    assert len(suffixes) > 0
     assert all(suff.startswith(".") for suff in suffixes)
     if isinstance(value, AnyUrl):
         if value.path is None or "." not in value.path:
-            suffix = None
+            suffix = ""
         else:
             suffix = "." + value.path.split(".")[-1]
+    elif isinstance(value, PurePath):
+        suffix = value.suffixes[-1]
     else:
         suffix = value.relative.suffixes[-1]
 
-    if suffix not in suffixes:
-        raise ValueError(f"{suffix} not in {suffixes}")
+    if (
+        case_sensitive
+        and suffix not in suffixes
+        or not case_sensitive
+        and suffix.lower() in [s.lower() for s in suffixes]
+    ):
+        if len(suffixes) == 1:
+            raise ValueError(f"Expected suffix {suffixes[0]}, but got {suffix}")
+        else:
+            raise ValueError(f"Expected a suffix from {suffixes}, but got {suffix}")
 
     return value
 

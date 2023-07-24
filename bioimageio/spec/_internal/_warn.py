@@ -3,6 +3,7 @@ import sys
 from logging import getLogger
 from types import MappingProxyType
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     Literal,
@@ -13,23 +14,25 @@ from typing import (
 )
 
 from annotated_types import BaseMetadata, GroupedMetadata
-from pydantic import FieldValidationInfo, TypeAdapter, ValidationInfo
+from pydantic import FieldValidationInfo, TypeAdapter
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import (
-    GeneralValidatorFunction,
+    FieldValidatorFunction,
     NoInfoValidatorFunction,
 )
 from typing_extensions import Annotated, LiteralString
 
+if TYPE_CHECKING:
+    from pydantic.functional_validators import _V2Validator  # type: ignore
 
 WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 Severity = Literal[20, 30, 35]
 WarningLevel = Literal[Severity, 50]  # with warning level x raise warnings of severity >=x
 ALERT: Severity = 35  # no ALERT or worse -> RDF is worriless
 WARNING: Severity = 30  # no WARNING or worse -> RDF is watertight
-INFO: Severity = 20
+INFO: Severity = 30
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
@@ -37,7 +40,7 @@ else:
     SLOTS = {"slots": True}
 
 
-ValidatorFunction = Union[NoInfoValidatorFunction, GeneralValidatorFunction]
+ValidatorFunction = Union[NoInfoValidatorFunction, FieldValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
@@ -53,7 +56,7 @@ def raise_warning(message_template: LiteralString, *, severity: Severity, contex
 
 def warn(
     typ: Union[AnnotationMetaData, Any],
-    severity: Severity = 20,
+    severity: Severity = 30,
     msg: Optional[LiteralString] = None,
 ):
     """treat a type or its annotation metadata as a warning condition"""
@@ -66,7 +69,10 @@ def warn(
 
 
 def call_validator_func(
-    func: GeneralValidatorFunction, mode: Literal["after", "before", "plain", "wrap"], value: Any, info: ValidationInfo
+    func: "_V2Validator",
+    mode: Literal["after", "before", "plain", "wrap"],
+    value: Any,
+    info: FieldValidationInfo,
 ) -> Any:
     info_arg = inspect_validator(func, mode)
     if info_arg:
@@ -76,15 +82,15 @@ def call_validator_func(
 
 
 def as_warning(
-    func: GeneralValidatorFunction,
+    func: "_V2Validator",
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-    severity: Severity = 20,
+    severity: Severity = 30,
     msg: Optional[LiteralString] = None,
-) -> GeneralValidatorFunction:
-    """turn validation function into a no-op, but may raise if `context["warnings"] == "raise"`"""
+) -> ValidatorFunction:
+    """turn validation function into a no-op, based on warning level"""
 
-    def wrapper(value: Any, info: Union[FieldValidationInfo, ValidationInfo]) -> Any:
+    def wrapper(value: Any, info: FieldValidationInfo) -> Any:
         logger = getLogger(getattr(info, "field_name", "node"))
         assert info.context is not None
         if info.context[WARNING_LEVEL_CONTEXT_KEY] > severity:
@@ -103,7 +109,7 @@ def as_warning(
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class _WarnerMixin:
-    severity: Severity = 20
+    severity: Severity = 30
     msg: Optional[LiteralString] = None
 
     def __getattribute__(self, __name: str) -> Any:
