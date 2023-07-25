@@ -3,8 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
-from bioimageio.spec.shared.validation import validation_context_var
-from annotated_types import Len, LowerCase, MaxLen, MinLen
+from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
     AnyUrl,
     ConfigDict,

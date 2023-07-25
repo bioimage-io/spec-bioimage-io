@@ -20,7 +20,6 @@ from bioimageio.spec.shared.types import (
     NonEmpty,
     RawDict,
     RawLeafValue,
-    RawMapping,
     Sha256,
     SiUnit,
     Version,

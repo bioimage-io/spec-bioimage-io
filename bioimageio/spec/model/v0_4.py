@@ -477,7 +477,8 @@ class ScaleRangeKwargs(ProcessingKwargs):
     max_percentile: Annotated[float, Interval(gt=1, le=100)] = 100.0
     """The upper percentile used for normalization
     Has to be bigger than `min_percentile`.
-    The range is 1 to 100 instead of 0 to 100 to avoid mistakenly accepting percentiles specified in the range 0.0 to 1.0."""
+    The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
+    accepting percentiles specified in the range 0.0 to 1.0."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """Epsilon for numeric stability.

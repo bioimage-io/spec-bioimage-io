@@ -14,3 +14,6 @@ class Application(GenericBase):
     """pydantic model_config"""
 
     type: Literal["application"] = "application"
+
+
+AnyApplication = Application
