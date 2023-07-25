@@ -1,8 +1,9 @@
-from typing import Literal
+from typing import Annotated, Literal, Union
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 from bioimageio.spec.generic.v0_3 import GenericBase
+from bioimageio.spec.notebook import v0_2
 
 
 class Notebook(GenericBase):
@@ -17,3 +18,6 @@ class Notebook(GenericBase):
     """pydantic model_config"""
 
     type: Literal["notebook"] = "notebook"
+
+
+AnyNotebook = Annotated[Union[v0_2.Notebook, Notebook], Field(discriminator="format_version")]

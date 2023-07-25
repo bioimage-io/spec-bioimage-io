@@ -8,7 +8,7 @@ from bioimageio.spec.generic.v0_2 import (
 )
 from bioimageio.spec.shared.types import NonEmpty
 
-__all__ = ["Dataset", "LinkedDataset"]
+__all__ = ["Dataset", "LinkedDataset", "AnyDataset"]
 
 
 class Dataset(GenericBase):
@@ -23,6 +23,9 @@ class Dataset(GenericBase):
         }
     )
     type: Literal["dataset"] = "dataset"
+
+
+AnyDataset = Dataset
 
 
 class LinkedDataset(LinkedResource):

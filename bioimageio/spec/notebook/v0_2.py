@@ -17,3 +17,6 @@ class Notebook(GenericBase):
     """pydantic model_config"""
 
     type: Literal["notebook"] = "notebook"
+
+
+AnyNotebook = Notebook

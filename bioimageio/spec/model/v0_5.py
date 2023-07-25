@@ -1,17 +1,19 @@
 import collections.abc
 from typing import Annotated, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
-from annotated_types import Ge, Gt, MaxLen, MinLen
+from annotated_types import Ge, Gt, MaxLen
 from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._warn import warn
-from bioimageio.spec.dataset import LinkedDataset, Dataset
+from bioimageio.spec.dataset import Dataset
+from bioimageio.spec.dataset.v0_3 import LinkedDataset
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
     CapitalStr,
+    Datetime,
     FileSource,
     Identifier,
     LicenseId,
@@ -601,3 +603,6 @@ class Model(
         kwargs = state_dict_entry.pop("kwargs")  # type: ignore
         if kwargs:
             state_dict_entry["architecture"]["kwargs"] = kwargs  # type: ignore
+
+
+AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

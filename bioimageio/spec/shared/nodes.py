@@ -23,7 +23,7 @@ import pydantic
 from bioimageio.spec.shared.types import RawDict, RawValue
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
 from bioimageio.spec.shared.validation import ValidationContext
-from bioimageio.spec.shared.validation import _validation_context_var
+from bioimageio.spec.shared.validation import validation_context_var
 
 if TYPE_CHECKING:
     from pydantic.main import Model, IncEx
@@ -178,7 +178,7 @@ class ResourceDescriptionBase(Node):
         cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
     ) -> ValidationContext:
         if context is None:
-            context = _validation_context_var.get()
+            context = validation_context_var.get()
 
         if context.root:
             if "root" in cls.model_fields:

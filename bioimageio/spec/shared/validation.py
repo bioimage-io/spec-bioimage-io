@@ -32,14 +32,14 @@ class ValidationContext(pydantic.BaseModel):
     _token: Token[ValidationContext] = PrivateAttr()
 
     def __enter__(self):
-        self._token = _validation_context_var.set(self)
+        self._token = validation_context_var.set(self)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):  # type: ignore
-        _validation_context_var.reset(self._token)
+        validation_context_var.reset(self._token)
 
 
-_validation_context_var = ContextVar("_validation_context_var", default=ValidationContext())
+validation_context_var = ContextVar("_validation_context_var", default=ValidationContext())
 
 
 class ValidationOutcome(TypedDict):

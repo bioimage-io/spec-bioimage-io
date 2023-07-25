@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
-from bioimageio.spec.shared.validation import _validation_context_var
+from bioimageio.spec.shared.validation import validation_context_var
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
     AnyUrl,
@@ -302,3 +302,6 @@ class Generic(GenericBase):
             )
 
         return value
+
+
+AnyGeneric = Annotated[Union[v0_2.Generic, Generic], Field(discriminator="format_version")]

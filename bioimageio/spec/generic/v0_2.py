@@ -401,3 +401,6 @@ class Generic(GenericBase):
             )
 
         return value
+
+
+AnyGeneric = Generic

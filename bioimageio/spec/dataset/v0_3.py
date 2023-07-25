@@ -1,6 +1,7 @@
-from typing import Literal
+from typing import Annotated, Literal, Union
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
+from bioimageio.spec.dataset import v0_2
 
 from bioimageio.spec.generic.v0_3 import (
     LinkedResource,
@@ -8,7 +9,7 @@ from bioimageio.spec.generic.v0_3 import (
 )
 from bioimageio.spec.shared.types import NonEmpty
 
-__all__ = ["Dataset", "LinkedDataset"]
+__all__ = ["Dataset", "LinkedDataset", "AnyDataset"]
 
 
 class Dataset(GenericBase):
@@ -23,6 +24,9 @@ class Dataset(GenericBase):
         }
     )
     type: Literal["dataset"] = "dataset"
+
+
+AnyDataset = Annotated[Union[v0_2.Dataset, Dataset], Field(discriminator="format_version")]
 
 
 class LinkedDataset(LinkedResource):

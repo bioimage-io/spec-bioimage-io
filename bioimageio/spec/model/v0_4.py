@@ -933,3 +933,6 @@ class Model(GenericBaseNoSource):
         # remove 'config' if now empty
         if data.get("config") == {}:
             del data["config"]
+
+
+AnyModel = Model
