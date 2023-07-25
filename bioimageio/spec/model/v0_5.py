@@ -1,5 +1,5 @@
-import collections
-from typing import Annotated, Any, ClassVar, Dict, List, Literal, Optional, Set, Tuple, Union
+import collections.abc
+from typing import Annotated, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, MaxLen, MinLen
 from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
@@ -8,6 +8,7 @@ from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._warn import warn
+from bioimageio.spec.dataset import LinkedDataset, Dataset
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node
 from bioimageio.spec.shared.types import (
     CapitalStr,
@@ -379,10 +380,12 @@ class Model(
     by bioimage.io-compatible consumers (e.g. image analysis software or another website).
     """
 
-    model_config = ConfigDict({
-        **generic.v0_3.GenericBaseNoSource.model_config,
-        **ConfigDict(title="bioimage.io model specification"),
-    })
+    model_config = ConfigDict(
+        {
+            **generic.v0_3.GenericBaseNoSource.model_config,
+            **ConfigDict(title="bioimage.io model specification"),
+        }
+    )
     """pydantic model_config"""
 
     format_version: Literal["0.5.0"] = "0.5.0"
@@ -488,6 +491,37 @@ class Model(
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
+
+    timestamp: Datetime
+    """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
+    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
+
+    training_data: Union[LinkedDataset, Dataset, None] = None
+    """The dataset used to train this model"""
+
+    weights: FrozenDictNode[v0_4.WeightsFormat, WeightsEntry]
+    """The weights for this model.
+    Weights can be given for different formats, but should otherwise be equivalent.
+    The available weight formats determine which consumers can use this model."""
+
+    @field_validator("weights", mode="before")
+    @classmethod
+    def weights_type_from_key(
+        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[Union[Any, str], Any]]]]
+    ) -> Union[Any, Dict[Union[Any, str], Dict[str, Any]]]:
+        if not isinstance(data, collections.abc.Mapping):
+            return data
+
+        ret: Dict[Union[Any, str], Dict[str, Any]] = dict()
+        for key, value in data.items():
+            ret[key] = dict(value)
+            if isinstance(key, str) and isinstance(value, collections.abc.Mapping):
+                if "type" in value:
+                    raise ValueError(f"`type` should not be specified (redundantly) in weights entry {key}.")
+
+                ret[key]["type"] = key  # set type to descriminate weights entry union
+
+        return ret
 
     @classmethod
     def convert_from_older_format(cls, data: RawDict) -> None:

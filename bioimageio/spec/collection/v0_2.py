@@ -4,8 +4,7 @@ import collections.abc
 from types import MappingProxyType
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, Union
 
-import annotated_types
-from pydantic import ConfigDict, HttpUrl, model_validator
+from pydantic import ConfigDict, HttpUrl, TypeAdapter, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
 
@@ -49,9 +48,9 @@ class CollectionEntry(Node):
     def rdf_update(self) -> Dict[str, RawValue]:
         return self.model_extra or {}
 
-    entry_classes: ClassVar[MappingProxyType[str, Type[GenericBaseNoSource]]] = MappingProxyType(
-        dict(model=Model, dataset=Dataset, application=Application, notebook=Notebook)
-    )
+    entry_classes: ClassVar[
+        MappingProxyType[str, Union[Type[GenericBaseNoSource], TypeAdapter[Any]]]
+    ] = MappingProxyType(dict(model=Model, dataset=Dataset, application=Application, notebook=Notebook))
 
     @model_validator(mode="before")
     @classmethod
@@ -70,7 +69,10 @@ class CollectionEntry(Node):
                 raise ValueError("Collections may not be nested!")
 
             entry_class = cls.entry_classes.get(type_, Generic) if isinstance(type_, str) else Generic
-            entry_class.model_validate(entry_data, context=info.context)
+            if isinstance(entry_class, TypeAdapter):
+                entry_class.validate_python(entry_data, context=info.context)
+            else:
+                entry_class.model_validate(entry_data, context=info.context)
         else:
             # Cannot validate entry without resolving 'rdf_source'.
             # To validate, specify the content of 'rdf_source' as extra fields.
@@ -80,12 +82,7 @@ class CollectionEntry(Node):
         return data
 
 
-class Collection(GenericBase):
-    """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
-    resources.
-    The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
-    """
-
+class CollectionBase(Node):
     model_config = ConfigDict(
         {
             **GenericBase.model_config,
@@ -93,9 +90,6 @@ class Collection(GenericBase):
         }
     )
     type: Literal["collection"] = "collection"
-
-    collection: NonEmpty[Tuple[CollectionEntry, ...],]
-    """Collection entries"""
 
     @classmethod
     def _get_context_and_update_data(
@@ -161,3 +155,13 @@ class Collection(GenericBase):
 
     #     if duplicates:
     #         raise ValueError(f"Duplicate ids in collection: {duplicates}")
+
+
+class Collection(GenericBase, CollectionBase):
+    """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
+    resources.
+    The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
+    """
+
+    collection: NonEmpty[Tuple[CollectionEntry, ...],]
+    """Collection entries"""
