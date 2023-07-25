@@ -12,6 +12,7 @@ from bioimageio.spec.generic.v0_2 import (
     Maintainer,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
+from bioimageio.spec.shared.validation import ValidationContext
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -19,6 +20,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
 
 class TestAttachments(BaseTestCases.TestNode):
     default_node_class = Attachments
+    allow_empty = True
     sub_tests = [
         Valid(dict(files=(RelativeFilePath(__file__), HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5)),
         Valid(dict(files=(__file__, EXAMPLE_DOT_COM), extra=Valid(dict(more="of this")))),
@@ -114,7 +116,7 @@ class TestGeneric(BaseTestCases.TestNode):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
-            context={"root": Path(__file__).parent},
+            context=ValidationContext(root=Path(__file__).parent),
             name="deprecated license",
         ),
         Valid(
@@ -127,7 +129,7 @@ class TestGeneric(BaseTestCases.TestNode):
                 type="my_type",
                 version="0.1.0",
             ),
-            context={},
+            context=ValidationContext(),
         ),
         Invalid(
             dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name")

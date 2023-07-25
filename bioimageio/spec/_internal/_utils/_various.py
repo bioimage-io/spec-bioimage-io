@@ -60,13 +60,6 @@ def Field(  # noqa C901  NOSONAR: S1542
     )
 
 
-def ensure_raw(value: Union[pydantic.BaseModel, Any]) -> Union[Dict[str, Any], Any]:
-    if isinstance(value, pydantic.BaseModel):
-        return value.model_dump(exclude_unset=True, exclude_defaults=False, exclude_none=False)
-    else:
-        return value
-
-
 K = TypeVar("K")
 V = TypeVar("V")
 NestedDict = Dict[K, "NestedDict[K, V] | V"]

@@ -2,20 +2,17 @@ from __future__ import annotations
 
 import collections
 from collections.abc import Mapping, Sequence
-from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple, Type, TypeVar, Union, get_args
+from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
     AnyUrl,
+    ConfigDict,
     DirectoryPath,
     EmailStr,
     FieldValidationInfo,
     HttpUrl,
-    TypeAdapter,
-    ValidationError,
     field_validator,
-    model_validator,
 )
 from pydantic._internal._model_construction import ModelMetaclass
 from pydantic.fields import FieldInfo
@@ -23,13 +20,13 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import (
     WARNING,
     as_warning,
     warn,
 )
-from bioimageio.spec._internal._validate import WithSuffix
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -37,13 +34,12 @@ from bioimageio.spec.shared.types import (
     NonEmpty,
     OrcidId,
     RawDict,
-    RawMapping,
     Version,
 )
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
-VALID_COVER_IMAGE_EXTENSIONS = ("jpg", "png", "gif", "jpeg")
+VALID_COVER_IMAGE_EXTENSIONS = (".jpg", ".png", ".gif", ".jpeg")
 
 
 class Attachments(Node):
@@ -130,10 +126,10 @@ class GenericBaseNoSourceMeta(ModelMetaclass):
         return self.model_fields["format_version"].default
 
 
-class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
-    """ResourceDescriptionBase without a source field
+class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSourceMeta):
+    """GenericBaseNoFormatVersion without a source field
 
-    (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
+    (needed because `model.v0_4.Model` and `model.v0_5.Model` have no `source` field)
     """
 
     format_version: str
@@ -178,7 +174,7 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: Annotated[Tuple[Author, ...], warn(MinLen(1))] = ()
+    authors: Annotated[Tuple[Author, ...], warn(MinLen(1), WARNING, "Please specify at least one author.")] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Optional[Attachments] = None
@@ -189,7 +185,7 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
 
     cite: Annotated[
         Tuple[CiteEntry, ...],
-        warn(Annotated[Tuple[CiteEntry, ...], MinLen(1)], WARNING, "Please specify at least one `cite` entry."),
+        warn(MinLen(1), WARNING, "Please specify at least one source to cite."),
     ] = ()
     """citations"""
 
@@ -299,43 +295,12 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
     The initial version should be `"0.1.0"`."""
 
     @classmethod
-    def _validate_root(cls, value: Any, *, raise_: bool, allow_none: bool):
-        if allow_none and value is None:
-            return None
-
-        root_validator = TypeAdapter(cls.model_fields["root"].annotation)
-        try:
-            root = root_validator.validate_python(value)
-        except ValidationError:
-            root = value
-            if raise_:
-                raise
-        else:
-            if isinstance(root, Path):
-                root = root.resolve()
-
-        return root
-
-    @model_validator(mode="before")
-    @classmethod
-    def apply_convert_from_older_format(cls, data: RawMapping) -> RawMapping:
-        """pydantic validator calling `convert_from_older_format`.
-
-        This allows to control conversion order in child classes as needed,
-        avoid typing issues around pydantic model validator inheritance,
-        and calling `convert_from_older_format` outside pydantic validation logic.
-        """
-        return cls.convert_from_older_format(data)
-
-    @classmethod
-    def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
+    def convert_from_older_format(cls, data: RawDict) -> None:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
         fv = data.get("format_version", "0.2.0")
         if isinstance(fv, str) and tuple(map(int, fv.split(".")[:2])) >= (0, 3):
-            return data
-
-        data = dict(data)
+            return
 
         # we unofficially accept strings as author entries
         authors = data.get("authors")
@@ -349,9 +314,7 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
             cls._remove_slashes_from_names(data)
             data["format_version"] = "0.2.3"
 
-        data = cls._remove_doi_prefix(data)
-
-        return data
+        cls._remove_doi_prefix(data)
 
     @staticmethod
     def _remove_slashes_from_names(data: Dict[str, Any]) -> None:
@@ -377,7 +340,7 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
                 data[group] = [rm_slashes_in_person_name(p) for p in persons]  # type: ignore
 
     @staticmethod
-    def _remove_doi_prefix(data: RawDict) -> RawDict:
+    def _remove_doi_prefix(data: RawDict) -> None:
         """we unofficially accept DOIs starting with "https://doi.org/"
         here we remove this 'prefix'"""
         DOI_PREFIX = "https://doi.org/"
@@ -398,72 +361,20 @@ class GenericBaseNoSource(Node, metaclass=GenericBaseNoSourceMeta):
                 new_cite[i] = new_cite_entry
 
             data["cite"] = new_cite
-        return data
-
-    @classmethod
-    def model_validate(
-        cls: Type[ResourceDescriptionType],
-        obj: Union[Any, Dict[str, Any]],
-        *,
-        strict: Optional[bool] = None,
-        from_attributes: Optional[bool] = None,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> ResourceDescriptionType:
-        """Validate RDF content `obj` and create an RDF instance.
-
-        Also sets 'root' context from 'root' in `obj` (or vice versa)
-
-        Args:
-            cls: The model class to use.
-            obj: The object to validate.
-            strict: Whether to raise an exception on invalid fields. Defaults to None.
-            from_attributes: Whether to extract data from object attributes. Defaults to None.
-            context: Additional context to pass to the validator. Defaults to None.
-
-        Raises:
-            ValidationError: If the object could not be validated.
-
-        Returns:
-            The validated RDF instance.
-
-        """
-        if not isinstance(obj, dict):
-            obj = dict(obj)
-
-        if from_attributes:
-            raise NotImplementedError("from_attributes")
-
-        context = context or {}
-        given_root = cls._validate_root(obj.get("root"), raise_=False, allow_none=True)
-        context_root = cls._validate_root(context.get("root"), raise_=True, allow_none=True)
-
-        if given_root and context_root and (given_root != context_root):
-            raise ValueError(
-                f"'root' specified as field and as context and they disagree: {given_root} != {context_root}."
-            )
-
-        if given_root and not context_root:
-            context = {**(context or {}), "root": given_root}
-        elif context_root and not given_root:
-            obj = dict(obj)
-            obj["root"] = context_root
-
-        data = cls.convert_from_older_format(obj)
-        return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=context)
 
 
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
 
 class GenericBaseNoFormatVersion(GenericBaseNoSource):
+    """A generic node base without format version
+    to allow a derived resource description to define its format_version independently."""
+
     source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
     """The primary source of the resource"""
 
 
 class GenericBase(GenericBaseNoFormatVersion):
-    model_config = {**GenericBaseNoFormatVersion.model_config, "extra": "ignore"}
-    """pydantic model config"""
-
     format_version: Literal["0.2.3"] = "0.2.3"
 
 
@@ -475,10 +386,7 @@ class Generic(GenericBase):
     Use this generic resource description, if none of the known specific types matches your resource.
     """
 
-    model_config = {
-        **GenericBase.model_config,
-        **dict(title="bioimage.io generic specification"),
-    }
+    model_config = {**GenericBase.model_config, **ConfigDict(title="bioimage.io generic specification", extra="ignore")}
     """pydantic model_config"""
 
     type: Annotated[str, LowerCase]

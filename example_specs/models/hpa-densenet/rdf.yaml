@@ -2,7 +2,10 @@ attachments:
   files:
     - ./hpa_labels.txt
 authors:
-  - name: Shubin Dai
+- name: Shubin Dai
+maintainers:
+- github_user: oeway
+  name: Wei Ouyang
 cite:
   - doi: https://doi.org/10.1038/s41592-019-0658-6
     text: >-

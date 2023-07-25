@@ -30,9 +30,9 @@ if TYPE_CHECKING:
 WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 Severity = Literal[20, 30, 35]
 WarningLevel = Literal[Severity, 50]  # with warning level x raise warnings of severity >=x
-ALERT: Severity = 35  # no ALERT or worse -> RDF is worriless
-WARNING: Severity = 30  # no WARNING or worse -> RDF is watertight
-INFO: Severity = 30
+ALERT = 35  # no ALERT or worse -> RDF is worriless
+WARNING = 30  # no WARNING or worse -> RDF is watertight
+INFO = 20
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}

@@ -1,17 +1,17 @@
 import json
-import pathlib
+from importlib.resources import files
 from typing import Union
 
 from typing_extensions import Annotated
 
 from bioimageio.spec import application, collection, dataset, generic, model, notebook, shared
-from bioimageio.spec.application import Application, AnyApplication
-from bioimageio.spec.collection import Collection, AnyCollection
-from bioimageio.spec.dataset import Dataset, AnyDataset
-from bioimageio.spec.generic import Generic, AnyGeneric
-from bioimageio.spec.model import Model, AnyModel
-from bioimageio.spec.notebook import Notebook, AnyNotebook
 from bioimageio.spec._internal._utils import Field
+from bioimageio.spec.application import AnyApplication, Application
+from bioimageio.spec.collection import AnyCollection, Collection
+from bioimageio.spec.dataset import AnyDataset, Dataset
+from bioimageio.spec.generic import AnyGeneric, Generic
+from bioimageio.spec.model import AnyModel, Model
+from bioimageio.spec.notebook import AnyNotebook, Notebook
 
 __all__ = (
     "__version__",
@@ -40,7 +40,9 @@ __all__ = (
     "SpecificResourceDescription",
 )
 
-with (pathlib.Path(__file__).parent / "VERSION").open() as f:
+
+with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
+    # with (pathlib.Path(__file__).parent / "VERSION").open() as f:
     __version__: str = json.load(f)["version"]
     assert isinstance(__version__, str)
 

@@ -3,14 +3,30 @@ import ast
 import collections.abc
 import inspect
 import sys
-from typing import Any, ClassVar, Dict, Generic, Iterator, Literal, Sequence, Set, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Dict,
+    Generic,
+    Iterator,
+    Literal,
+    Optional,
+    Sequence,
+    Set,
+    TypeVar,
+    Union,
+)
 
 import pydantic
 
-from bioimageio.spec.shared.types import RawValue
+from bioimageio.spec.shared.types import RawDict, RawValue
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
+from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.shared.validation import _validation_context_var
 
-IncEx = Union[Set[int], Set[str], Dict[int, "IncEx"], Dict[str, "IncEx"], None]
+if TYPE_CHECKING:
+    from pydantic.main import Model, IncEx
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -107,7 +123,11 @@ class Node(
             ):
                 continue
 
-            info = self.model_fields[last.target.id]
+            field_name = last.target.id
+            if field_name not in self.model_fields:
+                continue
+
+            info = self.model_fields[field_name]
             if info.description is not None:
                 continue
 
@@ -141,6 +161,81 @@ class Node(
     #     doc += f"{field_info.description}\n\n"
     #     for constraint in field_info.get_constraints():
     #         doc += f"* constraint : `{constraint} = {getattr(field_info, constraint)}`\n\n"
+
+
+class ResourceDescriptionBase(Node):
+    def __init__(self, **data: Any) -> None:
+        __tracebackhide__ = True
+        context = self._get_context_and_update_data(data)
+        self.__pydantic_validator__.validate_python(
+            data,
+            self_instance=self,
+            context=dict(context),
+        )
+
+    @classmethod
+    def _get_context_and_update_data(
+        cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
+    ) -> ValidationContext:
+        if context is None:
+            context = _validation_context_var.get()
+
+        if context.root:
+            if "root" in cls.model_fields:
+                data["root"] = context.root
+        elif "root" in data:
+            context = ValidationContext(**{**dict(context), "root": data["root"]})
+
+        original_format = data.get("format_version")
+        if isinstance(original_format, str) and original_format.count(".") == 2:
+            context = context.model_copy(update=dict(original_format=tuple(map(int, original_format.split(".")))))
+
+        cls.convert_from_older_format(data)
+        return context
+
+    @classmethod
+    def convert_from_older_format(cls, data: RawDict) -> None:
+        """A node may `convert` it's raw data from an older format."""
+        pass
+
+    @classmethod
+    def model_validate(
+        cls: type[Model],
+        obj: Any,
+        *,
+        strict: bool | None = None,
+        from_attributes: bool | None = None,
+        context: dict[str, Any] | None | ValidationContext = None,
+    ) -> Model:
+        """Validate a pydantic model instance.
+
+        Args:
+            obj: The object to validate.
+            strict: Whether to raise an exception on invalid fields.
+            from_attributes: Whether to extract data from object attributes.
+            context: Additional context to pass to the validator.
+
+        Raises:
+            ValidationError: If the object could not be validated.
+
+        Returns:
+            The validated model instance.
+        """
+        __tracebackhide__ = True
+        if isinstance(context, dict):
+            context = ValidationContext(**context)
+
+        if isinstance(obj, pydantic.BaseModel):
+            data: Dict[str, Any] = obj.model_dump()
+        elif isinstance(obj, dict):
+            assert all(isinstance(k, str) for k in obj)  # type: ignore
+            data = obj
+        else:
+            raise TypeError(type(obj))
+
+        new_context = cls._get_context_and_update_data(data, context)
+
+        return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=dict(new_context))
 
 
 class StringNode(Node):

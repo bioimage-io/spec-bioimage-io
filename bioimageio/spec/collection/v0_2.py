@@ -5,11 +5,10 @@ from types import MappingProxyType
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Type, Union
 
 import annotated_types
-from pydantic import HttpUrl, model_validator
+from pydantic import ConfigDict, HttpUrl, model_validator
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._utils._various import ensure_raw
 from bioimageio.spec._internal._warn import ALERT, warn
 from bioimageio.spec.application.v0_2 import Application
 from bioimageio.spec.dataset.v0_2 import Dataset
@@ -21,7 +20,8 @@ from bioimageio.spec.generic.v0_2 import (
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.notebook.v0_2 import Notebook
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types import RawMapping, RawValue, RelativeFilePath
+from bioimageio.spec.shared.types import NonEmpty, RawDict, RawMapping, RawValue, RelativeFilePath
+from bioimageio.spec.shared.validation import ValidationContext, _validation_context_var
 
 __all__ = ["Collection", "CollectionEntry"]
 
@@ -36,7 +36,7 @@ class CollectionEntry(Node):
     and the entry's 'sub-'`id`, specified remotely as part of `rdf_source` or superseeded in-place,
     such that the `final_entry_id = <collection_id>/<entry_id>`"""
 
-    model_config = {**Node.model_config, **dict(extra="allow")}
+    model_config = ConfigDict({**Node.model_config, **ConfigDict(extra="allow")})
     """pydantic model config set to allow additional keys"""
 
     rdf_source: Annotated[
@@ -67,7 +67,7 @@ class CollectionEntry(Node):
 
             type_ = entry_data.get("type")
             if type_ == "collection":
-                raise ValueError(f"Collections may not be nested!")
+                raise ValueError("Collections may not be nested!")
 
             entry_class = cls.entry_classes.get(type_, Generic) if isinstance(type_, str) else Generic
             entry_class.model_validate(entry_data, context=info.context)
@@ -86,46 +86,36 @@ class Collection(GenericBase):
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
     """
 
-    model_config = {
-        **GenericBase.model_config,
-        **dict(title="bioimage.io collection specification"),
-    }
+    model_config = ConfigDict(
+        {
+            **GenericBase.model_config,
+            **ConfigDict(extra="allow", title="bioimage.io collection specification"),
+        }
+    )
     type: Literal["collection"] = "collection"
 
-    collection: Annotated[
-        Tuple[CollectionEntry, ...],
-        annotated_types.MinLen(1),
-    ]
+    collection: NonEmpty[Tuple[CollectionEntry, ...],]
     """Collection entries"""
 
     @classmethod
-    def model_validate(
-        cls,
-        obj: Union[Any, Dict[str, Any]],
-        *,
-        strict: Optional[bool] = None,
-        from_attributes: Optional[bool] = None,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Collection:
-        if not isinstance(obj, dict):
-            obj = dict(obj)
-
-        context = context or {}
-        context["collection_base_content"] = {k: ensure_raw(v) for k, v in obj.items() if k != "collection"}
-
-        return super().model_validate(obj, strict=strict, from_attributes=from_attributes, context=context)
-
-    def get_collection_base_content(self) -> Dict[str, RawValue]:
-        """each collection entry is based on the collection content itself (without the 'collection' field)"""
-        return self.model_dump(exclude={"collection"}, exclude_unset=True)
+    def _get_context_and_update_data(
+        cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
+    ) -> ValidationContext:
+        if context is None:
+            context = _validation_context_var.get()
+        context = context.model_copy(
+            update=dict(collection_base_content={k: v for k, v in data.items() if k != "collection"})
+        )
+        return super()._get_context_and_update_data(data, context)
 
     @classmethod
-    def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
-        data = dict(data)
+    def convert_from_older_format(cls, data: RawDict) -> None:
         if data.get("format_version") in ("0.2.0", "0.2.1"):
             # move all type groups to the 'collection' field
-            if "collection" in data:
-                assert isinstance(data["collection"], collections.abc.Sequence)
+            if "collection" in data and data["collection"] is not None:
+                if not isinstance(data["collection"], collections.abc.Sequence):
+                    raise ValueError("Expected `collection` to not be present, or to be a list")
+
                 data["collection"] = list(data["collection"])
             else:
                 data["collection"] = []
@@ -141,7 +131,7 @@ class Collection(GenericBase):
                 if id_ is not None:
                     data["id"] = id_
 
-        return super().convert_from_older_format(data)
+        super().convert_from_older_format(data)
 
     # @validates("collection")
     # def unique_ids(self, value: List[Union[dict, raw_nodes.CollectionEntry]]):

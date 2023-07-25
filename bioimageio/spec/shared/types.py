@@ -129,7 +129,7 @@ class RelativePath:
         root = info.context["root"]
         if not isinstance(root, (AnyUrl, pathlib.Path)):
             raise ValueError(
-                "{klass} expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
+                f"Expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
                 f"but got {root} of type '{type(root)}'"
             )
 

@@ -1,5 +1,7 @@
 from typing import Literal
 
+from pydantic import ConfigDict
+
 from bioimageio.spec.generic.v0_2 import (
     LinkedResource,
     GenericBase,
@@ -14,10 +16,12 @@ class Dataset(GenericBase):
     processing.
     """
 
-    model_config = {
-        **GenericBase.model_config,
-        **dict(title="bioimage.io dataset specification"),
-    }
+    model_config = ConfigDict(
+        {
+            **GenericBase.model_config,
+            **ConfigDict(title="bioimage.io dataset specification"),
+        }
+    )
     type: Literal["dataset"] = "dataset"
 
 

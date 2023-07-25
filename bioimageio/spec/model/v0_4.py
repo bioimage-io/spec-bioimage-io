@@ -14,9 +14,10 @@ from typing import (
     Union,
 )
 
-from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
+from annotated_types import Ge, Interval, MaxLen, MultipleOf
 from pydantic import (
     AllowInfNan,
+    ConfigDict,
     FieldValidationInfo,
     HttpUrl,
     field_validator,
@@ -26,7 +27,7 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
-from bioimageio.spec._internal._validate import validate_suffix
+from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import ALERT, INFO, warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
@@ -45,6 +46,7 @@ from bioimageio.spec.shared.types import (
     Identifier,
     LicenseId,
     NonEmpty,
+    RawDict,
     RawMapping,
     RelativeFilePath,
     Sha256,
@@ -171,7 +173,7 @@ class KerasHdf5Entry(WeightsEntryBase):
 class OnnxEntry(WeightsEntryBase):
     type: Literal["onnx"] = Field("onnx", exclude=True)
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Annotated[Union[Annotated[int, warn(Ge(7), ALERT)], None], warn(int, ALERT)] = None
+    opset_version: Annotated[Union[Annotated[int, Ge(7)], None], warn(int, ALERT)] = None
     """ONNX opset version"""
 
 
@@ -255,10 +257,10 @@ WeightsEntry = Annotated[
 class ParametrizedInputShape(Node):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
-    min: Annotated[Tuple[int, ...], MinLen(1)]
+    min: NonEmpty[Tuple[int, ...]]
     """The minimum input shape"""
 
-    step: Annotated[Tuple[int, ...], MinLen(1)]
+    step: NonEmpty[Tuple[int, ...]]
     """The minimum shape change"""
 
     def __len__(self) -> int:
@@ -279,11 +281,11 @@ class ImplicitOutputShape(Node):
     reference_tensor: NonEmpty[str]
     """Name of the reference tensor."""
 
-    scale: Annotated[Tuple[Union[float, None], ...], MinLen(1)]
+    scale: NonEmpty[Tuple[Union[float, None], ...]]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: Annotated[Tuple[Annotated[float, MultipleOf(0.5)], ...], MinLen(1)]
+    offset: NonEmpty[Tuple[Annotated[float, MultipleOf(0.5)], ...]]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -649,10 +651,12 @@ class Model(GenericBaseNoSource):
     by bioimage.io-compatible consumers (e.g. image analysis software or another website).
     """
 
-    model_config = {
-        **GenericBaseNoSource.model_config,
-        **dict(title="bioimage.io model specification"),
-    }
+    model_config = ConfigDict(
+        {
+            **GenericBaseNoSource.model_config,
+            **ConfigDict(title="bioimage.io model specification"),
+        }
+    )
     """pydantic model_config"""
 
     format_version: Literal["0.4.9"] = "0.4.9"
@@ -665,7 +669,7 @@ class Model(GenericBaseNoSource):
     type: Literal["model"] = "model"
     """specialized type 'model'"""
 
-    authors: Annotated[Tuple[Author, ...], MinLen(1)]
+    authors: NonEmpty[Tuple[Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     badges: ClassVar[tuple] = ()  # type: ignore
@@ -684,7 +688,7 @@ class Model(GenericBaseNoSource):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: Annotated[Tuple[InputTensor, ...], MinLen(1)]
+    inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
     license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
@@ -700,7 +704,7 @@ class Model(GenericBaseNoSource):
     """"A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: Annotated[Tuple[OutputTensor, ...], MinLen(1)]
+    outputs: NonEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
@@ -833,20 +837,19 @@ class Model(GenericBaseNoSource):
     sample_outputs: Tuple[FileSource, ...] = Field((), in_package=True)
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
+    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field(
+        in_package=True
+    )
     """URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NonEmpty[Tuple[FileSource, ...]] = Field(in_package=True)
+    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field(
+        in_package=True
+    )
     """Analog to `test_inputs`."""
-
-    @field_validator("test_inputs", "test_outputs", mode="after")
-    @classmethod
-    def check_suffix(cls, value: NonEmpty[Tuple[FileSource, ...]]):
-        return tuple(validate_suffix(v, ".npy") for v in value)
 
     timestamp: Datetime
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
@@ -900,15 +903,14 @@ class Model(GenericBaseNoSource):
         data["format_version"] = "0.4.5"
 
     @classmethod
-    def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
-        data = dict(data)
+    def convert_from_older_format(cls, data: RawDict) -> None:
         fv = data.get("format_version", "0.3.0")
         if isinstance(fv, str):
             major_minor = tuple(map(int, fv.split(".")[:2]))
             if major_minor < (0, 4):
                 raise NotImplementedError("model RDF conversion for format_version < 0.4 no longer supported.")
             elif major_minor > (0, 4):
-                return data
+                return
 
         if data["format_version"] == "0.4.0":
             cls.convert_model_from_v0_4_0_to_0_4_1(data)
@@ -931,5 +933,3 @@ class Model(GenericBaseNoSource):
         # remove 'config' if now empty
         if data.get("config") == {}:
             del data["config"]
-
-        return data

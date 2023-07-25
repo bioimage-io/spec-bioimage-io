@@ -7,13 +7,14 @@ from unittest import TestCase
 from pydantic import TypeAdapter, ValidationError
 
 from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec.shared.validation import ValidationContext
 
 
 @dataclass
 class SubTest(ABC):
     kwargs: Dict[str, Any]
     name: Optional[str] = None
-    context: Optional[Dict[str, Any]] = None
+    context: Optional[ValidationContext] = None
     node_class: Optional[Type[Node]] = None
 
     def __post_init__(self):
@@ -39,9 +40,10 @@ class BaseTestCases:
         """template to test any Node subclass with valid and invalid kwargs"""
 
         default_node_class: Type[Node]
-        default_context: Dict[str, Any] = dict(root=Path(__file__).parent)
+        default_context: ValidationContext = ValidationContext(root=Path(__file__).parent)
 
         sub_tests: Sequence[SubTest]
+        allow_empty: bool = False
 
         def test_valid(self):
             for st in self.sub_tests:
@@ -70,11 +72,22 @@ class BaseTestCases:
                     nc = self.get_node_class(st)
                     self.assertRaises(st.expect, nc.model_validate, st.kwargs, context=self.get_context(st))
 
+        def test_empty(self):
+            """assure that emtpy input data raises a validation error, not a KeyError, AttributeError, etc."""
+            if not hasattr(self, "default_node_class"):
+                self.skipTest("no default node class specified")
+
+            nc = self.default_node_class
+            if self.allow_empty:
+                nc.model_validate({})
+            else:
+                self.assertRaises(ValidationError, nc.model_validate, {})
+
         def get_context(self, st: SubTest) -> Dict[str, Any]:
             if st.context is None:
-                return self.default_context
+                return dict(self.default_context)
             else:
-                return st.context
+                return dict(st.context)
 
         def get_node_class(self, st: SubTest) -> Type[Node]:
             return st.node_class or self.default_node_class

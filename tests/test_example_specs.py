@@ -5,6 +5,7 @@ from ruamel.yaml import YAML
 
 import bioimageio.spec
 from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec.shared.validation import ValidationContext
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
 
 yaml = YAML(typ="safe")
@@ -27,10 +28,13 @@ class TestExampleSpecs(BaseTestCases.TestNode):
                 assert isinstance(data, dict)
                 assert all(isinstance(k, str) for k in data)
                 typ = data["type"]
+                fv_module = f"v{'_'.join(data['format_version'].split('.')[:2])}"
                 if hasattr(bioimageio.spec, typ):
-                    node_class: Type[Node] = getattr(getattr(bioimageio.spec, typ), typ.capitalize())
+                    node_class: Type[Node] = getattr(
+                        getattr(getattr(bioimageio.spec, typ), fv_module), typ.capitalize()
+                    )
                 else:
-                    node_class = bioimageio.spec.generic.GenericDescription
+                    node_class = getattr(bioimageio.spec.generic, fv_module).Generic
 
                 if rdf.name.startswith("rdf"):
                     st_class = Valid
@@ -44,7 +48,7 @@ class TestExampleSpecs(BaseTestCases.TestNode):
                     st_class(
                         kwargs=data,
                         name=name,
-                        context=dict(root=rdf.parent),
+                        context=ValidationContext(root=rdf.parent),
                         node_class=node_class,
                     )
                 )

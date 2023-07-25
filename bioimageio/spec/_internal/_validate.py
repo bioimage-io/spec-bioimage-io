@@ -143,8 +143,8 @@ V_suffix = TypeVar("V_suffix", bound=Union[AnyUrl, PurePath, "RelativePath"])
 
 def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
     """check final suffix"""
-    assert len(suffixes) > 0
-    assert all(suff.startswith(".") for suff in suffixes)
+    assert len(suffixes) > 0, "no suffix given"
+    assert all(suff.startswith(".") for suff in suffixes), "expected suffixes to start with '.'"
     if isinstance(value, AnyUrl):
         if value.path is None or "." not in value.path:
             suffix = ""
@@ -159,7 +159,7 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
         case_sensitive
         and suffix not in suffixes
         or not case_sensitive
-        and suffix.lower() in [s.lower() for s in suffixes]
+        and suffix.lower() not in [s.lower() for s in suffixes]
     ):
         if len(suffixes) == 1:
             raise ValueError(f"Expected suffix {suffixes[0]}, but got {suffix}")

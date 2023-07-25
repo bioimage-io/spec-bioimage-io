@@ -2,7 +2,7 @@ import collections
 from typing import Annotated, Any, ClassVar, Dict, List, Literal, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, MaxLen, MinLen
-from pydantic import FieldValidationInfo, field_validator, model_validator
+from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import SHA256_HINT
@@ -15,6 +15,7 @@ from bioimageio.spec.shared.types import (
     Identifier,
     LicenseId,
     NonEmpty,
+    RawDict,
     RawLeafValue,
     RawMapping,
     Sha256,
@@ -378,10 +379,10 @@ class Model(
     by bioimage.io-compatible consumers (e.g. image analysis software or another website).
     """
 
-    model_config = {
+    model_config = ConfigDict({
         **generic.v0_3.GenericBaseNoSource.model_config,
-        **dict(title="bioimage.io model specification"),
-    }
+        **ConfigDict(title="bioimage.io model specification"),
+    })
     """pydantic model_config"""
 
     format_version: Literal["0.5.0"] = "0.5.0"
@@ -389,7 +390,7 @@ class Model(
     type: Literal["model"] = "model"
     """specialized type 'model'"""
 
-    authors: Annotated[Tuple[v0_4.Author, ...], MinLen(1)]
+    authors: NonEmpty[Tuple[v0_4.Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     badges: ClassVar[tuple] = ()  # type: ignore
@@ -408,7 +409,7 @@ class Model(
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: Annotated[Tuple[InputTensor, ...], MinLen(1)]
+    inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
@@ -443,7 +444,7 @@ class Model(
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: Annotated[Tuple[OutputTensor, ...], MinLen(1)]
+    outputs: NonEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
@@ -489,20 +490,17 @@ class Model(
     No standard run modes are defined yet."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawMapping) -> RawMapping:
-        data = super().convert_from_older_format(data)
+    def convert_from_older_format(cls, data: RawDict) -> None:
         fv = data.get("format_version")
         if not isinstance(fv, str) or fv.count(".") != 3:
-            return data
+            return
 
         major, minor, _ = map(int, fv.split("."))
         if (major, minor) > (0, 5):
-            return data
+            return
 
         if minor == 4:
-            data = cls.convert_model_from_v0_4_to_0_5_0(data)
-
-        return data
+            cls.convert_model_from_v0_4_to_0_5_0(data)
 
     @staticmethod
     def _update_v0_4_tensor_specs(
@@ -529,10 +527,15 @@ class Model(
                 param["sample_tensor"] = sample_tensors[i]
 
     @classmethod
-    def convert_model_from_v0_4_to_0_5_0(cls, data: RawMapping) -> RawMapping:
-        # convert axes string to axis descriptions
-        data = dict(data)
+    def convert_model_from_v0_4_to_0_5_0(cls, data: RawDict) -> None:
+        cls._convert_axes_string_to_axis_descriptions(data)
+        cls._convert_architecture_field(data)
+        data.pop("download_url", None)
 
+        data["format_version"] = "0.5.0"
+
+    @classmethod
+    def _convert_axes_string_to_axis_descriptions(cls, data: RawDict):
         inputs = data.get("inputs")
         outputs = data.get("outputs")
         sample_inputs = data.get("sample_inputs")
@@ -547,11 +550,6 @@ class Model(
         if isinstance(outputs, collections.Sequence):
             data["outputs"] = list(outputs)
             cls.update_tensor_specs(outputs, test_outputs, sample_outputs)
-
-        cls._convert_architecture_field(data)
-
-        data["format_version"] = "0.5.0"
-        return data
 
     @staticmethod
     def _convert_architecture_field(data: Dict[str, Any]) -> None:

@@ -97,7 +97,9 @@ def update_format(
     assert "type" in resource_description
     assert isinstance(resource_description["type"], str)
     rd_class = get_rd_class(resource_description["type"], update_to_format)
-    return rd_class.convert_from_older_format(resource_description)
+    rd = dict(resource_description)
+    rd_class.convert_from_older_format(rd)
+    return rd
 
 
 RD = TypeVar("RD", bound=ResourceDescription)

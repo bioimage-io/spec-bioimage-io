@@ -1,17 +1,45 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
+from contextvars import ContextVar, Token
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple, Union
-from pydantic import HttpUrl
 
+import pydantic
+from pydantic import HttpUrl, PrivateAttr
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import NotRequired, TypedDict
 
-from bioimageio.spec._internal._warn import WarningType
+from bioimageio.spec._internal._warn import WarningLevel, WarningType
 
 
-@dataclass(frozen=True)
-class ValidationContext:
-    root: Union[HttpUrl, Path] = Path()  # url/path serving as base to any relative file paths.
+class ValidationContext(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(
+        extra="forbid",
+        frozen=True,
+        validate_default=True,
+    )
+    root: Union[HttpUrl, Path, None] = None
+    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
+    warning_level: WarningLevel = 50
+    """raise warnings of severity s as validation errors if s >= `warning_level`"""
+
+    original_format: Tuple[int, int, int] = (99999, 0, 0)
+    """original format version of the validation data set dynamically when validating resource descriptions."""
+
+    collection_base_content: Dict[str, Any] = pydantic.Field(default_factory=dict, frozen=False)
+    """Collection base content set dynamically during validation of collection resource descriptions."""
+
+    _token: Token[ValidationContext] = PrivateAttr()
+
+    def __enter__(self):
+        self._token = _validation_context_var.set(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):  # type: ignore
+        _validation_context_var.reset(self._token)
+
+
+_validation_context_var = ContextVar("_validation_context_var", default=ValidationContext())
 
 
 class ValidationOutcome(TypedDict):
