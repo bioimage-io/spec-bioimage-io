@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 

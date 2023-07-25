@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 from pydantic import ConfigDict, Field, TypeAdapter, field_validator

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import collections
 from collections.abc import Mapping, Sequence
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
