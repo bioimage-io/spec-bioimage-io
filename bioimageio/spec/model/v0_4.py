@@ -61,7 +61,7 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 
 
 class CallableFromDepencency(StringNode):
-    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^\w(\.\w)+$")])
+    _pattern = r"^.+\..+$"
     module_name: NonEmpty[str]
     callable_name: NonEmpty[str]
 
@@ -72,7 +72,7 @@ class CallableFromDepencency(StringNode):
 
 
 class CallableFromSourceFile(StringNode):
-    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^.*:\w$")])
+    _pattern = r"^.+:.+$"
     source_file: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
     callable_name: str
 
@@ -86,7 +86,7 @@ CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
 
 
 class Dependencies(StringNode):
-    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^\w:.+$")])
+    _pattern = r"^.+:.+$"
     manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
     """Dependency manager"""
 
@@ -96,7 +96,7 @@ class Dependencies(StringNode):
     """Dependency file"""
 
     @classmethod
-    def _get_kwargs(cls, valid_string_data: str):
+    def _get_data(cls, valid_string_data: str):
         manager, *file_parts = valid_string_data.split(":")
         return dict(manager=manager, file=":".join(file_parts))
 
@@ -204,14 +204,14 @@ class PytorchStateDictEntry(WeightsEntryBase):
     if the architecture is not defined in a module listed in `dependencies`"""
 
     @model_validator(mode="after")
-    def check_architecture_sha256(self, data: Any):
-        if isinstance(data["architecture"], CallableFromSourceFile):
-            if data.get("architecture_sha256") is None:
+    def check_architecture_sha256(self):
+        if isinstance(self.architecture, CallableFromSourceFile):
+            if self.architecture_sha256 is None:
                 raise ValueError("Missing required `architecture_sha256` for `architecture` with source file.")
-        elif data.get("architecture_sha256") is not None:
+        elif self.architecture_sha256 is not None:
             raise ValueError("Got `architecture_sha256` for architecture that does not have a source file.")
 
-        return data
+        return self
 
     kwargs: FrozenDictNode[NonEmpty[str], Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""

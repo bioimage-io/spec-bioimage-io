@@ -96,11 +96,11 @@ weights:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
     source: weights.onnx
     opset_version: 12
-    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+    parent: pytorch_state_dict
   torchscript:
     sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
     source: weights.pt
-    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+    parent: pytorch_state_dict
 
 type: model
 version: 0.2.0

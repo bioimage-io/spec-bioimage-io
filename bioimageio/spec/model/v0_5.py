@@ -492,7 +492,7 @@ class Model(
 
         for i, out in enumerate(outputs):
             valid_axes_references = (
-                [None]
+                ["BATCH_AXES", None]
                 + [a.name for a in out.axes if not isinstance(a.size, str)]
                 + input_tensor_axes_names
                 + output_tensor_axes_names

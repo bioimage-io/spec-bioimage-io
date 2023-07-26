@@ -12,7 +12,9 @@ yaml = YAML(typ="safe")
 
 
 class TestExampleSpecs(BaseTestCases.TestNode):
-    DEBUG_SUBTEST_NAME: Optional[str] = None  # "unet2d_nuclei_broad_col/rdf.yaml"  # limit subtests for debugging
+    DEBUG_SUBTEST_NAME: Optional[
+        str
+    ] = None  # "models/unet2d_nuclei_broad_col/rdf.yaml"  # limit subtests for debugging
 
     def __init__(self, methodName: str = "runTest") -> None:
         example_specs = Path(__file__).parent / "../example_specs"
