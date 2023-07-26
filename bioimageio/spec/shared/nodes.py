@@ -1,8 +1,11 @@
 from __future__ import annotations
+from abc import ABC
+
 import ast
 import collections.abc
 import inspect
 import sys
+from collections import UserString
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -14,19 +17,33 @@ from typing import (
     Optional,
     Sequence,
     Set,
+    Tuple,
+    Type,
     TypeVar,
     Union,
 )
 
 import pydantic
+from pydantic import (
+    BaseModel,
+    GetCoreSchemaHandler,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
+from pydantic.config import ConfigDict
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import core_schema
+from typing_extensions import Self, Unpack
 
-from bioimageio.spec.shared.types import RawDict, RawValue
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
-from bioimageio.spec.shared.validation import ValidationContext
-from bioimageio.spec.shared.validation import validation_context_var
+from bioimageio.spec.shared.types import RawDict, RawValue
+from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 if TYPE_CHECKING:
-    from pydantic.main import Model, IncEx
+    from pydantic.main import IncEx, Model
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -239,31 +256,95 @@ class ResourceDescriptionBase(Node):
 
 
 class StringNode(Node):
-    """Node defined as a string"""
+    _string_adapter: ClassVar[TypeAdapter[str]] = TypeAdapter(str)
+    _string_data: str
 
-    _data: str
-
-    def __str__(self):
-        return self._data
-
-    must_include: ClassVar[Sequence[str]] = ()
-
-    @pydantic.model_serializer
-    def serialize(self) -> str:
-        return str(self)
+    def __init__(self, string_data: str, /, **data: Any) -> None:
+        assert not data
+        valid_string_data, context = self._validate_string_data(string_data)
+        self._string_data = valid_string_data
+        data = self._get_data(self._string_data)
+        self.__pydantic_validator__.validate_python(
+            data,
+            self_instance=self,
+            context=dict(context),
+        )
 
     @classmethod
-    def _common_assert(cls, data: Union[str, Any]):
-        if not isinstance(data, str):
-            raise AssertionError(f"Expected a string, but got {type(data)} instead.")
+    def model_validate(
+        cls,
+        obj: Any,
+        *,
+        strict: "bool | None" = None,
+        from_attributes: "bool | None" = None,
+        context: "Dict[str, Any] | None | ValidationContext" = None,
+    ) -> Self:
+        if isinstance(context, dict):
+            context = ValidationContext(**context)
 
-        for mi in cls.must_include:
-            if mi not in data:
-                raise ValueError(f"'{data}' must include {mi}")
+        valid_string_data, context = cls._validate_string_data(obj, context=context)
+        data = cls._get_data(valid_string_data)
+        return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=dict(context))
 
-    def __init__(self, data_string: str, /, **data: Any):
-        super().__init__(**data)
-        self._data = data_string
+    @classmethod
+    def _get_data(cls, valid_string_data: str) -> Dict[str, Any]:
+        return {}
+
+    @classmethod
+    def _validate_string_data(
+        cls, string_data: Any, context: Optional[ValidationContext] = None
+    ) -> Tuple[str, ValidationContext]:
+        if context is None:
+            context = validation_context_var.get()
+
+        return cls._string_adapter.validate_python(string_data, context=dict(context)), context
+
+    @model_serializer(mode="plain")
+    def _serialize(self) -> str:
+        return self._string_data
+
+
+# @classmethod
+# def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+#     assert issubclass(source, StringLeaf)
+#     return core_schema.general_after_validator_function(
+#         cls._validate,
+#         core_schema.str_schema(pattern=cls.pattern),
+#         serialization=core_schema.plain_serializer_function_ser_schema(
+#             cls,
+#             info_arg=False,
+#             return_schema=core_schema.str_schema(),
+#         ),
+#     )
+
+# @classmethod
+# def _validate(cls, value: str, info: ValidationInfo) -> NodeType:
+#     return cls.node_class.model_validate(value, info=info)
+
+
+# class StringLeaf(UserString, Generic[NodeType], ABC):
+#     pattern: ClassVar[str] = ".+"
+
+#     def __init__(self, seq: object) -> None:
+#         super().__init__(seq)
+#         self.node = self.get_node(self.data)
+
+#     @classmethod
+#     def get_node(cls, data: str) -> NodeType:
+#         raise NotImplementedError
+
+#     @classmethod
+#     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+#         assert issubclass(source, StringLeaf)
+#         return core_schema.no_info_after_validator_function(
+#             cls,
+#             core_schema.str_schema(pattern=cls.pattern),
+#             serialization=core_schema.plain_serializer_function_ser_schema(
+#                 cls,
+#                 info_arg=False,
+#                 return_schema=core_schema.str_schema(),
+#             ),
+#         )
 
 
 D = TypeVar("D")

@@ -128,22 +128,15 @@ class SizeReference(Node):
 class AxisBase(Node):
     type: Literal["batch", "channel", "index", "time", "space"]
 
-    name: Union[ShortId, Tuple[ShortId]]
+    name: ShortId
     """a unique name"""
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    size: Union[int, ParametrizedSize, SizeReference, TensorAxisId]
+    size: Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId]
     """The axis size.
     To specify that this axis' size equals another, an axis name can be given.
     Specify another tensor's axis as `<tensor name>.<axis name>`."""
-
-    @property
-    def name_string(self) -> str:
-        if isinstance(self.name, str):
-            return self.name
-        else:
-            return ",".join(self.name)
 
 
 class WithHalo(Node):
@@ -161,7 +154,14 @@ class BatchAxis(AxisBase):
 
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
-    name: Tuple[ShortId, ...]
+    name: ShortId = "channel"
+    channel_names: Tuple[ShortId, ...]
+    size: Union[Annotated[int, Gt(0)], Literal["#channel_names"]] = "#channel_names"
+
+    def model_post_init(self, __context: Any):
+        if self.size == "#channel_names":
+            object.__setattr__(self, "size", len(self.channel_names))
+        return super().model_post_init(__context)
 
 
 class IndexAxis(AxisBase):
@@ -172,15 +172,29 @@ class IndexAxis(AxisBase):
 class TimeAxis(AxisBase):
     type: Literal["time"] = "time"
     name: ShortId = "time"
-    unit: TimeUnit
+    unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
+
+    @field_validator("scale")
+    @classmethod
+    def check_scale(cls, value: float, info: FieldValidationInfo):
+        if info.data["unit"] is None and value != 1.0:
+            raise ValueError("Without `unit`, `scale` may not be set.")
+        return value
 
 
 class SpaceAxis(AxisBase):
     type: Literal["space"] = "space"
     name: ShortId = Field("x", examples=["x", "y", "z"])
-    unit: SpaceUnit
+    unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
+
+    @field_validator("scale")
+    @classmethod
+    def check_scale(cls, value: float, info: FieldValidationInfo):
+        if info.data["unit"] is None and value != 1.0:
+            raise ValueError("Without `unit`, `scale` may not be set.")
+        return value
 
 
 Axis = Annotated[Union[BatchAxis, ChannelAxis, IndexAxis, TimeAxis, SpaceAxis], Field(discriminator="type")]
@@ -216,7 +230,7 @@ class OrdinalTensorValue(TensorValueBase):
 
 
 class IntervalTensorValueBase(TensorValueBase):
-    unit: SiUnit
+    unit: Optional[SiUnit] = None
     factor: float = 1.0
     data_type: Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"]
     data_range: Tuple[Optional[float], Optional[float]] = (
@@ -272,8 +286,7 @@ class TensorBase(Node):
         seen: Set[str] = set()
         duplicate_axes_names: Set[str] = set()
         for a in axes:
-            axis_name = a.name if isinstance(a.name, str) else ",".join(a.name)
-            (duplicate_axes_names if axis_name in seen else seen).add(axis_name)
+            (duplicate_axes_names if a.name in seen else seen).add(a.name)
 
         if duplicate_axes_names:
             raise ValueError(f"Duplicate axis names: {duplicate_axes_names}")
@@ -350,17 +363,30 @@ class PytorchStateDictEntry(v0_4.WeightsEntryBase):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-WeightsEntry = Annotated[
-    Union[
-        v0_4.KerasHdf5Entry,
-        v0_4.OnnxEntry,
-        v0_4.TorchscriptEntry,
-        PytorchStateDictEntry,
-        v0_4.TensorflowJsEntry,
-        v0_4.TensorflowSavedModelBundleEntry,
-    ],
-    Field(discriminator="type"),
-]
+class Weights(Node):
+    keras_hdf5: Optional[v0_4.KerasHdf5Entry] = None
+    onnx: Optional[v0_4.OnnxEntry] = None
+    pytorch_state_dict: Optional[PytorchStateDictEntry] = None
+    tensorflow_js: Optional[v0_4.TensorflowJsEntry] = None
+    tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleEntry] = None
+    torchscript: Optional[v0_4.TorchscriptEntry] = None
+
+    @model_validator(mode="after")
+    def check_one_entry(self):
+        if all(
+            entry is None
+            for entry in [
+                self.keras_hdf5,
+                self.onnx,
+                self.pytorch_state_dict,
+                self.tensorflow_js,
+                self.tensorflow_saved_model_bundle,
+                self.torchscript,
+            ]
+        ):
+            raise ValueError("Missing weights entry")
+
+        return self
 
 
 class ModelRdf(Node):
@@ -422,7 +448,7 @@ class Model(
         tensor_axes_names = [f"{ipt.name}.{a.name}" for ipt in inputs for a in ipt.axes if not isinstance(a.size, str)]
         for i, ipt in enumerate(inputs):
             valid_axes_references = (
-                [None] + [a.name for a in ipt.axes if not isinstance(a.size, str)] + tensor_axes_names
+                ["BATCH_AXES", None] + [a.name for a in ipt.axes if not isinstance(a.size, str)] + tensor_axes_names
             )
             for a, ax in enumerate(ipt.axes):
                 if isinstance(ax.size, ParametrizedSize) and ax.size.step_with not in valid_axes_references:
@@ -500,7 +526,7 @@ class Model(
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: FrozenDictNode[v0_4.WeightsFormat, WeightsEntry]
+    weights: Weights
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

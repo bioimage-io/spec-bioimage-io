@@ -3,92 +3,107 @@ format_version: 0.5.0
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-- name: "Constantin Pape;@bioimage-io"
-  affiliation: "EMBL Heidelberg"
-  orcid: "0000-0001-6562-7187"
-- name: "Fynn Beuttenmueller"
-  affiliation: "EMBL Heidelberg"
-  orcid: "0000-0002-8567-6389"
+  - name: "Constantin Pape;@bioimage-io"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0001-6562-7187"
+  - name: "Fynn Beuttenmueller"
+    affiliation: "EMBL Heidelberg"
+    orcid: "0000-0002-8567-6389"
 maintainers:
-- name: "Constantin Pape"
-  github_user: constantinpape
-- name: "Fynn Beuttenmueller"
-  github_user: fynnbe
+  - name: "Constantin Pape"
+    github_user: constantinpape
+  - name: "Fynn Beuttenmueller"
+    github_user: fynnbe
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
-- text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
-  doi: https://doi.org/10.1007/978-3-319-24574-4_28
-- text: "2018 Data Science Bowl"
-  url: https://www.kaggle.com/c/data-science-bowl-2018
+  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+    doi: https://doi.org/10.1007/978-3-319-24574-4_28
+  - text: "2018 Data Science Bowl"
+    url: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 
-documentation: README.md  # may also be a url
+documentation: README.md # may also be a url
 covers: [cover0.png]
-attachments: {}
-timestamp: 2019-12-11T12:22:32Z  # ISO 8601
+attachments: []
+timestamp: 2019-12-11T12:22:32Z # ISO 8601
 
 inputs:
-- name: raw
-  description: raw input
-  shape: [1, 1, 512, 512]
-  axes:
-  - type: batch
-  - type: channel
-  - type: y
-  - type: x
-  data_type: float32
-  data_range: [-.inf, .inf]
-  test_tensor: test_input.npy
-  sample_tensor: test_input.npy
-  preprocessing:  # list of preprocessing steps
-    - name: zero_mean_unit_variance  # name of preprocessing step
-      kwargs:
-        mode: per_sample      # mode in [fixed, per_dataset, per_sample]
-        axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+  - name: raw
+    description: raw input
+    values:
+      type: ratio
+      data_type: float32
+    axes:
+      - type: batch
+      - type: channel
+        channel_names: [raw_intensity]
+      - type: space
+        name: y
+        size: 512
+      - type: space
+        name: x
+        size: 512
+    test_tensor: test_input.npy
+    sample_tensor: test_input.npy
+    preprocessing: # list of preprocessing steps
+      - name: zero_mean_unit_variance # name of preprocessing step
+        kwargs:
+          mode: per_sample # mode in [fixed, per_dataset, per_sample]
+          axes: yx # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
 
 outputs:
-- name: probability
-  description: probability in [0,1]
-  axes: bcyx
-  data_type: float32
-  data_range: [-.inf, .inf]
-  halo: [0, 0, 32, 32]
-  test_tensor: test_output.npy
-  sample_tensor: test_output.npy
-  shape:
-    reference_tensor: raw
-    scale: [1.0, 1.0, 1.0, 1.0]
-    offset: [0.0, 0.0, 0.0, 0.0]
+  - name: probability
+    description: probability in [0,1]
+    values:
+      type: ratio
+      data_type: float32
+      data_range:
+        - 0.0
+        - 1.0
+    axes:
+      - type: batch
+      - type: channel
+        channel_names: [probability]
+      - type: space
+        name: y
+        size: raw.y
+        halo: 32
+      - type: space
+        size: raw.x
+        name: x
+        halo: 32
+    test_tensor: test_output.npy
+    sample_tensor: test_output.npy
 
 weights:
- pytorch_state_dict:
-   authors:
-     - name: "Constantin Pape;@bioimage-io"
-       affiliation: "EMBL Heidelberg"
-       orcid: "0000-0001-6562-7187"
-   sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-   source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-   architecture: unet2d.py:UNet2d
-   architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
-   kwargs: {input_channels: 1, output_channels: 1}
-   dependencies: conda:environment.yaml
- onnx:
-   sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
-   source: weights.onnx
-   opset_version: 12
-   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
- torchscript:
-   sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
-   source: weights.pt
-   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+  pytorch_state_dict:
+    authors:
+      - name: "Constantin Pape;@bioimage-io"
+        affiliation: "EMBL Heidelberg"
+        orcid: "0000-0001-6562-7187"
+    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+    architecture:
+      callable: unet2d.py:UNet2d
+      sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
+      kwargs: { input_channels: 1, output_channels: 1 }
+    dependencies: conda:environment.yaml
+  onnx:
+    sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
+    source: weights.onnx
+    opset_version: 12
+    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+  torchscript:
+    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
+    source: weights.pt
+    parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
 
 type: model
-version: 0.1.3
-download_url: https://example.com  # note: not recommended for model RDFs
+version: 0.2.0
 
 training_data:
-  id: ilastik/covid_if_training_data  # note: not the real training data
+  id: ilastik/covid_if_training_data # note: not the real training data

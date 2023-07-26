@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import collections.abc
 from typing import (
     Any,
     ClassVar,
     Dict,
     List,
     Literal,
-    Mapping,
     Optional,
     Sequence,
     Tuple,
@@ -20,6 +18,7 @@ from pydantic import (
     ConfigDict,
     FieldValidationInfo,
     HttpUrl,
+    TypeAdapter,
     field_validator,
     model_validator,
 )
@@ -62,32 +61,24 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 
 
 class CallableFromDepencency(StringNode):
-    module_name: str
-    callable_name: str
+    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^\w(\.\w)+$")])
+    module_name: NonEmpty[str]
+    callable_name: NonEmpty[str]
 
-    must_include = (".",)
-
-    @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> Dict[str, str]:
-        str_data = cls.sanitize(data)
-        *mods, callname = str_data.split(".")
-        modnane = ".".join(mods)
-        return dict(module_name=modnane, callable_name=callname)
+    def _get_data(cls, valid_string_data: str):
+        *mods, callname = valid_string_data.split(".")
+        return dict(module_name=".".join(mods), callable_name=callname)
 
 
 class CallableFromSourceFile(StringNode):
+    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^.*:\w$")])
     source_file: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
     callable_name: str
 
-    def __str__(self):
-        return f"{self.source_file}:{self.callable_name}"
-
-    @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> Dict[str, str]:
-        str_data = cls.sanitize(data)
-        *file_parts, callname = str_data.split(":")
+    def _get_data(cls, valid_string_data: str):
+        *file_parts, callname = valid_string_data.split(":")
         return dict(source_file=":".join(file_parts), callable_name=callname)
 
 
@@ -95,6 +86,7 @@ CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
 
 
 class Dependencies(StringNode):
+    _string_adapter = TypeAdapter(Annotated[str, Field(pattern=r"^\w:.+$")])
     manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
     """Dependency manager"""
 
@@ -103,32 +95,46 @@ class Dependencies(StringNode):
     )
     """Dependency file"""
 
-    def __str__(self):
-        return f"{self.manager}:{self.file}"
-
-    @model_validator(mode="before")
     @classmethod
-    def load(cls, data: Any) -> Dict[str, str]:
-        data = cls.sanitize(data)
-        manager, *file_parts = data.split(cls.split_on)
-        return dict(manager=manager, file=cls.split_on.join(file_parts))
+    def _get_kwargs(cls, valid_string_data: str):
+        manager, *file_parts = valid_string_data.split(":")
+        return dict(manager=manager, file=":".join(file_parts))
 
 
 WeightsFormat = Literal[
-    "pytorch_state_dict",
-    "torchscript",
-    "keras_hdf5",
-    "tensorflow_js",
-    "tensorflow_saved_model_bundle",
-    "onnx",
+    "keras_hdf5", "onnx", "pytorch_state_dict", "tensorflow_js", "tensorflow_saved_model_bundle", "torchscript"
 ]
+
+
+class Weights(Node):
+    keras_hdf5: Optional[KerasHdf5Entry] = None
+    onnx: Optional[OnnxEntry] = None
+    pytorch_state_dict: Optional[PytorchStateDictEntry] = None
+    tensorflow_js: Optional[TensorflowJsEntry] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleEntry] = None
+    torchscript: Optional[TorchscriptEntry] = None
+
+    @model_validator(mode="after")
+    def check_one_entry(self):
+        if all(
+            entry is None
+            for entry in [
+                self.keras_hdf5,
+                self.onnx,
+                self.pytorch_state_dict,
+                self.tensorflow_js,
+                self.tensorflow_saved_model_bundle,
+                self.torchscript,
+            ]
+        ):
+            raise ValueError("Missing weights entry")
+
+        return self
 
 
 class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
-    type: WeightsFormat
-    """weights format of this entry"""
 
     source: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
     """The weights file."""
@@ -149,12 +155,12 @@ class WeightsEntryBase(Node):
         the person(s) who have converted the weights to this format.
     """
 
-    dependencies: Annotated[Union[Dependencies, None], warn(None, ALERT)] = Field(
+    dependencies: Annotated[Optional[Dependencies], warn(None, ALERT)] = Field(
         None, examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]
     )
     """"Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
-    parent: Union[WeightsFormat, None] = Field(None, examples=["pytorch_state_dict"])
+    parent: Optional[WeightsFormat] = Field(None, examples=["pytorch_state_dict"])
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -859,29 +865,10 @@ class Model(GenericBaseNoSource):
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: FrozenDictNode[WeightsFormat, WeightsEntry]
+    weights: Weights
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
-
-    @field_validator("weights", mode="before")
-    @classmethod
-    def weights_type_from_key(
-        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[Union[Any, str], Any]]]]
-    ) -> Union[Any, Dict[Union[Any, str], Dict[str, Any]]]:
-        if not isinstance(data, collections.abc.Mapping):
-            return data
-
-        ret: Dict[Union[Any, str], Dict[str, Any]] = dict()
-        for key, value in data.items():
-            ret[key] = dict(value)
-            if isinstance(key, str) and isinstance(value, collections.abc.Mapping):
-                if "type" in value:
-                    raise ValueError(f"`type` should not be specified (redundantly) in weights entry {key}.")
-
-                ret[key]["type"] = key  # set type to descriminate weights entry union
-
-        return ret
 
     @staticmethod
     def convert_model_from_v0_4_0_to_0_4_1(data: Dict[str, Any]):
