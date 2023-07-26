@@ -416,6 +416,10 @@ class Model(
     """pydantic model_config"""
 
     format_version: Literal["0.5.0"] = "0.5.0"
+    """Version of the bioimage.io model description specification used.
+    When creating a new model always use the latest micro/patch version described here.
+    The `format_version` is important for any consumer software to understand how to parse the fields.
+    """
 
     type: Literal["model"] = "model"
     """specialized type 'model'"""

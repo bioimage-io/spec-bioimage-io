@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Sequence
+from typing import Optional, Sequence
 from unittest import TestCase
 
 from pathlib import Path
@@ -9,6 +9,7 @@ from pydantic import TypeAdapter
 from ruamel.yaml import YAML
 
 from bioimageio.spec import ResourceDescription
+from bioimageio.spec.shared.validation import ValidationContext
 
 yaml = YAML(typ="safe")
 
@@ -17,6 +18,7 @@ BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
 
 
 class TestBioimageioCollection(TestCase):
+    DEBUG_SUBTEST_INDEX: Optional[int] = None
     resources: Sequence[str]
     collection: pooch.Pooch
     adapter: TypeAdapter[ResourceDescription]
@@ -36,10 +38,12 @@ class TestBioimageioCollection(TestCase):
         return super().setUp()
 
     def test_all(self):
-        # for rdf in self.resources:
-        rdf = self.resources[0]
-        with self.subTest(rdf=rdf):
-            with Path(self.collection.fetch(rdf)).open(encoding="utf-8") as f:  #  type: ignore
-                data = yaml.load(f)
+        for idx, rdf in enumerate(self.resources):
+            if self.DEBUG_SUBTEST_INDEX is not None and self.DEBUG_SUBTEST_INDEX != idx:
+                continue
+            with self.subTest(rdf=rdf):
+                with Path(self.collection.fetch(rdf)).open(encoding="utf-8") as f:  #  type: ignore
+                    data = yaml.load(f)
 
-            self.adapter.validate_python(data)
+                with ValidationContext(root=Path(__file__).parent):
+                    self.adapter.validate_python(data)

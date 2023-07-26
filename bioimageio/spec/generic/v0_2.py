@@ -132,7 +132,10 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
 
     format_version: str
     """The format version of this resource specification
-    (not the `version` of the resource description)"""
+    (not the `version` of the resource description)
+    When creating a new resource always use the latest micro/patch version described here.
+    The `format_version` is important for any consumer software to understand how to parse the fields.
+    """
 
     name: Annotated[str, warn(MaxLen(128))]
     """A human-friendly name of the resource description"""
@@ -373,7 +376,7 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource):
 
 
 class GenericBase(GenericBaseNoFormatVersion):
-    format_version: Literal["0.2.3"] = "0.2.3"
+    format_version: Literal["0.2.0", "0.2.1", "0.2.2", "0.2.3"] = "0.2.3"
 
 
 class Generic(GenericBase):

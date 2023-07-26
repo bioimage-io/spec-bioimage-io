@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 import pydantic
-from pydantic import HttpUrl, PrivateAttr
+from pydantic import DirectoryPath, HttpUrl, PrivateAttr
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import NotRequired, TypedDict
 
@@ -18,7 +18,7 @@ class ValidationContext(pydantic.BaseModel):
         frozen=True,
         validate_default=True,
     )
-    root: Union[HttpUrl, Path, None] = None
+    root: Union[HttpUrl, DirectoryPath, None] = None
     """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
     warning_level: WarningLevel = 50
     """raise warnings of severity s as validation errors if s >= `warning_level`"""

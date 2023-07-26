@@ -35,6 +35,7 @@ from bioimageio.spec.generic.v0_2 import (
     GenericBaseNoSource,
     LinkedResource,
 )
+from bioimageio.spec.model.v0_3_converter import convert_model_from_v0_3_to_0_4_0
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
     AxesInCZYX,
@@ -544,7 +545,7 @@ Postprocessing = Annotated[
 
 
 class InputTensor(TensorBase):
-    data_type: Literal["float32"]
+    data_type: Literal["float32", "uint8", "uint16"]
     """For now an input tensor is expected to be given as `float32`.
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
@@ -666,11 +667,12 @@ class Model(GenericBaseNoSource):
     )
     """pydantic model_config"""
 
-    format_version: Literal["0.4.9"] = "0.4.9"
-    """Version of the bioimage.io model Resource Description File (RDF) specification used.
-    This is important for any consumer software to understand how to parse the fields.
-    The recommended behavior for the implementation is to keep backward compatibility and throw an error if the RDF
-    content has an unsupported format version.
+    format_version: Literal[
+        "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.4.5", "0.4.6", "0.4.7", "0.4.8", "0.4.9"
+    ] = "0.4.9"
+    """Version of the bioimage.io model description specification used.
+    When creating a new model always use the latest micro/patch version described here.
+    The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
     type: Literal["model"] = "model"
@@ -896,7 +898,7 @@ class Model(GenericBaseNoSource):
         if isinstance(fv, str):
             major_minor = tuple(map(int, fv.split(".")[:2]))
             if major_minor < (0, 4):
-                raise NotImplementedError("model RDF conversion for format_version < 0.4 no longer supported.")
+                data = convert_model_from_v0_3_to_0_4_0(data)
             elif major_minor > (0, 4):
                 return
 
