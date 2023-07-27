@@ -1,49 +1,61 @@
 import datetime
 import json
-from typing import Optional, Sequence
+from pathlib import Path
+from typing import Any, ClassVar, Dict, List, Tuple
 from unittest import TestCase
 
-from pathlib import Path
 import pooch  # type: ignore
-from pydantic import TypeAdapter
+from pydantic import HttpUrl, TypeAdapter, ValidationError
 from ruamel.yaml import YAML
 
 from bioimageio.spec import ResourceDescription
 from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.utils import check_type_and_format_version
 
 yaml = YAML(typ="safe")
 
 CURRENT_DATE = str(datetime.datetime.now().date())
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
+RDF_BASE_URL = BASE_URL + "rdfs/"
+RDF_FILE_NAME = "rdf.yaml"
 
 
-class TestBioimageioCollection(TestCase):
-    DEBUG_SUBTEST_INDEX: Optional[int] = None
-    resources: Sequence[str]
-    collection: pooch.Pooch
-    adapter: TypeAdapter[ResourceDescription]
-
-    def setUp(self) -> None:
-        self.adapter = TypeAdapter(ResourceDescription)
+class TestBioimageioCollectionMeta(type):
+    def __new__(cls, name: str, bases: Tuple[type, ...], dct: Dict[str, Any]):
         with open(pooch.retrieve(BASE_URL + "collection.json", None), encoding="utf-8") as f:  # type: ignore
             collection_data = json.load(f)["collection"]
 
-        collection_registry = {entry["rdf_source"].replace(BASE_URL, ""): None for entry in collection_data}
-        self.resources = list(collection_registry)
-        self.collection = pooch.create(  # type: ignore
+        collection_registry: Dict[str, None] = {
+            entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
+        }
+        collection = pooch.create(  # type: ignore
             path=pooch.os_cache("bioimageio-collection") / CURRENT_DATE,  # type: ignore
-            base_url="https://bioimage-io.github.io/collection-bioimage-io/",
+            base_url=RDF_BASE_URL,
             registry=collection_registry,
         )
-        return super().setUp()
 
-    def test_all(self):
-        for idx, rdf in enumerate(self.resources):
-            if self.DEBUG_SUBTEST_INDEX is not None and self.DEBUG_SUBTEST_INDEX != idx:
-                continue
-            with self.subTest(rdf=rdf):
-                with Path(self.collection.fetch(rdf)).open(encoding="utf-8") as f:  #  type: ignore
+        for rdf in collection_registry:
+
+            def test_rdf(self: "TestBioimageioCollection", rdf_: str = rdf) -> None:
+                rdf_path = Path(collection.fetch(rdf_))  # type: ignore
+                with rdf_path.open(encoding="utf-8") as f:
                     data = yaml.load(f)
 
-                with ValidationContext(root=Path(__file__).parent):
-                    self.adapter.validate_python(data)
+                try:
+                    check_type_and_format_version(data)
+                    with ValidationContext(root=HttpUrl(BASE_URL + rdf_[: -len(RDF_FILE_NAME)])):
+                        self.adapter.validate_python(data)
+                except ValidationError as e:
+                    self.fail(str(e))
+
+            assert rdf.endswith("/" + RDF_FILE_NAME)
+            rdf_name = rdf[: -(len(RDF_FILE_NAME) + 1)].replace(".", "_").replace("/", "_")
+            test_case_name: str = f"test_{rdf_name}"
+            test_rdf.__name__ = test_case_name
+            dct[test_case_name] = test_rdf
+
+        return super().__new__(cls, name, bases, dct)
+
+
+class TestBioimageioCollection(TestCase, metaclass=TestBioimageioCollectionMeta):
+    adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)

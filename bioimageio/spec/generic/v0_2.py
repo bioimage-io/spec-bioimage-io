@@ -37,7 +37,13 @@ from bioimageio.spec.shared.types import (
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
-VALID_COVER_IMAGE_EXTENSIONS = (".jpg", ".png", ".gif", ".jpeg")
+VALID_COVER_IMAGE_EXTENSIONS = (
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".svg",
+)
 
 
 class Attachments(Node):
@@ -103,7 +109,8 @@ class CiteEntry(Node):
     @field_validator("url", mode="after")
     @classmethod
     def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo):
-        if not info.data.get("doi") and not value:
+        no_error_for_doi = "doi" in info.data
+        if no_error_for_doi and not info.data["doi"] and not value:
             raise ValueError("Either 'doi' or 'url' is required")
 
         return value
@@ -149,7 +156,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     description: str
     """A string containing a brief description."""
 
-    documentation: Union[Annotated[FileSource, WithSuffix(".md", case_sensitive=True)], None] = Field(
+    documentation: Union[FileSource, None] = Field(
         None,
         examples=[
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -376,7 +383,7 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource):
 
 
 class GenericBase(GenericBaseNoFormatVersion):
-    format_version: Literal["0.2.0", "0.2.1", "0.2.2", "0.2.3"] = "0.2.3"
+    format_version: Literal["0.2.3"] = "0.2.3"
 
 
 class Generic(GenericBase):

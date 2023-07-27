@@ -36,8 +36,6 @@ __all__ = (
     "LatestResourceDescription",
     "ResourceDescription",
     "shared",
-    "LatestSpecificResourceDescription",
-    "SpecificResourceDescription",
 )
 
 
@@ -46,36 +44,43 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
     __version__: str = json.load(f)["version"]
     assert isinstance(__version__, str)
 
-LatestSpecificResourceDescription = Annotated[
-    Union[
-        Application,
-        Collection,
-        Dataset,
-        Model,
-        Notebook,
+ResourceDescriptionV0_3 = Union[
+    Annotated[
+        Union[
+            application.v0_2.Application,
+            collection.v0_2.Collection,
+            dataset.v0_2.Dataset,
+            model.v0_4.Model,
+            notebook.v0_2.Notebook,
+        ],
+        Field(discriminator="type"),
     ],
-    Field(discriminator="type"),
+    generic.v0_3.Generic,
 ]
-"""A specific resource description following the latest specification format.
-Loading previous format versions is allowed where automatic updating is possible. (e.g. renaming of a field)"""
+"""A resource description following the 0.3.x (model: 0.5.x) specification format"""
 
-LatestResourceDescription = Union[LatestSpecificResourceDescription, Generic]
-"""A specific or generic resource description following the latest specification format
-Loading previous format versions is allowed where automatic updating is possible. (e.g. renaming of a field)"""
+LatestResourceDescription = ResourceDescriptionV0_3
+"""A resource description following the latest specification format"""
 
-SpecificResourceDescription = Annotated[
-    Union[
-        AnyApplication,
-        AnyCollection,
-        AnyDataset,
-        AnyModel,
-        AnyNotebook,
+
+ResourceDescriptionV0_2 = Union[
+    Annotated[
+        Union[
+            application.v0_2.Application,
+            collection.v0_2.Collection,
+            dataset.v0_2.Dataset,
+            model.v0_4.Model,
+            notebook.v0_2.Notebook,
+        ],
+        Field(discriminator="type"),
     ],
-    Field(discriminator="type"),
+    generic.v0_2.Generic,
 ]
-"""A specific resource description.
-Previous format versions are not converted upon loading (except for patch/micro format version changes)."""
+"""A resource description following the 0.2.x (model: 0.4.x) specification format"""
 
-ResourceDescription = Union[SpecificResourceDescription, AnyGeneric]
-"""A specific or generic resource description.
-Previous format versions are not converted upon loading (except for patch/micro format version changes)."""
+
+ResourceDescription = Union[
+    ResourceDescriptionV0_3,
+    ResourceDescriptionV0_2,
+]
+"""Any of the implemented resource descriptions"""

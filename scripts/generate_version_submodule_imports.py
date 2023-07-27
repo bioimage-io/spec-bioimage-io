@@ -21,9 +21,7 @@ __all__ = [{info.all_version_modules_quoted},
 
 Any{info.target_node} = {info.target_node}
 """
-AUTOGEN_BODY_MULTIPLE = """from typing import Annotated, Union
-
-from pydantic import Field
+AUTOGEN_BODY_MULTIPLE = """from typing import Union
 
 from . import {info.all_version_modules_plain}
 from .{info.latest_version_module} import {info.target_node}
@@ -32,7 +30,7 @@ __all__ = [{info.all_version_modules_quoted},
     "{info.target_node}"
 ]
 
-Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Field(discriminator="format_version")]
+Any{info.target_node} = Union[{info.all_target_nodes_plain}]
 """
 
 AUTOGEN_STOP = "# autogen: stop\n"
@@ -71,7 +69,7 @@ class Info:
 
     def __post_init__(self):
         self.target_node = dict(generic="Generic").get(self.target, self.target.capitalize())
-        self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules])
+        self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules[::-1]])
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_quoted = ",\n".join(f'"{vm}"' for vm in self.all_version_modules)
         self.all_version_modules_plain = ", ".join(self.all_version_modules)

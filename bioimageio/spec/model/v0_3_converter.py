@@ -85,9 +85,8 @@ def convert_model_v0_3_2_to_v0_3_3(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
+def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
     """auto converts model 'data' to newest format"""
-    data = copy.deepcopy(data)
 
     if data.get("format_version", "0.3.0") == "0.3.0":
         # no breaking change, bump to 0.3.1
@@ -133,5 +132,3 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> Dict[str, Any]:
         data["weights"]["torchscript"] = torchscript_weights_entry
 
     data["format_version"] = "0.4.0"
-
-    return data

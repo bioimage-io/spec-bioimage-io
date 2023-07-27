@@ -137,7 +137,7 @@ class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
 
-    source: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
+    source: FileSource = Field(in_package=True)
     """The weights file."""
 
     sha256: Annotated[Union[Sha256, None], warn(Sha256)] = Field(
@@ -592,7 +592,9 @@ class InputTensor(TensorBase):
 
 
 class OutputTensor(TensorBase):
-    data_type: Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"]
+    data_type: Literal[
+        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+    ]
     """Data type.
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
@@ -667,9 +669,7 @@ class Model(GenericBaseNoSource):
     )
     """pydantic model_config"""
 
-    format_version: Literal[
-        "0.4.0", "0.4.1", "0.4.2", "0.4.3", "0.4.4", "0.4.5", "0.4.6", "0.4.7", "0.4.8", "0.4.9"
-    ] = "0.4.9"
+    format_version: Literal["0.4.9",] = "0.4.9"
     """Version of the bioimage.io model description specification used.
     When creating a new model always use the latest micro/patch version described here.
     The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -700,7 +700,7 @@ class Model(GenericBaseNoSource):
     inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
-    license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    license: Annotated[Union[LicenseId, str], warn(LicenseId)] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
@@ -748,9 +748,9 @@ class Model(GenericBaseNoSource):
                         else ""
                     )
                     raise ValueError(
-                        f"Referenced tensor {out.shape.reference_tensor} "
+                        f"Referenced tensor '{out.shape.reference_tensor}' "
                         f"with {ndim_ref} dimensions does not match "
-                        f"output tensor {out.name} with {ndim_out_ref} dimensions.{expanded_dim_note}"
+                        f"output tensor '{out.name}' with {ndim_out_ref} dimensions.{expanded_dim_note}"
                     )
 
             min_out_shape = self._get_min_shape(out, tensors_by_name)
@@ -898,7 +898,7 @@ class Model(GenericBaseNoSource):
         if isinstance(fv, str):
             major_minor = tuple(map(int, fv.split(".")[:2]))
             if major_minor < (0, 4):
-                data = convert_model_from_v0_3_to_0_4_0(data)
+                convert_model_from_v0_3_to_0_4_0(data)
             elif major_minor > (0, 4):
                 return
 

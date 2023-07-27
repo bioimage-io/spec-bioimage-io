@@ -610,11 +610,11 @@ class Model(
 
         if isinstance(inputs, collections.Sequence):
             data["inputs"] = list(inputs)
-            cls.update_tensor_specs(inputs, test_inputs, sample_inputs)
+            cls.update_tensor_specs(data["inputs"], test_inputs, sample_inputs)
 
         if isinstance(outputs, collections.Sequence):
             data["outputs"] = list(outputs)
-            cls.update_tensor_specs(outputs, test_outputs, sample_outputs)
+            cls.update_tensor_specs(data["outputs"], test_outputs, sample_outputs)
 
     @staticmethod
     def _convert_architecture_field(data: Dict[str, Any]) -> None:

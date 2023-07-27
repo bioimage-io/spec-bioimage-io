@@ -1,7 +1,9 @@
 import dataclasses
 from importlib.resources import Resource
+from multiprocessing import Value
 import os
 import traceback
+from types import MappingProxyType
 from urllib.parse import urljoin, urlparse
 import warnings
 from pathlib import Path, PurePath
@@ -63,6 +65,33 @@ from bioimageio.spec._internal._warn import WarningType, WARNING_LEVEL_CONTEXT_K
 # from .v import __version__
 
 LATEST: Literal["latest"] = "latest"
+
+
+def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
+    supported: Dict[str, List[str]] = {}
+    for rd_class in get_args(
+        Union[
+            application.AnyApplication,
+            collection.AnyCollection,
+            dataset.AnyDataset,
+            generic.AnyGeneric,
+            model.AnyModel,
+            notebook.AnyNotebook,
+        ]
+    ):
+        typ = rd_class.model_fields["type"].default
+        format_versions = supported.setdefault(typ, [])
+        ma, mi, pa = map(int, rd_class.model_fields["format_version"].default.split("."))
+        for p in range(pa + 1):
+            format_versions.append(f"{ma}.{mi}.{p}")
+
+    supported["model"].extend([f"0.3.{i}" for i in range(7)])  # model 0.3 can be converted
+    return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
+
+
+def check_type_and_format_version(data: Dict[str, Any]) -> None:
+    if data["format_version"] not in get_supported_format_versions()[data["type"]]:
+        raise ValueError(f"Invalid format version '{data['format_version']}' for resource type '{data['type']}'")
 
 
 def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDescription]:
@@ -321,147 +350,119 @@ def _fill_resource_package_content(
             package_content[loc] = src
 
 
-def load_raw_resource_description(
-    source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
-    update_to_format: Optional[str] = None,
-) -> RawResourceDescription:
-    """load a raw python representation from a bioimage.io resource description.
-    Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
-    and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
-    a local file path.
+# def load_raw_resource_description(
+#     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
+#     update_to_format: Optional[str] = None,
+# ) -> RawResourceDescription:
+#     """load a raw python representation from a bioimage.io resource description.
+#     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
+#     and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
+#     a local file path.
 
-    Args:
-        source: resource description or resource description file (RDF)
-        update_to_format: update resource to specific major.minor format version; ignoring patch version.
-    Returns:
-        raw bioimage.io resource
-    """
-    root = None
-    if isinstance(source, RawResourceDescription):
-        if update_to_format == "latest":
-            update_to_format = get_latest_format_version(source.type)
+#     Args:
+#         source: resource description or resource description file (RDF)
+#         update_to_format: update resource to specific major.minor format version; ignoring patch version.
+#     Returns:
+#         raw bioimage.io resource
+#     """
+#     root = None
+#     if isinstance(source, RawResourceDescription):
+#         if update_to_format == "latest":
+#             update_to_format = get_latest_format_version(source.type)
 
-        if update_to_format is not None and source.format_version != update_to_format:
-            # do serialization round-trip to account for 'update_to_format' but keep root_path
-            root = source.root_path
-            source = serialize_raw_resource_description_to_dict(source)
-        else:
-            return source
+#         if update_to_format is not None and source.format_version != update_to_format:
+#             # do serialization round-trip to account for 'update_to_format' but keep root_path
+#             root = source.root_path
+#             source = serialize_raw_resource_description_to_dict(source)
+#         else:
+#             return source
 
-    data, source_name, _root, type_ = resolve_rdf_source_and_type(source)
-    if root is None:
-        root = _root
+#     data, source_name, _root, type_ = resolve_rdf_source_and_type(source)
+#     if root is None:
+#         root = _root
 
-    class_name = get_class_name_from_type(type_)
+#     class_name = get_class_name_from_type(type_)
 
-    # determine submodule's format version
-    original_data_version = data.get("format_version")
-    if original_data_version is None:
-        odv: Optional[Version] = None
-    else:
-        try:
-            odv = Version(original_data_version)
-        except Exception as e:
-            raise ValueError(f"Invalid format version {original_data_version}.") from e
+#     # determine submodule's format version
+#     original_data_version = data.get("format_version")
+#     if original_data_version is None:
+#         odv: Optional[Version] = None
+#     else:
+#         try:
+#             odv = Version(original_data_version)
+#         except Exception as e:
+#             raise ValueError(f"Invalid format version {original_data_version}.") from e
 
-    if update_to_format is None:
-        data_version = original_data_version or LATEST
-    elif update_to_format == LATEST:
-        data_version = LATEST
-    else:
-        data_version = ".".join(update_to_format.split("."[:2]))
-        if update_to_format.count(".") > 1:
-            warnings.warn(
-                f"Ignoring patch version of update_to_format {update_to_format} "
-                f"(always updating to latest patch version)."
-            )
+#     if update_to_format is None:
+#         data_version = original_data_version or LATEST
+#     elif update_to_format == LATEST:
+#         data_version = LATEST
+#     else:
+#         data_version = ".".join(update_to_format.split("."[:2]))
+#         if update_to_format.count(".") > 1:
+#             warnings.warn(
+#                 f"Ignoring patch version of update_to_format {update_to_format} "
+#                 f"(always updating to latest patch version)."
+#             )
 
-    try:
-        sub_spec = _get_spec_submodule(type_, data_version)
-    except ValueError as e:
-        if odv is None:
-            raise e  # raise original error; no second attempt with 'LATEST' format version
+#     try:
+#         sub_spec = _get_spec_submodule(type_, data_version)
+#     except ValueError as e:
+#         if odv is None:
+#             raise e  # raise original error; no second attempt with 'LATEST' format version
 
-        try:
-            # load latest spec submodule
-            sub_spec = _get_spec_submodule(type_, data_version=LATEST)
-        except ValueError:
-            raise e  # raise original error with desired data_version
+#         try:
+#             # load latest spec submodule
+#             sub_spec = _get_spec_submodule(type_, data_version=LATEST)
+#         except ValueError:
+#             raise e  # raise original error with desired data_version
 
-        if odv <= Version(sub_spec.format_version):
-            # original format version is not a future version.
-            # => we should not fall back to latest format version.
-            # => 'format_version' may be invalid or the issue lies with 'type_'...
-            raise e
+#         if odv <= Version(sub_spec.format_version):
+#             # original format version is not a future version.
+#             # => we should not fall back to latest format version.
+#             # => 'format_version' may be invalid or the issue lies with 'type_'...
+#             raise e
 
-    downgrade_format_version = odv and Version(sub_spec.format_version) < odv
-    if downgrade_format_version:
-        warnings.warn(
-            f"Loading future {type_} format version {original_data_version} as (latest known) "
-            f"{sub_spec.format_version}."
-        )
-        data["format_version"] = sub_spec.format_version  # set format_version to latest available
+#     downgrade_format_version = odv and Version(sub_spec.format_version) < odv
+#     if downgrade_format_version:
+#         warnings.warn(
+#             f"Loading future {type_} format version {original_data_version} as (latest known) "
+#             f"{sub_spec.format_version}."
+#         )
+#         data["format_version"] = sub_spec.format_version  # set format_version to latest available
 
-        # save original format version under config:bioimageio:original_format_version for reference
-        if "config" not in data:
-            data["config"] = {}
+#         # save original format version under config:bioimageio:original_format_version for reference
+#         if "config" not in data:
+#             data["config"] = {}
 
-        if "bioimageio" not in data["config"]:
-            data["config"]["bioimageio"] = {}
+#         if "bioimageio" not in data["config"]:
+#             data["config"]["bioimageio"] = {}
 
-        data["config"]["bioimageio"]["original_format_version"] = original_data_version
+#         data["config"]["bioimageio"]["original_format_version"] = original_data_version
 
-    schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
+#     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
 
-    data = sub_spec.converters.maybe_convert(data)
-    try:
-        raw_rd = schema.load(data)
-    except ValidationError as e:
-        if downgrade_format_version:
-            e.messages["format_version"] = (
-                f"Other errors may be caused by a possibly incompatible future format version {original_data_version} "
-                f"treated as {sub_spec.format_version}."
-            )
+#     data = sub_spec.converters.maybe_convert(data)
+#     try:
+#         raw_rd = schema.load(data)
+#     except ValidationError as e:
+#         if downgrade_format_version:
+#             e.messages["format_version"] = (
+#                 f"Other errors may be caused by a possibly incompatible future format version {original_data_version} "
+#                 f"treated as {sub_spec.format_version}."
+#             )
 
-        raise e
+#         raise e
 
-    if isinstance(root, pathlib.Path):
-        root = root.resolve()
-        if zipfile.is_zipfile(root):
-            # set root to extracted zip package
-            _, _, root = extract_resource_package(root)
-    elif isinstance(root, bytes):
-        root = pathlib.Path().resolve()
+#     if isinstance(root, pathlib.Path):
+#         root = root.resolve()
+#         if zipfile.is_zipfile(root):
+#             # set root to extracted zip package
+#             _, _, root = extract_resource_package(root)
+#     elif isinstance(root, bytes):
+#         root = pathlib.Path().resolve()
 
-    raw_rd.root_path = root
-    raw_rd = RelativePathTransformer(root=root).transform(raw_rd)
+#     raw_rd.root_path = root
+#     raw_rd = RelativePathTransformer(root=root).transform(raw_rd)
 
-    return raw_rd
-
-
-def serialize_raw_resource_description_to_dict(
-    raw_rd: RawResourceDescription, convert_absolute_paths: bool = False
-) -> dict:
-    """serialize a raw nodes resource description to a dict with the content of a resource description file (RDF).
-    If 'convert_absolute_paths' all absolute paths are converted to paths relative to raw_rd.root_path before
-    serialization.
-    """
-    class_name = get_class_name_from_type(raw_rd.type)
-    sub_spec = _get_spec_submodule(raw_rd.type, raw_rd.format_version)
-    schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
-
-    if convert_absolute_paths:
-        raw_rd = AbsoluteToRelativePathTransformer(root=raw_rd.root_path).transform(raw_rd)
-
-    serialized = schema.dump(raw_rd)
-    assert isinstance(serialized, dict)
-    assert missing not in serialized.values()
-
-    return serialized
-
-
-def get_description_class(type_: str, format_version: str = "latest"):
-    if type_ == "generic":
-        return ""
-    else:
-        return type_.title()
+#     return raw_rd
