@@ -63,8 +63,8 @@ class Person(Node):
     github_user: Optional[str] = None
     """GitHub user name"""
     orcid: Optional[OrcidId] = Field(None, examples=["0000-0001-2345-6789"])
-    """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID)
-    in hyphenated groups of 4 digits, (and [valid](
+    """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
+    ) in hyphenated groups of 4 digits, (and [valid](
     https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
     ) as per ISO 7064 11,2.)
     """
@@ -171,7 +171,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         (),
         examples=[],
         description=(
-            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
+            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
             f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
         in_package=True,
@@ -179,8 +179,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     """Cover images."""
 
     id: Optional[str] = None
-    """bioimage.io wide, unique identifier assigned by the
-    [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
+    """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
     authors: Annotated[Tuple[Author, ...], warn(MinLen(1), WARNING, "Please specify at least one author.")] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
@@ -226,8 +225,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
     an altered rdf.yaml file with local references to the downloaded files)"""
 
-    download_url: Union[HttpUrl, None] = None
-    """optional URL to download the resource from (deprecated)"""
+    download_url: Optional[HttpUrl] = None
+    """URL to download the resource from (deprecated)"""
 
     git_repo: Optional[str] = Field(
         None,
@@ -280,7 +279,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     """Base path or URL for any relative paths specified in the RDF"""
 
     tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
-    """"Associated tags"""
+    """Associated tags"""
 
     @as_warning
     @field_validator("tags")

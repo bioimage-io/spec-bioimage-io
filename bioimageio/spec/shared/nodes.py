@@ -16,9 +16,7 @@ from typing import (
     Iterator,
     Literal,
     Optional,
-    Sequence,
     Set,
-    Tuple,
     Type,
     TypeVar,
     Union,
@@ -27,21 +25,17 @@ from typing import (
 
 import pydantic
 from pydantic import (
-    BaseModel,
     Field,
     GetCoreSchemaHandler,
     TypeAdapter,
     ValidationInfo,
-    field_validator,
-    model_serializer,
-    model_validator,
 )
 from pydantic.config import ConfigDict
-from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 from typing_extensions import Self, Unpack
 
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec.shared.types import RawDict, RawValue
 from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
@@ -74,10 +68,54 @@ class Node(
     )
     """pydantic model config"""
 
-    def model_post_init(self, __context: Any):
-        super().model_post_init(__context)
-        self._set_undefined_field_descriptions_from_var_docstrings()
-        self._set_defaults_for_undefined_field_descriptions()
+    @classmethod
+    def __pydantic_init_subclass__(cls, **kwargs: Any):
+        super().__pydantic_init_subclass__(**kwargs)
+        cls._set_undefined_field_descriptions_from_var_docstrings()
+        # cls._set_defaults_for_undefined_field_descriptions()
+
+    @classmethod
+    def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
+        for klass in inspect.getmro(cls):
+            if issubclass(klass, Node):
+                cls._set_undefined_field_descriptions_from_var_docstrings_impl(klass)
+
+    @classmethod
+    def _set_undefined_field_descriptions_from_var_docstrings_impl(cls, klass: Type[Any]):
+        module = ast.parse(inspect.getsource(klass))
+        assert isinstance(module, ast.Module)
+        class_def = module.body[0]
+        assert isinstance(class_def, ast.ClassDef)
+        if len(class_def.body) < 2:
+            return
+        for last, node in zip(class_def.body, class_def.body[1:]):
+            if not (
+                isinstance(last, ast.AnnAssign) and isinstance(last.target, ast.Name) and isinstance(node, ast.Expr)
+            ):
+                continue
+
+            field_name = last.target.id
+            if field_name not in cls.model_fields:
+                continue
+
+            info = cls.model_fields[field_name]
+            description = info.description or ""
+            if description and description != IN_PACKAGE_MESSAGE:
+                continue
+
+            doc_node = node.value
+            if isinstance(doc_node, ast.Constant):
+                docstring = doc_node.value
+            else:
+                raise NotImplementedError(doc_node)
+
+            info.description = description + docstring
+
+    @classmethod
+    def _set_defaults_for_undefined_field_descriptions(cls):
+        for name, info in cls.model_fields.items():
+            if info.description is None:
+                info.description = name
 
     def model_dump(
         self,
@@ -128,59 +166,6 @@ class Node(
             round_trip=round_trip,
             warnings=warnings,
         )
-
-    def _set_undefined_field_descriptions_from_var_docstrings(self) -> None:
-        module = ast.parse(inspect.getsource(self.__class__))
-        assert isinstance(module, ast.Module)
-        class_def = module.body[0]
-        assert isinstance(class_def, ast.ClassDef)
-        if len(class_def.body) < 2:
-            return
-
-        for last, node in zip(class_def.body, class_def.body[1:]):
-            if not (
-                isinstance(last, ast.AnnAssign) and isinstance(last.target, ast.Name) and isinstance(node, ast.Expr)
-            ):
-                continue
-
-            field_name = last.target.id
-            if field_name not in self.model_fields:
-                continue
-
-            info = self.model_fields[field_name]
-            if info.description is not None:
-                continue
-
-            doc_node = node.value
-            if isinstance(doc_node, ast.Constant):
-                docstring = doc_node.value  # 'regular' variable doc string
-            # elif isinstance(doc_node, (ast.JoinedStr, ast.FormattedValue)):
-            #     docstring = eval(ast.unparse(doc_node))  # evaluate f-string
-            else:
-                raise NotImplementedError(doc_node)
-
-            info.description = docstring
-
-    def _set_defaults_for_undefined_field_descriptions(self):
-        for name, info in self.model_fields.items():
-            if info.description is None:
-                info.description = name
-
-    # @classmethod
-    # def generate_documentation(cls: Type[Node], lvl: int = 0):
-    #     cls.__na
-    # doc = f"{'#'*lvl} {cls.__name__}"
-    # doc = ""
-    # doc += f"# {cls.__name__}\n\n"
-    # doc += f"{cls.Doc.short_description}\n\n"
-    # doc += f"{cls.Doc.long_description}\n\n"
-    # doc += "## Fields\n\n"
-    # for name, field in cls.__fields__.items():
-    #     field_info: pd.fields.FieldInfo = field.field_info
-    #     doc += f"### {name}\n\n"
-    #     doc += f"{field_info.description}\n\n"
-    #     for constraint in field_info.get_constraints():
-    #         doc += f"* constraint : `{constraint} = {getattr(field_info, constraint)}`\n\n"
 
 
 class ResourceDescriptionBase(Node):

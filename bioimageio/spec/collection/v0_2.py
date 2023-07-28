@@ -39,8 +39,7 @@ class CollectionEntryBase(Node):
 
     id: Optional[NonEmpty[str]] = None
     """Collection entry sub id overwriting `rdf_source.id`.
-    The full collection entry id is this <sub id> appended to the collection's <base id>:
-    full_id=<base id>/<sub id>"""
+    The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
     @property
     def rdf_update(self) -> Dict[str, RawValue]:
@@ -95,9 +94,8 @@ class CollectionEntry(CollectionEntryBase):
 
 
 class Collection(GenericBase):
-    """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
-    resources.
-    The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
+    """A bioimage.io collection describes several other bioimage.io resources.
+    Note that collections cannot be nested; resources listed under `collection` may not be collections themselves.
     """
 
     model_config = ConfigDict(

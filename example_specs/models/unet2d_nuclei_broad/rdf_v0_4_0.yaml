@@ -14,7 +14,6 @@ maintainers:
   - name: "Constantin Pape"
     github_user: constantinpape
 
-
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
   - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
@@ -29,20 +28,20 @@ license: MIT
 documentation: README.md
 covers: [cover0.png]
 attachments: {}
-timestamp: 2019-12-11T12:22:32Z  # ISO 8601
+timestamp: 2019-12-11T12:22:32Z # ISO 8601
 
 inputs:
   - name: raw
     description: raw input
-    axes: bcyx  # letters of axes in btczyx
+    axes: bcyx # letters of axes in btczyx
     data_type: float32
     data_range: [-.inf, .inf]
     shape: [1, 1, 512, 512]
-    preprocessing:  # list of preprocessing steps
-      - name: zero_mean_unit_variance  # name of preprocessing step
+    preprocessing: # list of preprocessing steps
+      - name: zero_mean_unit_variance # name of preprocessing step
         kwargs:
-          mode: per_sample      # mode in [fixed, per_dataset, per_sample]
-          axes: yx              # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+          mode: per_sample # mode in [fixed, per_dataset, per_sample]
+          axes: yx # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
 
 outputs:
   - name: probability
@@ -65,25 +64,25 @@ sample_inputs: [test_input.npy]
 sample_outputs: [test_output.npy]
 
 weights:
- pytorch_state_dict:
-   authors:
-     - name: "Constantin Pape;@bioimage-io"
-       affiliation: "EMBL Heidelberg"
-       orcid: "0000-0001-6562-7187"
-   sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-   source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
-   architecture: unet2d.py:UNet2d
-   architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
-   kwargs: {input_channels: 1, output_channels: 1}
- onnx:
-   sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
-   source: weights.onnx
-   opset_version: 12
-   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
- torchscript:
-   sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
-   source: weights.pt
-   parent: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+  pytorch_state_dict:
+    authors:
+      - name: "Constantin Pape;@bioimage-io"
+        affiliation: "EMBL Heidelberg"
+        orcid: "0000-0001-6562-7187"
+    source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
+    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    architecture: unet2d.py:UNet2d
+    architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
+    kwargs: { input_channels: 1, output_channels: 1 }
+  onnx:
+    source: weights.onnx
+    sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
+    opset_version: 12
+    parent: pytorch_state_dict
+  torchscript:
+    source: weights.pt
+    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
+    parent: pytorch_state_dict
 
 type: model
 version: 0.1.3

@@ -81,7 +81,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
         (),
         examples=[],
         description=(
-            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1. "
+            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
             f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
         ),
         in_package=True,

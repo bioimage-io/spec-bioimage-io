@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 
 import annotated_types
 from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo, constr
-from pydantic.functional_validators import AfterValidator, BeforeValidator
+from pydantic import functional_validators
 from pydantic_core import core_schema
 from typing_extensions import Annotated, LiteralString
 
@@ -22,6 +22,17 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
+
+
+class AfterValidator(functional_validators.AfterValidator):
+    def __str__(self):
+        return f"AfterValidator({self.func.__name__})"
+
+
+class BeforeValidator(functional_validators.BeforeValidator):
+    def __str__(self):
+        return f"BeforeValidator({self.func.__name__})"
+
 
 T = TypeVar("T")
 L = TypeVar("L", bound=LiteralString)
