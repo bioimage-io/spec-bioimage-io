@@ -657,8 +657,6 @@ class Model(GenericBaseNoSource):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
-    Like any RDF, a model RDF can be downloaded from or uploaded to the bioimage.io website and is produced or consumed
-    by bioimage.io-compatible consumers (e.g. image analysis software or another website).
     """
 
     model_config = ConfigDict(
