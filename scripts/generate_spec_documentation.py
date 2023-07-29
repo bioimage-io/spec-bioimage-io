@@ -126,18 +126,18 @@ class Field:
         self.rd_class = rd_class
 
     @property
-    def indent_symbol(self):
+    def indent_with_symbol(self):
+        spaces = " " * max(0, self.indent_level - 2)
         if len(self.loc) == 1:
-            return "##"
+            symbol = "## "
         else:
-            return "*"
+            symbol = "* "
+
+        return f"{spaces}{symbol}"
 
     @property
     def indent_level(self):
-        if len(self.loc) < 3:
-            return 0
-        else:
-            return (len(self.loc) - 2) * 2
+        return max(0, len(self.loc) - 1) * 2
 
     @property
     def indent_spaces(self):
@@ -185,14 +185,15 @@ class Field:
         if self.info.default is PydanticUndefined:
             return ""
         else:
-            return f" = {self.info.get_default(call_default_factory=True)}"
+            d = self.info.get_default(call_default_factory=True)
+            if d == "":
+                d = r"\<empty string\>"
+
+            return f" = {d}"
 
     @property
     def md(self) -> str:
-        ret = f"{self.indent_spaces}{self.indent_symbol} " + "\n".join(
-            [self.name + self.default, self.type_annotation, self.explanation]
-        )
-
+        nested = ""
         for subloc, subnode in get_subnodes(self.loc, self.info.annotation):
             sub_anno = AnnotationName(
                 annotation=subnode,
@@ -206,7 +207,15 @@ class Field:
                     "\n" + Field(subloc + (sfn,), sinfo, type_footnotes=self.type_footnotes, rd_class=self.rd_class).md
                 )
             if subfields:
-                ret += "\n" + self.indent_spaces + sub_anno + ":" + subfields
+                nested += "\n" + self.indent_spaces + sub_anno + ":" + subfields
+
+        if nested and self.indent_level == 0:
+            ret = (
+                f"{self.indent_with_symbol}{self.name}{self.default}\n<details><summary>{self.type_annotation}\n\n"
+                f"{self.explanation}\n\n</summary>\n{nested}\n</details>\n"
+            )
+        else:
+            ret = f"{self.indent_with_symbol}{self.name}{self.default}\n{self.type_annotation}\n{self.explanation}{nested}\n"
 
         return ret
 

@@ -192,7 +192,8 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
         return maintainers
 
     rdf_source: Optional[FileSource] = None
-    """resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from"""
+    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
+    Do not set this field in a YAML file."""
 
     root: Union[DirectoryPath, AnyUrl] = DirectoryPath()
     """Base path or URL for any relative paths specified in the RDF"""
