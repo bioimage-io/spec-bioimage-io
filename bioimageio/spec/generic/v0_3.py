@@ -143,7 +143,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """an icon for illustration"""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId],
+        Union[LicenseId, Annotated[DeprecatedLicenseId, "deprecated"]],
         warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
     ] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -199,7 +199,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """Base path or URL for any relative paths specified in the RDF"""
 
     tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
-    """"Associated tags"""
+    """Associated tags"""
 
     @as_warning
     @field_validator("tags")

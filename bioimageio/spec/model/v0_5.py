@@ -474,7 +474,7 @@ class Model(
         CapitalStr,
         warn(MaxLen(64)),
     ] = Field(pattern=r"\w+[\w\- ]*\w")
-    """"A human-readable name of this model.
+    """A human-readable name of this model.
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 

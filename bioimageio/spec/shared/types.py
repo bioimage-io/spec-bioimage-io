@@ -1,19 +1,28 @@
 from __future__ import annotations
 
 import pathlib
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
-from pydantic import AnyUrl, GetCoreSchemaHandler, HttpUrl, PydanticUserError, ValidationInfo, constr
-from pydantic import functional_validators
+from pydantic import (
+    AnyUrl,
+    GetCoreSchemaHandler,
+    HttpUrl,
+    PydanticUserError,
+    ValidationInfo,
+    constr,
+    functional_validators,
+)
 from pydantic_core import core_schema
 from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 from bioimageio.spec._internal._validate import (
+    SLOTS,
     RestrictCharacters,
     validate_datetime,
     validate_identifier,
@@ -24,14 +33,22 @@ from bioimageio.spec._internal._validate import (
 )
 
 
+@dataclass(frozen=True, **SLOTS)
 class AfterValidator(functional_validators.AfterValidator):
     def __str__(self):
         return f"AfterValidator({self.func.__name__})"
 
 
+@dataclass(frozen=True, **SLOTS)
 class BeforeValidator(functional_validators.BeforeValidator):
     def __str__(self):
         return f"BeforeValidator({self.func.__name__})"
+
+
+@dataclass(frozen=True, **SLOTS)
+class Predicate(annotated_types.Predicate):
+    def __str__(self):
+        return f"Predicate({self.func.__name__})"
 
 
 T = TypeVar("T")
@@ -51,7 +68,7 @@ OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 DeprecatedLicenseId = DeprecatedLicenseId
 Identifier = Annotated[
     NonEmpty[str],
-    annotated_types.LowerCase,
+    Predicate(str.islower),
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]

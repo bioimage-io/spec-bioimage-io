@@ -159,7 +159,7 @@ class WeightsEntryBase(Node):
     dependencies: Annotated[Optional[Dependencies], warn(None, ALERT)] = Field(
         None, examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]
     )
-    """"Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
+    """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
     parent: Optional[WeightsFormat] = Field(None, examples=["pytorch_state_dict"])
     """The source weights these weights were converted from.
@@ -708,7 +708,7 @@ class Model(GenericBaseNoSource):
         CapitalStr,
         warn(MaxLen(64), INFO),
     ]
-    """"A human-readable name of this model.
+    """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
     outputs: NonEmpty[Tuple[OutputTensor, ...]]
