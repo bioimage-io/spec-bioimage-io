@@ -1,5 +1,6 @@
 import collections
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
@@ -243,8 +244,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     ] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
-    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-    to discuss your intentions with the community."""
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
+    ) to discuss your intentions with the community."""
 
     @as_warning
     @field_validator("license", mode="after")
@@ -276,7 +277,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
     Do not set this field in a YAML file."""
 
-    root: Union[DirectoryPath, AnyUrl]
+    root: Union[DirectoryPath, AnyUrl] = Path()
     """Base path or URL for any relative paths specified in the RDF"""
 
     tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])

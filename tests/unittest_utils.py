@@ -58,9 +58,8 @@ class BaseTestCases:
                         ("python", st.expected_dump_python),
                         ("json", st.expected_dump_raw),
                     ]:
-                        with self.subTest(_dump_mode=mode):
-                            actual = node.model_dump(mode=mode, round_trip=True)
-                            assert expected is None or actual == expected, (actual, expected)
+                        actual = node.model_dump(mode=mode, round_trip=True)
+                        assert expected is None or actual == expected, (actual, expected)
 
         def test_invalid(self):
             for st in self.sub_tests:

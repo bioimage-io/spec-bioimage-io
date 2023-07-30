@@ -91,7 +91,7 @@ SAME_AS_TYPE = "<same as type>"
 
 
 class ParametrizedSize(Node):
-    """Describes a range of valid tensor axis sizes"""
+    """Describes a range of valid tensor axis sizes as `size = min + n*step."""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
@@ -108,7 +108,9 @@ class ParametrizedBatchSize(ParametrizedSize):
 
     min: Literal[1] = 1
     step: Literal[1] = 1
+    """Any batch size is allowed and only limited by available memory."""
     step_with: Literal["BATCH_AXES"] = "BATCH_AXES"
+    """All batch dimensions have to step jointly to match their size."""
 
 
 class SizeReference(Node):
@@ -129,7 +131,7 @@ class AxisBase(Node):
     type: Literal["batch", "channel", "index", "time", "space"]
 
     name: ShortId
-    """a unique name"""
+    """An axis name unique across all axes of one tensor."""
 
     description: Annotated[str, MaxLen(128)] = ""
 
@@ -150,6 +152,7 @@ class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
     name: ShortId = "batch"
     size: ParametrizedBatchSize = ParametrizedBatchSize()
+    """All batch axes size's must follow the ParametrizedBatchSize description."""
 
 
 class ChannelAxis(AxisBase):
@@ -218,14 +221,19 @@ class TensorValueBase(Node):
     """Brief descripiton of tensor values"""
 
 
+TVs = Union[
+    NonEmpty[Tuple[int, ...]], NonEmpty[Tuple[float, ...]], NonEmpty[Tuple[bool, ...]], NonEmpty[Tuple[str, ...]]
+]
+
+
 class NominalTensorValue(TensorValueBase):
     type: Literal["nominal"] = "nominal"
-    values: Tuple[Union[int, float, str, bool], ...]
+    values: TVs
 
 
 class OrdinalTensorValue(TensorValueBase):
     type: Literal["ordinal"] = "ordinal"
-    values: Tuple[Union[int, float, str, bool], ...]
+    values: TVs
     """values in ascending order"""
 
 
@@ -264,6 +272,30 @@ class TensorBase(Node):
 
     axes: Tuple[Axis, ...]
 
+    @field_validator("axes", mode="after")
+    @classmethod
+    def validate_axes(cls, axes: Tuple[Axis, ...]):
+        seen_types: Set[str] = set()
+        duplicate_axes_types: Set[str] = set()
+        for a in axes:
+            if a.type in ("time", "space"):
+                continue  # duplicates allowed
+
+            (duplicate_axes_types if a.type in seen_types else seen_types).add(a.type)
+
+        if duplicate_axes_types:
+            raise ValueError(f"Duplicate axis types: {duplicate_axes_types}")
+
+        seen_names: Set[str] = set()
+        duplicate_axes_names: Set[str] = set()
+        for a in axes:
+            (duplicate_axes_names if a.name in seen_names else seen_names).add(a.name)
+
+        if duplicate_axes_names:
+            raise ValueError(f"Duplicate axis names: {duplicate_axes_names}")
+
+        return axes
+
     test_tensor: FileSource
     """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
@@ -276,22 +308,66 @@ class TensorBase(Node):
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
-    values: Union[TensorValue, Tuple[TensorValue, ...]]
+    values: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]]
     """Description of tensor values, optionally per channel.
-    If specified per channel, `data_type` needs to match across channels for interval and ratio type values."""
+    If specified per channel, `data_type` needs to match/be compatible across channels."""
 
-    @field_validator("axes", mode="after")
+    @field_validator("values", mode="after")
     @classmethod
-    def validate_axes(cls, axes: Tuple[Axis, ...]):
-        seen: Set[str] = set()
-        duplicate_axes_names: Set[str] = set()
-        for a in axes:
-            (duplicate_axes_names if a.name in seen else seen).add(a.name)
+    def check_values_are_consistet(cls, value: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]]):
+        if not isinstance(value, tuple):
+            return value
 
-        if duplicate_axes_names:
-            raise ValueError(f"Duplicate axis names: {duplicate_axes_names}")
+        data_types = {
+            c: v.data_type for c, v in enumerate(value) if isinstance(v, (IntervalTensorValue, RatioTensorValue))
+        }
+        data_type_set = set(data_types.values())
+        if len(data_type_set) > 1:
+            raise ValueError(f"`data_type` values per channel {data_types} must match.")
 
-        return axes
+        data_value_types = {
+            c: type(v.values[0]).__name__
+            for c, v in enumerate(value)
+            if isinstance(v, (NominalTensorValue, OrdinalTensorValue))
+        }
+        data_value_type_set = set(data_value_types.values())
+        if len(data_value_type_set) > 1:
+            raise ValueError(f"`values` per channel {data_value_types} must be compatible.")
+
+        if not (data_type_set and data_value_type_set):
+            return value
+
+        values_type = data_value_type_set.pop()
+        data_type = data_type_set.pop()
+        for x in "3264u81":
+            data_type = data_type.replace(x, "")
+
+        if values_type != data_type:
+            raise ValueError(f"`values` of type '{values_type}' incompatible with `data_type` family '{data_type}'.")
+
+        return value
+
+    @field_validator("values", mode="after")
+    @classmethod
+    def check_values_match_channels(
+        cls, value: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]], info: FieldValidationInfo
+    ):
+        if not isinstance(value, tuple) or "axes" not in info.data:
+            return value
+
+        size = None
+        for a in info.data["axes"]:
+            if isinstance(a, ChannelAxis):
+                size = a.size
+                assert isinstance(size, int)
+                break
+        else:
+            return value
+
+        if len(value) != size:
+            raise ValueError(f"Got value descriptions for {len(value)} channels, but '{a.name}' axis has size {size}.")
+
+        return value
 
 
 class InputTensor(TensorBase):
@@ -401,10 +477,7 @@ class Model(
     generic.v0_3.GenericBaseNoSource
 ):  # todo: do not inherite from v0_4.Model, e.g. 'inputs' are not compatible
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
-
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
-    Like any RDF, a model RDF can be downloaded from or uploaded to the bioimage.io website and is produced or consumed
-    by bioimage.io-compatible consumers (e.g. image analysis software or another website).
     """
 
     model_config = ConfigDict(
@@ -422,7 +495,7 @@ class Model(
     """
 
     type: Literal["model"] = "model"
-    """specialized type 'model'"""
+    """Specialized resource type 'model'"""
 
     authors: NonEmpty[Tuple[v0_4.Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""

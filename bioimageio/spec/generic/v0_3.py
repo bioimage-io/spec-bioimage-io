@@ -1,4 +1,5 @@
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen
@@ -114,8 +115,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
         ],
     )
     """A field for custom configuration that can contain any keys not present in the RDF spec.
-    This means you should not store, for example, a github repo URL in `config` since we already have the
-    `git_repo` field defined in the spec.
+    This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
     it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
     for example:
@@ -129,9 +129,9 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
             macro_dir: path/to/macro/file
     ```
     If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
-    You may want to list linked files additionally under `attachments` to include them when packaging a resource
-    (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
-    an altered rdf.yaml file with local references to the downloaded files)"""
+    You may want to list linked files additionally under `attachments` to include them when packaging a resource.
+    (Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
+    an altered rdf.yaml file with local references to the downloaded files.)"""
 
     git_repo: Optional[str] = Field(
         None,
@@ -148,8 +148,8 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     ] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
-    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-    to discuss your intentions with the community."""
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
+    ) to discuss your intentions with the community."""
 
     @as_warning
     @field_validator("license", mode="after")
@@ -195,7 +195,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
     Do not set this field in a YAML file."""
 
-    root: Union[DirectoryPath, AnyUrl] = DirectoryPath()
+    root: Union[DirectoryPath, AnyUrl] = Path()
     """Base path or URL for any relative paths specified in the RDF"""
 
     tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
@@ -261,7 +261,7 @@ ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNo
 class GenericBaseNoFormatVersion(GenericBaseNoSource):
     """GenericBase without a format version"""
 
-    source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
+    source: Optional[FileSource] = None
     """The primary source of the resource"""
 
 

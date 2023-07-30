@@ -674,7 +674,7 @@ class Model(GenericBaseNoSource):
     """
 
     type: Literal["model"] = "model"
-    """specialized type 'model'"""
+    """Specialized resource type 'model'"""
 
     authors: NonEmpty[Tuple[Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
@@ -701,8 +701,8 @@ class Model(GenericBaseNoSource):
     license: Annotated[Union[LicenseId, str], warn(LicenseId)] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
-    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-    to discuss your intentions with the community."""
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
+    ) to discuss your intentions with the community."""
 
     name: Annotated[
         CapitalStr,

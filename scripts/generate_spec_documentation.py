@@ -12,6 +12,7 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
 from bioimageio.spec import ResourceDescription, application, collection, dataset, generic, model, notebook
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec.shared.nodes import Node
 
 Loc = Tuple[str, ...]
@@ -19,13 +20,37 @@ Loc = Tuple[str, ...]
 ANNOTATION_MAP = {
     "pydantic_core._pydantic_core.Url": "Url",
     "typing.": "",
+    "pathlib.": "",
     "bioimageio.spec.shared.nodes.FrozenDictNode": "Dict",
     "bioimageio.spec.shared.types.": "",
+    "pydantic.networks.EmailStr": "Email",
     "bioimageio.spec.": "",
     "NoneType": "None",
     "Ellipsis": "...",
+    "PathType(path_type='dir')": "Directory",
 }
 MAX_LINE_WIDTH = 120
+
+ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
+    "\n**General notes on this documentation:**\n"
+    "| symbol | explanation |\n"
+    "| --- | --- |\n"
+    "| `field` = default | Default field values are indicated after '=' and make a field optional. "
+    "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
+    "and determine which bioimage.io specification applies. They are optional only when creating a resource "
+    "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"
+    "| `field`<sub>type hint</sub> | A fields's <sub>expected type</sub> may be shortened. "
+    "If so, the abbreviated or full type is displayed below the field's description and can expanded to view "
+    "further (nested) details if available. |\n"
+    "| Union[A, B, ...] | indicates that a field value may be of type A or B, etc.|\n"
+    "| Literal[a, b, ...] | indicates that a field value must be the specific value a or b, etc.|\n"
+    "| Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. "
+    "value restriction apply. These are listed in parentheses in the expanded type description. "
+    "They are not always intuitively understandable and merely a hint at more complex validation.|\n"
+    f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with '{IN_PACKAGE_MESSAGE}' "
+    "are included when packaging the resource to a .zip archive. "
+    "The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |\n"
+)
 
 
 def get_subnodes(loc: Loc, annotation: Any) -> Iterator[Tuple[Loc, Type[Node]]]:
@@ -97,7 +122,7 @@ class AnnotationName:
 
         return s.strip("'\"")
 
-    def more_common_name(self, type_name: str):
+    def more_common_sequence_name(self, type_name: str):
         bracket = type_name.find("[")
         if bracket == -1:
             first_part = type_name
@@ -136,25 +161,25 @@ class AnnotationName:
         if s.startswith("Optional["):
             return f"Optional[{self.get_name(get_args(t)[0], abbreviate, inline, multiline_level)}]"
 
-        for format_like_list in ["Union", "Tuple", "Literal", "Dict", "List", "Set"]:
-            if not s.startswith(format_like_list):
+        for format_like_seq in ["Union", "Tuple", "Literal", "Dict", "List", "Set"]:
+            if not s.startswith(format_like_seq):
                 continue
 
             args = get_args(t)
-            if format_like_list == "Tuple" and len(args) == 2 and args[1] == ...:
+            if format_like_seq == "Tuple" and len(args) == 2 and args[1] == ...:
                 args = args[:1]
 
-            format_like_list_name = self.more_common_name(format_like_list)
+            format_like_seq_name = self.more_common_sequence_name(format_like_seq)
 
             if len(args) > 4 and abbreviate:
                 args = [args[0], "...", args[-1]]
 
             parts = [self.get_name(tt, abbreviate, inline, multiline_level) for tt in args]
-            one_line = f"{format_like_list_name}[{', '.join(parts)}]"
+            one_line = f"{format_like_seq_name}[{', '.join(parts)}]"
             if abbreviate or inline or (self.indent_level + len(one_line) < MAX_LINE_WIDTH):
                 return one_line
 
-            first_line_descr = f"{format_like_list_name} of"
+            first_line_descr = f"{format_like_seq_name} of"
             if len(args) == 1:
                 more_maybe_multiline = self.get_name(
                     args[0], abbreviate=abbreviate, inline=inline, multiline_level=multiline_level
@@ -262,7 +287,7 @@ class Field:
         )
         first_line = f"{self.indent_with_symbol}{self.name}<sub> {an.kind}</sub>{self.default}\n"
         if (nested or an.abbreviated) and len(self.loc) <= self.STYLE_SWITCH_DEPTH:
-            if an.kind == an.full_inline:
+            if an.abbreviated is None:
                 expaned_type_anno = ""
             else:
                 expaned_type_anno = an.full_maybe_multiline + "\n"
@@ -273,7 +298,12 @@ class Field:
                 f"{expaned_type_anno}{nested}\n</details>\n"
             )
         else:
-            ret = f"{first_line}{self.explanation}\n{'' if an.kind == an.full_inline else an.full_inline}{nested}\n"
+            if an.kind == an.full_inline:
+                expaned_type_anno = ""
+            else:
+                expaned_type_anno = "\n" + an.full_inline
+
+            ret = f"{first_line}{self.explanation}\n{expaned_type_anno}{nested}\n"
 
         return ret
 
@@ -307,10 +337,21 @@ def unindent(text: str, ignore_first_line: bool = True):
 
 def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> Path:
     footnotes: OrderedDict[str, str] = OrderedDict()
-    md = "# " + (rd_class.model_config.get("title") or "") + "\n" + (unindent(rd_class.__doc__ or ""))
-    field_names = ["type", "format_version"] + [
-        fn for fn in rd_class.model_fields if fn not in ("type", "format_version")
-    ]
+    md = (
+        "# "
+        + (rd_class.model_config.get("title") or "")
+        + "\n"
+        + (unindent(rd_class.__doc__ or "") + ADDITIONAL_DESCRIPTION_ANY_RESOURCE)
+    )
+    all_fields = [(fn, info) for fn, info in rd_class.model_fields.items() if fn not in ("type", "format_version")]
+
+    def field_sort_key(fn_info: Tuple[str, FieldInfo]) -> Tuple[bool, str]:
+        fn, info = fn_info
+        return (info.get_default(call_default_factory=True) is not PydanticUndefined, fn)
+
+    all_fields = sorted(all_fields, key=field_sort_key)
+
+    field_names = ["type", "format_version"] + [fn for (fn, _) in all_fields]
     for field_name in field_names:
         info = rd_class.model_fields[field_name]
         md += "\n" + Field((field_name,), info, footnotes=footnotes, rd_class=rd_class).md
@@ -318,6 +359,9 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> P
     md += "\n"
     for i, full in enumerate(footnotes, start=1):
         md += f"\n[^{i}]: {full}"
+
+    if footnotes:
+        md += "\n"
 
     file_path = folder / get_documentation_file_name(rd_class)
     file_path.write_text(md, encoding="utf-8")

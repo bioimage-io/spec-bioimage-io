@@ -88,6 +88,7 @@ class Node(
         assert isinstance(class_def, ast.ClassDef)
         if len(class_def.body) < 2:
             return
+
         for last, node in zip(class_def.body, class_def.body[1:]):
             if not (
                 isinstance(last, ast.AnnAssign) and isinstance(last.target, ast.Name) and isinstance(node, ast.Expr)
@@ -177,6 +178,10 @@ class ResourceDescriptionBase(Node):
             self_instance=self,
             context=dict(context),
         )
+
+    @classmethod
+    def __pydantic_init_subclass__(cls, **kwargs: Any):
+        super().__pydantic_init_subclass__(**kwargs)
 
     @classmethod
     def _get_context_and_update_data(
