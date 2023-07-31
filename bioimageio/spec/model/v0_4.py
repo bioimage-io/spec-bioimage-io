@@ -315,7 +315,6 @@ class TensorBase(Node):
     """Tensor name. No duplicates are allowed."""
 
     description: str = ""
-    """Brief descripiton of the tensor"""
 
     axes: AxesStr
     """Axes identifying characters. Same length and order as the axes in `shape`.
@@ -371,9 +370,6 @@ class Processing(Node):  # todo: add ABC
             raise AssertionError("'name' field mandatory for raw data input.")
 
         return data
-
-    kwargs: ProcessingKwargs = ProcessingKwargs()
-    """key word arguments"""
 
 
 class BinarizeKwargs(ProcessingKwargs):
@@ -436,6 +432,11 @@ class Sigmoid(Processing):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
+
+    @property
+    def kwargs(self) -> ProcessingKwargs:
+        """empty kwargs"""
+        return ProcessingKwargs()
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):

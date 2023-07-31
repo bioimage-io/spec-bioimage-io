@@ -140,7 +140,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
-    """an icon for illustration"""
+    """An icon for illustration, e.g. on bioimage.io"""
 
     license: Annotated[
         Union[LicenseId, Annotated[DeprecatedLicenseId, "deprecated"]],
@@ -219,7 +219,7 @@ class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
     Hyphens and plus signs are not allowed to be compatible with
     https://packaging.pypa.io/en/stable/version.html.
-    The initial version should be `"0.1.0"`."""
+    The initial version should be '0.1.0'."""
 
     @classmethod
     def convert_from_older_format(cls, data: RawDict) -> None:

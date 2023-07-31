@@ -155,7 +155,6 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         return name.capitalize()
 
     description: str
-    """A string containing a brief description."""
 
     documentation: Union[FileSource, None] = Field(
         None,
@@ -236,7 +235,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
-    """an icon for illustration"""
+    """An icon for illustration"""
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
@@ -301,7 +300,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
     Hyphens and plus signs are not allowed to be compatible with
     https://packaging.pypa.io/en/stable/version.html.
-    The initial version should be `"0.1.0"`."""
+    The initial version should be '0.1.0'."""
 
     @classmethod
     def convert_from_older_format(cls, data: RawDict) -> None:

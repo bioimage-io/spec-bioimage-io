@@ -47,11 +47,11 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
 ResourceDescriptionV0_3 = Union[
     Annotated[
         Union[
-            application.v0_2.Application,
-            collection.v0_2.Collection,
-            dataset.v0_2.Dataset,
-            model.v0_4.Model,
-            notebook.v0_2.Notebook,
+            application.v0_3.Application,
+            collection.v0_3.Collection,
+            dataset.v0_3.Dataset,
+            model.v0_5.Model,
+            notebook.v0_3.Notebook,
         ],
         Field(discriminator="type"),
     ],

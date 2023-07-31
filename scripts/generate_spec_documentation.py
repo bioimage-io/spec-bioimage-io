@@ -5,7 +5,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Dict, Iterator, Optional, Tuple, Type, get_args
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, get_args
 
 from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
@@ -47,10 +47,20 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "| Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. "
     "value restriction apply. These are listed in parentheses in the expanded type description. "
     "They are not always intuitively understandable and merely a hint at more complex validation.|\n"
+    r"| \<type\>.v\<major\>_\<minor\>.\<sub spec\> | "
+    "Subparts of a spec might be taken from another spec type or format version. |\n"
     f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with '{IN_PACKAGE_MESSAGE}' "
     "are included when packaging the resource to a .zip archive. "
     "The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |\n"
 )
+
+
+def anchor_tag(heading: str):
+    a = heading.strip().strip("#")
+    for rm in ",;!?./<>=`'\"":
+        a = a.replace(rm, "")
+
+    return "#" + a.replace(" ", "-")
 
 
 def get_subnodes(loc: Loc, annotation: Any) -> Iterator[Tuple[Loc, Type[Node]]]:
@@ -197,7 +207,13 @@ class Field:
     STYLE_SWITCH_DEPTH = 4
 
     def __init__(
-        self, loc: Loc, info: FieldInfo, *, footnotes: OrderedDict[str, str], rd_class: type[ResourceDescription]
+        self,
+        loc: Loc,
+        info: FieldInfo,
+        *,
+        footnotes: OrderedDict[str, str],
+        rd_class: type[ResourceDescription],
+        all_examples: List[Tuple[str, List[Any]]],
     ) -> None:
         assert loc
         self.loc = loc
@@ -205,6 +221,7 @@ class Field:
         self.footnotes = footnotes
         self.annotation_map = {f"{rd_class.__module__}.": "", **ANNOTATION_MAP}
         self.rd_class = rd_class
+        self.all_examples = all_examples
 
     @property
     def indent_with_symbol(self):
@@ -232,28 +249,37 @@ class Field:
         else:
             return f'<a id="{n}"></a>`{n}`'
 
-    @property
-    def title(self):
-        return self.info.title or ""
-
-    @property
-    def description(self):
-        return unindent(self.info.description or "")
-
-    @property
-    def explanation(self):
+    def get_explanation(self):
+        title = self.info.title or ""
+        description = unindent(self.info.description or "")
         ret = self.indent_spaces
-        if self.info.title:
-            ret += f"{self.title}: "
-            if "\n" in self.description or len(ret) + len(self.description) > MAX_LINE_WIDTH:
+        if title:
+            ret += f"{title}: "
+            if "\n" in description or len(ret) + len(description) > MAX_LINE_WIDTH:
                 ret += "\n"
 
-        ret += self.description
+        ret += description.strip() + "\n"
+
+        if self.info.examples:
+            ex = "Example" if len(self.info.examples) == 1 else "Examples"
+            ex = f"*{ex}:*"
+            if len(self.info.examples) == 1:
+                e = self.info.examples[0]
+                example_inline = f"'{e}'" if isinstance(e, str) else str(e)
+            else:
+                example_inline = str(self.info.examples)
+                if self.indent_level + len(example_inline) > MAX_LINE_WIDTH:
+                    for i in range(len(self.info.examples) - 1, 0, -1):
+                        example_inline = str(self.info.examples[:i] + ["…"])
+                        if self.indent_level + len(example_inline) <= MAX_LINE_WIDTH:
+                            break
+
+            ret += f"[{ex}]({anchor_tag(self.name)}) {example_inline}\n"
+            self.all_examples.append((self.name, self.info.examples))
 
         return ret.replace("\n", self.indent_spaces + "\n")
 
-    @property
-    def default(self):
+    def get_default_value(self):
         if self.info.default is PydanticUndefined:
             return ""
         else:
@@ -263,8 +289,7 @@ class Field:
 
             return f" = {d}"
 
-    @property
-    def md(self) -> str:
+    def get_md(self) -> str:
         nested = ""
         for subloc, subnode in get_subnodes(self.loc, self.info.annotation):
             sub_anno = AnnotationName(
@@ -275,9 +300,18 @@ class Field:
             ).full_inline
             subfields = ""
             for sfn, sinfo in subnode.model_fields.items():
-                subfields += "\n" + Field(subloc + (sfn,), sinfo, footnotes=self.footnotes, rd_class=self.rd_class).md
+                subfields += (
+                    "\n"
+                    + Field(
+                        subloc + (sfn,),
+                        sinfo,
+                        footnotes=self.footnotes,
+                        rd_class=self.rd_class,
+                        all_examples=self.all_examples,
+                    ).get_md()
+                )
             if subfields:
-                nested += "\n" + self.indent_spaces + sub_anno + ":" + subfields
+                nested += f"\n{self.indent_spaces}**{sub_anno}:**{subfields}"
 
         an = AnnotationName(
             annotation=self.info.annotation,
@@ -285,7 +319,7 @@ class Field:
             indent_level=self.indent_level,
             annotation_map=self.annotation_map,
         )
-        first_line = f"{self.indent_with_symbol}{self.name}<sub> {an.kind}</sub>{self.default}\n"
+        first_line = f"{self.indent_with_symbol}{self.name}<sub> {an.kind}</sub>{self.get_default_value()}\n"
         if (nested or an.abbreviated) and len(self.loc) <= self.STYLE_SWITCH_DEPTH:
             if an.abbreviated is None:
                 expaned_type_anno = ""
@@ -293,7 +327,7 @@ class Field:
                 expaned_type_anno = an.full_maybe_multiline + "\n"
 
             ret = (
-                f"{first_line}{self.explanation}\n"
+                f"{first_line}{self.get_explanation()}\n"
                 f"<details><summary>{an.abbreviated or an.full_inline}\n\n</summary>\n\n"
                 f"{expaned_type_anno}{nested}\n</details>\n"
             )
@@ -303,7 +337,7 @@ class Field:
             else:
                 expaned_type_anno = "\n" + an.full_inline
 
-            ret = f"{first_line}{self.explanation}\n{expaned_type_anno}{nested}\n"
+            ret = f"{first_line}{self.get_explanation()}\n{expaned_type_anno}{nested}\n"
 
         return ret
 
@@ -337,6 +371,7 @@ def unindent(text: str, ignore_first_line: bool = True):
 
 def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> Path:
     footnotes: OrderedDict[str, str] = OrderedDict()
+    all_examples: List[Tuple[str, List[Any]]] = []
     md = (
         "# "
         + (rd_class.model_config.get("title") or "")
@@ -354,11 +389,24 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> P
     field_names = ["type", "format_version"] + [fn for (fn, _) in all_fields]
     for field_name in field_names:
         info = rd_class.model_fields[field_name]
-        md += "\n" + Field((field_name,), info, footnotes=footnotes, rd_class=rd_class).md
+        md += (
+            "\n"
+            + Field((field_name,), info, footnotes=footnotes, rd_class=rd_class, all_examples=all_examples).get_md()
+        )
 
     md += "\n"
     for i, full in enumerate(footnotes, start=1):
         md += f"\n[^{i}]: {full}"
+
+    if all_examples:
+        md += "# Example values\n"
+        for name, examples in all_examples:
+            if len(examples) == 1:
+                formatted_examples = str(examples[0])
+            else:
+                formatted_examples = "".join(f"- {ex}\n" for ex in examples)
+
+            md += f"### {name}\n{formatted_examples}\n"
 
     if footnotes:
         md += "\n"

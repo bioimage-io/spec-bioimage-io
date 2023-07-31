@@ -218,7 +218,6 @@ OutputAxis = Annotated[
 
 class TensorValueBase(Node):
     description: Annotated[str, MaxLen(128)] = ""
-    """Brief descripiton of tensor values"""
 
 
 TVs = Union[
@@ -268,7 +267,6 @@ class TensorBase(Node):
     """Tensor name. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
-    """Brief descripiton of the tensor"""
 
     axes: Tuple[Axis, ...]
 

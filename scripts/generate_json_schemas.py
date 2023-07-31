@@ -7,15 +7,6 @@ from pydantic import ConfigDict, TypeAdapter
 import bioimageio.spec
 
 
-def export_json_schemas(folder: Path):
-    export_json_schemas_from_type(
-        folder,
-        bioimageio.spec.ResourceDescription,
-        name="bioimageio_spec",
-        title=f"bioimage.io resource description {bioimageio.spec.__version__}",
-    )
-
-
 def export_json_schemas_from_type(folder: Path, type_: Any, *, name: str, title: str):
     adapter = TypeAdapter(
         type_,
@@ -37,4 +28,9 @@ if __name__ == "__main__":
     dist = (Path(__file__).parent / "../dist").resolve()
     dist.mkdir(exist_ok=True)
 
-    export_json_schemas(dist)
+    export_json_schemas_from_type(
+        dist,
+        bioimageio.spec.ResourceDescription,
+        name="bioimageio_spec",
+        title=f"bioimage.io resource description {bioimageio.spec.__version__}",
+    )
