@@ -1,4 +1,3 @@
-import collections
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
@@ -353,11 +352,11 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         here we remove this 'prefix'"""
         DOI_PREFIX = "https://doi.org/"
         cite = data.get("cite")
-        if isinstance(cite, collections.Sequence):
+        if isinstance(cite, Sequence):
             new_cite = list(cite)
             for i in range(len(new_cite)):
                 cite_entry = new_cite[i]
-                if not isinstance(cite_entry, collections.Mapping):
+                if not isinstance(cite_entry, Mapping):
                     continue
 
                 doi = cite_entry.get("doi")

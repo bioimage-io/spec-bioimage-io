@@ -132,10 +132,10 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
     rdf["tags"] = tags
 
     docs = plugin_config.get("docs")
-#     if isinstance(docs, dict):
-#         rdf["documentation"] = docs.get("content")
-#     elif isinstance(docs, str):
-#         rdf["documentation"] = docs
+    #     if isinstance(docs, dict):
+    #         rdf["documentation"] = docs.get("content")
+    #     elif isinstance(docs, str):
+    #         rdf["documentation"] = docs
     rdf["covers"] = plugin_config.get("cover")
     # make sure we have a list
     if not rdf["covers"]:

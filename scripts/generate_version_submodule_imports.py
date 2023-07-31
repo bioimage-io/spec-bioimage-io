@@ -4,6 +4,7 @@ import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 import black.files
 import black.mode
@@ -38,12 +39,11 @@ AUTOGEN_STOP = "# autogen: stop\n"
 VERSION_MODULE_PATTERN = r"v(?P<major>\d+)_(?P<minor>\d+).py"
 
 
-def main():
-    args = parse_args()
+def main(command: Literal["check", "generate"]):
     for target in ["generic", "model", "dataset", "collection", "notebook", "application"]:
         process(
             Info(target=target, all_version_modules=get_ordered_version_submodules(target)),
-            check=args.command == "check",
+            check=command == "check",
         )
 
     return 0
@@ -121,4 +121,5 @@ def get_ordered_version_submodules(target: str):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    args = parse_args()
+    sys.exit(main(args.command))

@@ -1,5 +1,6 @@
 __pycache__/
 .vscode
-tmp
 *.egg-info/
 dist
+tests/cache
+tmp

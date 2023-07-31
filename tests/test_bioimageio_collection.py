@@ -1,7 +1,7 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Tuple
+from typing import Any, ClassVar, Dict, Tuple
 from unittest import TestCase
 
 import pooch  # type: ignore
@@ -14,10 +14,11 @@ from bioimageio.spec.utils import check_type_and_format_version
 
 yaml = YAML(typ="safe")
 
-CURRENT_DATE = str(datetime.datetime.now().date())
+WEEK = f"{datetime.datetime.now().year}week{datetime.datetime.now().isocalendar()[1]}"
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
 RDF_BASE_URL = BASE_URL + "rdfs/"
 RDF_FILE_NAME = "rdf.yaml"
+CACHE_PATH = Path(__file__).parent / "cache" / WEEK
 
 
 class TestBioimageioCollectionMeta(type):
@@ -29,7 +30,7 @@ class TestBioimageioCollectionMeta(type):
             entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
         }
         collection = pooch.create(  # type: ignore
-            path=pooch.os_cache("bioimageio-collection") / CURRENT_DATE,  # type: ignore
+            path=CACHE_PATH,
             base_url=RDF_BASE_URL,
             registry=collection_registry,
         )
