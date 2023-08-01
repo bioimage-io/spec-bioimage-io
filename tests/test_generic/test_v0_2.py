@@ -84,6 +84,13 @@ class TestCiteEntry(BaseTestCases.TestNode):
     sub_tests = [
         Valid(dict(text="lala", url=EXAMPLE_DOT_COM)),
         Valid(dict(text="lala", doi="10.1234fakedoi")),
+        Valid(
+            dict(
+                text="Title",
+                doi="https://doi.org/10.1109/5.771073",
+                url="https://ieeexplore.ieee.org/document/771073",
+            )
+        ),
         Invalid(dict(text="lala")),
         Invalid(dict(url=EXAMPLE_DOT_COM)),
     ]

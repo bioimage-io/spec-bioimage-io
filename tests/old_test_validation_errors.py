@@ -2,21 +2,6 @@
 from bioimageio.spec.shared import yaml
 
 
-def test_list_instead_of_nested_schema(unet2d_nuclei_broad_latest):
-    from bioimageio.spec.utils import validate
-
-    assert yaml is not None
-    data = yaml.load(unet2d_nuclei_broad_latest)
-
-    # set wrong run_mode (list)
-    data["run_mode"] = [{"name": "something"}]
-
-    error = validate(data)["error"]
-    assert isinstance(error, dict)
-    assert len(error) == 1
-    assert error["run_mode"] == ["Expected dictionary, but got list."]
-
-
 def test_forward_compatibility_error(unet2d_fixed_shape):
     from bioimageio.spec.utils import validate
 

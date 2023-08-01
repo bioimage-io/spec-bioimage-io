@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.model.v0_5 import ModelRdf, TensorBase
+from bioimageio.spec.model.v0_5 import InputTensor, ModelRdf, TensorBase
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
@@ -28,7 +28,7 @@ class TestTensorBase(BaseTestCases.TestNode):
     sub_tests = [
         Valid(
             dict(
-                name="tensor",
+                name="t1",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 values={"type": "nominal", "values": ["cat", "dog", "parrot"]},
@@ -36,7 +36,7 @@ class TestTensorBase(BaseTestCases.TestNode):
         ),
         Valid(
             dict(
-                name="tensor",
+                name="t2",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 values=[
@@ -47,7 +47,7 @@ class TestTensorBase(BaseTestCases.TestNode):
         ),
         Valid(
             dict(
-                name="tensor",
+                name="t3",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 values=[
@@ -58,7 +58,7 @@ class TestTensorBase(BaseTestCases.TestNode):
         ),
         Invalid(
             dict(
-                name="tensor",
+                name="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 values=[
@@ -70,7 +70,7 @@ class TestTensorBase(BaseTestCases.TestNode):
         ),
         Invalid(
             dict(
-                name="tensor",
+                name="t5",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 values=[
@@ -82,7 +82,7 @@ class TestTensorBase(BaseTestCases.TestNode):
         ),
         Invalid(
             dict(
-                name="tensor",
+                name="t6",
                 axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
                 test_tensor="https://example.com/test.npy",
                 values=[
@@ -91,5 +91,29 @@ class TestTensorBase(BaseTestCases.TestNode):
                 ],
             ),
             name="channel mismatch",
+        ),
+    ]
+
+
+class TestInputTensor(BaseTestCases.TestNode):
+    default_node_class = InputTensor
+    sub_tests = [
+        Valid(
+            {
+                "name": "input_1",
+                "description": "Input 1",
+                "data_type": "float32",
+                "axes": [
+                    dict(type="space", name="x", size=10),
+                    dict(type="space", name="y", size=11),
+                    dict(type="channel", channel_names=tuple("abc")),
+                ],
+                "preprocessing": [
+                    {
+                        "name": "scale_range",
+                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                    }
+                ],
+            }
         ),
     ]

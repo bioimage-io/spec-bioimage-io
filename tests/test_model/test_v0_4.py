@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.model.v0_4 import LinkedModel, ModelRdf, OnnxEntry, ScaleLinearKwargs
+from bioimageio.spec.model.v0_4 import InputTensor, LinkedModel, ModelRdf, OnnxEntry, OutputTensor, ScaleLinearKwargs
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
 from tests.unittest_utils import BaseTestCases, Invalid, Valid
@@ -69,4 +69,66 @@ class TestScaleLinearKwargs(BaseTestCases.TestNode):
         Invalid(dict(), name="empty kwargs"),
         Invalid(dict(gain=1.0)),
         Invalid(dict(offset=0.0)),
+    ]
+
+
+class TestInputTensor(BaseTestCases.TestNode):
+    default_node_class = InputTensor
+    sub_tests = [
+        Valid(
+            {
+                "name": "input_1",
+                "description": "Input 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+                "preprocessing": [
+                    {
+                        "name": "scale_range",
+                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                    }
+                ],
+            }
+        ),
+        Valid(
+            {
+                "name": "input_1",
+                "description": "Input 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+            },
+        ),
+        Valid({"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}),
+    ]
+
+
+class TestOutputTensor(BaseTestCases.TestNode):
+    default_node_class = OutputTensor
+    sub_tests = [
+        Valid(
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+                "postprocessing": [
+                    {
+                        "name": "scale_range",
+                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                    }
+                ],
+            }
+        ),
+        Valid(
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+            },
+        ),
+        Valid({"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]}),
     ]
