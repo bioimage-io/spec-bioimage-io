@@ -18,7 +18,6 @@ from pydantic import (
     ConfigDict,
     FieldValidationInfo,
     HttpUrl,
-    TypeAdapter,
     field_validator,
     model_validator,
 )
@@ -214,7 +213,7 @@ class PytorchStateDictEntry(WeightsEntryBase):
 
         return self
 
-    kwargs: FrozenDictNode[NonEmpty[str], Any] = Field(default_factory=dict)
+    kwargs: Kwargs = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
@@ -344,7 +343,7 @@ _MODE_DESCR_WO_FIXED = """Mode for computing mean and variance.
 | per_sample | mean and variance are computed for each sample individually |
 """
 
-_MODE_DESCR = (
+MODE_DESCR = (
     _MODE_DESCR_WO_FIXED
     + """
 | fixed | fixed values for mean and variance |
@@ -352,10 +351,8 @@ _MODE_DESCR = (
 )
 
 
-class ProcessingKwargs(Kwargs):
+class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any]):
     """base class for pre-/postprocessing key word arguments"""
-
-    # mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
 
 
 class Processing(Node):  # todo: add ABC
@@ -440,7 +437,7 @@ class Sigmoid(Processing):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=_MODE_DESCR)
+    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=MODE_DESCR)
     axes: AxesInCZYX = Field(examples=["xy"])
     """The subset of axes to normalize jointly.
     For example `xy` to normalize the two image axes for 2d data jointly."""

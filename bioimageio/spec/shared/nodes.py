@@ -4,6 +4,7 @@ from abc import ABC
 import ast
 import collections.abc
 import inspect
+from pathlib import Path
 import sys
 from collections import UserString
 from typing import (
@@ -30,13 +31,12 @@ from pydantic import (
     TypeAdapter,
     ValidationInfo,
 )
-from pydantic.config import ConfigDict
 from pydantic_core import core_schema
-from typing_extensions import Self, Unpack
+from typing_extensions import Self
 
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec.shared.types import RawDict, RawValue
+from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RawLeafValue
 from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 if TYPE_CHECKING:
@@ -170,6 +170,9 @@ class Node(
 
 
 class ResourceDescriptionBase(Node):
+    type: str
+    format_version: str
+
     def __init__(self, **data: Any) -> None:
         __tracebackhide__ = True
         context = self._get_context_and_update_data(data)
@@ -191,14 +194,23 @@ class ResourceDescriptionBase(Node):
             context = validation_context_var.get()
 
         if context.root:
-            if "root" in cls.model_fields:
-                data["root"] = context.root
+            root = context.root
         elif "root" in data:
-            context = ValidationContext(**{**dict(context), "root": data["root"]})
+            root = data["root"]
+        else:
+            root = Path()
+
+        if not context.root:
+            c: Dict[str, Any] = {**dict(context), "root": root}
+            context = ValidationContext(**c)
+
+        if "root" in cls.model_fields:
+            data["root"] = context.root
 
         original_format = data.get("format_version")
         if isinstance(original_format, str) and original_format.count(".") == 2:
-            context = context.model_copy(update=dict(original_format=tuple(map(int, original_format.split(".")))))
+            c = {**dict(context), "original_format": tuple(map(int, original_format.split(".")))}
+            context = ValidationContext(**c)
 
         cls.convert_from_older_format(data)
         return context
@@ -300,8 +312,6 @@ D = TypeVar("D")
 
 
 class FrozenDictNode(FrozenDictBase[K, V], Node):
-    model_config = {**Node.model_config, "extra": "allow"}
-
     def __getitem__(self, item: K) -> V:
         try:
             return getattr(self, item)
@@ -331,5 +341,5 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
         return self
 
 
-class Kwargs(FrozenDictNode[str, Any]):
-    pass
+class Kwargs(FrozenDictNode[NonEmpty[str], RawLeafValue]):
+    model_config = {**Node.model_config, "extra": "allow"}

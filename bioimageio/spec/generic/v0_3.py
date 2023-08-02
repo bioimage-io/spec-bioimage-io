@@ -17,7 +17,7 @@ from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import WARNING, as_warning, warn
 from bioimageio.spec.generic import v0_2
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -43,7 +43,7 @@ class LinkedResource(Node):
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericBaseNoSource(Node, metaclass=v0_2.GenericBaseNoSourceMeta):
+class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoSourceMeta):
     """GenericBaseNoFormatVersion without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)

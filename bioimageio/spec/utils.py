@@ -1,20 +1,12 @@
 import dataclasses
-from importlib.resources import Resource
-from multiprocessing import Value
-import os
 import traceback
-from types import MappingProxyType
-from urllib.parse import urljoin, urlparse
-import warnings
 from pathlib import Path, PurePath
+from types import MappingProxyType
 from typing import (
     Any,
-    Callable,
     Dict,
-    IO,
     List,
     Literal,
-    Mapping,
     Optional,
     Sequence,
     Tuple,
@@ -23,48 +15,36 @@ from typing import (
     Union,
     get_args,
 )
-from typing_extensions import LiteralString
-from pydantic import AnyUrl, HttpUrl, TypeAdapter
+from urllib.parse import urljoin, urlparse
+
 import pydantic
-from bioimageio.spec import __version__
+from pydantic import AnyUrl, HttpUrl
+
+from bioimageio.spec import (
+    ResourceDescription,
+    __version__,
+    application,
+    collection,
+    dataset,
+    generic,
+    model,
+    notebook,
+)
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import nest_dict, nest_dict_with_narrow_first_key
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
-from bioimageio.spec.shared.types import FileSource, Loc, RawMapping, RelativeFilePath
+from bioimageio.spec._internal._warn import WarningType
+from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
+from bioimageio.spec.shared.types import Loc, RawMapping, RelativeFilePath
 from bioimageio.spec.shared.validation import (
     LegacyValidationSummary,
     ValidationContext,
-    ValidationSummary,
     ValidationError,
+    ValidationSummary,
     ValidationWarning,
 )
 
-from bioimageio.spec import (
-    LatestResourceDescription,
-    ResourceDescription,
-    generic,
-    application,
-    collection,
-    model,
-    dataset,
-    notebook,
-    __version__,
-)
-from bioimageio.spec._internal._warn import WarningType, WARNING_LEVEL_CONTEXT_KEY, WarningLevel
-
-# from .collection.v0_2 import default_enrich_partial_rdf, resolve_collection_entries
-# from .io_ import (
-#     load_raw_resource_description,
-#     resolve_rdf_source,
-#     save_raw_resource_description,
-#     serialize_raw_resource_description_to_dict,
-# )
-# from .shared import update_nested
-# from .shared.common import ValidationSummary, ValidationWarning, nested_default_dict_as_nested_dict, yaml
-# from .shared.raw_nodes import ResourceDescription as RawResourceDescription, URI
-# from .v import __version__
-
 LATEST: Literal["latest"] = "latest"
+DISCOVER: Literal["discover"] = "discover"
 
 
 def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
@@ -89,9 +69,17 @@ def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
     return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
 
 
-def check_type_and_format_version(data: Dict[str, Any]) -> None:
-    if data["format_version"] not in get_supported_format_versions()[data["type"]]:
-        raise ValueError(f"Invalid format version '{data['format_version']}' for resource type '{data['type']}'")
+def check_type_and_format_version(data: RawMapping) -> Tuple[str, str]:
+    typ = data.get("type")
+    if not isinstance(typ, str):
+        raise ValueError(f"Invalid resource type '{typ}' of type {type(typ)}")
+
+    fv = data.get("format_version")
+    if fv not in (supp := get_supported_format_versions().get(typ, ())):
+        raise ValueError(f"Invalid format version '{fv}' for resource type '{typ}' (valid for type {typ}: {supp})")
+
+    assert isinstance(fv, str)
+    return typ, fv
 
 
 def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDescription]:
@@ -131,16 +119,16 @@ def update_format(
     return rd
 
 
-RD = TypeVar("RD", bound=ResourceDescription)
+RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext):
+def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValidationContext):
     rd: Optional[RD] = None
     error: Union[List[ValidationError], str, None] = None
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
     try:
-        rd = adapter.validate_python(resource_description, context=dataclasses.asdict(context))
+        rd = rd_class.model_validate(resource_description, context=dataclasses.asdict(context))
     except pydantic.ValidationError as e:
         val_errors: List[ValidationError] = []
         for ee in e.errors(include_url=False):
@@ -158,24 +146,27 @@ def _load_descr_impl(adapter: TypeAdapter[RD], resource_description: RawMapping,
     return rd, error, tb, val_warnings
 
 
-def _load_description_from_adapter(
-    adapter: TypeAdapter[RD], resource_description: RawMapping, context: ValidationContext
+def load_description_with_known_rd_class(
+    resource_description: RawMapping,
+    *,
+    context: ValidationContext = ValidationContext(),
+    rd_class: Type[RD],
 ) -> Tuple[Optional[RD], ValidationSummary]:
     rd, error, tb, val_warnings = _load_descr_impl(
-        adapter, resource_description, dataclasses.replace(context, **{WARNING_LEVEL_CONTEXT_KEY: 50})
+        rd_class,
+        resource_description,
+        ValidationContext(**context.model_dump(exclude={"warning_level"}), warning_level=50),
     )  # ignore any warnings using warning level 50 ('ERROR'/'CRITICAL') on first loading attempt
     if rd is None:
-        resource_type = resource_description.get("type", "unknown")
-        format_version = resource_description.get("format_version", "?.?.?")
+        resource_type = rd_class.model_fields["type"].default
+        format_version = rd_class.implemented_format_version
     else:
         resource_type = rd.type
         format_version = rd.format_version
         assert error is None, "got rd, but also an error"
         assert tb is None, "got rd, but also an error traceback"
         assert not val_warnings, "got rd, but also already warnings"
-        _, error2, tb2, val_warnings = _load_descr_impl(
-            adapter, resource_description, context
-        )  # may not return rd due to raised warnings
+        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, context)
         assert error2 is None, "increasing warning level caused errors"
         assert tb2 is None, "increasing warning level lead to error traceback"
 
@@ -197,41 +188,25 @@ def _load_description_from_adapter(
     return rd, summary
 
 
-def load_description_as_latest(
-    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
-    context: ValidationContext = ValidationContext(),
-) -> Tuple[LatestResourceDescription, ValidationSummary]:
-    """load a resource description in the latest available format.
-
-    If `root` is a path, relative file paths are checked for existence"""
-
-    return _load_description_from_adapter(TypeAdapter(LatestResourceDescription), resource_description, context)
-
-
 def load_description(
-    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    resource_description: RawMapping,
+    *,
     context: ValidationContext = ValidationContext(),
-) -> Tuple[ResourceDescription, ValidationSummary]:
-    """Validate a bioimage.io resource description, i.e. the content of a resource description file (RDF)."""
-
-    return _load_description_from_adapter(TypeAdapter(ResourceDescription), resource_description, context)
+    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
+    discovered_type, discovered_format_version = check_type_and_format_version(resource_description)
+    fv = discovered_format_version if format_version == DISCOVER else format_version
+    rd_class = get_rd_class(discovered_type, format_version=fv)
+    return load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
 
 
 def validate(
     resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
     context: ValidationContext = ValidationContext(),
-    update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
+    as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
-    if update_format:
-        out = load_description_as_latest(resource_description, context)
-    else:
-        out = load_description(resource_description, context)
-
-    if isinstance(out, ValidationSummary):
-        return out
-    else:
-        assert len(out._validation_summaries) == 1
-        return out._validation_summaries[0]
+    _, summary = load_description(resource_description, context=context, format_version=as_format)
+    return summary
 
 
 def validate_legacy(
@@ -243,20 +218,23 @@ def validate_legacy(
 
     The legacy validation summary contains any errors and warnings as nested dict."""
 
-    vs = validate(resource_description, context, update_format)
+    vs = validate(resource_description, context, LATEST if update_format else DISCOVER)
 
     error = vs["error"]
     legacy_error = (
-        error if (error is None or isinstance(error, str)) else nest_dict({e["loc"]: e["msg"] for e in error})
+        error
+        if (error is None or isinstance(error, str))
+        else nest_dict_with_narrow_first_key({e["loc"]: e["msg"] for e in error}, first_k=str)
     )
     tb = vs.get("traceback")
+    tb_list = None if tb is None else list(tb)
     return LegacyValidationSummary(
         bioimageio_spec_version=vs["bioimageio_spec_version"],
         error=legacy_error,
         name=vs["name"],
         source_name=vs["source_name"],
         status=vs["status"],
-        traceback=None if tb is None else list(tb),
+        traceback=tb_list,
         warnings=nest_dict({w["loc"]: w["msg"] for w in vs["warnings"]}) if "warnings" in vs else {},
     )
 
@@ -278,10 +256,10 @@ def prepare_to_package(
         which are referenced in the modfieid resource description.
         Important note: The serialized resource description itself (= an rdf.yaml file) is not included.
     """
-    if weights_priority_order is not None and isinstance(rd, model.AnyModel):
+    if weights_priority_order is not None and isinstance(rd, get_args(model.AnyModel)):
         # select single weights entry
         for w in weights_priority_order:
-            weights_entry = rd.weights.get(w)
+            weights_entry: Any = rd.weights.get(w)  # type: ignore
             if weights_entry is not None:
                 rd = rd.model_copy(update=dict(weights={w: weights_entry}))
                 break

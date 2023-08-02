@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, Mapping, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, Literal, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
@@ -52,9 +52,10 @@ class Predicate(annotated_types.Predicate):
 
 
 T = TypeVar("T")
+S = TypeVar("S", bound=Sequence[Any])
 L = TypeVar("L", bound=LiteralString)
 
-NonEmpty = Annotated[T, annotated_types.MinLen(1)]
+NonEmpty = Annotated[S, annotated_types.MinLen(1)]
 
 
 AxesStr = Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)]
@@ -83,6 +84,7 @@ SiUnit = Annotated[
     constr(min_length=1, pattern=SI_UNIT_REGEX),
     BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
 ]
+Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
 
@@ -98,7 +100,6 @@ class RelativePath:
     ) -> None:
         self._relative = path._relative if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
         self._root = root
-        self._check_exists()
 
     @property
     def __members(self):
@@ -161,7 +162,9 @@ class RelativePath:
                 f"but got {root} of type '{type(root)}'"
             )
 
-        return cls(value, root=root)
+        ret = cls(value, root=root)
+        ret._check_exists()
+        return ret
 
 
 class RelativeFilePath(RelativePath):

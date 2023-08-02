@@ -1,16 +1,16 @@
 import collections.abc
-from typing import Annotated, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
+from typing import Annotated, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Sequence, Set, Tuple, Union
 
-from annotated_types import Ge, Gt, MaxLen
-from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
+from annotated_types import Ge, Gt, Interval, MaxLen
+from pydantic import ConfigDict, FieldValidationInfo, HttpUrl, field_validator, model_validator
 
 from bioimageio.spec import generic
-from bioimageio.spec._internal._constants import SHA256_HINT
+from bioimageio.spec._internal._constants import DTYPE_LIMITS, SHA256_HINT
 from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
+from bioimageio.spec.shared.nodes import Kwargs, Node
 from bioimageio.spec.shared.types import (
     CapitalStr,
     Datetime,
@@ -19,9 +19,9 @@ from bioimageio.spec.shared.types import (
     LicenseId,
     NonEmpty,
     RawDict,
-    RawLeafValue,
+    RawValue,
     Sha256,
-    SiUnit,
+    Unit,
     Version,
 )
 
@@ -95,22 +95,11 @@ class ParametrizedSize(Node):
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
-    step_with: Union[TensorAxisId, Literal["BATCH_AXES"], None] = None
-    """name of another axis to resize jointly,
+    step_with: Optional[TensorAxisId] = None
+    """name of another axis with parametrixed size to resize jointly,
     i.e. `n=n_other` for `size = min + n*step`, `size_other = min_other + n_other*step_other`.
     To step with an axis of another tensor, use `step_with = <tensor name>.<axis name>`.
-    `step_with="BATCH_AXES"` is a special value to step jointly with all batch dimensions.
     """
-
-
-class ParametrizedBatchSize(ParametrizedSize):
-    """Any batch axis size must be parametrized by `min=1`, `step=1` and `step_with` all batch axes jointly."""
-
-    min: Literal[1] = 1
-    step: Literal[1] = 1
-    """Any batch size is allowed and only limited by available memory."""
-    step_with: Literal["BATCH_AXES"] = "BATCH_AXES"
-    """All batch dimensions have to step jointly to match their size."""
 
 
 class SizeReference(Node):
@@ -122,7 +111,7 @@ class SizeReference(Node):
     """
 
     reference: TensorAxisId
-    offset: Annotated[int, Ge(0)] = 0
+    offset: int = 0
 
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
@@ -135,11 +124,6 @@ class AxisBase(Node):
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    size: Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId]
-    """The axis size.
-    To specify that this axis' size equals another, an axis name can be given.
-    Specify another tensor's axis as `<tensor name>.<axis name>`."""
-
 
 class WithHalo(Node):
     halo: Annotated[int, Ge(0)] = 0
@@ -151,8 +135,6 @@ class WithHalo(Node):
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
     name: ShortId = "batch"
-    size: ParametrizedBatchSize = ParametrizedBatchSize()
-    """All batch axes size's must follow the ParametrizedBatchSize description."""
 
 
 class ChannelAxis(AxisBase):
@@ -167,12 +149,30 @@ class ChannelAxis(AxisBase):
         return super().model_post_init(__context)
 
 
-class IndexAxis(AxisBase):
+class IndexTimeSpaceAxisBase(AxisBase):
+    size: Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId] = Field(
+        examples=[
+            10,
+            "other_axis",
+            ParametrizedSize(min=32, step=16, step_with="other_tensor.axis").model_dump(),
+            SizeReference(reference="other_tensor.axis").model_dump(),
+            SizeReference(reference="other_axis", offset=8).model_dump(),
+        ]
+    )
+    """The size/length of an axis can be specified as
+    - fixed integer
+    - parametrized series of valid sizes (`ParametrizedSize`)
+    - axis reference '[tensor_name.]axis_name'
+    - axis reference with optional offset (`SizeReference`)
+    """
+
+
+class IndexAxis(IndexTimeSpaceAxisBase):
     type: Literal["index"] = "index"
     name: ShortId = "index"
 
 
-class TimeAxis(AxisBase):
+class TimeAxis(IndexTimeSpaceAxisBase):
     type: Literal["time"] = "time"
     name: ShortId = "time"
     unit: Optional[TimeUnit] = None
@@ -186,7 +186,7 @@ class TimeAxis(AxisBase):
         return value
 
 
-class SpaceAxis(AxisBase):
+class SpaceAxis(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
     name: ShortId = Field("x", examples=["x", "y", "z"])
     unit: Optional[SpaceUnit] = None
@@ -216,54 +216,238 @@ OutputAxis = Annotated[
 ]
 
 
-class TensorValueBase(Node):
-    description: Annotated[str, MaxLen(128)] = ""
-
-
 TVs = Union[
     NonEmpty[Tuple[int, ...]], NonEmpty[Tuple[float, ...]], NonEmpty[Tuple[bool, ...]], NonEmpty[Tuple[str, ...]]
 ]
 
 
-class NominalTensorValue(TensorValueBase):
-    type: Literal["nominal"] = "nominal"
+# class NominalTensor(Node):
+#     level: Literal["nominal"] = "nominal"
+#     values: TVs
+#     """nominal values in arbitrary order"""
+
+
+# class OrdinalTensor(Node):
+#     level: Literal["ordinal"] = "ordinal"
+#     values: TVs
+#     """ordinal values in ascending order"""
+
+
+class NominalOrOrdinalData(Node):
     values: TVs
+    """A fixed set of nominal or an ascending sequence of ordinal values.
+    String `values` are interpreted as labels for tensor values 0, ..., N.
+    In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'"""
+    type: Literal[
+        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+    ] = Field(
+        "uint8",
+        examples=[
+            "float32",
+            "uint8",
+            "uint16",
+            "int64",
+            "bool",
+        ],
+    )
+
+    @field_validator("type")
+    @classmethod
+    def validate_type_matches_values(
+        cls,
+        typ: Literal[
+            "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+        ],
+        info: FieldValidationInfo,
+    ):
+        incompatible: List[Any] = []
+        for v in info.data.get("values", ()):
+            if (
+                (isinstance(v, (int, float)) and (v < DTYPE_LIMITS[typ].min or v > DTYPE_LIMITS[typ].max))
+                or (isinstance(v, bool) and typ != "bool")
+                or (isinstance(v, str) and "uint" not in typ)
+            ):
+                incompatible.append(v)
+
+            if len(incompatible) == 5:
+                incompatible.append("...")
+                break
+
+        if incompatible:
+            raise ValueError(f"data type '{typ}' incompatible with values {incompatible}")
+
+        return typ
+
+    unit: Optional[Unit] = None
+
+    @property
+    def range(self):
+        if isinstance(self.values[0], str):
+            return 0, len(self.values) - 1
+        else:
+            return min(self.values), max(self.values)
 
 
-class OrdinalTensorValue(TensorValueBase):
-    type: Literal["ordinal"] = "ordinal"
-    values: TVs
-    """values in ascending order"""
-
-
-class IntervalTensorValueBase(TensorValueBase):
-    unit: Optional[SiUnit] = None
-    factor: float = 1.0
-    data_type: Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"]
-    data_range: Tuple[Optional[float], Optional[float]] = (
+class IntervalOrRatioData(Node):
+    type: Literal[
+        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"
+    ] = Field(
+        "float32",
+        examples=["float32", "float64", "uint8", "uint16"],
+    )
+    range: Tuple[Optional[float], Optional[float]] = (
         None,
         None,
     )
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-    `None` correspond to min/max of what can be expressed by `data_type`."""
+    `None` corresponds to min/max of what can be expressed by `data_type`."""
+    unit: Optional[Unit] = "arbitrary intensity"
+    scale: float = 1.0
+    """Scale for data on an interval (or ratio) scale."""
+    offset: Optional[float] = None
+    """Offset for data on a ratio scale."""
 
 
-class IntervalTensorValue(IntervalTensorValueBase):
-    type: Literal["interval"] = "interval"
+TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
-class RatioTensorValue(IntervalTensorValueBase):
-    type: Literal["ratio"] = "ratio"
-    offset: float = 0.0
+class ScaleLinearKwargs(v0_4.ProcessingKwargs):
+    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    """The subset of axes to scale jointly.
+    For example ('x', 'y') to scale two image axes for 2d data jointly."""
+
+    gain: Union[float, Tuple[float, ...]] = 1.0
+    """multiplicative factor"""
+
+    offset: Union[float, Tuple[float, ...]] = 0.0
+    """additive term"""
+
+    @model_validator(mode="after")
+    def either_gain_or_offset(self):
+        if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
+            self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
+        ):
+            raise ValueError("Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
+
+        return self
 
 
-TensorValue = Annotated[
-    Union[NominalTensorValue, OrdinalTensorValue, IntervalTensorValue, RatioTensorValue], Field(discriminator="type")
+class ScaleLinear(v0_4.Processing):
+    """Fixed linear scaling."""
+
+    name: Literal["scale_linear"] = "scale_linear"
+    kwargs: ScaleLinearKwargs
+
+
+class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
+    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=v0_4.MODE_DESCR)
+    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    """The subset of axes to normalize jointly.
+    For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
+
+    mean: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(1.1, 2.2, 3.3)])
+    """The mean value(s) to use for `mode: fixed`.
+    For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
+    # todo: check if means match input axes (for mode 'fixed')
+
+    std: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(0.1, 0.2, 0.3)])
+    """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
+
+    @model_validator(mode="after")
+    def mean_and_std_match_mode(self):
+        if self.mode == "fixed" and (self.mean is None or self.std is None):
+            raise ValueError("`mean` and `std` are required for `mode: fixed`.")
+        elif self.mode != "fixed" and (self.mean is not None or self.std is not None):
+            raise ValueError(f"`mean` and `std` not allowed for `mode: {self.mode}`")
+
+        return self
+
+
+class ZeroMeanUnitVariance(v0_4.Processing):
+    """Subtract mean and divide by variance."""
+
+    name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    kwargs: ZeroMeanUnitVarianceKwargs
+
+
+class ScaleRangeKwargs(v0_4.ProcessingKwargs):
+    mode: Literal["per_dataset", "per_sample"]
+    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    """The subset of axes to normalize jointly.
+    For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
+
+    min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
+    """The lower percentile used for normalization."""
+
+    max_percentile: Annotated[float, Interval(gt=1, le=100)] = 100.0
+    """The upper percentile used for normalization
+    Has to be bigger than `min_percentile`.
+    The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
+    accepting percentiles specified in the range 0.0 to 1.0."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """Epsilon for numeric stability.
+    `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
+    with `v_lower,v_upper` values at the respective percentiles."""
+
+    reference_tensor: Optional[Identifier] = None
+    """Tensor name to compute the percentiles from. Default: The tensor itself.
+    For any tensor in `inputs` only input tensor references are allowed.
+    For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
+
+    @field_validator("max_percentile", mode="after")
+    @classmethod
+    def min_smaller_max(cls, value: float, info: FieldValidationInfo):
+        if (min_p := info.data["min_percentile"]) >= value:
+            raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
+
+        return value
+
+
+class ScaleRange(v0_4.Processing):
+    """Scale with percentiles."""
+
+    name: Literal["scale_range"] = "scale_range"
+    kwargs: ScaleRangeKwargs
+
+
+class ScaleMeanVarianceKwargs(v0_4.ProcessingKwargs):
+    mode: Literal["per_dataset", "per_sample"]
+    reference_tensor: Identifier
+    """Name of tensor to match."""
+
+    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    """The subset of axes to scale jointly.
+    For example xy to normalize the two image axes for 2d data jointly.
+    Default: scale all non-batch axes jointly."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """Epsilon for numeric stability:
+    "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
+
+
+class ScaleMeanVariance(v0_4.Processing):
+    """Scale the tensor s.t. its mean and variance match a reference tensor."""
+
+    name: Literal["scale_mean_variance"] = "scale_mean_variance"
+    kwargs: ScaleMeanVarianceKwargs
+
+
+Preprocessing = Annotated[
+    Union[v0_4.Binarize, v0_4.Clip, ScaleLinear, v0_4.Sigmoid, ZeroMeanUnitVariance, ScaleRange],
+    Field(discriminator="name"),
+]
+Postprocessing = Annotated[
+    Union[v0_4.Binarize, v0_4.Clip, ScaleLinear, v0_4.Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+    Field(discriminator="name"),
 ]
 
 
 class TensorBase(Node):
-    name: Identifier  # todo: validate duplicates
+    name: Identifier
     """Tensor name. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -306,54 +490,30 @@ class TensorBase(Node):
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
-    values: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]]
-    """Description of tensor values, optionally per channel.
-    If specified per channel, `data_type` needs to match/be compatible across channels."""
+    data: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]] = IntervalOrRatioData()
+    """Description of the tensor's data values, optionally per channel.
+    If specified per channel, the data `type` needs to match across channels."""
 
-    @field_validator("values", mode="after")
+    @field_validator("data", mode="after")
     @classmethod
-    def check_values_are_consistet(cls, value: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]]):
+    def check_data_type_across_channels(cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]):
         if not isinstance(value, tuple):
             return value
 
-        data_types = {
-            c: v.data_type for c, v in enumerate(value) if isinstance(v, (IntervalTensorValue, RatioTensorValue))
-        }
-        data_type_set = set(data_types.values())
-        if len(data_type_set) > 1:
-            raise ValueError(f"`data_type` values per channel {data_types} must match.")
-
-        data_value_types = {
-            c: type(v.values[0]).__name__
-            for c, v in enumerate(value)
-            if isinstance(v, (NominalTensorValue, OrdinalTensorValue))
-        }
-        data_value_type_set = set(data_value_types.values())
-        if len(data_value_type_set) > 1:
-            raise ValueError(f"`values` per channel {data_value_types} must be compatible.")
-
-        if not (data_type_set and data_value_type_set):
-            return value
-
-        values_type = data_value_type_set.pop()
-        data_type = data_type_set.pop()
-        for x in "3264u81":
-            data_type = data_type.replace(x, "")
-
-        if values_type != data_type:
-            raise ValueError(f"`values` of type '{values_type}' incompatible with `data_type` family '{data_type}'.")
+        dtypes = {t.type for t in value}
+        if len(dtypes) > 1:
+            raise ValueError("Tensor data descriptions per channel need to agree in their data `type`.")
 
         return value
 
-    @field_validator("values", mode="after")
+    @field_validator("data", mode="after")
     @classmethod
-    def check_values_match_channels(
-        cls, value: Union[TensorValue, NonEmpty[Tuple[TensorValue, ...]]], info: FieldValidationInfo
+    def check_data_matches_channelaxis(
+        cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]], info: FieldValidationInfo
     ):
         if not isinstance(value, tuple) or "axes" not in info.data:
             return value
 
-        size = None
         for a in info.data["axes"]:
             if isinstance(a, ChannelAxis):
                 size = a.size
@@ -363,13 +523,19 @@ class TensorBase(Node):
             return value
 
         if len(value) != size:
-            raise ValueError(f"Got value descriptions for {len(value)} channels, but '{a.name}' axis has size {size}.")
+            raise ValueError(
+                f"Got tensor data descriptions for {len(value)} channels, but '{a.name}' axis has size {size}."
+            )
 
         return value
 
 
 class InputTensor(TensorBase):
-    preprocessing: Tuple[v0_4.Preprocessing, ...] = ()
+    name: Identifier = "input"
+    """Input tensor name.
+    No duplicates are allowed across all inputs and outputs."""
+
+    preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
@@ -384,9 +550,13 @@ class InputTensor(TensorBase):
 
 
 class OutputTensor(TensorBase):
+    name: Identifier = "output"
+    """Output tensor name.
+    No duplicates are allowed across all inputs and outputs."""
+
     axes: Tuple[OutputAxis, ...]
 
-    postprocessing: Tuple[v0_4.Postprocessing, ...] = ()
+    postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -410,7 +580,7 @@ class ArchitectureFromSource(Node):
     )
     """The SHA256 of the callable source file."""
 
-    kwargs: FrozenDictNode[NonEmpty[str], RawLeafValue] = Field(default_factory=dict)
+    kwargs: Kwargs = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
@@ -419,7 +589,7 @@ class ArchitectureFromDependency(Node):
     """callable returning a torch.nn.Module instance.
     `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
-    kwargs: FrozenDictNode[NonEmpty[str], RawLeafValue] = Field(default_factory=dict)
+    kwargs: Kwargs = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
@@ -431,7 +601,7 @@ class PytorchStateDictEntry(v0_4.WeightsEntryBase):
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
-    pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
+    pytorch_version: Annotated[Optional[Version], warn(Version)] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
@@ -514,26 +684,74 @@ class Model(
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]]
+    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field(
+        default_factory=lambda: (
+            InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
+                exclude={"axes", "test_tensor"}
+            ),
+        )
+    )
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
     @classmethod
-    def validate_input_axes(cls, inputs: Tuple[InputTensor]) -> Tuple[InputTensor]:
-        tensor_axes_names = [f"{ipt.name}.{a.name}" for ipt in inputs for a in ipt.axes if not isinstance(a.size, str)]
-        for i, ipt in enumerate(inputs):
-            valid_axes_references = (
-                ["BATCH_AXES", None] + [a.name for a in ipt.axes if not isinstance(a.size, str)] + tensor_axes_names
-            )
-            for a, ax in enumerate(ipt.axes):
-                if isinstance(ax.size, ParametrizedSize) and ax.size.step_with not in valid_axes_references:
-                    raise ValueError(
-                        f"Invalid tensor axis reference at inputs[{i}].axes[{a}].size.step_with: {ax.size.step_with}."
-                    )
-                if isinstance(ax.size, str) and ax.size not in valid_axes_references:
-                    raise ValueError(f"Invalid tensor axis reference at inputs[{i}].axes[{a}].size: {ax.size}.")
+    def validate_input_axes(cls, inputs: Tuple[InputTensor, ...]) -> Tuple[InputTensor, ...]:
+        input_step_with_refs = cls._get_axes_with_parametrized_size(inputs)
+        input_size_refs = cls._get_axes_with_independent_size(inputs)
 
+        for i, ipt in enumerate(inputs):
+            valid_step_with_refs = [a.name for a in ipt.axes if not isinstance(a, BatchAxis)] + input_step_with_refs
+            valid_independent_refs = [a.name for a in ipt.axes if not isinstance(a, BatchAxis)] + input_size_refs
+            for a, ax in enumerate(ipt.axes):
+                cls._validate_axis(
+                    "inputs",
+                    i,
+                    a,
+                    ax,
+                    valid_step_with_refs=valid_step_with_refs,
+                    valid_independent_refs=valid_independent_refs,
+                )
         return inputs
+
+    @staticmethod
+    def _validate_axis(
+        field_name: str,
+        i: int,
+        a: int,
+        axis: Union[Axis, OutputAxis],
+        valid_step_with_refs: Sequence[TensorAxisId],
+        valid_independent_refs: Sequence[TensorAxisId],
+    ):
+        if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
+            return
+
+        if isinstance(axis.size, ParametrizedSize) and axis.size.step_with is not None:
+            if axis.size.step_with not in valid_step_with_refs:
+                raise ValueError(
+                    f"Invalid tensor axis reference in {field_name}[{i}].axes[{a}].size.step_with: "
+                    f"{axis.size.step_with}. Another axis's name with a parametrized size is required."
+                )
+            elif axis.size.step_with.split(".")[-1] == axis.name:
+                raise ValueError(
+                    f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
+                    f"{axis.size.step_with}"
+                )
+        elif isinstance(axis.size, SizeReference):
+            if axis.size.reference not in valid_independent_refs:
+                raise ValueError(
+                    f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
+                    f"{axis.size.reference}."
+                )
+            elif axis.size.reference.split(".")[-1] == axis.name:
+                raise ValueError(
+                    f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.reference: "
+                    f"{axis.size.reference}"
+                )
+        elif isinstance(axis.size, str):
+            if axis.size not in valid_independent_refs:
+                raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
+            elif axis.size.split(".")[-1] == axis.name:
+                raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
 
     license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -554,31 +772,70 @@ class Model(
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_output_axes(cls, outputs: Tuple[OutputTensor], info: FieldValidationInfo) -> Tuple[OutputTensor]:
-        input_tensor_axes_names = [
-            f"{ipt.name}.{a.name}"
-            for ipt in info.data.get("inputs", ())
-            for a in ipt.axes
-            if not isinstance(a.size, str)
-        ]
-        output_tensor_axes_names = [
-            f"{out.name}.{a.name}" for out in outputs for a in out.axes if not isinstance(a.size, str)
+    def validate_tensor_names(
+        cls, outputs: Tuple[OutputTensor, ...], info: FieldValidationInfo
+    ) -> Tuple[OutputTensor, ...]:
+        tensor_names = [t.name for t in info.data.get("inputs", ()) + info.data.get("outputs", ())]
+        duplicate_tensor_names: List[str] = []
+        seen: Set[str] = set()
+        for t in tensor_names:
+            if t in seen:
+                duplicate_tensor_names.append(t)
+
+            seen.add(t)
+
+        if duplicate_tensor_names:
+            raise ValueError(f"Duplicate tensor names: {duplicate_tensor_names}")
+
+        return outputs
+
+    @staticmethod
+    def _get_axes_with_parametrized_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
+        return [
+            f"{t.name}.{a.name}"
+            for t in io
+            for a in t.axes
+            if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
         ]
 
+    @staticmethod
+    def _get_axes_with_independent_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
+        return [
+            f"{t.name}.{a.name}"
+            for t in io
+            for a in t.axes
+            if not isinstance(a, BatchAxis) and (isinstance(a.size, int) or isinstance(a.size, ParametrizedSize))
+        ]
+
+    @field_validator("outputs", mode="after")
+    @classmethod
+    def validate_output_axes(
+        cls, outputs: Tuple[OutputTensor, ...], info: FieldValidationInfo
+    ) -> Tuple[OutputTensor, ...]:
+        input_step_with_refs = cls._get_axes_with_parametrized_size(info.data.get("inputs", ()))
+        output_step_with_refs = cls._get_axes_with_parametrized_size(outputs)
+
+        input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", ()))
+        output_size_refs = cls._get_axes_with_independent_size(outputs)
+
         for i, out in enumerate(outputs):
-            valid_axes_references = (
-                ["BATCH_AXES", None]
-                + [a.name for a in out.axes if not isinstance(a.size, str)]
-                + input_tensor_axes_names
-                + output_tensor_axes_names
+            valid_step_with_refs = (
+                [a.name for a in out.axes if not isinstance(a, BatchAxis)]
+                + input_step_with_refs
+                + output_step_with_refs
+            )
+            valid_independent_refs = (
+                [a.name for a in out.axes if not isinstance(a, BatchAxis)] + input_size_refs + output_size_refs
             )
             for a, ax in enumerate(out.axes):
-                if isinstance(ax.size, ParametrizedSize) and ax.size.step_with not in valid_axes_references:
-                    raise ValueError(
-                        f"Invalid tensor axis reference outputs[{i}].axes[{a}].size.step_with: {ax.size.step_with}."
-                    )
-                if isinstance(ax.size, str) and ax.size not in valid_axes_references:
-                    raise ValueError(f"Invalid tensor axis reference at outputs[{i}].axes[{a}].size: {ax.size}.")
+                cls._validate_axis(
+                    "outputs",
+                    i,
+                    a,
+                    ax,
+                    valid_step_with_refs=valid_step_with_refs,
+                    valid_independent_refs=valid_independent_refs,
+                )
 
         return outputs
 
@@ -656,16 +913,17 @@ class Model(
                 continue
 
             convert_axes(param)
-            if isinstance(test_tensors, collections.Sequence) and len(test_tensors) == len(tensor_specs):
+            if isinstance(test_tensors, collections.abc.Sequence) and len(test_tensors) == len(tensor_specs):
                 param["test_tensor"] = test_tensors[i]
 
-            if isinstance(sample_tensors, collections.Sequence) and len(sample_tensors) == len(tensor_specs):
+            if isinstance(sample_tensors, collections.abc.Sequence) and len(sample_tensors) == len(tensor_specs):
                 param["sample_tensor"] = sample_tensors[i]
 
     @classmethod
     def convert_model_from_v0_4_to_0_5_0(cls, data: RawDict) -> None:
         cls._convert_axes_string_to_axis_descriptions(data)
-        cls._convert_architecture_field(data)
+        cls._convert_architecture(data)
+        cls._convert_attachments(data)
         data.pop("download_url", None)
 
         data["format_version"] = "0.5.0"
@@ -679,16 +937,85 @@ class Model(
         test_inputs = data.get("test_inputs")
         test_outputs = data.get("test_outputs")
 
-        if isinstance(inputs, collections.Sequence):
+        if isinstance(inputs, collections.abc.Sequence):
             data["inputs"] = list(inputs)
-            cls.update_tensor_specs(data["inputs"], test_inputs, sample_inputs)
+            cls._update_tensor_specs(data["inputs"], test_inputs, sample_inputs)
 
-        if isinstance(outputs, collections.Sequence):
+        if isinstance(outputs, collections.abc.Sequence):
             data["outputs"] = list(outputs)
-            cls.update_tensor_specs(data["outputs"], test_outputs, sample_outputs)
+            cls._update_tensor_specs(data["outputs"], test_outputs, sample_outputs)
+
+    @classmethod
+    def _update_tensor_specs(cls, tensor_data: List[RawValue], test_tensors: Any, sample_tensors: Any):
+        tts: Sequence[Any] = test_tensors if isinstance(test_tensors, collections.abc.Sequence) else ()
+        sts: Sequence[Any] = sample_tensors if isinstance(sample_tensors, collections.abc.Sequence) else ()
+
+        for idx in range(len(tensor_data)):
+            d = tensor_data[idx]
+            if not isinstance(d, dict):
+                continue
+
+            reordered_shape = cls._reorder_tensor_shape(d.get("shape"))
+            new_d = {}
+            for keep in ("name", "description"):
+                if keep in d:
+                    new_d[keep] = d[keep]
+
+            if len(tts) > idx:
+                new_d["test_tensor"] = tts[idx]
+
+            if len(sts) > idx:
+                new_d["sample_tensor"] = sts[idx]
+
+            new_d["data"] = IntervalOrRatioData()
+
+            if isinstance(d["axes"], str):
+                new_axes = [
+                    cls._get_axis_description_from_letter(a, reordered_shape.get(i)) for i, a in enumerate(d["axes"])
+                ]
+                new_d["axes"] = new_axes
+
+            for proc in ("preprocessing", "postprocessing"):
+                if (
+                    isinstance(p := d.get(proc), dict)
+                    and isinstance(p_kwargs := p.get("kwargs"), dict)
+                    and isinstance(p_kwargs_axes := p_kwargs.get("axes"), str)
+                ):
+                    p_axes = [cls._get_axis_description_from_letter(a) for a in p_kwargs_axes]
+                    p_kwargs["axes"] = [a.get("name", a["type"]) for a in p_axes]
+
+            tensor_data[idx] = new_d
 
     @staticmethod
-    def _convert_architecture_field(data: Dict[str, Any]) -> None:
+    def _reorder_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
+        if isinstance(orig_shape, collections.abc.Mapping):
+            if "reference_tensor" in orig_shape:
+                raise NotImplementedError(
+                    "Converting tensor shapes with references from model RDF 0.4 to model RDF 0.5 is not implemented."
+                )
+
+            m: Sequence[Any] = _m if isinstance(_m := orig_shape.get("min"), collections.abc.Sequence) else []
+            s: Sequence[Any] = _s if isinstance(_s := orig_shape.get("step"), collections.abc.Sequence) else []
+            return {i: {"min": mm, "step": ss} for i, (mm, ss) in enumerate(zip(m, s))}
+        elif isinstance(orig_shape, collections.abc.Sequence):
+            return {i: s for i, s in enumerate(orig_shape)}
+
+        return {}
+
+    @staticmethod
+    def _get_axis_description_from_letter(letter: str, size: Optional[int] = None):
+        AXIS_TYPE_MAP = {"x": "space", "y": "space", "z": "space", "t": "time", "i": "index", "c": "channel"}
+        axis: Dict[str, Any] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
+        if axis["type"] == "space":
+            axis["name"] = letter
+
+        if size is not None:
+            axis["size"] = size
+
+        return axis
+
+    @staticmethod
+    def _convert_architecture(data: Dict[str, Any]) -> None:
         weights: "Any | Dict[str, Any]" = data.get("weights")
         if not isinstance(weights, dict):
             return
@@ -703,6 +1030,12 @@ class Model(
         kwargs = state_dict_entry.pop("kwargs")  # type: ignore
         if kwargs:
             state_dict_entry["architecture"]["kwargs"] = kwargs  # type: ignore
+
+    @staticmethod
+    def _convert_attachments(data: Dict[str, Any]) -> None:
+        a = data.get("attachments")
+        if isinstance(a, collections.abc.Mapping):
+            data["attachments"] = a.get("files", [])  # type: ignore
 
 
 AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

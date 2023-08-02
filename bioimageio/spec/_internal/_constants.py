@@ -3,7 +3,8 @@ from importlib.resources import files
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Sequence
+from types import MappingProxyType
+from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import LicenseId
@@ -35,3 +36,25 @@ _pos_power = r"(\^+?[1-9]\d*)"
 _unit_ap = f"{_prefix}?{_unit}{_any_power}?"
 _unit_pp = f"{_prefix}?{_unit}{_pos_power}?"
 SI_UNIT_REGEX = f"^{_unit_ap}((·{_unit_ap})|(/{_unit_pp}))*$"
+
+
+class MinMax(NamedTuple):
+    min: Union[int, float]
+    max: Union[int, float]
+
+
+# numpy.dtype limits; see scripts/generate_dtype_limits.py
+DTYPE_LIMITS = MappingProxyType(
+    {
+        "float32": MinMax(-3.4028235e38, 3.4028235e38),
+        "float64": MinMax(-1.7976931348623157e308, 1.7976931348623157e308),
+        "uint8": MinMax(0, 255),
+        "int8": MinMax(-128, 127),
+        "uint16": MinMax(0, 65535),
+        "int16": MinMax(-32768, 32767),
+        "uint32": MinMax(0, 4294967295),
+        "int32": MinMax(-2147483648, 2147483647),
+        "uint64": MinMax(0, 18446744073709551615),
+        "int64": MinMax(-9223372036854775808, 9223372036854775807),
+    }
+)

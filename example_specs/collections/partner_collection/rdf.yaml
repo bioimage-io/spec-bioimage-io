@@ -1,10 +1,15 @@
-format_version: 0.2.2
+format_version: 0.2.3
 type: collection
 name: Partner Collection
-tags: [bioimage.io, partner-software]
 description: "Resources for BioImgage.IO curated by the partner team."
+authors:
+  - name: Fynn Beuttenmueller
+    github_user: fynnbe
+cite:
+  - text: bioimage.io
+    url: "https://www.biorxiv.org/content/10.1101/2022.06.07.495102v1"
+tags: [bioimage.io, partner-software]
 id: partner
+license: MIT
 collection:
-  - rdf_source: datasets/dummy-dataset/rdf.yaml
-
-
+  - rdf_source: datasets/dummy-dataset/dummy_entry.yaml

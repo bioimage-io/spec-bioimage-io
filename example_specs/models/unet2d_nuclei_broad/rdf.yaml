@@ -34,14 +34,11 @@ timestamp: 2019-12-11T12:22:32Z # ISO 8601
 inputs:
   - name: raw
     description: raw input
-    values:
-      type: ratio
-      data_type: float32
     axes:
       - type: batch
       - type: channel
         channel_names: [raw_intensity]
-      - type: space
+      - type: space # todo: scale/unit
         name: y
         size: 512
       - type: space
@@ -52,16 +49,15 @@ inputs:
     preprocessing: # list of preprocessing steps
       - name: zero_mean_unit_variance # name of preprocessing step
         kwargs:
-          mode: per_sample # mode in [fixed, per_dataset, per_sample]
-          axes: yx # subset of axes to normalize jointly, batch ('b') is not a valid axis key here!
+          mode: per_sample
+          axes: [x, y]
 
 outputs:
   - name: probability
     description: probability in [0,1]
-    values:
-      type: ratio
-      data_type: float32
-      data_range:
+    data:
+      type: float32
+      range:
         - 0.0
         - 1.0
     axes:

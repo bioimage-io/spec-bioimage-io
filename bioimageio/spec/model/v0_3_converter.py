@@ -38,34 +38,6 @@ def convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
                 for a, u in zip(weights_entry["authors"], authors_update):
                     a.update(u)
 
-    # # documentation: we now enforce `documentation` to be a local md file
-    # if "documentation" in data:
-    #     AUTO_CONVERTED_DOCUMENTATION_FILE_NAME = "auto_converted_documentation.md"
-
-    #     class DocSchema(Schema):
-    #         doc = schema.Model().fields["documentation"]
-
-    #     doc_errors = DocSchema().validate({"doc": data["documentation"]})
-    #     if doc_errors:
-    #         # data["documentation"] is not a local relative md file, so we replace it with a placeholder.
-    #         # Having access only to the raw data dict, we cannot write the AUTO_CONVERTED_DOCUMENTATION_FILE_NAME file, but
-    #         # save the original content of data["documentation"] in data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME]
-    #         # to be written to AUTO_CONVERTED_DOCUMENTATION_FILE_NAME at a later stage.
-    #         data["config"] = data.get("config", {})  # make sure config exists
-    #         if AUTO_CONVERTED_DOCUMENTATION_FILE_NAME not in data["config"]:
-    #             orig_doc = data["documentation"]
-    #             assert isinstance(orig_doc, str)
-    #             if orig_doc.startswith("http"):
-    #                 if orig_doc.endswith(".md"):
-    #                     doc: Union[HttpUrl, str, pathlib.Path] = HttpUrl(orig_doc)
-    #                 else:
-    #                     doc = f"Find documentation at {orig_doc}"
-    #             else:
-    #                 doc = pathlib.Path(orig_doc)
-
-    #             data["config"][AUTO_CONVERTED_DOCUMENTATION_FILE_NAME] = doc
-    #             data["documentation"] = AUTO_CONVERTED_DOCUMENTATION_FILE_NAME
-
     # model version
     if "version" in future:
         data["version"] = future.pop("version")
