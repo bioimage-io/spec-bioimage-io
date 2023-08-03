@@ -1,6 +1,6 @@
-from collections.abc import Mapping, Sequence
+import collections.abc
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
+from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
@@ -17,7 +17,7 @@ from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import WARNING, as_warning, warn
 from bioimageio.spec.generic import v0_2
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
+from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -53,7 +53,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     """The format version of this resource specification
     (not the `version` of the resource description)"""
 
-    name: Annotated[str, MaxLen(128)]
+    name: Annotated[str, MaxLen(128)] = Field()
     """A human-friendly name of the resource description"""
 
     # todo warn about capitalization
@@ -62,7 +62,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     def check_name(cls, name: str) -> str:
         return name.capitalize()
 
-    description: Annotated[str, MaxLen(512), warn(MaxLen(256))]
+    description: Annotated[str, MaxLen(512), warn(MaxLen(256))] = Field()
     """A string containing a brief description."""
 
     documentation: Union[Annotated[FileSource, WithSuffix(".md", case_sensitive=True)], None] = Field(
@@ -93,7 +93,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: NonEmpty[Tuple[v0_2.Author, ...]]
+    authors: NonEmpty[Tuple[v0_2.Author, ...]] = Field()
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Tuple[Attachment, ...] = ()
@@ -102,10 +102,10 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     badges: Tuple[v0_2.Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]]
+    cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]] = Field()
     """citations"""
 
-    config: Optional[ConfigDict] = Field(
+    config: Optional[ConfigNode] = Field(
         None,
         examples=[
             dict(
@@ -225,34 +225,23 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     def convert_from_older_format(cls, data: RawDict) -> None:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
+        fv = data.get("format_version", "0.2.0")
+        if not isinstance(fv, str) or fv.count(".") != 2 or tuple(map(int, fv.split(".")[:2])) > (0, 3):
+            return
+
         v0_2.GenericBaseNoSource.convert_from_older_format(data)
 
-        data.pop("download_url", None)
+        cls._convert_attachments(data)
+
+        _ = data.pop("download_url", None)
 
         data["format_version"] = "0.3.0"
 
     @staticmethod
-    def _remove_slashes_from_names(data: Dict[str, Any]) -> None:
-        """edit `data` shallowly to remove slashes from names"""
-        NAME = "name"
-        if NAME in data and isinstance(data[NAME], str):
-            data[NAME] = data[NAME].replace("/", "").replace("\\", "")
-
-        # update authors and maintainers
-        def rm_slashes_in_person_name(person: Union[Any, Mapping[Union[Any, str], Any]]) -> Any:
-            if not isinstance(person, Mapping):
-                return person
-
-            new_person = dict(person)  # don't overwrite input data in depth
-            if isinstance(n := person.get(NAME), str):
-                new_person[NAME] = n.replace("/", "").replace("\\", "")
-
-            return new_person
-
-        for group in ("authors", "maintainers"):
-            persons = data.get(group)
-            if isinstance(persons, Sequence):
-                data[group] = [rm_slashes_in_person_name(p) for p in persons]  # type: ignore
+    def _convert_attachments(data: Dict[str, Any]) -> None:
+        a = data.get("attachments")
+        if isinstance(a, collections.abc.Mapping):
+            data["attachments"] = tuple({"source": file} for file in a.get("files", []))  # type: ignore
 
 
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)

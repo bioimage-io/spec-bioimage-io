@@ -1,8 +1,9 @@
 import collections.abc
-from typing import Annotated, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Sequence, Set, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Sequence, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen
-from pydantic import ConfigDict, FieldValidationInfo, HttpUrl, field_validator, model_validator
+from pydantic import ConfigDict, FieldValidationInfo, HttpUrl, constr, field_validator, model_validator
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import DTYPE_LIMITS, SHA256_HINT
@@ -18,6 +19,7 @@ from bioimageio.spec.shared.types import (
     Identifier,
     LicenseId,
     NonEmpty,
+    Predicate,
     RawDict,
     RawValue,
     Sha256,
@@ -85,7 +87,7 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 ShortId = Annotated[Identifier, MaxLen(16)]
-OtherTensorAxisId = Annotated[str, MaxLen(33)]
+OtherTensorAxisId = Annotated[constr(min_length=1, max_length=33, pattern=r"^.*\..*$"), Predicate(str.islower)]
 TensorAxisId = Union[ShortId, OtherTensorAxisId]
 SAME_AS_TYPE = "<same as type>"
 
@@ -140,12 +142,17 @@ class BatchAxis(AxisBase):
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     name: ShortId = "channel"
-    channel_names: Tuple[ShortId, ...]
+    channel_names: Tuple[ShortId, ...] = ("channel1", "channel2", "etc")
     size: Union[Annotated[int, Gt(0)], Literal["#channel_names"]] = "#channel_names"
 
     def model_post_init(self, __context: Any):
         if self.size == "#channel_names":
             object.__setattr__(self, "size", len(self.channel_names))
+
+        if self.channel_names == ("channel1", "…"):
+            assert isinstance(self.size, int)
+            object.__setattr__(self, "channel_names", (f"channel{i}" for i in range(1, self.size + 1)))
+
         return super().model_post_init(__context)
 
 
@@ -322,8 +329,8 @@ class ScaleLinearKwargs(v0_4.ProcessingKwargs):
     offset: Union[float, Tuple[float, ...]] = 0.0
     """additive term"""
 
-    @model_validator(mode="after")
-    def either_gain_or_offset(self):
+    @model_validator(mode="after")  # type: ignore
+    def either_gain_or_offset(self) -> Self:
         if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
             self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
         ):
@@ -356,8 +363,8 @@ class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
-    @model_validator(mode="after")
-    def mean_and_std_match_mode(self):
+    @model_validator(mode="after")  # type: ignore
+    def mean_and_std_match_mode(self) -> Self:
         if self.mode == "fixed" and (self.mean is None or self.std is None):
             raise ValueError("`mean` and `std` are required for `mode: fixed`.")
         elif self.mode != "fixed" and (self.mean is not None or self.std is not None):
@@ -538,8 +545,8 @@ class InputTensor(TensorBase):
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
-    @model_validator(mode="after")
-    def validate_preprocessing_kwargs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_preprocessing_kwargs(self) -> Self:
         axes_names = [a.name for a in self.axes]
         for p in self.preprocessing:
             kwarg_axes = p.kwargs.get("axes", ())
@@ -559,8 +566,8 @@ class OutputTensor(TensorBase):
     postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
-    @model_validator(mode="after")
-    def validate_postprocessing_kwargs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_postprocessing_kwargs(self) -> Self:
         axes_names = [a.name for a in self.axes]
         for p in self.postprocessing:
             kwarg_axes = p.kwargs.get("axes", ())
@@ -615,8 +622,8 @@ class Weights(Node):
     tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleEntry] = None
     torchscript: Optional[v0_4.TorchscriptEntry] = None
 
-    @model_validator(mode="after")
-    def check_one_entry(self):
+    @model_validator(mode="after")  # type: ignore
+    def check_one_entry(self) -> Self:
         if all(
             entry is None
             for entry in [
@@ -639,6 +646,14 @@ class ModelRdf(Node):
 
     sha256: Sha256
     """SHA256 checksum of the model RDF specified under `rdf_source`."""
+
+
+def get_default_partial_inputs():
+    return (
+        InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
+            exclude_unset=False, exclude={"axes", "test_tensor"}
+        ),
+    )
 
 
 class Model(
@@ -684,13 +699,7 @@ class Model(
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field(
-        default_factory=lambda: (
-            InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
-                exclude={"axes", "test_tensor"}
-            ),
-        )
-    )
+    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field(default_factory=get_default_partial_inputs)
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
@@ -767,7 +776,7 @@ class Model(
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]]
+    outputs: NonEmpty[Tuple[OutputTensor, ...]] = Field()
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
@@ -851,14 +860,14 @@ class Model(
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime
+    timestamp: Datetime = Field()
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights
+    weights: Weights = Field()
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
@@ -885,10 +894,10 @@ class Model(
     @classmethod
     def convert_from_older_format(cls, data: RawDict) -> None:
         fv = data.get("format_version")
-        if not isinstance(fv, str) or fv.count(".") != 3:
+        if not isinstance(fv, str) or fv.count(".") != 2:
             return
 
-        major, minor, _ = map(int, fv.split("."))
+        major, minor = map(int, fv.split(".")[:2])
         if (major, minor) > (0, 5):
             return
 
@@ -924,7 +933,7 @@ class Model(
         cls._convert_axes_string_to_axis_descriptions(data)
         cls._convert_architecture(data)
         cls._convert_attachments(data)
-        data.pop("download_url", None)
+        _ = data.pop("download_url", None)
 
         data["format_version"] = "0.5.0"
 
@@ -934,8 +943,8 @@ class Model(
         outputs = data.get("outputs")
         sample_inputs = data.get("sample_inputs")
         sample_outputs = data.get("sample_outputs")
-        test_inputs = data.get("test_inputs")
-        test_outputs = data.get("test_outputs")
+        test_inputs = data.pop("test_inputs", None)
+        test_outputs = data.pop("test_outputs", None)
 
         if isinstance(inputs, collections.abc.Sequence):
             data["inputs"] = list(inputs)
@@ -1004,12 +1013,20 @@ class Model(
 
     @staticmethod
     def _get_axis_description_from_letter(letter: str, size: Optional[int] = None):
-        AXIS_TYPE_MAP = {"x": "space", "y": "space", "z": "space", "t": "time", "i": "index", "c": "channel"}
+        AXIS_TYPE_MAP = {
+            "b": "batch",
+            "t": "time",
+            "i": "index",
+            "c": "channel",
+            "x": "space",
+            "y": "space",
+            "z": "space",
+        }
         axis: Dict[str, Any] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
         if axis["type"] == "space":
             axis["name"] = letter
 
-        if size is not None:
+        if size is not None and axis["type"] != "batch":
             axis["size"] = size
 
         return axis
@@ -1020,22 +1037,16 @@ class Model(
         if not isinstance(weights, dict):
             return
 
-        state_dict_entry: "Any | Dict[str, Any]" = weights.get("pytorch_state_dict")  # type: ignore
+        state_dict_entry: "Any | Dict[str, Any]" = weights.get("pytorch_state_dict")
         if not isinstance(state_dict_entry, dict):
             return
 
-        callable_ = state_dict_entry.pop("architecture")  # type: ignore
-        sha = state_dict_entry.pop("architecture_sha256")  # type: ignore
-        state_dict_entry["architecture"] = dict(callable=callable_, sha256=sha)  # type: ignore
-        kwargs = state_dict_entry.pop("kwargs")  # type: ignore
+        callable_ = state_dict_entry.pop("architecture")
+        sha = state_dict_entry.pop("architecture_sha256")
+        state_dict_entry["architecture"] = dict(callable=callable_, sha256=sha)
+        kwargs = state_dict_entry.pop("kwargs")
         if kwargs:
-            state_dict_entry["architecture"]["kwargs"] = kwargs  # type: ignore
-
-    @staticmethod
-    def _convert_attachments(data: Dict[str, Any]) -> None:
-        a = data.get("attachments")
-        if isinstance(a, collections.abc.Mapping):
-            data["attachments"] = a.get("files", [])  # type: ignore
+            state_dict_entry["architecture"]["kwargs"] = kwargs
 
 
 AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

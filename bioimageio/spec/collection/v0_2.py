@@ -3,7 +3,7 @@ from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 from pydantic import ConfigDict, Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator, model_validator
 from pydantic_core.core_schema import ValidationInfo
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._warn import ALERT, warn
 from bioimageio.spec.application.v0_2 import AnyApplication
@@ -51,8 +51,8 @@ class CollectionEntryBase(Node):
 
     _entry: Any = PrivateAttr()
 
-    @model_validator(mode="after")
-    def set_entry(self, info: ValidationInfo):
+    @model_validator(mode="after")  # type: ignore
+    def set_entry(self, info: ValidationInfo) -> Self:
         if self.rdf_source is not None:
             return self  # todo: add resolve_rdf_source callback
 
@@ -73,6 +73,7 @@ class CollectionEntryBase(Node):
 
         entry = self.entry_adapter.validate_python(entry_data, context=info.context)
         object.__setattr__(self, "_entry", entry)
+        return self
 
 
 class CollectionEntry(CollectionEntryBase):
@@ -117,7 +118,7 @@ class Collection(GenericBase):
         )
         return super()._get_context_and_update_data(data, context)
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]]
+    collection: NonEmpty[Tuple[CollectionEntry, ...]] = Field()
     """Collection entries"""
 
     @field_validator("collection")

@@ -1,15 +1,14 @@
 from __future__ import annotations
-from abc import ABC
 
 import ast
 import collections.abc
 import inspect
-from pathlib import Path
 import sys
+from abc import ABC
 from collections import UserString
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
-    Annotated,
     Any,
     ClassVar,
     Dict,
@@ -32,11 +31,11 @@ from pydantic import (
     ValidationInfo,
 )
 from pydantic_core import core_schema
-from typing_extensions import Self
+from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._validate import is_valid_raw_mapping
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RawLeafValue
+from bioimageio.spec._internal._validate import is_valid_raw_mapping
+from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue
 from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 if TYPE_CHECKING:
@@ -173,7 +172,7 @@ class ResourceDescriptionBase(Node):
     type: str
     format_version: str
 
-    def __init__(self, **data: Any) -> None:
+    def __init__(self, **data: Any) -> None:  # type: ignore
         __tracebackhide__ = True
         context = self._get_context_and_update_data(data)
         self.__pydantic_validator__.validate_python(
@@ -333,13 +332,17 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     def get(self, item: Any, default: D = None) -> Union[V, D]:  # type: ignore
         return getattr(self, item, default)
 
-    @pydantic.model_validator(mode="after")
-    def validate_raw_mapping(self):
+    @pydantic.model_validator(mode="after")  # type: ignore
+    def validate_raw_mapping(self) -> Self:
         if not is_valid_raw_mapping(self):
             raise AssertionError(f"{self} contains values unrepresentable in JSON/YAML")
 
         return self
 
 
-class Kwargs(FrozenDictNode[NonEmpty[str], RawLeafValue]):
+class ConfigNode(FrozenDictNode[NonEmpty[str], RawValue]):
+    model_config = {**Node.model_config, "extra": "allow"}
+
+
+class Kwargs(FrozenDictNode[NonEmpty[str], RawValue]):
     model_config = {**Node.model_config, "extra": "allow"}

@@ -24,7 +24,7 @@ from bioimageio.spec._internal._warn import (
     as_warning,
     warn,
 )
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
+from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -148,7 +148,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[str, warn(MaxLen(128))]
+    name: Annotated[str, warn(MaxLen(128))] = Field()
     """A human-friendly name of the resource description"""
 
     # todo warn about capitalization
@@ -157,7 +157,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     def check_name(cls, name: str) -> str:
         return name.capitalize()
 
-    description: str
+    description: str = Field()
 
     documentation: Union[FileSource, None] = Field(
         None,
@@ -199,7 +199,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     ] = ()
     """citations"""
 
-    config: Optional[ConfigDict] = Field(
+    config: Optional[ConfigNode] = Field(
         None,
         examples=[
             dict(
@@ -316,7 +316,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         # we unofficially accept strings as author entries
         authors = data.get("authors")
         if isinstance(authors, list):
-            data["authors"] = [{"name": a} if isinstance(a, str) else a for a in authors]  # type: ignore
+            data["authors"] = [{"name": a} if isinstance(a, str) else a for a in authors]
 
         if data.get("format_version") in ("0.2.0", "0.2.1"):
             data["format_version"] = "0.2.2"

@@ -21,7 +21,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import SHA256_HINT
 from bioimageio.spec._internal._utils import Field
@@ -114,8 +114,8 @@ class Weights(Node):
     tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleEntry] = None
     torchscript: Optional[TorchscriptEntry] = None
 
-    @model_validator(mode="after")
-    def check_one_entry(self):
+    @model_validator(mode="after")  # type: ignore
+    def check_one_entry(self) -> Self:
         if all(
             entry is None
             for entry in [
@@ -203,8 +203,8 @@ class PytorchStateDictEntry(WeightsEntryBase):
     """The SHA256 of the architecture source file,
     if the architecture is not defined in a module listed in `dependencies`"""
 
-    @model_validator(mode="after")
-    def check_architecture_sha256(self):
+    @model_validator(mode="after")  # type: ignore
+    def check_architecture_sha256(self) -> Self:
         if isinstance(self.architecture, CallableFromSourceFile):
             if self.architecture_sha256 is None:
                 raise ValueError("Missing required `architecture_sha256` for `architecture` with source file.")
@@ -272,8 +272,8 @@ class ParametrizedInputShape(Node):
     def __len__(self) -> int:
         return len(self.min)
 
-    @model_validator(mode="after")
-    def matching_lengths(self):
+    @model_validator(mode="after")  # type: ignore
+    def matching_lengths(self) -> Self:
         if len(self.min) != len(self.step):
             raise ValueError("`min` and `step` required to have the same length")
 
@@ -297,8 +297,8 @@ class ImplicitOutputShape(Node):
     def __len__(self) -> int:
         return len(self.scale)
 
-    @model_validator(mode="after")
-    def matching_lengths(self):
+    @model_validator(mode="after")  # type: ignore
+    def matching_lengths(self) -> Self:
         if len(self.scale) != len(self.offset):
             raise ValueError(f"scale {self.scale} has to have same length as offset {self.offset}!")
         # if we have an expanded dimension, make sure that it's offet is not zero
@@ -408,8 +408,8 @@ class ScaleLinearKwargs(ProcessingKwargs):
     offset: Union[float, Tuple[float, ...]] = 0.0
     """additive term"""
 
-    @model_validator(mode="after")
-    def either_gain_or_offset(self):
+    @model_validator(mode="after")  # type: ignore
+    def either_gain_or_offset(self) -> Self:
         if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
             self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
         ):
@@ -453,8 +453,8 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
-    @model_validator(mode="after")
-    def mean_and_std_match_mode(self):
+    @model_validator(mode="after")  # type: ignore
+    def mean_and_std_match_mode(self) -> Self:
         if self.mode == "fixed" and (self.mean is None or self.std is None):
             raise ValueError("`mean` and `std` are required for `mode: fixed`.")
         elif self.mode != "fixed" and (self.mean is not None or self.std is not None):
@@ -556,8 +556,8 @@ class InputTensor(TensorBase):
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
-    @model_validator(mode="after")
-    def zero_batch_step_and_one_batch_size(self):
+    @model_validator(mode="after")  # type: ignore
+    def zero_batch_step_and_one_batch_size(self) -> Self:
         bidx = self.axes.find("b")
         if bidx == -1:
             return self
@@ -579,8 +579,8 @@ class InputTensor(TensorBase):
 
         return self
 
-    @model_validator(mode="after")
-    def validate_preprocessing_kwargs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_preprocessing_kwargs(self) -> Self:
         for p in self.preprocessing:
             kwarg_axes = p.kwargs.get("axes", "")
             if any(a not in self.axes for a in kwarg_axes):
@@ -608,15 +608,15 @@ class OutputTensor(TensorBase):
     postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
-    @model_validator(mode="after")
-    def matching_halo_length(self):
+    @model_validator(mode="after")  # type: ignore
+    def matching_halo_length(self) -> Self:
         if self.halo and len(self.halo) != len(self.shape):
             raise ValueError(f"halo {self.halo} has to have same length as shape {self.shape}!")
 
         return self
 
-    @model_validator(mode="after")
-    def validate_postprocessing_kwargs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_postprocessing_kwargs(self) -> Self:
         for p in self.postprocessing:
             kwarg_axes = p.kwargs.get("axes", "")
             if any(a not in self.axes for a in kwarg_axes):
@@ -693,7 +693,7 @@ class Model(GenericBaseNoSource):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]]
+    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field()
     """Describes the input tensors expected by this model."""
 
     license: Annotated[Union[LicenseId, str], warn(LicenseId)] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
@@ -705,11 +705,11 @@ class Model(GenericBaseNoSource):
     name: Annotated[
         CapitalStr,
         warn(MaxLen(64), INFO),
-    ]
+    ] = Field()
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]]
+    outputs: NonEmpty[Tuple[OutputTensor, ...]] = Field()
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
@@ -720,16 +720,16 @@ class Model(GenericBaseNoSource):
             raise ValueError("Duplicate tensor names")
         return value
 
-    @model_validator(mode="after")
-    def unique_io_names(self):
+    @model_validator(mode="after")  # type: ignore
+    def unique_io_names(self) -> Self:
         unique_names = {ss.name for s in (self.inputs, self.outputs) for ss in s}
         if len(unique_names) != (len(self.inputs) + len(self.outputs)):
             raise ValueError("Duplicate tensor names across inputs/outputs")
 
         return self
 
-    @model_validator(mode="after")
-    def minimum_shape2valid_output(self):
+    @model_validator(mode="after")  # type: ignore
+    def minimum_shape2valid_output(self) -> Self:
         tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]] = {t.name: t for t in self.inputs + self.outputs}
 
         for out in self.outputs:
@@ -794,8 +794,8 @@ class Model(GenericBaseNoSource):
         assert len(offset) == len(scale)
         return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
 
-    @model_validator(mode="after")
-    def validate_tensor_references_in_inputs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_tensor_references_in_inputs(self) -> Self:
         for t in self.inputs:
             for proc in t.preprocessing:
                 if "reference_tensor" not in proc.kwargs:
@@ -810,8 +810,8 @@ class Model(GenericBaseNoSource):
 
         return self
 
-    @model_validator(mode="after")
-    def validate_tensor_references_in_outputs(self):
+    @model_validator(mode="after")  # type: ignore
+    def validate_tensor_references_in_outputs(self) -> Self:
         for t in self.outputs:
             for proc in t.postprocessing:
                 if "reference_tensor" not in proc.kwargs:
@@ -856,14 +856,14 @@ class Model(GenericBaseNoSource):
     )
     """Analog to `test_inputs`."""
 
-    timestamp: Datetime
+    timestamp: Datetime = Field()
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights
+    weights: Weights = Field()
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

@@ -36,11 +36,6 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "\n**General notes on this documentation:**\n"
     "| symbol | explanation |\n"
     "| --- | --- |\n"
-    "| `field` ≝ `default` | Default field values are indicated after '=' and make a field optional. "
-    "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
-    "and determine which bioimage.io specification applies. They are optional only when creating a resource "
-    "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"
-    "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |\n"
     "| `field`<sub>type hint</sub> | A fields's <sub>expected type</sub> may be shortened. "
     "If so, the abbreviated or full type is displayed below the field's description and can expanded to view "
     "further (nested) details if available. |\n"
@@ -51,6 +46,11 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "They are not always intuitively understandable and merely a hint at more complex validation.|\n"
     r"| \<type\>.v\<major\>_\<minor\>.\<sub spec\> | "
     "Subparts of a spec might be taken from another spec type or format version. |\n"
+    "| `field` ≝ `default` | Default field values are indicated after '=' and make a field optional. "
+    "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
+    "and determine which bioimage.io specification applies. They are optional only when creating a resource "
+    "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"
+    "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |\n"
     f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with '{IN_PACKAGE_MESSAGE}' "
     "are included when packaging the resource to a .zip archive. "
     "The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |\n"
@@ -217,6 +217,7 @@ class Field:
         rd_class: type[ResourceDescription],
         all_examples: List[Tuple[str, List[Any]]],
     ) -> None:
+        super().__init__()
         assert loc
         self.loc = loc
         self.info = info
@@ -287,7 +288,7 @@ class Field:
             return ""
         # elif d == "":
         #     d = "<empty string>"
-        d_inline = str(d)
+        d_inline = f"`{d}`"
         if self.indent_level + 30 + len(d_inline) > MAX_LINE_WIDTH:
             return f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
         else:
@@ -416,7 +417,7 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> P
         md += "\n"
 
     file_path = folder / get_documentation_file_name(rd_class)
-    file_path.write_text(md, encoding="utf-8")
+    _ = file_path.write_text(md, encoding="utf-8")
     print(f"written {file_path}")
     return file_path
 
@@ -445,9 +446,9 @@ if __name__ == "__main__":
     dist = (Path(__file__).parent / "../dist").resolve()
     dist.mkdir(exist_ok=True)
 
-    # export_module_documentations(dist, application)
-    # export_module_documentations(dist, collection)
-    # export_module_documentations(dist, dataset)
-    # export_module_documentations(dist, generic)
+    export_module_documentations(dist, application)
+    export_module_documentations(dist, collection)
+    export_module_documentations(dist, dataset)
+    export_module_documentations(dist, generic)
     export_module_documentations(dist, model)
-    # export_module_documentations(dist, notebook)
+    export_module_documentations(dist, notebook)
