@@ -5,10 +5,10 @@ from pydantic import HttpUrl
 from bioimageio.spec.model.v0_4 import InputTensor, LinkedModel, ModelRdf, OnnxEntry, OutputTensor, ScaleLinearKwargs
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
-from tests.unittest_utils import BaseTestCases, Invalid, Valid
+from tests.unittest_utils import Invalid, TestBases, Valid
 
 
-class TestModelRdf(BaseTestCases.TestNode):
+class TestModelRdf(TestBases.TestNode):
     default_node_class = ModelRdf
     sub_tests = [
         Valid(
@@ -27,7 +27,7 @@ class TestModelRdf(BaseTestCases.TestNode):
     ]
 
 
-class TestLinkedModel(BaseTestCases.TestNode):
+class TestLinkedModel(TestBases.TestNode):
     default_node_class = LinkedModel
     sub_tests = [
         Valid(dict(id="lala"), expected_dump_raw=dict(id="lala"), expected_dump_python=dict(id="lala")),
@@ -36,7 +36,7 @@ class TestLinkedModel(BaseTestCases.TestNode):
     ]
 
 
-class TestOnnxEntry(BaseTestCases.TestNode):
+class TestOnnxEntry(TestBases.TestNode):
     default_node_class = OnnxEntry
     sub_tests = [
         Valid(
@@ -58,7 +58,7 @@ class TestOnnxEntry(BaseTestCases.TestNode):
     ]
 
 
-class TestScaleLinearKwargs(BaseTestCases.TestNode):
+class TestScaleLinearKwargs(TestBases.TestNode):
     default_node_class = ScaleLinearKwargs
     sub_tests = [
         Valid(dict(axes="xy", gain=2.0, offset=0.5)),
@@ -72,7 +72,7 @@ class TestScaleLinearKwargs(BaseTestCases.TestNode):
     ]
 
 
-class TestInputTensor(BaseTestCases.TestNode):
+class TestInputTensor(TestBases.TestNode):
     default_node_class = InputTensor
     sub_tests = [
         Valid(
@@ -103,7 +103,7 @@ class TestInputTensor(BaseTestCases.TestNode):
     ]
 
 
-class TestOutputTensor(BaseTestCases.TestNode):
+class TestOutputTensor(TestBases.TestNode):
     default_node_class = OutputTensor
     sub_tests = [
         Valid(

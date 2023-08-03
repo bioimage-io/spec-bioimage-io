@@ -13,12 +13,12 @@ from bioimageio.spec.generic.v0_2 import (
 )
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
-from tests.unittest_utils import BaseTestCases, Invalid, Valid
+from tests.unittest_utils import Invalid, TestBases, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"
 
 
-class TestAttachments(BaseTestCases.TestNode):
+class TestAttachments(TestBases.TestNode):
     default_node_class = Attachments
     allow_empty = True
     sub_tests = [
@@ -32,7 +32,7 @@ class TestAttachments(BaseTestCases.TestNode):
     ]
 
 
-class TestAuthor(BaseTestCases.TestNode):
+class TestAuthor(TestBases.TestNode):
     default_node_class = Author
     sub_tests = [
         Valid(dict(name="only_name")),
@@ -61,7 +61,7 @@ class TestAuthor(BaseTestCases.TestNode):
     ]
 
 
-class TestMaintainer(BaseTestCases.TestNode):
+class TestMaintainer(TestBases.TestNode):
     default_node_class = Maintainer
     sub_tests = [
         Valid(dict(github_user="ghuser_only")),
@@ -79,7 +79,7 @@ class TestMaintainer(BaseTestCases.TestNode):
     ]
 
 
-class TestCiteEntry(BaseTestCases.TestNode):
+class TestCiteEntry(TestBases.TestNode):
     default_node_class = CiteEntry
     sub_tests = [
         Valid(dict(text="lala", url=EXAMPLE_DOT_COM)),
@@ -96,7 +96,7 @@ class TestCiteEntry(BaseTestCases.TestNode):
     ]
 
 
-class TestGeneric(BaseTestCases.TestNode):
+class TestGeneric(TestBases.TestNode):
     default_node_class = Generic
     sub_tests = [
         Valid(

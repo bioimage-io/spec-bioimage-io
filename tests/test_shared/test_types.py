@@ -1,7 +1,8 @@
+from datetime import datetime, timezone
 from unittest import TestCase
 
-from bioimageio.spec.shared.types import SiUnit
-from tests.unittest_utils import BaseTestCases
+from bioimageio.spec.shared.types import Datetime, SiUnit
+from tests.unittest_utils import TestBases, TypeSubTest
 
 
 class TestRelativePath(TestCase):
@@ -13,7 +14,20 @@ class TestRelativePath(TestCase):
         self.assertEqual(p, p2)
 
 
-class TestSiUnit(BaseTestCases.TestType):
+class TestSiUnit(TestBases.TestType):
     type_ = SiUnit
     valid = ("lx·s", "kg/m^2·s^-2")
     invalid = ["lxs", " kg"]
+
+
+NOW = datetime.now()
+
+
+class TestDateTime(TestBases.TestType):
+    type_ = Datetime
+    valid = (
+        TypeSubTest("2019-12-11T12:22:32+00:00", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
+        TypeSubTest(NOW, NOW),
+        TypeSubTest("2019-12-11T12:22:32+00:00", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        TypeSubTest("2019-12-11T12:22:32Z", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+    )

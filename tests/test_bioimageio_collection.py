@@ -5,7 +5,7 @@ from typing import Dict
 
 import pooch  # type: ignore
 
-from tests.unittest_utils import BaseTestCases
+from tests.unittest_utils import TestBases
 
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
@@ -14,8 +14,8 @@ WEEK = f"{datetime.datetime.now().year}week{datetime.datetime.now().isocalendar(
 CACHE_PATH = Path(__file__).parent / "cache" / WEEK
 
 
-class TestBioimageioCollection(BaseTestCases.TestManyRdfs):
-    rdf_root = CACHE_PATH / "rdfs"
+class TestBioimageioCollection(TestBases.TestManyRdfs):
+    rdf_root = CACHE_PATH
 
     @classmethod
     def yield_rdf_paths(cls):
@@ -25,11 +25,11 @@ class TestBioimageioCollection(BaseTestCases.TestManyRdfs):
         collection_registry: Dict[str, None] = {
             entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
         }
-        collection = pooch.create(  # type: ignore
+        collection = pooch.create(
             path=CACHE_PATH,
             base_url=RDF_BASE_URL,
             registry=collection_registry,
         )
 
         for rdf in collection_registry:
-            yield Path(collection.fetch(rdf))  # type: ignore
+            yield Path(collection.fetch(rdf))

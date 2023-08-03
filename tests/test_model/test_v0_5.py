@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from pydantic import HttpUrl
-
 from bioimageio.spec.model.v0_5 import InputTensor, ModelRdf, TensorBase
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
-from tests.unittest_utils import BaseTestCases, Invalid, Valid
+from tests.unittest_utils import Invalid, TestBases, Valid
 
 
-class TestModelRdf(BaseTestCases.TestNode):
+class TestModelRdf(TestBases.TestNode):
     default_node_class = ModelRdf
     sub_tests = [
         Valid(
@@ -23,7 +21,7 @@ class TestModelRdf(BaseTestCases.TestNode):
     ]
 
 
-class TestTensorBase(BaseTestCases.TestNode):
+class TestTensorBase(TestBases.TestNode):
     default_node_class = TensorBase
     sub_tests = [
         Valid(
@@ -31,7 +29,7 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t1",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
-                values={"type": "nominal", "values": ["cat", "dog", "parrot"]},
+                data={"values": ["cat", "dog", "parrot"]},
             )
         ),
         Valid(
@@ -39,9 +37,9 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t2",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
-                values=[
-                    {"type": "nominal", "values": ["cat", "dog", "parrot"]},
-                    {"type": "ordinal", "values": ["mouse", "zebra", "elephant"]},
+                data=[
+                    {"values": ["cat", "dog", "parrot"]},
+                    {"values": ["mouse", "zebra", "elephant"]},
                 ],
             )
         ),
@@ -50,9 +48,9 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t3",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
-                values=[
-                    {"type": "ordinal", "values": [1, 2, 3]},
-                    {"type": "interval", "data_type": "uint8"},
+                data=[
+                    {"values": [1, 2, 3]},
+                    {"type": "uint8"},
                 ],
             )
         ),
@@ -61,9 +59,9 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
-                values=[
-                    {"type": "ordinal", "values": ["mouse", "zebra", "elephant"]},
-                    {"type": "interval", "data_type": "uint8"},
+                data=[
+                    {"values": ["mouse", "zebra", "elephant"]},
+                    {"type": "uint8"},
                 ],
             ),
             name="string values and int data type",
@@ -73,9 +71,9 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t5",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
-                values=[
-                    {"type": "nominal", "values": ["cat", "dog", "parrot"]},
-                    {"type": "ordinal", "values": [1, 2, 3]},
+                data=[
+                    {"values": ["cat", "dog", "parrot"]},
+                    {"values": [1, 2, 3]},
                 ],
             ),
             name="str and int values",
@@ -85,9 +83,9 @@ class TestTensorBase(BaseTestCases.TestNode):
                 name="t6",
                 axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
                 test_tensor="https://example.com/test.npy",
-                values=[
-                    {"type": "nominal", "values": ["cat", "dog", "parrot"]},
-                    {"type": "ordinal", "values": ["mouse", "zebra", "elephant"]},
+                data=[
+                    {"values": ["cat", "dog", "parrot"]},
+                    {"values": ["mouse", "zebra", "elephant"]},
                 ],
             ),
             name="channel mismatch",
@@ -95,14 +93,14 @@ class TestTensorBase(BaseTestCases.TestNode):
     ]
 
 
-class TestInputTensor(BaseTestCases.TestNode):
+class TestInputTensor(TestBases.TestNode):
     default_node_class = InputTensor
     sub_tests = [
         Valid(
             {
                 "name": "input_1",
                 "description": "Input 1",
-                "data_type": "float32",
+                "data": {"type": "float32"},
                 "axes": [
                     dict(type="space", name="x", size=10),
                     dict(type="space", name="y", size=11),
@@ -111,9 +109,10 @@ class TestInputTensor(BaseTestCases.TestNode):
                 "preprocessing": [
                     {
                         "name": "scale_range",
-                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
                     }
                 ],
+                "test_tensor": "https://example.com/test.npy",
             }
         ),
     ]

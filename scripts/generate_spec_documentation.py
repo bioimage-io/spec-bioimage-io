@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pprint import pformat
 
 import shutil
 from collections import OrderedDict
@@ -35,10 +36,11 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "\n**General notes on this documentation:**\n"
     "| symbol | explanation |\n"
     "| --- | --- |\n"
-    "| `field` = default | Default field values are indicated after '=' and make a field optional. "
+    "| `field` ≝ `default` | Default field values are indicated after '=' and make a field optional. "
     "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
     "and determine which bioimage.io specification applies. They are optional only when creating a resource "
     "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"
+    "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |\n"
     "| `field`<sub>type hint</sub> | A fields's <sub>expected type</sub> may be shortened. "
     "If so, the abbreviated or full type is displayed below the field's description and can expanded to view "
     "further (nested) details if available. |\n"
@@ -280,14 +282,16 @@ class Field:
         return ret.replace("\n", self.indent_spaces + "\n")
 
     def get_default_value(self):
-        if self.info.default is PydanticUndefined:
+        d = self.info.get_default(call_default_factory=True)
+        if d is PydanticUndefined:
             return ""
+        # elif d == "":
+        #     d = "<empty string>"
+        d_inline = str(d)
+        if self.indent_level + 30 + len(d_inline) > MAX_LINE_WIDTH:
+            return f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
         else:
-            d = self.info.get_default(call_default_factory=True)
-            if d == "":
-                d = r"\<empty string\>"
-
-            return f" = {d}"
+            return f" ≝ {d_inline}"
 
     def get_md(self) -> str:
         nested = ""
@@ -441,9 +445,9 @@ if __name__ == "__main__":
     dist = (Path(__file__).parent / "../dist").resolve()
     dist.mkdir(exist_ok=True)
 
-    export_module_documentations(dist, application)
-    export_module_documentations(dist, collection)
-    export_module_documentations(dist, dataset)
-    export_module_documentations(dist, generic)
+    # export_module_documentations(dist, application)
+    # export_module_documentations(dist, collection)
+    # export_module_documentations(dist, dataset)
+    # export_module_documentations(dist, generic)
     export_module_documentations(dist, model)
-    export_module_documentations(dist, notebook)
+    # export_module_documentations(dist, notebook)

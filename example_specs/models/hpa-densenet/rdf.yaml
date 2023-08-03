@@ -2,10 +2,10 @@ attachments:
   files:
     - ./hpa_labels.txt
 authors:
-- name: Shubin Dai
+  - name: Shubin Dai
 maintainers:
-- github_user: oeway
-  name: Wei Ouyang
+  - github_user: oeway
+    name: Wei Ouyang
 cite:
   - doi: https://doi.org/10.1038/s41592-019-0658-6
     text: >-
@@ -29,7 +29,7 @@ inputs:
           gain: [0.003921568627, 0.003921568627, 0.003921568627, 0.003921568627]
           offset: [0, 0, 0, 0]
         name: scale_linear
-    shape: [1,4 ,1024 ,1024]
+    shape: [1, 4, 1024, 1024]
 license: MIT
 name: HPA Bestfitting Densenet
 outputs:
@@ -57,7 +57,7 @@ test_inputs:
 test_outputs:
   - ./test_output_classes.npy
   - ./test_output_features.npy
-timestamp: '2021-09-21T12:00:12.000Z'
+timestamp: "2021-09-21T12:00:12.000Z"
 type: model
 version: 0.1.1
 weights:

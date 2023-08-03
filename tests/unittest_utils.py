@@ -1,16 +1,16 @@
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, Optional, Sequence, Type
+from typing import Any, ClassVar, Dict, Optional, Sequence, Type, Union
 from unittest import TestCase
 
 from pydantic import TypeAdapter, ValidationError
 from ruamel.yaml import YAML
-from bioimageio.spec import LatestResourceDescription, ResourceDescription
 
+from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.validation import ValidationContext
-from bioimageio.spec.utils import load_description
+from bioimageio.spec.utils import format_summary, load_description
 
 yaml = YAML(typ="safe")
 
@@ -38,10 +38,14 @@ class Invalid(SubTest):
     expect: Type[Exception] = ValidationError
 
 
-class BaseTestCases:
-    """class to hide base test cases to not discover them as tests"""
+@dataclass
+class TypeSubTest:
+    val: Any
+    exp: Any
 
-    class TestNode(TestCase):
+
+class TestBases:
+    class TestNode(TestCase, ABC):
         """template to test any Node subclass with valid and invalid kwargs"""
 
         default_node_class: Type[Node]
@@ -83,7 +87,7 @@ class BaseTestCases:
 
             nc = self.default_node_class
             if self.allow_empty:
-                nc.model_validate({})
+                _ = nc.model_validate({})
             else:
                 self.assertRaises(ValidationError, nc.model_validate, {})
 
@@ -107,30 +111,39 @@ class BaseTestCases:
 
                 return ret
 
-    class TestType(TestCase):
+    class TestType(TestCase, ABC):
         type_: ClassVar[Type[Any]]
-        valid: Sequence[Any]
+        valid: Sequence[Union[Any, TypeSubTest]]
         invalid: Sequence[Any]
         type_adapter: TypeAdapter[Any]
 
-        def setUp(self) -> None:
-            self.type_adapter = TypeAdapter(self.type_)
-            return super().setUp()
+        @classmethod
+        def setUpClass(cls) -> None:
+            cls.type_adapter = TypeAdapter(cls.type_)
+            return super().setUpClass()
 
         def test_valid(self):
             for v in self.valid:
-                with self.subTest(v=v):
+                if isinstance(v, TypeSubTest):
+                    val = v.val
+                else:
+                    val = v
+
+                with self.subTest(v=val):
                     try:
-                        self.type_adapter.validate_python(v)
+                        actual = self.type_adapter.validate_python(v)
                     except Exception as e:
                         self.fail(str(e))
+
+                    if isinstance(v, TypeSubTest):
+                        self.assertEqual(actual, v.exp)
 
         def test_invalid(self):
             for v in self.invalid:
                 with self.subTest(iv=v):
                     self.assertRaises(ValidationError, self.type_adapter.validate_python, v)
 
-    class TestManyRdfs(TestCase):
+    class TestManyRdfs(TestCase, ABC):
         rdf_root: Path
         adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)
         latest_adapter: ClassVar[TypeAdapter[LatestResourceDescription]] = TypeAdapter(LatestResourceDescription)
@@ -138,7 +151,7 @@ class BaseTestCases:
         def __init_subclass__(cls) -> None:
             for rdf in cls.yield_rdf_paths():
 
-                def test_rdf(self: BaseTestCases.TestManyRdfs, rdf_path: Path = rdf) -> None:
+                def test_rdf(self: TestBases.TestManyRdfs, rdf_path: Path = rdf) -> None:
                     with rdf_path.open(encoding="utf-8") as f:
                         data = yaml.load(f)
 
@@ -151,12 +164,18 @@ class BaseTestCases:
                     with self.subTest("as-is"):
                         rd, summary = load_description(data, context=context, format_version="discover")
                         if rd is None:
-                            self.fail(str(summary))
+                            self.fail(format_summary(summary))
+
+                        deserialized = rd.model_dump()
+                        self.assertEqual(data, deserialized, "roundtrip")
 
                     with self.subTest("as-latest"):
                         rd, summary = load_description(data, context=context, format_version="latest")
                         if rd is None:
-                            self.fail(str(summary))
+                            self.fail(format_summary(summary))
+
+                        deserialized = rd.model_dump()
+                        self.assertEqual(data, deserialized, "roundtrip")
 
                 subfolder = "".join(f"_{sf}" for sf in rdf.relative_to(cls.rdf_root).as_posix().split("/")[:-1])
                 test_case_name: str = f"test{subfolder}_{rdf.stem}"

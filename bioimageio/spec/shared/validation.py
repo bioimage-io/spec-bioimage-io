@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from contextvars import ContextVar, Token
-from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 import pydantic

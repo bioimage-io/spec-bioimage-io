@@ -98,6 +98,7 @@ class RelativePath:
     def __init__(
         self, path: Union[str, pathlib.Path, RelativePath], /, *, root: Union[AnyUrl, pathlib.Path] = pathlib.Path()
     ) -> None:
+        super().__init__()
         self._relative = path._relative if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
         self._root = root
 
