@@ -105,7 +105,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
     cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]]
     """citations"""
 
-    config: Optional[FrozenDictNode[str, Any]] = Field(
+    config: Optional[ConfigDict] = Field(
         None,
         examples=[
             dict(

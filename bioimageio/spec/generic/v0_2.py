@@ -130,6 +130,10 @@ class GenericBaseNoSourceMeta(ModelMetaclass):
     def implemented_format_version(self) -> str:
         return self.model_fields["format_version"].default
 
+    @property
+    def implemented_format_version_tuple(self) -> Tuple[int, int, int]:
+        return tuple(int(x) for x in self.model_fields["format_version"].default.split("."))
+
 
 class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSourceMeta):
     """GenericBaseNoFormatVersion without a source field
@@ -195,7 +199,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     ] = ()
     """citations"""
 
-    config: Optional[FrozenDictNode[str, Any]] = Field(
+    config: Optional[ConfigDict] = Field(
         None,
         examples=[
             dict(
@@ -306,7 +310,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
         fv = data.get("format_version", "0.2.0")
-        if isinstance(fv, str) and tuple(map(int, fv.split(".")[:2])) >= (0, 3):
+        if isinstance(fv, str) and tuple(map(int, fv.split(".")[:2])) > (0, 2):
             return
 
         # we unofficially accept strings as author entries

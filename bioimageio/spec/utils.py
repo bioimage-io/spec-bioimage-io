@@ -1,4 +1,3 @@
-import dataclasses
 import traceback
 from pathlib import Path, PurePath
 from types import MappingProxyType
@@ -20,6 +19,7 @@ from urllib.parse import urljoin, urlparse
 import pydantic
 from pydantic import AnyUrl, HttpUrl
 
+import bioimageio.spec
 from bioimageio.spec import (
     ResourceDescription,
     __version__,
@@ -31,7 +31,7 @@ from bioimageio.spec import (
     notebook,
 )
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal._utils import nest_dict, nest_dict_with_narrow_first_key
+from bioimageio.spec._internal._utils import nest_dict_with_narrow_first_key
 from bioimageio.spec._internal._warn import WarningType
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import Loc, RawMapping, RelativeFilePath
@@ -61,7 +61,7 @@ def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
     ):
         typ = rd_class.model_fields["type"].default
         format_versions = supported.setdefault(typ, [])
-        ma, mi, pa = map(int, rd_class.model_fields["format_version"].default.split("."))
+        ma, mi, pa = rd_class.implemented_format_version_tuple
         for p in range(pa + 1):
             format_versions.append(f"{ma}.{mi}.{p}")
 
@@ -69,22 +69,37 @@ def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
     return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
 
 
-def check_type_and_format_version(data: RawMapping) -> Tuple[str, str]:
+def check_type_and_format_version(data: RawMapping) -> Tuple[str, str, str]:
     typ = data.get("type")
     if not isinstance(typ, str):
-        raise ValueError(f"Invalid resource type '{typ}' of type {type(typ)}")
+        raise TypeError(f"Invalid resource type '{typ}' of type {type(typ)}")
 
     fv = data.get("format_version")
+    if not isinstance(fv, str):
+        raise TypeError(f"Invalid format version '{fv}' of type {type(fv)}")
+
+    use_fv = fv
     if fv not in (supp := get_supported_format_versions().get(typ, ())):
+        # fv might be from the future, attempt to find currently known patch version
+        if fv.count(".") == 2:
+            # set fv to latest known patch
+            v_module = f"v{fv[:fv.rfind('.')].replace('.', '_')}"
+            try:
+                rd_class = getattr(getattr(getattr(bioimageio.spec, typ), v_module), typ.capitalize())
+            except AttributeError:
+                pass  # cannot find typ or v_module of the future
+            else:
+                assert issubclass(rd_class, ResourceDescription)
+                use_fv = rd_class.implemented_format_version
+
         raise ValueError(f"Invalid format version '{fv}' for resource type '{typ}' (valid for type {typ}: {supp})")
 
-    assert isinstance(fv, str)
-    return typ, fv
+    return typ, fv, use_fv
 
 
 def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDescription]:
     assert isinstance(format_version, str)
-    if format_version.count(".") == 0:
+    if format_version != LATEST and format_version.count(".") == 0:
         format_version = format_version + ".0"
     elif format_version.count(".") == 2:
         format_version = format_version[: format_version.rfind(".")]
@@ -128,7 +143,7 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, conte
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
     try:
-        rd = rd_class.model_validate(resource_description, context=dataclasses.asdict(context))
+        rd = rd_class.model_validate(resource_description, context=context)
     except pydantic.ValidationError as e:
         val_errors: List[ValidationError] = []
         for ee in e.errors(include_url=False):
@@ -194,10 +209,28 @@ def load_description(
     context: ValidationContext = ValidationContext(),
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
-    discovered_type, discovered_format_version = check_type_and_format_version(resource_description)
-    fv = discovered_format_version if format_version == DISCOVER else format_version
+    discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(resource_description)
+    if use_format_version != discovered_format_version:
+        resource_description = dict(resource_description)
+        resource_description["format_version"] = use_format_version
+        future_patch_warning = ValidationWarning(
+            loc=("format_version",),
+            msg=f"Treated future patch version {discovered_format_version} as {use_format_version}.",
+            type="worriless",
+        )
+    else:
+        future_patch_warning = None
+
+    fv = use_format_version if format_version == DISCOVER else format_version
     rd_class = get_rd_class(discovered_type, format_version=fv)
-    return load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
+
+    rd, summary = load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
+
+    if future_patch_warning:
+        summary["warnings"] = list(summary["warnings"]) if "warnings" in summary else []
+        summary["warnings"].insert(0, future_patch_warning)
+
+    return rd, summary
 
 
 def validate(
@@ -235,7 +268,7 @@ def validate_legacy(
         source_name=vs["source_name"],
         status=vs["status"],
         traceback=tb_list,
-        warnings=nest_dict({w["loc"]: w["msg"] for w in vs["warnings"]}) if "warnings" in vs else {},
+        warnings={".".join(map(str, w["loc"])): w["msg"] for w in vs["warnings"]} if "warnings" in vs else {},
     )
 
 
@@ -326,6 +359,18 @@ def _fill_resource_package_content(
                 raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
 
             package_content[loc] = src
+
+
+def format_summary(summary: ValidationSummary):
+    es = "\n    ".join(
+        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in summary["error"] or []
+    )
+    ws = "\n    ".join(f"{'.'.join(map(str, w['loc']))}: {w['msg']}" for w in summary.get("warning", []))
+
+    es_msg = f"errors: {es}" if es else ""
+    ws_msg = f"warnings: {ws}" if ws else ""
+
+    return f"{summary['name'].strip('.')}: {summary['status']}\nsource: {summary['source_name']}\n{es_msg}\n{ws_msg}"
 
 
 # def load_raw_resource_description(
