@@ -22,7 +22,9 @@ __all__ = [{info.all_version_modules_quoted},
 
 Any{info.target_node} = {info.target_node}
 """
-AUTOGEN_BODY_MULTIPLE = """from typing import Union
+AUTOGEN_BODY_MULTIPLE = """from typing import Annotated, Union
+
+from pydantic import Field
 
 from . import {info.all_version_modules_plain}
 from .{info.latest_version_module} import {info.target_node}
@@ -31,7 +33,7 @@ __all__ = [{info.all_version_modules_quoted},
     "{info.target_node}"
 ]
 
-Any{info.target_node} = Union[{info.all_target_nodes_plain}]
+Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Field(discriminator="format_version")]
 """
 
 AUTOGEN_STOP = "# autogen: stop\n"
@@ -51,7 +53,7 @@ def main(command: Literal["check", "generate"]):
 
 def parse_args():
     p = ArgumentParser(description=("script that generates imports in bioimageio.spec resource description submodules"))
-    p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
+    _ = p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
     args = p.parse_args()
     return args
 
@@ -69,7 +71,7 @@ class Info:
 
     def __post_init__(self):
         self.target_node = dict(generic="Generic").get(self.target, self.target.capitalize())
-        self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules[::-1]])
+        self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules])
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_quoted = ",\n".join(f'"{vm}"' for vm in self.all_version_modules)
         self.all_version_modules_plain = ", ".join(self.all_version_modules)

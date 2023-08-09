@@ -24,6 +24,7 @@ from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLic
 from bioimageio.spec._internal._validate import (
     SLOTS,
     RestrictCharacters,
+    capitalize_first_letter,
     validate_datetime,
     validate_identifier,
     validate_is_not_keyword,
@@ -60,7 +61,7 @@ NonEmpty = Annotated[S, annotated_types.MinLen(1)]
 
 AxesStr = Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)]
 AxesInCZYX = Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)]
-CapitalStr = Annotated[NonEmpty[str], AfterValidator(str.capitalize)]
+CapitalStr = Annotated[NonEmpty[str], AfterValidator(capitalize_first_letter)]
 Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""

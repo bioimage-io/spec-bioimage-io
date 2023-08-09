@@ -6,7 +6,7 @@ import inspect
 import sys
 from abc import ABC
 from collections import UserString
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -204,18 +204,20 @@ class ResourceDescriptionBase(Node):
             context = ValidationContext(**c)
 
         if "root" in cls.model_fields:
-            data["root"] = context.root
+            # serialize root for equality after roundtrip
+            serialized_root = context.model_dump()["root"]
+            data["root"] = serialized_root
 
         original_format = data.get("format_version")
         if isinstance(original_format, str) and original_format.count(".") == 2:
             c = {**dict(context), "original_format": tuple(map(int, original_format.split(".")))}
             context = ValidationContext(**c)
 
-        cls.convert_from_older_format(data)
+        cls.convert_from_older_format(data, raise_unconvertable=True)
         return context
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         """A node may `convert` it's raw data from an older format."""
         pass
 

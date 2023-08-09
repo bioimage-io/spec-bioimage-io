@@ -26,6 +26,7 @@ from bioimageio.spec._internal._warn import (
 )
 from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
+    CapitalStr,
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
@@ -108,7 +109,7 @@ class CiteEntry(Node):
 
     @field_validator("url", mode="after")
     @classmethod
-    def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo):
+    def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo) -> Optional[str]:
         no_error_for_doi = "doi" in info.data
         if no_error_for_doi and not info.data["doi"] and not value:
             raise ValueError("Either 'doi' or 'url' is required")
@@ -148,14 +149,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[str, warn(MaxLen(128))] = Field()
+    name: Annotated[CapitalStr, warn(MaxLen(128))] = Field()
     """A human-friendly name of the resource description"""
-
-    # todo warn about capitalization
-    @field_validator("name", mode="after")
-    @classmethod
-    def check_name(cls, name: str) -> str:
-        return name.capitalize()
 
     description: str = Field()
 
@@ -252,7 +247,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     @as_warning
     @field_validator("license", mode="after")
     @classmethod
-    def deprecated_spdx_license(cls, value: Optional[str]):
+    def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
         license_info = LICENSES[value] if value in LICENSES else {}
         if not license_info.get("isFsfLibre", False):
             raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")
@@ -288,7 +283,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     @as_warning
     @field_validator("tags")
     @classmethod
-    def warn_about_tag_categories(cls, value: Tuple[str, ...], info: FieldValidationInfo):
+    def warn_about_tag_categories(cls, value: Tuple[str, ...], info: FieldValidationInfo) -> Tuple[str, ...]:
         categories = TAG_CATEGORIES.get(info.data["type"], {})
         missing_categories: List[Mapping[str, Sequence[str]]] = []
         for cat, entries in categories.items():
@@ -298,6 +293,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
         if missing_categories:
             raise ValueError("Missing tags from bioimage.io categories: {missing_categories}")
 
+        return value
+
     version: Union[Version, None] = Field(None, examples=["0.1.0"])
     """The version number of the resource. Its format must be a string in
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
@@ -306,7 +303,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
         fv = data.get("format_version", "0.2.0")

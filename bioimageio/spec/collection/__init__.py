@@ -1,10 +1,12 @@
 # autogen: start
-from typing import Union
+from typing import Annotated, Union
+
+from pydantic import Field
 
 from . import v0_2, v0_3
 from .v0_3 import Collection
 
 __all__ = ["v0_2", "v0_3", "Collection"]
 
-AnyCollection = Union[v0_3.Collection, v0_2.Collection]
+AnyCollection = Annotated[Union[v0_2.Collection, v0_3.Collection], Field(discriminator="format_version")]
 # autogen: stop

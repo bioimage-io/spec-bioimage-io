@@ -123,8 +123,9 @@ class Collection(GenericBase):
 
     @field_validator("collection")
     @classmethod
-    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]):
+    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]) -> NonEmpty[Tuple[CollectionEntry, ...]]:
         cls.check_unique_ids_impl(value)
+        return value
 
     @staticmethod
     def check_unique_ids_impl(value: NonEmpty[Tuple[CollectionEntryBase, ...]]):
@@ -181,9 +182,9 @@ class Collection(GenericBase):
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         cls.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data)
+        super().convert_from_older_format(data, raise_unconvertable)
 
 
 AnyCollection = Collection

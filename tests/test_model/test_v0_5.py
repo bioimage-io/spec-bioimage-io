@@ -54,7 +54,7 @@ class TestTensorBase(TestBases.TestNode):
                 ],
             )
         ),
-        Invalid(
+        Valid(
             dict(
                 name="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
@@ -62,6 +62,18 @@ class TestTensorBase(TestBases.TestNode):
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "uint8"},
+                ],
+            ),
+            name="string values and uint data type",
+        ),
+        Invalid(
+            dict(
+                name="t4",
+                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
+                test_tensor="https://example.com/test.npy",
+                data=[
+                    {"values": ["mouse", "zebra", "elephant"]},
+                    {"type": "int8"},
                 ],
             ),
             name="string values and int data type",
@@ -73,10 +85,10 @@ class TestTensorBase(TestBases.TestNode):
                 test_tensor="https://example.com/test.npy",
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
-                    {"values": [1, 2, 3]},
+                    {"values": [1.1, 2.2, 3.3]},
                 ],
             ),
-            name="str and int values",
+            name="str and float values",
         ),
         Invalid(
             dict(

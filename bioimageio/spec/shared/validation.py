@@ -19,6 +19,7 @@ class ValidationContext(pydantic.BaseModel):
     )
     root: Union[HttpUrl, DirectoryPath, None] = None
     """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
+
     warning_level: WarningLevel = 50
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
@@ -56,12 +57,12 @@ class ValidationWarning(ValidationOutcome):
 
 class ValidationSummary(TypedDict):
     bioimageio_spec_version: str
-    error: Union[str, Sequence[ValidationError], None]
     name: str
     source_name: str
     status: Union[Literal["passed", "failed"], str]
+    errors: Sequence[ValidationError]
     traceback: NotRequired[Sequence[str]]
-    warnings: NotRequired[Sequence[ValidationWarning]]
+    warnings: Sequence[ValidationWarning]
 
 
 class LegacyValidationSummary(TypedDict):

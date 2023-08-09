@@ -65,18 +65,19 @@ class Collection(GenericBase):
         )
         return super()._get_context_and_update_data(data, context)
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]]
+    collection: NonEmpty[Tuple[CollectionEntry, ...]] = Field()
     """Collection entries"""
 
     @field_validator("collection")
     @classmethod
-    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]):
+    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]) -> NonEmpty[Tuple[CollectionEntry, ...]]:
         v0_2.Collection.check_unique_ids_impl(value)
+        return value
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data)
+        super().convert_from_older_format(data, raise_unconvertable)
 
 
 AnyCollection = Annotated[Union[v0_2.Collection, Collection], Field(discriminator="format_version")]

@@ -44,7 +44,7 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
     __version__: str = json.load(f)["version"]
     assert isinstance(__version__, str)
 
-ResourceDescriptionV0_3 = Union[
+ResourceDescription_v0_3 = Union[
     Annotated[
         Union[
             application.v0_3.Application,
@@ -59,11 +59,11 @@ ResourceDescriptionV0_3 = Union[
 ]
 """A resource description following the 0.3.x (model: 0.5.x) specification format"""
 
-LatestResourceDescription = ResourceDescriptionV0_3
+LatestResourceDescription = ResourceDescription_v0_3
 """A resource description following the latest specification format"""
 
 
-ResourceDescriptionV0_2 = Union[
+ResourceDescription_v0_2 = Union[
     Annotated[
         Union[
             application.v0_2.Application,
@@ -79,8 +79,20 @@ ResourceDescriptionV0_2 = Union[
 """A resource description following the 0.2.x (model: 0.4.x) specification format"""
 
 
+SpecificResourceDescription = Annotated[
+    Union[
+        AnyApplication,
+        AnyCollection,
+        AnyDataset,
+        AnyModel,
+        AnyNotebook,
+    ],
+    Field(discriminator="type"),
+]
+"""Any of the implemented, non-generic resource descriptions"""
+
 ResourceDescription = Union[
-    ResourceDescriptionV0_3,
-    ResourceDescriptionV0_2,
+    SpecificResourceDescription,
+    AnyGeneric,
 ]
 """Any of the implemented resource descriptions"""

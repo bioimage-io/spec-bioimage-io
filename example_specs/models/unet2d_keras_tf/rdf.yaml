@@ -1,59 +1,71 @@
 attachments:
   files: [per_sample_scale_range.ijm]
 authors:
-- {affiliation: zerocost, name: zerocost}
+  - affiliation: zerocost
+    name: zerocost
 cite:
-- {text: Falk et al. Nature Methods 2019, url: 'https://doi.org/10.1038/s41592-018-0261-2'}
-- {text: Ronneberger et al. arXiv in 2015, url: 'https://doi.org/10.1007/978-3-319-24574-4_28'}
-- {text: Lucas von Chamier et al. biorXiv 2020, url: 'https://doi.org/10.1101/2020.03.20.000133'}
+  - text: Falk et al. Nature Methods 2019
+    doi: "10.1038/s41592-018-0261-2"
+  - text: Ronneberger et al. arXiv in 2015
+    doi: "10.1007/978-3-319-24574-4_28"
+  - text: Lucas von Chamier et al. biorXiv 2020
+    doi: "10.1101/2020.03.20.000133"
 config:
   deepimagej:
     allow_tiling: true
     model_keys: null
     prediction:
       postprocess:
-      - {spec: null}
+        - { spec: null }
       preprocess:
-      - {kwargs: per_sample_scale_range.ijm, spec: 'ij.IJ::runMacroFile'}
+        - { kwargs: per_sample_scale_range.ijm, spec: "ij.IJ::runMacroFile" }
     pyramidal_model: false
     test_information:
       inputs:
-      - name: sample_input_0.tif
-        pixel_size: {x: 1.0, y: 1.0, z: 1.0}
-        size: 512 x 512 x 1 x 1
+        - name: sample_input_0.tif
+          pixel_size: { x: 1.0, y: 1.0, z: 1.0 }
+          size: 512 x 512 x 1 x 1
       memory_peak: null
       outputs:
-      - {name: sample_output_0.tif, size: 512 x 512 x 1 x 1, type: image}
+        - { name: sample_output_0.tif, size: 512 x 512 x 1 x 1, type: image }
       runtime: null
 covers: [input.png, output.png]
 description: 2D UNet trained on data from the ISBI 2D segmentation challenge.
 documentation: README.md
 format_version: 0.4.0
 inputs:
-- axes: bxyc
-  data_range: [-inf, inf]
-  data_type: float32
-  name: input
-  preprocessing:
-  - kwargs: {axes: xyc, max_percentile: 99.8, min_percentile: 1, mode: per_sample}
-    name: scale_range
-  shape: [1, 512, 512, 1]
+  - axes: bxyc
+    data_range: ["-inf", "inf"]
+    data_type: float32
+    name: input
+    preprocessing:
+      - kwargs:
+          {
+            axes: xyc,
+            max_percentile: 99.8,
+            min_percentile: 1,
+            mode: per_sample,
+          }
+        name: scale_range
+    shape: [1, 512, 512, 1]
 license: MIT
 links: [deepimagej/deepimagej]
 name: Unet2DKeras
 outputs:
-- axes: bxyc
-  data_range: [-.inf, .inf]
-  data_type: float64
-  name: output
-  shape: [1, 512, 512, 1]
+  - axes: bxyc
+    data_range: [-.inf, .inf]
+    data_type: float64
+    name: output
+    shape: [1, 512, 512, 1]
 sample_inputs: [sample_input_0.tif]
 sample_outputs: [sample_output_0.tif]
 tags: [zerocostdl4mic, deepimagej, segmentation, tem, unet]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
-timestamp: '2021-11-30T11:37:51.374314'
+timestamp: "2021-11-30T11:37:51.374314Z"
 type: model
 weights:
-  keras_hdf5: {sha256: 2c0d85bbb37f424d4927bd6ccd6537bac815b1c0ed5f0b4bfa313be3efba96af,
-    source: keras_weights.hdf5, tensorflow_version: '1.15'}
+  keras_hdf5:
+    sha256: 2c0d85bbb37f424d4927bd6ccd6537bac815b1c0ed5f0b4bfa313be3efba96af
+    source: keras_weights.hdf5
+    tensorflow_version: "1.15"

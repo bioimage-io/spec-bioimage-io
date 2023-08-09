@@ -187,9 +187,10 @@ class TimeAxis(IndexTimeSpaceAxisBase):
 
     @field_validator("scale")
     @classmethod
-    def check_scale(cls, value: float, info: FieldValidationInfo):
+    def check_scale(cls, value: float, info: FieldValidationInfo) -> float:
         if info.data["unit"] is None and value != 1.0:
             raise ValueError("Without `unit`, `scale` may not be set.")
+
         return value
 
 
@@ -201,9 +202,10 @@ class SpaceAxis(IndexTimeSpaceAxisBase):
 
     @field_validator("scale")
     @classmethod
-    def check_scale(cls, value: float, info: FieldValidationInfo):
+    def check_scale(cls, value: float, info: FieldValidationInfo) -> float:
         if info.data["unit"] is None and value != 1.0:
             raise ValueError("Without `unit`, `scale` may not be set.")
+
         return value
 
 
@@ -228,23 +230,12 @@ TVs = Union[
 ]
 
 
-# class NominalTensor(Node):
-#     level: Literal["nominal"] = "nominal"
-#     values: TVs
-#     """nominal values in arbitrary order"""
-
-
-# class OrdinalTensor(Node):
-#     level: Literal["ordinal"] = "ordinal"
-#     values: TVs
-#     """ordinal values in ascending order"""
-
-
 class NominalOrOrdinalData(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
     String `values` are interpreted as labels for tensor values 0, ..., N.
     In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'"""
+
     type: Literal[
         "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
     ] = Field(
@@ -258,21 +249,17 @@ class NominalOrOrdinalData(Node):
         ],
     )
 
-    @field_validator("type")
-    @classmethod
-    def validate_type_matches_values(
-        cls,
-        typ: Literal[
-            "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
-        ],
-        info: FieldValidationInfo,
-    ):
+    @model_validator(mode="after")  # type: ignore
+    def validate_values_match_type(
+        self,
+    ) -> Self:
         incompatible: List[Any] = []
-        for v in info.data.get("values", ()):
+        for v in self.values:
             if (
-                (isinstance(v, (int, float)) and (v < DTYPE_LIMITS[typ].min or v > DTYPE_LIMITS[typ].max))
-                or (isinstance(v, bool) and typ != "bool")
-                or (isinstance(v, str) and "uint" not in typ)
+                (isinstance(v, (int, float)) and (v < DTYPE_LIMITS[self.type].min or v > DTYPE_LIMITS[self.type].max))
+                or (isinstance(v, bool) and self.type != "bool")
+                or (isinstance(v, str) and "uint" not in self.type)
+                or (isinstance(v, float) and "int" in self.type)
             ):
                 incompatible.append(v)
 
@@ -281,9 +268,9 @@ class NominalOrOrdinalData(Node):
                 break
 
         if incompatible:
-            raise ValueError(f"data type '{typ}' incompatible with values {incompatible}")
+            raise ValueError(f"data type '{self.type}' incompatible with values {incompatible}")
 
-        return typ
+        return self
 
     unit: Optional[Unit] = None
 
@@ -407,7 +394,7 @@ class ScaleRangeKwargs(v0_4.ProcessingKwargs):
 
     @field_validator("max_percentile", mode="after")
     @classmethod
-    def min_smaller_max(cls, value: float, info: FieldValidationInfo):
+    def min_smaller_max(cls, value: float, info: FieldValidationInfo) -> float:
         if (min_p := info.data["min_percentile"]) >= value:
             raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
 
@@ -463,7 +450,7 @@ class TensorBase(Node):
 
     @field_validator("axes", mode="after")
     @classmethod
-    def validate_axes(cls, axes: Tuple[Axis, ...]):
+    def validate_axes(cls, axes: Tuple[Axis, ...]) -> Tuple[Axis, ...]:
         seen_types: Set[str] = set()
         duplicate_axes_types: Set[str] = set()
         for a in axes:
@@ -503,7 +490,9 @@ class TensorBase(Node):
 
     @field_validator("data", mode="after")
     @classmethod
-    def check_data_type_across_channels(cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]):
+    def check_data_type_across_channels(
+        cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]
+    ) -> Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]:
         if not isinstance(value, tuple):
             return value
 
@@ -517,7 +506,7 @@ class TensorBase(Node):
     @classmethod
     def check_data_matches_channelaxis(
         cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]], info: FieldValidationInfo
-    ):
+    ) -> Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]:
         if not isinstance(value, tuple) or "axes" not in info.data:
             return value
 
@@ -715,6 +704,7 @@ class Model(
                 cls._validate_axis(
                     "inputs",
                     i,
+                    ipt.name,
                     a,
                     ax,
                     valid_step_with_refs=valid_step_with_refs,
@@ -726,6 +716,7 @@ class Model(
     def _validate_axis(
         field_name: str,
         i: int,
+        tensor_name: str,
         a: int,
         axis: Union[Axis, OutputAxis],
         valid_step_with_refs: Sequence[TensorAxisId],
@@ -740,7 +731,7 @@ class Model(
                     f"Invalid tensor axis reference in {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}. Another axis's name with a parametrized size is required."
                 )
-            elif axis.size.step_with.split(".")[-1] == axis.name:
+            elif axis.size.step_with in (axis.name, f"{tensor_name}.{axis.name}") :
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}"
@@ -751,7 +742,7 @@ class Model(
                     f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}."
                 )
-            elif axis.size.reference.split(".")[-1] == axis.name:
+            elif axis.size.reference  in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}"
@@ -759,12 +750,12 @@ class Model(
         elif isinstance(axis.size, str):
             if axis.size not in valid_independent_refs:
                 raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
-            elif axis.size.split(".")[-1] == axis.name:
+            elif axis.size  in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
 
     license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
     """A [SPDX license identifier](https://spdx.org/licenses/).
-    We do notsupport custom license beyond the SPDX license list, if you need that please
+    We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
@@ -840,6 +831,7 @@ class Model(
                 cls._validate_axis(
                     "outputs",
                     i,
+                    out.name,
                     a,
                     ax,
                     valid_step_with_refs=valid_step_with_refs,
@@ -892,7 +884,7 @@ class Model(
         return ret
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         fv = data.get("format_version")
         if not isinstance(fv, str) or fv.count(".") != 2:
             return
@@ -902,7 +894,7 @@ class Model(
             return
 
         if minor == 4:
-            cls.convert_model_from_v0_4_to_0_5_0(data)
+            cls.convert_model_from_v0_4_to_0_5_0(data, raise_unconvertable)
 
     @staticmethod
     def _update_v0_4_tensor_specs(
@@ -929,8 +921,8 @@ class Model(
                 param["sample_tensor"] = sample_tensors[i]
 
     @classmethod
-    def convert_model_from_v0_4_to_0_5_0(cls, data: RawDict) -> None:
-        cls._convert_axes_string_to_axis_descriptions(data)
+    def convert_model_from_v0_4_to_0_5_0(cls, data: RawDict, raise_unconvertable: bool) -> None:
+        cls._convert_axes_string_to_axis_descriptions(data, raise_unconvertable)
         cls._convert_architecture(data)
         cls._convert_attachments(data)
         _ = data.pop("download_url", None)
@@ -938,7 +930,7 @@ class Model(
         data["format_version"] = "0.5.0"
 
     @classmethod
-    def _convert_axes_string_to_axis_descriptions(cls, data: RawDict):
+    def _convert_axes_string_to_axis_descriptions(cls, data: RawDict, raise_unconvertable: bool):
         inputs = data.get("inputs")
         outputs = data.get("outputs")
         sample_inputs = data.get("sample_inputs")
@@ -948,14 +940,16 @@ class Model(
 
         if isinstance(inputs, collections.abc.Sequence):
             data["inputs"] = list(inputs)
-            cls._update_tensor_specs(data["inputs"], test_inputs, sample_inputs)
+            cls._update_tensor_specs(data["inputs"], test_inputs, sample_inputs, raise_unconvertable)
 
         if isinstance(outputs, collections.abc.Sequence):
             data["outputs"] = list(outputs)
-            cls._update_tensor_specs(data["outputs"], test_outputs, sample_outputs)
+            cls._update_tensor_specs(data["outputs"], test_outputs, sample_outputs, raise_unconvertable)
 
     @classmethod
-    def _update_tensor_specs(cls, tensor_data: List[RawValue], test_tensors: Any, sample_tensors: Any):
+    def _update_tensor_specs(
+        cls, tensor_data: List[RawValue], test_tensors: Any, sample_tensors: Any, raise_unconvertable: bool
+    ):
         tts: Sequence[Any] = test_tensors if isinstance(test_tensors, collections.abc.Sequence) else ()
         sts: Sequence[Any] = sample_tensors if isinstance(sample_tensors, collections.abc.Sequence) else ()
 
@@ -964,7 +958,7 @@ class Model(
             if not isinstance(d, dict):
                 continue
 
-            reordered_shape = cls._reorder_tensor_shape(d.get("shape"))
+            reordered_shape = cls._reorder_tensor_shape(d.get("shape"), raise_unconvertable)
             new_d = {}
             for keep in ("name", "description"):
                 if keep in d:
@@ -996,16 +990,19 @@ class Model(
             tensor_data[idx] = new_d
 
     @staticmethod
-    def _reorder_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
+    def _reorder_tensor_shape(
+        orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]], raise_unconvertable: bool
+    ) -> Dict[int, Any]:
         if isinstance(orig_shape, collections.abc.Mapping):
             if "reference_tensor" in orig_shape:
-                raise NotImplementedError(
-                    "Converting tensor shapes with references from model RDF 0.4 to model RDF 0.5 is not implemented."
-                )
-
-            m: Sequence[Any] = _m if isinstance(_m := orig_shape.get("min"), collections.abc.Sequence) else []
-            s: Sequence[Any] = _s if isinstance(_s := orig_shape.get("step"), collections.abc.Sequence) else []
-            return {i: {"min": mm, "step": ss} for i, (mm, ss) in enumerate(zip(m, s))}
+                if raise_unconvertable:
+                    raise NotImplementedError(
+                        "Converting tensor shapes with references from model RDF 0.4 to model RDF 0.5 is not implemented."
+                    )
+            else:
+                m: Sequence[Any] = _m if isinstance(_m := orig_shape.get("min"), collections.abc.Sequence) else []
+                s: Sequence[Any] = _s if isinstance(_s := orig_shape.get("step"), collections.abc.Sequence) else []
+                return {i: {"min": mm, "step": ss} for i, (mm, ss) in enumerate(zip(m, s))}
         elif isinstance(orig_shape, collections.abc.Sequence):
             return {i: s for i, s in enumerate(orig_shape)}
 

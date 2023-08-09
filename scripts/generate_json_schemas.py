@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     export_json_schemas_from_type(
         dist,
-        bioimageio.spec.ResourceDescription,
+        bioimageio.spec.SpecificResourceDescription,
         name="bioimageio_spec",
         title=f"bioimage.io resource description {bioimageio.spec.__version__}",
     )

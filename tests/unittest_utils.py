@@ -1,7 +1,8 @@
 from abc import ABC
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Optional, Sequence, Type, Union
+from typing import Any, ClassVar, Dict, Optional, Sequence, Set, Type, Union
 from unittest import TestCase
 
 from pydantic import TypeAdapter, ValidationError
@@ -11,6 +12,7 @@ from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.validation import ValidationContext
 from bioimageio.spec.utils import format_summary, load_description
+from deepdiff import DeepDiff
 
 yaml = YAML(typ="safe")
 
@@ -147,6 +149,8 @@ class TestBases:
         rdf_root: Path
         adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)
         latest_adapter: ClassVar[TypeAdapter[LatestResourceDescription]] = TypeAdapter(LatestResourceDescription)
+        known_invalid_as_latest: ClassVar[Set[Path]]
+        exclude_fields_from_roundtrip: ClassVar[Dict[Path, Set[str]]]
 
         def __init_subclass__(cls) -> None:
             for rdf in cls.yield_rdf_paths():
@@ -161,21 +165,31 @@ class TestBases:
                         if rd is not None:
                             self.fail("Invalid RDF passed validation")
 
+                    expect_back = {
+                        k: v
+                        for k, v in data.items()
+                        if k
+                        not in {
+                            "format_version",
+                            "timestamp",
+                            *cls.exclude_fields_from_roundtrip.get(rdf_path.relative_to(cls.rdf_root), set()),
+                        }
+                    }
                     with self.subTest("as-is"):
                         rd, summary = load_description(data, context=context, format_version="discover")
                         if rd is None:
                             self.fail(format_summary(summary))
 
-                        deserialized = rd.model_dump()
-                        self.assertEqual(data, deserialized, "roundtrip")
+                        deserialized = rd.model_dump(mode="json", exclude={"root", "format_version", "timestamp"})
+                        self.assert_big_dicts_equal(expect_back, deserialized, "roundtrip")
 
                     with self.subTest("as-latest"):
                         rd, summary = load_description(data, context=context, format_version="latest")
                         if rd is None:
-                            self.fail(format_summary(summary))
-
-                        deserialized = rd.model_dump()
-                        self.assertEqual(data, deserialized, "roundtrip")
+                            if rdf_path not in cls.known_invalid_as_latest:
+                                self.fail(format_summary(summary))
+                        elif rdf_path in cls.known_invalid_as_latest:
+                            self.fail("passes despite marked as known failure case")
 
                 subfolder = "".join(f"_{sf}" for sf in rdf.relative_to(cls.rdf_root).as_posix().split("/")[:-1])
                 test_case_name: str = f"test{subfolder}_{rdf.stem}"
@@ -189,3 +203,10 @@ class TestBases:
             for rdf in cls.rdf_root.glob("**/*.yaml"):
                 if rdf.name.startswith("invalid_rdf") or rdf.name.startswith("rdf"):
                     yield rdf
+
+        def assert_big_dicts_equal(self, a: Dict[str, Any], b: Dict[str, Any], msg: str):
+            diff = DeepDiff(a, b)
+            if diff:
+                self.fail(f"{msg}\n" + diff.pretty())
+
+            self.assertDictEqual(a, b, msg)

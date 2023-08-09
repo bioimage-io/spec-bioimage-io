@@ -17,7 +17,7 @@ maintainers:
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
   - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
-    doi: https://doi.org/10.1007/978-3-319-24574-4_28
+    doi: 10.1007/978-3-319-24574-4_28
   - text: "2018 Data Science Bowl"
     url: https://www.kaggle.com/c/data-science-bowl-2018
 

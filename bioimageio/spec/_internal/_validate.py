@@ -80,6 +80,10 @@ class WithSuffix:
             return validate_suffix(value, *self.suffix, case_sensitive=self.case_sensitive)
 
 
+def capitalize_first_letter(v: str) -> str:
+    return v[:1].capitalize() + v[1:]
+
+
 def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
     if isinstance(dt, datetime):
         return dt

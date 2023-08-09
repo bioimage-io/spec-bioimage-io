@@ -291,7 +291,7 @@ class ImplicitOutputShape(Node):
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: NonEmpty[Tuple[Annotated[float, MultipleOf(0.5)], ...]]
+    offset: NonEmpty[Tuple[Union[int, Annotated[float, MultipleOf(0.5)]], ...]]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -497,7 +497,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
 
     @field_validator("max_percentile", mode="after")
     @classmethod
-    def min_smaller_max(cls, value: float, info: FieldValidationInfo):
+    def min_smaller_max(cls, value: float, info: FieldValidationInfo) -> float:
         if (min_p := info.data["min_percentile"]) >= value:
             raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
 
@@ -714,10 +714,13 @@ class Model(GenericBaseNoSource):
 
     @field_validator("inputs", "outputs")
     @classmethod
-    def unique_tensor_names(cls, value: Sequence[Union[InputTensor, OutputTensor]]):
+    def unique_tensor_names(
+        cls, value: Sequence[Union[InputTensor, OutputTensor]]
+    ) -> Sequence[Union[InputTensor, OutputTensor]]:
         unique_names = {v.name for v in value}
         if len(unique_names) != len(value):
             raise ValueError("Duplicate tensor names")
+
         return value
 
     @model_validator(mode="after")  # type: ignore
@@ -889,7 +892,7 @@ class Model(GenericBaseNoSource):
         data["format_version"] = "0.4.5"
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict) -> None:
+    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
         fv = data.get("format_version", "0.3.0")
         if isinstance(fv, str):
             major_minor = tuple(map(int, fv.split(".")[:2]))

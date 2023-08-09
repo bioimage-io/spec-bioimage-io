@@ -4,7 +4,7 @@ authors:
   - name: Constantin Pape
     github_user: constantinpape
 cite:
-  - doi: "https://doi.org/10.1002/bies.202000257"
+  - doi: "10.1002/bies.202000257"
     text: "Pape, Remme et al."
 covers:
   - "https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/covid-if-cover0.jpg"

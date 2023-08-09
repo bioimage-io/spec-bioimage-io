@@ -30,8 +30,8 @@ if TYPE_CHECKING:
 WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 Severity = Literal[20, 30, 35]
 WarningLevel = Literal[Severity, 50]  # with warning level x raise warnings of severity >=x
-ALERT = 35  # no ALERT or worse -> RDF is worriless
-WARNING = 30  # no WARNING or worse -> RDF is watertight
+ALERT = 35  # no ALERT -> RDF is worriless
+WARNING = 30  # no ALERT nor WARNING -> RDF is watertight
 INFO = 20
 
 if sys.version_info < (3, 10):
@@ -44,14 +44,14 @@ ValidatorFunction = Union[NoInfoValidatorFunction, FieldValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
-WarningType = Literal["info", "worriless", "watertight"]
-SEVERITY_TO_TYPE: MappingProxyType[Severity, WarningType] = MappingProxyType(
-    {INFO: "info", WARNING: "worriless", ALERT: "watertight"}
+WarningType = Literal["info", "warning", "alert"]
+SEVERITY_TO_WARNING: MappingProxyType[Severity, WarningType] = MappingProxyType(
+    {INFO: "info", WARNING: "warning", ALERT: "alert"}
 )
 
 
 def raise_warning(message_template: LiteralString, *, severity: Severity, context: Optional[Dict[str, Any]]):
-    raise PydanticCustomError(SEVERITY_TO_TYPE[severity], message_template, context)
+    raise PydanticCustomError(SEVERITY_TO_WARNING[severity], message_template, context)
 
 
 def warn(
