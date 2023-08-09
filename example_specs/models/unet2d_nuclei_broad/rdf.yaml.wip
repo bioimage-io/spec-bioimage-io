@@ -88,7 +88,7 @@ weights:
 
 type: model
 version: 0.1.3
-download_url: https://example.com  # note: not recommended for model RDFs
+download_url: https://example.com/  # note: not recommended for model RDFs
 
 training_data:
   id: ilastik/covid_if_training_data  # note: not the real training data

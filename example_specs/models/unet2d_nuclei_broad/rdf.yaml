@@ -1,6 +1,8 @@
+type: model
 format_version: 0.5.0
 
 name: UNet 2D Nuclei Broad
+version: 0.2.0
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
   - name: "Constantin Pape;@bioimage-io"
@@ -97,9 +99,6 @@ weights:
     sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
     source: weights.pt
     parent: pytorch_state_dict
-
-type: model
-version: 0.2.0
 
 training_data:
   id: ilastik/covid_if_training_data # note: not the real training data

@@ -5,7 +5,7 @@ authors:
 cite:
   - { url: "https://example.com", text: Test }
 covers: []
-description: test model for scaling
+description: Test model for scaling
 documentation: docs.md
 format_version: 0.4.6
 inputs:
@@ -17,7 +17,7 @@ inputs:
       min: [1, 1, 5, 5]
       step: [0, 0, 0, 0]
 license: CC-BY-4.0
-name: test_scaling
+name: Test_scaling
 outputs:
   - axes: bcyx
     data_range: [-.inf, .inf]

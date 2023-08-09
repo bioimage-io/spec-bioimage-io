@@ -9,7 +9,7 @@ cite:
   - text: architecture
     doi: "10.1007/978-3-319-24574-4_28"
 covers: ["cover.jpg"]
-description: fixed-shape
+description: Fixed shape
 documentation: documentation.md
 format_version: 0.4.9
 git_repo: https://github.com/constantinpape/torch-em.git
@@ -24,7 +24,7 @@ inputs:
     shape: &shape [1, 1, 256, 256]
 license: CC-BY-4.0
 links: [ilastik/ilastik]
-name: fixed-shape
+name: Fixed-shape
 outputs:
   - axes: *axes
     data_range: [-.inf, .inf]

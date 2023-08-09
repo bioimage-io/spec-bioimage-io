@@ -101,6 +101,6 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
 
     torchscript_weights_entry = data.get("weights", {}).pop("pytorch_script", None)
     if torchscript_weights_entry is not None:
-        data["weights"]["torchscript"] = torchscript_weights_entry
+        data.setdefault("weights", {})["torchscript"] = torchscript_weights_entry
 
     data["format_version"] = "0.4.0"

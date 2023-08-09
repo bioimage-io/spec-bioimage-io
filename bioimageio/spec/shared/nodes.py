@@ -17,6 +17,7 @@ from typing import (
     Literal,
     Optional,
     Set,
+    Tuple,
     Type,
     TypeVar,
     Union,
@@ -30,8 +31,9 @@ from pydantic import (
     TypeAdapter,
     ValidationInfo,
 )
-from pydantic_core import core_schema
-from typing_extensions import Annotated, Self
+from pydantic.config import ConfigDict
+from pydantic_core import PydanticUndefined, core_schema
+from typing_extensions import Annotated, Self, Unpack
 
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
@@ -172,6 +174,9 @@ class ResourceDescriptionBase(Node):
     type: str
     format_version: str
 
+    implemented_format_version: ClassVar[str]
+    implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
+
     def __init__(self, **data: Any) -> None:  # type: ignore
         __tracebackhide__ = True
         context = self._get_context_and_update_data(data)
@@ -184,6 +189,10 @@ class ResourceDescriptionBase(Node):
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
+        if cls.model_fields["format_version"].default is not PydanticUndefined:
+            cls.implemented_format_version = cls.model_fields["format_version"].default
+            cls.implemented_format_version_tuple = tuple(int(x) for x in cls.implemented_format_version.split("."))
+            assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
     def _get_context_and_update_data(
@@ -266,7 +275,7 @@ class StringNode(UserString, ABC):
     _node_class: Type[Node]
     _node: Node
 
-    def __init__(self, seq: object) -> None:
+    def __init__(self: Self, seq: object) -> None:
         super().__init__(seq)
         type_hints = {fn: t for fn, t in get_type_hints(self.__class__).items() if not fn.startswith("_")}
         defaults = {fn: getattr(self.__class__, fn, Field()) for fn in type_hints}

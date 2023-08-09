@@ -56,7 +56,7 @@ documentation: README.md
 format_version: 0.4.8
 inputs:
   - axes: bxyc
-    data_range: ["-inf", "inf"]
+    data_range: [-.inf, .inf]
     data_type: float32
     name: input
     preprocessing:
@@ -64,7 +64,7 @@ inputs:
           {
             axes: xyc,
             max_percentile: 99.8,
-            min_percentile: 1,
+            min_percentile: 1.0,
             mode: per_sample,
           }
         name: scale_range

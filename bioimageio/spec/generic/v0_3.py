@@ -33,7 +33,8 @@ SpecificResourceType = Literal["application", "collection", "dataset", "model", 
 
 
 class Attachment(Node):
-    source: FileSource = Field(in_package=True)
+    source: FileSource = Field()
+    """∈📦 """
     sha256: Annotated[Optional[Sha256], warn(Sha256)] = None
 
 
@@ -44,7 +45,7 @@ class LinkedResource(Node):
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoSourceMeta):
+class GenericBaseNoSource(ResourceDescriptionBase):
     """GenericBaseNoFormatVersion without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
@@ -66,9 +67,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
-        in_package=True,
     )
-    """URL or relative path to a markdown file with additional documentation.
+    """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     covers: Tuple[
@@ -80,9 +80,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=v0_2.GenericBaseNoS
             "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
             f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-        in_package=True,
     )
-    """Cover images."""
+    """∈📦 Cover images."""
 
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the

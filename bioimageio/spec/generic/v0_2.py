@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, ge
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
     AnyUrl,
+    BaseModel,
     ConfigDict,
     DirectoryPath,
     EmailStr,
@@ -12,7 +13,6 @@ from pydantic import (
     HttpUrl,
     field_validator,
 )
-from pydantic._internal._model_construction import ModelMetaclass
 from pydantic.fields import FieldInfo
 from typing_extensions import Annotated
 
@@ -50,11 +50,11 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 class Attachments(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: Tuple[FileSource, ...] = Field((), in_package=True)
-    """File attachments"""
+    files: Tuple[FileSource, ...] = ()
+    """∈📦 File attachments"""
 
 
-class Person(Node):
+class Person(BaseModel):
     name: Optional[str] = None
     """Full name"""
     affiliation: Optional[str] = None
@@ -124,19 +124,7 @@ class LinkedResource(Node):
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericBaseNoSourceMeta(ModelMetaclass):
-    model_fields: Dict[str, FieldInfo]
-
-    @property
-    def implemented_format_version(self) -> str:
-        return self.model_fields["format_version"].default
-
-    @property
-    def implemented_format_version_tuple(self) -> Tuple[int, int, int]:
-        return tuple(int(x) for x in self.model_fields["format_version"].default.split("."))
-
-
-class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSourceMeta):
+class GenericBaseNoSource(ResourceDescriptionBase):
     """GenericBaseNoFormatVersion without a source field
 
     (needed because `model.v0_4.Model` and `model.v0_5.Model` have no `source` field)
@@ -160,9 +148,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
-        in_package=True,
     )
-    """URL or relative path to a markdown file with additional documentation.
+    """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     covers: Tuple[Annotated[FileSource, WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...] = Field(
@@ -172,9 +159,8 @@ class GenericBaseNoSource(ResourceDescriptionBase, metaclass=GenericBaseNoSource
             "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
             f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-        in_package=True,
     )
-    """Cover images."""
+    """∈📦 Cover images."""
 
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""

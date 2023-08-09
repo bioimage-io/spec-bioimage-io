@@ -115,8 +115,8 @@ class TestBases:
 
     class TestType(TestCase, ABC):
         type_: ClassVar[Type[Any]]
-        valid: Sequence[Union[Any, TypeSubTest]]
-        invalid: Sequence[Any]
+        valid: Sequence[Union[Any, TypeSubTest]] = ()
+        invalid: Sequence[Any] = ()
         type_adapter: TypeAdapter[Any]
 
         @classmethod
@@ -133,7 +133,7 @@ class TestBases:
 
                 with self.subTest(v=val):
                     try:
-                        actual = self.type_adapter.validate_python(v)
+                        actual = self.type_adapter.validate_python(val)
                     except Exception as e:
                         self.fail(str(e))
 
@@ -165,34 +165,37 @@ class TestBases:
                         if rd is not None:
                             self.fail("Invalid RDF passed validation")
 
-                    expect_back = {
-                        k: v
-                        for k, v in data.items()
-                        if k
-                        not in {
-                            "format_version",
-                            "timestamp",
-                            *cls.exclude_fields_from_roundtrip.get(rdf_path.relative_to(cls.rdf_root), set()),
-                        }
+                        return
+
+                    exclude_from_comp = {
+                        "root",
+                        "format_version",
+                        "timestamp",
+                        *cls.exclude_fields_from_roundtrip.get(rdf_path.relative_to(cls.rdf_root), set()),
                     }
+                    expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
                     with self.subTest("as-is"):
                         rd, summary = load_description(data, context=context, format_version="discover")
                         if rd is None:
                             self.fail(format_summary(summary))
 
-                        deserialized = rd.model_dump(mode="json", exclude={"root", "format_version", "timestamp"})
+                        deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp)
                         self.assert_big_dicts_equal(expect_back, deserialized, "roundtrip")
 
                     with self.subTest("as-latest"):
                         rd, summary = load_description(data, context=context, format_version="latest")
                         if rd is None:
-                            if rdf_path not in cls.known_invalid_as_latest:
+                            if rdf_path.relative_to(cls.rdf_root) not in cls.known_invalid_as_latest:
                                 self.fail(format_summary(summary))
                         elif rdf_path in cls.known_invalid_as_latest:
                             self.fail("passes despite marked as known failure case")
 
                 subfolder = "".join(f"_{sf}" for sf in rdf.relative_to(cls.rdf_root).as_posix().split("/")[:-1])
                 test_case_name: str = f"test{subfolder}_{rdf.stem}"
+                for c in ":.-,; ":
+                    test_case_name = test_case_name.replace(c, "_")
+
+                assert test_case_name.isidentifier(), test_case_name
                 setattr(cls, test_case_name, test_rdf)
 
             return super().__init_subclass__()

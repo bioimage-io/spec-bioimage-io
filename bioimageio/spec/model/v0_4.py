@@ -11,10 +11,12 @@ from typing import (
     Tuple,
     Union,
 )
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 
 from annotated_types import Ge, Interval, MaxLen, MultipleOf
 from pydantic import (
     AllowInfNan,
+    BaseModel,
     ConfigDict,
     FieldValidationInfo,
     HttpUrl,
@@ -73,7 +75,7 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromSourceFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
+    source_file: Union[HttpUrl, RelativeFilePath] = Field(description=IN_PACKAGE_MESSAGE)
     callable_name: str
 
     @classmethod
@@ -90,10 +92,8 @@ class Dependencies(StringNode):
     manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
     """Dependency manager"""
 
-    file: Union[HttpUrl, RelativeFilePath] = Field(
-        in_package=True, examples=["environment.yaml", "pom.xml", "requirements.txt"]
-    )
-    """Dependency file"""
+    file: Union[HttpUrl, RelativeFilePath] = Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])
+    IN_PACKAGE_MESSAGE + """Dependency file"""
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
@@ -136,8 +136,8 @@ class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
 
-    source: FileSource = Field(in_package=True)
-    """The weights file."""
+    source: FileSource = Field()
+    """∈📦 The weights file."""
 
     sha256: Annotated[Union[Sha256, None], warn(Sha256)] = Field(
         None, description="SHA256 checksum of the source file\n" + SHA256_HINT
@@ -235,8 +235,8 @@ class TensorflowJsEntry(WeightsEntryBase):
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
 
-    source: Union[HttpUrl, RelativeFilePath] = Field(in_package=True)
-    """The multi-file weights.
+    source: Union[HttpUrl, RelativeFilePath] = Field()
+    """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
@@ -686,9 +686,8 @@ class Model(GenericBaseNoSource):
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
-        in_package=True,
     )
-    """URL or relative path to a markdown file with additional documentation.
+    """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
@@ -837,27 +836,23 @@ class Model(GenericBaseNoSource):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: Tuple[FileSource, ...] = Field((), in_package=True)
-    """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
+    sample_inputs: Tuple[FileSource, ...] = ()
+    """∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: Tuple[FileSource, ...] = Field((), in_package=True)
-    """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
+    sample_outputs: Tuple[FileSource, ...] = ()
+    """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field(
-        in_package=True
-    )
-    """URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
+    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field()
+    """∈📦 URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field(
-        in_package=True
-    )
-    """Analog to `test_inputs`."""
+    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field()
+    """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime = Field()
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format

@@ -681,9 +681,8 @@ class Model(
             "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
             "README.md",
         ],
-        in_package=True,
     )
-    """URL or relative path to a markdown file with additional documentation.
+    """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
@@ -731,7 +730,7 @@ class Model(
                     f"Invalid tensor axis reference in {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}. Another axis's name with a parametrized size is required."
                 )
-            elif axis.size.step_with in (axis.name, f"{tensor_name}.{axis.name}") :
+            elif axis.size.step_with in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}"
@@ -742,7 +741,7 @@ class Model(
                     f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}."
                 )
-            elif axis.size.reference  in (axis.name, f"{tensor_name}.{axis.name}"):
+            elif axis.size.reference in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}"
@@ -750,7 +749,7 @@ class Model(
         elif isinstance(axis.size, str):
             if axis.size not in valid_independent_refs:
                 raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
-            elif axis.size  in (axis.name, f"{tensor_name}.{axis.name}"):
+            elif axis.size in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
 
     license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
@@ -933,8 +932,8 @@ class Model(
     def _convert_axes_string_to_axis_descriptions(cls, data: RawDict, raise_unconvertable: bool):
         inputs = data.get("inputs")
         outputs = data.get("outputs")
-        sample_inputs = data.get("sample_inputs")
-        sample_outputs = data.get("sample_outputs")
+        sample_inputs = data.pop("sample_inputs", None)
+        sample_outputs = data.pop("sample_outputs", None)
         test_inputs = data.pop("test_inputs", None)
         test_outputs = data.pop("test_outputs", None)
 

@@ -15,7 +15,6 @@ from typing import (
     TypeVar,
     Union,
     get_args,
-    get_origin,
 )
 from urllib.parse import urljoin, urlparse
 
@@ -53,8 +52,7 @@ DISCOVER: Literal["discover"] = "discover"
 
 def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
     supported: Dict[str, List[str]] = {}
-    for rd_class in _iterate_over_rd_classes():
-        typ = rd_class.model_fields["type"].default
+    for typ, rd_class in _iterate_over_rd_classes():
         format_versions = supported.setdefault(typ, [])
         ma, mi, pa = rd_class.implemented_format_version_tuple
         for p in range(pa + 1):
@@ -64,8 +62,8 @@ def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
     return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
 
 
-def _iterate_over_rd_classes() -> Iterable[Type[ResourceDescription]]:
-    yield from get_args(
+def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
+    for rd_class in get_args(
         Union[
             get_args(application.AnyApplication)[0],  # type: ignore
             get_args(collection.AnyCollection)[0],  # type: ignore
@@ -74,7 +72,30 @@ def _iterate_over_rd_classes() -> Iterable[Type[ResourceDescription]]:
             get_args(model.AnyModel)[0],  # type: ignore
             get_args(notebook.AnyNotebook)[0],  # type: ignore
         ]
-    )
+    ):
+        typ = rd_class.model_fields["type"].default
+        if typ is PydanticUndefined:
+            typ = "generic"
+
+        assert isinstance(typ, str)
+        yield typ, rd_class
+
+
+def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
+    for rd_class in [
+        application.Application,
+        collection.Collection,
+        dataset.Dataset,
+        generic.Generic,
+        model.Model,
+        notebook.Notebook,
+    ]:
+        typ = rd_class.model_fields["type"].default
+        if typ is PydanticUndefined:
+            typ = "generic"
+
+        assert isinstance(typ, str)
+        yield typ, rd_class
 
 
 def check_type_and_format_version(data: RawMapping) -> Tuple[str, str, str]:
@@ -117,18 +138,16 @@ def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDe
         format_version = format_version[: format_version.rfind(".")]
 
     rd_classes: Dict[str, Dict[str, Type[ResourceDescription]]] = {}
-    for rd_class in _iterate_over_rd_classes():
-        typ = rd_class.model_fields["type"].default
-        if typ is PydanticUndefined:
-            typ = "generic"
-
-        assert isinstance(typ, str)
+    for typ, rd_class in _iterate_over_rd_classes():
         per_fv: Dict[str, Type[ResourceDescription]] = rd_classes.setdefault(typ, {})
 
         ma, mi, _pa = rd_class.implemented_format_version_tuple
         key = f"{ma}.{mi}"
         assert key not in per_fv
         per_fv[key] = rd_class
+
+    for typ, rd_class in _iterate_over_latest_rd_classes():
+        rd_classes[typ]["latest"] = rd_class
 
     rd_class = rd_classes.get(type_, rd_classes["generic"]).get(format_version)
     if rd_class is None:
@@ -197,11 +216,11 @@ def load_description_with_known_rd_class(
     else:
         resource_type = rd.type
         format_version = rd.format_version
-        assert errors is None, "got rd, but also an error"
+        assert not errors, "got rd, but also an error"
         assert tb is None, "got rd, but also an error traceback"
         assert not val_warnings, "got rd, but also already warnings"
         _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, context)
-        assert error2 is None, "increasing warning level caused errors"
+        assert not error2, "increasing warning level caused errors"
         assert tb2 is None, "increasing warning level lead to error traceback"
 
     summary = ValidationSummary(
@@ -212,12 +231,10 @@ def load_description_with_known_rd_class(
         if isinstance(context.root, PurePath)
         else urljoin(str(context.root), "rdf.yaml"),
         status="failed" if errors else "passed",
+        warnings=val_warnings,
     )
     if tb:
         summary["traceback"] = tb
-
-    if val_warnings:
-        summary["warnings"] = val_warnings
 
     return rd, summary
 
@@ -379,7 +396,7 @@ def _fill_resource_package_content(
 
 def format_summary(summary: ValidationSummary):
     es = "\n    ".join(
-        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in summary["error"] or []
+        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in summary["errors"] or []
     )
     ws = "\n    ".join(f"{'.'.join(map(str, w['loc']))}: {w['msg']}" for w in summary.get("warning", []))
 
@@ -387,121 +404,3 @@ def format_summary(summary: ValidationSummary):
     ws_msg = f"warnings: {ws}" if ws else ""
 
     return f"{summary['name'].strip('.')}: {summary['status']}\nsource: {summary['source_name']}\n{es_msg}\n{ws_msg}"
-
-
-# def load_raw_resource_description(
-#     source: Union[dict, os.PathLike, IO, str, bytes, raw_nodes.URI, RawResourceDescription],
-#     update_to_format: Optional[str] = None,
-# ) -> RawResourceDescription:
-#     """load a raw python representation from a bioimage.io resource description.
-#     Use `bioimageio.core.load_resource_description` for a more convenient representation of the resource.
-#     and `bioimageio.core.load_raw_resource_description` to ensure the 'root_path' attribute of the returned object is
-#     a local file path.
-
-#     Args:
-#         source: resource description or resource description file (RDF)
-#         update_to_format: update resource to specific major.minor format version; ignoring patch version.
-#     Returns:
-#         raw bioimage.io resource
-#     """
-#     root = None
-#     if isinstance(source, RawResourceDescription):
-#         if update_to_format == "latest":
-#             update_to_format = get_latest_format_version(source.type)
-
-#         if update_to_format is not None and source.format_version != update_to_format:
-#             # do serialization round-trip to account for 'update_to_format' but keep root_path
-#             root = source.root_path
-#             source = serialize_raw_resource_description_to_dict(source)
-#         else:
-#             return source
-
-#     data, source_name, _root, type_ = resolve_rdf_source_and_type(source)
-#     if root is None:
-#         root = _root
-
-#     class_name = get_class_name_from_type(type_)
-
-#     # determine submodule's format version
-#     original_data_version = data.get("format_version")
-#     if original_data_version is None:
-#         odv: Optional[Version] = None
-#     else:
-#         try:
-#             odv = Version(original_data_version)
-#         except Exception as e:
-#             raise ValueError(f"Invalid format version {original_data_version}.") from e
-
-#     if update_to_format is None:
-#         data_version = original_data_version or LATEST
-#     elif update_to_format == LATEST:
-#         data_version = LATEST
-#     else:
-#         data_version = ".".join(update_to_format.split("."[:2]))
-#         if update_to_format.count(".") > 1:
-#             warnings.warn(
-#                 f"Ignoring patch version of update_to_format {update_to_format} "
-#                 f"(always updating to latest patch version)."
-#             )
-
-#     try:
-#         sub_spec = _get_spec_submodule(type_, data_version)
-#     except ValueError as e:
-#         if odv is None:
-#             raise e  # raise original error; no second attempt with 'LATEST' format version
-
-#         try:
-#             # load latest spec submodule
-#             sub_spec = _get_spec_submodule(type_, data_version=LATEST)
-#         except ValueError:
-#             raise e  # raise original error with desired data_version
-
-#         if odv <= Version(sub_spec.format_version):
-#             # original format version is not a future version.
-#             # => we should not fall back to latest format version.
-#             # => 'format_version' may be invalid or the issue lies with 'type_'...
-#             raise e
-
-#     downgrade_format_version = odv and Version(sub_spec.format_version) < odv
-#     if downgrade_format_version:
-#         warnings.warn(
-#             f"Loading future {type_} format version {original_data_version} as (latest known) "
-#             f"{sub_spec.format_version}."
-#         )
-#         data["format_version"] = sub_spec.format_version  # set format_version to latest available
-
-#         # save original format version under config:bioimageio:original_format_version for reference
-#         if "config" not in data:
-#             data["config"] = {}
-
-#         if "bioimageio" not in data["config"]:
-#             data["config"]["bioimageio"] = {}
-
-#         data["config"]["bioimageio"]["original_format_version"] = original_data_version
-
-#     schema: SharedBioImageIOSchema = getattr(sub_spec.schema, class_name)()
-
-#     data = sub_spec.converters.maybe_convert(data)
-#     try:
-#         raw_rd = schema.load(data)
-#     except ValidationError as e:
-#         if downgrade_format_version:
-#             e.messages["format_version"] = (
-#                 f"Other errors may be caused by a possibly incompatible future format version {original_data_version} "
-#                 f"treated as {sub_spec.format_version}."
-#             )
-
-#         raise e
-
-#     if isinstance(root, pathlib.Path):
-#         root = root.resolve()
-#         if zipfile.is_zipfile(root):
-#             # set root to extracted zip package
-#             _, _, root = extract_resource_package(root)
-#     elif isinstance(root, bytes):
-#         root = pathlib.Path().resolve()
-
-#     raw_rd.root_path = root
-#     raw_rd = RelativePathTransformer(root=root).transform(raw_rd)
-
-#     return raw_rd

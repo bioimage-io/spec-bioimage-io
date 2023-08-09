@@ -5,7 +5,7 @@ cite:
   - { text: architecture, doi: "10.1007/978-3-319-24574-4_28" }
 covers: [cover.jpg]
 dependencies: conda:environment.yaml
-description: multi-tensor
+description: Multi tensor
 documentation: documentation.md
 format_version: 0.4.0
 git_repo: https://github.com/constantinpape/torch-em.git
@@ -32,7 +32,7 @@ inputs:
       step: [0, 0, 16, 16]
 license: CC-BY-4.0
 links: [ilastik/ilastik]
-name: multi-tensor
+name: Multi-tensor
 outputs:
   - axes: bcyx
     data_range: [-.inf, .inf]
