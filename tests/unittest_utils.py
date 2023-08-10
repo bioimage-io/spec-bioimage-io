@@ -1,18 +1,17 @@
 from abc import ABC
-from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Optional, Sequence, Set, Type, Union
 from unittest import TestCase
 
+from deepdiff import DeepDiff
 from pydantic import TypeAdapter, ValidationError
 from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.shared.validation import ValidationContext, get_validation_context
 from bioimageio.spec.utils import format_summary, load_description
-from deepdiff import DeepDiff
 
 yaml = YAML(typ="safe")
 
@@ -94,10 +93,7 @@ class TestBases:
                 self.assertRaises(ValidationError, nc.model_validate, {})
 
         def get_context(self, st: SubTest) -> Dict[str, Any]:
-            if st.context is None:
-                return dict(self.default_context)
-            else:
-                return dict(st.context)
+            return dict(get_validation_context(**(st.context or self.default_context)))
 
         def get_node_class(self, st: SubTest) -> Type[Node]:
             return st.node_class or self.default_node_class

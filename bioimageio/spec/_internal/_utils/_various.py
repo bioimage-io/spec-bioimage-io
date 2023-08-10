@@ -1,15 +1,6 @@
 from __future__ import annotations
-from functools import wraps
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
-
-import pydantic
-from pydantic_core import PydanticUndefined
-
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-
-
-Field = pydantic.Field
+from typing import Dict, Tuple, Type, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")

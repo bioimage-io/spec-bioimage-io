@@ -22,16 +22,11 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec.shared.validation import (
-    SEVERITY_TO_WARNING,
-    Severity,
-    validation_context_var,
-)
+from bioimageio.spec._internal._constants import SEVERITY_TO_WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec.shared.types import Severity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
-
-# WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
@@ -85,8 +80,7 @@ def as_warning(
 
     def wrapper(value: Any, info: FieldValidationInfo) -> Any:
         logger = getLogger(getattr(info, "field_name", "node"))
-        context = validation_context_var.get()
-        if severity < context.warning_level:
+        if severity < (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, 50):
             return value
 
         try:

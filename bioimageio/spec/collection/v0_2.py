@@ -6,7 +6,8 @@ from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._warn import ALERT, warn
+from bioimageio.spec._internal._constants import ALERT
+from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.dataset.v0_2 import AnyDataset
 from bioimageio.spec.generic.v0_2 import (
@@ -17,7 +18,6 @@ from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RelativeFilePath
-from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -59,18 +59,18 @@ class CollectionEntryBase(Node):
     _entry: Any = PrivateAttr()
 
     @model_validator(mode="after")  # type: ignore
-    def set_entry(self) -> Self:
+    def set_entry(self, info: ValidationInfo) -> Self:
         if self.rdf_source is not None:
             return self  # todo: add resolve_rdf_source callback
 
         if self.id is None:
             raise ValueError("Missing `id`")
 
-        context = validation_context_var.get()
-        if context.collection_base_content is None:
+        context = info.context
+        if context is None:
             return self
 
-        entry_data: Dict[str, Any] = context.collection_base_content
+        entry_data: Dict[str, Any] = context["collection_base_content"]
         base_id: Any = entry_data.pop("id", None)
         if not isinstance(base_id, (str, int, float, bool)):
             return self  # invalid base id
@@ -118,13 +118,6 @@ class Collection(GenericBase):
     )
     type: Literal["collection"] = "collection"
 
-    @classmethod
-    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
-        super()._update_data_and_context(data)
-        context = validation_context_var.get()
-        assert context.collection_base_content is None
-        context.collection_base_content = {k: v for k, v in data.items() if k != "collection"}
-
     collection: NonEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""
 
@@ -163,6 +156,13 @@ class Collection(GenericBase):
                 # raise pydantic_core.ValidationError("Collection", [error])
 
             seen[v.id] = i
+
+    # @model_validator(mode="before")
+    # @classmethod
+    # def add_collection_base_content_to_context(cls, data: Dict[str, Any], info: ValidationInfo) -> Dict[str, Any]:
+    #     info.context = {} if info.context is None else info.context
+    #     info.context["collection_base_content"] = {k: v for k, v in data.items() if k != "collection"}
+    #     return data
 
     @staticmethod
     def move_groups_to_collection_field(data: RawDict) -> None:

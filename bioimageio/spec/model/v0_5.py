@@ -2,12 +2,11 @@ import collections.abc
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Sequence, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen
-from pydantic import ConfigDict, FieldValidationInfo, HttpUrl, constr, field_validator, model_validator
+from pydantic import ConfigDict, Field, FieldValidationInfo, constr, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import DTYPE_LIMITS, SHA256_HINT
-from bioimageio.spec._internal._utils import Field
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
@@ -1015,7 +1014,8 @@ class Model(
             if "reference_tensor" in orig_shape:
                 if raise_unconvertable:
                     raise NotImplementedError(
-                        "Converting tensor shapes with references from model RDF 0.4 to model RDF 0.5 is not implemented."
+                        "Converting tensor shapes with references from "
+                        "model RDF 0.4 to model RDF 0.5 is not implemented."
                     )
             else:
                 m: Sequence[Any] = _m if isinstance(_m := orig_shape.get("min"), collections.abc.Sequence) else []

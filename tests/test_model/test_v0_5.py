@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bioimageio.spec.model.v0_5 import InputTensor, ModelRdf, TensorBase
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.shared.validation import ValContext
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 
@@ -13,7 +13,7 @@ class TestModelRdf(TestBases.TestNode):
             dict(rdf_source=__file__, sha256="s" * 64),
             expected_dump_raw=dict(rdf_source=__file__, sha256="s" * 64),
             expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
-            context=ValidationContext(root=Path()),
+            context=ValContext(root=Path()),
         ),
         Invalid(dict(uri="https://example.com", sha256="s" * 64)),
         Invalid(dict(id="lala", uri="https://example.com", sha256="s" * 64)),

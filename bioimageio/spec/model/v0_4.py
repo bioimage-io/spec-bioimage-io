@@ -1,5 +1,4 @@
 from __future__ import annotations
-from abc import ABC
 
 from typing import (
     Any,
@@ -12,24 +11,22 @@ from typing import (
     Tuple,
     Union,
 )
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 
 from annotated_types import Ge, Interval, MaxLen, MultipleOf
 from pydantic import (
     AllowInfNan,
-    BaseModel,
     ConfigDict,
-    FieldValidationInfo,
+    Field,
     HttpUrl,
+    ValidationInfo,
     field_validator,
     model_validator,
 )
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._constants import SHA256_HINT
-from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal._validate import WithSuffix
-from bioimageio.spec._internal._warn import ALERT, INFO, warn
+from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import (
     Attachments,
@@ -495,6 +492,13 @@ class ScaleRangeKwargs(ProcessingKwargs):
     The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
     accepting percentiles specified in the range 0.0 to 1.0."""
 
+    @model_validator(mode="after")  # type: ignore
+    def min_smaller_max(self, info: ValidationInfo) -> Self:
+        if self.min_percentile >= self.max_percentile:
+            raise ValueError(f"min_percentile {self.min_percentile} >= max_percentile {self.max_percentile}")
+
+        return self
+
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """Epsilon for numeric stability.
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
@@ -504,14 +508,6 @@ class ScaleRangeKwargs(ProcessingKwargs):
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
-
-    @field_validator("max_percentile", mode="after")
-    @classmethod
-    def min_smaller_max(cls, value: float, info: FieldValidationInfo) -> float:
-        if (min_p := info.data["min_percentile"]) >= value:
-            raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
-
-        return value
 
 
 class ScaleRange(Processing):
@@ -865,7 +861,7 @@ class Model(GenericBaseNoSource):
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
-    """∈📦 URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
+    """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).

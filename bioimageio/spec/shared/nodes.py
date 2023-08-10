@@ -6,7 +6,6 @@ import inspect
 import sys
 from abc import ABC
 from collections import UserString
-from pathlib import Path, PurePath
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -21,6 +20,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
     get_type_hints,
 )
 
@@ -28,20 +28,20 @@ import pydantic
 from pydantic import (
     Field,
     GetCoreSchemaHandler,
+    HttpUrl,
     TypeAdapter,
     ValidationInfo,
 )
-from pydantic.config import ConfigDict
 from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, Self, Unpack
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue
-from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
+from bioimageio.spec.shared.validation import ValContext, get_validation_context
 
 if TYPE_CHECKING:
-    from pydantic.main import IncEx, Model
+    from pydantic.main import IncEx
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -179,7 +179,7 @@ class ResourceDescriptionBase(Node):
 
     def __init__(self, **data: Any) -> None:
         __tracebackhide__ = True
-        self._update_data_and_context(data)
+        self._update_context_and_data(ValContext(root=HttpUrl("https://example.com/"), warning_level=50), data)
         super().__init__(**data)
 
     @classmethod
@@ -191,13 +191,11 @@ class ResourceDescriptionBase(Node):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
-        context = validation_context_var.get()
-
+    def _update_context_and_data(cls, context: ValContext, data: Dict[str, Any]) -> None:
         # set original format if possible
         original_format = data.get("format_version")
-        if context.original_format is None and isinstance(original_format, str) and original_format.count(".") == 2:
-            context.original_format = tuple(map(int, original_format.split(".")))
+        if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
+            context["original_format"] = tuple(map(int, original_format.split(".")))
 
         cls.convert_from_older_format(data, raise_unconvertable=True)
 
@@ -208,13 +206,13 @@ class ResourceDescriptionBase(Node):
 
     @classmethod
     def model_validate(
-        cls: type[Model],
+        cls,
         obj: Any,
         *,
-        strict: bool | None = None,
-        from_attributes: bool | None = None,
-        context: dict[str, Any] | None | ValidationContext = None,
-    ) -> Model:
+        strict: Optional[bool] = None,
+        from_attributes: Optional[bool] = None,
+        context: Union[ValContext, Dict[Any, Any], None] = None,
+    ) -> Self:
         """Validate a pydantic model instance.
 
         Args:
@@ -224,14 +222,13 @@ class ResourceDescriptionBase(Node):
             context: Additional context to pass to the validator.
 
         Raises:
+            ValueError: If context is not a valid ValidationContext.
             ValidationError: If the object could not be validated.
 
         Returns:
             The validated model instance.
         """
         __tracebackhide__ = True
-        if isinstance(context, dict):
-            context = ValidationContext(**context)
 
         if isinstance(obj, pydantic.BaseModel):
             data: Dict[str, Any] = obj.model_dump()
@@ -241,15 +238,17 @@ class ResourceDescriptionBase(Node):
         else:
             raise TypeError(type(obj))
 
-        new_context = cls._get_context_and_update_data(data, context)
-
-        return super().model_validate(data, strict=strict, from_attributes=from_attributes, context=dict(new_context))
+        context = get_validation_context(**(context or {}))  # make sure context is a ValidationContext
+        cls._update_context_and_data(context, data)
+        return super().model_validate(
+            data, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
+        )
 
 
 class StringNode(UserString, ABC):
     _pattern: ClassVar[str]
     _node_class: Type[Node]
-    _node: Node
+    _node: Optional[Node] = None
 
     def __init__(self: Self, seq: object) -> None:
         super().__init__(seq)
@@ -262,14 +261,19 @@ class StringNode(UserString, ABC):
             __module__=self.__module__,
             **field_definitions,
         )
-        context = dict(validation_context_var.get())
-        valid_string_data = TypeAdapter(Annotated[str, Field(pattern=self._pattern)]).validate_python(
-            self.data, context=context
-        )
-        data = self._get_data(valid_string_data)
-        self._node = self._node_class.model_validate(data, context=context)
-        for fn, value in self._node:
-            object.__setattr__(self, fn, value)
+
+    @property
+    def model_fields(self):
+        return self._node_class.model_fields
+
+    def __getattr__(self, name: str):
+        if name in self._node_class.model_fields:
+            if self._node is None:
+                raise AttributeError(f"{name} only available after validation")
+
+            return getattr(self._node, name)
+
+        raise AttributeError(name)
 
     def __setattr__(self, name: str, value: Any):
         raise AttributeError(f"{self} is immutable.")
@@ -293,8 +297,13 @@ class StringNode(UserString, ABC):
 
     @classmethod
     def _validate(cls, value: str, info: ValidationInfo) -> Self:
-        with ValidationContext(**(info.context or {})):
-            return cls(value)
+        valid_string_data = TypeAdapter(Annotated[str, Field(pattern=cls._pattern)]).validate_python(
+            value, context=info.context
+        )
+        data = cls._get_data(valid_string_data)
+        self = cls(valid_string_data)
+        self._node = self._node_class.model_validate(data, context=info.context)
+        return self
 
     def _serialize(self) -> str:
         return self.data

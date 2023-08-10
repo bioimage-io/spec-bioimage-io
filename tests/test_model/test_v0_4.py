@@ -5,9 +5,8 @@ from typing import Any, Dict
 from unittest import TestCase
 
 from pydantic import HttpUrl
-from pydantic_core import Url
-from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 
+from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     InputTensor,
     LinkedModel,
@@ -211,48 +210,47 @@ class TestModel(TestCase):
     data: Dict[str, Any] = {}
 
     def setUp(self):
-        with ValidationContext(root=Url("https://example.com/")):
-            self.data = Model(
-                documentation=RelativeFilePath("docs.md"),
-                license="MIT",
-                git_repo="https://github.com/bioimage-io/python-bioimage-io",
-                format_version="0.4.9",
-                description="description",
-                authors=(
-                    Author(name="Author 1", affiliation="Affiliation 1"),
-                    Author(name="Author 2"),
+        self.data = Model(
+            documentation=RelativeFilePath("docs.md"),
+            license="MIT",
+            git_repo="https://github.com/bioimage-io/python-bioimage-io",
+            format_version="0.4.9",
+            description="description",
+            authors=(
+                Author(name="Author 1", affiliation="Affiliation 1"),
+                Author(name="Author 2"),
+            ),
+            maintainers=(
+                Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
+                Maintainer(github_user="githubuser2"),
+            ),
+            timestamp=datetime.now(),
+            cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
+            inputs=(
+                InputTensor(
+                    name="input_1",
+                    description="Input 1",
+                    data_type="float32",
+                    axes="xyc",
+                    shape=(128, 128, 3),
                 ),
-                maintainers=(
-                    Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
-                    Maintainer(github_user="githubuser2"),
+            ),
+            outputs=(
+                OutputTensor(
+                    name="output_1",
+                    description="Output 1",
+                    data_type="float32",
+                    axes="xyc",
+                    shape=(128, 128, 3),
                 ),
-                timestamp=datetime.now(),
-                cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
-                inputs=(
-                    InputTensor(
-                        name="input_1",
-                        description="Input 1",
-                        data_type="float32",
-                        axes="xyc",
-                        shape=(128, 128, 3),
-                    ),
-                ),
-                outputs=(
-                    OutputTensor(
-                        name="output_1",
-                        description="Output 1",
-                        data_type="float32",
-                        axes="xyc",
-                        shape=(128, 128, 3),
-                    ),
-                ),
-                name="Model",
-                tags=(),
-                weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
-                test_inputs=(RelativeFilePath("test_ipt.npy"),),
-                test_outputs=(RelativeFilePath("test_out.npy"),),
-                type="model",
-            ).model_dump()
+            ),
+            name="Model",
+            tags=(),
+            weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
+            test_inputs=(RelativeFilePath("test_ipt.npy"),),
+            test_outputs=(RelativeFilePath("test_out.npy"),),
+            type="model",
+        ).model_dump()
 
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})

@@ -22,6 +22,7 @@ import packaging.version
 from pydantic import AnyUrl, GetCoreSchemaHandler
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 
+
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import FileSource, RelativePath
 
@@ -157,7 +158,7 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
     elif isinstance(value, PurePath):
         suffix = value.suffixes[-1]
     else:
-        suffix = value.relative.suffixes[-1]
+        suffix = value.path.suffixes[-1]
 
     if (
         case_sensitive

@@ -1,6 +1,6 @@
-from copy import deepcopy
 import traceback
-from pathlib import Path, PurePath
+from copy import deepcopy
+from pathlib import PurePath
 from types import MappingProxyType
 from typing import (
     Any,
@@ -24,8 +24,6 @@ from pydantic_core import PydanticUndefined
 
 import bioimageio.spec
 from bioimageio.spec import (
-    ResourceDescription,
-    __version__,
     application,
     collection,
     dataset,
@@ -33,21 +31,26 @@ from bioimageio.spec import (
     model,
     notebook,
 )
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal._constants import (
+    DISCOVER,
+    IN_PACKAGE_MESSAGE,
+    LATEST,
+    VERSION,
+    WARNING_LEVEL_CONTEXT_KEY,
+)
 from bioimageio.spec._internal._utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._internal._warn import WarningType
+from bioimageio.spec.resource_types import ResourceDescription
 from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
-from bioimageio.spec.shared.types import Loc, RawDict, RawMapping, RelativeFilePath
+from bioimageio.spec.shared.types import Loc, RawDict, RawMapping, RelativeFilePath, WarningLevelName
 from bioimageio.spec.shared.validation import (
     LegacyValidationSummary,
+    ValContext,
     ValidationContext,
     ValidationError,
     ValidationSummary,
     ValidationWarning,
+    get_validation_context,
 )
-
-LATEST: Literal["latest"] = "latest"
-DISCOVER: Literal["discover"] = "discover"
 
 
 def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
@@ -178,16 +181,16 @@ def dump_description(resource_description: ResourceDescription) -> RawDict:
     return resource_description.model_dump(mode="json", exclude={"root"})
 
 
-def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValidationContext):
+def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ValidationError] = []
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
     try:
-        rd = rd_class.model_validate(resource_description, context=context)
+        rd = rd_class.model_validate(resource_description, context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
-            if (type_ := ee["type"]) in get_args(WarningType):
+            if (type_ := ee["type"]) in get_args(WarningLevelName):
                 val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
             else:
                 val_errors.append(ValidationError(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
@@ -202,13 +205,15 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, conte
 def load_description_with_known_rd_class(
     resource_description: RawMapping,
     *,
-    context: ValidationContext = ValidationContext(),
+    context: Optional[ValidationContext] = None,
     rd_class: Type[RD],
 ) -> Tuple[Optional[RD], ValidationSummary]:
+    val_context = get_validation_context(**(context or {}))
+
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
         resource_description,
-        ValidationContext(**context.model_dump(exclude={"warning_level"}), warning_level=50),
+        {**val_context, WARNING_LEVEL_CONTEXT_KEY: 50},
     )  # ignore any warnings using warning level 50 ('ERROR'/'CRITICAL') on first loading attempt
     if rd is None:
         resource_type = rd_class.model_fields["type"].default
@@ -219,17 +224,17 @@ def load_description_with_known_rd_class(
         assert not errors, "got rd, but also an error"
         assert tb is None, "got rd, but also an error traceback"
         assert not val_warnings, "got rd, but also already warnings"
-        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, context)
+        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, val_context)
         assert not error2, "increasing warning level caused errors"
         assert tb2 is None, "increasing warning level lead to error traceback"
 
     summary = ValidationSummary(
-        bioimageio_spec_version=__version__,
+        bioimageio_spec_version=VERSION,
         errors=errors,
         name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
-        source_name=(context.root / "rdf.yaml").as_posix()
-        if isinstance(context.root, PurePath)
-        else urljoin(str(context.root), "rdf.yaml"),
+        source_name=(val_context["root"] / "rdf.yaml").as_posix()
+        if isinstance(val_context["root"], PurePath)
+        else urljoin(str(val_context["root"]), "rdf.yaml"),
         status="failed" if errors else "passed",
         warnings=val_warnings,
     )
@@ -242,7 +247,7 @@ def load_description_with_known_rd_class(
 def load_description(
     resource_description: RawMapping,
     *,
-    context: ValidationContext = ValidationContext(),
+    context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
     discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(resource_description)
@@ -272,7 +277,7 @@ def load_description(
 
 def validate(
     resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
-    context: ValidationContext = ValidationContext(),
+    context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
     _rd, summary = load_description(resource_description, context=context, format_version=as_format)
@@ -281,7 +286,7 @@ def validate(
 
 def validate_legacy(
     resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
-    context: ValidationContext = ValidationContext(),
+    context: Optional[ValidationContext] = None,
     update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
 ) -> LegacyValidationSummary:
     """Validate a bioimage.io resource description returning the legacy validaiton summary.
@@ -309,7 +314,8 @@ def prepare_to_package(
     rd: ResourceDescription,
     *,
     weights_priority_order: Optional[Sequence[str]] = None,  # model only
-) -> Tuple[ResourceDescription, Dict[str, Union[HttpUrl, Path]]]:
+    package_urls: bool = True,
+) -> Tuple[ResourceDescription, Dict[str, Union[HttpUrl, RelativeFilePath]]]:
     """
     Args:
         rd: resource description
@@ -332,10 +338,10 @@ def prepare_to_package(
         else:
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
 
-    package_content: Dict[Loc, Union[HttpUrl, Path]] = {}
-    _fill_resource_package_content(package_content, rd, node_loc=())
+    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
+    _fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
     file_names: Dict[Loc, str] = {}
-    file_sources: Dict[str, Union[HttpUrl, Path]] = {}
+    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath]] = {}
     for loc, src in package_content.items():
         file_name = _extract_file_name(src)
         if file_name in file_sources and file_sources[file_name] != src:
@@ -357,17 +363,20 @@ def prepare_to_package(
     return rd, file_sources
 
 
-def _extract_file_name(src: Union[HttpUrl, PurePath]) -> str:
-    if isinstance(src, PurePath):
+def _extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
+    if isinstance(src, RelativeFilePath):
+        return src.path.name
+    elif isinstance(src, PurePath):
         return src.name
     else:
         return urlparse(str(src)).path.split("/")[-1]
 
 
 def _fill_resource_package_content(
-    package_content: Dict[Loc, Union[HttpUrl, Path]],
+    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]],
     node: Node,
     node_loc: Loc,
+    package_urls: bool,
 ):
     field_value: Union[Tuple[Any, ...], Node, Any]
     for field_name, field_value in node:
@@ -375,18 +384,20 @@ def _fill_resource_package_content(
         # nested node
         if isinstance(field_value, Node):
             if not isinstance(field_value, FrozenDictNode):
-                _fill_resource_package_content(package_content, field_value, loc)
+                _fill_resource_package_content(package_content, field_value, loc, package_urls)
 
         # nested node in tuple
         elif isinstance(field_value, tuple):
             for i, fv in enumerate(field_value):
                 if isinstance(fv, Node) and not isinstance(fv, FrozenDictNode):
-                    _fill_resource_package_content(package_content, fv, loc + (i,))
+                    _fill_resource_package_content(package_content, fv, loc + (i,), package_urls)
 
         elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
             if isinstance(field_value, RelativeFilePath):
-                src = field_value.absolute
+                src = field_value
             elif isinstance(field_value, AnyUrl):
+                if not package_urls:
+                    continue
                 src = field_value
             else:
                 raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")

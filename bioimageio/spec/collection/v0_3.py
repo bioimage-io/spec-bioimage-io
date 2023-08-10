@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
+from typing import Any, ClassVar, Dict, Literal, Tuple, Union
 
 from pydantic import ConfigDict, Field, TypeAdapter, field_validator
 from typing_extensions import Annotated
@@ -13,7 +13,7 @@ from bioimageio.spec.generic.v0_3 import (
 from bioimageio.spec.model.v0_5 import AnyModel
 from bioimageio.spec.notebook.v0_3 import AnyNotebook
 from bioimageio.spec.shared.types import NonEmpty, RawDict
-from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
+from bioimageio.spec.shared.validation import ValContext
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -55,11 +55,10 @@ class Collection(GenericBase):
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
-        super()._update_data_and_context(data)
-        context = validation_context_var.get()
-        assert context.collection_base_content is None
-        context.collection_base_content = {k: v for k, v in data.items() if k != "collection"}
+    def _update_context_and_data(cls, context: ValContext, data: Dict[str, Any]) -> None:
+        super()._update_context_and_data(context, data)
+        assert "collection_base_content" not in context
+        context["collection_base_content"] = {k: v for k, v in data.items() if k != "collection"}
 
     collection: NonEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""

@@ -1,13 +1,16 @@
 from __future__ import annotations
-from importlib.resources import files
 
 import json
-from pathlib import Path
+from importlib.resources import files
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import LicenseId
+    from bioimageio.spec.shared.types import LicenseId, Severity, WarningLevelName
+
+with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
+    VERSION: str = json.load(f)["version"]
+    assert isinstance(VERSION, str)
 
 DOI_REGEX = r"10\.[0-9]{4}.+"  # lax DOI regex validating the first 7 DOI characters only
 
@@ -58,3 +61,13 @@ DTYPE_LIMITS = MappingProxyType(
         "int64": MinMax(-9223372036854775808, 9223372036854775807),
     }
 )
+
+WARNING_LEVEL_CONTEXT_KEY = "warning_level"
+ALERT = 35  # no ALERT -> RDF is worriless
+WARNING = 30  # no ALERT nor WARNING -> RDF is watertight
+INFO = 20
+SEVERITY_TO_WARNING: MappingProxyType[Severity, WarningLevelName] = MappingProxyType(
+    {INFO: "info", WARNING: "warning", ALERT: "alert"}
+)
+LATEST = "latest"
+DISCOVER = "discover"

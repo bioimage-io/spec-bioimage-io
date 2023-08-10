@@ -1,7 +1,7 @@
 import logging
 from unittest import TestCase
 
-from bioimageio.spec._internal._warn import ALERT, INFO, WARNING
+from bioimageio.spec._internal._constants import ALERT, INFO, WARNING
 
 
 class TestWarnings(TestCase):

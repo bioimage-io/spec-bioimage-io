@@ -1,27 +1,21 @@
 from collections.abc import Mapping, Sequence
-from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
-    AnyUrl,
     BaseModel,
     ConfigDict,
-    DirectoryPath,
     EmailStr,
+    Field,
     FieldValidationInfo,
     HttpUrl,
-    PrivateAttr,
     field_validator,
 )
-from pydantic.fields import FieldInfo
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import (
-    WARNING,
     as_warning,
     warn,
 )
@@ -280,13 +274,6 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     rdf_source: Optional[FileSource] = None
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
     Do not set this field in a YAML file."""
-
-    _root: Union[DirectoryPath, AnyUrl] = PrivateAttr(default_factory=lambda :validation_context_var.get().root)
-    """Base path or URL for any relative paths specified in the RDF"""
-
-    @property
-    def root(self):
-        return self._root
 
     tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
     """Associated tags"""

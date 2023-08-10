@@ -7,15 +7,15 @@ from pydantic import (
     AnyUrl,
     ConfigDict,
     DirectoryPath,
+    Field,
     FieldValidationInfo,
     field_validator,
 )
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal._utils import Field
+from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES, WARNING
 from bioimageio.spec._internal._validate import WithSuffix
-from bioimageio.spec._internal._warn import WARNING, as_warning, warn
+from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (

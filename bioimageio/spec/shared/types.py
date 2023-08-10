@@ -32,7 +32,6 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
-from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 
 @dataclass(frozen=True, **SLOTS)
@@ -90,21 +89,25 @@ Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
 
+Severity = Literal[20, 30, 35]
+"""Severity of a warning"""
+
+WarningLevel = Literal[Severity, 50]
+"""With warning level x raise warnings of severity >=x"""
+
+WarningLevelName = Literal["info", "warning", "alert"]
+
 
 class RelativePath:
-    """A path relative to root; root may be a (relative or absolute) path or a URL."""
-
-    _relative: pathlib.PurePosixPath
-    _root: Union[AnyUrl, pathlib.Path]
+    path: pathlib.PurePosixPath
 
     def __init__(self, path: Union[str, pathlib.Path, RelativePath]) -> None:
         super().__init__()
-        self._relative = path._relative if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
-        self._root = validation_context_var.get().root  # save root from current context
+        self.path = path.path if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
 
     @property
     def __members(self):
-        return (self._relative, self._root)
+        return (self.path,)
 
     def __eq__(self, __value: object) -> bool:
         return type(__value) is type(self) and self.__members == __value.__members
@@ -113,10 +116,10 @@ class RelativePath:
         return hash(self.__members)
 
     def __str__(self) -> str:
-        return str(self._relative)
+        return self.path.as_posix()
 
     def __repr__(self) -> str:
-        return f"RelativePath('{self._relative.as_posix()}')"
+        return f"RelativePath('{self.path.as_posix()}')"
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
@@ -132,41 +135,35 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    @property
-    def relative(self):
-        return self._relative
-
-    def get_root(self):
-        # prefer current context over context at init
-        return validation_context_var.get(ValidationContext(root=self._root)).root
-
-    def get_absolute(self):
-        root = self.get_root()
+    def get_absolute(self, root: Union[DirectoryPath, AnyUrl]):
         if isinstance(root, pathlib.Path):
-            return root / self._relative
+            return root / self.path
         else:
-            return AnyUrl(urljoin(str(root), str(self._relative)))
+            return AnyUrl(urljoin(str(root), str(self.path)))
 
-    def _check_exists(self) -> None:
-        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.exists():
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.exists():
             raise ValueError(f"{p} does not exist")
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
         ret = cls(value)
-        ret._check_exists()
+        root = (info.context or {}).get("root")
+        if root is None:
+            raise ValueError("Missing context `root`")
+
         return ret
 
 
 class RelativeFilePath(RelativePath):
-    def _check_exists(self) -> None:
-        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.is_file():
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_file():
             raise ValueError(f"{p} does not point to an existing file")
 
 
 class RelativeDirectory(RelativePath):
-    def _check_exists(self) -> None:
-        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.is_dir():
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_dir():
             raise ValueError(f"{p} does not point to an existing directory")
 
 
