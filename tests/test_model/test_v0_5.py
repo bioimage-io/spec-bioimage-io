@@ -12,7 +12,7 @@ class TestModelRdf(TestBases.TestNode):
         Valid(
             dict(rdf_source=__file__, sha256="s" * 64),
             expected_dump_raw=dict(rdf_source=__file__, sha256="s" * 64),
-            expected_dump_python=dict(rdf_source=RelativeFilePath(__file__, root=Path()), sha256="s" * 64),
+            expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
             context=ValidationContext(root=Path()),
         ),
         Invalid(dict(uri="https://example.com", sha256="s" * 64)),

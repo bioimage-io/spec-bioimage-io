@@ -157,15 +157,18 @@ class ChannelAxis(AxisBase):
 
 
 class IndexTimeSpaceAxisBase(AxisBase):
-    size: Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId] = Field(
-        examples=[
-            10,
-            "other_axis",
-            ParametrizedSize(min=32, step=16, step_with="other_tensor.axis").model_dump(),
-            SizeReference(reference="other_tensor.axis").model_dump(),
-            SizeReference(reference="other_axis", offset=8).model_dump(),
-        ]
-    )
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId],
+        Field(
+            examples=[
+                10,
+                "other_axis",
+                ParametrizedSize(min=32, step=16, step_with="other_tensor.axis").model_dump(),
+                SizeReference(reference="other_tensor.axis").model_dump(),
+                SizeReference(reference="other_axis", offset=8).model_dump(),
+            ]
+        ),
+    ]
     """The size/length of an axis can be specified as
     - fixed integer
     - parametrized series of valid sizes (`ParametrizedSize`)
@@ -196,7 +199,7 @@ class TimeAxis(IndexTimeSpaceAxisBase):
 
 class SpaceAxis(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
-    name: ShortId = Field("x", examples=["x", "y", "z"])
+    name: Annotated[ShortId, Field(examples=["x", "y", "z"])] = "x"
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -236,18 +239,18 @@ class NominalOrOrdinalData(Node):
     String `values` are interpreted as labels for tensor values 0, ..., N.
     In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'"""
 
-    type: Literal[
-        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
-    ] = Field(
-        "uint8",
-        examples=[
-            "float32",
-            "uint8",
-            "uint16",
-            "int64",
-            "bool",
-        ],
-    )
+    type: Annotated[
+        Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"],
+        Field(
+            examples=[
+                "float32",
+                "uint8",
+                "uint16",
+                "int64",
+                "bool",
+            ],
+        ),
+    ] = "uint8"
 
     @model_validator(mode="after")  # type: ignore
     def validate_values_match_type(
@@ -283,12 +286,12 @@ class NominalOrOrdinalData(Node):
 
 
 class IntervalOrRatioData(Node):
-    type: Literal[
-        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"
-    ] = Field(
-        "float32",
-        examples=["float32", "float64", "uint8", "uint16"],
-    )
+    type: Annotated[
+        Literal["float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"],
+        Field(
+            examples=["float32", "float64", "uint8", "uint16"],
+        ),
+    ] = "float32"
     range: Tuple[Optional[float], Optional[float]] = (
         None,
         None,
@@ -306,7 +309,7 @@ TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
 class ScaleLinearKwargs(v0_4.ProcessingKwargs):
-    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to scale jointly.
     For example ('x', 'y') to scale two image axes for 2d data jointly."""
 
@@ -334,17 +337,24 @@ class ScaleLinear(v0_4.Processing):
 
 
 class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
-    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=v0_4.MODE_DESCR)
-    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
+    """Mode for computing mean and variance.
+    |     mode    |             description              |
+    | ----------- | ------------------------------------ |
+    |   fixed     | Fixed values for mean and variance   |
+    | per_dataset | Compute for the entire dataset       |
+    | per_sample  | Compute for each sample individually |
+    """
+    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to normalize jointly.
     For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
 
-    mean: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(1.1, 2.2, 3.3)])
+    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(0.1, 0.2, 0.3)])
+    std: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
@@ -369,7 +379,7 @@ class ZeroMeanUnitVariance(v0_4.Processing):
 
 class ScaleRangeKwargs(v0_4.ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
-    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to normalize jointly.
     For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
 
@@ -413,7 +423,7 @@ class ScaleMeanVarianceKwargs(v0_4.ProcessingKwargs):
     reference_tensor: Identifier
     """Name of tensor to match."""
 
-    axes: Tuple[ShortId, ...] = Field((), examples=[("x", "y")])
+    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to scale jointly.
     For example xy to normalize the two image axes for 2d data jointly.
     Default: scale all non-batch axes jointly."""
@@ -567,13 +577,16 @@ class OutputTensor(TensorBase):
 
 
 class ArchitectureFromSource(Node):
-    callable: v0_4.CallableFromSourceFile = Field(examples=["my_function.py:MyNetworkClass"])
+    callable: Annotated[v0_4.CallableFromSourceFile, Field(examples=["my_function.py:MyNetworkClass"])]
     """Callable returning a torch.nn.Module instance.
     `<relative path to file>:<identifier of implementation within the file>`."""
 
-    sha256: Sha256 = Field(
-        description="The SHA256 of the architecture source file." + SHA256_HINT,
-    )
+    sha256: Annotated[
+        Sha256,
+        Field(
+            description="The SHA256 of the architecture source file." + SHA256_HINT,
+        ),
+    ]
     """The SHA256 of the callable source file."""
 
     kwargs: Kwargs = Field(default_factory=dict)
@@ -581,7 +594,7 @@ class ArchitectureFromSource(Node):
 
 
 class ArchitectureFromDependency(Node):
-    callable: v0_4.CallableFromDepencency = Field(examples=["my_module.submodule.get_my_model"])
+    callable: Annotated[v0_4.CallableFromDepencency, Field(examples=["my_module.submodule.get_my_model"])]
     """callable returning a torch.nn.Module instance.
     `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
@@ -592,8 +605,8 @@ class ArchitectureFromDependency(Node):
 Architecture = Union[ArchitectureFromSource, ArchitectureFromDependency]
 
 
-class PytorchStateDictEntry(v0_4.WeightsEntryBase):
-    type: Literal["pytorch_state_dict"] = Field("pytorch_state_dict", exclude=True)
+class PytorchStateDictWeights(v0_4.WeightsEntryBase):
+    type: Annotated[Literal["pytorch_state_dict"], Field(exclude=True)] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
@@ -604,27 +617,34 @@ class PytorchStateDictEntry(v0_4.WeightsEntryBase):
 
 
 class Weights(Node):
-    keras_hdf5: Optional[v0_4.KerasHdf5Entry] = None
-    onnx: Optional[v0_4.OnnxEntry] = None
-    pytorch_state_dict: Optional[PytorchStateDictEntry] = None
-    tensorflow_js: Optional[v0_4.TensorflowJsEntry] = None
-    tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleEntry] = None
-    torchscript: Optional[v0_4.TorchscriptEntry] = None
+    keras_hdf5: Optional[v0_4.KerasHdf5Weights] = None
+    onnx: Optional[v0_4.OnnxWeights] = None
+    pytorch_state_dict: Optional[PytorchStateDictWeights] = None
+    tensorflow_js: Optional[v0_4.TensorflowJsWeights] = None
+    tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleWeights] = None
+    torchscript: Optional[v0_4.TorchscriptWeights] = None
 
     @model_validator(mode="after")  # type: ignore
-    def check_one_entry(self) -> Self:
-        if all(
-            entry is None
-            for entry in [
-                self.keras_hdf5,
-                self.onnx,
-                self.pytorch_state_dict,
-                self.tensorflow_js,
-                self.tensorflow_saved_model_bundle,
-                self.torchscript,
-            ]
-        ):
+    def check_entries(self) -> Self:
+        entries = {name for name, entry in self if entry is not None}
+
+        if not entries:
             raise ValueError("Missing weights entry")
+
+        entries_wo_parent = {name for name, entry in self if entry is not None and entry.parent is None}
+
+        if len(entries_wo_parent) != 1:
+            raise ValueError(
+                "Exactly one weights entry that does not specify the `parent` field is required. "
+                "That entry is considered the original set of model weights."
+                "Other weight formats are created through conversion of the orignal or already converted model weights."
+                "They have to reference the weights format they were converted from as their `parent`."
+            )
+
+        for name, entry in self:
+            assert name == entry.type
+            if entry.parent is not None and entry.parent not in entries:  # self reference checked for `parent` field
+                raise ValueError(f"`weights.{name}.parent={entry.parent} not in specified weight formats: {entries}")
 
         return self
 
@@ -637,12 +657,12 @@ class ModelRdf(Node):
     """SHA256 checksum of the model RDF specified under `rdf_source`."""
 
 
-def get_default_partial_inputs():
-    return (
-        InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
-            exclude_unset=False, exclude={"axes", "test_tensor"}
-        ),
-    )
+# def get_default_partial_inputs():
+#     return (
+#         InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
+#             exclude_unset=False, exclude={"axes", "test_tensor"}
+#         ),
+#     )
 
 
 class Model(
@@ -675,19 +695,21 @@ class Model(
     badges: ClassVar[tuple] = ()  # type: ignore
     """Badges are not allowed for model RDFs"""
 
-    documentation: Union[FileSource, None] = Field(
-        None,
-        examples=[
-            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-            "README.md",
-        ],
-    )
+    documentation: Annotated[
+        Optional[FileSource],
+        Field(
+            examples=[
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "README.md",
+            ],
+        ),
+    ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field(default_factory=get_default_partial_inputs)
+    inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
@@ -752,21 +774,18 @@ class Model(
             elif axis.size in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
 
-    license: LicenseId = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    license: Annotated[LicenseId, Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    name: Annotated[
-        CapitalStr,
-        warn(MaxLen(64)),
-    ] = Field(pattern=r"\w+[\w\- ]*\w")
+    name: Annotated[CapitalStr, warn(MaxLen(64)), Field(pattern=r"\w+[\w\- ]*\w")]
     """A human-readable name of this model.
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]] = Field()
+    outputs: NonEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
@@ -851,14 +870,14 @@ class Model(
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime = Field()
+    timestamp: Datetime
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights = Field()
+    weights: Weights
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

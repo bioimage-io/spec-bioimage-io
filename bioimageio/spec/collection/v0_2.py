@@ -2,6 +2,7 @@ import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 from pydantic import ConfigDict, Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator, model_validator
+from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
@@ -47,19 +48,29 @@ class CollectionEntryBase(Node):
 
     @property
     def entry(self) -> Any:
+        if self._entry is PydanticUndefined:
+            raise RuntimeError(
+                "Collection entry cannot be accessed. Is this entry part of a Collection? "
+                "A collection entry is only valid within a collection resrouce description."
+            )
+
         return self._entry
 
     _entry: Any = PrivateAttr()
 
     @model_validator(mode="after")  # type: ignore
-    def set_entry(self, info: ValidationInfo) -> Self:
+    def set_entry(self) -> Self:
         if self.rdf_source is not None:
             return self  # todo: add resolve_rdf_source callback
 
         if self.id is None:
             raise ValueError("Missing `id`")
 
-        entry_data: Dict[str, Any] = dict(info.context["collection_base_content"])  # type: ignore
+        context = validation_context_var.get()
+        if context.collection_base_content is None:
+            return self
+
+        entry_data: Dict[str, Any] = context.collection_base_content
         base_id: Any = entry_data.pop("id", None)
         if not isinstance(base_id, (str, int, float, bool)):
             return self  # invalid base id
@@ -71,7 +82,7 @@ class CollectionEntryBase(Node):
         if type_ == "collection":
             raise ValueError("Collections may not be nested!")
 
-        entry = self.entry_adapter.validate_python(entry_data, context=info.context)
+        entry = self.entry_adapter.validate_python(entry_data)
         object.__setattr__(self, "_entry", entry)
         return self
 
@@ -108,17 +119,13 @@ class Collection(GenericBase):
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _get_context_and_update_data(
-        cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
-    ) -> ValidationContext:
-        if context is None:
-            context = validation_context_var.get()
-        context = context.model_copy(
-            update=dict(collection_base_content={k: v for k, v in data.items() if k != "collection"})
-        )
-        return super()._get_context_and_update_data(data, context)
+    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
+        super()._update_data_and_context(data)
+        context = validation_context_var.get()
+        assert context.collection_base_content is None
+        context.collection_base_content = {k: v for k, v in data.items() if k != "collection"}
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]] = Field()
+    collection: NonEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""
 
     @field_validator("collection")

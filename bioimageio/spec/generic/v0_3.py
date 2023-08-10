@@ -33,7 +33,7 @@ SpecificResourceType = Literal["application", "collection", "dataset", "model", 
 
 
 class Attachment(Node):
-    source: FileSource = Field()
+    source: FileSource
     """∈📦 """
     sha256: Annotated[Optional[Sha256], warn(Sha256)] = None
 
@@ -55,39 +55,41 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """The format version of this resource specification
     (not the `version` of the resource description)"""
 
-    name: Annotated[CapitalStr, MaxLen(128)] = Field()
+    name: Annotated[CapitalStr, MaxLen(128)]
     """A human-friendly name of the resource description"""
 
-    description: Annotated[str, MaxLen(512), warn(MaxLen(256))] = Field()
+    description: Annotated[str, MaxLen(512), warn(MaxLen(256))]
     """A string containing a brief description."""
 
-    documentation: Union[Annotated[FileSource, WithSuffix(".md", case_sensitive=True)], None] = Field(
-        None,
-        examples=[
-            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-            "README.md",
-        ],
-    )
+    documentation: Annotated[
+        Optional[Annotated[FileSource, WithSuffix(".md", case_sensitive=True)]],
+        Field(
+            examples=[
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "README.md",
+            ],
+        ),
+    ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
-    covers: Tuple[
-        Annotated[FileSource, WithSuffix(v0_2.VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...
-    ] = Field(
-        (),
-        examples=[],
-        description=(
-            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
-            f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
+    covers: Annotated[
+        Tuple[Annotated[FileSource, WithSuffix(v0_2.VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...],
+        Field(
+            examples=[],
+            description=(
+                "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
+                f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
+            ),
         ),
-    )
+    ] = ()
     """∈📦 Cover images."""
 
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: NonEmpty[Tuple[v0_2.Author, ...]] = Field()
+    authors: NonEmpty[Tuple[v0_2.Author, ...]]
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Tuple[Attachment, ...] = ()
@@ -96,18 +98,20 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     badges: Tuple[v0_2.Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]] = Field()
+    cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]]
     """citations"""
 
-    config: Optional[ConfigNode] = Field(
-        None,
-        examples=[
-            dict(
-                bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
-                imagej={"macro_dir": "path/to/macro/file"},
-            )
-        ],
-    )
+    config: Annotated[
+        Optional[ConfigNode],
+        Field(
+            examples=[
+                dict(
+                    bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    imagej={"macro_dir": "path/to/macro/file"},
+                )
+            ],
+        ),
+    ] = None
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
@@ -127,10 +131,14 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     (Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
     an altered rdf.yaml file with local references to the downloaded files.)"""
 
-    git_repo: Optional[str] = Field(
-        None,
-        examples=["https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"],
-    )
+    git_repo: Annotated[
+        Optional[str],
+        Field(
+            examples=[
+                "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+            ],
+        ),
+    ] = None
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
@@ -139,7 +147,8 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     license: Annotated[
         Union[LicenseId, Annotated[DeprecatedLicenseId, "deprecated"]],
         warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
-    ] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+        Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
+    ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
@@ -148,23 +157,25 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     @as_warning
     @field_validator("license", mode="after")
     @classmethod
-    def deprecated_spdx_license(cls, value: Optional[str]) -> Tuple[str, ...]:
+    def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
         license_info = LICENSES[value] if value in LICENSES else {}
         if not license_info.get("isFsfLibre", False):
             raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")
 
         return value
 
-    links: Tuple[str, ...] = Field(
-        (),
-        examples=[
-            (
-                "ilastik/ilastik",
-                "deepimagej/deepimagej",
-                "zero/notebook_u-net_3d_zerocostdl4mic",
-            )
-        ],
-    )
+    links: Annotated[
+        Tuple[str, ...],
+        Field(
+            examples=[
+                (
+                    "ilastik/ilastik",
+                    "deepimagej/deepimagej",
+                    "zero/notebook_u-net_3d_zerocostdl4mic",
+                )
+            ],
+        ),
+    ] = ()
     """IDs of other bioimage.io resources"""
 
     maintainers: Tuple[v0_2.Maintainer, ...] = ()
@@ -192,7 +203,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     root: Union[DirectoryPath, AnyUrl] = Path()
     """Base path or URL for any relative paths specified in the RDF"""
 
-    tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
+    tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
     """Associated tags"""
 
     @as_warning
@@ -210,7 +221,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 
         return value
 
-    version: Union[Version, None] = Field(None, examples=["0.1.0"])
+    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
     """The version number of the resource. Its format must be a string in
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
     Hyphens and plus signs are not allowed to be compatible with

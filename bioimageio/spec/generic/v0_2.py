@@ -11,6 +11,7 @@ from pydantic import (
     EmailStr,
     FieldValidationInfo,
     HttpUrl,
+    PrivateAttr,
     field_validator,
 )
 from pydantic.fields import FieldInfo
@@ -55,15 +56,15 @@ class Attachments(Node):
 
 
 class Person(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     """Full name"""
     affiliation: Optional[str] = None
     """Affiliation"""
     email: Optional[EmailStr] = None
     """Email"""
-    github_user: Optional[str] = None
+    github_user: Optional[str]
     """GitHub user name"""
-    orcid: Optional[OrcidId] = Field(None, examples=["0000-0001-2345-6789"])
+    orcid: Annotated[Optional[OrcidId], Field(examples=["0000-0001-2345-6789"])] = None
     """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
     ) in hyphenated groups of 4 digits, (and [valid](
     https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
@@ -72,27 +73,34 @@ class Person(BaseModel):
 
 
 class Author(Person):
-    name: str = Field(description="Full name")
+    name: str
+    github_user: Optional[str] = None
 
 
 class Maintainer(Person):
-    github_user: str = Field(description="GitHub user name")
+    name: Optional[str] = None
+    github_user: str
 
 
 class Badge(Node, title="Custom badge"):
     """A custom badge"""
 
-    label: str = Field(examples=["Open in Colab"])
+    label: Annotated[str, Field(examples=["Open in Colab"])]
     """badge label to display on hover"""
 
-    icon: Union[HttpUrl, None] = Field(None, examples=["https://colab.research.google.com/assets/colab-badge.svg"])
+    icon: Annotated[
+        Union[HttpUrl, None], Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"])
+    ] = None
     """badge icon"""
 
-    url: HttpUrl = Field(
-        examples=[
-            "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
-        ]
-    )
+    url: Annotated[
+        HttpUrl,
+        Field(
+            examples=[
+                "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
+            ]
+        ),
+    ]
     """target URL"""
 
 
@@ -100,7 +108,7 @@ class CiteEntry(Node):
     text: str
     """free text description"""
 
-    doi: Optional[str] = Field(None, pattern=DOI_REGEX)
+    doi: Annotated[Optional[str], Field(pattern=DOI_REGEX)] = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details. (alternatively specify `url`)"""
 
@@ -137,30 +145,34 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[CapitalStr, warn(MaxLen(128))] = Field()
+    name: Annotated[CapitalStr, warn(MaxLen(128))]
     """A human-friendly name of the resource description"""
 
-    description: str = Field()
+    description: str
 
-    documentation: Union[FileSource, None] = Field(
-        None,
-        examples=[
-            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-            "README.md",
-        ],
-    )
+    documentation: Annotated[
+        Union[FileSource, None],
+        Field(
+            examples=[
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "README.md",
+            ],
+        ),
+    ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
-    covers: Tuple[Annotated[FileSource, WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...] = Field(
-        (),
-        examples=[],
-        description=(
-            "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
-            f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
+    covers: Annotated[
+        Tuple[Annotated[FileSource, WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...],
+        Field(
+            examples=["cover.png"],
+            description=(
+                "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
+                f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
+            ),
         ),
-    )
-    """∈📦 Cover images."""
+    ] = ()
+    """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
@@ -180,15 +192,17 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     ] = ()
     """citations"""
 
-    config: Optional[ConfigNode] = Field(
-        None,
-        examples=[
-            dict(
-                bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
-                imagej={"macro_dir": "path/to/macro/file"},
-            )
-        ],
-    )
+    config: Annotated[
+        Optional[ConfigNode],
+        Field(
+            examples=[
+                dict(
+                    bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    imagej={"macro_dir": "path/to/macro/file"},
+                )
+            ],
+        ),
+    ] = None
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a github repo URL in `config` since we already have the
     `git_repo` field defined in the spec.
@@ -212,10 +226,14 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     download_url: Optional[HttpUrl] = None
     """URL to download the resource from (deprecated)"""
 
-    git_repo: Optional[str] = Field(
-        None,
-        examples=["https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"],
-    )
+    git_repo: Annotated[
+        Optional[str],
+        Field(
+            examples=[
+                "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+            ],
+        ),
+    ] = None
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
@@ -224,7 +242,8 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
         warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
-    ] = Field(None, examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+        Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
+    ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
@@ -240,16 +259,18 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 
         return value
 
-    links: Tuple[str, ...] = Field(
-        (),
-        examples=[
-            (
-                "ilastik/ilastik",
-                "deepimagej/deepimagej",
-                "zero/notebook_u-net_3d_zerocostdl4mic",
-            )
-        ],
-    )
+    links: Annotated[
+        Tuple[str, ...],
+        Field(
+            examples=[
+                (
+                    "ilastik/ilastik",
+                    "deepimagej/deepimagej",
+                    "zero/notebook_u-net_3d_zerocostdl4mic",
+                )
+            ],
+        ),
+    ] = ()
     """IDs of other bioimage.io resources"""
 
     maintainers: Tuple[Maintainer, ...] = ()
@@ -260,10 +281,14 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
     Do not set this field in a YAML file."""
 
-    root: Union[DirectoryPath, AnyUrl] = Path()
+    _root: Union[DirectoryPath, AnyUrl] = PrivateAttr(default_factory=lambda :validation_context_var.get().root)
     """Base path or URL for any relative paths specified in the RDF"""
 
-    tags: Tuple[str, ...] = Field((), examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])
+    @property
+    def root(self):
+        return self._root
+
+    tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
     """Associated tags"""
 
     @as_warning
@@ -281,7 +306,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 
         return value
 
-    version: Union[Version, None] = Field(None, examples=["0.1.0"])
+    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
     """The version number of the resource. Its format must be a string in
     `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
     Hyphens and plus signs are not allowed to be compatible with
@@ -364,7 +389,9 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource):
     """A generic node base without format version
     to allow a derived resource description to define its format_version independently."""
 
-    source: Union[FileSource, None] = Field(None, description="URL or relative path to the source of the resource")
+    source: Annotated[
+        Optional[FileSource], Field(description="URL or relative path to the source of the resource")
+    ] = None
     """The primary source of the resource"""
 
 

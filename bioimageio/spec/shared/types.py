@@ -9,9 +9,9 @@ from urllib.parse import urljoin
 import annotated_types
 from pydantic import (
     AnyUrl,
+    DirectoryPath,
     GetCoreSchemaHandler,
     HttpUrl,
-    PydanticUserError,
     ValidationInfo,
     constr,
     functional_validators,
@@ -32,6 +32,7 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
+from bioimageio.spec.shared.validation import ValidationContext, validation_context_var
 
 
 @dataclass(frozen=True, **SLOTS)
@@ -96,12 +97,10 @@ class RelativePath:
     _relative: pathlib.PurePosixPath
     _root: Union[AnyUrl, pathlib.Path]
 
-    def __init__(
-        self, path: Union[str, pathlib.Path, RelativePath], /, *, root: Union[AnyUrl, pathlib.Path] = pathlib.Path()
-    ) -> None:
+    def __init__(self, path: Union[str, pathlib.Path, RelativePath]) -> None:
         super().__init__()
         self._relative = path._relative if isinstance(path, RelativePath) else pathlib.PurePosixPath(path)
-        self._root = root
+        self._root = validation_context_var.get().root  # save root from current context
 
     @property
     def __members(self):
@@ -117,7 +116,7 @@ class RelativePath:
         return str(self._relative)
 
     def __repr__(self) -> str:
-        return f"RelativePath({self._relative}, root={self._root}"
+        return f"RelativePath('{self._relative.as_posix()}')"
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
@@ -137,47 +136,37 @@ class RelativePath:
     def relative(self):
         return self._relative
 
-    @property
-    def root(self):
-        return self._root
+    def get_root(self):
+        # prefer current context over context at init
+        return validation_context_var.get(ValidationContext(root=self._root)).root
 
-    @property
-    def absolute(self):
-        if isinstance(self._root, pathlib.Path):
-            return self._root / self._relative
+    def get_absolute(self):
+        root = self.get_root()
+        if isinstance(root, pathlib.Path):
+            return root / self._relative
         else:
-            return AnyUrl(urljoin(str(self._root), str(self._relative)))
+            return AnyUrl(urljoin(str(root), str(self._relative)))
 
     def _check_exists(self) -> None:
-        if isinstance((p := self.absolute), pathlib.Path) and not p.exists():
+        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.exists():
             raise ValueError(f"{p} does not exist")
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
-        if info.context is None or "root" not in info.context:
-            raise PydanticUserError(f"missing 'root' context for {cls}", code=None)
-
-        root = info.context["root"]
-        if not isinstance(root, (AnyUrl, pathlib.Path)):
-            raise ValueError(
-                f"Expected root context to be of type 'pathlib.Path' or 'pydantic.AnyUrl', "
-                f"but got {root} of type '{type(root)}'"
-            )
-
-        ret = cls(value, root=root)
+        ret = cls(value)
         ret._check_exists()
         return ret
 
 
 class RelativeFilePath(RelativePath):
     def _check_exists(self) -> None:
-        if isinstance((p := self.absolute), pathlib.Path) and not p.is_file():
+        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.is_file():
             raise ValueError(f"{p} does not point to an existing file")
 
 
 class RelativeDirectory(RelativePath):
     def _check_exists(self) -> None:
-        if isinstance((p := self.absolute), pathlib.Path) and not p.is_dir():
+        if isinstance((p := self.get_absolute()), pathlib.Path) and not p.is_dir():
             raise ValueError(f"{p} does not point to an existing directory")
 
 

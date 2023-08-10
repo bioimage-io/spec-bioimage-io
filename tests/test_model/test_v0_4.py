@@ -4,7 +4,8 @@ from types import MappingProxyType
 from typing import Any, Dict
 from unittest import TestCase
 
-from pydantic import HttpUrl, TypeAdapter
+from pydantic import HttpUrl
+from pydantic_core import Url
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 
 from bioimageio.spec.model.v0_4 import (
@@ -12,11 +13,12 @@ from bioimageio.spec.model.v0_4 import (
     LinkedModel,
     Model,
     ModelRdf,
-    OnnxEntry,
+    OnnxWeights,
     OutputTensor,
     Postprocessing,
     Preprocessing,
     ScaleLinearKwargs,
+    Weights,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
@@ -30,7 +32,7 @@ class TestModelRdf(TestBases.TestNode):
         Valid(
             dict(rdf_source=__file__, sha256="s" * 64),
             expected_dump_raw=dict(rdf_source=__file__, sha256="s" * 64),
-            expected_dump_python=dict(rdf_source=RelativeFilePath(__file__, root=Path()), sha256="s" * 64),
+            expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
             context=ValidationContext(root=Path()),
         ),
         Valid(
@@ -53,7 +55,7 @@ class TestLinkedModel(TestBases.TestNode):
 
 
 class TestOnnxEntry(TestBases.TestNode):
-    default_node_class = OnnxEntry
+    default_node_class = OnnxWeights
     sub_tests = [
         Valid(
             dict(type="onnx", opset_version=8, source="https://example.com", sha256="s" * 64),
@@ -209,48 +211,48 @@ class TestModel(TestCase):
     data: Dict[str, Any] = {}
 
     def setUp(self):
-        self.data = Model(
-            root="https://example.com/",
-            documentation="./docs.md",
-            license="MIT",
-            git_repo="https://github.com/bioimage-io/python-bioimage-io",
-            format_version="0.4.9",
-            description="description",
-            authors=[
-                Author(name="Author 1", affiliation="Affiliation 1"),
-                Author(name="Author 2", affiliation="Affiliation 2"),
-            ],
-            maintainers=[
-                Maintainer(name="Author 1", affiliation="Affiliation 1", github_user="githubuser1"),
-                Maintainer(name="Author 2", affiliation="Affiliation 2", github_user="githubuser2"),
-            ],
-            timestamp=datetime.now(),
-            cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
-            inputs=(
-                InputTensor(
-                    name="input_1",
-                    description="Input 1",
-                    data_type="float32",
-                    axes="xyc",
-                    shape=(128, 128, 3),
+        with ValidationContext(root=Url("https://example.com/")):
+            self.data = Model(
+                documentation=RelativeFilePath("docs.md"),
+                license="MIT",
+                git_repo="https://github.com/bioimage-io/python-bioimage-io",
+                format_version="0.4.9",
+                description="description",
+                authors=(
+                    Author(name="Author 1", affiliation="Affiliation 1"),
+                    Author(name="Author 2"),
                 ),
-            ),
-            outputs=(
-                OutputTensor(
-                    name="output_1",
-                    description="Output 1",
-                    data_type="float32",
-                    axes="xyc",
-                    shape=(128, 128, 3),
+                maintainers=(
+                    Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
+                    Maintainer(github_user="githubuser2"),
                 ),
-            ),
-            name="Model",
-            tags=(),
-            # weights={"weights": {format: {"source": "local_weights"}}},
-            test_inputs=("test_ipt.npy",),
-            test_outputs=("test_out.npy",),
-            type="model",
-        ).model_dump()
+                timestamp=datetime.now(),
+                cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
+                inputs=(
+                    InputTensor(
+                        name="input_1",
+                        description="Input 1",
+                        data_type="float32",
+                        axes="xyc",
+                        shape=(128, 128, 3),
+                    ),
+                ),
+                outputs=(
+                    OutputTensor(
+                        name="output_1",
+                        description="Output 1",
+                        data_type="float32",
+                        axes="xyc",
+                        shape=(128, 128, 3),
+                    ),
+                ),
+                name="Model",
+                tags=(),
+                weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
+                test_inputs=(RelativeFilePath("test_ipt.npy"),),
+                test_outputs=(RelativeFilePath("test_out.npy"),),
+                type="model",
+            ).model_dump()
 
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})

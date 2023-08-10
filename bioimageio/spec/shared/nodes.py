@@ -177,14 +177,10 @@ class ResourceDescriptionBase(Node):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    def __init__(self, **data: Any) -> None:  # type: ignore
+    def __init__(self, **data: Any) -> None:
         __tracebackhide__ = True
-        context = self._get_context_and_update_data(data)
-        self.__pydantic_validator__.validate_python(
-            data,
-            self_instance=self,
-            context=dict(context),
-        )
+        self._update_data_and_context(data)
+        super().__init__(**data)
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -195,35 +191,15 @@ class ResourceDescriptionBase(Node):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _get_context_and_update_data(
-        cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
-    ) -> ValidationContext:
-        if context is None:
-            context = validation_context_var.get()
+    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
+        context = validation_context_var.get()
 
-        if context.root:
-            root = context.root
-        elif "root" in data:
-            root = data["root"]
-        else:
-            root = Path()
-
-        if not context.root:
-            c: Dict[str, Any] = {**dict(context), "root": root}
-            context = ValidationContext(**c)
-
-        if "root" in cls.model_fields:
-            # serialize root for equality after roundtrip
-            serialized_root = context.model_dump()["root"]
-            data["root"] = serialized_root
-
+        # set original format if possible
         original_format = data.get("format_version")
-        if isinstance(original_format, str) and original_format.count(".") == 2:
-            c = {**dict(context), "original_format": tuple(map(int, original_format.split(".")))}
-            context = ValidationContext(**c)
+        if context.original_format is None and isinstance(original_format, str) and original_format.count(".") == 2:
+            context.original_format = tuple(map(int, original_format.split(".")))
 
         cls.convert_from_older_format(data, raise_unconvertable=True)
-        return context
 
     @classmethod
     def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
@@ -281,7 +257,10 @@ class StringNode(UserString, ABC):
         defaults = {fn: getattr(self.__class__, fn, Field()) for fn in type_hints}
         field_definitions: Dict[str, Any] = {fn: (t, defaults[fn]) for fn, t in type_hints.items()}
         self._node_class = pydantic.create_model(
-            self.__class__.__name__, __base__=Node, __module__=self.__module__, **field_definitions
+            self.__class__.__name__,
+            __base__=Node,
+            __module__=self.__module__,
+            **field_definitions,
         )
         context = dict(validation_context_var.get())
         valid_string_data = TypeAdapter(Annotated[str, Field(pattern=self._pattern)]).validate_python(
@@ -290,7 +269,10 @@ class StringNode(UserString, ABC):
         data = self._get_data(valid_string_data)
         self._node = self._node_class.model_validate(data, context=context)
         for fn, value in self._node:
-            setattr(self, fn, value)
+            object.__setattr__(self, fn, value)
+
+    def __setattr__(self, name: str, value: Any):
+        raise AttributeError(f"{self} is immutable.")
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:

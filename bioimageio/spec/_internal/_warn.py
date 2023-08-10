@@ -1,7 +1,6 @@
 import dataclasses
 import sys
 from logging import getLogger
-from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -10,7 +9,6 @@ from typing import (
     Optional,
     Union,
     get_args,
-    get_origin,
 )
 
 from annotated_types import BaseMetadata, GroupedMetadata
@@ -24,15 +22,16 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
+from bioimageio.spec.shared.validation import (
+    SEVERITY_TO_WARNING,
+    Severity,
+    validation_context_var,
+)
+
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
 
-WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
-Severity = Literal[20, 30, 35]
-WarningLevel = Literal[Severity, 50]  # with warning level x raise warnings of severity >=x
-ALERT = 35  # no ALERT -> RDF is worriless
-WARNING = 30  # no ALERT nor WARNING -> RDF is watertight
-INFO = 20
+# WARNING_LEVEL_CONTEXT_KEY: Literal["warning_level"] = "warning_level"
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, Any] = {}
@@ -43,11 +42,6 @@ else:
 ValidatorFunction = Union[NoInfoValidatorFunction, FieldValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
-
-WarningType = Literal["info", "warning", "alert"]
-SEVERITY_TO_WARNING: MappingProxyType[Severity, WarningType] = MappingProxyType(
-    {INFO: "info", WARNING: "warning", ALERT: "alert"}
-)
 
 
 def raise_warning(message_template: LiteralString, *, severity: Severity, context: Optional[Dict[str, Any]]):
@@ -60,7 +54,6 @@ def warn(
     msg: Optional[LiteralString] = None,
 ):
     """treat a type or its annotation metadata as a warning condition"""
-    assert get_origin(AnnotationMetaData) is Union
     if isinstance(typ, get_args(AnnotationMetaData)):
         typ = Annotated[Any, typ]
 
@@ -92,8 +85,8 @@ def as_warning(
 
     def wrapper(value: Any, info: FieldValidationInfo) -> Any:
         logger = getLogger(getattr(info, "field_name", "node"))
-        assert info.context is not None
-        if info.context[WARNING_LEVEL_CONTEXT_KEY] > severity:
+        context = validation_context_var.get()
+        if severity < context.warning_level:
             return value
 
         try:

@@ -55,17 +55,13 @@ class Collection(GenericBase):
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _get_context_and_update_data(
-        cls, data: Dict[str, Any], context: Optional[ValidationContext] = None
-    ) -> ValidationContext:
-        if context is None:
-            context = validation_context_var.get()
-        context = context.model_copy(
-            update=dict(collection_base_content={k: v for k, v in data.items() if k != "collection"})
-        )
-        return super()._get_context_and_update_data(data, context)
+    def _update_data_and_context(cls, data: Dict[str, Any]) -> None:
+        super()._update_data_and_context(data)
+        context = validation_context_var.get()
+        assert context.collection_base_content is None
+        context.collection_base_content = {k: v for k, v in data.items() if k != "collection"}
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]] = Field()
+    collection: NonEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""
 
     @field_validator("collection")

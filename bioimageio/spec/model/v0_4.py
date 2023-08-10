@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 
 from typing import (
     Any,
@@ -75,7 +76,8 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromSourceFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Union[HttpUrl, RelativeFilePath] = Field(description=IN_PACKAGE_MESSAGE)
+    source_file: Union[HttpUrl, RelativeFilePath]
+    """∈📦 """
     callable_name: str
 
     @classmethod
@@ -89,11 +91,11 @@ CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
 
 class Dependencies(StringNode):
     _pattern = r"^.+:.+$"
-    manager: NonEmpty[str] = Field(examples=["conda", "maven", "pip"])
+    manager: Annotated[NonEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
-    file: Union[HttpUrl, RelativeFilePath] = Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])
-    IN_PACKAGE_MESSAGE + """Dependency file"""
+    file: Annotated[FileSource, Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])]
+    """∈📦 Dependency file"""
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
@@ -107,12 +109,12 @@ WeightsFormat = Literal[
 
 
 class Weights(Node):
-    keras_hdf5: Optional[KerasHdf5Entry] = None
-    onnx: Optional[OnnxEntry] = None
-    pytorch_state_dict: Optional[PytorchStateDictEntry] = None
-    tensorflow_js: Optional[TensorflowJsEntry] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleEntry] = None
-    torchscript: Optional[TorchscriptEntry] = None
+    keras_hdf5: Optional[KerasHdf5Weights] = None
+    onnx: Optional[OnnxWeights] = None
+    pytorch_state_dict: Optional[PytorchStateDictWeights] = None
+    tensorflow_js: Optional[TensorflowJsWeights] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeights] = None
+    torchscript: Optional[TorchscriptWeights] = None
 
     @model_validator(mode="after")  # type: ignore
     def check_one_entry(self) -> Self:
@@ -136,12 +138,12 @@ class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
 
-    source: FileSource = Field()
+    source: FileSource
     """∈📦 The weights file."""
 
-    sha256: Annotated[Union[Sha256, None], warn(Sha256)] = Field(
-        None, description="SHA256 checksum of the source file\n" + SHA256_HINT
-    )
+    sha256: Annotated[
+        Optional[Sha256], warn(Sha256), Field(description="SHA256 checksum of the source file\n" + SHA256_HINT)
+    ] = None
     """SHA256 checksum of the source file"""
 
     attachments: Annotated[Union[Attachments, None], warn(None, ALERT)] = None
@@ -155,51 +157,61 @@ class WeightsEntryBase(Node):
         the person(s) who have converted the weights to this format.
     """
 
-    dependencies: Annotated[Optional[Dependencies], warn(None, ALERT)] = Field(
-        None, examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]
-    )
+    dependencies: Annotated[
+        Optional[Dependencies],
+        warn(None, ALERT),
+        Field(examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]),
+    ] = None
     """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
-    parent: Optional[WeightsFormat] = Field(None, examples=["pytorch_state_dict"])
+    parent: Annotated[Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])] = None
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
-    # todo: validate
+
+    @field_validator("parent")
+    @classmethod
+    def check_parent_is_not_self(cls, value: Optional[WeightsFormat]) -> Optional[WeightsFormat]:
+        if cls.type == value:
+            raise ValueError("Weights entry can't be it's own parent.")
+
+        return value
 
 
-class KerasHdf5Entry(WeightsEntryBase):
-    type: Literal["keras_hdf5"] = Field("keras_hdf5", exclude=True)
+class KerasHdf5Weights(WeightsEntryBase):
+    type: Annotated[Literal["keras_hdf5"], Field(exclude=True)] = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[Union[Version, None], warn(Version, ALERT)] = None
     """TensorFlow version used to create these weights"""
 
 
-class OnnxEntry(WeightsEntryBase):
-    type: Literal["onnx"] = Field("onnx", exclude=True)
+class OnnxWeights(WeightsEntryBase):
+    type: Annotated[Literal["onnx"], Field(exclude=True)] = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[Union[Annotated[int, Ge(7)], None], warn(int, ALERT)] = None
     """ONNX opset version"""
 
 
-class PytorchStateDictEntry(WeightsEntryBase):
-    type: Literal["pytorch_state_dict"] = Field("pytorch_state_dict", exclude=True)
+class PytorchStateDictWeights(WeightsEntryBase):
+    type: Annotated[Literal["pytorch_state_dict"], Field(exclude=True)] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
     """callable returning a torch.nn.Module instance.
     Local implementation: `<relative path to file>:<identifier of implementation within the file>`.
     Implementation in a dependency: `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
-    # todo: include in `architecture` field
-    architecture_sha256: Union[Sha256, None] = Field(
-        None,
-        description=(
-            "The SHA256 of the architecture source file, "
-            "if the architecture is not defined in a module listed in `dependencies`\n"
-        )
-        + SHA256_HINT,
-    )
+    architecture_sha256: Annotated[
+        Optional[Sha256],
+        Field(
+            description=(
+                "The SHA256 of the architecture source file, "
+                "if the architecture is not defined in a module listed in `dependencies`\n"
+            )
+            + SHA256_HINT,
+        ),
+    ] = None
     """The SHA256 of the architecture source file,
     if the architecture is not defined in a module listed in `dependencies`"""
 
@@ -222,26 +234,26 @@ class PytorchStateDictEntry(WeightsEntryBase):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-class TorchscriptEntry(WeightsEntryBase):
-    type: Literal["torchscript"] = Field("torchscript", exclude=True)
+class TorchscriptWeights(WeightsEntryBase):
+    type: Annotated[Literal["torchscript"], Field(exclude=True)] = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the PyTorch library used."""
 
 
-class TensorflowJsEntry(WeightsEntryBase):
-    type: Literal["tensorflow_js"] = Field("tensorflow_js", exclude=True)
+class TensorflowJsWeights(WeightsEntryBase):
+    type: Annotated[Literal["tensorflow_js"], Field(exclude=True)] = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
 
-    source: Union[HttpUrl, RelativeFilePath] = Field()
+    source: Union[HttpUrl, RelativeFilePath]
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleEntry(WeightsEntryBase):
-    type: Literal["tensorflow_saved_model_bundle"] = Field("tensorflow_saved_model_bundle", exclude=True)
+class TensorflowSavedModelBundleWeights(WeightsEntryBase):
+    type: Annotated[Literal["tensorflow_saved_model_bundle"], Field(exclude=True)] = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
@@ -249,12 +261,12 @@ class TensorflowSavedModelBundleEntry(WeightsEntryBase):
 
 WeightsEntry = Annotated[
     Union[
-        KerasHdf5Entry,
-        OnnxEntry,
-        TorchscriptEntry,
-        PytorchStateDictEntry,
-        TensorflowJsEntry,
-        TensorflowSavedModelBundleEntry,
+        KerasHdf5Weights,
+        OnnxWeights,
+        TorchscriptWeights,
+        PytorchStateDictWeights,
+        TensorflowJsWeights,
+        TensorflowSavedModelBundleWeights,
     ],
     Field(discriminator="type"),
 ]
@@ -310,7 +322,7 @@ class ImplicitOutputShape(Node):
 
 
 class TensorBase(Node):
-    name: Identifier  # todo: validate duplicates
+    name: Identifier
     """Tensor name. No duplicates are allowed."""
 
     description: str = ""
@@ -334,21 +346,6 @@ class TensorBase(Node):
     data_range: Optional[Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]] = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
-
-
-_MODE_DESCR_WO_FIXED = """Mode for computing mean and variance.
-| mode | description |
-| --- | ---- |
-| per_dataset | mean and variance are computed for the entire dataset |
-| per_sample | mean and variance are computed for each sample individually |
-"""
-
-MODE_DESCR = (
-    _MODE_DESCR_WO_FIXED
-    + """
-| fixed | fixed values for mean and variance |
-"""
-)
 
 
 class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any]):
@@ -398,7 +395,7 @@ class Clip(Processing):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    axes: Optional[AxesInCZYX] = Field(None, examples=["xy"])
+    axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
 
@@ -437,17 +434,24 @@ class Sigmoid(Processing):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    mode: Literal["fixed", "per_dataset", "per_sample"] = Field("fixed", description=MODE_DESCR)
-    axes: AxesInCZYX = Field(examples=["xy"])
+    mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
+    """Mode for computing mean and variance.
+    |     mode    |             description              |
+    | ----------- | ------------------------------------ |
+    |   fixed     | Fixed values for mean and variance   |
+    | per_dataset | Compute for the entire dataset       |
+    | per_sample  | Compute for each sample individually |
+    """
+    axes: Annotated[AxesInCZYX, Field(examples=["xy"])]
     """The subset of axes to normalize jointly.
     For example `xy` to normalize the two image axes for 2d data jointly."""
 
-    mean: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(1.1, 2.2, 3.3)])
+    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Union[float, NonEmpty[Tuple[float, ...]], None] = Field(None, examples=[(0.1, 0.2, 0.3)])
+    std: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
@@ -472,7 +476,13 @@ class ZeroMeanUnitVariance(Processing):
 
 class ScaleRangeKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
-    axes: AxesInCZYX = Field(examples=["xy"])
+    """Mode for computing percentiles.
+    |     mode    |             description              |
+    | ----------- | ------------------------------------ |
+    | per_dataset | compute for the entire dataset       |
+    | per_sample  | compute for each sample individually |
+    """
+    axes: Annotated[AxesInCZYX, Field(examples=["xy"])]
     """The subset of axes to normalize jointly.
     For example xy to normalize the two image axes for 2d data jointly."""
 
@@ -513,10 +523,17 @@ class ScaleRange(Processing):
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
+    """Mode for computing mean and variance.
+    |     mode    |             description              |
+    | ----------- | ------------------------------------ |
+    | per_dataset | Compute for the entire dataset       |
+    | per_sample  | Compute for each sample individually |
+    """
+
     reference_tensor: Identifier
     """Name of tensor to match."""
 
-    axes: Optional[AxesInCZYX] = Field(None, examples=["xy"])
+    axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to normalize the two image axes for 2d data jointly.
     Default: scale all non-batch axes jointly."""
@@ -548,9 +565,10 @@ class InputTensor(TensorBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
-    shape: Union[Tuple[int, ...], ParametrizedInputShape] = Field(
-        examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
-    )
+    shape: Annotated[
+        Union[Tuple[int, ...], ParametrizedInputShape],
+        Field(examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]),
+    ]
     """Specification of input tensor shape."""
 
     preprocessing: Tuple[Preprocessing, ...] = ()
@@ -637,7 +655,7 @@ class RunMode(Node):
 
 
 class ModelRdf(Node):
-    rdf_source: FileSource = Field(alias="uri")
+    rdf_source: Annotated[FileSource, Field(alias="uri")]
     """URL or relative path of a model RDF"""
 
     sha256: Sha256
@@ -680,22 +698,24 @@ class Model(GenericBaseNoSource):
     badges: ClassVar[tuple] = ()  # type: ignore
     """Badges are not allowed for model RDFs"""
 
-    documentation: Union[FileSource, None] = Field(
-        None,
-        examples=[
-            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-            "README.md",
-        ],
-    )
+    documentation: Annotated[
+        Optional[FileSource],
+        Field(
+            examples=[
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "README.md",
+            ],
+        ),
+    ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]] = Field()
+    inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
-    license: Annotated[Union[LicenseId, str], warn(LicenseId)] = Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])
+    license: Annotated[Union[LicenseId, str], warn(LicenseId), Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
@@ -704,11 +724,11 @@ class Model(GenericBaseNoSource):
     name: Annotated[
         CapitalStr,
         warn(MaxLen(64), INFO),
-    ] = Field()
+    ]
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]] = Field()
+    outputs: NonEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
@@ -844,24 +864,24 @@ class Model(GenericBaseNoSource):
     sample_outputs: Tuple[FileSource, ...] = ()
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field()
+    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
     """∈📦 URLs or relative paths to test input tensors compatible with the `inputs` description for **a single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]] = Field()
+    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
     """∈📦 Analog to `test_inputs`."""
 
-    timestamp: Datetime = Field()
+    timestamp: Datetime
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
     training_data: Union[LinkedDataset, Dataset, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights = Field()
+    weights: Weights
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
