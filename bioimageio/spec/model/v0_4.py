@@ -720,7 +720,7 @@ class Model(GenericBaseNoSource):
     ) to discuss your intentions with the community."""
 
     name: Annotated[
-        CapitalStr,
+        NonEmpty[str],
         warn(MaxLen(64), INFO),
     ]
     """A human-readable name of this model.

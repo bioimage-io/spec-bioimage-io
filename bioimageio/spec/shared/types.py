@@ -148,6 +148,9 @@ class RelativePath:
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
+        if isinstance(value, str) and (value.startswith("https://") or value.startswith("http://")):
+            raise ValueError(f"{value} looks like a URL, not a relative path")
+
         ret = cls(value)
         root = (info.context or {}).get("root")
         if root is not None:

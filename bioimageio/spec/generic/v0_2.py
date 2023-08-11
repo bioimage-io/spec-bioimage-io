@@ -142,7 +142,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[CapitalStr, warn(MaxLen(128))]
+    name: Annotated[NonEmpty[str], warn(MaxLen(128))]
     """A human-friendly name of the resource description"""
 
     description: str

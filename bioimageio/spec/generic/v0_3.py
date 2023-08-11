@@ -63,10 +63,10 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """The format version of this resource specification
     (not the `version` of the resource description)"""
 
-    name: Annotated[CapitalStr, MaxLen(128)]
+    name: Annotated[NonEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description"""
 
-    description: Annotated[str, MaxLen(512), warn(MaxLen(256))]
+    description: Annotated[str, MaxLen(1024), warn(MaxLen(512))]
     """A string containing a brief description."""
 
     documentation: Annotated[
