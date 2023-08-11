@@ -1,11 +1,14 @@
 from pathlib import Path
 from types import MappingProxyType
 from unittest import TestCase
+
 from ruamel.yaml import YAML
 
+from bioimageio.spec._internal._constants import ALERT
 from bioimageio.spec.utils import update_format, validate
 
 yaml = YAML(typ="safe")
+
 EXAMPLE_SPECS = Path(__file__).parent / "../example_specs"
 
 
@@ -16,9 +19,9 @@ class TestUpdateFormatWithStardist(TestCase):
             cls.data = MappingProxyType(yaml.load(f))
 
     def test_update_format(self):
-        _ = update_format(self.data, raise_unconvertable=False)
-        with self.assertRaises(NotImplementedError):
-            _ = update_format(self.data, raise_unconvertable=True)
+        _ = update_format(self.data)
+        with self.assertRaises(ValueError):
+            _ = update_format(self.data, context={"warning_level": ALERT})
 
 
 class TestForwardCompatibility(TestCase):
@@ -36,12 +39,12 @@ class TestForwardCompatibility(TestCase):
         data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
 
         summary = validate(data)
-        assert summary["status"] == "passed"
+        self.assertEqual(summary["status"], "passed", summary)
 
         # expect warning about treating future format version as latest
         ws = summary.get("warnings", [])
-        assert len(ws) == 1
-        assert ws[0]["loc"] == ("format_version",), ws[0]["loc"]
+        self.assertEqual(len(ws), 1, ws)
+        self.assertEqual(ws[0]["loc"], ("format_version",), ws[0]["loc"])
 
     def test_no_forward_compatibility(self):
         data = dict(self.data)
@@ -49,13 +52,13 @@ class TestForwardCompatibility(TestCase):
         data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
 
         summary = validate(data)
-        assert summary["status"] == "failed"
+        self.assertEqual(summary["status"], "failed", summary)
 
         errors = summary.get("errors", [])
-        assert len(errors) == 1
-        assert errors[0]["loc"] == ("authors",)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertEqual(errors[0]["loc"], ("authors",), errors[0]["loc"])
 
         # expect warning about treating future format version as latest
         ws = summary.get("warnings", [])
-        assert len(ws) == 1, ws
-        assert ws[0]["loc"] == ("format_version",), ws[0]["loc"]
+        self.assertEqual(len(ws), 1, ws)
+        self.assertEqual(ws[0]["loc"], ("format_version",), ws[0]["loc"])

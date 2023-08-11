@@ -162,14 +162,15 @@ def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDe
 def update_format(
     resource_description: RawMapping,
     update_to_format: str = "latest",
-    raise_unconvertable: bool = False,
+    context: Optional[ValidationContext] = None,
 ) -> RawMapping:
     """Auto-update fields of a bioimage.io resource without any validation."""
     assert "type" in resource_description
     assert isinstance(resource_description["type"], str)
     rd_class = get_rd_class(resource_description["type"], update_to_format)
     rd = dict(resource_description)
-    rd_class.convert_from_older_format(rd, raise_unconvertable)
+    val_context = get_validation_context(**(context or {}))
+    rd_class.convert_from_older_format(rd, val_context)
     return rd
 
 

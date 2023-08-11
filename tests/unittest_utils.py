@@ -1,7 +1,8 @@
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Optional, Sequence, Set, Type, Union
+from types import MappingProxyType
+from typing import Any, ClassVar, Dict, Mapping, Optional, Sequence, Set, Type, Union
 from unittest import TestCase
 
 from deepdiff import DeepDiff
@@ -145,10 +146,12 @@ class TestBases:
         rdf_root: Path
         adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)
         latest_adapter: ClassVar[TypeAdapter[LatestResourceDescription]] = TypeAdapter(LatestResourceDescription)
-        known_invalid_as_latest: ClassVar[Set[Path]]
-        exclude_fields_from_roundtrip: ClassVar[Dict[Path, Set[str]]]
+        known_invalid_as_latest: ClassVar[Set[Union[str, Path]]] = set()
+        exclude_fields_from_roundtrip: ClassVar[Mapping[Path, Set[str]]] = MappingProxyType({})
 
         def __init_subclass__(cls) -> None:
+            cls.known_invalid_as_latest = {Path(p) for p in cls.known_invalid_as_latest}
+
             for rdf in cls.yield_rdf_paths():
 
                 def test_rdf(self: TestBases.TestManyRdfs, rdf_path: Path = rdf) -> None:
@@ -164,7 +167,6 @@ class TestBases:
                         return
 
                     exclude_from_comp = {
-                        "root",
                         "format_version",
                         "timestamp",
                         *cls.exclude_fields_from_roundtrip.get(rdf_path.relative_to(cls.rdf_root), set()),
@@ -181,7 +183,9 @@ class TestBases:
                     with self.subTest("as-latest"):
                         rd, summary = load_description(data, context=context, format_version="latest")
                         if rd is None:
-                            if rdf_path.relative_to(cls.rdf_root) not in cls.known_invalid_as_latest:
+                            if rdf_path.relative_to(cls.rdf_root) in cls.known_invalid_as_latest:
+                                self.skipTest("known_invalid_as_latest")
+                            else:
                                 self.fail(format_summary(summary))
                         elif rdf_path in cls.known_invalid_as_latest:
                             self.fail("passes despite marked as known failure case")

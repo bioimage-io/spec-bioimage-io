@@ -1,18 +1,27 @@
 import collections.abc
-from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Sequence, Set, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen
-from pydantic import ConfigDict, Field, FieldValidationInfo, constr, field_validator, model_validator
+from pydantic import (
+    AfterValidator,
+    ConfigDict,
+    Field,
+    FieldValidationInfo,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal._constants import DTYPE_LIMITS, SHA256_HINT
+from bioimageio.spec._internal._validate import capitalize_first_letter
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
+from bioimageio.spec.model.v0_5_converter import convert_model_from_v0_4_to_0_5_0
 from bioimageio.spec.shared.nodes import Kwargs, Node
 from bioimageio.spec.shared.types import (
-    CapitalStr,
     Datetime,
     FileSource,
     Identifier,
@@ -20,11 +29,11 @@ from bioimageio.spec.shared.types import (
     NonEmpty,
     Predicate,
     RawDict,
-    RawValue,
     Sha256,
     Unit,
     Version,
 )
+from bioimageio.spec.shared.validation import ValContext
 
 from . import v0_4
 
@@ -86,7 +95,9 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 ShortId = Annotated[Identifier, MaxLen(16)]
-OtherTensorAxisId = Annotated[constr(min_length=1, max_length=33, pattern=r"^.*\..*$"), Predicate(str.islower)]
+OtherTensorAxisId = Annotated[
+    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.*\..*$"), Predicate(str.islower)
+]
 TensorAxisId = Union[ShortId, OtherTensorAxisId]
 SAME_AS_TYPE = "<same as type>"
 
@@ -108,7 +119,7 @@ class SizeReference(Node):
 
     `size = reference.size / reference.scale * axis.scale + offset`
     The axis and the referenced axis need to have the same unit (or no unit).
-    `scale=1.0`, if the axes have a no scale.
+    A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
     """
 
     reference: TensorAxisId
@@ -136,19 +147,26 @@ class WithHalo(Node):
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
     name: ShortId = "batch"
+    size: Optional[Literal[1]] = None
+    """The batch size may be fixed to 1,
+    otherwise (the default) it may be chosen arbitrarily depending on available memory"""
+
+
+CHANNEL_NAMES_PLACEHOLDER = ("channel1", "channel2", "etc")
+ChannelNamePattern = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r".*\{i\}.*")]
 
 
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     name: ShortId = "channel"
-    channel_names: Tuple[ShortId, ...] = ("channel1", "channel2", "etc")
-    size: Union[Annotated[int, Gt(0)], Literal["#channel_names"]] = "#channel_names"
+    channel_names: Union[Tuple[ShortId, ...], ChannelNamePattern] = "channel{i}"
+    size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
     def model_post_init(self, __context: Any):
         if self.size == "#channel_names":
             object.__setattr__(self, "size", len(self.channel_names))
 
-        if self.channel_names == ("channel1", "…"):
+        if self.channel_names == CHANNEL_NAMES_PLACEHOLDER:
             assert isinstance(self.size, int)
             object.__setattr__(self, "channel_names", (f"channel{i}" for i in range(1, self.size + 1)))
 
@@ -251,7 +269,7 @@ class NominalOrOrdinalData(Node):
         ),
     ] = "uint8"
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_values_match_type(
         self,
     ) -> Self:
@@ -318,7 +336,7 @@ class ScaleLinearKwargs(v0_4.ProcessingKwargs):
     offset: Union[float, Tuple[float, ...]] = 0.0
     """additive term"""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
         if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
             self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
@@ -359,7 +377,7 @@ class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def mean_and_std_match_mode(self) -> Self:
         if self.mode == "fixed" and (self.mean is None or self.std is None):
             raise ValueError("`mean` and `std` are required for `mode: fixed`.")
@@ -543,7 +561,7 @@ class InputTensor(TensorBase):
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_preprocessing_kwargs(self) -> Self:
         axes_names = [a.name for a in self.axes]
         for p in self.preprocessing:
@@ -564,7 +582,7 @@ class OutputTensor(TensorBase):
     postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_postprocessing_kwargs(self) -> Self:
         axes_names = [a.name for a in self.axes]
         for p in self.postprocessing:
@@ -623,7 +641,7 @@ class Weights(Node):
     tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleWeights] = None
     torchscript: Optional[v0_4.TorchscriptWeights] = None
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def check_entries(self) -> Self:
         entries = {name for name, entry in self if entry is not None}
 
@@ -641,6 +659,11 @@ class Weights(Node):
             )
 
         for name, entry in self:
+            if entry is None:
+                continue
+
+            assert hasattr(entry, "type")
+            assert hasattr(entry, "parent")
             assert name == entry.type
             if entry.parent is not None and entry.parent not in entries:  # self reference checked for `parent` field
                 raise ValueError(f"`weights.{name}.parent={entry.parent} not in specified weight formats: {entries}")
@@ -718,8 +741,14 @@ class Model(
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_step_with_refs = [a.name for a in ipt.axes if not isinstance(a, BatchAxis)] + input_step_with_refs
-            valid_independent_refs = [a.name for a in ipt.axes if not isinstance(a, BatchAxis)] + input_size_refs
+            valid_step_with_refs = {
+                **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
+                **input_step_with_refs,
+            }
+            valid_independent_refs = {
+                **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
+                **input_size_refs,
+            }
             for a, ax in enumerate(ipt.axes):
                 cls._validate_axis(
                     "inputs",
@@ -739,8 +768,8 @@ class Model(
         tensor_name: str,
         a: int,
         axis: Union[Axis, OutputAxis],
-        valid_step_with_refs: Sequence[TensorAxisId],
-        valid_independent_refs: Sequence[TensorAxisId],
+        valid_step_with_refs: Dict[TensorAxisId, Tuple[Union[InputTensor, OutputTensor], Axis]],
+        valid_independent_refs: Dict[TensorAxisId, Tuple[Union[InputTensor, OutputTensor], Axis]],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
@@ -751,7 +780,7 @@ class Model(
                     f"Invalid tensor axis reference in {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}. Another axis's name with a parametrized size is required."
                 )
-            elif axis.size.step_with in (axis.name, f"{tensor_name}.{axis.name}"):
+            if axis.size.step_with in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}"
@@ -762,16 +791,21 @@ class Model(
                     f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}."
                 )
-            elif axis.size.reference in (axis.name, f"{tensor_name}.{axis.name}"):
+            if axis.size.reference in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.reference: "
                     f"{axis.size.reference}"
                 )
+            if axis.type == "channel" and valid_independent_refs[axis.size.reference][1].type != "channel":
+                raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
+
         elif isinstance(axis.size, str):
             if axis.size not in valid_independent_refs:
                 raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
-            elif axis.size in (axis.name, f"{tensor_name}.{axis.name}"):
+            if axis.size in (axis.name, f"{tensor_name}.{axis.name}"):
                 raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
+            if axis.type == "channel" and valid_independent_refs[axis.size][1].type != "channel":
+                raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
 
     license: Annotated[LicenseId, Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])]
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -779,7 +813,12 @@ class Model(
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
 
-    name: Annotated[CapitalStr, warn(MaxLen(64)), Field(pattern=r"\w+[\w\- ]*\w")]
+    name: Annotated[
+        NonEmpty[str],
+        StringConstraints(pattern=r"\w+[\w\- ]*\w"),
+        AfterValidator(capitalize_first_letter),
+        warn(MaxLen(64)),
+    ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
@@ -808,21 +847,21 @@ class Model(
 
     @staticmethod
     def _get_axes_with_parametrized_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
-        return [
-            f"{t.name}.{a.name}"
+        return {
+            f"{t.name}.{a.name}": (t, a)
             for t in io
             for a in t.axes
             if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
-        ]
+        }
 
     @staticmethod
     def _get_axes_with_independent_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
-        return [
-            f"{t.name}.{a.name}"
+        return {
+            f"{t.name}.{a.name}": (t, a)
             for t in io
             for a in t.axes
             if not isinstance(a, BatchAxis) and (isinstance(a.size, int) or isinstance(a.size, ParametrizedSize))
-        ]
+        }
 
     @field_validator("outputs", mode="after")
     @classmethod
@@ -836,14 +875,16 @@ class Model(
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_step_with_refs = (
-                [a.name for a in out.axes if not isinstance(a, BatchAxis)]
-                + input_step_with_refs
-                + output_step_with_refs
-            )
-            valid_independent_refs = (
-                [a.name for a in out.axes if not isinstance(a, BatchAxis)] + input_size_refs + output_size_refs
-            )
+            valid_step_with_refs = {
+                **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
+                **input_step_with_refs,
+                **output_step_with_refs,
+            }
+            valid_independent_refs = {
+                **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
+                **input_size_refs,
+                **output_size_refs,
+            }
             for a, ax in enumerate(out.axes):
                 cls._validate_axis(
                     "outputs",
@@ -901,7 +942,7 @@ class Model(
         return ret
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         fv = data.get("format_version")
         if not isinstance(fv, str) or fv.count(".") != 2:
             return
@@ -911,157 +952,8 @@ class Model(
             return
 
         if minor == 4:
-            cls.convert_model_from_v0_4_to_0_5_0(data, raise_unconvertable)
-
-    @staticmethod
-    def _update_v0_4_tensor_specs(
-        tensor_specs: List[Union[Any, Dict[str, Any]]],
-        test_tensors: Union[Any, List[Any]],
-        sample_tensors: Union[Any, List[Any]],
-    ) -> None:
-        axis_letter_map = {"t": "time", "c": "channel", "i": "index"}
-
-        def convert_axes(tensor_spec: Dict[str, Any]):
-            axes = tensor_spec.get("axes")
-            if isinstance(axes, str):
-                tensor_spec["axes"] = [dict(role=axis_letter_map.get(a, a)) for a in axes]
-
-        for i, param in enumerate(tensor_specs):
-            if not isinstance(param, dict):
-                continue
-
-            convert_axes(param)
-            if isinstance(test_tensors, collections.abc.Sequence) and len(test_tensors) == len(tensor_specs):
-                param["test_tensor"] = test_tensors[i]
-
-            if isinstance(sample_tensors, collections.abc.Sequence) and len(sample_tensors) == len(tensor_specs):
-                param["sample_tensor"] = sample_tensors[i]
-
-    @classmethod
-    def convert_model_from_v0_4_to_0_5_0(cls, data: RawDict, raise_unconvertable: bool) -> None:
-        cls._convert_axes_string_to_axis_descriptions(data, raise_unconvertable)
-        cls._convert_architecture(data)
-        cls._convert_attachments(data)
-        _ = data.pop("download_url", None)
-
-        data["format_version"] = "0.5.0"
-
-    @classmethod
-    def _convert_axes_string_to_axis_descriptions(cls, data: RawDict, raise_unconvertable: bool):
-        inputs = data.get("inputs")
-        outputs = data.get("outputs")
-        sample_inputs = data.pop("sample_inputs", None)
-        sample_outputs = data.pop("sample_outputs", None)
-        test_inputs = data.pop("test_inputs", None)
-        test_outputs = data.pop("test_outputs", None)
-
-        if isinstance(inputs, collections.abc.Sequence):
-            data["inputs"] = list(inputs)
-            cls._update_tensor_specs(data["inputs"], test_inputs, sample_inputs, raise_unconvertable)
-
-        if isinstance(outputs, collections.abc.Sequence):
-            data["outputs"] = list(outputs)
-            cls._update_tensor_specs(data["outputs"], test_outputs, sample_outputs, raise_unconvertable)
-
-    @classmethod
-    def _update_tensor_specs(
-        cls, tensor_data: List[RawValue], test_tensors: Any, sample_tensors: Any, raise_unconvertable: bool
-    ):
-        tts: Sequence[Any] = test_tensors if isinstance(test_tensors, collections.abc.Sequence) else ()
-        sts: Sequence[Any] = sample_tensors if isinstance(sample_tensors, collections.abc.Sequence) else ()
-
-        for idx in range(len(tensor_data)):
-            d = tensor_data[idx]
-            if not isinstance(d, dict):
-                continue
-
-            reordered_shape = cls._reorder_tensor_shape(d.get("shape"), raise_unconvertable)
-            new_d = {}
-            for keep in ("name", "description"):
-                if keep in d:
-                    new_d[keep] = d[keep]
-
-            if len(tts) > idx:
-                new_d["test_tensor"] = tts[idx]
-
-            if len(sts) > idx:
-                new_d["sample_tensor"] = sts[idx]
-
-            new_d["data"] = IntervalOrRatioData()
-
-            if isinstance(d["axes"], str):
-                new_axes = [
-                    cls._get_axis_description_from_letter(a, reordered_shape.get(i)) for i, a in enumerate(d["axes"])
-                ]
-                new_d["axes"] = new_axes
-
-            for proc in ("preprocessing", "postprocessing"):
-                if (
-                    isinstance(p := d.get(proc), dict)
-                    and isinstance(p_kwargs := p.get("kwargs"), dict)
-                    and isinstance(p_kwargs_axes := p_kwargs.get("axes"), str)
-                ):
-                    p_axes = [cls._get_axis_description_from_letter(a) for a in p_kwargs_axes]
-                    p_kwargs["axes"] = [a.get("name", a["type"]) for a in p_axes]
-
-            tensor_data[idx] = new_d
-
-    @staticmethod
-    def _reorder_tensor_shape(
-        orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]], raise_unconvertable: bool
-    ) -> Dict[int, Any]:
-        if isinstance(orig_shape, collections.abc.Mapping):
-            if "reference_tensor" in orig_shape:
-                if raise_unconvertable:
-                    raise NotImplementedError(
-                        "Converting tensor shapes with references from "
-                        "model RDF 0.4 to model RDF 0.5 is not implemented."
-                    )
-            else:
-                m: Sequence[Any] = _m if isinstance(_m := orig_shape.get("min"), collections.abc.Sequence) else []
-                s: Sequence[Any] = _s if isinstance(_s := orig_shape.get("step"), collections.abc.Sequence) else []
-                return {i: {"min": mm, "step": ss} for i, (mm, ss) in enumerate(zip(m, s))}
-        elif isinstance(orig_shape, collections.abc.Sequence):
-            return {i: s for i, s in enumerate(orig_shape)}
-
-        return {}
-
-    @staticmethod
-    def _get_axis_description_from_letter(letter: str, size: Optional[int] = None):
-        AXIS_TYPE_MAP = {
-            "b": "batch",
-            "t": "time",
-            "i": "index",
-            "c": "channel",
-            "x": "space",
-            "y": "space",
-            "z": "space",
-        }
-        axis: Dict[str, Any] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
-        if axis["type"] == "space":
-            axis["name"] = letter
-
-        if size is not None and axis["type"] != "batch":
-            axis["size"] = size
-
-        return axis
-
-    @staticmethod
-    def _convert_architecture(data: Dict[str, Any]) -> None:
-        weights: "Any | Dict[str, Any]" = data.get("weights")
-        if not isinstance(weights, dict):
-            return
-
-        state_dict_entry: "Any | Dict[str, Any]" = weights.get("pytorch_state_dict")
-        if not isinstance(state_dict_entry, dict):
-            return
-
-        callable_ = state_dict_entry.pop("architecture")
-        sha = state_dict_entry.pop("architecture_sha256")
-        state_dict_entry["architecture"] = dict(callable=callable_, sha256=sha)
-        kwargs = state_dict_entry.pop("kwargs")
-        if kwargs:
-            state_dict_entry["architecture"]["kwargs"] = kwargs
+            cls._convert_attachments(data)
+            convert_model_from_v0_4_to_0_5_0(data, context)
 
 
 AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

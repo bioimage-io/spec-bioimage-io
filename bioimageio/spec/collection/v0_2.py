@@ -18,6 +18,7 @@ from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RelativeFilePath
+from bioimageio.spec.shared.validation import ValContext
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -58,7 +59,7 @@ class CollectionEntryBase(Node):
 
     _entry: Any = PrivateAttr()
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def set_entry(self, info: ValidationInfo) -> Self:
         if self.rdf_source is not None:
             return self  # todo: add resolve_rdf_source callback
@@ -189,9 +190,9 @@ class Collection(GenericBase):
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         cls.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data, raise_unconvertable)
+        super().convert_from_older_format(data, context)
 
 
 AnyCollection = Collection

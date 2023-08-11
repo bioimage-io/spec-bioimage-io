@@ -9,6 +9,7 @@ from pydantic import (
     Field,
     FieldValidationInfo,
     HttpUrl,
+    StringConstraints,
     field_validator,
 )
 from typing_extensions import Annotated
@@ -30,6 +31,7 @@ from bioimageio.spec.shared.types import (
     RawDict,
     Version,
 )
+from bioimageio.spec.shared.validation import ValContext
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
@@ -102,7 +104,7 @@ class CiteEntry(Node):
     text: str
     """free text description"""
 
-    doi: Annotated[Optional[str], Field(pattern=DOI_REGEX)] = None
+    doi: Optional[Annotated[str, StringConstraints(pattern=DOI_REGEX)]] = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details. (alternatively specify `url`)"""
 
@@ -301,7 +303,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
         fv = data.get("format_version", "0.2.0")

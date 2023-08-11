@@ -12,8 +12,8 @@ from pydantic import (
     DirectoryPath,
     GetCoreSchemaHandler,
     HttpUrl,
+    StringConstraints,
     ValidationInfo,
-    constr,
     functional_validators,
 )
 from pydantic_core import core_schema
@@ -82,7 +82,8 @@ RawValue = Union[RawLeafValue, RawSequence, RawMapping]
 RawDict = Dict[str, RawValue]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 SiUnit = Annotated[
-    constr(min_length=1, pattern=SI_UNIT_REGEX),
+    str,
+    StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
     BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
 ]
 Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
@@ -149,8 +150,8 @@ class RelativePath:
     def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
         ret = cls(value)
         root = (info.context or {}).get("root")
-        if root is None:
-            raise ValueError("Missing context `root`")
+        if root is not None:
+            ret._check_exists(root)
 
         return ret
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from pprint import pformat
 from types import MappingProxyType
 from typing import Any, Dict
 from unittest import TestCase
@@ -76,15 +77,15 @@ class TestOnnxEntry(TestBases.TestNode):
 
 
 VALID_PRE_AND_POSTPROCESSING = tuple(
-    MappingProxyType(dict(name=name, kwargs=kwargs))
-    for name, kwargs in [
+    MappingProxyType(dict(zip(["name", "kwargs"], name_kwargs)))
+    for name_kwargs in [
         ("binarize", {"threshold": 0.5}),
         ("clip", {"min": 0.2, "max": 0.5}),
         ("scale_linear", {"gain": 2, "offset": 0.5, "axes": "xy"}),
-        ("sigmoid", {}),
+        ("sigmoid",),
         ("zero_mean_unit_variance", {"mode": "fixed", "mean": 1, "std": 2, "axes": "xy"}),
         ("scale_range", {"mode": "per_sample", "axes": "xy"}),
-        ("scale_range", {"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 5}),
+        ("scale_range", {"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 50}),
     ]
 )
 INVALID_PRE_AND_POSTPROCESSING = tuple(
@@ -104,13 +105,14 @@ INVALID_PRE_AND_POSTPROCESSING = tuple(
 
 class TestPreprocessing(TestBases.TestType):
     type_ = Preprocessing
-    valid = VALID_PRE_AND_POSTPROCESSING
-    invalid = INVALID_PRE_AND_POSTPROCESSING + (
+    valid = VALID_PRE_AND_POSTPROCESSING + (
         dict(
             name="scale_range",
             kwargs={"mode": "per_dataset", "axes": "xy", "reference_tensor": "some_input_tensor_name"},
         ),
     )
+
+    invalid = INVALID_PRE_AND_POSTPROCESSING
 
 
 class TestPostprocessing(TestBases.TestType):
@@ -255,7 +257,7 @@ class TestModel(TestCase):
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
         summary = validate(self.data)
-        self.assertEqual(summary["status"], "passed")
+        self.assertEqual(summary["status"], "passed", summary)
 
     def test_model_schema_accepts_valid_weight_formats(self):
         for format in [
@@ -268,12 +270,12 @@ class TestModel(TestCase):
         ]:
             with self.subTest(format):
                 self.data.update({"weights": {format: {"source": "local_weights"}}})
-            if format == "pytorch_state_dict":
-                self.data["weights"][format]["architecture"] = "file.py:Model"
-                self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
+                if format == "pytorch_state_dict":
+                    self.data["weights"][format]["architecture"] = "file.py:Model"
+                    self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
 
-            summary = validate(self.data)
-            self.assertEqual(summary["status"], "passed")
+                summary = validate(self.data)
+                self.assertEqual(summary["status"], "passed", summary)
 
 
 # def test_model_schema_raises_invalid_name(model_dict):

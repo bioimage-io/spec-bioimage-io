@@ -113,7 +113,7 @@ class Weights(Node):
     tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeights] = None
     torchscript: Optional[TorchscriptWeights] = None
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def check_one_entry(self) -> Self:
         if all(
             entry is None
@@ -134,6 +134,8 @@ class Weights(Node):
 class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
     weights_format_name: ClassVar[str]  # human readable
+
+    type: str
 
     source: FileSource
     """∈📦 The weights file."""
@@ -168,13 +170,12 @@ class WeightsEntryBase(Node):
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
 
-    @field_validator("parent")
-    @classmethod
-    def check_parent_is_not_self(cls, value: Optional[WeightsFormat]) -> Optional[WeightsFormat]:
-        if cls.type == value:
+    @model_validator(mode="after")
+    def check_parent_is_not_self(self) -> Self:
+        if self.type == self.parent:
             raise ValueError("Weights entry can't be it's own parent.")
 
-        return value
+        return self
 
 
 class KerasHdf5Weights(WeightsEntryBase):
@@ -212,7 +213,7 @@ class PytorchStateDictWeights(WeightsEntryBase):
     """The SHA256 of the architecture source file,
     if the architecture is not defined in a module listed in `dependencies`"""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def check_architecture_sha256(self) -> Self:
         if isinstance(self.architecture, CallableFromSourceFile):
             if self.architecture_sha256 is None:
@@ -281,7 +282,7 @@ class ParametrizedInputShape(Node):
     def __len__(self) -> int:
         return len(self.min)
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def matching_lengths(self) -> Self:
         if len(self.min) != len(self.step):
             raise ValueError("`min` and `step` required to have the same length")
@@ -306,7 +307,7 @@ class ImplicitOutputShape(Node):
     def __len__(self) -> int:
         return len(self.scale)
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def matching_lengths(self) -> Self:
         if len(self.scale) != len(self.offset):
             raise ValueError(f"scale {self.scale} has to have same length as offset {self.offset}!")
@@ -402,7 +403,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
     offset: Union[float, Tuple[float, ...]] = 0.0
     """additive term"""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
         if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
             self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
@@ -454,7 +455,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def mean_and_std_match_mode(self) -> Self:
         if self.mode == "fixed" and (self.mean is None or self.std is None):
             raise ValueError("`mean` and `std` are required for `mode: fixed`.")
@@ -483,16 +484,16 @@ class ScaleRangeKwargs(ProcessingKwargs):
     """The subset of axes to normalize jointly.
     For example xy to normalize the two image axes for 2d data jointly."""
 
-    min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
+    min_percentile: Annotated[Union[int, float], Interval(ge=0, lt=100)] = 0.0
     """The lower percentile used for normalization."""
 
-    max_percentile: Annotated[float, Interval(gt=1, le=100)] = 100.0
+    max_percentile: Annotated[Union[int, float], Interval(gt=1, le=100)] = 100.0
     """The upper percentile used for normalization
     Has to be bigger than `min_percentile`.
     The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
     accepting percentiles specified in the range 0.0 to 1.0."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def min_smaller_max(self, info: ValidationInfo) -> Self:
         if self.min_percentile >= self.max_percentile:
             raise ValueError(f"min_percentile {self.min_percentile} >= max_percentile {self.max_percentile}")
@@ -570,7 +571,7 @@ class InputTensor(TensorBase):
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def zero_batch_step_and_one_batch_size(self) -> Self:
         bidx = self.axes.find("b")
         if bidx == -1:
@@ -593,7 +594,7 @@ class InputTensor(TensorBase):
 
         return self
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_preprocessing_kwargs(self) -> Self:
         for p in self.preprocessing:
             kwarg_axes = p.kwargs.get("axes", "")
@@ -622,14 +623,14 @@ class OutputTensor(TensorBase):
     postprocessing: Tuple[Postprocessing, ...] = ()
     """Description of how this output should be postprocessed."""
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def matching_halo_length(self) -> Self:
         if self.halo and len(self.halo) != len(self.shape):
             raise ValueError(f"halo {self.halo} has to have same length as shape {self.shape}!")
 
         return self
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_postprocessing_kwargs(self) -> Self:
         for p in self.postprocessing:
             kwarg_axes = p.kwargs.get("axes", "")
@@ -738,7 +739,7 @@ class Model(GenericBaseNoSource):
 
         return value
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def unique_io_names(self) -> Self:
         unique_names = {ss.name for s in (self.inputs, self.outputs) for ss in s}
         if len(unique_names) != (len(self.inputs) + len(self.outputs)):
@@ -746,7 +747,7 @@ class Model(GenericBaseNoSource):
 
         return self
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def minimum_shape2valid_output(self) -> Self:
         tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]] = {t.name: t for t in self.inputs + self.outputs}
 
@@ -812,7 +813,7 @@ class Model(GenericBaseNoSource):
         assert len(offset) == len(scale)
         return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_tensor_references_in_inputs(self) -> Self:
         for t in self.inputs:
             for proc in t.preprocessing:
@@ -828,7 +829,7 @@ class Model(GenericBaseNoSource):
 
         return self
 
-    @model_validator(mode="after")  # type: ignore
+    @model_validator(mode="after")
     def validate_tensor_references_in_outputs(self) -> Self:
         for t in self.outputs:
             for proc in t.postprocessing:
@@ -903,7 +904,7 @@ class Model(GenericBaseNoSource):
         data["format_version"] = "0.4.5"
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         fv = data.get("format_version", "0.3.0")
         if isinstance(fv, str):
             major_minor = tuple(map(int, fv.split(".")[:2]))

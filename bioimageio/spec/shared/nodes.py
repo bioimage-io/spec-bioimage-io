@@ -29,6 +29,7 @@ from pydantic import (
     Field,
     GetCoreSchemaHandler,
     HttpUrl,
+    StringConstraints,
     TypeAdapter,
     ValidationInfo,
 )
@@ -197,10 +198,10 @@ class ResourceDescriptionBase(Node):
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
             context["original_format"] = tuple(map(int, original_format.split(".")))
 
-        cls.convert_from_older_format(data, raise_unconvertable=True)
+        cls.convert_from_older_format(data, context)
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         """A node may `convert` it's raw data from an older format."""
         pass
 
@@ -262,6 +263,12 @@ class StringNode(UserString, ABC):
             **field_definitions,
         )
 
+        # freeze after initialization
+        def __setattr__(self: Self, __name: str, __value: Any):
+            raise AttributeError(f"{self} is immutable.")
+
+        setattr(self, "__setattr__", __setattr__)
+
     @property
     def model_fields(self):
         return self._node_class.model_fields
@@ -274,9 +281,6 @@ class StringNode(UserString, ABC):
             return getattr(self._node, name)
 
         raise AttributeError(name)
-
-    def __setattr__(self, name: str, value: Any):
-        raise AttributeError(f"{self} is immutable.")
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
@@ -297,12 +301,12 @@ class StringNode(UserString, ABC):
 
     @classmethod
     def _validate(cls, value: str, info: ValidationInfo) -> Self:
-        valid_string_data = TypeAdapter(Annotated[str, Field(pattern=cls._pattern)]).validate_python(
+        valid_string_data = TypeAdapter(Annotated[str, StringConstraints(pattern=cls._pattern)]).validate_python(
             value, context=info.context
         )
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)
-        self._node = self._node_class.model_validate(data, context=info.context)
+        object.__setattr__(self, "_node", self._node_class.model_validate(data, context=info.context))
         return self
 
     def _serialize(self) -> str:

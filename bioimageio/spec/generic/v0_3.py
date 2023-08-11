@@ -28,6 +28,7 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
+from bioimageio.spec.shared.validation import ValContext
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
@@ -229,14 +230,14 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
         # check if we have future format version
         fv = data.get("format_version", "0.2.0")
         if not isinstance(fv, str) or fv.count(".") != 2 or tuple(map(int, fv.split(".")[:2])) > (0, 3):
             return
 
-        v0_2.GenericBaseNoSource.convert_from_older_format(data, raise_unconvertable)
+        v0_2.GenericBaseNoSource.convert_from_older_format(data, context)
 
         cls._convert_attachments(data)
 

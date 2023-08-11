@@ -70,9 +70,9 @@ class Collection(GenericBase):
         return value
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, raise_unconvertable: bool) -> None:
+    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data, raise_unconvertable)
+        super().convert_from_older_format(data, context)
 
 
 AnyCollection = Annotated[Union[v0_2.Collection, Collection], Field(discriminator="format_version")]
