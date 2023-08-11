@@ -1,5 +1,5 @@
 authors:
-  - { name: Constantin Pape; @constantinpape }
+  - { name: Constantin Pape, github_user: constantinpape }
 cite:
   - { text: training library, doi: "10.5281/zenodo.5108853" }
   - { text: architecture, doi: "10.1007/978-3-319-24574-4_28" }

@@ -63,8 +63,15 @@ DTYPE_LIMITS = MappingProxyType(
 )
 
 WARNING_LEVEL_CONTEXT_KEY = "warning_level"
-ALERT = 35  # no ALERT -> RDF is worriless
-WARNING = 30  # no ALERT nor WARNING -> RDF is watertight
+ERROR = 50
+"""A warning of the error level is always raised (equivalent to a validation error)"""
+
+ALERT = 35
+"""no ALERT nor ERROR -> RDF is worriless"""
+
+WARNING = 30
+"""no WARNING nor ALERT nor ERROR -> RDF is watertight"""
+
 INFO = 20
 SEVERITY_TO_WARNING: MappingProxyType[Severity, WarningLevelName] = MappingProxyType(
     {INFO: "info", WARNING: "warning", ALERT: "alert"}

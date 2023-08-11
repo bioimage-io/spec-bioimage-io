@@ -113,3 +113,4 @@ weights:
     sha256: 40333b1333594edff9b0cc4243da5304addcacf2e77a5b12f062f102f6005c56
     source: tf-weights.zip
     tensorflow_version: 2.6.2
+    parent: keras_hdf5

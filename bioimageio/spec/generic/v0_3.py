@@ -12,7 +12,14 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES, WARNING
+from bioimageio.spec._internal._constants import (
+    ALERT,
+    ERROR,
+    LICENSES,
+    TAG_CATEGORIES,
+    WARNING,
+    WARNING_LEVEL_CONTEXT_KEY,
+)
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec.generic import v0_2
@@ -190,7 +197,9 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     ) -> Tuple[v0_2.Maintainer, ...]:
         if not maintainers and "authors" in info.data:
             authors: Tuple[v0_2.Author, ...] = info.data["authors"]
-            if all(a.github_user is None for a in authors):
+            if all(a.github_user is None for a in authors) and ALERT >= (info.context or {}).get(
+                WARNING_LEVEL_CONTEXT_KEY, ERROR
+            ):
                 raise ValueError(
                     "Missing `maintainers` or any author in `authors` with a specified `github_user` name."
                 )

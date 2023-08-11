@@ -8,14 +8,14 @@ from pydantic import (
     Field,
     FieldValidationInfo,
     StringConstraints,
+    ValidationInfo,
     field_validator,
     model_validator,
 )
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
-from bioimageio.spec._internal._constants import DTYPE_LIMITS, SHA256_HINT
-from bioimageio.spec._internal._validate import capitalize_first_letter
+from bioimageio.spec._internal._constants import DTYPE_LIMITS, ERROR, SHA256_HINT, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
@@ -23,6 +23,7 @@ from bioimageio.spec.model.v0_5_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import Kwargs, Node
 from bioimageio.spec.shared.types import (
     Datetime,
+    DeprecatedLicenseId,
     FileSource,
     Identifier,
     LicenseId,
@@ -115,11 +116,13 @@ class ParametrizedSize(Node):
 
 
 class SizeReference(Node):
-    """A tensor axis size defined in relation to another `reference` tensor axis
+    """A tensor axis size defined in relation to another reference tensor axis.
 
     `size = reference.size / reference.scale * axis.scale + offset`
-    The axis and the referenced axis need to have the same unit (or no unit).
-    A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
+
+    note:
+    1. The axis and the referenced axis need to have the same unit (or no unit).
+    2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
     """
 
     reference: TensorAxisId
@@ -205,28 +208,12 @@ class TimeAxis(IndexTimeSpaceAxisBase):
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
-    @field_validator("scale")
-    @classmethod
-    def check_scale(cls, value: float, info: FieldValidationInfo) -> float:
-        if info.data["unit"] is None and value != 1.0:
-            raise ValueError("Without `unit`, `scale` may not be set.")
-
-        return value
-
 
 class SpaceAxis(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
     name: Annotated[ShortId, Field(examples=["x", "y", "z"])] = "x"
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
-
-    @field_validator("scale")
-    @classmethod
-    def check_scale(cls, value: float, info: FieldValidationInfo) -> float:
-        if info.data["unit"] is None and value != 1.0:
-            raise ValueError("Without `unit`, `scale` may not be set.")
-
-        return value
 
 
 Axis = Annotated[Union[BatchAxis, ChannelAxis, IndexAxis, TimeAxis, SpaceAxis], Field(discriminator="type")]
@@ -642,7 +629,7 @@ class Weights(Node):
     torchscript: Optional[v0_4.TorchscriptWeights] = None
 
     @model_validator(mode="after")
-    def check_entries(self) -> Self:
+    def check_entries(self, info: ValidationInfo) -> Self:
         entries = {name for name, entry in self if entry is not None}
 
         if not entries:
@@ -650,11 +637,11 @@ class Weights(Node):
 
         entries_wo_parent = {name for name, entry in self if entry is not None and entry.parent is None}
 
-        if len(entries_wo_parent) != 1:
+        if len(entries_wo_parent) != 1 and WARNING >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
             raise ValueError(
                 "Exactly one weights entry that does not specify the `parent` field is required. "
-                "That entry is considered the original set of model weights."
-                "Other weight formats are created through conversion of the orignal or already converted model weights."
+                "That entry is considered the original set of model weights. "
+                "Other weight formats are created through conversion of the orignal or already converted weights. "
                 "They have to reference the weights format they were converted from as their `parent`."
             )
 
@@ -798,6 +785,12 @@ class Model(
                 )
             if axis.type == "channel" and valid_independent_refs[axis.size.reference][1].type != "channel":
                 raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
+            if (ax_unit := getattr(axis, "unit", None)) != (
+                ref_unit := getattr(valid_independent_refs[axis.size.reference][1], "unit", None)
+            ):
+                raise ValueError(
+                    f"The units of an axis and its reference axis need to match, but '{ax_unit}' != '{ref_unit}'."
+                )
 
         elif isinstance(axis.size, str):
             if axis.size not in valid_independent_refs:
@@ -807,7 +800,11 @@ class Model(
             if axis.type == "channel" and valid_independent_refs[axis.size][1].type != "channel":
                 raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
 
-    license: Annotated[LicenseId, Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])]
+    license: Annotated[
+        Union[LicenseId, DeprecatedLicenseId],
+        warn(LicenseId, msg="{value} is deprecated, see https://spdx.org/licenses/{value}.html"),
+        Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
+    ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
@@ -816,7 +813,6 @@ class Model(
     name: Annotated[
         NonEmpty[str],
         StringConstraints(pattern=r"\w+[\w\- ]*\w"),
-        AfterValidator(capitalize_first_letter),
         warn(MaxLen(64)),
     ]
     """A human-readable name of this model.

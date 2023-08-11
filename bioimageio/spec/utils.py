@@ -33,6 +33,7 @@ from bioimageio.spec import (
 )
 from bioimageio.spec._internal._constants import (
     DISCOVER,
+    ERROR,
     IN_PACKAGE_MESSAGE,
     LATEST,
     VERSION,
@@ -133,7 +134,14 @@ def check_type_and_format_version(data: RawMapping) -> Tuple[str, str, str]:
     return typ, fv, use_fv
 
 
-def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDescription]:
+def get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[ResourceDescription], str]:
+    """Get the appropriate resource description class for a given `type` and `format_version`.
+
+    returns:
+        resource description class
+        or string with error message
+
+    """
     assert isinstance(format_version, str)
     if format_version != LATEST and format_version.count(".") == 0:
         format_version = format_version + ".0"
@@ -154,7 +162,7 @@ def get_rd_class(type_: str, /, format_version: str = LATEST) -> Type[ResourceDe
 
     rd_class = rd_classes.get(type_, rd_classes["generic"]).get(format_version)
     if rd_class is None:
-        raise NotImplementedError(f"{type_} (or generic) specification {format_version} does not exist.")
+        return f"{type_} (or generic) specification {format_version} does not exist."
 
     return rd_class
 
@@ -168,6 +176,9 @@ def update_format(
     assert "type" in resource_description
     assert isinstance(resource_description["type"], str)
     rd_class = get_rd_class(resource_description["type"], update_to_format)
+    if isinstance(rd_class, str):
+        raise ValueError(rd_class)
+
     rd = dict(resource_description)
     val_context = get_validation_context(**(context or {}))
     rd_class.convert_from_older_format(rd, val_context)
@@ -188,7 +199,7 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, conte
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
     try:
-        rd = rd_class.model_validate(dict(resource_description), context=dict(context))
+        rd = rd_class.model_validate(deepcopy(dict(resource_description)), context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):
@@ -214,20 +225,20 @@ def load_description_with_known_rd_class(
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
         resource_description,
-        {**val_context, WARNING_LEVEL_CONTEXT_KEY: 50},
-    )  # ignore any warnings using warning level 50 ('ERROR'/'CRITICAL') on first loading attempt
+        {**val_context, WARNING_LEVEL_CONTEXT_KEY: ERROR},
+    )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
     if rd is None:
         resource_type = rd_class.model_fields["type"].default
         format_version = rd_class.implemented_format_version
     else:
         resource_type = rd.type
         format_version = rd.format_version
-        assert not errors, "got rd, but also an error"
-        assert tb is None, "got rd, but also an error traceback"
-        assert not val_warnings, "got rd, but also already warnings"
+        assert not errors, f"got rd, but also errors: {errors}"
+        assert tb is None, f"got rd, but also an error traceback: {tb}"
+        assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
         _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, val_context)
-        assert not error2, "increasing warning level caused errors"
-        assert tb2 is None, "increasing warning level lead to error traceback"
+        assert not error2, f"increasing warning level caused errors: {error2}"
+        assert tb2 is None, f"increasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
         bioimageio_spec_version=VERSION,
@@ -266,8 +277,21 @@ def load_description(
 
     fv = use_format_version if format_version == DISCOVER else format_version
     rd_class = get_rd_class(discovered_type, format_version=fv)
-
-    rd, summary = load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
+    if isinstance(rd_class, str):
+        rd = None
+        root = (context or {}).get("root", PurePath())
+        summary = ValidationSummary(
+            bioimageio_spec_version=VERSION,
+            errors=[ValidationError(loc=(), msg=rd_class, type="error")],
+            name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
+            source_name=(root / "rdf.yaml").as_posix()
+            if isinstance(root, PurePath)
+            else urljoin(str(root), "rdf.yaml"),
+            status="failed",
+            warnings=[],
+        )
+    else:
+        rd, summary = load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
 
     if future_patch_warning:
         summary["warnings"] = list(summary["warnings"]) if "warnings" in summary else []
@@ -408,7 +432,8 @@ def _fill_resource_package_content(
 
 def format_summary(summary: ValidationSummary):
     es = "\n    ".join(
-        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in summary["errors"] or []
+        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc'] or ('root',)))}: {e['msg']}"
+        for e in summary["errors"] or []
     )
     ws = "\n    ".join(f"{'.'.join(map(str, w['loc']))}: {w['msg']}" for w in summary.get("warning", []))
 

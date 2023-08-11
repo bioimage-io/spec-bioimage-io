@@ -36,7 +36,7 @@ from pydantic import (
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal._constants import ERROR, IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._validate import is_valid_raw_mapping
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue
 from bioimageio.spec.shared.validation import ValContext, get_validation_context
@@ -180,7 +180,7 @@ class ResourceDescriptionBase(Node):
 
     def __init__(self, **data: Any) -> None:
         __tracebackhide__ = True
-        self._update_context_and_data(ValContext(root=HttpUrl("https://example.com/"), warning_level=50), data)
+        self._update_context_and_data(ValContext(root=HttpUrl("https://example.com/"), warning_level=ERROR), data)
         super().__init__(**data)
 
     @classmethod

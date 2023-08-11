@@ -22,7 +22,7 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal._constants import SEVERITY_TO_WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal._constants import ERROR, SEVERITY_TO_WARNING, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec.shared.types import Severity
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ def raise_warning(message_template: LiteralString, *, severity: Severity, contex
 
 def warn(
     typ: Union[AnnotationMetaData, Any],
-    severity: Severity = 30,
+    severity: Severity = WARNING,
     msg: Optional[LiteralString] = None,
 ):
     """treat a type or its annotation metadata as a warning condition"""
@@ -73,21 +73,19 @@ def as_warning(
     func: "_V2Validator",
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-    severity: Severity = 30,
+    severity: Severity = WARNING,
     msg: Optional[LiteralString] = None,
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
     def wrapper(value: Any, info: FieldValidationInfo) -> Any:
-        logger = getLogger(getattr(info, "field_name", "node"))
-        if severity < (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, 50):
-            return value
-
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
+            logger = getLogger(getattr(info, "field_name", "node"))
             logger.log(severity, e)
-            raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
+            if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
+                raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
 
         return value
 
@@ -96,7 +94,7 @@ def as_warning(
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class _WarnerMixin:
-    severity: Severity = 30
+    severity: Severity = WARNING
     msg: Optional[LiteralString] = None
 
     def __getattribute__(self, __name: str) -> Any:

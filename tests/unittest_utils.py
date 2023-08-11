@@ -1,4 +1,5 @@
 from abc import ABC
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -11,7 +12,7 @@ from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.validation import ValidationContext, get_validation_context
+from bioimageio.spec.shared.validation import ValidationContext, ValidationSummary, get_validation_context
 from bioimageio.spec.utils import format_summary, load_description
 
 yaml = YAML(typ="safe")
@@ -146,11 +147,14 @@ class TestBases:
         rdf_root: Path
         adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)
         latest_adapter: ClassVar[TypeAdapter[LatestResourceDescription]] = TypeAdapter(LatestResourceDescription)
+        known_invalid_as_is: ClassVar[Set[Union[str, Path]]] = set()
         known_invalid_as_latest: ClassVar[Set[Union[str, Path]]] = set()
-        exclude_fields_from_roundtrip: ClassVar[Mapping[Path, Set[str]]] = MappingProxyType({})
+        exclude_fields_from_roundtrip: ClassVar[Mapping[Union[str, Path], Set[str]]] = MappingProxyType({})
 
         def __init_subclass__(cls) -> None:
+            cls.known_invalid_as_is = {Path(p) for p in cls.known_invalid_as_is}
             cls.known_invalid_as_latest = {Path(p) for p in cls.known_invalid_as_latest}
+            cls.exclude_fields_from_roundtrip = {Path(p): v for p, v in cls.exclude_fields_from_roundtrip.items()}
 
             for rdf in cls.yield_rdf_paths():
 
@@ -174,21 +178,14 @@ class TestBases:
                     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
                     with self.subTest("as-is"):
                         rd, summary = load_description(data, context=context, format_version="discover")
-                        if rd is None:
-                            self.fail(format_summary(summary))
-
+                        self.check_summary_as_is(summary, rdf_path)
+                        assert rd is not None
                         deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp)
-                        self.assert_big_dicts_equal(expect_back, deserialized, "roundtrip")
+                        self.assert_big_dicts_equal(expect_back, deserialized, f"roundtrip {rdf_path.as_posix()}")
 
                     with self.subTest("as-latest"):
                         rd, summary = load_description(data, context=context, format_version="latest")
-                        if rd is None:
-                            if rdf_path.relative_to(cls.rdf_root) in cls.known_invalid_as_latest:
-                                self.skipTest("known_invalid_as_latest")
-                            else:
-                                self.fail(format_summary(summary))
-                        elif rdf_path in cls.known_invalid_as_latest:
-                            self.fail("passes despite marked as known failure case")
+                        self.check_summary_as_latest(summary, rdf_path)
 
                 subfolder = "".join(f"_{sf}" for sf in rdf.relative_to(cls.rdf_root).as_posix().split("/")[:-1])
                 test_case_name: str = f"test{subfolder}_{rdf.stem}"
@@ -200,6 +197,30 @@ class TestBases:
 
             return super().__init_subclass__()
 
+        def check_summary_as_is(self, summary: ValidationSummary, rdf_path: Path):
+            if summary["status"] == "passed":
+                if rdf_path in self.known_invalid_as_is:
+                    self.fail("passes despite marked as known failure case")
+
+                return
+
+            if rdf_path.relative_to(self.rdf_root) in self.known_invalid_as_is:
+                self.skipTest("known_invalid_as_is")
+            else:
+                self.fail(format_summary(summary))
+
+        def check_summary_as_latest(self, summary: ValidationSummary, rdf_path: Path):
+            if summary["status"] == "passed":
+                if rdf_path in self.known_invalid_as_latest:
+                    self.fail("passes despite marked as known failure case")
+
+                return
+
+            if rdf_path.relative_to(self.rdf_root) in self.known_invalid_as_latest:
+                self.skipTest("known_invalid_as_latest")
+
+            self.fail(format_summary(summary))
+
         @classmethod
         def yield_rdf_paths(cls):
             assert cls.rdf_root.exists()
@@ -210,6 +231,22 @@ class TestBases:
         def assert_big_dicts_equal(self, a: Dict[str, Any], b: Dict[str, Any], msg: str):
             diff = DeepDiff(a, b)
             if diff:
-                self.fail(f"{msg}\n" + diff.pretty())
+                # ignore some known differences...
+                slim_diff = deepcopy(diff)
+                VC = "values_changed"
+                k: Any
+                for k in diff.get(VC, {}):
+                    if (
+                        isinstance(k, str)
+                        and k.startswith("root['cite'][")
+                        and k.endswith("]['doi']")
+                        and diff[VC][k]["old_value"].startswith("https://doi.org")
+                    ):
+                        # 1. we dop 'https://doi.org/' from cite.i.doi field
+                        slim_diff[VC].pop(k)
 
-            self.assertDictEqual(a, b, msg)
+                if VC in slim_diff and not slim_diff[VC]:
+                    slim_diff.pop(VC)
+
+                if slim_diff:
+                    self.fail(f"{msg}\n" + slim_diff.pretty())

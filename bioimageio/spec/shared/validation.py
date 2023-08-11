@@ -7,6 +7,8 @@ from pydantic import AnyUrl, DirectoryPath
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import NotRequired, TypedDict
 
+from bioimageio.spec._internal._constants import ERROR
+
 if TYPE_CHECKING:
     from bioimageio.spec.shared.types import WarningLevel, WarningLevelName
 
@@ -35,7 +37,9 @@ class ValContext(TypedDict):
     """Collection base content (set dynamically during validation of collection resource descriptions)."""
 
 
-def get_validation_context(root: Union[DirectoryPath, AnyUrl] = Path(), warning_level: WarningLevel = 50) -> ValContext:
+def get_validation_context(
+    root: Union[DirectoryPath, AnyUrl] = Path(), warning_level: WarningLevel = ERROR
+) -> ValContext:
     return ValContext(root=root, warning_level=warning_level)
 
 

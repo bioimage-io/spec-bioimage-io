@@ -33,6 +33,9 @@ def _convert_model_from_v0_4_to_0_5_0(data: RawDict, context: ValContext) -> Non
     convert_attachments(data)
     _ = data.pop("download_url", None)
 
+    if (p := data.get("parent")) and isinstance(p, dict) and "uri" in p:
+        p["rdf_source"] = p.pop("uri")
+
     data["format_version"] = "0.5.0"
 
 
@@ -154,7 +157,7 @@ def _get_axis_description_from_letter(
             if axis["type"] == "channel":
                 if scale != 1.0 and ALERT >= context["warning_level"]:
                     raise ValueError("Channel axis referenced with scale != 1")
-            else:
+            elif scale is not None:
                 axis["scale"] = scale
 
         if "reference" in size:
@@ -185,8 +188,9 @@ def _convert_architecture(data: Dict[str, Any]) -> None:
         return
 
     callable_ = state_dict_entry.pop("architecture")
-    sha = state_dict_entry.pop("architecture_sha256")
-    state_dict_entry["architecture"] = dict(callable=callable_, sha256=sha)
-    kwargs = state_dict_entry.pop("kwargs")
-    if kwargs:
+    state_dict_entry["architecture"] = dict(callable=callable_)
+    if sha := state_dict_entry.pop("architecture_sha256", None):
+        state_dict_entry["architecture"]["sha256"] = sha
+
+    if kwargs := state_dict_entry.pop("kwargs", None):
         state_dict_entry["architecture"]["kwargs"] = kwargs
