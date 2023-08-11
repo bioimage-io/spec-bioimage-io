@@ -188,7 +188,7 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, conte
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
     try:
-        rd = rd_class.model_validate(resource_description, context=dict(context))
+        rd = rd_class.model_validate(dict(resource_description), context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):

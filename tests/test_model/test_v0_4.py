@@ -1,6 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from pprint import pformat
 from types import MappingProxyType
 from typing import Any, Dict
 from unittest import TestCase

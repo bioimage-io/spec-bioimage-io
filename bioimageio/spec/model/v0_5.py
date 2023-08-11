@@ -19,7 +19,7 @@ from bioimageio.spec._internal._validate import capitalize_first_letter
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
-from bioimageio.spec.model.v0_5_converter import convert_model_from_v0_4_to_0_5_0
+from bioimageio.spec.model.v0_5_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import Kwargs, Node
 from bioimageio.spec.shared.types import (
     Datetime,
@@ -943,17 +943,7 @@ class Model(
 
     @classmethod
     def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
-        fv = data.get("format_version")
-        if not isinstance(fv, str) or fv.count(".") != 2:
-            return
-
-        major, minor = map(int, fv.split(".")[:2])
-        if (major, minor) > (0, 5):
-            return
-
-        if minor == 4:
-            cls._convert_attachments(data)
-            convert_model_from_v0_4_to_0_5_0(data, context)
+        convert_from_older_format(data, context)
 
 
 AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Mapping, Sequence, Union
 
 
 from bioimageio.spec._internal._constants import ALERT
+from bioimageio.spec.generic.v0_3_converter import convert_attachments
+from bioimageio.spec.model import v0_4_converter
 from bioimageio.spec.shared.types import (
     RawDict,
     RawValue,
@@ -10,9 +12,25 @@ from bioimageio.spec.shared.types import (
 from bioimageio.spec.shared.validation import ValContext
 
 
-def convert_model_from_v0_4_to_0_5_0(data: RawDict, context: ValContext) -> None:
+def convert_from_older_format(data: RawDict, context: ValContext):
+    fv = data.get("format_version")
+    if not isinstance(fv, str) or fv.count(".") != 2:
+        return
+
+    v0_4_converter.convert_from_older_format(data, context)
+    major, minor = map(int, fv.split(".")[:2])
+
+    if (major, minor) > (0, 5):
+        return
+
+    if minor == 4:
+        _convert_model_from_v0_4_to_0_5_0(data, context)
+
+
+def _convert_model_from_v0_4_to_0_5_0(data: RawDict, context: ValContext) -> None:
     _convert_axes_string_to_axis_descriptions(data, context=context)
     _convert_architecture(data)
+    convert_attachments(data)
     _ = data.pop("download_url", None)
 
     data["format_version"] = "0.5.0"

@@ -208,11 +208,11 @@ class ResourceDescriptionBase(Node):
     @classmethod
     def model_validate(
         cls,
-        obj: Any,
+        obj: Dict[str, Any],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
-        context: Union[ValContext, Dict[Any, Any], None] = None,
+        context: Union[ValContext, Dict[str, Any], None] = None,
     ) -> Self:
         """Validate a pydantic model instance.
 
@@ -233,13 +233,12 @@ class ResourceDescriptionBase(Node):
 
         if isinstance(obj, pydantic.BaseModel):
             data: Dict[str, Any] = obj.model_dump()
-        elif isinstance(obj, dict):
-            assert all(isinstance(k, str) for k in obj)  # type: ignore
-            data = obj
         else:
-            raise TypeError(type(obj))
+            assert isinstance(obj, dict)
+            assert all(isinstance(k, str) for k in obj)
+            data = obj
 
-        context = get_validation_context(**(context or {}))  # make sure context is a ValidationContext
+        context = get_validation_context(**cast(Dict[str, Any], (context or {})))
         cls._update_context_and_data(context, data)
         return super().model_validate(
             data, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
@@ -338,7 +337,7 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     def get(self, item: Any, default: D = None) -> Union[V, D]:  # type: ignore
         return getattr(self, item, default)
 
-    @pydantic.model_validator(mode="after")  # type: ignore
+    @pydantic.model_validator(mode="after")
     def validate_raw_mapping(self) -> Self:
         if not is_valid_raw_mapping(self):
             raise AssertionError(f"{self} contains values unrepresentable in JSON/YAML")

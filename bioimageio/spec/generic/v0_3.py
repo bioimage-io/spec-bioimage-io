@@ -1,6 +1,5 @@
-import collections.abc
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
+from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
@@ -17,6 +16,7 @@ from bioimageio.spec._internal._constants import LICENSES, TAG_CATEGORIES, WARNI
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec.generic import v0_2
+from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
     CapitalStr,
@@ -232,24 +232,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     @classmethod
     def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
-        # check if we have future format version
-        fv = data.get("format_version", "0.2.0")
-        if not isinstance(fv, str) or fv.count(".") != 2 or tuple(map(int, fv.split(".")[:2])) > (0, 3):
-            return
-
-        v0_2.GenericBaseNoSource.convert_from_older_format(data, context)
-
-        cls._convert_attachments(data)
-
-        _ = data.pop("download_url", None)
-
-        data["format_version"] = "0.3.0"
-
-    @staticmethod
-    def _convert_attachments(data: Dict[str, Any]) -> None:
-        a = data.get("attachments")
-        if isinstance(a, collections.abc.Mapping):
-            data["attachments"] = tuple({"source": file} for file in a.get("files", []))  # type: ignore
+        convert_from_older_format(data, context)
 
 
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)

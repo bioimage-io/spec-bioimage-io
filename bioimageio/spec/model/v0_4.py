@@ -34,7 +34,7 @@ from bioimageio.spec.generic.v0_2 import (
     GenericBaseNoSource,
     LinkedResource,
 )
-from bioimageio.spec.model.v0_3_converter import convert_model_from_v0_3_to_0_4_0
+from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.shared.types import (
     AxesInCZYX,
@@ -51,6 +51,7 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
+from bioimageio.spec.shared.validation import ValContext
 
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]
@@ -883,57 +884,9 @@ class Model(GenericBaseNoSource):
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
-    @staticmethod
-    def convert_model_from_v0_4_0_to_0_4_1(data: Dict[str, Any]):
-        # move dependencies from root to pytorch_state_dict weights entry
-        deps = data.pop("dependencies", None)
-        weights = data.get("weights", {})
-        if deps and weights and isinstance(weights, dict):
-            entry = weights.get("pytorch_state_dict")
-            if entry and isinstance(entry, dict):
-                entry["dependencies"] = deps
-
-        data["format_version"] = "0.4.1"
-
-    @staticmethod
-    def convert_model_from_v0_4_4_to_0_4_5(data: Dict[str, Any]) -> None:
-        parent = data.pop("parent", None)
-        if parent and "uri" in parent:
-            data["parent"] = parent["uri"]
-
-        data["format_version"] = "0.4.5"
-
     @classmethod
     def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
-        fv = data.get("format_version", "0.3.0")
-        if isinstance(fv, str):
-            major_minor = tuple(map(int, fv.split(".")[:2]))
-            if major_minor < (0, 4):
-                convert_model_from_v0_3_to_0_4_0(data)
-            elif major_minor > (0, 4):
-                return
-
-        if data["format_version"] == "0.4.0":
-            cls.convert_model_from_v0_4_0_to_0_4_1(data)
-
-        if data["format_version"] in ("0.4.1", "0.4.2", "0.4.3", "0.4.4"):
-            cls.convert_model_from_v0_4_4_to_0_4_5(data)
-
-        if data["format_version"] in ("0.4.5", "0.4.6"):
-            cls._remove_slashes_from_names(data)
-            data["format_version"] = "0.4.7"
-
-        if data["format_version"] in ("0.4.7", "0.4.8"):
-            data["format_version"] = "0.4.9"
-
-        # remove 'future' from config if no other than the used future entries exist
-        config = data.get("config", {})
-        if isinstance(config, dict) and config.get("future") == {}:
-            del config["future"]
-
-        # remove 'config' if now empty
-        if data.get("config") == {}:
-            del data["config"]
+        convert_from_older_format(data, context)
 
 
 AnyModel = Model
