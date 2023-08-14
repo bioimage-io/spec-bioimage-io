@@ -12,7 +12,7 @@ from typing import (
     Union,
 )
 
-from annotated_types import Ge, Interval, MaxLen, MultipleOf
+from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
 from pydantic import (
     AllowInfNan,
     ConfigDict,
@@ -39,7 +39,6 @@ from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNod
 from bioimageio.spec.shared.types import (
     AxesInCZYX,
     AxesStr,
-    CapitalStr,
     Datetime,
     FileSource,
     Identifier,
@@ -720,8 +719,9 @@ class Model(GenericBaseNoSource):
     ) to discuss your intentions with the community."""
 
     name: Annotated[
-        NonEmpty[str],
-        warn(MaxLen(64), INFO),
+        str,
+        MinLen(1),
+        warn(Len(5, 64), INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""

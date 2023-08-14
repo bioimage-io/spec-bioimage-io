@@ -49,9 +49,11 @@ def remove_slashes_from_names(data: Dict[str, Any]) -> None:
             data[group] = [rm_slashes_in_person_name(p) for p in persons]  # type: ignore
 
 
+DOI_PREFIXES = ("https://doi.org/", "http://dx.doi.org/")
+
+
 def remove_doi_prefix(data: RawDict) -> None:
     """we unofficially accept DOIs starting with "https://doi.org/" here we remove this prefix"""
-    DOI_PREFIX = "https://doi.org/"
     cite = data.get("cite")
     if isinstance(cite, Sequence):
         new_cite = list(cite)
@@ -61,11 +63,18 @@ def remove_doi_prefix(data: RawDict) -> None:
                 continue
 
             doi = cite_entry.get("doi")
-            if not isinstance(doi, str) or not doi.startswith(DOI_PREFIX):
+            if not isinstance(doi, str):
+                continue
+
+            for doi_prefix in DOI_PREFIXES:
+                if doi.startswith(doi_prefix):
+                    doi = doi[len(doi_prefix) :]
+                    break
+            else:
                 continue
 
             new_cite_entry = dict(cite_entry)
-            new_cite_entry["doi"] = doi[len(DOI_PREFIX) :]
+            new_cite_entry["doi"] = doi
             new_cite[i] = new_cite_entry
 
         data["cite"] = new_cite

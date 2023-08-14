@@ -1,9 +1,8 @@
 import collections.abc
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
-from annotated_types import Ge, Gt, Interval, MaxLen
+from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import (
-    AfterValidator,
     ConfigDict,
     Field,
     FieldValidationInfo,
@@ -15,7 +14,14 @@ from pydantic import (
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
-from bioimageio.spec._internal._constants import DTYPE_LIMITS, ERROR, SHA256_HINT, WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal._constants import (
+    DTYPE_LIMITS,
+    ERROR,
+    INFO,
+    SHA256_HINT,
+    WARNING,
+    WARNING_LEVEL_CONTEXT_KEY,
+)
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
@@ -156,7 +162,7 @@ class BatchAxis(AxisBase):
 
 
 CHANNEL_NAMES_PLACEHOLDER = ("channel1", "channel2", "etc")
-ChannelNamePattern = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r".*\{i\}.*")]
+ChannelNamePattern = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
 
 
 class ChannelAxis(AxisBase):
@@ -811,9 +817,9 @@ class Model(
     to discuss your intentions with the community."""
 
     name: Annotated[
-        NonEmpty[str],
-        StringConstraints(pattern=r"\w+[\w\- ]*\w"),
-        warn(MaxLen(64)),
+        str,
+        MinLen(5),
+        warn(MaxLen(64), INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters

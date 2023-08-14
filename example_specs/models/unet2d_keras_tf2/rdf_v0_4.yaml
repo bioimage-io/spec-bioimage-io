@@ -73,7 +73,7 @@ license: MIT
 links: [deepimagej/deepimagej, imjoy/BioImageIO-Packager, ilastik/ilastik]
 maintainers:
   - { github_user: esgomezm }
-name: " B. Sutilist bacteria segmentation - Widefield microscopy - 2D UNet"
+name: "B. Sutilist bacteria segmentation - Widefield microscopy - 2D UNet"
 outputs:
   - axes: bxyc
     data_range: [-.inf, .inf]

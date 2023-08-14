@@ -12,7 +12,7 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
     VERSION: str = json.load(f)["version"]
     assert isinstance(VERSION, str)
 
-DOI_REGEX = r"10\.[0-9]{4}.+"  # lax DOI regex validating the first 7 DOI characters only
+DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 
 IN_PACKAGE_MESSAGE = "∈📦 "
 

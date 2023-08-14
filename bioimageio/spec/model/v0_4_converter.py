@@ -1,5 +1,5 @@
 import collections.abc
-from bioimageio.spec.generic.v0_2_converter import remove_slashes_from_names
+from bioimageio.spec.generic.v0_2_converter import remove_doi_prefix, remove_slashes_from_names
 from bioimageio.spec.model.v0_3_converter import convert_model_from_v0_3_to_0_4_0
 from bioimageio.spec.shared.types import RawDict
 from bioimageio.spec.shared.validation import ValContext
@@ -29,6 +29,7 @@ def convert_from_older_format(data: RawDict, context: ValContext) -> None:
     if data["format_version"] in ("0.4.7", "0.4.8"):
         data["format_version"] = "0.4.9"
 
+    remove_doi_prefix(data)
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
     if isinstance(config, dict) and config.get("future") == {}:

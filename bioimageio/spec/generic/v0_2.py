@@ -3,7 +3,6 @@ from typing import List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import (
-    BaseModel,
     ConfigDict,
     EmailStr,
     Field,
@@ -23,7 +22,6 @@ from bioimageio.spec._internal._warn import (
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
-    CapitalStr,
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
@@ -52,7 +50,7 @@ class Attachments(Node):
     """∈📦 File attachments"""
 
 
-class Person(BaseModel):
+class Person(Node):
     name: Optional[str]
     """Full name"""
     affiliation: Optional[str] = None
