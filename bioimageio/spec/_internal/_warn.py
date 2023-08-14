@@ -82,10 +82,18 @@ def as_warning(
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
-            logger = getLogger(getattr(info, "field_name", "node"))
-            logger.log(severity, e)
             if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
                 raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
+
+            # if msg:
+            #     log_msg = msg.format(value=value)
+            # else:
+            #     log_msg = str(e)
+            #     if len(log_msg) < 120:
+            #         log_msg = log_msg[:100] + " ... " + log_msg[-15:]
+
+            # logger = getLogger(getattr(info, "field_name", "node"))
+            # logger.log(severity, log_msg)
 
         return value
 
