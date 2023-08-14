@@ -16,10 +16,10 @@ from typing import (
     Union,
     get_args,
 )
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 import pydantic
-from pydantic import AnyUrl, HttpUrl
+from pydantic import HttpUrl
 from pydantic_core import PydanticUndefined
 
 import bioimageio.spec
@@ -34,14 +34,17 @@ from bioimageio.spec import (
 from bioimageio.spec._internal._constants import (
     DISCOVER,
     ERROR,
-    IN_PACKAGE_MESSAGE,
     LATEST,
     VERSION,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal._utils import nest_dict_with_narrow_first_key
+from bioimageio.spec._internal._utils import (
+    extract_file_name,
+    fill_resource_package_content,
+    nest_dict_with_narrow_first_key,
+)
 from bioimageio.spec.resource_types import ResourceDescription
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node, ResourceDescriptionBase
+from bioimageio.spec.shared.nodes import ResourceDescriptionBase
 from bioimageio.spec.shared.types import Loc, RawDict, RawMapping, RelativeFilePath, WarningLevelName
 from bioimageio.spec.shared.validation import (
     LegacyValidationSummary,
@@ -244,9 +247,9 @@ def load_description_with_known_rd_class(
         bioimageio_spec_version=VERSION,
         errors=errors,
         name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
-        source_name=(val_context["root"] / "rdf.yaml").as_posix()
+        source_name=(val_context["root"] / val_context["file_name"]).as_posix()
         if isinstance(val_context["root"], PurePath)
-        else urljoin(str(val_context["root"]), "rdf.yaml"),
+        else urljoin(str(val_context["root"]), val_context["file_name"]),
         status="failed" if errors else "passed",
         warnings=val_warnings,
     )
@@ -279,14 +282,14 @@ def load_description(
     rd_class = get_rd_class(discovered_type, format_version=fv)
     if isinstance(rd_class, str):
         rd = None
-        root = (context or {}).get("root", PurePath())
+        val_context = get_validation_context(**(context or {}))
+        root = val_context["root"]
+        file_name = val_context["file_name"]
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=[ValidationError(loc=(), msg=rd_class, type="error")],
             name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
-            source_name=(root / "rdf.yaml").as_posix()
-            if isinstance(root, PurePath)
-            else urljoin(str(root), "rdf.yaml"),
+            source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
             status="failed",
             warnings=[],
         )
@@ -364,11 +367,11 @@ def prepare_to_package(
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
 
     package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
-    _fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
+    fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
     file_names: Dict[Loc, str] = {}
     file_sources: Dict[str, Union[HttpUrl, RelativeFilePath]] = {}
     for loc, src in package_content.items():
-        file_name = _extract_file_name(src)
+        file_name = extract_file_name(src)
         if file_name in file_sources and file_sources[file_name] != src:
             for i in range(2, 10):
                 fn, *ext = file_name.split(".")
@@ -388,54 +391,17 @@ def prepare_to_package(
     return rd, file_sources
 
 
-def _extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
-    if isinstance(src, RelativeFilePath):
-        return src.path.name
-    elif isinstance(src, PurePath):
-        return src.name
-    else:
-        return urlparse(str(src)).path.split("/")[-1]
-
-
-def _fill_resource_package_content(
-    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]],
-    node: Node,
-    node_loc: Loc,
-    package_urls: bool,
-):
-    field_value: Union[Tuple[Any, ...], Node, Any]
-    for field_name, field_value in node:
-        loc = node_loc + (field_name,)
-        # nested node
-        if isinstance(field_value, Node):
-            if not isinstance(field_value, FrozenDictNode):
-                _fill_resource_package_content(package_content, field_value, loc, package_urls)
-
-        # nested node in tuple
-        elif isinstance(field_value, tuple):
-            for i, fv in enumerate(field_value):
-                if isinstance(fv, Node) and not isinstance(fv, FrozenDictNode):
-                    _fill_resource_package_content(package_content, fv, loc + (i,), package_urls)
-
-        elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
-            if isinstance(field_value, RelativeFilePath):
-                src = field_value
-            elif isinstance(field_value, AnyUrl):
-                if not package_urls:
-                    continue
-                src = field_value
-            else:
-                raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
-
-            package_content[loc] = src
-
-
 def format_summary(summary: ValidationSummary):
+    def format_loc(loc: Tuple[Union[int, str], ...]) -> str:
+        if not loc:
+            loc = ("root",)
+
+        return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+
     es = "\n    ".join(
-        e if isinstance(e, str) else f"{'.'.join(map(str, e['loc'] or ('root',)))}: {e['msg']}"
-        for e in summary["errors"] or []
+        e if isinstance(e, str) else f"{format_loc(e['loc'])}: {e['msg']}" for e in summary["errors"] or []
     )
-    ws = "\n    ".join(f"{'.'.join(map(str, w['loc']))}: {w['msg']}" for w in summary.get("warning", []))
+    ws = "\n    ".join(f"{format_loc(w['loc'])}: {w['msg']}" for w in summary.get("warning", []))
 
     es_msg = f"errors: {es}" if es else ""
     ws_msg = f"warnings: {ws}" if ws else ""

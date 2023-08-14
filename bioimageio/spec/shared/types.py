@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import pathlib
-from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, Literal, Mapping, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
@@ -14,15 +13,17 @@ from pydantic import (
     HttpUrl,
     StringConstraints,
     ValidationInfo,
-    functional_validators,
 )
 from pydantic_core import core_schema
-from typing_extensions import Annotated, LiteralString
+from pydantic_core.core_schema import ErrorType
+from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict
 
 from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 from bioimageio.spec._internal._validate import (
-    SLOTS,
+    AfterValidator,
+    BeforeValidator,
+    Predicate,
     RestrictCharacters,
     capitalize_first_letter,
     validate_datetime,
@@ -32,25 +33,6 @@ from bioimageio.spec._internal._validate import (
     validate_unique_entries,
     validate_version,
 )
-
-
-@dataclass(frozen=True, **SLOTS)
-class AfterValidator(functional_validators.AfterValidator):
-    def __str__(self):
-        return f"AfterValidator({self.func.__name__})"
-
-
-@dataclass(frozen=True, **SLOTS)
-class BeforeValidator(functional_validators.BeforeValidator):
-    def __str__(self):
-        return f"BeforeValidator({self.func.__name__})"
-
-
-@dataclass(frozen=True, **SLOTS)
-class Predicate(annotated_types.Predicate):
-    def __str__(self):
-        return f"Predicate({self.func.__name__})"
-
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
@@ -173,3 +155,48 @@ class RelativeDirectory(RelativePath):
 
 FileSource = Union[HttpUrl, RelativeFilePath]
 Loc = Tuple[Union[int, str], ...]
+
+
+class ValidationContext(TypedDict):
+    root: NotRequired[Union[DirectoryPath, AnyUrl]]
+    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
+
+    file_name: NotRequired[str]
+    """The file name of the RDF used only for reporting"""
+
+    warning_level: NotRequired[WarningLevel]
+    """raise warnings of severity s as validation errors if s >= `warning_level`"""
+
+
+class ValidationOutcome(TypedDict):
+    loc: Tuple[Union[int, str], ...]
+    msg: str
+
+
+class ValidationError(ValidationOutcome):
+    type: Union[ErrorType, str]
+
+
+class ValidationWarning(ValidationOutcome):
+    type: WarningLevelName
+
+
+class ValidationSummary(TypedDict):
+    bioimageio_spec_version: str
+    name: str
+    source_name: str
+    status: Union[Literal["passed", "failed"], str]
+    errors: Sequence[ValidationError]
+    traceback: NotRequired[Sequence[str]]
+    warnings: Sequence[ValidationWarning]
+
+
+class LegacyValidationSummary(TypedDict):
+    bioimageio_spec_version: str
+    error: Union[None, str, Dict[str, Any]]
+    name: str
+    nested_errors: NotRequired[Dict[str, Dict[str, Any]]]
+    source_name: str
+    status: Union[Literal["passed", "failed"], str]
+    traceback: Optional[List[str]]
+    warnings: Dict[str, Any]

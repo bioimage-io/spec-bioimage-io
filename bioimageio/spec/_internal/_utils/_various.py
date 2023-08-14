@@ -1,10 +1,31 @@
 from __future__ import annotations
 
-from typing import Dict, Tuple, Type, TypeVar
+from pathlib import PurePath
+from typing import (
+    Dict,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
+from urllib.parse import urlparse
+
+from pydantic import HttpUrl
+
+from bioimageio.spec.shared.types import RelativeFilePath
 
 K = TypeVar("K")
 V = TypeVar("V")
 NestedDict = Dict[K, "NestedDict[K, V] | V"]
+
+
+def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
+    if isinstance(src, RelativeFilePath):
+        return src.path.name
+    elif isinstance(src, PurePath):
+        return src.name
+    else:
+        return urlparse(str(src)).path.split("/")[-1]
 
 
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:
