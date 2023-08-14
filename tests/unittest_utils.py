@@ -11,6 +11,7 @@ from pydantic import TypeAdapter, ValidationError
 from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
+from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.validation import ValidationContext, ValidationSummary, get_validation_context
 from bioimageio.spec.utils import format_summary, load_description
@@ -162,7 +163,7 @@ class TestBases:
                     with rdf_path.open(encoding="utf-8") as f:
                         data = yaml.load(f)
 
-                    context = ValidationContext(root=rdf_path.parent)
+                    context = ValidationContext(root=rdf_path.parent, file_name=rdf_path.name)
                     if rdf_path.stem.startswith("invalid"):
                         rd, _ = load_description(data, context=context)
                         if rd is not None:
@@ -240,7 +241,7 @@ class TestBases:
                         isinstance(k, str)
                         and k.startswith("root['cite'][")
                         and k.endswith("]['doi']")
-                        and diff[VC][k]["old_value"].startswith("https://doi.org")
+                        and any(diff[VC][k]["old_value"].startswith(dp) for dp in DOI_PREFIXES)  # type: ignore
                     ):
                         # 1. we dop 'https://doi.org/' from cite.i.doi field
                         slim_diff[VC].pop(k)

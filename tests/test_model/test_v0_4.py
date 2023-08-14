@@ -6,6 +6,7 @@ from unittest import TestCase
 
 from pydantic import HttpUrl
 
+from bioimageio.spec._internal._constants import INFO
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     InputTensor,
@@ -21,7 +22,7 @@ from bioimageio.spec.model.v0_4 import (
 )
 from bioimageio.spec.shared.types import RelativeFilePath
 from bioimageio.spec.shared.validation import ValidationContext
-from bioimageio.spec.utils import validate
+from bioimageio.spec.utils import format_summary, load_description, validate
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 
@@ -256,7 +257,7 @@ class TestModel(TestCase):
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
         summary = validate(self.data)
-        self.assertEqual(summary["status"], "passed", summary)
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_model_schema_accepts_valid_weight_formats(self):
         for format in [
@@ -274,140 +275,102 @@ class TestModel(TestCase):
                     self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
 
                 summary = validate(self.data)
-                self.assertEqual(summary["status"], "passed", summary)
+                self.assertEqual(summary["status"], "passed", format_summary(summary))
 
+    def test_warn_long_name(self):
+        self.data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
+        summary = validate(self.data, context=ValidationContext(warning_level=INFO))
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
+        self.assertEqual(summary["warnings"][0]["loc"] == ("name",), format_summary(summary))
+        self.assertEqual(summary["warnings"][0]["msg"] == "msg", format_summary(summary))
 
-# def test_model_schema_raises_invalid_name(model_dict):
-#     from bioimageio.spec.model.schema import Model
+    def test_model_schema_raises_invalid_input_name(self):
+        self.data["inputs"][0]["name"] = "invalid/name"
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "failed", format_summary(summary))
 
-#     model_schema = Model()
-#     model_dict["name"] = "invalid/name"
-#     with pytest.raises(ValidationError):
-#         model_schema.load(model_dict)
+    def test_output_fixed_shape_too_small(self):
+        self.data["outputs"] = [
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": [128, 128, 3],
+                "halo": [32, 128, 0],
+            }
+        ]
 
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "failed", format_summary(summary))
 
-# def test_model_schema_raises_invalid_input_name(model_dict):
-#     from bioimageio.spec.model.schema import Model
+    def test_output_ref_shape_mismatch(self):
+        self.data["outputs"] = [
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
+            }
+        ]
 
-#     model_schema = Model()
-#     model_dict["inputs"][0]["name"] = "invalid/name"
-#     with pytest.raises(ValidationError):
-#         model_schema.load(model_dict)
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "failed", format_summary(summary))
 
+    def test_output_ref_shape_too_small(self):
+        self.data["outputs"] = [
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyc",
+                "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
+                "halo": [256, 128, 0],
+            }
+        ]
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "failed", format_summary(summary))
 
-# def test_model_schema_raises_invalid_output_name(model_dict):
-#     from bioimageio.spec.model.schema import Model
+    def test_model_has_parent_with_uri(self):
+        uri = "https://doi.org/10.5281/zenodo.5744489"
+        self.data["parent"] = dict(uri=uri, sha256="s" * 64)
 
-#     model_schema = Model()
-#     model_dict["outputs"][0]["name"] = "invalid/name"
-#     with pytest.raises(ValidationError):
-#         model_schema.load(model_dict)
+        model, summary = load_description(self.data)
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
 
+        self.assertIsInstance(model, Model)
+        self.assertEqual(str(model.parent.rdf_source), uri)  # type: ignore
 
-# def test_output_fixed_shape_too_small(model_dict):
-#     from bioimageio.spec.model.schema import Model
+    def test_model_has_parent_with_id(self):
+        self.data["parent"] = dict(id="10.5281/zenodo.5764892")
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
 
-#     model_dict["outputs"] = [
-#         {
-#             "name": "output_1",
-#             "description": "Output 1",
-#             "data_type": "float32",
-#             "axes": "xyc",
-#             "shape": [128, 128, 3],
-#             "halo": [32, 128, 0],
-#         }
-#     ]
+    def test_model_with_expanded_output(self):
+        self.data["outputs"] = [
+            {
+                "name": "output_1",
+                "description": "Output 1",
+                "data_type": "float32",
+                "axes": "xyzc",
+                "shape": dict(
+                    scale=[1, 1, None, 1],
+                    offset=[0, 0, 7, 0],
+                    reference_tensor="input_1",
+                ),
+            }
+        ]
 
-#     with pytest.raises(ValidationError) as e:
-#         Model().load(model_dict)
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
 
-#     assert e.value.messages == {
-#         "_schema": ["Minimal shape [128 128   3] of output output_1 is too small for halo [32, 128, 0]."]
-#     }
+    def test_model_rdf_is_valid_general_rdf(self):
+        self.data["type"] = "model_as_generic"
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "passed", format_summary(summary))
 
-
-# def test_output_ref_shape_mismatch(model_dict):
-#     from bioimageio.spec.model.schema import Model
-
-#     model_dict["outputs"] = [
-#         {
-#             "name": "output_1",
-#             "description": "Output 1",
-#             "data_type": "float32",
-#             "axes": "xyc",
-#             "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
-#         }
-#     ]
-
-#     with pytest.raises(ValidationError) as e:
-#         Model().load(model_dict)
-
-#     assert e.value.messages == {
-#         "_schema": [
-#             "Referenced tensor input_1 with 3 dimensions does not match output tensor output_1 with 4 dimensions."
-#         ]
-#     }
-
-
-# def test_output_ref_shape_too_small(model_dict):
-#     from bioimageio.spec.model.schema import Model
-
-#     model_dict["outputs"] = [
-#         {
-#             "name": "output_1",
-#             "description": "Output 1",
-#             "data_type": "float32",
-#             "axes": "xyc",
-#             "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
-#             "halo": [256, 128, 0],
-#         }
-#     ]
-
-#     with pytest.raises(ValidationError) as e:
-#         Model().load(model_dict)
-
-#     assert e.value.messages == {
-#         "_schema": ["Minimal shape [128. 256.   9.] of output output_1 is too small for halo [256, 128, 0]."]
-#     }
-
-
-# def test_model_has_parent_with_uri(model_dict):
-#     from bioimageio.spec.model.schema import Model
-
-#     model_dict["parent"] = dict(uri="https://doi.org/10.5281/zenodo.5744489")
-
-#     valid_data = Model().load(model_dict)
-#     assert isinstance(valid_data, raw_nodes_m04.Model)
-
-
-# def test_model_has_parent_with_id(model_dict):
-#     from bioimageio.spec.model.schema import Model
-
-#     model_dict["parent"] = dict(id="10.5281/zenodo.5764892")
-
-#     valid_data = Model().load(model_dict)
-#     assert isinstance(valid_data, raw_nodes_m04.Model)
-
-
-# def test_model_with_expanded_output(model_dict):
-#     from bioimageio.spec.model.schema import Model
-
-#     model_dict["outputs"] = [
-#         {
-#             "name": "output_1",
-#             "description": "Output 1",
-#             "data_type": "float32",
-#             "axes": "xyzc",
-#             "shape": dict(
-#                 scale=[1, 1, None, 1],
-#                 offset=[0, 0, 7, 0],
-#                 reference_tensor="input_1",
-#             ),
-#         }
-#     ]
-
-#     model = Model().load(model_dict)
-#     assert isinstance(model, raw_nodes_m04.Model)
-#     out0_shape = model.outputs[0].shape
-#     assert isinstance(out0_shape, raw_nodes_m04.ImplicitOutputShape)
-#     assert out0_shape.scale == [1, 1, None, 1]
+    def test_model_does_not_accept_unknown_fields(self):
+        self.data["unknown_additional_field"] = "shouldn't be here"
+        summary = validate(self.data)
+        self.assertEqual(summary["status"], "failed", format_summary(summary))

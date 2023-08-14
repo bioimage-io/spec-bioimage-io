@@ -29,7 +29,6 @@ class TestBioimageioCollection(TestBases.TestManyRdfs):
         "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
         "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
         "fiji/N2VSEMDemo/latest/rdf.yaml",
-        "zero/Notebook Preview/latest/rdf.yaml" "zero/Notebook Preview/latest/rdf.yaml",
         "zero/Notebook_CycleGAN_2D_ZeroCostDL4Mic/latest/rdf.yaml",
         "zero/Notebook_DecoNoising_2D_ZeroCostDL4Mic/latest/rdf.yaml",
         "zero/Notebook_Detectron2_ZeroCostDL4Mic/latest/rdf.yaml",
@@ -146,6 +145,7 @@ class TestBioimageioCollection(TestBases.TestManyRdfs):
     }
     exclude_fields_from_roundtrip = {
         "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
+        "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
     }
 
     @classmethod

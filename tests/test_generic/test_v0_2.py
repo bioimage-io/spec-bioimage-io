@@ -12,7 +12,7 @@ from bioimageio.spec.generic.v0_2 import (
     Maintainer,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec.shared.validation import ValidationContext
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -87,7 +87,7 @@ class TestCiteEntry(TestBases.TestNode):
         Valid(
             dict(
                 text="Title",
-                doi="https://doi.org/10.1109/5.771073",
+                doi="10.1109/5.771073",
                 url="https://ieeexplore.ieee.org/document/771073",
             )
         ),
@@ -123,7 +123,7 @@ class TestGeneric(TestBases.TestNode):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
-            context=ValContext(root=Path(__file__).parent),
+            context=ValidationContext(root=Path(__file__).parent),
             name="deprecated license",
         ),
         Valid(
@@ -136,7 +136,6 @@ class TestGeneric(TestBases.TestNode):
                 type="my_type",
                 version="0.1.0",
             ),
-            context=ValContext(),
         ),
         Invalid(
             dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name")
