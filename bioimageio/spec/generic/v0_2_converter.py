@@ -2,7 +2,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Dict, Union
 
 from bioimageio.spec.shared.types import RawDict
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import ValContext
 
 
 def convert_from_older_format(data: RawDict, context: ValContext) -> None:

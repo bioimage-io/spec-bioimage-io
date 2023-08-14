@@ -34,13 +34,12 @@ from bioimageio.spec.shared.types import (
     Identifier,
     LicenseId,
     NonEmpty,
-    Predicate,
     RawDict,
     Sha256,
     Unit,
     Version,
 )
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import Predicate, ValContext
 
 from . import v0_4
 

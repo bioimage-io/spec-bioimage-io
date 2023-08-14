@@ -43,17 +43,22 @@ from bioimageio.spec._internal._utils import (
     fill_resource_package_content,
     nest_dict_with_narrow_first_key,
 )
+from bioimageio.spec._internal._validate import ValContext, get_validation_context
 from bioimageio.spec.resource_types import ResourceDescription
 from bioimageio.spec.shared.nodes import ResourceDescriptionBase
-from bioimageio.spec.shared.types import Loc, RawDict, RawMapping, RelativeFilePath, WarningLevelName
-from bioimageio.spec.shared.validation import (
-    LegacyValidationSummary,
-    ValContext,
+from bioimageio.spec.shared.types import (
+    Loc,
+    RawDict,
+    RawMapping,
+    RelativeFilePath,
     ValidationContext,
     ValidationError,
     ValidationSummary,
     ValidationWarning,
-    get_validation_context,
+    WarningLevelName,
+)
+from bioimageio.spec.shared.types import (
+    LegacyValidationSummary,
 )
 
 

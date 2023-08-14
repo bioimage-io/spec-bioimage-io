@@ -12,7 +12,7 @@ from bioimageio.spec.generic.v0_2 import (
     Maintainer,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.shared.types import ValidationContext
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"

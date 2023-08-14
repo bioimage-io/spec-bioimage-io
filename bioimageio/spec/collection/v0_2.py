@@ -18,7 +18,7 @@ from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RelativeFilePath
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import ValContext
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 

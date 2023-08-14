@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bioimageio.spec.model.v0_5 import InputTensor, ModelRdf, TensorBase
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import ValContext
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 

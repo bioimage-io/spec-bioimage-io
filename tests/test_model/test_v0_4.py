@@ -21,7 +21,7 @@ from bioimageio.spec.model.v0_4 import (
     Weights,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.validation import ValidationContext
+from bioimageio.spec.shared.types import ValidationContext
 from bioimageio.spec.utils import format_summary, load_description, validate
 from tests.unittest_utils import Invalid, TestBases, Valid
 

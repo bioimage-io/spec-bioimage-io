@@ -35,7 +35,7 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import ValContext
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 

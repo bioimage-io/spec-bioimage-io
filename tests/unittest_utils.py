@@ -11,9 +11,11 @@ from pydantic import TypeAdapter, ValidationError
 from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
+from bioimageio.spec._internal._validate import get_validation_context
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.validation import ValidationContext, ValidationSummary, get_validation_context
+from bioimageio.spec.shared.types import ValidationContext
+from bioimageio.spec.shared.types import ValidationSummary
 from bioimageio.spec.utils import format_summary, load_description
 
 yaml = YAML(typ="safe")

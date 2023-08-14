@@ -13,7 +13,7 @@ from bioimageio.spec.generic.v0_3 import (
 from bioimageio.spec.model.v0_5 import AnyModel
 from bioimageio.spec.notebook.v0_3 import AnyNotebook
 from bioimageio.spec.shared.types import NonEmpty, RawDict
-from bioimageio.spec.shared.validation import ValContext
+from bioimageio.spec._internal._validate import ValContext
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 

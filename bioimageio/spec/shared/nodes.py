@@ -37,9 +37,9 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal._validate import is_valid_raw_mapping
+from bioimageio.spec._internal._validate import get_validation_context, is_valid_raw_mapping
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue
-from bioimageio.spec.shared.validation import ValContext, get_validation_context
+from bioimageio.spec._internal._validate import ValContext
 
 if TYPE_CHECKING:
     from pydantic.main import IncEx

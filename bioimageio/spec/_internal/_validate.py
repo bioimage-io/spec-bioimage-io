@@ -2,9 +2,10 @@ import collections.abc
 import dataclasses
 import re
 import sys
+from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -12,19 +13,23 @@ from typing import (
     Hashable,
     Mapping,
     Sequence,
+    Tuple,
     Type,
     TypeVar,
     Union,
     get_args,
 )
 
+import annotated_types
 import packaging.version
-from pydantic import AnyUrl, GetCoreSchemaHandler
+from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
+from typing_extensions import NotRequired, TypedDict
 
+from bioimageio.spec._internal._constants import ERROR
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import FileSource, RelativePath
+    from bioimageio.spec.shared.types import FileSource, RelativePath, WarningLevel
 
 
 if sys.version_info < (3, 10):
@@ -186,3 +191,46 @@ def validate_version(v: str) -> str:
             f"'{v}' is not a valid version string, " "see https://packaging.pypa.io/en/stable/version.html for help"
         )
     return v
+
+
+class ValContext(TypedDict):
+    """internally used validation context"""
+
+    root: Union[DirectoryPath, AnyUrl]
+    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
+
+    warning_level: "WarningLevel"
+    """raise warnings of severity s as validation errors if s >= `warning_level`"""
+
+    file_name: str
+    """The file name of the RDF used only for reporting"""
+
+    original_format: NotRequired[Tuple[int, int, int]]
+    """original format version of the validation data (set dynamically during validation of resource descriptions)."""
+
+    collection_base_content: NotRequired[Dict[str, Any]]
+    """Collection base content (set dynamically during validation of collection resource descriptions)."""
+
+
+def get_validation_context(
+    root: Union[DirectoryPath, AnyUrl] = Path(), warning_level: "WarningLevel" = ERROR, file_name: str = "rdf.yaml"
+) -> ValContext:
+    return ValContext(root=root, warning_level=warning_level, file_name=file_name)
+
+
+@dataclass(frozen=True, **SLOTS)
+class AfterValidator(functional_validators.AfterValidator):
+    def __str__(self):
+        return f"AfterValidator({self.func.__name__})"
+
+
+@dataclass(frozen=True, **SLOTS)
+class BeforeValidator(functional_validators.BeforeValidator):
+    def __str__(self):
+        return f"BeforeValidator({self.func.__name__})"
+
+
+@dataclass(frozen=True, **SLOTS)
+class Predicate(annotated_types.Predicate):
+    def __str__(self):
+        return f"Predicate({self.func.__name__})"
