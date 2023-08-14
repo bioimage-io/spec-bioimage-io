@@ -1,5 +1,4 @@
 import traceback
-from copy import deepcopy
 from pathlib import PurePath
 from types import MappingProxyType
 from typing import (
@@ -38,15 +37,16 @@ from bioimageio.spec._internal._constants import (
     VERSION,
     WARNING_LEVEL_CONTEXT_KEY,
 )
+from bioimageio.spec._internal._package import fill_resource_package_content
 from bioimageio.spec._internal._utils import (
     extract_file_name,
-    fill_resource_package_content,
     nest_dict_with_narrow_first_key,
 )
 from bioimageio.spec._internal._validate import ValContext, get_validation_context
 from bioimageio.spec.resource_types import ResourceDescription
 from bioimageio.spec.shared.nodes import ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
+    LegacyValidationSummary,
     Loc,
     RawDict,
     RawMapping,
@@ -56,9 +56,6 @@ from bioimageio.spec.shared.types import (
     ValidationSummary,
     ValidationWarning,
     WarningLevelName,
-)
-from bioimageio.spec.shared.types import (
-    LegacyValidationSummary,
 )
 
 
@@ -201,13 +198,19 @@ def dump_description(resource_description: ResourceDescription) -> RawDict:
     return resource_description.model_dump(mode="json", exclude={"root"})
 
 
-def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], resource_description: Union[RawMapping, RD], context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ValidationError] = []
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
+
+    if isinstance(resource_description, ResourceDescriptionBase):
+        rd_in = resource_description
+    else:
+        rd_in = dict(resource_description)
+
     try:
-        rd = rd_class.model_validate(deepcopy(dict(resource_description)), context=dict(context))
+        rd = rd_class.model_validate(rd_in, context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):
@@ -244,7 +247,7 @@ def load_description_with_known_rd_class(
         assert not errors, f"got rd, but also errors: {errors}"
         assert tb is None, f"got rd, but also an error traceback: {tb}"
         assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
-        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, resource_description, val_context)
+        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, rd, val_context)
         assert not error2, f"increasing warning level caused errors: {error2}"
         assert tb2 is None, f"increasing warning level lead to error traceback: {tb2}"
 
@@ -271,7 +274,6 @@ def load_description(
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
     discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(resource_description)
-    resource_description = deepcopy(resource_description)
     if use_format_version != discovered_format_version:
         resource_description = dict(resource_description)
         resource_description["format_version"] = use_format_version

@@ -60,3 +60,20 @@ def nest_dict_with_narrow_first_key(
         raise ValueError(f"Invalid root level keys: {invalid_first_keys}")
 
     return nested  # type: ignore
+
+
+def unindent(text: str, ignore_first_line: bool = False):
+    """remove minimum count of spaces at beginning of each line.
+
+    Args:
+        text: indented text
+        ignore_first_line: allows to correctly unindent doc strings
+    """
+    first = int(ignore_first_line)
+    lines = text.split("\n")
+    filled_lines = [line for line in lines[first:] if line]
+    if len(filled_lines) < 2:
+        return "\n".join(line.strip() for line in lines)
+
+    indent = min(len(line) - len(line.lstrip(" ")) for line in filled_lines)
+    return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])

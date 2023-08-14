@@ -27,7 +27,15 @@ class TestDateTime(TestBases.TestType):
     type_ = Datetime
     valid = (
         TypeSubTest("2019-12-11T12:22:32+00:00", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
-        TypeSubTest(NOW, NOW),
         TypeSubTest("2019-12-11T12:22:32+00:00", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        TypeSubTest("2019-12-11T12:22:32Z", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
         TypeSubTest("2019-12-11T12:22:32Z", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        TypeSubTest(NOW, NOW),
+    )
+    invalid = (
+        "2019-12-11T12:22:32+0000",
+        "2019-12-11T12:22:32Y",
+        "2019-12-11T12:22:32Zulu",
+        "201912-11T12:22:32+00:00",
+        "NOW",
     )

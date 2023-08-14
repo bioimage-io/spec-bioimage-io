@@ -26,7 +26,7 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
-    install_requires=["packaging>=17.0", "typing-extensions", "pydantic>=2.0", "annotated-types"],
+    install_requires=["packaging>=17.0", "typing-extensions", "pydantic>=2.0", "annotated-types", "python-dateutil"],
     extras_require={"dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "ruff", "pdoc", "pooch", "pre-commit"]},
     scripts=[
         "scripts/generate_json_specs.py",

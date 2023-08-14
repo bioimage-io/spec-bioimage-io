@@ -14,6 +14,7 @@ from pydantic_core import PydanticUndefined
 
 from bioimageio.spec import ResourceDescription, application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal._utils import unindent
 from bioimageio.spec.shared.nodes import Node
 
 Loc = Tuple[str, ...]
@@ -254,7 +255,7 @@ class Field:
 
     def get_explanation(self):
         title = self.info.title or ""
-        description = unindent(self.info.description or "")
+        description = unindent(self.info.description or "", ignore_first_line=True)
         ret = self.indent_spaces
         if title:
             ret += f"{title}: "
@@ -357,23 +358,6 @@ def get_documentation_file_name(rd_class: Type[ResourceDescription], *, latest: 
     return f"{typ}_{v}.md"
 
 
-def unindent(text: str, ignore_first_line: bool = True):
-    """remove minimum count of spaces at beginning of each line.
-
-    Args:
-        text: indented text
-        ignore_first_line: allows to correctly unindent doc strings
-    """
-    first = int(ignore_first_line)
-    lines = text.split("\n")
-    filled_lines = [line for line in lines[first:] if line]
-    if len(filled_lines) < 2:
-        return "\n".join(line.strip() for line in lines)
-
-    indent = min(len(line) - len(line.lstrip(" ")) for line in filled_lines)
-    return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])
-
-
 def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> Path:
     footnotes: OrderedDict[str, str] = OrderedDict()
     all_examples: List[Tuple[str, List[Any]]] = []
@@ -381,7 +365,7 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> P
         "# "
         + (rd_class.model_config.get("title") or "")
         + "\n"
-        + (unindent(rd_class.__doc__ or "") + ADDITIONAL_DESCRIPTION_ANY_RESOURCE)
+        + (unindent(rd_class.__doc__ or "", ignore_first_line=True) + ADDITIONAL_DESCRIPTION_ANY_RESOURCE)
     )
     all_fields = [(fn, info) for fn, info in rd_class.model_fields.items() if fn not in ("type", "format_version")]
 

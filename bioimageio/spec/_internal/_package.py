@@ -1,11 +1,9 @@
-from pathlib import PurePath
 from typing import (
     Any,
     Dict,
     Tuple,
     Union,
 )
-from urllib.parse import urlparse
 
 from pydantic import AnyUrl, HttpUrl
 

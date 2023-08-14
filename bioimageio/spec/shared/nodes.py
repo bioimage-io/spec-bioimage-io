@@ -6,6 +6,7 @@ import inspect
 import sys
 from abc import ABC
 from collections import UserString
+from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -37,9 +38,9 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal._validate import get_validation_context, is_valid_raw_mapping
+from bioimageio.spec._internal._utils import unindent
+from bioimageio.spec._internal._validate import ValContext, get_validation_context, is_valid_raw_mapping
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue
-from bioimageio.spec._internal._validate import ValContext
 
 if TYPE_CHECKING:
     from pydantic.main import IncEx
@@ -72,9 +73,10 @@ class Node(
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
+        print("kwargs", kwargs)
         super().__pydantic_init_subclass__(**kwargs)
         cls._set_undefined_field_descriptions_from_var_docstrings()
-        # cls._set_defaults_for_undefined_field_descriptions()
+        # cls._set_undefined_field_descriptions_from_field_name()
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
@@ -84,7 +86,17 @@ class Node(
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings_impl(cls, klass: Type[Any]):
-        module = ast.parse(inspect.getsource(klass))
+        try:
+            source = inspect.getsource(klass)
+        except OSError:
+            if klass.__module__ == "pydantic.main":
+                # klass is probably a dynamically created pydantic Model (using pydantic.create_model)
+                return
+            else:
+                raise
+
+        unindented_source = unindent(source)
+        module = ast.parse(unindented_source)
         assert isinstance(module, ast.Module)
         class_def = module.body[0]
         assert isinstance(class_def, ast.ClassDef)
@@ -115,7 +127,7 @@ class Node(
             info.description = description + docstring
 
     @classmethod
-    def _set_defaults_for_undefined_field_descriptions(cls):
+    def _set_undefined_field_descriptions_from_field_name(cls):
         for name, info in cls.model_fields.items():
             if info.description is None:
                 info.description = name
@@ -208,7 +220,7 @@ class ResourceDescriptionBase(Node):
     @classmethod
     def model_validate(
         cls,
-        obj: Dict[str, Any],
+        obj: Union[Any, Dict[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
@@ -231,15 +243,14 @@ class ResourceDescriptionBase(Node):
         """
         __tracebackhide__ = True
 
-        if isinstance(obj, pydantic.BaseModel):
-            data: Dict[str, Any] = obj.model_dump()
-        else:
-            assert isinstance(obj, dict)
+        context = get_validation_context(**cast(Dict[str, Any], (context or {})))
+        if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj)
+            data = deepcopy(dict(obj))
+            cls._update_context_and_data(context, data)
+        else:
             data = obj
 
-        context = get_validation_context(**cast(Dict[str, Any], (context or {})))
-        cls._update_context_and_data(context, data)
         return super().model_validate(
             data, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
         )

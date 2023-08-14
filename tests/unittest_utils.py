@@ -7,7 +7,7 @@ from typing import Any, ClassVar, Dict, Mapping, Optional, Sequence, Set, Type, 
 from unittest import TestCase
 
 from deepdiff import DeepDiff
-from pydantic import TypeAdapter, ValidationError
+from pydantic import TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
@@ -120,9 +120,16 @@ class TestBases:
         invalid: Sequence[Any] = ()
         type_adapter: TypeAdapter[Any]
 
+        class DummyNodeBase(Node):
+            value: Any
+
+        node: DummyNodeBase
+
         @classmethod
         def setUpClass(cls) -> None:
             cls.type_adapter = TypeAdapter(cls.type_)
+            cls.node = create_model("DummyNode", value=(cls.type_, ...), __base__=cls.DummyNodeBase)  # type: ignore
+
             return super().setUpClass()
 
         def test_valid(self):
@@ -141,10 +148,19 @@ class TestBases:
                     if isinstance(v, TypeSubTest):
                         self.assertEqual(actual, v.exp)
 
+                    with self.subTest("in_node"):
+                        if isinstance(v, TypeSubTest):
+                            self.assertEqual(self.node.model_validate(dict(value=val)).value, v.exp)
+                        else:
+                            _ = self.node.model_validate(dict(value=val))
+
         def test_invalid(self):
             for v in self.invalid:
                 with self.subTest(iv=v):
-                    self.assertRaises(ValidationError, self.type_adapter.validate_python, v)
+                    self.assertRaises(ValidationError, self.type_adapter.validate_python, dict(value=v))
+
+                    with self.subTest("in_node"):
+                        self.assertRaises(ValidationError, self.node.model_validate, dict(value=v))
 
     class TestManyRdfs(TestCase, ABC):
         rdf_root: Path
