@@ -22,6 +22,7 @@ from typing import (
 
 import annotated_types
 import packaging.version
+from dateutil.parser import isoparse
 from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 from typing_extensions import NotRequired, TypedDict
@@ -94,7 +95,7 @@ def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
     if isinstance(dt, datetime):
         return dt
     elif isinstance(dt, str):
-        return datetime.fromisoformat(dt.replace("Z", "+00:00"))
+        return isoparse(dt)
 
     raise AssertionError(f"'{dt}' not a string or datetime.")
 
