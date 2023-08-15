@@ -1,3 +1,4 @@
+from copy import deepcopy
 import traceback
 from pathlib import PurePath
 from types import MappingProxyType
@@ -198,19 +199,14 @@ def dump_description(resource_description: ResourceDescription) -> RawDict:
     return resource_description.model_dump(mode="json", exclude={"root"})
 
 
-def _load_descr_impl(rd_class: Type[RD], resource_description: Union[RawMapping, RD], context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ValidationError] = []
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
 
-    if isinstance(resource_description, ResourceDescriptionBase):
-        rd_in = resource_description
-    else:
-        rd_in = dict(resource_description)
-
     try:
-        rd = rd_class.model_validate(rd_in, context=dict(context))
+        rd = rd_class.model_validate(resource_description, context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):
@@ -233,9 +229,10 @@ def load_description_with_known_rd_class(
 ) -> Tuple[Optional[RD], ValidationSummary]:
     val_context = get_validation_context(**(context or {}))
 
+    raw_rd = deepcopy(dict(resource_description))
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
-        resource_description,
+        raw_rd,
         {**val_context, WARNING_LEVEL_CONTEXT_KEY: ERROR},
     )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
     if rd is None:
@@ -247,7 +244,7 @@ def load_description_with_known_rd_class(
         assert not errors, f"got rd, but also errors: {errors}"
         assert tb is None, f"got rd, but also an error traceback: {tb}"
         assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
-        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, rd, val_context)
+        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, raw_rd, val_context)
         assert not error2, f"increasing warning level caused errors: {error2}"
         assert tb2 is None, f"increasing warning level lead to error traceback: {tb2}"
 
@@ -408,7 +405,7 @@ def format_summary(summary: ValidationSummary):
     es = "\n    ".join(
         e if isinstance(e, str) else f"{format_loc(e['loc'])}: {e['msg']}" for e in summary["errors"] or []
     )
-    ws = "\n    ".join(f"{format_loc(w['loc'])}: {w['msg']}" for w in summary.get("warning", []))
+    ws = "\n    ".join(f"{format_loc(w['loc'])}: {w['msg']}" for w in summary["warnings"])
 
     es_msg = f"errors: {es}" if es else ""
     ws_msg = f"warnings: {ws}" if ws else ""

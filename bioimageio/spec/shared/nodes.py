@@ -6,7 +6,6 @@ import inspect
 import sys
 from abc import ABC
 from collections import UserString
-from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -29,10 +28,10 @@ import pydantic
 from pydantic import (
     Field,
     GetCoreSchemaHandler,
-    HttpUrl,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
+    model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
@@ -66,17 +65,21 @@ class Node(
         extra="forbid",
         frozen=True,
         populate_by_name=True,
+        revalidate_instances="always",
+        validate_assignment=True,
         validate_default=True,
         validate_return=True,
     )
     """pydantic model config"""
 
     @classmethod
-    def __pydantic_init_subclass__(cls, **kwargs: Any):
-        print("kwargs", kwargs)
+    def __pydantic_init_subclass__(
+        cls, *, set_undefined_field_descriptions_from_var_docstrings: bool = False, **kwargs: Any
+    ):
         super().__pydantic_init_subclass__(**kwargs)
-        cls._set_undefined_field_descriptions_from_var_docstrings()
-        # cls._set_undefined_field_descriptions_from_field_name()
+        if set_undefined_field_descriptions_from_var_docstrings:
+            cls._set_undefined_field_descriptions_from_var_docstrings()
+            # cls._set_undefined_field_descriptions_from_field_name()
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
@@ -190,10 +193,14 @@ class ResourceDescriptionBase(Node):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    def __init__(self, **data: Any) -> None:
-        __tracebackhide__ = True
-        self._update_context_and_data(get_validation_context(root=HttpUrl("https://example.com/")), data)
-        super().__init__(**data)
+    @model_validator(mode="before")
+    @classmethod
+    def update_context_and_data(cls, data: Union[Any, Dict[Any, Any]], info: ValidationInfo):
+        if isinstance(data, dict):
+            context = get_validation_context(**(info.context or {}))
+            cls._update_context_and_data(context, data)
+
+        return data
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -204,7 +211,7 @@ class ResourceDescriptionBase(Node):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _update_context_and_data(cls, context: ValContext, data: Dict[str, Any]) -> None:
+    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
@@ -246,13 +253,10 @@ class ResourceDescriptionBase(Node):
         context = get_validation_context(**cast(Dict[str, Any], (context or {})))
         if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj)
-            data = deepcopy(dict(obj))
-            cls._update_context_and_data(context, data)
-        else:
-            data = obj
+            cls._update_context_and_data(context, obj)
 
         return super().model_validate(
-            data, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
+            obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
         )
 
 

@@ -279,10 +279,17 @@ class TestModel(TestCase):
 
     def test_warn_long_name(self):
         self.data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-        summary = validate(self.data, context=ValidationContext(warning_level=INFO))
+        summary = validate(
+            self.data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
+        )
         self.assertEqual(summary["status"], "passed", format_summary(summary))
-        self.assertEqual(summary["warnings"][0]["loc"] == ("name",), format_summary(summary))
-        self.assertEqual(summary["warnings"][0]["msg"] == "msg", format_summary(summary))
+        self.assertEqual(summary["warnings"][0]["loc"], ("name",), format_summary(summary))
+        self.assertEqual(
+            summary["warnings"][0]["msg"],
+            "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
+            "typing.Annotated[typing.Any, Len(min_length=5, max_length=64)]",
+            format_summary(summary),
+        )
 
     def test_model_schema_raises_invalid_input_name(self):
         self.data["inputs"][0]["name"] = "invalid/name"

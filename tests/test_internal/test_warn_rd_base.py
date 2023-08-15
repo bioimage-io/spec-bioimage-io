@@ -7,21 +7,25 @@ from pydantic import ValidationError
 
 from bioimageio.spec._internal._constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal._warn import warn
-from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec.shared.nodes import ResourceDescriptionBase
 
 
-class DummyNode(Node):
+class DummyNode(ResourceDescriptionBase):
+    type: str = "generic"
+    format_version: str = "0.1.0"
     a: Annotated[int, warn(Ge(0))] = 0
     b: Annotated[int, warn(Ge(0), WARNING)] = 0
 
 
-class NestedDummyNode(Node):
+class NestedDummyNode(ResourceDescriptionBase):
+    type: str = "generic"
+    format_version: str = "0.1.0"
     dummy: DummyNode
 
 
 DUMMY_INPUT = {"a": -1, "b": -1}
 NESTED_DICT_DUMMY_INPUT = dict(dummy=DUMMY_INPUT)
-NESTED_NODE_DUMMY_INPUT = dict(dummy=DummyNode(**DUMMY_INPUT))
+NESTED_NODE_DUMMY_INPUT = dict(dummy=DummyNode(a=-1, b=-1))
 
 
 class Base:

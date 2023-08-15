@@ -214,9 +214,13 @@ class ValContext(TypedDict):
 
 
 def get_validation_context(
-    root: Union[DirectoryPath, AnyUrl] = Path(), warning_level: "WarningLevel" = ERROR, file_name: str = "rdf.yaml"
+    *,
+    root: Union[DirectoryPath, AnyUrl] = Path(),
+    warning_level: "WarningLevel" = ERROR,
+    file_name: str = "rdf.yaml",
+    **kwargs: Any,
 ) -> ValContext:
-    return ValContext(root=root, warning_level=warning_level, file_name=file_name)
+    return ValContext(root=root, warning_level=warning_level, file_name=file_name, **kwargs)
 
 
 @dataclass(frozen=True, **SLOTS)

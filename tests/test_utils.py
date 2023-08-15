@@ -1,16 +1,10 @@
-import logging
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated
 from unittest import TestCase
 
-from annotated_types import Ge
-from pydantic import ValidationError
 from ruamel.yaml import YAML
 
-from bioimageio.spec._internal._constants import ALERT, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec._internal._warn import warn
-from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec._internal._constants import ALERT
 from bioimageio.spec.utils import update_format, validate
 
 yaml = YAML(typ="safe")

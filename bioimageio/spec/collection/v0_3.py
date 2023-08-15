@@ -55,7 +55,7 @@ class Collection(GenericBase):
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _update_context_and_data(cls, context: ValContext, data: Dict[str, Any]) -> None:
+    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
         super()._update_context_and_data(context, data)
         assert "collection_base_content" not in context
         context["collection_base_content"] = {k: v for k, v in data.items() if k != "collection"}

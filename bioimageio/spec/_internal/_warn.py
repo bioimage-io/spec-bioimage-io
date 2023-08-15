@@ -1,11 +1,12 @@
 import dataclasses
 import sys
-from logging import getLogger
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
     Literal,
+    Mapping,
     Optional,
     Union,
     get_args,
@@ -46,14 +47,14 @@ def raise_warning(message_template: LiteralString, *, severity: Severity, contex
 def warn(
     typ: Union[AnnotationMetaData, Any],
     severity: Severity = WARNING,
-    msg: Optional[LiteralString] = None,
+    msg: LiteralString = "'{value}' incompatible with {typ}",
 ):
     """treat a type or its annotation metadata as a warning condition"""
     if isinstance(typ, get_args(AnnotationMetaData)):
         typ = Annotated[Any, typ]
 
     validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python, severity=severity, msg=msg)
+    return BeforeWarner(validator.validate_python, severity=severity, msg=msg, context={"typ": typ})
 
 
 def call_validator_func(
@@ -75,6 +76,7 @@ def as_warning(
     mode: Literal["after", "before", "plain", "wrap"] = "after",
     severity: Severity = WARNING,
     msg: Optional[LiteralString] = None,
+    context: Mapping[str, Any] = MappingProxyType({}),
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
@@ -83,17 +85,7 @@ def as_warning(
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
             if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
-                raise_warning(msg or ",".join(e.args), severity=severity, context=dict(value=value))
-
-            # if msg:
-            #     log_msg = msg.format(value=value)
-            # else:
-            #     log_msg = str(e)
-            #     if len(log_msg) < 120:
-            #         log_msg = log_msg[:100] + " ... " + log_msg[-15:]
-
-            # logger = getLogger(getattr(info, "field_name", "node"))
-            # logger.log(severity, log_msg)
+                raise_warning(msg or ",".join(e.args), severity=severity, context={**context, "value": value})
 
         return value
 
@@ -104,11 +96,12 @@ def as_warning(
 class _WarnerMixin:
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
+    context: Mapping[str, Any] = MappingProxyType({})
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
         if __name == "func":
-            return as_warning(ret, severity=self.severity, msg=self.msg)
+            return as_warning(ret, severity=self.severity, msg=self.msg, context=self.context)
         else:
             return ret
 
