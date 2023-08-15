@@ -3,6 +3,7 @@
 import copy
 import json
 import uuid
+from typing import Any, Dict
 
 import requests
 from lxml import etree
@@ -160,7 +161,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
     return rdf
 
 
-def get_plugin_as_rdf(source_url) -> dict:
+def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
     """Get imjoy plugin config in RDF format."""
     req = requests.get(source_url)
     source = req.text
