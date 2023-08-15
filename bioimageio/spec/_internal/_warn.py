@@ -93,7 +93,9 @@ def as_warning(
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class _WarnerMixin:
+class AfterWarner(AfterValidator):
+    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
+
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
     context: Mapping[str, Any] = MappingProxyType({})
@@ -107,10 +109,16 @@ class _WarnerMixin:
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class AfterWarner(_WarnerMixin, AfterValidator):
-    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class BeforeWarner(_WarnerMixin, BeforeValidator):
+class BeforeWarner(BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
+
+    severity: Severity = WARNING
+    msg: Optional[LiteralString] = None
+    context: Mapping[str, Any] = MappingProxyType({})
+
+    def __getattribute__(self, __name: str) -> Any:
+        ret = super().__getattribute__(__name)
+        if __name == "func":
+            return as_warning(ret, severity=self.severity, msg=self.msg, context=self.context)
+        else:
+            return ret
