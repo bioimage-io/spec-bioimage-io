@@ -107,7 +107,7 @@ def process(info: Info, check: bool):
                 + "".join(ndiff(init_content.splitlines(keepends=True), updated.splitlines(keepends=True)))
             )
     else:
-        package_init.write_text(updated)
+        _ = package_init.write_text(updated)
 
 
 def get_ordered_version_submodules(target: str):

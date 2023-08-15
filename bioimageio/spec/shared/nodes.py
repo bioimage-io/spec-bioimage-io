@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import collections.abc
 import inspect
+import os
 import sys
 from abc import ABC
 from collections import UserString
@@ -74,13 +75,11 @@ class Node(
     """pydantic model config"""
 
     @classmethod
-    def __pydantic_init_subclass__(
-        cls, *, set_undefined_field_descriptions_from_var_docstrings: bool = False, **kwargs: Any
-    ):
+    def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if set_undefined_field_descriptions_from_var_docstrings:
+        if os.getenv("BIOIMAGEIO_set_undefined_field_descriptions_from_var_docstrings".upper(), True):
             cls._set_undefined_field_descriptions_from_var_docstrings()
-            # cls._set_undefined_field_descriptions_from_field_name()
+            # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:

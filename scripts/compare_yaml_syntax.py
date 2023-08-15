@@ -26,7 +26,7 @@ def parse_args():
     p = ArgumentParser(
         description="Check for differences between yaml 1.1 (using PyYAML) and yaml 1.2 syntax (using ruamel.yaml)."
     )
-    p.add_argument(
+    _ = p.add_argument(
         "--resource_description_path",
         type=Path,
         default=Path(__file__).parent / "../example_specs/models/unet2d_nuclei_broad/rdf.yaml",

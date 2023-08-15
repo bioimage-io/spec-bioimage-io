@@ -26,7 +26,7 @@ DeprecatedLicenseId = Literal{deprecated_license_ids}
 
 def parse_args():
     p = ArgumentParser(description=("script that generates weights formats overview"))
-    p.add_argument("tag", nargs="?", default="v3.21")
+    _ = p.add_argument("tag", nargs="?", default="v3.21")
 
     args = p.parse_args()
     return dict(tag=args.tag)
@@ -49,7 +49,7 @@ def main(*, tag: str):
     )
     code = black.format_str(code, mode=black.mode.Mode(**black_config))
 
-    LICENSE_ID_MODULE_PATH.write_text(code, encoding="utf-8")
+    _ = LICENSE_ID_MODULE_PATH.write_text(code, encoding="utf-8")
     print(f"Updated {LICENSE_ID_MODULE_PATH}")
 
 

@@ -6,7 +6,7 @@ from bioimageio.spec.dataset import AnyDataset, Dataset
 from bioimageio.spec.generic import AnyGeneric, Generic
 from bioimageio.spec.model import AnyModel, Model
 from bioimageio.spec.notebook import AnyNotebook, Notebook
-from bioimageio.spec.resource_types import LatestResourceDescription, ResourceDescription
+from bioimageio.spec.resource_types import LatestResourceDescription, ResourceDescription, SpecificResourceDescription
 from bioimageio.spec.utils import load_description, validate
 
 __all__ = (
@@ -33,5 +33,6 @@ __all__ = (
     "Notebook",
     "ResourceDescription",
     "shared",
+    "SpecificResourceDescription",
     "validate",
 )
