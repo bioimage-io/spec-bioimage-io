@@ -222,7 +222,6 @@ class ResourceDescriptionBase(Node):
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
-            data.setdefault("config", {}).setdefault("bioimageio", {})["original_format_version"] = original_format
             context["original_format"] = tuple(map(int, original_format.split(".")))
 
         cls.convert_from_older_format(data, context)

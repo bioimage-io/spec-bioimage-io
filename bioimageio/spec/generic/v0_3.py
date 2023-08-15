@@ -20,13 +20,12 @@ from bioimageio.spec._internal._constants import (
     WARNING,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal._validate import WithSuffix
+from bioimageio.spec._internal._validate import ValContext, WithSuffix
 from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.shared.types import (
-    CapitalStr,
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
@@ -35,7 +34,6 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec._internal._validate import ValContext
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
