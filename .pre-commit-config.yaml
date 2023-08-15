@@ -3,12 +3,14 @@ repos:
     rev: 23.7.0
     hooks:
       - id: black
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.322
-    hooks:
-      - id: pyright
   - repo: local
     hooks:
+      - id: pyright
+        name: pyright
+        entry: pyright
+        language: system
+        always_run: true
+        pass_filenames: false
       - id: generate passthrough modules
         name: generate passthrough modules
         entry: python scripts/generate_version_submodule_imports.py generate
