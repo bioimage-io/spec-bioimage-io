@@ -14,6 +14,7 @@ from typing import (
     Generic,
     Iterator,
     Literal,
+    Mapping,
     Optional,
     Set,
     Tuple,
@@ -195,12 +196,18 @@ class ResourceDescriptionBase(Node):
 
     @model_validator(mode="before")
     @classmethod
-    def update_context_and_data(cls, data: Union[Any, Dict[Any, Any]], info: ValidationInfo):
-        if isinstance(data, dict):
-            context = get_validation_context(**(info.context or {}))
-            cls._update_context_and_data(context, data)
+    def update_context_and_data(cls, data: Union[Any, Mapping[Any, Any]], info: ValidationInfo):
+        if isinstance(data, collections.abc.Mapping):
+            if isinstance(data, dict):
+                data_dict = data
+            else:
+                data_dict = dict(data)
 
-        return data
+            context = get_validation_context(**(info.context or {}))
+            cls._update_context_and_data(context, data_dict)
+            return data_dict
+        else:
+            return data
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -215,6 +222,7 @@ class ResourceDescriptionBase(Node):
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
+            data.setdefault("config", {}).setdefault("bioimageio", {})["original_format_version"] = original_format
             context["original_format"] = tuple(map(int, original_format.split(".")))
 
         cls.convert_from_older_format(data, context)

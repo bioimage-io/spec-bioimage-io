@@ -110,7 +110,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """citations"""
 
     config: Annotated[
-        Optional[ConfigNode],
+        ConfigNode,
         Field(
             examples=[
                 dict(
@@ -119,7 +119,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
                 )
             ],
         ),
-    ] = None
+    ] = ConfigNode()
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,

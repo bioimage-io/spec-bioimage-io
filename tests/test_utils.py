@@ -5,7 +5,9 @@ from unittest import TestCase
 from ruamel.yaml import YAML
 
 from bioimageio.spec._internal._constants import ALERT
-from bioimageio.spec.utils import update_format, validate
+from bioimageio.spec.model.v0_5 import Model
+from bioimageio.spec.shared.nodes import ResourceDescriptionBase
+from bioimageio.spec.utils import load_description, update_format, validate
 
 yaml = YAML(typ="safe")
 
@@ -36,15 +38,23 @@ class TestForwardCompatibility(TestCase):
 
     def test_forward_compatibility(self):
         data = dict(self.data)
-        data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
+        v_future = "9999.0.0"
+        data["format_version"] = v_future  # assume it is valid in a future format version
 
-        summary = validate(data)
+        rd, summary = load_description(data)
         self.assertEqual(summary["status"], "passed", summary)
 
         # expect warning about treating future format version as latest
         ws = summary.get("warnings", [])
         self.assertEqual(len(ws), 1, ws)
         self.assertEqual(ws[0]["loc"], ("format_version",), ws[0]["loc"])
+
+        # expect that we saved the 'original_format_version'
+        assert isinstance(rd, Model)
+        bioimageio_config = rd.config["bioimageio"]
+        self.assertIsInstance(bioimageio_config, dict)
+        assert isinstance(bioimageio_config, dict)
+        self.assertEqual(bioimageio_config["original_format_version"], v_future)
 
     def test_no_forward_compatibility(self):
         data = dict(self.data)
