@@ -12,7 +12,6 @@ from bioimageio.spec.generic.v0_2 import (
     Maintainer,
 )
 from bioimageio.spec.shared.types import RelativeFilePath
-from bioimageio.spec.shared.types import ValidationContext
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -101,14 +100,14 @@ class TestGeneric(TestBases.TestNode):
     sub_tests = [
         Valid(
             dict(
-                format_version=Generic.implemented_format_version,
-                name="my name",
-                description="the description",
                 authors=[{"name": "Me"}],
-                root=Path(__file__).parent.parent,
-                type="my_type",
-                version="1.0",
+                description="the description",
+                format_version=Generic.implemented_format_version,
                 license="BSD-2-Clause-FreeBSD",
+                name="my name",
+                type="my_type",
+                unknown_extra_field="present",
+                version="1.0",
             )
         ),
         Invalid(
@@ -117,13 +116,11 @@ class TestGeneric(TestBases.TestNode):
                 name="my name",
                 description="my description",
                 authors=[{"name": "Me"}],
-                root=Path(__file__).parent,
                 type="my_type",
                 version="1.0",
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
             ),
-            context=ValidationContext(root=Path(__file__).parent),
             name="deprecated license",
         ),
         Valid(
@@ -132,7 +129,6 @@ class TestGeneric(TestBases.TestNode):
                 name="your name",
                 description="my description",
                 attachments={"files": [Path(__file__)], "something": 42},
-                root=EXAMPLE_DOT_COM,
                 type="my_type",
                 version="0.1.0",
             ),

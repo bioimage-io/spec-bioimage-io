@@ -44,28 +44,3 @@ def test_model_format_version_conversion(unet2d_nuclei_broad_before_latest, unet
     for key, item in actual.items():
         assert key in expected
         assert item == expected[key]
-
-
-# todo: break forward compatibility on major version difference?
-@pytest.mark.parametrize("v_diff", [(0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 1, 1)])
-def test_forward_compatible(v_diff: Tuple[int, int, int], unet2d_nuclei_broad_latest):
-    from bioimageio.spec import load_raw_resource_description
-    from bioimageio.spec.model import format_version
-
-    fv_key = "format_version"
-
-    assert yaml is not None
-    model_data = yaml.load(unet2d_nuclei_broad_latest)
-
-    v_latest: Version = Version(format_version)
-    v_future: str = ".".join(
-        [str(latest + diff) for latest, diff in zip([v_latest.major, v_latest.minor, v_latest.micro], v_diff)]
-    )
-
-    future_model_data = dict(model_data)
-    future_model_data[fv_key] = v_future
-
-    rd = load_raw_resource_description(future_model_data)
-    assert rd.format_version == format_version
-    assert hasattr(rd, "config")
-    assert rd.config["bioimageio"]["original_format_version"] == v_future
