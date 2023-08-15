@@ -26,7 +26,13 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
-    install_requires=["packaging>=17.0", "typing-extensions", "pydantic>=2.0", "annotated-types", "python-dateutil"],
+    install_requires=[
+        "packaging>=17.0",
+        "typing-extensions",
+        "pydantic[email]>=2.0.1",
+        "annotated-types",
+        "python-dateutil",
+    ],
     extras_require={"dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "pooch", "pre-commit", "numpy"]},
     scripts=[],
     include_package_data=True,
