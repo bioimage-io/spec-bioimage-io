@@ -27,11 +27,11 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "packaging>=17.0",
-        "typing-extensions",
-        "pydantic[email]>=2.0.1",
         "annotated-types",
+        "email_validator" "packaging>=17.0",
+        "pydantic[email]>=2.0.1",
         "python-dateutil",
+        "typing-extensions",
     ],
     extras_require={"dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "pooch", "pre-commit", "numpy"]},
     scripts=[],

@@ -63,12 +63,16 @@ jobs:
       with:
         fetch-depth: 0
     - name: Install Conda environment with Micromamba
-      uses: mamba-org/provision-with-micromamba@main
+      uses: mamba-org/setup-micromamba@v1
+      # uses: mamba-org/provision-with-micromamba@main
       with:
-        environment-file: false
+        cache-downloads: true
+        cache-environment: true
         environment-name: build-env
-        channels: conda-forge
-        extra-specs: |
+        condarc: |
+          channels:
+          - conda-forge
+        create-args: >-  # script dependencies
           boa
     - name: linux conda build
       shell: bash -l {0}
