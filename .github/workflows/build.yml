@@ -50,7 +50,7 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: tests/cache
-        key: ${{ runner.os }}-${{ steps.get-date.outputs.week }}-${{ hashFiles('**/lockfiles') }}
+        key: ${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.week }}-${{ hashFiles('**/lockfiles') }}
     - name: Run tests
       run: python -m unittest
 
