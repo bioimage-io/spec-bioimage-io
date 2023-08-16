@@ -34,7 +34,7 @@ test:
     - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
   commands:
-    - pytest .
+    - python -m unittest discover
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io
