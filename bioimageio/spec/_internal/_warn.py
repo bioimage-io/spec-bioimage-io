@@ -1,12 +1,10 @@
 import dataclasses
 import sys
-from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
     Literal,
-    Mapping,
     Optional,
     Union,
     get_args,
@@ -76,7 +74,7 @@ def as_warning(
     mode: Literal["after", "before", "plain", "wrap"] = "after",
     severity: Severity = WARNING,
     msg: Optional[LiteralString] = None,
-    context: Mapping[str, Any] = MappingProxyType({}),
+    context: Optional[Dict[str, Any]] = None,
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
@@ -85,7 +83,7 @@ def as_warning(
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
             if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
-                raise_warning(msg or ",".join(e.args), severity=severity, context={**context, "value": value})
+                raise_warning(msg or ",".join(e.args), severity=severity, context={**(context or {}), "value": value})
 
         return value
 
@@ -98,7 +96,7 @@ class AfterWarner(AfterValidator):
 
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
-    context: Mapping[str, Any] = MappingProxyType({})
+    context: Optional[Dict[str, Any]] = None
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
@@ -114,7 +112,7 @@ class BeforeWarner(BeforeValidator):
 
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
-    context: Mapping[str, Any] = MappingProxyType({})
+    context: Optional[Dict[str, Any]] = None
 
     def __getattribute__(self, __name: str) -> Any:
         ret = super().__getattribute__(__name)
