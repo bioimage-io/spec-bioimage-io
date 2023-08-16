@@ -28,7 +28,8 @@ setup(
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "annotated-types",
-        "email_validator" "packaging>=17.0",
+        "email_validator",
+        "packaging>=17.0",
         "pydantic[email]>=2.0.1",
         "python-dateutil",
         "typing-extensions",
