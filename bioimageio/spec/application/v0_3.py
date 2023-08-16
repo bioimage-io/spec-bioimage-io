@@ -1,6 +1,7 @@
-from typing import Annotated, Literal, Union
+from typing import Literal, Union
 
 from pydantic import ConfigDict, Field
+from typing_extensions import Annotated
 
 from bioimageio.spec.application import v0_2
 from bioimageio.spec.generic.v0_3 import GenericBase

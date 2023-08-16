@@ -1,7 +1,8 @@
 # autogen: start
-from typing import Annotated, Union
+from typing import Union
 
 from pydantic import Field
+from typing_extensions import Annotated
 
 from . import v0_4, v0_5
 from .v0_5 import Model

@@ -22,9 +22,10 @@ __all__ = [{info.all_version_modules_quoted},
 
 Any{info.target_node} = {info.target_node}
 """
-AUTOGEN_BODY_MULTIPLE = """from typing import Annotated, Union
+AUTOGEN_BODY_MULTIPLE = """from typing import Union
 
 from pydantic import Field
+from typing_extensions import Annotated
 
 from . import {info.all_version_modules_plain}
 from .{info.latest_version_module} import {info.target_node}

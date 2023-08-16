@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Annotated
 from unittest import TestCase
 
 from pydantic import TypeAdapter, ValidationError
+from typing_extensions import Annotated
 
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec.shared.types import FileSource

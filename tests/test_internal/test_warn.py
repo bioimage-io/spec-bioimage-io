@@ -1,9 +1,10 @@
 from contextlib import nullcontext
-from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, Union
+from typing import Any, ClassVar, Dict, Sequence, Type, Union
 from unittest import TestCase
 
 from annotated_types import Ge
 from pydantic import ValidationError
+from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal._warn import warn

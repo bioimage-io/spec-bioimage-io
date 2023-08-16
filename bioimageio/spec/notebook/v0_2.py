@@ -1,6 +1,7 @@
-from typing import Annotated, Literal
+from typing import Literal
 
 from pydantic import ConfigDict
+from typing_extensions import Annotated
 
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec.generic.v0_2 import GenericBase
