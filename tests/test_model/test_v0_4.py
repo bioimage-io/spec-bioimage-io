@@ -284,10 +284,13 @@ class TestModel(TestCase):
         )
         self.assertEqual(summary["status"], "passed", format_summary(summary))
         self.assertEqual(summary["warnings"][0]["loc"], ("name",), format_summary(summary))
-        self.assertEqual(
+        self.assertIn(
             summary["warnings"][0]["msg"],
-            "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
-            "typing.Annotated[typing.Any, Len(min_length=5, max_length=64)]",
+            [
+                "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
+                f"{typing_module}.Annotated[typing.Any, Len(min_length=5, max_length=64)]"
+                for typing_module in ("typing", "typing_extensions")
+            ],
             format_summary(summary),
         )
 

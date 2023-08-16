@@ -1,8 +1,8 @@
-from collections.abc import Mapping, Sequence
-from typing import Any, Dict, Union
+import collections.abc
+from typing import Any, Dict, Mapping, Union
 
-from bioimageio.spec.shared.types import RawDict
 from bioimageio.spec._internal._validate import ValContext
+from bioimageio.spec.shared.types import RawDict
 
 
 def convert_from_older_format(data: RawDict, context: ValContext) -> None:
@@ -34,7 +34,7 @@ def remove_slashes_from_names(data: Dict[str, Any]) -> None:
 
     # update authors and maintainers
     def rm_slashes_in_person_name(person: Union[Any, Mapping[Union[Any, str], Any]]) -> Any:
-        if not isinstance(person, Mapping):
+        if not isinstance(person, collections.abc.Mapping):
             return person
 
         new_person = dict(person)
@@ -45,7 +45,7 @@ def remove_slashes_from_names(data: Dict[str, Any]) -> None:
 
     for group in ("authors", "maintainers"):
         persons = data.get(group)
-        if isinstance(persons, Sequence):
+        if isinstance(persons, collections.abc.Sequence):
             data[group] = [rm_slashes_in_person_name(p) for p in persons]  # type: ignore
 
 
@@ -55,11 +55,11 @@ DOI_PREFIXES = ("https://doi.org/", "http://dx.doi.org/")
 def remove_doi_prefix(data: RawDict) -> None:
     """we unofficially accept DOIs starting with "https://doi.org/" here we remove this prefix"""
     cite = data.get("cite")
-    if isinstance(cite, Sequence):
+    if isinstance(cite, collections.abc.Sequence):
         new_cite = list(cite)
         for i in range(len(new_cite)):
             cite_entry = new_cite[i]
-            if not isinstance(cite_entry, Mapping):
+            if not isinstance(cite_entry, collections.abc.Mapping):
                 continue
 
             doi = cite_entry.get("doi")
