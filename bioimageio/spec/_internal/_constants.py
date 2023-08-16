@@ -83,7 +83,7 @@ WARNING = 30
 """no WARNING nor ALERT nor ERROR -> RDF is watertight"""
 
 INFO = 20
-SEVERITY_TO_WARNING: MappingProxyType[Severity, WarningLevelName] = MappingProxyType(
+SEVERITY_TO_WARNING: Mapping[Severity, WarningLevelName] = MappingProxyType(
     {INFO: "info", WARNING: "warning", ALERT: "alert"}
 )
 LATEST = "latest"

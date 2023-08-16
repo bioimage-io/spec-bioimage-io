@@ -8,6 +8,7 @@ from typing import (
     Iterable,
     List,
     Literal,
+    Mapping,
     Optional,
     Sequence,
     Tuple,
@@ -60,7 +61,7 @@ from bioimageio.spec.shared.types import (
 )
 
 
-def get_supported_format_versions() -> MappingProxyType[str, Tuple[str, ...]]:
+def get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
     supported: Dict[str, List[str]] = {}
     for typ, rd_class in _iterate_over_rd_classes():
         format_versions = supported.setdefault(typ, [])
