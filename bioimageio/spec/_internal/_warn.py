@@ -92,31 +92,31 @@ def as_warning(
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class AfterWarner(AfterValidator):
-    """Like AfterValidator, but wraps validation `func` with the `warn` decorator"""
+    """Like AfterValidator, but wraps validation `func` `as_warning`"""
 
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
     context: Optional[Dict[str, Any]] = None
 
-    def __getattribute__(self, __name: str) -> Any:
-        ret = super().__getattribute__(__name)
-        if __name == "func":
-            return as_warning(ret, severity=self.severity, msg=self.msg, context=self.context)
-        else:
-            return ret
+    def __post_init__(self):
+        object.__setattr__(
+            self,
+            "func",
+            as_warning(self.func, mode="after", severity=self.severity, msg=self.msg, context=self.context),
+        )
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class BeforeWarner(BeforeValidator):
-    """Like BeforeValidator, but wraps validation `func` with the `warn` decorator"""
+    """Like BeforeValidator, but wraps validation `func` `as_warning`"""
 
     severity: Severity = WARNING
     msg: Optional[LiteralString] = None
     context: Optional[Dict[str, Any]] = None
 
-    def __getattribute__(self, __name: str) -> Any:
-        ret = super().__getattribute__(__name)
-        if __name == "func":
-            return as_warning(ret, severity=self.severity, msg=self.msg, context=self.context)
-        else:
-            return ret
+    def __post_init__(self):
+        object.__setattr__(
+            self,
+            "func",
+            as_warning(self.func, mode="before", severity=self.severity, msg=self.msg, context=self.context),
+        )
