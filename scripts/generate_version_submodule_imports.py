@@ -4,7 +4,7 @@ import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import List, Literal
 
 import black.files
 import black.mode
@@ -61,7 +61,7 @@ def parse_args():
 @dataclass
 class Info:
     target: str
-    all_version_modules: list[str]
+    all_version_modules: List[str]
     target_node: str = field(init=False)
     all_target_nodes_plain: str = field(init=False)
     latest_version_module: str = field(init=False)
