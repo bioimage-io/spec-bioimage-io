@@ -7,6 +7,7 @@ from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import ALERT
+from bioimageio.spec._internal._validate import ValContext
 from bioimageio.spec._internal._warn import warn
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.dataset.v0_2 import AnyDataset
@@ -18,7 +19,6 @@ from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
 from bioimageio.spec.shared.nodes import Node
 from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RelativeFilePath
-from bioimageio.spec._internal._validate import ValContext
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -158,12 +158,12 @@ class Collection(GenericBase):
 
             seen[v.id] = i
 
-    # @model_validator(mode="before")
-    # @classmethod
-    # def add_collection_base_content_to_context(cls, data: Dict[str, Any], info: ValidationInfo) -> Dict[str, Any]:
-    #     info.context = {} if info.context is None else info.context
-    #     info.context["collection_base_content"] = {k: v for k, v in data.items() if k != "collection"}
-    #     return data
+    @classmethod
+    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
+        super()._update_context_and_data(context, data)
+        collection_base_content = {k: v for k, v in data.items() if k != "collection"}
+        assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
+        context["collection_base_content"] = collection_base_content
 
     @staticmethod
     def move_groups_to_collection_field(data: RawDict) -> None:

@@ -3,10 +3,10 @@ import json
 from pathlib import Path
 from typing import Dict
 
-import pooch  # type: ignore
+import pooch
+from pydantic import AnyUrl
 
 from tests.unittest_utils import TestBases
-
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
 RDF_BASE_URL = BASE_URL + "rdfs/"
@@ -163,4 +163,4 @@ class TestBioimageioCollection(TestBases.TestManyRdfs):
         )
 
         for rdf in collection_registry:
-            yield Path(collection.fetch(rdf))
+            yield AnyUrl("https://example.com/"), Path(collection.fetch(rdf))

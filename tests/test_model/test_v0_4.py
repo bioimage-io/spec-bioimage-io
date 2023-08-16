@@ -256,7 +256,7 @@ class TestModel(TestCase):
 
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
-        summary = validate(self.data)
+        summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_model_schema_accepts_valid_weight_formats(self):
@@ -274,7 +274,7 @@ class TestModel(TestCase):
                     self.data["weights"][format]["architecture"] = "file.py:Model"
                     self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
 
-                summary = validate(self.data)
+                summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
                 self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_warn_long_name(self):
@@ -343,7 +343,7 @@ class TestModel(TestCase):
         uri = "https://doi.org/10.5281/zenodo.5744489"
         self.data["parent"] = dict(uri=uri, sha256="s" * 64)
 
-        model, summary = load_description(self.data)
+        model, summary = load_description(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "passed", format_summary(summary))
 
         self.assertIsInstance(model, Model)
@@ -351,7 +351,7 @@ class TestModel(TestCase):
 
     def test_model_has_parent_with_id(self):
         self.data["parent"] = dict(id="10.5281/zenodo.5764892")
-        summary = validate(self.data)
+        summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_model_with_expanded_output(self):
@@ -369,15 +369,15 @@ class TestModel(TestCase):
             }
         ]
 
-        summary = validate(self.data)
+        summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_model_rdf_is_valid_general_rdf(self):
         self.data["type"] = "model_as_generic"
-        summary = validate(self.data)
+        summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "passed", format_summary(summary))
 
     def test_model_does_not_accept_unknown_fields(self):
         self.data["unknown_additional_field"] = "shouldn't be here"
-        summary = validate(self.data)
+        summary = validate(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "failed", format_summary(summary))

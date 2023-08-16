@@ -3,11 +3,11 @@ from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, ClassVar, Dict, Mapping, Optional, Sequence, Set, Type, Union
+from typing import Any, ClassVar, Dict, Iterable, Mapping, Optional, Sequence, Set, Tuple, Type, Union
 from unittest import TestCase
 
 from deepdiff import DeepDiff
-from pydantic import TypeAdapter, ValidationError, create_model
+from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
@@ -175,13 +175,15 @@ class TestBases:
             cls.known_invalid_as_latest = {Path(p) for p in cls.known_invalid_as_latest}
             cls.exclude_fields_from_roundtrip = {Path(p): v for p, v in cls.exclude_fields_from_roundtrip.items()}
 
-            for rdf in cls.yield_rdf_paths():
+            for root, rdf in cls.yield_rdf_paths():
 
-                def test_rdf(self: TestBases.TestManyRdfs, rdf_path: Path = rdf) -> None:
+                def test_rdf(
+                    self: TestBases.TestManyRdfs, root_path: Union[Path, AnyUrl] = root, rdf_path: Path = rdf
+                ) -> None:
                     with rdf_path.open(encoding="utf-8") as f:
                         data = yaml.load(f)
 
-                    context = ValidationContext(root=rdf_path.parent, file_name=rdf_path.name)
+                    context = ValidationContext(root=root_path, file_name=rdf_path.name)
                     if rdf_path.stem.startswith("invalid"):
                         rd, _ = load_description(data, context=context)
                         if rd is not None:
@@ -241,11 +243,11 @@ class TestBases:
             self.fail(format_summary(summary))
 
         @classmethod
-        def yield_rdf_paths(cls):
+        def yield_rdf_paths(cls) -> Iterable[Tuple[Union[AnyUrl, Path], Path]]:
             assert cls.rdf_root.exists()
             for rdf in cls.rdf_root.glob("**/*.yaml"):
                 if rdf.name.startswith("invalid_rdf") or rdf.name.startswith("rdf"):
-                    yield rdf
+                    yield rdf.parent, rdf
 
         def assert_big_dicts_equal(self, a: Dict[str, Any], b: Dict[str, Any], msg: str):
             diff = DeepDiff(a, b)

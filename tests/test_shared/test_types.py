@@ -33,7 +33,7 @@ class TestDateTime(TestBases.TestType):
         TypeSubTest(NOW, NOW),
     )
     invalid = (
-        "2019-12-11T12:22:32+0000",
+        "2019-12-11T12:22:32+00/00",
         "2019-12-11T12:22:32Y",
         "2019-12-11T12:22:32Zulu",
         "201912-11T12:22:32+00:00",
