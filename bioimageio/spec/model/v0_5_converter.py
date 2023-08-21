@@ -5,10 +5,10 @@ from bioimageio.spec._internal._constants import ALERT
 from bioimageio.spec._internal._validate import ValContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 from bioimageio.spec.model import v0_4_converter
-from bioimageio.spec.types import RawDict, RawValue
+from bioimageio.spec.types import RawStringDict, RawValue
 
 
-def convert_from_older_format(data: RawDict, context: ValContext):
+def convert_from_older_format(data: RawStringDict, context: ValContext):
     fv = data.get("format_version")
     if not isinstance(fv, str) or fv.count(".") != 2:
         return
@@ -23,7 +23,7 @@ def convert_from_older_format(data: RawDict, context: ValContext):
         _convert_model_from_v0_4_to_0_5_0(data, context)
 
 
-def _convert_model_from_v0_4_to_0_5_0(data: RawDict, context: ValContext) -> None:
+def _convert_model_from_v0_4_to_0_5_0(data: RawStringDict, context: ValContext) -> None:
     _convert_axes_string_to_axis_descriptions(data, context=context)
     _convert_architecture(data)
     convert_attachments(data)
@@ -35,7 +35,7 @@ def _convert_model_from_v0_4_to_0_5_0(data: RawDict, context: ValContext) -> Non
     data["format_version"] = "0.5.0"
 
 
-def _convert_axes_string_to_axis_descriptions(data: RawDict, *, context: ValContext):
+def _convert_axes_string_to_axis_descriptions(data: RawStringDict, *, context: ValContext):
     inputs = data.get("inputs")
     outputs = data.get("outputs")
     sample_inputs = data.pop("sample_inputs", None)

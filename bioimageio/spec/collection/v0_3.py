@@ -10,7 +10,7 @@ from bioimageio.spec.dataset.v0_3 import AnyDataset
 from bioimageio.spec.generic.v0_3 import AnyGeneric, GenericBase
 from bioimageio.spec.model.v0_5 import AnyModel
 from bioimageio.spec.notebook.v0_3 import AnyNotebook
-from bioimageio.spec.types import NonEmpty, RawDict
+from bioimageio.spec.types import NonEmpty, RawStringDict
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -68,7 +68,7 @@ class Collection(GenericBase):
         return value
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)
 

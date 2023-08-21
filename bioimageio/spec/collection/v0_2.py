@@ -15,7 +15,7 @@ from bioimageio.spec.dataset.v0_2 import AnyDataset
 from bioimageio.spec.generic.v0_2 import AnyGeneric, GenericBase
 from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
-from bioimageio.spec.types import NonEmpty, RawDict, RawValue, RelativeFilePath
+from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue, RelativeFilePath
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 
@@ -163,7 +163,7 @@ class Collection(GenericBase):
         context["collection_base_content"] = collection_base_content
 
     @staticmethod
-    def move_groups_to_collection_field(data: RawDict) -> None:
+    def move_groups_to_collection_field(data: RawStringDict) -> None:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):
             return
 
@@ -187,7 +187,7 @@ class Collection(GenericBase):
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         cls.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)
 

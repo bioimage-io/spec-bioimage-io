@@ -51,10 +51,11 @@ Identifier = Annotated[
 ]
 LicenseId = LicenseId
 RawLeafValue = Union[int, float, str, bool, None]
-RawMapping = Mapping[str, "RawValue"]
+RawMapping = Mapping[RawLeafValue, "RawValue"]
+RawStringMapping = Mapping[str, "RawValue"]
 RawSequence = Sequence["RawValue"]
 RawValue = Union[RawLeafValue, RawSequence, RawMapping]
-RawDict = Dict[str, RawValue]
+RawStringDict = Dict[str, RawValue]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 SiUnit = Annotated[
     str,

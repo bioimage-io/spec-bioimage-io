@@ -10,7 +10,7 @@ from bioimageio.spec._internal._validate import ValContext, WithSuffix
 from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
-from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawDict, Version
+from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawStringDict, Version
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 
@@ -282,7 +282,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
         convert_from_older_format(data, context)
 

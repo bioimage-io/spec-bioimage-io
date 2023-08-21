@@ -34,8 +34,8 @@ from bioimageio.spec._resource_types import ResourceDescription
 from bioimageio.spec.types import (
     LegacyValidationSummary,
     Loc,
-    RawDict,
-    RawMapping,
+    RawStringDict,
+    RawStringMapping,
     RelativeFilePath,
     ValidationContext,
     ValidationError,
@@ -93,7 +93,7 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
         yield typ, rd_class
 
 
-def check_type_and_format_version(data: RawMapping) -> Tuple[str, str, str]:
+def check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
     typ = data.get("type")
     if not isinstance(typ, str):
         raise TypeError(f"Invalid resource type '{typ}' of type {type(typ)}")
@@ -159,10 +159,10 @@ def get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Reso
 
 
 def update_format(
-    resource_description: RawMapping,
+    resource_description: RawStringMapping,
     update_to_format: str = "latest",
     context: Optional[ValidationContext] = None,
-) -> RawMapping:
+) -> RawStringMapping:
     """Auto-update fields of a bioimage.io resource without any validation."""
     assert "type" in resource_description
     assert isinstance(resource_description["type"], str)
@@ -179,12 +179,12 @@ def update_format(
 RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def dump_description(resource_description: ResourceDescription) -> RawDict:
+def dump_description(resource_description: ResourceDescription) -> RawStringDict:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return resource_description.model_dump(mode="json", exclude={"root"})
 
 
-def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], resource_description: RawStringMapping, context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ValidationError] = []
     val_warnings: List[ValidationWarning] = []
@@ -207,7 +207,7 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawMapping, conte
 
 
 def load_description_with_known_rd_class(
-    resource_description: RawMapping,
+    resource_description: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
     rd_class: Type[RD],
@@ -250,7 +250,7 @@ def load_description_with_known_rd_class(
 
 
 def load_description(
-    resource_description: RawMapping,
+    resource_description: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -293,7 +293,7 @@ def load_description(
 
 
 def validate(
-    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    resource_description: RawStringMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
@@ -302,7 +302,7 @@ def validate(
 
 
 def validate_legacy(
-    resource_description: RawMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    resource_description: RawStringMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
     context: Optional[ValidationContext] = None,
     update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
 ) -> LegacyValidationSummary:

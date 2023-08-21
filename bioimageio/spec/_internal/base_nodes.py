@@ -34,7 +34,7 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import unindent
 from bioimageio.spec._internal._validate import ValContext, get_validation_context, is_valid_raw_mapping
-from bioimageio.spec.types import NonEmpty, RawDict, RawValue
+from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue
 
 if TYPE_CHECKING:
     from pydantic.main import IncEx
@@ -219,7 +219,7 @@ class ResourceDescriptionBase(Node):
         cls.convert_from_older_format(data, context)
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         """A node may `convert` it's raw data from an older format."""
         pass
 

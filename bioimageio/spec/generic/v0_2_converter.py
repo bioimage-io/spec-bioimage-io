@@ -2,10 +2,10 @@ import collections.abc
 from typing import Any, Dict, Mapping, Union
 
 from bioimageio.spec._internal._validate import ValContext
-from bioimageio.spec.types import RawDict
+from bioimageio.spec.types import RawStringDict
 
 
-def convert_from_older_format(data: RawDict, context: ValContext) -> None:
+def convert_from_older_format(data: RawStringDict, context: ValContext) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
     fv = data.get("format_version", "0.2.0")
@@ -52,7 +52,7 @@ def remove_slashes_from_names(data: Dict[str, Any]) -> None:
 DOI_PREFIXES = ("https://doi.org/", "http://dx.doi.org/")
 
 
-def remove_doi_prefix(data: RawDict) -> None:
+def remove_doi_prefix(data: RawStringDict) -> None:
     """we unofficially accept DOIs starting with "https://doi.org/" here we remove this prefix"""
     cite = data.get("cite")
     if isinstance(cite, collections.abc.Sequence):

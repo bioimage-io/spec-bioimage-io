@@ -35,7 +35,7 @@ from bioimageio.spec.types import (
     Identifier,
     LicenseId,
     NonEmpty,
-    RawDict,
+    RawStringDict,
     Sha256,
     Unit,
     Version,
@@ -943,7 +943,7 @@ class Model(
         return ret
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         convert_from_older_format(data, context)
 
 

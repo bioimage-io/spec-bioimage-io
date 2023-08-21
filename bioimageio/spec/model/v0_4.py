@@ -21,8 +21,8 @@ from bioimageio.spec.types import (
     Identifier,
     LicenseId,
     NonEmpty,
-    RawDict,
     RawMapping,
+    RawStringDict,
     RelativeFilePath,
     Sha256,
     Version,
@@ -861,7 +861,7 @@ class Model(GenericBaseNoSource):
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         convert_from_older_format(data, context)
 
 
