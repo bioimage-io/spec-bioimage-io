@@ -1,8 +1,8 @@
 import collections.abc
 
-from bioimageio.spec.generic import v0_2_converter
-from bioimageio.spec.shared.types import RawDict
 from bioimageio.spec._internal._validate import ValContext
+from bioimageio.spec.generic import v0_2_converter
+from bioimageio.spec.types import RawDict
 
 
 def convert_from_older_format(data: RawDict, context: ValContext) -> None:

@@ -2,14 +2,7 @@ from pathlib import Path
 from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import (
-    AnyUrl,
-    ConfigDict,
-    DirectoryPath,
-    Field,
-    FieldValidationInfo,
-    field_validator,
-)
+from pydantic import AnyUrl, ConfigDict, DirectoryPath, Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import (
@@ -22,18 +15,10 @@ from bioimageio.spec._internal._constants import (
 )
 from bioimageio.spec._internal._validate import ValContext, WithSuffix
 from bioimageio.spec._internal._warn import as_warning, warn
+from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
-from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
-from bioimageio.spec.shared.types import (
-    DeprecatedLicenseId,
-    FileSource,
-    LicenseId,
-    NonEmpty,
-    RawDict,
-    Sha256,
-    Version,
-)
+from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, RawDict, Sha256, Version
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 

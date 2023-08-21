@@ -9,16 +9,13 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal._constants import ALERT
 from bioimageio.spec._internal._validate import ValContext
 from bioimageio.spec._internal._warn import warn
+from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.dataset.v0_2 import AnyDataset
-from bioimageio.spec.generic.v0_2 import (
-    AnyGeneric,
-    GenericBase,
-)
+from bioimageio.spec.generic.v0_2 import AnyGeneric, GenericBase
 from bioimageio.spec.model.v0_4 import AnyModel
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
-from bioimageio.spec.shared.nodes import Node
-from bioimageio.spec.shared.types import NonEmpty, RawDict, RawValue, RelativeFilePath
+from bioimageio.spec.types import NonEmpty, RawDict, RawValue, RelativeFilePath
 
 __all__ = ["Collection", "CollectionEntry", "AnyCollection"]
 

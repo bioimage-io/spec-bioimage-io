@@ -1,5 +1,5 @@
 from bioimageio.spec.model.v0_5 import InputTensor, ModelRdf, TensorBase
-from bioimageio.spec.shared.types import RelativeFilePath
+from bioimageio.spec.types import RelativeFilePath
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 

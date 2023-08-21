@@ -2,11 +2,8 @@ from typing import Literal
 
 from pydantic import ConfigDict
 
-from bioimageio.spec.generic.v0_2 import (
-    LinkedResource,
-    GenericBase,
-)
-from bioimageio.spec.shared.types import NonEmpty
+from bioimageio.spec.generic.v0_2 import GenericBase, LinkedResource
+from bioimageio.spec.types import NonEmpty
 
 __all__ = ["Dataset", "LinkedDataset", "AnyDataset"]
 

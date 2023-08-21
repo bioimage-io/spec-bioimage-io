@@ -6,19 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
 from pathlib import Path, PurePath
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Hashable,
-    Mapping,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    get_args,
-)
+from typing import TYPE_CHECKING, Any, Dict, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
 
 import annotated_types
 import packaging.version
@@ -30,7 +18,7 @@ from typing_extensions import NotRequired, TypedDict
 from bioimageio.spec._internal._constants import ERROR
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import FileSource, RelativePath, WarningLevel
+    from bioimageio.spec.types import FileSource, RelativePath, WarningLevel
 
 
 if sys.version_info < (3, 10):
@@ -66,7 +54,7 @@ class WithSuffix:
     case_sensitive: bool
 
     def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
-        from bioimageio.spec.shared.types import FileSource, RelativePath
+        from bioimageio.spec.types import FileSource, RelativePath
 
         if not self.suffix:
             raise ValueError("suffix may not be empty")
@@ -130,7 +118,7 @@ def validate_orcid_id(orcid_id: str):
 
 
 def is_valid_raw_leaf_value(value: Any) -> bool:
-    from bioimageio.spec.shared.types import RawLeafValue
+    from bioimageio.spec.types import RawLeafValue
 
     return isinstance(value, get_args(RawLeafValue))
 

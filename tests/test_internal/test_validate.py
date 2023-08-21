@@ -5,7 +5,7 @@ from pydantic import TypeAdapter, ValidationError
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal._validate import WithSuffix
-from bioimageio.spec.shared.types import FileSource
+from bioimageio.spec.types import FileSource
 
 
 class TestWithSuffix(TestCase):

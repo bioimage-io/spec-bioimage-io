@@ -2,7 +2,7 @@ import collections.abc
 from typing import Any
 from unittest import TestCase
 
-from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs
+from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs
 
 
 class TestFrozenDict(TestCase):

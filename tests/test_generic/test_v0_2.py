@@ -4,14 +4,8 @@ from pathlib import Path
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.generic.v0_2 import (
-    Attachments,
-    Author,
-    CiteEntry,
-    Generic,
-    Maintainer,
-)
-from bioimageio.spec.shared.types import RelativeFilePath
+from bioimageio.spec.generic.v0_2 import Attachments, Author, CiteEntry, Generic, Maintainer
+from bioimageio.spec.types import RelativeFilePath
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 EXAMPLE_DOT_COM = "https://example.com/"

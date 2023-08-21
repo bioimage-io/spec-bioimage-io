@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 from unittest import TestCase
 
-from bioimageio.spec.shared.types import Datetime, SiUnit
+from bioimageio.spec.types import Datetime, SiUnit
 from tests.unittest_utils import TestBases, TypeSubTest
 
 
 class TestRelativePath(TestCase):
     def test_eq(self):
-        from bioimageio.spec.shared.types import RelativePath
+        from bioimageio.spec.types import RelativePath
 
         p = RelativePath(__file__)
         p2 = RelativePath(__file__)

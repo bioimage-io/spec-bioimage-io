@@ -1,28 +1,17 @@
 import dataclasses
 import sys
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Literal,
-    Optional,
-    Union,
-    get_args,
-)
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 from annotated_types import BaseMetadata, GroupedMetadata
 from pydantic import FieldValidationInfo, TypeAdapter
 from pydantic._internal._decorators import inspect_validator
 from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core import PydanticCustomError
-from pydantic_core.core_schema import (
-    FieldValidatorFunction,
-    NoInfoValidatorFunction,
-)
+from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec._internal._constants import ERROR, SEVERITY_TO_WARNING, WARNING, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec.shared.types import Severity
+from bioimageio.spec.types import Severity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore

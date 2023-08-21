@@ -6,14 +6,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple,
 from urllib.parse import urljoin
 
 import annotated_types
-from pydantic import (
-    AnyUrl,
-    DirectoryPath,
-    GetCoreSchemaHandler,
-    HttpUrl,
-    StringConstraints,
-    ValidationInfo,
-)
+from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, HttpUrl, StringConstraints, ValidationInfo
 from pydantic_core import core_schema
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict

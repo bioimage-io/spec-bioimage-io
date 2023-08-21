@@ -1,5 +1,5 @@
-from copy import deepcopy
 import traceback
+from copy import deepcopy
 from pathlib import PurePath
 from types import MappingProxyType
 from typing import (
@@ -24,30 +24,14 @@ from pydantic import HttpUrl
 from pydantic_core import PydanticUndefined
 
 import bioimageio.spec
-from bioimageio.spec import (
-    application,
-    collection,
-    dataset,
-    generic,
-    model,
-    notebook,
-)
-from bioimageio.spec._internal._constants import (
-    DISCOVER,
-    ERROR,
-    LATEST,
-    VERSION,
-    WARNING_LEVEL_CONTEXT_KEY,
-)
+from bioimageio.spec import application, collection, dataset, generic, model, notebook
+from bioimageio.spec._internal._constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal._package import fill_resource_package_content
-from bioimageio.spec._internal._utils import (
-    extract_file_name,
-    nest_dict_with_narrow_first_key,
-)
+from bioimageio.spec._internal._utils import extract_file_name, nest_dict_with_narrow_first_key
 from bioimageio.spec._internal._validate import ValContext, get_validation_context
-from bioimageio.spec.resource_types import ResourceDescription
-from bioimageio.spec.shared.nodes import ResourceDescriptionBase
-from bioimageio.spec.shared.types import (
+from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._resource_types import ResourceDescription
+from bioimageio.spec.types import (
     LegacyValidationSummary,
     Loc,
     RawDict,
@@ -101,7 +85,7 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
         model.Model,
         notebook.Notebook,
     ]:
-        typ = rd_class.model_fields["type"].default
+        typ: Any = rd_class.model_fields["type"].default
         if typ is PydanticUndefined:
             typ = "generic"
 

@@ -1,10 +1,10 @@
 from __future__ import annotations
-from pprint import pformat
 
 import shutil
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
+from pprint import pformat
 from types import ModuleType
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, get_args
 
@@ -15,7 +15,7 @@ from pydantic_core import PydanticUndefined
 from bioimageio.spec import ResourceDescription, application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import unindent
-from bioimageio.spec.shared.nodes import Node
+from bioimageio.spec._internal.base_nodes import Node
 
 Loc = Tuple[str, ...]
 

@@ -1,17 +1,10 @@
-from typing import (
-    Any,
-    Dict,
-    Tuple,
-    Union,
-)
+from typing import Any, Dict, Tuple, Union
 
 from pydantic import AnyUrl, HttpUrl
 
-from bioimageio.spec._internal._constants import (
-    IN_PACKAGE_MESSAGE,
-)
-from bioimageio.spec.shared.nodes import FrozenDictNode, Node
-from bioimageio.spec.shared.types import Loc, RelativeFilePath
+from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal.base_nodes import FrozenDictNode, Node
+from bioimageio.spec.types import Loc, RelativeFilePath
 
 
 def fill_resource_package_content(

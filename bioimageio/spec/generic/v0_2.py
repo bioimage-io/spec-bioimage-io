@@ -2,35 +2,15 @@ from collections.abc import Mapping, Sequence
 from typing import List, Literal, Optional, Tuple, TypeVar, Union, get_args
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
-from pydantic import (
-    ConfigDict,
-    EmailStr,
-    Field,
-    FieldValidationInfo,
-    HttpUrl,
-    StringConstraints,
-    field_validator,
-)
+from pydantic import ConfigDict, EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
-from bioimageio.spec._internal._validate import WithSuffix
-from bioimageio.spec._internal._warn import (
-    as_warning,
-    warn,
-)
+from bioimageio.spec._internal._validate import ValContext, WithSuffix
+from bioimageio.spec._internal._warn import as_warning, warn
+from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
-from bioimageio.spec.shared.nodes import ConfigNode, Node, ResourceDescriptionBase
-from bioimageio.spec.shared.types import (
-    DeprecatedLicenseId,
-    FileSource,
-    LicenseId,
-    NonEmpty,
-    OrcidId,
-    RawDict,
-    Version,
-)
-from bioimageio.spec._internal._validate import ValContext
+from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawDict, Version
 
 SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
 

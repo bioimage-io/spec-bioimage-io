@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import (
-    Dict,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Dict, Tuple, Type, TypeVar, Union
 from urllib.parse import urlparse
 
 from pydantic import HttpUrl
 
-from bioimageio.spec.shared.types import RelativeFilePath
+from bioimageio.spec.types import RelativeFilePath
 
 K = TypeVar("K")
 V = TypeVar("V")

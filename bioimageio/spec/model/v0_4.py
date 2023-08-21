@@ -1,42 +1,19 @@
 from __future__ import annotations
 
-from typing import (
-    Any,
-    ClassVar,
-    Dict,
-    List,
-    Literal,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-)
+from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
-from pydantic import (
-    AllowInfNan,
-    ConfigDict,
-    Field,
-    HttpUrl,
-    ValidationInfo,
-    field_validator,
-    model_validator,
-)
+from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal._constants import ALERT, INFO, SHA256_HINT
-from bioimageio.spec._internal._validate import WithSuffix
+from bioimageio.spec._internal._validate import ValContext, WithSuffix
 from bioimageio.spec._internal._warn import warn
+from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
-from bioimageio.spec.generic.v0_2 import (
-    Attachments,
-    Author,
-    GenericBaseNoSource,
-    LinkedResource,
-)
+from bioimageio.spec.generic.v0_2 import Attachments, Author, GenericBaseNoSource, LinkedResource
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
-from bioimageio.spec.shared.nodes import FrozenDictNode, Kwargs, Node, StringNode
-from bioimageio.spec.shared.types import (
+from bioimageio.spec.types import (
     AxesInCZYX,
     AxesStr,
     Datetime,
@@ -50,7 +27,6 @@ from bioimageio.spec.shared.types import (
     Sha256,
     Version,
 )
-from bioimageio.spec._internal._validate import ValContext
 
 Framework = Literal["pytorch", "tensorflow"]
 Language = Literal["python", "java"]

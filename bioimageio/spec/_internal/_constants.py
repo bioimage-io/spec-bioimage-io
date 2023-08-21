@@ -16,7 +16,7 @@ else:
     from importlib.resources import files
 
 if TYPE_CHECKING:
-    from bioimageio.spec.shared.types import LicenseId, Severity, WarningLevelName
+    from bioimageio.spec.types import LicenseId, Severity, WarningLevelName
 
 with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
     VERSION: str = json.load(f)["version"]

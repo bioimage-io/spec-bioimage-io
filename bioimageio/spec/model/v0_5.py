@@ -22,12 +22,13 @@ from bioimageio.spec._internal._constants import (
     WARNING,
     WARNING_LEVEL_CONTEXT_KEY,
 )
+from bioimageio.spec._internal._validate import Predicate, ValContext
 from bioimageio.spec._internal._warn import warn
+from bioimageio.spec._internal.base_nodes import Kwargs, Node
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
-from bioimageio.spec.shared.nodes import Kwargs, Node
-from bioimageio.spec.shared.types import (
+from bioimageio.spec.types import (
     Datetime,
     DeprecatedLicenseId,
     FileSource,
@@ -39,7 +40,6 @@ from bioimageio.spec.shared.types import (
     Unit,
     Version,
 )
-from bioimageio.spec._internal._validate import Predicate, ValContext
 
 from . import v0_4
 

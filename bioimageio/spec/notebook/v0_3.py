@@ -6,7 +6,7 @@ from typing_extensions import Annotated
 from bioimageio.spec._internal._validate import WithSuffix
 from bioimageio.spec.generic.v0_3 import GenericBase
 from bioimageio.spec.notebook import v0_2
-from bioimageio.spec.shared.types import FileSource
+from bioimageio.spec.types import FileSource
 
 
 class Notebook(GenericBase):

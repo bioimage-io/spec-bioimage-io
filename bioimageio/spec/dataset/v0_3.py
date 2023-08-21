@@ -4,11 +4,8 @@ from pydantic import ConfigDict, Field
 from typing_extensions import Annotated
 
 from bioimageio.spec.dataset import v0_2
-from bioimageio.spec.generic.v0_3 import (
-    GenericBase,
-    LinkedResource,
-)
-from bioimageio.spec.shared.types import NonEmpty
+from bioimageio.spec.generic.v0_3 import GenericBase, LinkedResource
+from bioimageio.spec.types import NonEmpty
 
 __all__ = ["Dataset", "LinkedDataset", "AnyDataset"]
 
