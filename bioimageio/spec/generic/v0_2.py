@@ -273,7 +273,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
     rdf_source: Optional[FileSource] = None
-    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
+    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.
     Do not set this field in a YAML file."""
 
     tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
