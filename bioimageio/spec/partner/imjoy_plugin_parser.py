@@ -7,8 +7,9 @@ from typing import Any, Dict
 
 import requests
 from lxml import etree
+from ruamel.yaml import YAML
 
-from bioimageio.spec.shared import yaml
+yaml = YAML(typ="safe")
 
 tag_types = ["config", "script", "link", "window", "style", "docs", "attachment"]
 

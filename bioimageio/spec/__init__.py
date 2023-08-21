@@ -1,4 +1,4 @@
-from bioimageio.spec import application, collection, dataset, generic, model, notebook, shared
+from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal._constants import VERSION as __version__
 from bioimageio.spec._resource_types import LatestResourceDescription, ResourceDescription, SpecificResourceDescription
 from bioimageio.spec.application import AnyApplication, Application
@@ -32,7 +32,6 @@ __all__ = (
     "notebook",
     "Notebook",
     "ResourceDescription",
-    "shared",
     "SpecificResourceDescription",
     "validate",
 )
