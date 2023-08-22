@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple,
 from urllib.parse import urljoin
 
 import annotated_types
-from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, HttpUrl, StringConstraints, ValidationInfo
+from pydantic import AnyUrl, DirectoryPath, FilePath, GetCoreSchemaHandler, HttpUrl, StringConstraints, ValidationInfo
 from pydantic_core import core_schema
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict
@@ -112,7 +112,7 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: Union[DirectoryPath, AnyUrl]):
+    def get_absolute(self, root: Union[DirectoryPath, AnyUrl]) -> Union[FilePath, AnyUrl]:
         if isinstance(root, pathlib.Path):
             return root / self.path
         else:
@@ -148,6 +148,7 @@ class RelativeDirectory(RelativePath):
 
 
 FileSource = Union[HttpUrl, RelativeFilePath]
+FileName = str
 Loc = Tuple[Union[int, str], ...]
 
 
