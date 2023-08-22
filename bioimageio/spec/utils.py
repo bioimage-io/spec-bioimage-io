@@ -32,8 +32,8 @@ from bioimageio.spec._internal._utils import extract_file_name, nest_dict_with_n
 from bioimageio.spec._internal._validate import ValContext, get_validation_context
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._resource_types import ResourceDescription
-from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.types import (
+    FileName,
     LegacyValidationSummary,
     Loc,
     RawStringDict,
@@ -45,6 +45,12 @@ from bioimageio.spec.types import (
     ValidationWarning,
     WarningLevelName,
 )
+
+WeightsFormat = model.v0_4.WeightsFormat
+
+
+def _get_os_friendly_file_name(name: str) -> str:
+    return re.sub(r"\W+|^(?=\d)", "_", name)
 
 
 def get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
@@ -329,10 +335,7 @@ def validate_legacy(
     )
 
 
-FileName = str
-
-
-def prepare_to_package(
+def get_resource_package_content(
     rd: ResourceDescription,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
@@ -355,7 +358,7 @@ def prepare_to_package(
     package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
     fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
     file_names: Dict[Loc, str] = {}
-    os_friendly_name = re.sub(r"\W+|^(?=\d)", "_", rd.name)
+    os_friendly_name = _get_os_friendly_file_name(rd.name)
     rdf_content = {}  # filled in below
     reserved_file_sources: Dict[str, RawStringMapping] = {
         "rdf.yaml": rdf_content,
