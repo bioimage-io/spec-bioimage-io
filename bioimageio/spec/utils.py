@@ -1,3 +1,4 @@
+import re
 import traceback
 from copy import deepcopy
 from pathlib import PurePath
@@ -31,6 +32,7 @@ from bioimageio.spec._internal._utils import extract_file_name, nest_dict_with_n
 from bioimageio.spec._internal._validate import ValContext, get_validation_context
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._resource_types import ResourceDescription
+from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.types import (
     LegacyValidationSummary,
     Loc,
@@ -159,18 +161,18 @@ def get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Reso
 
 
 def update_format(
-    resource_description: RawStringMapping,
+    rdf_content: RawStringMapping,
     update_to_format: str = "latest",
     context: Optional[ValidationContext] = None,
 ) -> RawStringMapping:
     """Auto-update fields of a bioimage.io resource without any validation."""
-    assert "type" in resource_description
-    assert isinstance(resource_description["type"], str)
-    rd_class = get_rd_class(resource_description["type"], update_to_format)
+    assert "type" in rdf_content
+    assert isinstance(rdf_content["type"], str)
+    rd_class = get_rd_class(rdf_content["type"], update_to_format)
     if isinstance(rd_class, str):
         raise ValueError(rd_class)
 
-    rd = dict(resource_description)
+    rd = dict(rdf_content)
     val_context = get_validation_context(**(context or {}))
     rd_class.convert_from_older_format(rd, val_context)
     return rd
@@ -179,19 +181,19 @@ def update_format(
 RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def dump_description(resource_description: ResourceDescription) -> RawStringDict:
+def dump_description(rd: ResourceDescription) -> RawStringDict:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
-    return resource_description.model_dump(mode="json", exclude={"root"})
+    return rd.model_dump(mode="json", exclude={"root"})
 
 
-def _load_descr_impl(rd_class: Type[RD], resource_description: RawStringMapping, context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ValidationError] = []
     val_warnings: List[ValidationWarning] = []
     tb: Optional[List[str]] = None
 
     try:
-        rd = rd_class.model_validate(resource_description, context=dict(context))
+        rd = rd_class.model_validate(rdf_content, context=dict(context))
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):
@@ -207,14 +209,14 @@ def _load_descr_impl(rd_class: Type[RD], resource_description: RawStringMapping,
 
 
 def load_description_with_known_rd_class(
-    resource_description: RawStringMapping,
+    rdf_content: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
     rd_class: Type[RD],
 ) -> Tuple[Optional[RD], ValidationSummary]:
     val_context = get_validation_context(**(context or {}))
 
-    raw_rd = deepcopy(dict(resource_description))
+    raw_rd = deepcopy(dict(rdf_content))
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
         raw_rd,
@@ -250,15 +252,15 @@ def load_description_with_known_rd_class(
 
 
 def load_description(
-    resource_description: RawStringMapping,
+    rdf_content: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
-    discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(resource_description)
+    discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(rdf_content)
     if use_format_version != discovered_format_version:
-        resource_description = dict(resource_description)
-        resource_description["format_version"] = use_format_version
+        rdf_content = dict(rdf_content)
+        rdf_content["format_version"] = use_format_version
         future_patch_warning = ValidationWarning(
             loc=("format_version",),
             msg=f"Treated future patch version {discovered_format_version} as {use_format_version}.",
@@ -283,7 +285,7 @@ def load_description(
             warnings=[],
         )
     else:
-        rd, summary = load_description_with_known_rd_class(resource_description, context=context, rd_class=rd_class)
+        rd, summary = load_description_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
 
     if future_patch_warning:
         summary["warnings"] = list(summary["warnings"]) if "warnings" in summary else []
@@ -293,16 +295,16 @@ def load_description(
 
 
 def validate(
-    resource_description: RawStringMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    rdf_content: RawStringMapping,
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
-    _rd, summary = load_description(resource_description, context=context, format_version=as_format)
+    _rd, summary = load_description(rdf_content, context=context, format_version=as_format)
     return summary
 
 
 def validate_legacy(
-    resource_description: RawStringMapping,  # raw resource description (e.g. loaded from an rdf.yaml file).
+    rdf_content: RawStringMapping,  # e.g. loaded from an rdf.yaml file
     context: Optional[ValidationContext] = None,
     update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
 ) -> LegacyValidationSummary:
@@ -310,7 +312,7 @@ def validate_legacy(
 
     The legacy validation summary contains any errors and warnings as nested dict."""
 
-    vs = validate(resource_description, context, LATEST if update_format else DISCOVER)
+    vs = validate(rdf_content, context, LATEST if update_format else DISCOVER)
 
     error = vs["errors"]
     legacy_error = nest_dict_with_narrow_first_key({e["loc"]: e["msg"] for e in error}, first_k=str)
@@ -327,38 +329,39 @@ def validate_legacy(
     )
 
 
+FileName = str
+
+
 def prepare_to_package(
     rd: ResourceDescription,
     *,
-    weights_priority_order: Optional[Sequence[str]] = None,  # model only
+    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
     package_urls: bool = True,
-) -> Tuple[ResourceDescription, Dict[str, Union[HttpUrl, RelativeFilePath]]]:
+) -> Dict[FileName, Union[HttpUrl, RelativeFilePath, RawStringMapping]]:
     """
     Args:
         rd: resource description
         # for model resources only:
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
-
-    Returns:
-        Modified resource description copy and associated package content mapping file names to URLs or local paths,
-        which are referenced in the modfieid resource description.
-        Important note: The serialized resource description itself (= an rdf.yaml file) is not included.
     """
-    if weights_priority_order is not None and isinstance(rd, get_args(model.AnyModel)):
+    if weights_priority_order is not None and isinstance(rd, (model.v0_4.Model, model.v0_5.Model)):
         # select single weights entry
-        for w in weights_priority_order:
-            weights_entry: Any = rd.weights.get(w)  # type: ignore
-            if weights_entry is not None:
-                rd = rd.model_copy(update=dict(weights={w: weights_entry}))
-                break
-        else:
+        weights_entry = rd.weights.get(*weights_priority_order)
+        if weights_entry is None:
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
+        rd = rd.model_copy(update=dict(weights={weights_entry.type: weights_entry}))
 
     package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
     fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
     file_names: Dict[Loc, str] = {}
-    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath]] = {}
+    os_friendly_name = re.sub(r"\W+|^(?=\d)", "_", rd.name)
+    rdf_content = {}  # filled in below
+    reserved_file_sources: Dict[str, RawStringMapping] = {
+        "rdf.yaml": rdf_content,
+        f"{os_friendly_name}.{rd.type}.bioimageio.yaml": rdf_content,
+    }
+    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath, RawStringMapping]] = dict(reserved_file_sources)
     for loc, src in package_content.items():
         file_name = extract_file_name(src)
         if file_name in file_sources and file_sources[file_name] != src:
@@ -377,7 +380,10 @@ def prepare_to_package(
     # update resource description to point to local files
     rd = rd.model_copy(update=nest_dict_with_narrow_first_key(file_names, str))
 
-    return rd, file_sources
+    # fill in rdf content from updated resource description
+    rdf_content.update(dump_description(rd))
+
+    return file_sources
 
 
 def format_summary(summary: ValidationSummary):
