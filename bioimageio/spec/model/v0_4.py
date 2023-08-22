@@ -106,6 +106,35 @@ class Weights(Node):
 
         return self
 
+    def get(self, *priority_order: WeightsFormat):
+        if not priority_order:
+            priority_order = (
+                "pytorch_state_dict",
+                "onnx",
+                "torchscript",
+                "keras_hdf5",
+                "tensorflow_saved_model_bundle",
+                "tensorflow_js",
+            )
+
+        for priority in priority_order:
+            if priority == "keras_hdf5" and self.keras_hdf5 is not None:
+                return self.keras_hdf5
+            elif priority == "onnx" and self.onnx is not None:
+                return self.onnx
+            elif priority == "pytorch_state_dict" and self.pytorch_state_dict is not None:
+                return self.pytorch_state_dict
+            elif priority == "tensorflow_js" and self.tensorflow_js is not None:
+                return self.tensorflow_js
+            elif priority == "tensorflow_saved_model_bundle" and self.tensorflow_saved_model_bundle is not None:
+                return self.tensorflow_saved_model_bundle
+            elif priority == "torchscript" and self.torchscript is not None:
+                return self.torchscript
+            else:
+                raise ValueError(f"Invalid weights priority: {priority}")
+
+        return None
+
 
 class WeightsEntryBase(Node):
     model_config = {**Node.model_config, "exclude": ("type",)}
