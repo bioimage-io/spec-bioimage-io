@@ -1,6 +1,6 @@
 import collections.abc
 
-from bioimageio.spec._internal.validate import ValContext
+from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec.generic import v0_2_converter
 from bioimageio.spec.types import RawStringDict
 

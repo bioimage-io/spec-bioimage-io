@@ -1,6 +1,6 @@
 import collections.abc
 
-from bioimageio.spec._internal.validate import ValContext
+from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec.generic.v0_2_converter import remove_doi_prefix, remove_slashes_from_names
 from bioimageio.spec.model.v0_3_converter import convert_model_from_v0_3_to_0_4_0
 from bioimageio.spec.types import RawStringDict

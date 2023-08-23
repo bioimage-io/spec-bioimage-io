@@ -4,7 +4,7 @@ from unittest import TestCase
 from pydantic import TypeAdapter, ValidationError
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.validate import WithSuffix
+from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec.types import FileSource
 
 

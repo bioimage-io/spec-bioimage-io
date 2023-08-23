@@ -8,8 +8,8 @@ from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
-from bioimageio.spec._internal.validate import ValContext, WithSuffix
-from bioimageio.spec._internal.warn import warn
+from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
 from bioimageio.spec.generic.v0_2 import Attachments, Author, GenericBaseNoSource, LinkedResource
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format

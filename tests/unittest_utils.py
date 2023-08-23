@@ -12,7 +12,7 @@ from ruamel.yaml import YAML
 
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec._internal.base_nodes import Node
-from bioimageio.spec._internal.validate import get_validation_context
+from bioimageio.spec._internal.field_validation import get_validation_context
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.types import ValidationContext, ValidationSummary
 from bioimageio.spec.utils import format_summary, load_description

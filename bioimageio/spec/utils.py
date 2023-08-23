@@ -1,56 +1,30 @@
-import re
 import traceback
 from copy import deepcopy
 from pathlib import PurePath
 from types import MappingProxyType
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Literal,
-    Mapping,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    get_args,
-)
+from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional, Tuple, Type, TypeVar, Union, get_args
 from urllib.parse import urljoin
 
 import pydantic
-from pydantic import HttpUrl
 from pydantic_core import PydanticUndefined
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal._package import fill_resource_package_content
-from bioimageio.spec._internal._utils import extract_file_name, nest_dict_with_narrow_first_key
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec._internal.validate import ValContext, get_validation_context
+from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
+from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
 from bioimageio.spec._resource_types import ResourceDescription
 from bioimageio.spec.types import (
-    FileName,
     LegacyValidationSummary,
-    Loc,
     RawStringDict,
     RawStringMapping,
-    RelativeFilePath,
     ValidationContext,
     ValidationError,
     ValidationSummary,
     ValidationWarning,
     WarningLevelName,
 )
-
-WeightsFormat = model.v0_4.WeightsFormat
-
-
-def _get_os_friendly_file_name(name: str) -> str:
-    return re.sub(r"\W+|^(?=\d)", "_", name)
 
 
 def get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
@@ -333,60 +307,6 @@ def validate_legacy(
         traceback=tb_list,
         warnings={".".join(map(str, w["loc"])): w["msg"] for w in vs["warnings"]} if "warnings" in vs else {},
     )
-
-
-def get_resource_package_content(
-    rd: ResourceDescription,
-    *,
-    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
-    package_urls: bool = True,
-) -> Dict[FileName, Union[HttpUrl, RelativeFilePath, RawStringMapping]]:
-    """
-    Args:
-        rd: resource description
-        # for model resources only:
-        weights_priority_order: If given, only the first weights format present in the model is included.
-                                If none of the prioritized weights formats is found a ValueError is raised.
-    """
-    if weights_priority_order is not None and isinstance(rd, (model.v0_4.Model, model.v0_5.Model)):
-        # select single weights entry
-        weights_entry = rd.weights.get(*weights_priority_order)
-        if weights_entry is None:
-            raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
-        rd = rd.model_copy(update=dict(weights={weights_entry.type: weights_entry}))
-
-    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
-    fill_resource_package_content(package_content, rd, node_loc=(), package_urls=package_urls)
-    file_names: Dict[Loc, str] = {}
-    os_friendly_name = _get_os_friendly_file_name(rd.name)
-    rdf_content = {}  # filled in below
-    reserved_file_sources: Dict[str, RawStringMapping] = {
-        "rdf.yaml": rdf_content,
-        f"{os_friendly_name}.{rd.type}.bioimageio.yaml": rdf_content,
-    }
-    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath, RawStringMapping]] = dict(reserved_file_sources)
-    for loc, src in package_content.items():
-        file_name = extract_file_name(src)
-        if file_name in file_sources and file_sources[file_name] != src:
-            for i in range(2, 10):
-                fn, *ext = file_name.split(".")
-                alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-                if alternative_file_name not in file_sources or file_sources[alternative_file_name] == src:
-                    file_name = alternative_file_name
-                    break
-            else:
-                raise RuntimeError(f"Too many file name clashes for {file_name}")
-
-        file_sources[file_name] = src
-        file_names[loc] = file_name
-
-    # update resource description to point to local files
-    rd = rd.model_copy(update=nest_dict_with_narrow_first_key(file_names, str))
-
-    # fill in rdf content from updated resource description
-    rdf_content.update(dump_description(rd))
-
-    return file_sources
 
 
 def format_summary(summary: ValidationSummary):

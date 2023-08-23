@@ -1,7 +1,7 @@
 import collections.abc
 from typing import Any, Dict, Mapping, Union
 
-from bioimageio.spec._internal.validate import ValContext
+from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec.types import RawStringDict
 
 

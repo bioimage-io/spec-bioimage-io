@@ -12,8 +12,7 @@ from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict
 
 from bioimageio.spec._internal.constants import SI_UNIT_REGEX
-from bioimageio.spec._internal.generated_spdx_license_type import DeprecatedLicenseId, LicenseId
-from bioimageio.spec._internal.validate import (
+from bioimageio.spec._internal.field_validation import (
     AfterValidator,
     BeforeValidator,
     Predicate,
@@ -26,6 +25,7 @@ from bioimageio.spec._internal.validate import (
     validate_unique_entries,
     validate_version,
 )
+from bioimageio.spec._internal.generated_spdx_license_type import DeprecatedLicenseId, LicenseId
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])

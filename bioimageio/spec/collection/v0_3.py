@@ -3,7 +3,7 @@ from typing import Any, ClassVar, Dict, Literal, Tuple, Union
 from pydantic import ConfigDict, Field, TypeAdapter, field_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.validate import ValContext
+from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.collection import v0_2
 from bioimageio.spec.dataset.v0_3 import AnyDataset

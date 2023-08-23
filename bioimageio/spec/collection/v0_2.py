@@ -8,8 +8,8 @@ from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.validate import ValContext
-from bioimageio.spec._internal.warn import warn
+from bioimageio.spec._internal.field_validation import ValContext
+from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.dataset.v0_2 import AnyDataset
 from bioimageio.spec.generic.v0_2 import AnyGeneric, GenericBase

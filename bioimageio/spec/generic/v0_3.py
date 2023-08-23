@@ -14,8 +14,8 @@ from bioimageio.spec._internal.constants import (
     WARNING,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal.validate import ValContext, WithSuffix
-from bioimageio.spec._internal.warn import as_warning, warn
+from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, RawStringDict, Sha256, Version

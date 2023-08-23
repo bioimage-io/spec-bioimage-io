@@ -7,8 +7,8 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
-from bioimageio.spec._internal.validate import ValContext, WithSuffix
-from bioimageio.spec._internal.warn import as_warning, warn
+from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawStringDict, Version
 

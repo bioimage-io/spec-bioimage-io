@@ -8,7 +8,7 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec._internal.warn import warn
+from bioimageio.spec._internal.field_warning import warn
 
 
 class DummyNode(Node):
