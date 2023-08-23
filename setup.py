@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 from setuptools import find_namespace_packages, setup
 
 # Get the long description from the README file
@@ -34,7 +35,9 @@ setup(
         "python-dateutil",
         "typing-extensions",
     ],
-    extras_require={"dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "pooch", "pre-commit", "numpy"]},
+    extras_require={
+        "dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "pooch", "pre-commit", "numpy", "pytest", "lxml"]
+    },
     scripts=[],
     include_package_data=True,
     project_urls={

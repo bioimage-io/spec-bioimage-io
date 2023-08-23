@@ -13,9 +13,9 @@ from ruamel.yaml import YAML
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_validation import get_validation_context
+from bioimageio.spec.description import format_summary, load_description
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.types import ValidationContext, ValidationSummary
-from bioimageio.spec.utils import format_summary, load_description
 
 yaml = YAML(typ="safe")
 
@@ -160,6 +160,7 @@ class TestBases:
 
                     with self.subTest("in_node"):
                         self.assertRaises(ValidationError, self.node.model_validate, dict(value=v))
+
 
     class TestManyRdfs(TestCase, ABC):
         rdf_root: Path

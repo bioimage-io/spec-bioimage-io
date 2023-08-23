@@ -6,8 +6,8 @@ from pydantic import HttpUrl
 from ruamel.yaml import YAML
 
 from bioimageio.spec._internal.constants import ALERT
+from bioimageio.spec.description import load_description, update_format, validate
 from bioimageio.spec.types import ValidationContext
-from bioimageio.spec.utils import load_description, update_format, validate
 
 yaml = YAML(typ="safe")
 

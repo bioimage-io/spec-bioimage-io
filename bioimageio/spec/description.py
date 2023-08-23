@@ -6,7 +6,9 @@ from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional, Tuple,
 from urllib.parse import urljoin
 
 import pydantic
+from pydantic import Field
 from pydantic_core import PydanticUndefined
+from typing_extensions import Annotated
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
@@ -14,7 +16,6 @@ from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._resource_types import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.types import (
     LegacyValidationSummary,
     RawStringDict,
@@ -25,6 +26,58 @@ from bioimageio.spec.types import (
     ValidationWarning,
     WarningLevelName,
 )
+
+_ResourceDescription_v0_2 = Union[
+    Annotated[
+        Union[
+            application.v0_2.Application,
+            collection.v0_2.Collection,
+            dataset.v0_2.Dataset,
+            model.v0_4.Model,
+            notebook.v0_2.Notebook,
+        ],
+        Field(discriminator="type"),
+    ],
+    generic.v0_2.Generic,
+]
+"""A resource description following the 0.2.x (model: 0.4.x) specification format"""
+
+_ResourceDescription_v0_3 = Union[
+    Annotated[
+        Union[
+            application.v0_3.Application,
+            collection.v0_3.Collection,
+            dataset.v0_3.Dataset,
+            model.v0_5.Model,
+            notebook.v0_3.Notebook,
+        ],
+        Field(discriminator="type"),
+    ],
+    generic.v0_3.Generic,
+]
+"""A resource description following the 0.3.x (model: 0.5.x) specification format"""
+
+LatestResourceDescription = _ResourceDescription_v0_3
+"""A resource description following the latest specification format"""
+
+
+SpecificResourceDescription = Annotated[
+    Union[
+        application.AnyApplication,
+        collection.AnyCollection,
+        dataset.AnyDataset,
+        model.AnyModel,
+        notebook.AnyNotebook,
+    ],
+    Field(discriminator="type"),
+]
+"""Any of the implemented, non-generic resource descriptions"""
+
+ResourceDescription = Union[
+    SpecificResourceDescription,
+    generic.AnyGeneric,
+]
+"""Any of the implemented resource descriptions"""
 
 
 def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:

@@ -1,19 +1,10 @@
 from __future__ import annotations
 
 import json
-import sys
-from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
-if sys.version_info < (3, 9):
-
-    def files(package_name: str):
-        assert package_name == "bioimageio.spec"
-        return Path(__file__).parent.parent
-
-else:
-    from importlib.resources import files
+from bioimageio.spec._internal.utils import files
 
 if TYPE_CHECKING:
     from bioimageio.spec.types import LicenseId, Severity, WarningLevelName

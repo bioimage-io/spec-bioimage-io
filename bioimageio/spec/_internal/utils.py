@@ -1,25 +1,45 @@
 from __future__ import annotations
 
-from pathlib import PurePath
-from typing import Dict, Tuple, Type, TypeVar, Union
-from urllib.parse import urlparse
+import sys
+from pathlib import Path
+from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
 
-from pydantic import HttpUrl
-
-from bioimageio.spec.types import RelativeFilePath
+from typing_extensions import Annotated
 
 K = TypeVar("K")
 V = TypeVar("V")
 NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
 
-def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
-    if isinstance(src, RelativeFilePath):
-        return src.path.name
-    elif isinstance(src, PurePath):
-        return src.name
+if sys.version_info < (3, 9):
+
+    def files(package_name: str):
+        assert package_name == "bioimageio.spec"
+        return Path(__file__).parent.parent
+
+else:
+    from importlib.resources import files  # type: ignore
+
+_annot_type = type(Annotated[int, "int"])
+
+
+def iterate_annotated_union(typ: type) -> Iterator[Any]:
+    """iterate over all type arguments in a nested combination of Annotation and Union
+
+    >>> U = Union[Annotated[int, "int"], Annotated[str, "str"]]
+    >>> A = Annotated[U, "union"]
+    >>> list(iterate_annotated_union(U))
+    [<class 'int'>, <class 'str'>]
+    >>> list(iterate_annotated_union(A))
+    [<class 'int'>, <class 'str'>]
+    """
+    if get_origin(typ) is Union:
+        for t in get_args(typ):
+            yield from iterate_annotated_union(t)
+    elif isinstance(typ, _annot_type):
+        yield from iterate_annotated_union(get_args(typ)[0])
     else:
-        return urlparse(str(src)).path.split("/")[-1]
+        yield typ
 
 
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:

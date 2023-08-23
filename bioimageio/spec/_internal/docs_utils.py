@@ -10,11 +10,11 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
 
     example:
     >>> get_ref_url(
-        "class",
-        "Binarize",
-        "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
-    )
-    https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L107-L112
+    ...     "class",
+    ...     "Binarize",
+    ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
+    ... )
+    'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L120-L127'
     """
     # hotfix to handle requests not available in pyodide, see
     # https://github.com/bioimage-io/bioimage.io/issues/216#issuecomment-1012422194

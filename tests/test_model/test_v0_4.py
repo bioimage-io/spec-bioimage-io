@@ -7,6 +7,7 @@ from unittest import TestCase
 from pydantic import HttpUrl
 
 from bioimageio.spec._internal.constants import INFO
+from bioimageio.spec.description import format_summary, load_description, validate
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     InputTensor,
@@ -21,7 +22,6 @@ from bioimageio.spec.model.v0_4 import (
     Weights,
 )
 from bioimageio.spec.types import RelativeFilePath, ValidationContext
-from bioimageio.spec.utils import format_summary, load_description, validate
 from tests.unittest_utils import Invalid, TestBases, Valid
 
 

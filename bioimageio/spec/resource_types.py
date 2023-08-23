@@ -5,6 +5,21 @@ from typing_extensions import Annotated
 
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 
+ResourceDescription_v0_2 = Union[
+    Annotated[
+        Union[
+            application.v0_2.Application,
+            collection.v0_2.Collection,
+            dataset.v0_2.Dataset,
+            model.v0_4.Model,
+            notebook.v0_2.Notebook,
+        ],
+        Field(discriminator="type"),
+    ],
+    generic.v0_2.Generic,
+]
+"""A resource description following the 0.2.x (model: 0.4.x) specification format"""
+
 ResourceDescription_v0_3 = Union[
     Annotated[
         Union[
@@ -22,22 +37,6 @@ ResourceDescription_v0_3 = Union[
 
 LatestResourceDescription = ResourceDescription_v0_3
 """A resource description following the latest specification format"""
-
-
-ResourceDescription_v0_2 = Union[
-    Annotated[
-        Union[
-            application.v0_2.Application,
-            collection.v0_2.Collection,
-            dataset.v0_2.Dataset,
-            model.v0_4.Model,
-            notebook.v0_2.Notebook,
-        ],
-        Field(discriminator="type"),
-    ],
-    generic.v0_2.Generic,
-]
-"""A resource description following the 0.2.x (model: 0.4.x) specification format"""
 
 
 SpecificResourceDescription = Annotated[
