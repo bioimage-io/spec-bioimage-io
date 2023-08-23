@@ -9,8 +9,7 @@ from bioimageio.spec import model
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec.description import dump_description
-from bioimageio.spec.resource_types import ResourceDescription
+from bioimageio.spec.description import ResourceDescription, dump_description
 from bioimageio.spec.types import FileName, Loc, RawStringMapping, RelativeFilePath
 
 

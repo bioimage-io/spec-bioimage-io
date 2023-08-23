@@ -156,11 +156,11 @@ class TestBioimageioCollection(TestBases.TestManyRdfs):
         collection_registry: Dict[str, None] = {
             entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
         }
-        collection = pooch.create(
+        collection = pooch.create(  # type: ignore
             path=CACHE_PATH,
             base_url=RDF_BASE_URL,
             registry=collection_registry,
         )
 
         for rdf in collection_registry:
-            yield AnyUrl("https://example.com/"), Path(collection.fetch(rdf))
+            yield AnyUrl("https://example.com/"), Path(collection.fetch(rdf))  # type: ignore

@@ -6,7 +6,7 @@ from types import MappingProxyType
 from typing import Any, ClassVar, Dict, Iterable, Mapping, Optional, Sequence, Set, Tuple, Type, Union
 from unittest import TestCase
 
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # type: ignore
 from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
@@ -161,7 +161,6 @@ class TestBases:
                     with self.subTest("in_node"):
                         self.assertRaises(ValidationError, self.node.model_validate, dict(value=v))
 
-
     class TestManyRdfs(TestCase, ABC):
         rdf_root: Path
         adapter: ClassVar[TypeAdapter[ResourceDescription]] = TypeAdapter(ResourceDescription)
@@ -250,7 +249,7 @@ class TestBases:
                     yield rdf.parent, rdf
 
         def assert_big_dicts_equal(self, a: Dict[str, Any], b: Dict[str, Any], msg: str):
-            diff = DeepDiff(a, b)
+            diff: Any = DeepDiff(a, b)
             if diff:
                 # ignore some known differences...
                 slim_diff = deepcopy(diff)
@@ -261,7 +260,7 @@ class TestBases:
                         isinstance(k, str)
                         and k.startswith("root['cite'][")
                         and k.endswith("]['doi']")
-                        and any(diff[VC][k]["old_value"].startswith(dp) for dp in DOI_PREFIXES)  # type: ignore
+                        and any(diff[VC][k]["old_value"].startswith(dp) for dp in DOI_PREFIXES)
                     ):
                         # 1. we dop 'https://doi.org/' from cite.i.doi field
                         slim_diff[VC].pop(k)
