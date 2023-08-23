@@ -14,7 +14,7 @@ from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._resource_types import ResourceDescription
+from bioimageio.spec._resource_types import LatestResourceDescription, ResourceDescription
 from bioimageio.spec.types import (
     LegacyValidationSummary,
     RawStringDict,
@@ -27,7 +27,7 @@ from bioimageio.spec.types import (
 )
 
 
-def get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
+def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
     supported: Dict[str, List[str]] = {}
     for typ, rd_class in _iterate_over_rd_classes():
         format_versions = supported.setdefault(typ, [])
@@ -75,7 +75,7 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
         yield typ, rd_class
 
 
-def check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
+def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
     typ = data.get("type")
     if not isinstance(typ, str):
         raise TypeError(f"Invalid resource type '{typ}' of type {type(typ)}")
@@ -84,7 +84,7 @@ def check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str
     if not isinstance(fv, str):
         raise TypeError(f"Invalid format version '{fv}' of type {type(fv)}")
 
-    if fv in get_supported_format_versions().get(typ, ()):
+    if fv in _get_supported_format_versions().get(typ, ()):
         use_fv = fv
     elif hasattr(bioimageio.spec, typ):
         # type is specialized...
@@ -107,7 +107,7 @@ def check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str
     return typ, fv, use_fv
 
 
-def get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[ResourceDescription], str]:
+def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[ResourceDescription], str]:
     """Get the appropriate resource description class for a given `type` and `format_version`.
 
     returns:
@@ -148,7 +148,7 @@ def update_format(
     """Auto-update fields of a bioimage.io resource without any validation."""
     assert "type" in rdf_content
     assert isinstance(rdf_content["type"], str)
-    rd_class = get_rd_class(rdf_content["type"], update_to_format)
+    rd_class = _get_rd_class(rdf_content["type"], update_to_format)
     if isinstance(rd_class, str):
         raise ValueError(rd_class)
 
@@ -188,7 +188,7 @@ def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context:
     return rd, val_errors, tb, val_warnings
 
 
-def load_description_with_known_rd_class(
+def _load_description_with_known_rd_class(
     rdf_content: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
@@ -237,7 +237,7 @@ def load_description(
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
-    discovered_type, discovered_format_version, use_format_version = check_type_and_format_version(rdf_content)
+    discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(rdf_content)
     if use_format_version != discovered_format_version:
         rdf_content = dict(rdf_content)
         rdf_content["format_version"] = use_format_version
@@ -250,7 +250,7 @@ def load_description(
         future_patch_warning = None
 
     fv = use_format_version if format_version == DISCOVER else format_version
-    rd_class = get_rd_class(discovered_type, format_version=fv)
+    rd_class = _get_rd_class(discovered_type, format_version=fv)
     if isinstance(rd_class, str):
         rd = None
         val_context = get_validation_context(**(context or {}))
@@ -265,13 +265,21 @@ def load_description(
             warnings=[],
         )
     else:
-        rd, summary = load_description_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
+        rd, summary = _load_description_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
 
     if future_patch_warning:
         summary["warnings"] = list(summary["warnings"]) if "warnings" in summary else []
         summary["warnings"].insert(0, future_patch_warning)
 
     return rd, summary
+
+
+def load_description_as_latest(
+    rdf_content: RawStringMapping,
+    *,
+    context: Optional[ValidationContext] = None,
+) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
+    return load_description(rdf_content, context=context, format_version=LATEST)  # type: ignore
 
 
 def validate(
