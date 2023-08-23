@@ -13,9 +13,9 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
 from bioimageio.spec import ResourceDescription, application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import unindent
 from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 
 Loc = Tuple[str, ...]
 

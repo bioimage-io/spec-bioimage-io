@@ -2,8 +2,8 @@ from typing import Any, Dict, Tuple, Union
 
 from pydantic import AnyUrl, HttpUrl
 
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Node
+from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec.types import Loc, RelativeFilePath
 
 

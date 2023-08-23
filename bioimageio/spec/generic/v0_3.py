@@ -5,7 +5,8 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import AnyUrl, ConfigDict, DirectoryPath, Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import (
+from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
+from bioimageio.spec._internal.constants import (
     ALERT,
     ERROR,
     LICENSES,
@@ -13,9 +14,8 @@ from bioimageio.spec._internal._constants import (
     WARNING,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal._validate import ValContext, WithSuffix
-from bioimageio.spec._internal._warn import as_warning, warn
-from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
+from bioimageio.spec._internal.validate import ValContext, WithSuffix
+from bioimageio.spec._internal.warn import as_warning, warn
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, RawStringDict, Sha256, Version

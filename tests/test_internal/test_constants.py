@@ -2,7 +2,7 @@ import logging
 import re
 from unittest import TestCase
 
-from bioimageio.spec._internal._constants import ALERT, INFO, SI_UNIT_REGEX, WARNING
+from bioimageio.spec._internal.constants import ALERT, INFO, SI_UNIT_REGEX, WARNING
 
 
 class TestSiUnitRegex(TestCase):

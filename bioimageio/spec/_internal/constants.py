@@ -27,7 +27,7 @@ DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI char
 IN_PACKAGE_MESSAGE = "∈📦 "
 
 # license file generated with scripts/update_spdx_licenses.py
-with files("bioimageio.spec").joinpath("static/licenses.json").open("r", encoding="utf-8") as f:
+with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open("r", encoding="utf-8") as f:
     _license_data = json.load(f)
 
 LICENSES: Dict[LicenseId, Dict[str, Any]] = {x["licenseId"]: x for x in _license_data["licenses"]}

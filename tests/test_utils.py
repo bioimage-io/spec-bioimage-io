@@ -5,7 +5,7 @@ from unittest import TestCase
 from pydantic import HttpUrl
 from ruamel.yaml import YAML
 
-from bioimageio.spec._internal._constants import ALERT
+from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec.types import ValidationContext
 from bioimageio.spec.utils import load_description, update_format, validate
 

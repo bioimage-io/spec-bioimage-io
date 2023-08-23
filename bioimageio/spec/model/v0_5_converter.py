@@ -1,8 +1,8 @@
 import collections.abc
 from typing import Any, Dict, List, Mapping, Sequence, Union
 
-from bioimageio.spec._internal._constants import ALERT
-from bioimageio.spec._internal._validate import ValContext
+from bioimageio.spec._internal.constants import ALERT
+from bioimageio.spec._internal.validate import ValContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 from bioimageio.spec.model import v0_4_converter
 from bioimageio.spec.types import RawStringDict, RawValue

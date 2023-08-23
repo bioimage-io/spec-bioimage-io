@@ -11,9 +11,9 @@ from pydantic_core import core_schema
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict
 
-from bioimageio.spec._internal._constants import SI_UNIT_REGEX
 from bioimageio.spec._internal._generated_spdx_license_type import DeprecatedLicenseId, LicenseId
-from bioimageio.spec._internal._validate import (
+from bioimageio.spec._internal.constants import SI_UNIT_REGEX
+from bioimageio.spec._internal.validate import (
     AfterValidator,
     BeforeValidator,
     Predicate,

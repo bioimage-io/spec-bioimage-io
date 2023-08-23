@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal._constants import INFO
+from bioimageio.spec._internal.constants import INFO
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     InputTensor,

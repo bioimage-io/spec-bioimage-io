@@ -14,7 +14,8 @@ from pydantic import (
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
-from bioimageio.spec._internal._constants import (
+from bioimageio.spec._internal.base_nodes import Kwargs, Node
+from bioimageio.spec._internal.constants import (
     DTYPE_LIMITS,
     ERROR,
     INFO,
@@ -22,9 +23,8 @@ from bioimageio.spec._internal._constants import (
     WARNING,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal._validate import Predicate, ValContext
-from bioimageio.spec._internal._warn import warn
-from bioimageio.spec._internal.base_nodes import Kwargs, Node
+from bioimageio.spec._internal.validate import Predicate, ValContext
+from bioimageio.spec._internal.warn import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format

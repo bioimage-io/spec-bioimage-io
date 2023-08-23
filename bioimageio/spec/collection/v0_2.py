@@ -6,10 +6,10 @@ from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._constants import ALERT
-from bioimageio.spec._internal._validate import ValContext
-from bioimageio.spec._internal._warn import warn
 from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.constants import ALERT
+from bioimageio.spec._internal.validate import ValContext
+from bioimageio.spec._internal.warn import warn
 from bioimageio.spec.application.v0_2 import AnyApplication
 from bioimageio.spec.dataset.v0_2 import AnyDataset
 from bioimageio.spec.generic.v0_2 import AnyGeneric, GenericBase

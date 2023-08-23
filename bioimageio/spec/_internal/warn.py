@@ -10,7 +10,7 @@ from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal._constants import ERROR, SEVERITY_TO_WARNING, WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import ERROR, SEVERITY_TO_WARNING, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec.types import Severity
 
 if TYPE_CHECKING:

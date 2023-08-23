@@ -6,3 +6,4 @@ dist/
 tests/cache
 tmp/
 typings/pooch/
+typings/deepdiff/

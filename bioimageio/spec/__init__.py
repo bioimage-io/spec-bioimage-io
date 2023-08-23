@@ -1,5 +1,5 @@
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal._constants import VERSION as __version__
+from bioimageio.spec._internal.constants import VERSION as __version__
 from bioimageio.spec._resource_types import LatestResourceDescription, ResourceDescription, SpecificResourceDescription
 from bioimageio.spec.application import AnyApplication, Application
 from bioimageio.spec.collection import AnyCollection, Collection

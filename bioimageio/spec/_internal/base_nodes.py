@@ -31,9 +31,9 @@ from pydantic import Field, GetCoreSchemaHandler, StringConstraints, TypeAdapter
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal._constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal._utils import unindent
-from bioimageio.spec._internal._validate import ValContext, get_validation_context, is_valid_raw_mapping
+from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal.validate import ValContext, get_validation_context, is_valid_raw_mapping
 from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue
 
 if TYPE_CHECKING:

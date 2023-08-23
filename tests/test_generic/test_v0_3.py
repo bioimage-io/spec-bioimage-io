@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from bioimageio.spec._internal._constants import WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec.generic.v0_3 import Generic
 from tests.unittest_utils import Invalid, TestBases, Valid
 

@@ -5,10 +5,10 @@ from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import ConfigDict, EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal._constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
-from bioimageio.spec._internal._validate import ValContext, WithSuffix
-from bioimageio.spec._internal._warn import as_warning, warn
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
+from bioimageio.spec._internal.constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
+from bioimageio.spec._internal.validate import ValContext, WithSuffix
+from bioimageio.spec._internal.warn import as_warning, warn
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawStringDict, Version
 

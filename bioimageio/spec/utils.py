@@ -26,11 +26,11 @@ from pydantic_core import PydanticUndefined
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal._constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal._package import fill_resource_package_content
 from bioimageio.spec._internal._utils import extract_file_name, nest_dict_with_narrow_first_key
-from bioimageio.spec._internal._validate import ValContext, get_validation_context
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.validate import ValContext, get_validation_context
 from bioimageio.spec._resource_types import ResourceDescription
 from bioimageio.spec.types import (
     FileName,
