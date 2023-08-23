@@ -15,7 +15,7 @@ from bioimageio.spec import application, collection, dataset, generic, model, no
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
-from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
+from bioimageio.spec._internal.utils import iterate_annotated_union, nest_dict_with_narrow_first_key
 from bioimageio.spec.types import (
     LegacyValidationSummary,
     RawStringDict,
@@ -93,16 +93,7 @@ def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
 
 
 def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in get_args(
-        Union[
-            get_args(application.AnyApplication)[0],  # type: ignore
-            get_args(collection.AnyCollection)[0],  # type: ignore
-            get_args(dataset.AnyDataset)[0],  # type: ignore
-            get_args(generic.AnyGeneric)[0],  # type: ignore
-            get_args(model.AnyModel)[0],  # type: ignore
-            get_args(notebook.AnyNotebook)[0],  # type: ignore
-        ]
-    ):
+    for rd_class in iterate_annotated_union(ResourceDescription):
         typ = rd_class.model_fields["type"].default
         if typ is PydanticUndefined:
             typ = "generic"
@@ -112,14 +103,7 @@ def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]
 
 
 def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in [
-        application.Application,
-        collection.Collection,
-        dataset.Dataset,
-        generic.Generic,
-        model.Model,
-        notebook.Notebook,
-    ]:
+    for rd_class in iterate_annotated_union(LatestResourceDescription):
         typ: Any = rd_class.model_fields["type"].default
         if typ is PydanticUndefined:
             typ = "generic"
