@@ -15,17 +15,9 @@ from bioimageio.spec import application, collection, dataset, generic, model, no
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
-from bioimageio.spec._internal.utils import iterate_annotated_union, nest_dict_with_narrow_first_key
-from bioimageio.spec.types import (
-    LegacyValidationSummary,
-    RawStringDict,
-    RawStringMapping,
-    ValidationContext,
-    ValidationError,
-    ValidationSummary,
-    ValidationWarning,
-    WarningLevelName,
-)
+from bioimageio.spec._internal.utils import iterate_annotated_union
+from bioimageio.spec.summary import ErrorOutcome, ValidationSummary, WarningOutcome
+from bioimageio.spec.types import RawStringDict, RawStringMapping, ValidationContext, WarningLevelName
 
 _ResourceDescription_v0_2 = Union[
     Annotated[
@@ -205,8 +197,8 @@ def dump_description(rd: ResourceDescription) -> RawStringDict:
 
 def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context: ValContext):
     rd: Optional[RD] = None
-    val_errors: List[ValidationError] = []
-    val_warnings: List[ValidationWarning] = []
+    val_errors: List[ErrorOutcome] = []
+    val_warnings: List[WarningOutcome] = []
     tb: Optional[List[str]] = None
 
     try:
@@ -214,12 +206,12 @@ def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context:
     except pydantic.ValidationError as e:
         for ee in e.errors(include_url=False):
             if (type_ := ee["type"]) in get_args(WarningLevelName):
-                val_warnings.append(ValidationWarning(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
+                val_warnings.append(WarningOutcome(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
             else:
-                val_errors.append(ValidationError(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
+                val_errors.append(ErrorOutcome(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
 
     except Exception as e:
-        val_errors.append(ValidationError(loc=(), msg=str(e), type=type(e).__name__))
+        val_errors.append(ErrorOutcome(loc=(), msg=str(e), type=type(e).__name__))
         tb = traceback.format_tb(e.__traceback__)
 
     return rd, val_errors, tb, val_warnings
@@ -278,7 +270,7 @@ def load_description(
     if use_format_version != discovered_format_version:
         rdf_content = dict(rdf_content)
         rdf_content["format_version"] = use_format_version
-        future_patch_warning = ValidationWarning(
+        future_patch_warning = WarningOutcome(
             loc=("format_version",),
             msg=f"Treated future patch version {discovered_format_version} as {use_format_version}.",
             type="alert",
@@ -295,7 +287,7 @@ def load_description(
         file_name = val_context["file_name"]
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
-            errors=[ValidationError(loc=(), msg=rd_class, type="error")],
+            errors=[ErrorOutcome(loc=(), msg=rd_class, type="error")],
             name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
             source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
             status="failed",
@@ -326,32 +318,6 @@ def validate(
 ) -> ValidationSummary:
     _rd, summary = load_description(rdf_content, context=context, format_version=as_format)
     return summary
-
-
-def validate_legacy(
-    rdf_content: RawStringMapping,  # e.g. loaded from an rdf.yaml file
-    context: Optional[ValidationContext] = None,
-    update_format: bool = False,  # apply auto-conversion to the latest type-specific format before validating.
-) -> LegacyValidationSummary:
-    """Validate a bioimage.io resource description returning the legacy validaiton summary.
-
-    The legacy validation summary contains any errors and warnings as nested dict."""
-
-    vs = validate(rdf_content, context, LATEST if update_format else DISCOVER)
-
-    error = vs["errors"]
-    legacy_error = nest_dict_with_narrow_first_key({e["loc"]: e["msg"] for e in error}, first_k=str)
-    tb = vs.get("traceback")
-    tb_list = None if tb is None else list(tb)
-    return LegacyValidationSummary(
-        bioimageio_spec_version=vs["bioimageio_spec_version"],
-        error=legacy_error,
-        name=vs["name"],
-        source_name=vs["source_name"],
-        status=vs["status"],
-        traceback=tb_list,
-        warnings={".".join(map(str, w["loc"])): w["msg"] for w in vs["warnings"]} if "warnings" in vs else {},
-    )
 
 
 def format_summary(summary: ValidationSummary):

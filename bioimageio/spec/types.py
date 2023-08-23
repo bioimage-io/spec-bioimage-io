@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import pathlib
 from datetime import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
 from pydantic import AnyUrl, DirectoryPath, FilePath, GetCoreSchemaHandler, HttpUrl, StringConstraints, ValidationInfo
 from pydantic_core import core_schema
-from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, LiteralString, NotRequired, TypedDict
 
 from bioimageio.spec._internal.constants import SI_UNIT_REGEX
@@ -161,37 +160,3 @@ class ValidationContext(TypedDict):
 
     warning_level: NotRequired[WarningLevel]
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
-
-
-class ValidationOutcome(TypedDict):
-    loc: Tuple[Union[int, str], ...]
-    msg: str
-
-
-class ValidationError(ValidationOutcome):
-    type: Union[ErrorType, str]
-
-
-class ValidationWarning(ValidationOutcome):
-    type: WarningLevelName
-
-
-class ValidationSummary(TypedDict):
-    bioimageio_spec_version: str
-    name: str
-    source_name: str
-    status: Union[Literal["passed", "failed"], str]
-    errors: Sequence[ValidationError]
-    traceback: NotRequired[Sequence[str]]
-    warnings: Sequence[ValidationWarning]
-
-
-class LegacyValidationSummary(TypedDict):
-    bioimageio_spec_version: str
-    error: Union[None, str, Dict[str, Any]]
-    name: str
-    nested_errors: NotRequired[Dict[str, Dict[str, Any]]]
-    source_name: str
-    status: Union[Literal["passed", "failed"], str]
-    traceback: Optional[List[str]]
-    warnings: Dict[str, Any]
