@@ -199,7 +199,7 @@ def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context:
     rd: Optional[RD] = None
     val_errors: List[ErrorOutcome] = []
     val_warnings: List[WarningOutcome] = []
-    tb: Optional[List[str]] = None
+    tb: List[str] = []
 
     try:
         rd = rd_class.model_validate(rdf_content, context=dict(context))
@@ -253,9 +253,8 @@ def _load_description_with_known_rd_class(
         else urljoin(str(val_context["root"]), val_context["file_name"]),
         status="failed" if errors else "passed",
         warnings=val_warnings,
+        traceback=tb,
     )
-    if tb:
-        summary["traceback"] = tb
 
     return rd, summary
 
@@ -297,8 +296,7 @@ def load_description(
         rd, summary = _load_description_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
 
     if future_patch_warning:
-        summary["warnings"] = list(summary["warnings"]) if "warnings" in summary else []
-        summary["warnings"].insert(0, future_patch_warning)
+        summary.warnings.insert(0, future_patch_warning)
 
     return rd, summary
 
@@ -327,12 +325,10 @@ def format_summary(summary: ValidationSummary):
 
         return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
 
-    es = "\n    ".join(
-        e if isinstance(e, str) else f"{format_loc(e['loc'])}: {e['msg']}" for e in summary["errors"] or []
-    )
-    ws = "\n    ".join(f"{format_loc(w['loc'])}: {w['msg']}" for w in summary["warnings"])
+    es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in summary.errors)
+    ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in summary.warnings)
 
     es_msg = f"errors: {es}" if es else ""
     ws_msg = f"warnings: {ws}" if ws else ""
 
-    return f"{summary['name'].strip('.')}: {summary['status']}\nsource: {summary['source_name']}\n{es_msg}\n{ws_msg}"
+    return f"{summary.name.strip('.')}: {summary.status}\nsource: {summary.source_name}\n{es_msg}\n{ws_msg}"
