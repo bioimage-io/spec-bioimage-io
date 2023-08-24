@@ -11,9 +11,9 @@ from pydantic_core import PydanticUndefined
 from typing_extensions import Annotated
 
 import bioimageio.spec
-from bioimageio.spec import application, collection, dataset, generic, model, notebook
+from bioimageio.spec import __version__, application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
-from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import iterate_annotated_union
 from bioimageio.spec.summary import ErrorOutcome, ValidationSummary, WarningOutcome
@@ -245,7 +245,7 @@ def _load_description_with_known_rd_class(
         assert tb2 is None, f"increasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
-        bioimageio_spec_version=VERSION,
+        bioimageio_spec_version=__version__,
         errors=errors,
         name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
         source_name=(val_context["root"] / val_context["file_name"]).as_posix()
@@ -286,7 +286,7 @@ def load_description(
         root = val_context["root"]
         file_name = val_context["file_name"]
         summary = ValidationSummary(
-            bioimageio_spec_version=VERSION,
+            bioimageio_spec_version=__version__,
             errors=[ErrorOutcome(loc=(), msg=rd_class, type="error")],
             name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
             source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
@@ -311,7 +311,7 @@ def load_description_as_latest(
     return load_description(rdf_content, context=context, format_version=LATEST)  # type: ignore
 
 
-def validate(
+def validate_format(
     rdf_content: RawStringMapping,
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,

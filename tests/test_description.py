@@ -6,7 +6,7 @@ from pydantic import HttpUrl
 from ruamel.yaml import YAML
 
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec.description import load_description, update_format, validate
+from bioimageio.spec.description import load_description, update_format, validate_format
 from bioimageio.spec.types import ValidationContext
 
 yaml = YAML(typ="safe")
@@ -54,7 +54,7 @@ class TestForwardCompatibility(TestCase):
         data["authors"] = 42  # make sure rdf is invalid
         data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
 
-        summary = validate(data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+        summary = validate_format(data, context=ValidationContext(root=HttpUrl("https://example.com/")))
         self.assertEqual(summary["status"], "failed", summary)
 
         errors = summary.get("errors", [])

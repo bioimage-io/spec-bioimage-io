@@ -15,16 +15,10 @@ from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, functional_val
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 from typing_extensions import NotRequired, TypedDict
 
-from bioimageio.spec._internal.constants import ERROR
+from bioimageio.spec._internal.constants import ERROR, SLOTS
 
 if TYPE_CHECKING:
     from bioimageio.spec.types import FileSource, RelativePath, WarningLevel
-
-
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, Any] = {}
-else:
-    SLOTS = {"slots": True}
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)

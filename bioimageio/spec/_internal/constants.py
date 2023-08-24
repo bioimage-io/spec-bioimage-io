@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
@@ -9,9 +10,13 @@ from bioimageio.spec._internal.utils import files
 if TYPE_CHECKING:
     from bioimageio.spec.types import LicenseId, Severity, WarningLevelName
 
-with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
-    VERSION: str = json.load(f)["version"]
-    assert isinstance(VERSION, str)
+if sys.version_info < (3, 10):
+    SLOTS: Dict[str, bool] = {}
+    KW_ONLY: Dict[str, bool] = {}
+else:
+    SLOTS = {"slots": True}
+    KW_ONLY = {"kw_only": True}
+
 
 DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 
