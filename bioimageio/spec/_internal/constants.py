@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Unio
 from bioimageio.spec._internal.utils import files
 
 if TYPE_CHECKING:
-    from bioimageio.spec.types import LicenseId, Severity, WarningLevelName
+    from bioimageio.spec.types import LicenseId, Severity, SeverityName
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, bool] = {}
@@ -17,6 +17,9 @@ else:
     SLOTS = {"slots": True}
     KW_ONLY = {"kw_only": True}
 
+with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
+    VERSION: str = json.load(f)["version"]
+    assert isinstance(VERSION, str)
 
 DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 
@@ -72,15 +75,22 @@ WARNING_LEVEL_CONTEXT_KEY = "warning_level"
 ERROR = 50
 """A warning of the error level is always raised (equivalent to a validation error)"""
 
-ALERT = 35
+ALERT, ALERT_NAME = 35, "alert"
 """no ALERT nor ERROR -> RDF is worriless"""
 
-WARNING = 30
+WARNING, WARNING_NAME = 30, "warning"
 """no WARNING nor ALERT nor ERROR -> RDF is watertight"""
 
-INFO = 20
-SEVERITY_TO_WARNING: Mapping[Severity, WarningLevelName] = MappingProxyType(
-    {INFO: "info", WARNING: "warning", ALERT: "alert"}
+INFO, INFO_TYPE = 20, "info"
+"""info warnings are about purely cosmetic issues, etc."""
+
+SEVERITY_TO_NAME: Mapping[Severity, SeverityName] = MappingProxyType(
+    {INFO: INFO_TYPE, WARNING: WARNING_NAME, ALERT: ALERT_NAME}
 )
+NAME_TO_SEVERITY: Mapping[SeverityName, Severity] = MappingProxyType({v: k for k, v in SEVERITY_TO_NAME.items()})
+
 LATEST = "latest"
+"""placeholder for the latest available format version"""
+
 DISCOVER = "discover"
+"""placeholder for whatever format version an RDF specifies"""

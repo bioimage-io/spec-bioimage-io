@@ -10,7 +10,7 @@ from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal.constants import ERROR, SEVERITY_TO_WARNING, WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import ERROR, SEVERITY_TO_NAME, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec.types import Severity
 
 if TYPE_CHECKING:
@@ -25,10 +25,6 @@ else:
 ValidatorFunction = Union[NoInfoValidatorFunction, FieldValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
-
-
-def raise_warning(message_template: LiteralString, *, severity: Severity, context: Optional[Dict[str, Any]]):
-    raise PydanticCustomError(SEVERITY_TO_WARNING[severity], message_template, context)
 
 
 def warn(
@@ -72,7 +68,9 @@ def as_warning(
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
             if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
-                raise_warning(msg or ",".join(e.args), severity=severity, context={**(context or {}), "value": value})
+                raise PydanticCustomError(
+                    "warning", msg or ",".join(e.args), {**(context or {}), "value": value, "severity": severity}
+                )
 
         return value
 

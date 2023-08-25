@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 from datetime import datetime
-from typing import Any, Dict, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, Literal, Mapping, Sequence, Tuple, TypeVar, Union
 from urllib.parse import urljoin
 
 import annotated_types
@@ -71,7 +71,7 @@ Severity = Literal[20, 30, 35]
 WarningLevel = Literal[Severity, 50]
 """With warning level x raise warnings of severity >=x"""
 
-WarningLevelName = Literal["info", "warning", "alert"]
+SeverityName = Literal["info", "warning", "alert"]
 
 
 class RelativePath:
