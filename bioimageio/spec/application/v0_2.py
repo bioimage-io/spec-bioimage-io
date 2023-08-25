@@ -2,7 +2,18 @@ from typing import Literal
 
 from pydantic import ConfigDict
 
+from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
+
+__all__ = [
+    "Application",
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "LinkedResource",
+    "Maintainer",
+]
 
 
 class Application(GenericBase):
@@ -14,6 +25,3 @@ class Application(GenericBase):
     """pydantic model_config"""
 
     type: Literal["application"] = "application"
-
-
-AnyApplication = Application

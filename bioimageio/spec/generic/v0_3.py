@@ -16,11 +16,21 @@ from bioimageio.spec._internal.constants import (
 )
 from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
-from bioimageio.spec.generic import v0_2
+from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, Attachments, Author, Badge, CiteEntry, Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, RawStringDict, Sha256, Version
 
-SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "Generic",
+    "LinkedResource",
+    "Maintainer",
+]
+
+KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 
 class Attachment(Node):
@@ -65,12 +75,12 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     covers: Annotated[
-        Tuple[Annotated[FileSource, WithSuffix(v0_2.VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...],
+        Tuple[Annotated[FileSource, WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...],
         Field(
             examples=[],
             description=(
                 "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
-                f"The supported image formats are: {v0_2.VALID_COVER_IMAGE_EXTENSIONS}"
+                f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
     ] = ()
@@ -80,16 +90,16 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: NonEmpty[Tuple[v0_2.Author, ...]]
+    authors: NonEmpty[Tuple[Author, ...]]
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Tuple[Attachment, ...] = ()
     """file and other attachments"""
 
-    badges: Tuple[v0_2.Badge, ...] = ()
+    badges: Tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: NonEmpty[Tuple[v0_2.CiteEntry, ...]]
+    cite: NonEmpty[Tuple[CiteEntry, ...]]
     """citations"""
 
     config: Annotated[
@@ -169,17 +179,17 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     ] = ()
     """IDs of other bioimage.io resources"""
 
-    maintainers: Tuple[v0_2.Maintainer, ...] = ()
+    maintainers: Tuple[Maintainer, ...] = ()
     """Maintainers of this resource.
     If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""
 
     @field_validator("maintainers", mode="after")
     @classmethod
     def check_maintainers_exist(
-        cls, maintainers: Tuple[v0_2.Maintainer, ...], info: FieldValidationInfo
-    ) -> Tuple[v0_2.Maintainer, ...]:
+        cls, maintainers: Tuple[Maintainer, ...], info: FieldValidationInfo
+    ) -> Tuple[Maintainer, ...]:
         if not maintainers and "authors" in info.data:
-            authors: Tuple[v0_2.Author, ...] = info.data["authors"]
+            authors: Tuple[Author, ...] = info.data["authors"]
             if all(a.github_user is None for a in authors) and ALERT >= (info.context or {}).get(
                 WARNING_LEVEL_CONTEXT_KEY, ERROR
             ):
@@ -266,12 +276,9 @@ class Generic(GenericBase):
     @field_validator("type", mode="after")
     @classmethod
     def check_specific_types(cls, value: str) -> str:
-        if value in get_args(SpecificResourceType):
+        if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
                 f"Use the {value} description instead of this generic description for your '{value}' resource."
             )
 
         return value
-
-
-AnyGeneric = Annotated[Union[v0_2.Generic, Generic], Field(discriminator="format_version")]

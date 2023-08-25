@@ -2,10 +2,20 @@ from typing import Literal
 
 from pydantic import ConfigDict
 
-from bioimageio.spec.generic.v0_2 import GenericBase, LinkedResource
+from bioimageio.spec.generic.v0_2 import *
+from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.types import NonEmpty
 
-__all__ = ["Dataset", "LinkedDataset", "AnyDataset"]
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "Dataset",
+    "LinkedDataset",
+    "LinkedResource",
+    "Maintainer",
+]
 
 
 class Dataset(GenericBase):
@@ -20,9 +30,6 @@ class Dataset(GenericBase):
         }
     )
     type: Literal["dataset"] = "dataset"
-
-
-AnyDataset = Dataset
 
 
 class LinkedDataset(LinkedResource):

@@ -10,18 +10,27 @@ from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec.application.v0_2 import AnyApplication
-from bioimageio.spec.dataset.v0_2 import AnyDataset
-from bioimageio.spec.generic.v0_2 import AnyGeneric, GenericBase
-from bioimageio.spec.model.v0_4 import AnyModel
+from bioimageio.spec.application.v0_2 import Application
+from bioimageio.spec.dataset.v0_2 import Dataset
+from bioimageio.spec.generic.v0_2 import *
+from bioimageio.spec.generic.v0_2 import GenericBase
+from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.notebook.v0_2 import AnyNotebook
 from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue, RelativeFilePath
 
-__all__ = ["Collection", "CollectionEntry", "AnyCollection"]
-
-EntryNode = Union[
-    Annotated[Union[AnyModel, AnyDataset, AnyApplication, AnyNotebook], Field(discriminator="type")], AnyGeneric
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "Collection",
+    "CollectionEntry",
+    "LinkedResource",
+    "Maintainer",
 ]
+
+
+EntryNode = Union[Annotated[Union[Model, Dataset, Application, AnyNotebook], Field(discriminator="type")], Generic]
 
 
 class CollectionEntryBase(Node):
@@ -190,6 +199,3 @@ class Collection(GenericBase):
     def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         cls.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)
-
-
-AnyCollection = Collection

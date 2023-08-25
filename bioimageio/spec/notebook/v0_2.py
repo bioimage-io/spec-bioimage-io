@@ -4,8 +4,19 @@ from pydantic import ConfigDict
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_validation import WithSuffix
+from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.types import FileSource
+
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "LinkedResource",
+    "Maintainer",
+    "Notebook",
+]
 
 
 class Notebook(GenericBase):
@@ -23,6 +34,3 @@ class Notebook(GenericBase):
 
     source: Annotated[FileSource, WithSuffix(".ipynb", case_sensitive=True)]
     """The Jupyter notebook"""
-
-
-AnyNotebook = Notebook

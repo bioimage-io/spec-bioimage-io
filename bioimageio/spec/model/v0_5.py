@@ -27,6 +27,28 @@ from bioimageio.spec._internal.field_validation import Predicate, ValContext
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
+from bioimageio.spec.generic.v0_3 import *
+from bioimageio.spec.model.v0_4 import (
+    Binarize,
+    BinarizeKwargs,
+    CallableFromDepencency,
+    CallableFromSourceFile,
+    Clip,
+    ClipKwargs,
+    KerasHdf5Weights,
+    KnownRunMode,
+    LinkedModel,
+    OnnxWeights,
+    Processing,
+    ProcessingKwargs,
+    RunMode,
+    Sigmoid,
+    TensorflowJsWeights,
+    TensorflowSavedModelBundleWeights,
+    TorchscriptWeights,
+    WeightsEntryBase,
+    WeightsFormat,
+)
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
 from bioimageio.spec.types import (
     Datetime,
@@ -41,7 +63,52 @@ from bioimageio.spec.types import (
     Version,
 )
 
-from . import v0_4
+__all__ = [
+    "Architecture",
+    "ArchitectureFromDependency",
+    "ArchitectureFromSource",
+    "Attachments",
+    "Author",
+    "AxisType",
+    "Badge",
+    "Binarize",
+    "BinarizeKwargs",
+    "CallableFromDepencency",
+    "CallableFromSourceFile",
+    "CiteEntry",
+    "Clip",
+    "ClipKwargs",
+    "Generic",
+    "InputTensor",
+    "KerasHdf5Weights",
+    "KnownRunMode",
+    "LinkedModel",
+    "LinkedResource",
+    "Maintainer",
+    "Model",
+    "ModelRdf",
+    "OnnxWeights",
+    "OutputTensor",
+    "Postprocessing",
+    "Preprocessing",
+    "PytorchStateDictWeights",
+    "ScaleLinear",
+    "ScaleLinearKwargs",
+    "ScaleMeanVariance",
+    "ScaleMeanVarianceKwargs",
+    "ScaleRange",
+    "ScaleRangeKwargs",
+    "Sigmoid",
+    "SpaceUnit",
+    "TensorflowJsWeights",
+    "TensorflowSavedModelBundleWeights",
+    "TimeUnit",
+    "TorchscriptWeights",
+    "Weights",
+    "ZeroMeanUnitVariance",
+    "ZeroMeanUnitVarianceKwargs",
+]
+
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -317,7 +384,7 @@ class IntervalOrRatioData(Node):
 TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
-class ScaleLinearKwargs(v0_4.ProcessingKwargs):
+class ScaleLinearKwargs(ProcessingKwargs):
     axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to scale jointly.
     For example ('x', 'y') to scale two image axes for 2d data jointly."""
@@ -338,14 +405,14 @@ class ScaleLinearKwargs(v0_4.ProcessingKwargs):
         return self
 
 
-class ScaleLinear(v0_4.Processing):
+class ScaleLinear(Processing):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -379,14 +446,14 @@ class ZeroMeanUnitVarianceKwargs(v0_4.ProcessingKwargs):
         return self
 
 
-class ZeroMeanUnitVariance(v0_4.Processing):
+class ZeroMeanUnitVariance(Processing):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(v0_4.ProcessingKwargs):
+class ScaleRangeKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
     axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to normalize jointly.
@@ -420,14 +487,14 @@ class ScaleRangeKwargs(v0_4.ProcessingKwargs):
         return value
 
 
-class ScaleRange(v0_4.Processing):
+class ScaleRange(Processing):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(v0_4.ProcessingKwargs):
+class ScaleMeanVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
     reference_tensor: Identifier
     """Name of tensor to match."""
@@ -442,7 +509,7 @@ class ScaleMeanVarianceKwargs(v0_4.ProcessingKwargs):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(v0_4.Processing):
+class ScaleMeanVariance(Processing):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -450,11 +517,11 @@ class ScaleMeanVariance(v0_4.Processing):
 
 
 Preprocessing = Annotated[
-    Union[v0_4.Binarize, v0_4.Clip, ScaleLinear, v0_4.Sigmoid, ZeroMeanUnitVariance, ScaleRange],
+    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange],
     Field(discriminator="name"),
 ]
 Postprocessing = Annotated[
-    Union[v0_4.Binarize, v0_4.Clip, ScaleLinear, v0_4.Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
     Field(discriminator="name"),
 ]
 
@@ -586,7 +653,7 @@ class OutputTensor(TensorBase):
 
 
 class ArchitectureFromSource(Node):
-    callable: Annotated[v0_4.CallableFromSourceFile, Field(examples=["my_function.py:MyNetworkClass"])]
+    callable: Annotated[CallableFromSourceFile, Field(examples=["my_function.py:MyNetworkClass"])]
     """Callable returning a torch.nn.Module instance.
     `<relative path to file>:<identifier of implementation within the file>`."""
 
@@ -603,7 +670,7 @@ class ArchitectureFromSource(Node):
 
 
 class ArchitectureFromDependency(Node):
-    callable: Annotated[v0_4.CallableFromDepencency, Field(examples=["my_module.submodule.get_my_model"])]
+    callable: Annotated[CallableFromDepencency, Field(examples=["my_module.submodule.get_my_model"])]
     """callable returning a torch.nn.Module instance.
     `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
@@ -614,7 +681,7 @@ class ArchitectureFromDependency(Node):
 Architecture = Union[ArchitectureFromSource, ArchitectureFromDependency]
 
 
-class PytorchStateDictWeights(v0_4.WeightsEntryBase):
+class PytorchStateDictWeights(WeightsEntryBase):
     type: Annotated[Literal["pytorch_state_dict"], Field(exclude=True)] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
@@ -626,12 +693,12 @@ class PytorchStateDictWeights(v0_4.WeightsEntryBase):
 
 
 class Weights(Node):
-    keras_hdf5: Optional[v0_4.KerasHdf5Weights] = None
-    onnx: Optional[v0_4.OnnxWeights] = None
+    keras_hdf5: Optional[KerasHdf5Weights] = None
+    onnx: Optional[OnnxWeights] = None
     pytorch_state_dict: Optional[PytorchStateDictWeights] = None
-    tensorflow_js: Optional[v0_4.TensorflowJsWeights] = None
-    tensorflow_saved_model_bundle: Optional[v0_4.TensorflowSavedModelBundleWeights] = None
-    torchscript: Optional[v0_4.TorchscriptWeights] = None
+    tensorflow_js: Optional[TensorflowJsWeights] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeights] = None
+    torchscript: Optional[TorchscriptWeights] = None
 
     @model_validator(mode="after")
     def check_entries(self, info: ValidationInfo) -> Self:
@@ -662,7 +729,7 @@ class Weights(Node):
 
         return self
 
-    def get(self, *priority_order: v0_4.WeightsFormat):
+    def get(self, *priority_order: WeightsFormat):
         if not priority_order:
             priority_order = (
                 "pytorch_state_dict",
@@ -732,7 +799,7 @@ class Model(
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
 
-    authors: NonEmpty[Tuple[v0_4.Author, ...]]
+    authors: NonEmpty[Tuple[Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     badges: ClassVar[tuple] = ()  # type: ignore
@@ -928,14 +995,14 @@ class Model(
 
         return outputs
 
-    packaged_by: Tuple[v0_4.Author, ...] = ()
+    packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[Union[v0_4.LinkedModel, ModelRdf]] = None
+    parent: Optional[Union[LinkedModel, ModelRdf]] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    run_mode: Annotated[Optional[v0_4.RunMode], warn(None)] = None
+    run_mode: Annotated[Optional[RunMode], warn(None)] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
@@ -974,6 +1041,3 @@ class Model(
     @classmethod
     def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         convert_from_older_format(data, context)
-
-
-AnyModel = Annotated[Union[v0_4.Model, Model], Field(discriminator="format_version")]

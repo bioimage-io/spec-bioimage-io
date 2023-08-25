@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from typing import List, Literal, Optional, Tuple, TypeVar, Union, get_args
+from typing import List, Literal, Optional, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import ConfigDict, EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
@@ -12,7 +12,17 @@ from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawStringDict, Version
 
-SpecificResourceType = Literal["application", "collection", "dataset", "model", "notebook"]
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "Generic",
+    "LinkedResource",
+    "Maintainer",
+]
+
+KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 VALID_COVER_IMAGE_EXTENSIONS = (
     ".gif",
@@ -312,7 +322,10 @@ class Generic(GenericBase):
     Use this generic resource description, if none of the known specific types matches your resource.
     """
 
-    model_config = {**GenericBase.model_config, **ConfigDict(title="bioimage.io generic specification", extra="ignore")}
+    model_config = {
+        **GenericBase.model_config,
+        **ConfigDict(title="bioimage.io generic specification", extra="ignore"),
+    }
     """pydantic model_config"""
 
     type: Annotated[str, LowerCase]
@@ -321,12 +334,9 @@ class Generic(GenericBase):
     @field_validator("type", mode="after")
     @classmethod
     def check_specific_types(cls, value: str) -> str:
-        if value in get_args(SpecificResourceType):
+        if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
                 f"Use the {value} description instead of this generic description for your '{value}' resource."
             )
 
         return value
-
-
-AnyGeneric = Generic

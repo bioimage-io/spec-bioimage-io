@@ -7,17 +7,17 @@ from urllib.parse import urljoin
 
 import pydantic
 from pydantic import Field
-from pydantic_core import PydanticUndefined
+from pydantic_core import ErrorDetails, PydanticUndefined
 from typing_extensions import Annotated
 
 import bioimageio.spec
-from bioimageio.spec import __version__, application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
-from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec import application, collection, dataset, generic, model, notebook
+from bioimageio.spec._internal.base_nodes import _ResourceDescriptionBase
+from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import iterate_annotated_union
-from bioimageio.spec.summary import ErrorOutcome, ValidationSummary, WarningOutcome
-from bioimageio.spec.types import RawStringDict, RawStringMapping, ValidationContext, WarningLevelName
+from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
+from bioimageio.spec.types import RawStringDict, RawStringMapping, SeverityName, ValidationContext
 
 _ResourceDescription_v0_2 = Union[
     Annotated[
@@ -72,36 +72,105 @@ ResourceDescription = Union[
 """Any of the implemented resource descriptions"""
 
 
-def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
-    supported: Dict[str, List[str]] = {}
-    for typ, rd_class in _iterate_over_rd_classes():
-        format_versions = supported.setdefault(typ, [])
-        ma, mi, pa = rd_class.implemented_format_version_tuple
-        for p in range(pa + 1):
-            format_versions.append(f"{ma}.{mi}.{p}")
+def update_format(
+    rdf_content: RawStringMapping,
+    update_to_format: str = "latest",
+    context: Optional[ValidationContext] = None,
+) -> RawStringMapping:
+    """Auto-update fields of a bioimage.io resource without any validation."""
+    assert "type" in rdf_content
+    assert isinstance(rdf_content["type"], str)
+    rd_class = _get_rd_class(rdf_content["type"], update_to_format)
+    if isinstance(rd_class, str):
+        raise ValueError(rd_class)
 
-    supported["model"].extend([f"0.3.{i}" for i in range(7)])  # model 0.3 can be converted
-    return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
-
-
-def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in iterate_annotated_union(ResourceDescription):
-        typ = rd_class.model_fields["type"].default
-        if typ is PydanticUndefined:
-            typ = "generic"
-
-        assert isinstance(typ, str)
-        yield typ, rd_class
+    rd = dict(rdf_content)
+    val_context = get_validation_context(**(context or {}))
+    rd_class.convert_from_older_format(rd, val_context)
+    return rd
 
 
-def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in iterate_annotated_union(LatestResourceDescription):
-        typ: Any = rd_class.model_fields["type"].default
-        if typ is PydanticUndefined:
-            typ = "generic"
+RD = TypeVar("RD", bound=_ResourceDescriptionBase)
 
-        assert isinstance(typ, str)
-        yield typ, rd_class
+
+def dump_description(rd: ResourceDescription) -> RawStringDict:
+    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
+    return rd.model_dump(mode="json", exclude={"root"})
+
+
+def load_description(
+    rdf_content: RawStringMapping,
+    *,
+    context: Optional[ValidationContext] = None,
+    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
+    discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(rdf_content)
+    if use_format_version != discovered_format_version:
+        rdf_content = dict(rdf_content)
+        rdf_content["format_version"] = use_format_version
+        future_patch_warning = WarningEntry(
+            loc=("format_version",),
+            msg=f"Treated future patch version {discovered_format_version} as {use_format_version}.",
+            type="alert",
+        )
+    else:
+        future_patch_warning = None
+
+    fv = use_format_version if format_version == DISCOVER else format_version
+    rd_class = _get_rd_class(discovered_type, format_version=fv)
+    if isinstance(rd_class, str):
+        rd = None
+        val_context = get_validation_context(**(context or {}))
+        root = val_context["root"]
+        file_name = val_context["file_name"]
+        summary = ValidationSummary(
+            bioimageio_spec_version=VERSION,
+            errors=[ErrorEntry(loc=(), msg=rd_class, type="error")],
+            name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
+            source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
+            status="failed",
+            warnings=[],
+        )
+    else:
+        rd, summary = _load_descr_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
+
+    if future_patch_warning:
+        summary.warnings.insert(0, future_patch_warning)
+
+    return rd, summary
+
+
+def load_description_as_latest(
+    rdf_content: RawStringMapping,
+    *,
+    context: Optional[ValidationContext] = None,
+) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
+    return load_description(rdf_content, context=context, format_version=LATEST)  # type: ignore
+
+
+def validate_format(
+    rdf_content: RawStringMapping,
+    context: Optional[ValidationContext] = None,
+    as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
+) -> ValidationSummary:
+    _rd, summary = load_description(rdf_content, context=context, format_version=as_format)
+    return summary
+
+
+def format_summary(summary: ValidationSummary):
+    def format_loc(loc: Tuple[Union[int, str], ...]) -> str:
+        if not loc:
+            loc = ("root",)
+
+        return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+
+    es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in summary.errors)
+    ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in summary.warnings)
+
+    es_msg = f"errors: {es}" if es else ""
+    ws_msg = f"warnings: {ws}" if ws else ""
+
+    return f"{summary.name.strip('.')}: {summary.status}\nsource: {summary.source_name}\n{es_msg}\n{ws_msg}"
 
 
 def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
@@ -127,7 +196,7 @@ def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, st
                 v_module = getattr(type_module, v_module_name)
 
         rd_class = getattr(v_module, typ.capitalize())
-        assert issubclass(rd_class, ResourceDescriptionBase)
+        assert issubclass(rd_class, _ResourceDescriptionBase)
         use_fv = rd_class.implemented_format_version
     else:
         # fallback: type is not specialized (yet) and format version is unknown
@@ -169,55 +238,39 @@ def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Res
     return rd_class
 
 
-def update_format(
-    rdf_content: RawStringMapping,
-    update_to_format: str = "latest",
-    context: Optional[ValidationContext] = None,
-) -> RawStringMapping:
-    """Auto-update fields of a bioimage.io resource without any validation."""
-    assert "type" in rdf_content
-    assert isinstance(rdf_content["type"], str)
-    rd_class = _get_rd_class(rdf_content["type"], update_to_format)
-    if isinstance(rd_class, str):
-        raise ValueError(rd_class)
+def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
+    supported: Dict[str, List[str]] = {}
+    for typ, rd_class in _iterate_over_rd_classes():
+        format_versions = supported.setdefault(typ, [])
+        ma, mi, pa = rd_class.implemented_format_version_tuple
+        for p in range(pa + 1):
+            format_versions.append(f"{ma}.{mi}.{p}")
 
-    rd = dict(rdf_content)
-    val_context = get_validation_context(**(context or {}))
-    rd_class.convert_from_older_format(rd, val_context)
-    return rd
+    supported["model"].extend([f"0.3.{i}" for i in range(7)])  # model 0.3 can be converted
+    return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
 
 
-RD = TypeVar("RD", bound=ResourceDescriptionBase)
+def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
+    for rd_class in iterate_annotated_union(ResourceDescription):
+        typ = rd_class.model_fields["type"].default
+        if typ is PydanticUndefined:
+            typ = "generic"
+
+        assert isinstance(typ, str)
+        yield typ, rd_class
 
 
-def dump_description(rd: ResourceDescription) -> RawStringDict:
-    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
-    return rd.model_dump(mode="json", exclude={"root"})
+def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
+    for rd_class in iterate_annotated_union(LatestResourceDescription):
+        typ: Any = rd_class.model_fields["type"].default
+        if typ is PydanticUndefined:
+            typ = "generic"
+
+        assert isinstance(typ, str)
+        yield typ, rd_class
 
 
-def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context: ValContext):
-    rd: Optional[RD] = None
-    val_errors: List[ErrorOutcome] = []
-    val_warnings: List[WarningOutcome] = []
-    tb: List[str] = []
-
-    try:
-        rd = rd_class.model_validate(rdf_content, context=dict(context))
-    except pydantic.ValidationError as e:
-        for ee in e.errors(include_url=False):
-            if (type_ := ee["type"]) in get_args(WarningLevelName):
-                val_warnings.append(WarningOutcome(loc=ee["loc"], msg=ee["msg"], type=type_))  # type: ignore
-            else:
-                val_errors.append(ErrorOutcome(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
-
-    except Exception as e:
-        val_errors.append(ErrorOutcome(loc=(), msg=str(e), type=type(e).__name__))
-        tb = traceback.format_tb(e.__traceback__)
-
-    return rd, val_errors, tb, val_warnings
-
-
-def _load_description_with_known_rd_class(
+def _load_descr_with_known_rd_class(
     rdf_content: RawStringMapping,
     *,
     context: Optional[ValidationContext] = None,
@@ -238,14 +291,14 @@ def _load_description_with_known_rd_class(
         resource_type = rd.type
         format_version = rd.format_version
         assert not errors, f"got rd, but also errors: {errors}"
-        assert tb is None, f"got rd, but also an error traceback: {tb}"
+        assert not tb, f"got rd, but also an error traceback: {tb}"
         assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
         _, error2, tb2, val_warnings = _load_descr_impl(rd_class, raw_rd, val_context)
         assert not error2, f"increasing warning level caused errors: {error2}"
-        assert tb2 is None, f"increasing warning level lead to error traceback: {tb2}"
+        assert not tb2, f"increasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
-        bioimageio_spec_version=__version__,
+        bioimageio_spec_version=VERSION,
         errors=errors,
         name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
         source_name=(val_context["root"] / val_context["file_name"]).as_posix()
@@ -259,76 +312,23 @@ def _load_description_with_known_rd_class(
     return rd, summary
 
 
-def load_description(
-    rdf_content: RawStringMapping,
-    *,
-    context: Optional[ValidationContext] = None,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
-) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
-    discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(rdf_content)
-    if use_format_version != discovered_format_version:
-        rdf_content = dict(rdf_content)
-        rdf_content["format_version"] = use_format_version
-        future_patch_warning = WarningOutcome(
-            loc=("format_version",),
-            msg=f"Treated future patch version {discovered_format_version} as {use_format_version}.",
-            type="alert",
-        )
-    else:
-        future_patch_warning = None
+def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context: ValContext):
+    rd: Optional[RD] = None
+    val_errors: List[ErrorEntry] = []
+    val_warnings: List[WarningEntry] = []
+    tb: List[str] = []
 
-    fv = use_format_version if format_version == DISCOVER else format_version
-    rd_class = _get_rd_class(discovered_type, format_version=fv)
-    if isinstance(rd_class, str):
-        rd = None
-        val_context = get_validation_context(**(context or {}))
-        root = val_context["root"]
-        file_name = val_context["file_name"]
-        summary = ValidationSummary(
-            bioimageio_spec_version=__version__,
-            errors=[ErrorOutcome(loc=(), msg=rd_class, type="error")],
-            name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
-            source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
-            status="failed",
-            warnings=[],
-        )
-    else:
-        rd, summary = _load_description_with_known_rd_class(rdf_content, context=context, rd_class=rd_class)
+    try:
+        rd = rd_class.model_validate(rdf_content, context=dict(context))
+    except pydantic.ValidationError as e:
+        for ee in e.errors(include_url=False):
+            if (severity := ee.get("ctx", {}).get("severity", ERROR)) < ERROR:
+                val_warnings.append(WarningEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"], severity=severity))
+            else:
+                val_errors.append(ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
 
-    if future_patch_warning:
-        summary.warnings.insert(0, future_patch_warning)
+    except Exception as e:
+        val_errors.append(ErrorEntry(loc=(), msg=str(e), type=type(e).__name__))
+        tb = traceback.format_tb(e.__traceback__)
 
-    return rd, summary
-
-
-def load_description_as_latest(
-    rdf_content: RawStringMapping,
-    *,
-    context: Optional[ValidationContext] = None,
-) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
-    return load_description(rdf_content, context=context, format_version=LATEST)  # type: ignore
-
-
-def validate_format(
-    rdf_content: RawStringMapping,
-    context: Optional[ValidationContext] = None,
-    as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
-) -> ValidationSummary:
-    _rd, summary = load_description(rdf_content, context=context, format_version=as_format)
-    return summary
-
-
-def format_summary(summary: ValidationSummary):
-    def format_loc(loc: Tuple[Union[int, str], ...]) -> str:
-        if not loc:
-            loc = ("root",)
-
-        return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
-
-    es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in summary.errors)
-    ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in summary.warnings)
-
-    es_msg = f"errors: {es}" if es else ""
-    ws_msg = f"warnings: {ws}" if ws else ""
-
-    return f"{summary.name.strip('.')}: {summary.status}\nsource: {summary.source_name}\n{es_msg}\n{ws_msg}"
+    return rd, val_errors, tb, val_warnings

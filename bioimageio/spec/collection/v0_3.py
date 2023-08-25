@@ -4,18 +4,39 @@ from pydantic import ConfigDict, Field, TypeAdapter, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_validation import ValContext
-from bioimageio.spec.application.v0_2 import AnyApplication
+from bioimageio.spec.application.v0_2 import Application as Application02
+from bioimageio.spec.application.v0_3 import Application as Application03
 from bioimageio.spec.collection import v0_2
-from bioimageio.spec.dataset.v0_3 import AnyDataset
-from bioimageio.spec.generic.v0_3 import AnyGeneric, GenericBase
-from bioimageio.spec.model.v0_5 import AnyModel
-from bioimageio.spec.notebook.v0_3 import AnyNotebook
+from bioimageio.spec.dataset.v0_2 import Dataset as Dataset02
+from bioimageio.spec.dataset.v0_3 import Dataset as Dataset03
+from bioimageio.spec.generic.v0_2 import Generic as Generic02
+from bioimageio.spec.generic.v0_3 import *
+from bioimageio.spec.generic.v0_3 import GenericBase
+from bioimageio.spec.model.v0_4 import Model as Model04
+from bioimageio.spec.model.v0_5 import Model as Model05
+from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02
+from bioimageio.spec.notebook.v0_3 import Notebook as Notebook03
 from bioimageio.spec.types import NonEmpty, RawStringDict
 
-__all__ = ["Collection", "CollectionEntry", "AnyCollection"]
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "Collection",
+    "CollectionEntry",
+    "LinkedResource",
+    "Maintainer",
+]
+
+
+AnyApplication = Annotated[Union[Application02, Application03], Field(discriminator="format_version")]
+AnyDataset = Annotated[Union[Dataset02, Dataset03], Field(discriminator="format_version")]
+AnyModel = Annotated[Union[Model04, Model05], Field(discriminator="format_version")]
+AnyNotebook = Annotated[Union[Notebook02, Notebook03], Field(discriminator="format_version")]
 
 EntryNode = Union[
-    Annotated[Union[AnyModel, AnyDataset, AnyApplication, AnyNotebook], Field(discriminator="type")], AnyGeneric
+    Annotated[Union[AnyApplication, AnyDataset, AnyModel, AnyNotebook], Field(discriminator="type")], Generic02, Generic
 ]
 
 
@@ -71,6 +92,3 @@ class Collection(GenericBase):
     def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)
-
-
-AnyCollection = Annotated[Union[v0_2.Collection, Collection], Field(discriminator="format_version")]

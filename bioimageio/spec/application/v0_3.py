@@ -1,10 +1,19 @@
-from typing import Literal, Union
+from typing import Literal
 
-from pydantic import ConfigDict, Field
-from typing_extensions import Annotated
+from pydantic import ConfigDict
 
-from bioimageio.spec.application import v0_2
+from bioimageio.spec.generic.v0_3 import *
 from bioimageio.spec.generic.v0_3 import GenericBase
+
+__all__ = [
+    "Application",
+    "Attachments",
+    "Author",
+    "Badge",
+    "CiteEntry",
+    "LinkedResource",
+    "Maintainer",
+]
 
 
 class Application(GenericBase):
@@ -16,6 +25,3 @@ class Application(GenericBase):
     """pydantic model_config"""
 
     type: Literal["application"] = "application"
-
-
-AnyApplication = Annotated[Union[v0_2.Application, Application], Field(discriminator="format_version")]

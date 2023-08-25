@@ -11,7 +11,8 @@ from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
-from bioimageio.spec.generic.v0_2 import Attachments, Author, GenericBaseNoSource, LinkedResource
+from bioimageio.spec.generic.v0_2 import *
+from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 from bioimageio.spec.types import (
     AxesInCZYX,
@@ -28,8 +29,52 @@ from bioimageio.spec.types import (
     Version,
 )
 
-Framework = Literal["pytorch", "tensorflow"]
-Language = Literal["python", "java"]
+__all__ = [
+    "Attachments",
+    "Author",
+    "Badge",
+    "Binarize",
+    "BinarizeKwargs",
+    "CallableFromDepencency",
+    "CallableFromSourceFile",
+    "CiteEntry",
+    "Clip",
+    "ClipKwargs",
+    "CustomCallable",
+    "Generic",
+    "ImplicitOutputShape",
+    "InputTensor",
+    "KerasHdf5Weights",
+    "KnownRunMode",
+    "LinkedModel",
+    "LinkedResource",
+    "Maintainer",
+    "Model",
+    "ModelRdf",
+    "OnnxWeights",
+    "OutputTensor",
+    "ParametrizedInputShape",
+    "Postprocessing",
+    "PostprocessingName",
+    "Preprocessing",
+    "PreprocessingName",
+    "PytorchStateDictWeights",
+    "ScaleLinear",
+    "ScaleLinearKwargs",
+    "ScaleMeanVariance",
+    "ScaleMeanVarianceKwargs",
+    "ScaleRange",
+    "ScaleRangeKwargs",
+    "Sigmoid",
+    "TensorflowJsWeights",
+    "TensorflowSavedModelBundleWeights",
+    "TorchscriptWeights",
+    "Weights",
+    "WeightsEntry",
+    "ZeroMeanUnitVariance",
+    "ZeroMeanUnitVarianceKwargs",
+]
+
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
@@ -892,6 +937,3 @@ class Model(GenericBaseNoSource):
     @classmethod
     def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
         convert_from_older_format(data, context)
-
-
-AnyModel = Model
