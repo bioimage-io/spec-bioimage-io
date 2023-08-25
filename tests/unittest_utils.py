@@ -77,7 +77,7 @@ class TestBases:
                         ("python", st.expected_dump_python),
                         ("json", st.expected_dump_json),
                     ]:
-                        actual = node.model_dump(mode=mode, round_trip=True)
+                        actual = node.model_dump(mode=mode)
                         if expected is not None:
                             self.assertEqual(actual, expected)
 

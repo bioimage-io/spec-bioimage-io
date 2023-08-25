@@ -93,9 +93,9 @@ def update_format(
 RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def dump_description(rd: ResourceDescription) -> RawStringDict:
+def dump_description(rd: ResourceDescription, exclude_unset: bool = False) -> RawStringDict:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
-    return rd.model_dump(mode="json", exclude={"root"})
+    return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 
 
 def load_description(
