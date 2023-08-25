@@ -2,22 +2,22 @@ import traceback
 from copy import deepcopy
 from pathlib import PurePath
 from types import MappingProxyType
-from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional, Tuple, Type, TypeVar, Union, get_args
+from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional, Tuple, Type, TypeVar, Union
 from urllib.parse import urljoin
 
 import pydantic
 from pydantic import Field
-from pydantic_core import ErrorDetails, PydanticUndefined
+from pydantic_core import PydanticUndefined
 from typing_extensions import Annotated
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import _ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import iterate_annotated_union
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
-from bioimageio.spec.types import RawStringDict, RawStringMapping, SeverityName, ValidationContext
+from bioimageio.spec.types import RawStringDict, RawStringMapping, ValidationContext
 
 _ResourceDescription_v0_2 = Union[
     Annotated[
@@ -90,7 +90,7 @@ def update_format(
     return rd
 
 
-RD = TypeVar("RD", bound=_ResourceDescriptionBase)
+RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
 def dump_description(rd: ResourceDescription) -> RawStringDict:
@@ -157,22 +157,6 @@ def validate_format(
     return summary
 
 
-def format_summary(summary: ValidationSummary):
-    def format_loc(loc: Tuple[Union[int, str], ...]) -> str:
-        if not loc:
-            loc = ("root",)
-
-        return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
-
-    es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in summary.errors)
-    ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in summary.warnings)
-
-    es_msg = f"errors: {es}" if es else ""
-    ws_msg = f"warnings: {ws}" if ws else ""
-
-    return f"{summary.name.strip('.')}: {summary.status}\nsource: {summary.source_name}\n{es_msg}\n{ws_msg}"
-
-
 def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
     typ = data.get("type")
     if not isinstance(typ, str):
@@ -196,7 +180,7 @@ def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, st
                 v_module = getattr(type_module, v_module_name)
 
         rd_class = getattr(v_module, typ.capitalize())
-        assert issubclass(rd_class, _ResourceDescriptionBase)
+        assert issubclass(rd_class, ResourceDescriptionBase)
         use_fv = rd_class.implemented_format_version
     else:
         # fallback: type is not specialized (yet) and format version is unknown

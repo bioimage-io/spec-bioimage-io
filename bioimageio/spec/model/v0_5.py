@@ -2,15 +2,8 @@ import collections.abc
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
-from pydantic import (
-    ConfigDict,
-    Field,
-    FieldValidationInfo,
-    StringConstraints,
-    ValidationInfo,
-    field_validator,
-    model_validator,
-)
+from pydantic import model_validator  # type: ignore
+from pydantic import ConfigDict, Field, FieldValidationInfo, StringConstraints, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
@@ -71,15 +64,19 @@ __all__ = [
     "Author",
     "AxisType",
     "Badge",
+    "BatchAxis",
     "Binarize",
     "BinarizeKwargs",
     "CallableFromDepencency",
     "CallableFromSourceFile",
+    "ChannelAxis",
     "CiteEntry",
     "Clip",
     "ClipKwargs",
     "Generic",
+    "IndexAxis",
     "InputTensor",
+    "IntervalOrRatioData",
     "KerasHdf5Weights",
     "KnownRunMode",
     "LinkedModel",
@@ -87,6 +84,7 @@ __all__ = [
     "Maintainer",
     "Model",
     "ModelRdf",
+    "NominalOrOrdinalData",
     "OnnxWeights",
     "OutputTensor",
     "Postprocessing",
@@ -99,9 +97,14 @@ __all__ = [
     "ScaleRange",
     "ScaleRangeKwargs",
     "Sigmoid",
+    "SpaceInputAxis",
+    "SpaceOutputAxis",
     "SpaceUnit",
+    "TensorData",
     "TensorflowJsWeights",
     "TensorflowSavedModelBundleWeights",
+    "TimeInputAxis",
+    "TimeOutputAxis",
     "TimeUnit",
     "TorchscriptWeights",
     "Weights",
@@ -247,6 +250,13 @@ class ChannelAxis(AxisBase):
 
         return super().model_post_init(__context)
 
+    @model_validator(mode="after")
+    def validate_size_is_known(self):
+        if self.size == "#channel_names":
+            raise ValueError("Channel dimension has unknown size. Please specify `size` or `channel_names`.")
+
+        return self
+
 
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
@@ -274,35 +284,46 @@ class IndexAxis(IndexTimeSpaceAxisBase):
     name: ShortId = "index"
 
 
-class TimeAxis(IndexTimeSpaceAxisBase):
+class TimeAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["time"] = "time"
     name: ShortId = "time"
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-class SpaceAxis(IndexTimeSpaceAxisBase):
+class TimeInputAxis(TimeAxisBase):
+    pass
+
+
+class SpaceAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
     name: Annotated[ShortId, Field(examples=["x", "y", "z"])] = "x"
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-Axis = Annotated[Union[BatchAxis, ChannelAxis, IndexAxis, TimeAxis, SpaceAxis], Field(discriminator="type")]
-
-
-class OutputTimeAxis(TimeAxis, WithHalo):
+class SpaceInputAxis(SpaceAxisBase):
     pass
 
 
-class OutputSpaceAxis(SpaceAxis, WithHalo):
+InputAxis = Annotated[
+    Union[BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis], Field(discriminator="type")
+]
+
+
+class TimeOutputAxis(TimeAxisBase, WithHalo):
+    pass
+
+
+class SpaceOutputAxis(SpaceAxisBase, WithHalo):
     pass
 
 
 OutputAxis = Annotated[
-    Union[BatchAxis, ChannelAxis, IndexAxis, OutputTimeAxis, OutputSpaceAxis], Field(discriminator="type")
+    Union[BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis], Field(discriminator="type")
 ]
 
+AnyAxis = Union[InputAxis, OutputAxis]
 
 TVs = Union[
     NonEmpty[Tuple[int, ...]], NonEmpty[Tuple[float, ...]], NonEmpty[Tuple[bool, ...]], NonEmpty[Tuple[str, ...]]
@@ -532,11 +553,11 @@ class TensorBase(Node):
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    axes: Tuple[Axis, ...]
+    axes: Tuple[AxisBase, ...]
 
     @field_validator("axes", mode="after")
     @classmethod
-    def validate_axes(cls, axes: Tuple[Axis, ...]) -> Tuple[Axis, ...]:
+    def validate_axes(cls, axes: Tuple[AxisBase, ...]) -> Tuple[AxisBase, ...]:
         seen_types: Set[str] = set()
         duplicate_axes_types: Set[str] = set()
         for a in axes:
@@ -617,6 +638,8 @@ class InputTensor(TensorBase):
     """Input tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
+    axes: Tuple[InputAxis, ...]
+
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
 
@@ -650,6 +673,9 @@ class OutputTensor(TensorBase):
                 raise ValueError("`kwargs.axes` needs to be subset of axes names")
 
         return self
+
+
+AnyTensor = Union[InputTensor, OutputTensor]
 
 
 class ArchitectureFromSource(Node):
@@ -829,11 +855,11 @@ class Model(
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_step_with_refs = {
+            valid_step_with_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
                 **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
                 **input_step_with_refs,
             }
-            valid_independent_refs = {
+            valid_independent_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
                 **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
                 **input_size_refs,
             }
@@ -855,9 +881,9 @@ class Model(
         i: int,
         tensor_name: str,
         a: int,
-        axis: Union[Axis, OutputAxis],
-        valid_step_with_refs: Dict[TensorAxisId, Tuple[Union[InputTensor, OutputTensor], Axis]],
-        valid_independent_refs: Dict[TensorAxisId, Tuple[Union[InputTensor, OutputTensor], Axis]],
+        axis: AnyAxis,
+        valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]],
+        valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
@@ -972,12 +998,12 @@ class Model(
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_step_with_refs = {
+            valid_step_with_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
                 **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
                 **input_step_with_refs,
                 **output_step_with_refs,
             }
-            valid_independent_refs = {
+            valid_independent_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
                 **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
                 **input_size_refs,
                 **output_size_refs,

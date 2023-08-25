@@ -27,7 +27,8 @@ from typing import (
 )
 
 import pydantic
-from pydantic import Field, GetCoreSchemaHandler, StringConstraints, TypeAdapter, ValidationInfo, model_validator
+from pydantic import model_validator  # type: ignore
+from pydantic import Field, GetCoreSchemaHandler, StringConstraints, TypeAdapter, ValidationInfo
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
@@ -351,7 +352,7 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
     def get(self, item: Any, default: D = None) -> Union[V, D]:  # type: ignore
         return getattr(self, item, default)
 
-    @pydantic.model_validator(mode="after")
+    @model_validator(mode="after")
     def validate_raw_mapping(self) -> Self:
         if not is_valid_raw_mapping(self):
             raise AssertionError(f"{self} contains values unrepresentable in JSON/YAML")

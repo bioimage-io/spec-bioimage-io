@@ -7,7 +7,7 @@ from unittest import TestCase
 from pydantic import HttpUrl
 
 from bioimageio.spec._internal.constants import INFO
-from bioimageio.spec.description import format_summary, load_description, validate_format
+from bioimageio.spec.description import load_description, validate_format
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     InputTensor,
@@ -30,13 +30,13 @@ class TestModelRdf(TestBases.TestNode):
     sub_tests = [
         Valid(
             dict(rdf_source=__file__, sha256="s" * 64),
-            expected_dump_raw=dict(rdf_source=__file__, sha256="s" * 64),
+            expected_dump_json=dict(rdf_source=__file__, sha256="s" * 64),
             expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
             context=ValidationContext(root=Path()),
         ),
         Valid(
             dict(uri="https://example.com", sha256="s" * 64),
-            expected_dump_raw=dict(rdf_source="https://example.com/", sha256="s" * 64),
+            expected_dump_json=dict(rdf_source="https://example.com/", sha256="s" * 64),
             expected_dump_python=dict(rdf_source=HttpUrl("https://example.com/"), sha256="s" * 64),
         ),
         Invalid(dict(id="lala", uri="https://example.com", sha256="s" * 64)),
@@ -47,7 +47,7 @@ class TestModelRdf(TestBases.TestNode):
 class TestLinkedModel(TestBases.TestNode):
     default_node_class = LinkedModel
     sub_tests = [
-        Valid(dict(id="lala"), expected_dump_raw=dict(id="lala"), expected_dump_python=dict(id="lala")),
+        Valid(dict(id="lala"), expected_dump_json=dict(id="lala"), expected_dump_python=dict(id="lala")),
         Invalid(dict(id="lala", uri="https://example.com")),
         Invalid(dict(url="https://example.com")),
     ]
@@ -58,15 +58,15 @@ class TestOnnxEntry(TestBases.TestNode):
     sub_tests = [
         Valid(
             dict(type="onnx", opset_version=8, source="https://example.com", sha256="s" * 64),
-            expected_dump_raw=dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
+            expected_dump_json=dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
         ),
         Valid(
             dict(opset_version=8, source="https://example.com", sha256="s" * 64),
-            expected_dump_raw=dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
+            expected_dump_json=dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
         ),
         Valid(
             dict(source="https://example.com", sha256="s" * 64),
-            expected_dump_raw=dict(source="https://example.com/", sha256="s" * 64),
+            expected_dump_json=dict(source="https://example.com/", sha256="s" * 64),
         ),
         Invalid(dict(opset_version=5, source="https://example.com", sha256="s" * 64)),
         Invalid(
@@ -256,12 +256,12 @@ class TestModel(TestCase):
     def test_model_schema_accepts_run_mode(self):
         self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
     def test_model_name(self):
         self.data.update(dict(name="µ-unicode-model!"))
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
     def test_model_schema_accepts_valid_weight_formats(self):
         for format in [
@@ -279,15 +279,15 @@ class TestModel(TestCase):
                     self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
 
                 summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-                self.assertEqual(summary.status, "passed", format_summary(summary))
+                self.assertEqual(summary.status, "passed", summary.format())
 
     def test_warn_long_name(self):
         self.data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
         summary = validate_format(
             self.data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
         )
-        self.assertEqual(summary.status, "passed", format_summary(summary))
-        self.assertEqual(summary.warnings[0].loc, ("name",), format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
+        self.assertEqual(summary.warnings[0].loc, ("name",), summary.format())
         self.assertIn(
             summary.warnings[0].msg,
             [
@@ -295,13 +295,13 @@ class TestModel(TestCase):
                 f"{typing_module}.Annotated[typing.Any, Len(min_length=5, max_length=64)]"
                 for typing_module in ("typing", "typing_extensions")
             ],
-            format_summary(summary),
+            summary.format(),
         )
 
     def test_model_schema_raises_invalid_input_name(self):
         self.data["inputs"][0]["name"] = "invalid/name"
         summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", format_summary(summary))
+        self.assertEqual(summary.status, "failed", summary.format())
 
     def test_output_fixed_shape_too_small(self):
         self.data["outputs"] = [
@@ -316,7 +316,7 @@ class TestModel(TestCase):
         ]
 
         summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", format_summary(summary))
+        self.assertEqual(summary.status, "failed", summary.format())
 
     def test_output_ref_shape_mismatch(self):
         self.data["outputs"] = [
@@ -330,7 +330,7 @@ class TestModel(TestCase):
         ]
 
         summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", format_summary(summary))
+        self.assertEqual(summary.status, "failed", summary.format())
 
     def test_output_ref_shape_too_small(self):
         self.data["outputs"] = [
@@ -344,14 +344,14 @@ class TestModel(TestCase):
             }
         ]
         summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", format_summary(summary))
+        self.assertEqual(summary.status, "failed", summary.format())
 
     def test_model_has_parent_with_uri(self):
         uri = "https://doi.org/10.5281/zenodo.5744489"
         self.data["parent"] = dict(uri=uri, sha256="s" * 64)
 
         model, summary = load_description(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
         self.assertIsInstance(model, Model)
         self.assertEqual(str(model.parent.rdf_source), uri)  # type: ignore
@@ -359,7 +359,7 @@ class TestModel(TestCase):
     def test_model_has_parent_with_id(self):
         self.data["parent"] = dict(id="10.5281/zenodo.5764892")
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
     def test_model_with_expanded_output(self):
         self.data["outputs"] = [
@@ -377,14 +377,14 @@ class TestModel(TestCase):
         ]
 
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
     def test_model_rdf_is_valid_general_rdf(self):
         self.data["type"] = "model_as_generic"
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", format_summary(summary))
+        self.assertEqual(summary.status, "passed", summary.format())
 
     def test_model_does_not_accept_unknown_fields(self):
         self.data["unknown_additional_field"] = "shouldn't be here"
         summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "failed", format_summary(summary))
+        self.assertEqual(summary.status, "failed", summary.format())

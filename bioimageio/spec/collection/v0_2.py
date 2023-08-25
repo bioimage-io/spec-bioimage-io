@@ -15,7 +15,7 @@ from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.model.v0_4 import Model
-from bioimageio.spec.notebook.v0_2 import AnyNotebook
+from bioimageio.spec.notebook.v0_2 import Notebook
 from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue, RelativeFilePath
 
 __all__ = [
@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 
-EntryNode = Union[Annotated[Union[Model, Dataset, Application, AnyNotebook], Field(discriminator="type")], Generic]
+EntryNode = Union[Annotated[Union[Model, Dataset, Application, Notebook], Field(discriminator="type")], Generic]
 
 
 class CollectionEntryBase(Node):

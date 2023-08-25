@@ -13,7 +13,7 @@ from ruamel.yaml import YAML
 from bioimageio.spec import LatestResourceDescription, ResourceDescription
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_validation import get_validation_context
-from bioimageio.spec.description import format_summary, load_description
+from bioimageio.spec.description import load_description
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.summary import ValidationSummary
 from bioimageio.spec.types import ValidationContext
@@ -35,7 +35,7 @@ class SubTest(ABC):
 
 @dataclass
 class Valid(SubTest):
-    expected_dump_raw: Optional[Dict[str, Any]] = None
+    expected_dump_json: Optional[Dict[str, Any]] = None
     expected_dump_python: Optional[Dict[str, Any]] = None
 
 
@@ -61,6 +61,10 @@ class TestBases:
         allow_empty: bool = False
 
         def test_valid(self):
+            valid_sub_tests = [st for st in self.sub_tests if isinstance(st, Valid)]
+            if not valid_sub_tests:
+                self.skipTest("no 'valid' sub tests")
+
             for st in self.sub_tests:
                 if isinstance(st, Invalid):
                     continue
@@ -71,16 +75,18 @@ class TestBases:
                     node = nc.model_validate(st.kwargs, context=self.get_context(st))
                     for mode, expected in [
                         ("python", st.expected_dump_python),
-                        ("json", st.expected_dump_raw),
+                        ("json", st.expected_dump_json),
                     ]:
                         actual = node.model_dump(mode=mode, round_trip=True)
-                        assert expected is None or actual == expected, (actual, expected)
+                        if expected is not None:
+                            self.assertEqual(actual, expected)
 
         def test_invalid(self):
-            for st in self.sub_tests:
-                if isinstance(st, Valid):
-                    continue
+            invalid_sub_tests = [st for st in self.sub_tests if isinstance(st, Invalid)]
+            if not invalid_sub_tests:
+                self.skipTest("no 'invalid' sub tests")
 
+            for st in self.sub_tests:
                 assert isinstance(st, Invalid)
                 with self.subTest(**self.get_subtest_kwargs(st)):
                     nc = self.get_node_class(st)
@@ -133,6 +139,9 @@ class TestBases:
             return super().setUpClass()
 
         def test_valid(self):
+            if not self.valid:
+                self.skipTest("no 'valid' sub test cases")
+
             for v in self.valid:
                 if isinstance(v, TypeSubTest):
                     val = v.val
@@ -155,6 +164,9 @@ class TestBases:
                             _ = self.node.model_validate(dict(value=val))
 
         def test_invalid(self):
+            if not self.invalid:
+                self.skipTest("no 'invalid' sub test cases")
+
             for v in self.invalid:
                 with self.subTest(iv=v):
                     self.assertRaises(ValidationError, self.type_adapter.validate_python, dict(value=v))
@@ -219,7 +231,7 @@ class TestBases:
             return super().__init_subclass__()
 
         def check_summary_as_is(self, summary: ValidationSummary, rdf_path: Path):
-            if summary["status"] == "passed":
+            if summary.status == "passed":
                 if rdf_path in self.known_invalid_as_is:
                     self.fail("passes despite marked as known failure case")
 
@@ -228,10 +240,10 @@ class TestBases:
             if rdf_path.relative_to(self.rdf_root) in self.known_invalid_as_is:
                 self.skipTest("known_invalid_as_is")
             else:
-                self.fail(format_summary(summary))
+                self.fail(summary.format())
 
         def check_summary_as_latest(self, summary: ValidationSummary, rdf_path: Path):
-            if summary["status"] == "passed":
+            if summary.status == "passed":
                 if rdf_path in self.known_invalid_as_latest:
                     self.fail("passes despite marked as known failure case")
 
@@ -240,7 +252,7 @@ class TestBases:
             if rdf_path.relative_to(self.rdf_root) in self.known_invalid_as_latest:
                 self.skipTest("known_invalid_as_latest")
 
-            self.fail(format_summary(summary))
+            self.fail(summary.format())
 
         @classmethod
         def yield_rdf_paths(cls) -> Iterable[Tuple[Union[AnyUrl, Path], Path]]:
