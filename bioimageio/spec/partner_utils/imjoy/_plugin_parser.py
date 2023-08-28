@@ -13,8 +13,6 @@ from lxml import etree
 from pydantic import DirectoryPath, FilePath, HttpUrl
 from ruamel.yaml import YAML
 
-from .imjoy_plugin_parser import get_plugin_as_rdf
-
 yaml = YAML(typ="safe")
 
 tag_types = ["config", "script", "link", "window", "style", "docs", "attachment"]

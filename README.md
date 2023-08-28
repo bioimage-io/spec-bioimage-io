@@ -282,57 +282,63 @@ conda install -c conda-forge bioimageio.core
 
 <details>
 <summary>### Resource Description Format Versions</summary>
-#### application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / generic 0.3.0 / model 0.5.0 / notebook 0.3.0
+#### application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / generic 0.3.0 / notebook 0.3.0
 todo: format version updates
 
-#### model description 0.4.9
+#### model 0.5.0
+
+* all generic 0.3.0 changes +
+* Breaking canges that are fully auto-convertible
+  * rename `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`
+
+#### model 0.4.9
 
 * Non-breaking changes
   * make pre-/postprocessing kwargs `mode` and `axes` always optional for model description 0.3 and 0.4
 
-#### model description 0.4.8
+#### model 0.4.8
 
 * Non-breaking changes
   * `cite` field is now optional
 
-#### generic description 0.2.2 and model description 0.4.7
+#### generic 0.2.2 and model 0.4.7
 
 * Breaking changes that are fully auto-convertible
   * name field may not include '/' or '\' (conversion removes these)
 
-#### model description 0.4.6
+#### model 0.4.6
 
 * Non-breaking changes
   * Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.
 
-#### model description 0.4.5
+#### model 0.4.5
 
 * Breaking changes that are fully auto-convertible
   * `parent` field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
 
-#### model description 0.4.4
+#### model 0.4.4
 
 * Non-breaking changes
   * new optional field `training_data`
 
-#### dataset description 0.2.2
+#### dataset 0.2.2
 
 * Non-breaking changes
   * explicitly define and document dataset description (for now, clone of generic description with type="dataset")
 
-#### model description 0.4.3
+#### model 0.4.3
 
 * Non-breaking changes
   * add optional field `download_url`
   * add optional field `dependencies` to all weight formats (not only pytorch_state_dict)
   * add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats
 
-#### model description 0.4.2
+#### model 0.4.2
 
 * Bug fixes:
   * in a `pytorch_state_dict` weight entry `architecture` is no longer optional.
 
-#### collection description 0.2.2
+#### collection 0.2.2
 
 * Non-breaking changes
   * make `authors`, `cite`, `documentation` and `tags` optional
@@ -341,24 +347,24 @@ todo: format version updates
   * Simplifies collection description 0.2.1 by merging resource type fields together to a `collection` field,
     holindg a list of all resources in the specified collection.
 
-#### generic description 0.2.2 / model description 0.3.6 / model description 0.4.2
+#### generic 0.2.2 / model 0.3.6 / model 0.4.2
 
 * Non-breaking changes
   * `rdf_source` new optional field
   * `id` new optional field
 
-#### collection description 0.2.1
+#### collection 0.2.1
 
 * First official release, extends generic description with fields `application`, `model`, `dataset`, `notebook` and (nested)
   `collection`, which hold lists linking to respective resources.
 
-#### generic description 0.2.1
+#### generic 0.2.1
 
 * Non-breaking changes
   * add optional `email` and `github_user` fields to entries in `authors`
   * add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
 
-#### model description 0.4.1
+#### model 0.4.1
 
 * Breaking changes that are fully auto-convertible
   * moved field `dependencies` to `weights:pytorch_state_dict:dependencies`
@@ -366,12 +372,12 @@ todo: format version updates
 * Non-breaking changes
   * `documentation` field accepts URLs as well
 
-#### model description 0.3.5
+#### model 0.3.5
 
 * Non-breaking changes
   * `documentation` field accepts URLs as well
 
-#### model description 0.4.0
+#### model 0.4.0
 
 * Breaking changes
   * model inputs and outputs may not use duplicated names.
@@ -390,17 +396,17 @@ todo: format version updates
   * the summary returned by the `validate` command now also contains a list of warnings.
   * an `update_format` command was added to aid with updating older RDFs by applying auto-conversion.
 
-#### model description 0.3.4
+#### model 0.3.4
 
 * Non-breaking changes
   * Add optional parameter `eps` to `scale_range` postprocessing.
 
-#### model description 0.3.3
+#### model 0.3.3
 
 * Breaking changes that are fully auto-convertible
   * `reference_input` for implicit output tensor shape was renamed to `reference_tensor`
 
-#### model description 0.3.2
+#### model 0.3.2
 
 * Breaking changes
   * The RDF file name in a package should be `rdf.yaml` for all the RDF (not `model.yaml`);
@@ -416,53 +422,53 @@ todo: format version updates
 
 <details>
 <summary>### Model Description Format Versions</summary>
-#### model description 0.4.9
+#### model 0.4.9
 - Non-breaking changes
   - make pre-/postprocessing kwargs `mode` and `axes` always optional for model description 0.3 and 0.4
 
-#### model description 0.4.8
+#### model 0.4.8
 
 * Non-breaking changes
   * `cite` field is now optional
 
-#### RDF 0.2.2 and model description 0.4.7
+#### RDF 0.2.2 and model 0.4.7
 
 * Breaking changes that are fully auto-convertible
   * name field may not include '/' or '\' (conversion removes these)
 
-#### model description 0.4.6
+#### model 0.4.6
 
 * Non-breaking changes
   * Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.
 
-#### model description 0.4.5
+#### model 0.4.5
 
 * Breaking changes that are fully auto-convertible
   * `parent` field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
 
-#### model description 0.4.4
+#### model 0.4.4
 
 * Non-breaking changes
   * new optional field `training_data`
 
-#### dataset description 0.2.2
+#### dataset 0.2.2
 
 * Non-breaking changes
   * explicitly define and document dataset description (for now, clone of generic description with type="dataset")
 
-#### model description 0.4.3
+#### model 0.4.3
 
 * Non-breaking changes
   * add optional field `download_url`
   * add optional field `dependencies` to all weight formats (not only pytorch_state_dict)
   * add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats
 
-#### model description 0.4.2
+#### model 0.4.2
 
 * Bug fixes:
   * in a `pytorch_state_dict` weight entry `architecture` is no longer optional.
 
-#### collection description 0.2.2
+#### collection 0.2.2
 
 * Non-breaking changes
   * make `authors`, `cite`, `documentation` and `tags` optional
@@ -471,18 +477,18 @@ todo: format version updates
   * Simplifies collection description 0.2.1 by merging resource type fields together to a `collection` field,
     holindg a list of all resources in the specified collection.
 
-#### generic description 0.2.2 / model description 0.3.6 / model description 0.4.2
+#### generic 0.2.2 / model 0.3.6 / model 0.4.2
 
 * Non-breaking changes
   * `rdf_source` new optional field
   * `id` new optional field
 
-#### collection description 0.2.1
+#### collection 0.2.1
 
 * First official release, extends generic description with fields `application`, `model`, `dataset`, `notebook` and (nested)
   `collection`, which hold lists linking to respective resources.
 
-#### generic description 0.2.1
+#### generic 0.2.1
 
 * Non-breaking changes
   * add optional `email` and `github_user` fields to entries in `authors`
