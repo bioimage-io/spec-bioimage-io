@@ -51,12 +51,9 @@ jobs:
       with:
         path: tests/cache
         key: ${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.week }}-${{ hashFiles('**/lockfiles') }}
-    - name: Test doctests with pytest
-      run: |
-        pytest
     - name: Run tests
       run: |
-        python -m unittest
+        pytest
 
   conda-build:
     runs-on: ubuntu-latest
