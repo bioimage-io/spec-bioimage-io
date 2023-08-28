@@ -44,10 +44,10 @@ OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 DeprecatedLicenseId = DeprecatedLicenseId
 Identifier = Annotated[
     NonEmpty[str],
-    Predicate(str.islower),
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
+LowerCaseIdentifier = Annotated[Identifier, Predicate(str.islower)]
 LicenseId = LicenseId
 RawLeafValue = Union[int, float, str, bool, None]
 RawMapping = Mapping[RawLeafValue, "RawValue"]

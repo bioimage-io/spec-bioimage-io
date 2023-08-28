@@ -21,6 +21,7 @@ from bioimageio.spec.types import (
     FileSource,
     Identifier,
     LicenseId,
+    LowerCaseIdentifier,
     NonEmpty,
     RawMapping,
     RawStringDict,
@@ -36,7 +37,7 @@ __all__ = [
     "Binarize",
     "BinarizeKwargs",
     "CallableFromDepencency",
-    "CallableFromSourceFile",
+    "CallableFromFile",
     "CiteEntry",
     "Clip",
     "ClipKwargs",
@@ -83,8 +84,8 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 
 class CallableFromDepencency(StringNode):
     _pattern = r"^.+\..+$"
-    module_name: NonEmpty[str]
-    callable_name: NonEmpty[str]
+    module_name: Identifier
+    callable_name: Identifier
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
@@ -92,11 +93,12 @@ class CallableFromDepencency(StringNode):
         return dict(module_name=".".join(mods), callable_name=callname)
 
 
-class CallableFromSourceFile(StringNode):
+class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Union[HttpUrl, RelativeFilePath]
-    """∈📦 """
-    callable_name: str
+    file: Union[HttpUrl, RelativeFilePath]
+    """∈📦 Python module that implements `callable_name`"""
+    callable_name: Identifier
+    """The Python identifier of  """
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
@@ -104,7 +106,7 @@ class CallableFromSourceFile(StringNode):
         return dict(source_file=":".join(file_parts), callable_name=callname)
 
 
-CustomCallable = Union[CallableFromSourceFile, CallableFromDepencency]
+CustomCallable = Union[CallableFromFile, CallableFromDepencency]
 
 
 class Dependencies(StringNode):
@@ -265,7 +267,7 @@ class PytorchStateDictWeights(WeightsEntryBase):
 
     @model_validator(mode="after")
     def check_architecture_sha256(self) -> Self:
-        if isinstance(self.architecture, CallableFromSourceFile):
+        if isinstance(self.architecture, CallableFromFile):
             if self.architecture_sha256 is None:
                 raise ValueError("Missing required `architecture_sha256` for `architecture` with source file.")
         elif self.architecture_sha256 is not None:
@@ -370,7 +372,7 @@ class ImplicitOutputShape(Node):
 
 
 class TensorBase(Node):
-    name: Identifier
+    name: LowerCaseIdentifier
     """Tensor name. No duplicates are allowed."""
 
     description: str = ""
@@ -555,7 +557,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[Identifier] = None
+    reference_tensor: Optional[LowerCaseIdentifier] = None
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
@@ -577,7 +579,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     | per_sample  | Compute for each sample individually |
     """
 
-    reference_tensor: Identifier
+    reference_tensor: LowerCaseIdentifier
     """Name of tensor to match."""
 
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None

@@ -25,7 +25,7 @@ from bioimageio.spec.model.v0_4 import (
     Binarize,
     BinarizeKwargs,
     CallableFromDepencency,
-    CallableFromSourceFile,
+    CallableFromFile,
     Clip,
     ClipKwargs,
     KerasHdf5Weights,
@@ -47,8 +47,8 @@ from bioimageio.spec.types import (
     Datetime,
     DeprecatedLicenseId,
     FileSource,
-    Identifier,
     LicenseId,
+    LowerCaseIdentifier,
     NonEmpty,
     RawStringDict,
     Sha256,
@@ -59,7 +59,7 @@ from bioimageio.spec.types import (
 __all__ = [
     "Architecture",
     "ArchitectureFromDependency",
-    "ArchitectureFromSource",
+    "ArchitectureFromFile",
     "Attachments",
     "Author",
     "AxisType",
@@ -68,7 +68,7 @@ __all__ = [
     "Binarize",
     "BinarizeKwargs",
     "CallableFromDepencency",
-    "CallableFromSourceFile",
+    "CallableFromFile",
     "ChannelAxis",
     "CiteEntry",
     "Clip",
@@ -170,9 +170,9 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-ShortId = Annotated[Identifier, MaxLen(16)]
+ShortId = Annotated[LowerCaseIdentifier, MaxLen(16)]
 OtherTensorAxisId = Annotated[
-    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.*\..*$"), Predicate(str.islower)
+    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.+\..+$"), Predicate(str.islower)
 ]
 TensorAxisId = Union[ShortId, OtherTensorAxisId]
 SAME_AS_TYPE = "<same as type>"
@@ -494,7 +494,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[Identifier] = None
+    reference_tensor: Optional[LowerCaseIdentifier] = None
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
@@ -517,7 +517,7 @@ class ScaleRange(Processing):
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
-    reference_tensor: Identifier
+    reference_tensor: LowerCaseIdentifier
     """Name of tensor to match."""
 
     axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
@@ -548,7 +548,7 @@ Postprocessing = Annotated[
 
 
 class TensorBase(Node):
-    name: Identifier
+    name: LowerCaseIdentifier
     """Tensor name. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -634,7 +634,7 @@ class TensorBase(Node):
 
 
 class InputTensor(TensorBase):
-    name: Identifier = "input"
+    name: LowerCaseIdentifier = "input"
     """Input tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -655,7 +655,7 @@ class InputTensor(TensorBase):
 
 
 class OutputTensor(TensorBase):
-    name: Identifier = "output"
+    name: LowerCaseIdentifier = "output"
     """Output tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -678,8 +678,8 @@ class OutputTensor(TensorBase):
 AnyTensor = Union[InputTensor, OutputTensor]
 
 
-class ArchitectureFromSource(Node):
-    callable: Annotated[CallableFromSourceFile, Field(examples=["my_function.py:MyNetworkClass"])]
+class ArchitectureFromFile(Node):
+    callable: Annotated[CallableFromFile, Field(examples=["my_function.py:MyNetworkClass"])]
     """Callable returning a torch.nn.Module instance.
     `<relative path to file>:<identifier of implementation within the file>`."""
 
@@ -704,7 +704,7 @@ class ArchitectureFromDependency(Node):
     """key word arguments for the `callable`"""
 
 
-Architecture = Union[ArchitectureFromSource, ArchitectureFromDependency]
+Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
 class PytorchStateDictWeights(WeightsEntryBase):
