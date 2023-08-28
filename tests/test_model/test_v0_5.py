@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Any, Dict
-from unittest import TestCase
+from typing import Any, Dict, Union
 
+import pytest
 from pydantic import HttpUrl
 
 from bioimageio.spec._internal.constants import INFO
@@ -24,57 +24,58 @@ from bioimageio.spec.model.v0_5 import (
     Weights,
 )
 from bioimageio.spec.types import RelativeFilePath, ValidationContext
-from tests.unittest_utils import Invalid, TestBases, Valid
+from tests.utils import check_node
 
 
-class TestModelRdf(TestBases.TestNode):
-    default_node_class = ModelRdf
-    sub_tests = [
-        Valid(
-            dict(rdf_source=__file__, sha256="s" * 64),
-            expected_dump_json=dict(rdf_source=__file__, sha256="s" * 64),
-            expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
-        ),
-        Invalid(dict(uri="https://example.com", sha256="s" * 64)),
-        Invalid(dict(id="lala", uri="https://example.com", sha256="s" * 64)),
-        Invalid(dict(url="https://example.com", sha256="s" * 64)),
-    ]
+def test_model_rdf_file_ref():
+    check_node(
+        ModelRdf,
+        dict(rdf_source=__file__, sha256="s" * 64),
+        expected_dump_json=dict(rdf_source=__file__, sha256="s" * 64),
+        expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
+    )
 
 
-class TestTensorBase(TestBases.TestNode):
-    default_node_class = TensorBase
-    sub_tests = [
-        Valid(
-            dict(
-                name="t1",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
-                test_tensor="https://example.com/test.npy",
-                data={"values": ["cat", "dog", "parrot"]},
-            )
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(uri="https://example.com", sha256="s" * 64),
+        dict(id="lala", uri="https://example.com", sha256="s" * 64),
+        dict(url="https://example.com", sha256="s" * 64),
+    ],
+)
+def test_model_rdf_invalid(kwargs: Dict[str, Any]):
+    check_node(ModelRdf, kwargs, is_invalid=True)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(
+            name="t1",
+            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
+            test_tensor="https://example.com/test.npy",
+            data={"values": ["cat", "dog", "parrot"]},
         ),
-        Valid(
-            dict(
-                name="t2",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
-                test_tensor="https://example.com/test.npy",
-                data=[
-                    {"values": ["cat", "dog", "parrot"]},
-                    {"values": ["mouse", "zebra", "elephant"]},
-                ],
-            )
+        dict(
+            name="t2",
+            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
+            test_tensor="https://example.com/test.npy",
+            data=[
+                {"values": ["cat", "dog", "parrot"]},
+                {"values": ["mouse", "zebra", "elephant"]},
+            ],
         ),
-        Valid(
-            dict(
-                name="t3",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
-                test_tensor="https://example.com/test.npy",
-                data=[
-                    {"values": [1, 2, 3]},
-                    {"type": "uint8"},
-                ],
-            )
+        dict(
+            name="t3",
+            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
+            test_tensor="https://example.com/test.npy",
+            data=[
+                {"values": [1, 2, 3]},
+                {"type": "uint8"},
+            ],
         ),
-        Valid(
+        pytest.param(
             dict(
                 name="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
@@ -84,9 +85,9 @@ class TestTensorBase(TestBases.TestNode):
                     {"type": "uint8"},
                 ],
             ),
-            name="string values and uint data type",
+            id="string values and uint data type",
         ),
-        Invalid(
+        pytest.param(
             dict(
                 name="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
@@ -96,9 +97,18 @@ class TestTensorBase(TestBases.TestNode):
                     {"type": "int8"},
                 ],
             ),
-            name="string values and int data type",
+            id="string values and int data type",
         ),
-        Invalid(
+    ],
+)
+def test_tensor_base(kwargs: Dict[str, Any]):
+    check_node(TensorBase, kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        pytest.param(
             dict(
                 name="t5",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
@@ -108,9 +118,9 @@ class TestTensorBase(TestBases.TestNode):
                     {"values": [1.1, 2.2, 3.3]},
                 ],
             ),
-            name="str and float values",
+            id="str and float values",
         ),
-        Invalid(
+        pytest.param(
             dict(
                 name="t6",
                 axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
@@ -120,234 +130,241 @@ class TestTensorBase(TestBases.TestNode):
                     {"values": ["mouse", "zebra", "elephant"]},
                 ],
             ),
-            name="channel mismatch",
+            id="channel mismatch",
         ),
-    ]
+    ],
+)
+def test_tensor_base_invalid(kwargs: Dict[str, Any]):
+    check_node(TensorBase, kwargs, is_invalid=True)
 
 
-class TestInputTensor(TestBases.TestNode):
-    default_node_class = InputTensor
-    sub_tests = [
-        Valid(
-            {
-                "name": "input_1",
-                "description": "Input 1",
-                "data": {"type": "float32"},
-                "axes": [
-                    dict(type="space", name="x", size=10),
-                    dict(type="space", name="y", size=11),
-                    dict(type="channel", channel_names=tuple("abc")),
-                ],
-                "preprocessing": [
-                    {
-                        "name": "scale_range",
-                        "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
-                    }
-                ],
-                "test_tensor": "https://example.com/test.npy",
-            }
-        ),
-    ]
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "name": "input_1",
+            "description": "Input 1",
+            "data": {"type": "float32"},
+            "axes": [
+                dict(type="space", name="x", size=10),
+                dict(type="space", name="y", size=11),
+                dict(type="channel", channel_names=tuple("abc")),
+            ],
+            "preprocessing": [
+                {
+                    "name": "scale_range",
+                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
+                }
+            ],
+            "test_tensor": "https://example.com/test.npy",
+        }
+    ],
+)
+def test_input_tensor(kwargs: Dict[str, Any]):
+    check_node(InputTensor, kwargs)
 
 
-class TestBatchAxis(TestBases.TestNode):
-    default_node_class = BatchAxis
-    allow_empty = True
-    sub_tests = [
-        Valid({}, expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None}),
-        Valid(
-            {"type": "batch"},
-            expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None},
-        ),
-    ]
+@pytest.mark.parametrize(
+    "kwargs",
+    [{}, {"type": "batch"}],
+)
+def test_batch_axis(kwargs: Dict[str, Any]):
+    check_node(
+        BatchAxis, kwargs, expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None}
+    )
 
 
-class TestInputAxis(TestBases.TestType):
-    type_ = InputAxis
-    valid = [
+@pytest.mark.parametrize(
+    "kwargs",
+    [
         {"type": "space", "name": "x", "size": 10},
         SpaceInputAxis(name="x", size=10),
         {"type": "batch"},
+    ],
+)
+def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
+    check_node(InputAxis, kwargs)
+
+
+@pytest.fixture
+def model_data():
+    return Model(
+        documentation=RelativeFilePath("docs.md"),
+        license="MIT",
+        git_repo="https://github.com/bioimage-io/python-bioimage-io",
+        format_version="0.5.0",
+        description="description",
+        authors=(
+            Author(name="Author 1", affiliation="Affiliation 1"),
+            Author(name="Author 2"),
+        ),
+        maintainers=(
+            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
+            Maintainer(github_user="githubuser2"),
+        ),
+        timestamp=datetime.now(),
+        cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
+        inputs=(
+            InputTensor(
+                name="input_1",
+                description="Input 1",
+                data=IntervalOrRatioData(type="float32"),
+                axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
+                test_tensor=RelativeFilePath("test_ipt.npy"),
+            ),
+        ),
+        outputs=(
+            OutputTensor(
+                name="output_1",
+                description="Output 1",
+                axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
+                test_tensor=RelativeFilePath("test_out.npy"),
+            ),
+        ),
+        name="Model",
+        tags=(),
+        weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
+        type="model",
+    ).model_dump()
+
+
+@pytest.mark.parametrize(
+    "update",
+    [
+        pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
+        dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
+        dict(weights={"torchscript": {"source": "local_weights"}}),
+        dict(weights={"keras_hdf5": {"source": "local_weights"}}),
+        dict(weights={"tensorflow_js": {"source": "local_weights"}}),
+        dict(weights={"tensorflow_saved_model_bundle": {"source": "local_weights"}}),
+        dict(weights={"onnx": {"source": "local_weights"}}),
+        dict(
+            weights={
+                "pytorch_state_dict": {"source": "local_weights"},
+                "architecture": {
+                    "callable": "file.py:Model",
+                    "sha256": "0" * 64,  # dummy sha256
+                },
+            }
+        ),
+    ],
+)
+def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
+    model_data.update(update)
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "passed", summary.format()
+
+
+def test_warn_long_name(model_data: Dict[str, Any]):
+    model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
+    summary = validate_format(
+        model_data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
+    )
+    assert summary.status == "passed", summary.format()
+    assert summary.warnings[0].loc == ("name",), summary.format()
+    assert summary.warnings[0].msg in [
+        "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
+        f"{typing_module}.Annotated[typing.Any, Len(min_length=5, max_length=64)]"
+        for typing_module in ("typing", "typing_extensions")
+    ], summary.format()
+
+
+def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
+    model_data["inputs"][0]["name"] = "invalid/name"
+    summary = validate_format(model_data)
+    assert summary.status == "failed", summary.format()
+
+
+def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
+    model_data["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+            "halo": [32, 128, 0],
+        }
     ]
 
+    summary = validate_format(model_data)
+    assert summary.status == "failed", summary.format()
 
-class TestModel(TestCase):
-    data: Dict[str, Any] = {}
 
-    def setUp(self):
-        self.data = Model(
-            documentation=RelativeFilePath("docs.md"),
-            license="MIT",
-            git_repo="https://github.com/bioimage-io/python-bioimage-io",
-            format_version="0.5.0",
-            description="description",
-            authors=(
-                Author(name="Author 1", affiliation="Affiliation 1"),
-                Author(name="Author 2"),
+def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
+    model_data["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
+        }
+    ]
+
+    summary = validate_format(model_data)
+    assert summary.status == "failed", summary.format()
+
+
+def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
+    model_data["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
+            "halo": [256, 128, 0],
+        }
+    ]
+    summary = validate_format(model_data)
+    assert summary.status == "failed", summary.format()
+
+
+def test_model_has_parent_with_uri(model_data: Dict[str, Any]):
+    uri = "https://doi.org/10.5281/zenodo.5744489"
+    model_data["parent"] = dict(uri=uri, sha256="s" * 64)
+
+    model, summary = load_description(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "passed", summary.format()
+
+    assert isinstance(model, Model)
+    assert isinstance(model.parent, ModelRdf)
+    assert str(model.parent.rdf_source) == uri
+
+
+def test_model_has_parent_with_id(model_data: Dict[str, Any]):
+    model_data["parent"] = dict(id="10.5281/zenodo.5764892")
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "passed", summary.format()
+
+
+def test_model_with_expanded_output(model_data: Dict[str, Any]):
+    model_data["outputs"] = [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyzc",
+            "shape": dict(
+                scale=[1, 1, None, 1],
+                offset=[0, 0, 7, 0],
+                reference_tensor="input_1",
             ),
-            maintainers=(
-                Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
-                Maintainer(github_user="githubuser2"),
-            ),
-            timestamp=datetime.now(),
-            cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
-            inputs=(
-                InputTensor(
-                    name="input_1",
-                    description="Input 1",
-                    data=IntervalOrRatioData(type="float32"),
-                    axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
-                    test_tensor=RelativeFilePath("test_ipt.npy"),
-                ),
-            ),
-            outputs=(
-                OutputTensor(
-                    name="output_1",
-                    description="Output 1",
-                    axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
-                    test_tensor=RelativeFilePath("test_out.npy"),
-                ),
-            ),
-            name="Model",
-            tags=(),
-            weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
-            type="model",
-        ).model_dump()
+        }
+    ]
 
-    def test_model_schema_accepts_run_mode(self):
-        self.data.update({"run_mode": {"name": "special_run_mode", "kwargs": dict(marathon=True)}})
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "passed", summary.format()
 
-    def test_model_name(self):
-        self.data.update(dict(name="µ-unicode-model/name!"))
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
 
-    def test_model_schema_accepts_valid_weight_formats(self):
-        for format in [
-            "torchscript",
-            "keras_hdf5",
-            "tensorflow_js",
-            "tensorflow_saved_model_bundle",
-            "onnx",
-            "pytorch_state_dict",
-        ]:
-            with self.subTest(format):
-                self.data.update({"weights": {format: {"source": "local_weights"}}})
-                if format == "pytorch_state_dict":
-                    self.data["weights"][format]["architecture"] = {
-                        "callable": "file.py:Model",
-                        "sha256": "0" * 64,  # dummy sha256
-                    }
+def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
+    model_data["type"] = "model_as_generic"
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "passed", summary.format()
 
-                summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-                self.assertEqual(summary.status, "passed", summary.format())
 
-    def test_warn_long_name(self):
-        self.data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-        summary = validate_format(
-            self.data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
-        )
-        self.assertEqual(summary.status, "passed", summary.format())
-        self.assertEqual(summary.warnings[0].loc, ("name",), summary.format())
-        self.assertIn(
-            summary.warnings[0].msg,
-            [
-                "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
-                f"{typing_module}.Annotated[typing.Any, Len(min_length=5, max_length=64)]"
-                for typing_module in ("typing", "typing_extensions")
-            ],
-            summary.format(),
-        )
-
-    def test_model_schema_raises_invalid_input_name(self):
-        self.data["inputs"][0]["name"] = "invalid/name"
-        summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", summary.format())
-
-    def test_output_fixed_shape_too_small(self):
-        self.data["outputs"] = [
-            {
-                "name": "output_1",
-                "description": "Output 1",
-                "data_type": "float32",
-                "axes": "xyc",
-                "shape": [128, 128, 3],
-                "halo": [32, 128, 0],
-            }
-        ]
-
-        summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", summary.format())
-
-    def test_output_ref_shape_mismatch(self):
-        self.data["outputs"] = [
-            {
-                "name": "output_1",
-                "description": "Output 1",
-                "data_type": "float32",
-                "axes": "xyc",
-                "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
-            }
-        ]
-
-        summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", summary.format())
-
-    def test_output_ref_shape_too_small(self):
-        self.data["outputs"] = [
-            {
-                "name": "output_1",
-                "description": "Output 1",
-                "data_type": "float32",
-                "axes": "xyc",
-                "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
-                "halo": [256, 128, 0],
-            }
-        ]
-        summary = validate_format(self.data)
-        self.assertEqual(summary.status, "failed", summary.format())
-
-    def test_model_has_parent_with_uri(self):
-        uri = "https://doi.org/10.5281/zenodo.5744489"
-        self.data["parent"] = dict(uri=uri, sha256="s" * 64)
-
-        model, summary = load_description(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
-
-        self.assertIsInstance(model, Model)
-        self.assertEqual(str(model.parent.rdf_source), uri)  # type: ignore
-
-    def test_model_has_parent_with_id(self):
-        self.data["parent"] = dict(id="10.5281/zenodo.5764892")
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
-
-    def test_model_with_expanded_output(self):
-        self.data["outputs"] = [
-            {
-                "name": "output_1",
-                "description": "Output 1",
-                "data_type": "float32",
-                "axes": "xyzc",
-                "shape": dict(
-                    scale=[1, 1, None, 1],
-                    offset=[0, 0, 7, 0],
-                    reference_tensor="input_1",
-                ),
-            }
-        ]
-
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
-
-    def test_model_rdf_is_valid_general_rdf(self):
-        self.data["type"] = "model_as_generic"
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "passed", summary.format())
-
-    def test_model_does_not_accept_unknown_fields(self):
-        self.data["unknown_additional_field"] = "shouldn't be here"
-        summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
-        self.assertEqual(summary.status, "failed", summary.format())
+def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
+    model_data["unknown_additional_field"] = "shouldn't be here"
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    assert summary.status == "failed", summary.format()

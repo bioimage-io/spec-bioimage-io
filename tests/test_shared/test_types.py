@@ -1,41 +1,54 @@
 from datetime import datetime, timezone
-from unittest import TestCase
+from typing import Any
 
-from bioimageio.spec.types import Datetime, SiUnit
-from tests.unittest_utils import TestBases, TypeSubTest
+import pytest
 
-
-class TestRelativePath(TestCase):
-    def test_eq(self):
-        from bioimageio.spec.types import RelativePath
-
-        p = RelativePath(__file__)
-        p2 = RelativePath(__file__)
-        self.assertEqual(p, p2)
+from bioimageio.spec.types import Datetime, RelativePath, SiUnit
+from tests.utils import check_type
 
 
-class TestSiUnit(TestBases.TestType):
-    type_ = SiUnit
-    valid = ("lx·s", "kg/m^2·s^-2")
-    invalid = ["lxs", " kg"]
+def test_relative_path():
+    p = RelativePath(__file__)
+    p2 = RelativePath(__file__)
+    assert p == p2
+
+
+@pytest.mark.parametrize("value", ["lx·s", "kg/m^2·s^-2"])
+def test_si_unit(value: str):
+    check_type(SiUnit, value)
+
+
+@pytest.mark.parametrize("value", ["lxs", " kg"])
+def test_si_unit_invalid(value: str):
+    check_type(SiUnit, value, is_invalid=True)
 
 
 NOW = datetime.now()
 
 
-class TestDateTime(TestBases.TestType):
-    type_ = Datetime
-    valid = (
-        TypeSubTest("2019-12-11T12:22:32+00:00", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
-        TypeSubTest("2019-12-11T12:22:32+00:00", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
-        TypeSubTest("2019-12-11T12:22:32Z", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
-        TypeSubTest("2019-12-11T12:22:32Z", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
-        TypeSubTest(NOW, NOW),
-    )
-    invalid = (
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("2019-12-11T12:22:32+00:00", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
+        ("2019-12-11T12:22:32+00:00", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        ("2019-12-11T12:22:32Z", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
+        ("2019-12-11T12:22:32Z", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        (NOW, NOW),
+    ],
+)
+def test_datetime(value: Any, expected: Any):
+    check_type(Datetime, value, expected=expected)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
         "2019-12-11T12:22:32+00/00",
         "2019-12-11T12:22:32Y",
         "2019-12-11T12:22:32Zulu",
         "201912-11T12:22:32+00:00",
         "NOW",
-    )
+    ],
+)
+def test_datetime_invalid(value: Any):
+    check_type(Datetime, value, is_invalid=True)
