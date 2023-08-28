@@ -152,25 +152,23 @@ class TestInputTensor(TestBases.TestNode):
 
 class TestBatchAxis(TestBases.TestNode):
     default_node_class = BatchAxis
+    allow_empty = True
     sub_tests = [
-        Valid({}, expected_dump_python={"type": "batch"}),
-        Valid({"type": "batch"}, expected_dump_python={"type": "batch"}),
-    ]
-
-
-class TestSpaceInputAxis(TestBases.TestNode):
-    default_node_class = SpaceInputAxis
-    sub_tests = [
-        Valid({"name": "x", "size": 10}, expected_dump_python={"type": "space", "name": "x", "size": 10}),
+        Valid({}, expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None}),
         Valid(
-            {"type": "space", "name": "x", "size": 10}, expected_dump_python={"type": "space", "name": "x", "size": 10}
+            {"type": "batch"},
+            expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None},
         ),
     ]
 
 
 class TestInputAxis(TestBases.TestType):
     type_ = InputAxis
-    valid = [{"type": "space", "name": "x", "size": 10}, SpaceInputAxis(name="x", size=10)]
+    valid = [
+        {"type": "space", "name": "x", "size": 10},
+        SpaceInputAxis(name="x", size=10),
+        {"type": "batch"},
+    ]
 
 
 class TestModel(TestCase):
@@ -238,8 +236,10 @@ class TestModel(TestCase):
             with self.subTest(format):
                 self.data.update({"weights": {format: {"source": "local_weights"}}})
                 if format == "pytorch_state_dict":
-                    self.data["weights"][format]["architecture"] = "file.py:Model"
-                    self.data["weights"][format]["architecture_sha256"] = "0" * 64  # dummy sha256
+                    self.data["weights"][format]["architecture"] = {
+                        "callable": "file.py:Model",
+                        "sha256": "0" * 64,  # dummy sha256
+                    }
 
                 summary = validate_format(self.data, context=ValidationContext(root=HttpUrl("https://example.com/")))
                 self.assertEqual(summary.status, "passed", summary.format())

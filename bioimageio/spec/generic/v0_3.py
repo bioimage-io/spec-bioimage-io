@@ -203,9 +203,6 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
     Do not set this field in a YAML file."""
 
-    root: Union[DirectoryPath, AnyUrl] = Path()
-    """Base path or URL for any relative paths specified in the RDF"""
-
     tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
     """Associated tags"""
 
