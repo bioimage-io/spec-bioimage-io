@@ -2,12 +2,20 @@ import collections.abc
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
-from pydantic import model_validator  # type: ignore
-from pydantic import ConfigDict, Field, FieldValidationInfo, StringConstraints, ValidationInfo, field_validator
+from pydantic import (  # type: ignore
+    ConfigDict,
+    Field,
+    FieldValidationInfo,
+    HttpUrl,
+    StringConstraints,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec import generic
-from bioimageio.spec._internal.base_nodes import Kwargs, Node
+from bioimageio.spec._internal.base_nodes import Kwargs, Node, StringNode
 from bioimageio.spec._internal.constants import (
     DTYPE_LIMITS,
     ERROR,
@@ -25,7 +33,6 @@ from bioimageio.spec.model.v0_4 import (
     Binarize,
     BinarizeKwargs,
     CallableFromDepencency,
-    CallableFromFile,
     Clip,
     ClipKwargs,
     KerasHdf5Weights,
@@ -47,10 +54,12 @@ from bioimageio.spec.types import (
     Datetime,
     DeprecatedLicenseId,
     FileSource,
+    Identifier,
     LicenseId,
     LowerCaseIdentifier,
     NonEmpty,
     RawStringDict,
+    RelativeFilePath,
     Sha256,
     Unit,
     Version,
@@ -676,6 +685,19 @@ class OutputTensor(TensorBase):
 
 
 AnyTensor = Union[InputTensor, OutputTensor]
+
+
+class CallableFromFile(StringNode):
+    _pattern = r"^.+:.+$"
+    file: Union[HttpUrl, RelativeFilePath]
+    """∈📦 Python module that implements `callable_name`"""
+    callable_name: Identifier
+    """The Python identifier of  """
+
+    @classmethod
+    def _get_data(cls, valid_string_data: str):
+        *file_parts, callname = valid_string_data.split(":")
+        return dict(file=":".join(file_parts), callable_name=callname)
 
 
 class ArchitectureFromFile(Node):

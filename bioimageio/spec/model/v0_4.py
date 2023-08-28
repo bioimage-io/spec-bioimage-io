@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
-from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, ValidationInfo, field_validator, model_validator
+from pydantic import model_validator  # type: ignore
+from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
@@ -95,7 +96,7 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
-    file: Union[HttpUrl, RelativeFilePath]
+    source_file: Union[HttpUrl, RelativeFilePath]
     """∈📦 Python module that implements `callable_name`"""
     callable_name: Identifier
     """The Python identifier of  """
