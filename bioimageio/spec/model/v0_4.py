@@ -3,8 +3,16 @@ from __future__ import annotations
 from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
-from pydantic import model_validator  # type: ignore
-from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, ValidationInfo, field_validator
+from pydantic import (  # type: ignore
+    AllowInfNan,
+    ConfigDict,
+    Field,
+    HttpUrl,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
@@ -85,7 +93,17 @@ PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero
 
 class CallableFromDepencency(StringNode):
     _pattern = r"^.+\..+$"
-    module_name: Identifier
+    _submodule_adapter = TypeAdapter(Identifier)
+
+    module_name: str
+
+    @field_validator("module_name", mode="after")
+    def check_submodules(cls, module_name: str) -> str:
+        for submod in module_name.split("."):
+            _ = cls._submodule_adapter.validate_python(submod)
+
+        return module_name
+
     callable_name: Identifier
 
     @classmethod
@@ -185,10 +203,8 @@ class Weights(Node):
 
 
 class WeightsEntryBase(Node):
-    model_config = {**Node.model_config, "exclude": ("type",)}
+    type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
-
-    type: str
 
     source: FileSource
     """∈📦 The weights file."""
@@ -232,21 +248,21 @@ class WeightsEntryBase(Node):
 
 
 class KerasHdf5Weights(WeightsEntryBase):
-    type: Annotated[Literal["keras_hdf5"], Field(exclude=True)] = "keras_hdf5"
+    type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[Union[Version, None], warn(Version, ALERT)] = None
     """TensorFlow version used to create these weights"""
 
 
 class OnnxWeights(WeightsEntryBase):
-    type: Annotated[Literal["onnx"], Field(exclude=True)] = "onnx"
+    type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[Union[Annotated[int, Ge(7)], None], warn(int, ALERT)] = None
     """ONNX opset version"""
 
 
 class PytorchStateDictWeights(WeightsEntryBase):
-    type: Annotated[Literal["pytorch_state_dict"], Field(exclude=True)] = "pytorch_state_dict"
+    type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
     """callable returning a torch.nn.Module instance.
@@ -286,14 +302,14 @@ class PytorchStateDictWeights(WeightsEntryBase):
 
 
 class TorchscriptWeights(WeightsEntryBase):
-    type: Annotated[Literal["torchscript"], Field(exclude=True)] = "torchscript"
+    type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the PyTorch library used."""
 
 
 class TensorflowJsWeights(WeightsEntryBase):
-    type: Annotated[Literal["tensorflow_js"], Field(exclude=True)] = "tensorflow_js"
+    type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
@@ -304,23 +320,10 @@ class TensorflowJsWeights(WeightsEntryBase):
 
 
 class TensorflowSavedModelBundleWeights(WeightsEntryBase):
-    type: Annotated[Literal["tensorflow_saved_model_bundle"], Field(exclude=True)] = "tensorflow_saved_model_bundle"
+    type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
-
-
-WeightsEntry = Annotated[
-    Union[
-        KerasHdf5Weights,
-        OnnxWeights,
-        TorchscriptWeights,
-        PytorchStateDictWeights,
-        TensorflowJsWeights,
-        TensorflowSavedModelBundleWeights,
-    ],
-    Field(discriminator="type"),
-]
 
 
 class ParametrizedInputShape(Node):

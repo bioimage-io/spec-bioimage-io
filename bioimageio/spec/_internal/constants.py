@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Unio
 from bioimageio.spec._internal.utils import files
 
 if TYPE_CHECKING:
-    from bioimageio.spec.types import LicenseId, Severity, SeverityName
+    from bioimageio.spec.types import FormatVersionPlaceholder, LicenseId, WarningSeverity, WarningSeverityName
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, bool] = {}
@@ -81,16 +81,18 @@ ALERT, ALERT_NAME = 35, "alert"
 WARNING, WARNING_NAME = 30, "warning"
 """no WARNING nor ALERT nor ERROR -> RDF is watertight"""
 
-INFO, INFO_TYPE = 20, "info"
+INFO, INFO_NAME = 20, "info"
 """info warnings are about purely cosmetic issues, etc."""
 
-SEVERITY_TO_NAME: Mapping[Severity, SeverityName] = MappingProxyType(
-    {INFO: INFO_TYPE, WARNING: WARNING_NAME, ALERT: ALERT_NAME}
+WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = MappingProxyType(
+    {INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME}
 )
-NAME_TO_SEVERITY: Mapping[SeverityName, Severity] = MappingProxyType({v: k for k, v in SEVERITY_TO_NAME.items()})
+WANRING_NAME_TO_SEVERITY: Mapping[WarningSeverityName, WarningSeverity] = MappingProxyType(
+    {v: k for k, v in WARNING_SEVERITY_TO_NAME.items()}
+)
 
-LATEST = "latest"
+LATEST: FormatVersionPlaceholder = "latest"
 """placeholder for the latest available format version"""
 
-DISCOVER = "discover"
+DISCOVER: FormatVersionPlaceholder = "discover"
 """placeholder for whatever format version an RDF specifies"""

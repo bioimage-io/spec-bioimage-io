@@ -1,8 +1,7 @@
 import traceback
 from copy import deepcopy
 from pathlib import PurePath
-from types import MappingProxyType
-from typing import Any, Dict, Iterable, List, Literal, Mapping, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Type, TypeVar, Union
 from urllib.parse import urljoin
 
 import pydantic
@@ -166,7 +165,7 @@ def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, st
     if not isinstance(fv, str):
         raise TypeError(f"Invalid format version '{fv}' of type {type(fv)}")
 
-    if fv in _get_supported_format_versions().get(typ, ()):
+    if fv in _get_supported_format_versions(typ):
         use_fv = fv
     elif hasattr(bioimageio.spec, typ):
         # type is specialized...
@@ -222,16 +221,16 @@ def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Res
     return rd_class
 
 
-def _get_supported_format_versions() -> Mapping[str, Tuple[str, ...]]:
+def _get_supported_format_versions(typ: str) -> Tuple[str, ...]:
     supported: Dict[str, List[str]] = {}
-    for typ, rd_class in _iterate_over_rd_classes():
-        format_versions = supported.setdefault(typ, [])
+    for t, rd_class in _iterate_over_rd_classes():
+        format_versions = supported.setdefault(t, [])
         ma, mi, pa = rd_class.implemented_format_version_tuple
         for p in range(pa + 1):
             format_versions.append(f"{ma}.{mi}.{p}")
 
     supported["model"].extend([f"0.3.{i}" for i in range(7)])  # model 0.3 can be converted
-    return MappingProxyType({t: tuple(fv) for t, fv in supported.items()})
+    return tuple(supported.get(typ, supported["generic"]))
 
 
 def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:

@@ -184,11 +184,13 @@ def _convert_architecture(data: Dict[str, Any]) -> None:
         return
 
     callable_: Union[Any, Dict[Any, Any]] = state_dict_entry.pop("architecture", None)
-    if not isinstance(callable_, dict):
+    if isinstance(callable_, dict):
+        if (src_file := callable_.pop("source_file", None)) is not None:
+            callable_["file"] = src_file
+    elif isinstance(callable_, str):
+        pass
+    else:
         return
-
-    if (src_file := callable_.pop("source_file", None)) is not None:
-        callable_["file"] = src_file
 
     state_dict_entry["architecture"] = dict(callable=callable_)
     if sha := state_dict_entry.pop("architecture_sha256", None):

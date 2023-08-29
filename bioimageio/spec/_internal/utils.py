@@ -18,7 +18,7 @@ if sys.version_info < (3, 9):
         return Path(__file__).parent.parent
 
 else:
-    from importlib.resources import files  # type: ignore
+    from importlib.resources import files as files
 
 _annot_type = type(Annotated[int, "int"])
 

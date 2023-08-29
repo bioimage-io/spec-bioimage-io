@@ -10,8 +10,8 @@ from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal.constants import ERROR, SEVERITY_TO_NAME, WARNING, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec.types import Severity
+from bioimageio.spec._internal.constants import ERROR, WARNING, WARNING_LEVEL_CONTEXT_KEY, WARNING_SEVERITY_TO_NAME
+from bioimageio.spec.types import WarningSeverity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
@@ -29,7 +29,7 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
 def warn(
     typ: Union[AnnotationMetaData, Any],
-    severity: Severity = WARNING,
+    severity: WarningSeverity = WARNING,
     msg: LiteralString = "'{value}' incompatible with {typ}",
 ):
     """treat a type or its annotation metadata as a warning condition"""
@@ -57,7 +57,7 @@ def as_warning(
     func: "_V2Validator",
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
-    severity: Severity = WARNING,
+    severity: WarningSeverity = WARNING,
     msg: Optional[LiteralString] = None,
     context: Optional[Dict[str, Any]] = None,
 ) -> ValidatorFunction:
@@ -81,7 +81,7 @@ def as_warning(
 class AfterWarner(AfterValidator):
     """Like AfterValidator, but wraps validation `func` `as_warning`"""
 
-    severity: Severity = WARNING
+    severity: WarningSeverity = WARNING
     msg: Optional[LiteralString] = None
     context: Optional[Dict[str, Any]] = None
 
@@ -97,7 +97,7 @@ class AfterWarner(AfterValidator):
 class BeforeWarner(BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` `as_warning`"""
 
-    severity: Severity = WARNING
+    severity: WarningSeverity = WARNING
     msg: Optional[LiteralString] = None
     context: Optional[Dict[str, Any]] = None
 

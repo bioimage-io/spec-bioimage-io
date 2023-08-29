@@ -21,7 +21,7 @@ from bioimageio.spec.model.v0_4 import (
     Weights,
 )
 from bioimageio.spec.types import RelativeFilePath, ValidationContext
-from tests.utils import check_node, check_type
+from tests.utils import check_node, check_type, not_set
 
 
 def test_model_rdf_file_ref():
@@ -73,10 +73,6 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
     "kwargs,expected",
     [
         (
-            dict(type="onnx", opset_version=8, source="https://example.com", sha256="s" * 64),
-            dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
-        ),
-        (
             dict(opset_version=8, source="https://example.com", sha256="s" * 64),
             dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
         ),
@@ -95,30 +91,30 @@ def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool
     check_node(
         OnnxWeights,
         kwargs,
-        expected_dump_json=expected if isinstance(expected, dict) else None,
+        expected_dump_json=expected if isinstance(expected, dict) else not_set,
         is_invalid=expected is ValidationError,
     )
 
 
 VALID_PRE_AND_POSTPROCESSING = [
-    ("binarize", {"threshold": 0.5}),
-    ("clip", {"min": 0.2, "max": 0.5}),
-    ("scale_linear", {"gain": 2, "offset": 0.5, "axes": "xy"}),
-    ("sigmoid",),
-    ("zero_mean_unit_variance", {"mode": "fixed", "mean": 1, "std": 2, "axes": "xy"}),
-    ("scale_range", {"mode": "per_sample", "axes": "xy"}),
-    ("scale_range", {"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 50}),
+    dict(name="binarize", kwargs={"threshold": 0.5}),
+    dict(name="clip", kwargs={"min": 0.2, "max": 0.5}),
+    dict(name="scale_linear", kwargs={"gain": 2, "offset": 0.5, "axes": "xy"}),
+    dict(name="sigmoid"),
+    dict(name="zero_mean_unit_variance", kwargs={"mode": "fixed", "mean": 1, "std": 2, "axes": "xy"}),
+    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
+    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 50}),
 ]
 
 INVALID_PRE_AND_POSTPROCESSING = [
-    ("binarize", {"mode": "fixed", "threshold": 0.5}),
-    ("clip", {"min": "min", "max": 0.5}),
-    ("scale_linear", {"gain": 2, "offset": 0.5, "axes": "b"}),
-    ("sigmoid", {"axes": "x"}),
-    ("zero_mean_unit_variance", {"mode": "unknown", "mean": 1, "std": 2, "axes": "xy"}),
-    ("scale_range", {"mode": "fixed", "axes": "xy"}),
-    ("scale_range", {"mode": "per_sample", "axes": "xy", "min_percentile": 50, "max_percentile": 50}),
-    ("scale_range", {"mode": "per_sample", "axes": "xy", "min": 0}),
+    dict(name="binarize", kwargs={"mode": "fixed", "threshold": 0.5}),
+    dict(name="clip", kwargs={"min": "min", "max": 0.5}),
+    dict(name="scale_linear", kwargs={"gain": 2, "offset": 0.5, "axes": "b"}),
+    dict(name="sigmoid", kwargs={"axes": "x"}),
+    dict(name="zero_mean_unit_variance", kwargs={"mode": "unknown", "mean": 1, "std": 2, "axes": "xy"}),
+    dict(name="scale_range", kwargs={"mode": "fixed", "axes": "xy"}),
+    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 50, "max_percentile": 50}),
+    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min": 0}),
 ]
 
 
@@ -304,9 +300,11 @@ def model_data():
         dict(weights={"onnx": {"source": "local_weights"}}),
         dict(
             weights={
-                "pytorch_state_dict": {"source": "local_weights"},
-                "architecture": "file.py:Model",
-                "architecture_sha256": "0" * 64,
+                "pytorch_state_dict": {
+                    "source": "local_weights",
+                    "architecture": "file.py:Model",
+                    "architecture_sha256": "0" * 64,
+                }
             }
         ),
     ],
@@ -333,7 +331,7 @@ def test_warn_long_name(model_data: Dict[str, Any]):
 
 def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
     model_data["inputs"][0]["name"] = "invalid/name"
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("http://example.com")))
     assert summary.status == "failed", summary.format()
 
 
@@ -349,7 +347,7 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
         }
     ]
 
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("http://example.com")))
     assert summary.status == "failed", summary.format()
 
 
@@ -364,7 +362,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
         }
     ]
 
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("http://example.com")))
     assert summary.status == "failed", summary.format()
 
 
@@ -379,7 +377,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
             "halo": [256, 128, 0],
         }
     ]
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("http://example.com")))
     assert summary.status == "failed", summary.format()
 
 
@@ -422,6 +420,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
 
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
+    model_data["format_version"] = "0.2.3"
     summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
     assert summary.status == "passed", summary.format()
 

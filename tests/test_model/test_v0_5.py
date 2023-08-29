@@ -24,7 +24,7 @@ from bioimageio.spec.model.v0_5 import (
     Weights,
 )
 from bioimageio.spec.types import RelativeFilePath, ValidationContext
-from tests.utils import check_node
+from tests.utils import check_node, check_type
 
 
 def test_model_rdf_file_ref():
@@ -87,18 +87,6 @@ def test_model_rdf_invalid(kwargs: Dict[str, Any]):
             ),
             id="string values and uint data type",
         ),
-        pytest.param(
-            dict(
-                name="t4",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
-                test_tensor="https://example.com/test.npy",
-                data=[
-                    {"values": ["mouse", "zebra", "elephant"]},
-                    {"type": "int8"},
-                ],
-            ),
-            id="string values and int data type",
-        ),
     ],
 )
 def test_tensor_base(kwargs: Dict[str, Any]):
@@ -131,6 +119,18 @@ def test_tensor_base(kwargs: Dict[str, Any]):
                 ],
             ),
             id="channel mismatch",
+        ),
+        pytest.param(
+            dict(
+                name="t7",
+                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
+                test_tensor="https://example.com/test.npy",
+                data=[
+                    {"values": ["mouse", "zebra", "elephant"]},
+                    {"type": "int8"},
+                ],
+            ),
+            id="string values and int data type",
         ),
     ],
 )
@@ -183,13 +183,13 @@ def test_batch_axis(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
-    check_node(InputAxis, kwargs)
+    check_type(InputAxis, kwargs)
 
 
 @pytest.fixture
 def model_data():
-    return Model(
-        documentation=RelativeFilePath("docs.md"),
+    data = Model(
+        documentation=HttpUrl("https://example.com/docs.md"),
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.5.0",
@@ -210,7 +210,7 @@ def model_data():
                 description="Input 1",
                 data=IntervalOrRatioData(type="float32"),
                 axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
-                test_tensor=RelativeFilePath("test_ipt.npy"),
+                test_tensor=HttpUrl("https://example.com/test_ipt.npy"),
             ),
         ),
         outputs=(
@@ -218,14 +218,18 @@ def model_data():
                 name="output_1",
                 description="Output 1",
                 axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
-                test_tensor=RelativeFilePath("test_out.npy"),
+                test_tensor=HttpUrl("https://example.com/test_out.npy"),
             ),
         ),
         name="Model",
         tags=(),
-        weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
+        weights=Weights(onnx=OnnxWeights(source=HttpUrl("https://example.com/weights.onnx"))),
         type="model",
     ).model_dump()
+    # make data more editable
+    data["outputs"] = list(data["outputs"])
+    data["outputs"][0]["axes"] = list(data["outputs"][0]["axes"])
+    return data
 
 
 @pytest.mark.parametrize(
@@ -233,17 +237,19 @@ def model_data():
     [
         pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
         dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(weights={"torchscript": {"source": "local_weights"}}),
-        dict(weights={"keras_hdf5": {"source": "local_weights"}}),
-        dict(weights={"tensorflow_js": {"source": "local_weights"}}),
-        dict(weights={"tensorflow_saved_model_bundle": {"source": "local_weights"}}),
-        dict(weights={"onnx": {"source": "local_weights"}}),
+        dict(weights={"torchscript": {"source": "https://example.com/weights"}}),
+        dict(weights={"keras_hdf5": {"source": "https://example.com/weights"}}),
+        dict(weights={"tensorflow_js": {"source": "https://example.com/weights"}}),
+        dict(weights={"tensorflow_saved_model_bundle": {"source": "https://example.com/weights"}}),
+        dict(weights={"onnx": {"source": "https://example.com/weights"}}),
         dict(
             weights={
-                "pytorch_state_dict": {"source": "local_weights"},
-                "architecture": {
-                    "callable": "file.py:Model",
-                    "sha256": "0" * 64,  # dummy sha256
+                "pytorch_state_dict": {
+                    "source": "https://example.com/weights",
+                    "architecture": {
+                        "callable": "https://example.com/file.py:Model",
+                        "sha256": "0" * 64,  # dummy sha256
+                    },
                 },
             }
         ),
@@ -251,20 +257,19 @@ def model_data():
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     model_data.update(update)
-    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
     model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-    summary = validate_format(
-        model_data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
-    )
+    summary = validate_format(model_data, context=ValidationContext(warning_level=INFO))
+
     assert summary.status == "passed", summary.format()
     assert summary.warnings[0].loc == ("name",), summary.format()
     assert summary.warnings[0].msg in [
         "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
-        f"{typing_module}.Annotated[typing.Any, Len(min_length=5, max_length=64)]"
+        f"{typing_module}.Annotated[typing.Any, MaxLen(max_length=64)]"
         for typing_module in ("typing", "typing_extensions")
     ], summary.format()
 
@@ -276,47 +281,27 @@ def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
 
 
 def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
-    model_data["outputs"] = [
-        {
-            "name": "output_1",
-            "description": "Output 1",
-            "data_type": "float32",
-            "axes": "xyc",
-            "shape": [128, 128, 3],
-            "halo": [32, 128, 0],
-        }
-    ]
-
+    model_data["outputs"][0]["halo"] = 999
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 
 
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
-    model_data["outputs"] = [
-        {
-            "name": "output_1",
-            "description": "Output 1",
-            "data_type": "float32",
-            "axes": "xyc",
-            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
-        }
-    ]
-
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.x"}, "halo": 2}
+    summary = validate_format(model_data)
+    assert summary.status == "passed", summary.format()
+    # input_1.x -> input_1.z
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.z"}, "halo": 2}
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 
 
 def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
-    model_data["outputs"] = [
-        {
-            "name": "output_1",
-            "description": "Output 1",
-            "data_type": "float32",
-            "axes": "xyc",
-            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
-            "halo": [256, 128, 0],
-        }
-    ]
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.x"}, "halo": 2}
+    summary = validate_format(model_data)
+    assert summary.status == "passed", summary.format()
+
+    model_data["outputs"][0]["axes"][0]["halo"] = 999
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 
@@ -325,7 +310,7 @@ def test_model_has_parent_with_uri(model_data: Dict[str, Any]):
     uri = "https://doi.org/10.5281/zenodo.5744489"
     model_data["parent"] = dict(uri=uri, sha256="s" * 64)
 
-    model, summary = load_description(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    model, summary = load_description(model_data)
     assert summary.status == "passed", summary.format()
 
     assert isinstance(model, Model)
@@ -335,7 +320,7 @@ def test_model_has_parent_with_uri(model_data: Dict[str, Any]):
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     model_data["parent"] = dict(id="10.5281/zenodo.5764892")
-    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 
 
@@ -344,27 +329,27 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
         {
             "name": "output_1",
             "description": "Output 1",
-            "data_type": "float32",
-            "axes": "xyzc",
-            "shape": dict(
-                scale=[1, 1, None, 1],
-                offset=[0, 0, 7, 0],
-                reference_tensor="input_1",
-            ),
+            "data": {"type": "float32"},
+            "axes": [
+                {"type": "space", "name": "x", "size": {"reference": "input_1.x"}},
+                {"type": "space", "name": "y", "size": {"reference": "input_1.y"}},
+                {"type": "space", "name": "z", "size": 7},
+                {"type": "channel", "size": {"reference": "input_1.channel"}},
+            ],
         }
     ]
 
-    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 
 
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
-    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 
 
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
-    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()

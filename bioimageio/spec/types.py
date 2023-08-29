@@ -42,6 +42,7 @@ with a few restrictions listed [here](https://docs.python.org/3/library/datetime
 
 OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 DeprecatedLicenseId = DeprecatedLicenseId
+FormatVersionPlaceholder = Literal["latest", "discover"]
 Identifier = Annotated[
     NonEmpty[str],
     AfterValidator(validate_identifier),
@@ -65,13 +66,14 @@ Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
 
-Severity = Literal[20, 30, 35]
-"""Severity of a warning"""
+WarningSeverity = Literal[20, 30, 35]
+WarningSeverityName = Literal["info", "warning", "alert"]
 
-WarningLevel = Literal[Severity, 50]
-"""With warning level x raise warnings of severity >=x"""
+WarningLevel = Literal[WarningSeverity, 50]
+"""With warning level x validation warnings of severity >=x are raised.
+Highest warning level 50/error does not raise any validaiton warnings (only validation errors)."""
 
-SeverityName = Literal["info", "warning", "alert"]
+WarningLevelName = Literal[WarningSeverityName, "error"]
 
 
 class RelativePath:

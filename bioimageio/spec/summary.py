@@ -5,8 +5,13 @@ from pydantic import BaseModel, Field
 from pydantic_core.core_schema import ErrorType
 
 from bioimageio.spec import __version__
-from bioimageio.spec._internal.constants import NAME_TO_SEVERITY, SEVERITY_TO_NAME, WARNING, WARNING_NAME
-from bioimageio.spec.types import Loc, Severity, SeverityName
+from bioimageio.spec._internal.constants import (
+    WANRING_NAME_TO_SEVERITY,
+    WARNING,
+    WARNING_NAME,
+    WARNING_SEVERITY_TO_NAME,
+)
+from bioimageio.spec.types import Loc, WarningSeverity, WarningSeverityName
 
 
 class ValidationEntry(BaseModel):
@@ -20,8 +25,8 @@ class ErrorEntry(ValidationEntry):
 
 
 class WarningEntry(ValidationEntry):
-    severity: Severity = WARNING
-    severity_name: SeverityName = WARNING_NAME
+    severity: WarningSeverity = WARNING
+    severity_name: WarningSeverityName = WARNING_NAME
 
     @model_validator(mode="before")
     @classmethod
@@ -29,11 +34,11 @@ class WarningEntry(ValidationEntry):
         if isinstance(data, dict):
             data = dict(data)
             assert isinstance(data, dict)
-            if "severity" in data and not "severity_name" in data and data["severity"] in SEVERITY_TO_NAME:
-                data["severity_name"] = SEVERITY_TO_NAME[data["severity"]]
+            if "severity" in data and not "severity_name" in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+                data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
 
-            if "severity" in data and not "severity_name" in data and data["severity"] in SEVERITY_TO_NAME:
-                data["severity"] = NAME_TO_SEVERITY[data["severity_name"]]
+            if "severity" in data and not "severity_name" in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+                data["severity"] = WANRING_NAME_TO_SEVERITY[data["severity_name"]]
 
         return data
 

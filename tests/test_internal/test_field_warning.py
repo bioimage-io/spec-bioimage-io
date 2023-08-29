@@ -7,6 +7,7 @@ from typing_extensions import Annotated
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec.types import ValidationContext
 from tests.utils import check_node
 
 
@@ -25,33 +26,33 @@ NESTED_NODE_DUMMY_INPUT = dict(dummy=DummyNode(**DUMMY_INPUT))
 
 
 @pytest.mark.parametrize(
-    "kwargs,valid",
+    "kwargs,context,valid",
     [
-        (dict(obj=DUMMY_INPUT), True),
-        (dict(obj=DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ERROR}), True),
-        (dict(obj=DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ALERT}), True),
-        (dict(obj=DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: WARNING}), False),
-        (dict(obj=DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: INFO}), False),
+        (DUMMY_INPUT, {}, True),
+        (DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ERROR}, True),
+        (DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ALERT}, True),
+        (DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: WARNING}, False),
+        (DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
     ],
 )
-def test_warn(kwargs: Dict[str, Any], valid: bool):
-    check_node(DummyNode, kwargs, is_invalid=not valid)
+def test_warn(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
+    check_node(DummyNode, kwargs, context=context, is_invalid=not valid)
 
 
 @pytest.mark.parametrize(
-    "kwargs,valid",
+    "kwargs,context,valid",
     [
-        (dict(obj=NESTED_DICT_DUMMY_INPUT), True),
-        (dict(obj=NESTED_DICT_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ERROR}), True),
-        (dict(obj=NESTED_DICT_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ALERT}), True),
-        (dict(obj=NESTED_NODE_DUMMY_INPUT), True),
-        (dict(obj=NESTED_NODE_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ERROR}), True),
-        (dict(obj=NESTED_NODE_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: ALERT}), True),
-        (dict(obj=NESTED_DICT_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: WARNING}), False),
-        (dict(obj=NESTED_DICT_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: INFO}), False),
-        (dict(obj=NESTED_NODE_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: WARNING}), False),
-        (dict(obj=NESTED_NODE_DUMMY_INPUT, context={WARNING_LEVEL_CONTEXT_KEY: INFO}), False),
+        (NESTED_DICT_DUMMY_INPUT, {}, True),
+        (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ERROR}, True),
+        (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ALERT}, True),
+        (NESTED_NODE_DUMMY_INPUT, {}, True),
+        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ERROR}, True),
+        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ALERT}, True),
+        (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: WARNING}, False),
+        (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
+        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: WARNING}, False),
+        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
     ],
 )
-def test_warn_nested(kwargs: Dict[str, Any], valid: bool):
-    check_node(NestedDummyNode, kwargs, is_invalid=not valid)
+def test_warn_nested(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
+    check_node(NestedDummyNode, kwargs, context=context, is_invalid=not valid)

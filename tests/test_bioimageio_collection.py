@@ -1,13 +1,15 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Literal
 
 import pooch
 import pytest
 from pydantic import AnyUrl
 
-from tests.utils import check_rdf
+from bioimageio.spec._internal.constants import DISCOVER, LATEST
+from bioimageio.spec.types import FormatVersionPlaceholder
+from tests.utils import ParameterSet, check_rdf
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
 RDF_BASE_URL = BASE_URL + "rdfs/"
@@ -148,7 +150,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 }
 
 
-def yield_rdf_paths() -> Iterable[Path]:
+def yield_rdf_paths() -> Iterable[ParameterSet]:
     with open(pooch.retrieve(BASE_URL + "collection.json", None), encoding="utf-8") as f:  # type: ignore
         collection_data = json.load(f)["collection"]
 
@@ -162,19 +164,25 @@ def yield_rdf_paths() -> Iterable[Path]:
     )
 
     for rdf in collection_registry:
-        yield Path(collection.fetch(rdf))  # type: ignore
+        rdf_path = Path(collection.fetch(rdf))  # type: ignore
+        rdf_key = rdf_path.relative_to(CACHE_PATH).as_posix()
+        yield pytest.param(rdf_path, rdf_key, id=rdf_key)
 
 
-@pytest.mark.parametrize("as_latest", [False, True])
-@pytest.mark.parametrize("rdf_path", list(yield_rdf_paths()))
-def test_rdf(rdf_path: Path, as_latest: bool):
-    rdf_key = rdf_path.relative_to(CACHE_PATH).as_posix()
-    if not as_latest and rdf_key in KNOWN_INVALID or as_latest and rdf_key in KNOWN_INVALID_AS_LATEST:
+@pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
+@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_rdf_paths()))
+def test_rdf(rdf_path: Path, rdf_key: str, format_version: FormatVersionPlaceholder):
+    if (
+        format_version == DISCOVER
+        and rdf_key in KNOWN_INVALID
+        or format_version == LATEST
+        and rdf_key in KNOWN_INVALID_AS_LATEST
+    ):
         pytest.skip("known failure")
 
     check_rdf(
         AnyUrl("https://example.com/"),
         rdf_path,
-        as_latest=as_latest,
+        as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(rdf_key, set()),
     )

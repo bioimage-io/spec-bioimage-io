@@ -267,7 +267,7 @@ class Generic(GenericBase):
     )
     """pydantic model_config"""
 
-    type: Annotated[str, LowerCase]
+    type: Annotated[str, LowerCase] = "generic"
     """The resource type assigns a broad category to the resource."""
 
     @field_validator("type", mode="after")

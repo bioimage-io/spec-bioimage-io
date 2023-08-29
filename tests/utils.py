@@ -1,7 +1,7 @@
 from contextlib import nullcontext
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Optional, Set, Type, Union
+from typing import Any, ContextManager, Dict, Optional, Protocol, Sequence, Set, Type, Union
 
 import pytest
 from deepdiff import DeepDiff  # type: ignore
@@ -34,7 +34,7 @@ def check_node(
         assert expected_dump_json is not_set
         assert expected_dump_python is not_set
 
-    error_context: ContextManager = nullcontext if is_invalid else pytest.raises(expected_exception=ValidationError)  # type: ignore
+    error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
     with error_context:
         node = node_class.model_validate(
             kwargs, context=dict(get_validation_context(**(context or {"root": Path(__file__).parent})))
@@ -131,3 +131,8 @@ def check_rdf(
         slim_diff.pop(VC)
 
     assert not slim_diff, f"roundtrip {rdf_path.as_posix()}\n" + slim_diff.pretty()
+
+
+class ParameterSet(Protocol):
+    def __init__(self, values: Sequence[Any], marks: Any, id: str) -> None:
+        super().__init__()

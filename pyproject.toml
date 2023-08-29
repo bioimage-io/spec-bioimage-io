@@ -25,5 +25,5 @@ pythonVersion = "3.9"
 pythonPlatform = "All"
 
 [tool.pytest.ini_options]
-addopts = "--capture=no --doctest-modules --maxfail=1 --failed-first"
+addopts = "--capture=no --doctest-modules --failed-first"
 testpaths = ["tests", "bioimageio", "scripts", "example_specs"]

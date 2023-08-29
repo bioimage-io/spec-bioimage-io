@@ -154,7 +154,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
     ],
 )
 def test_node(node_class: Type[Node], kwargs: Dict[str, Any], is_valid: bool):
-    check_node(node_class, kwargs, raises=None if is_valid else ValidationError)
+    check_node(node_class, kwargs, is_invalid=not is_valid)
 
 
 def test_deprecated_license_in_generic():
@@ -168,8 +168,8 @@ def test_deprecated_license_in_generic():
             type="my_type",
             version="1.0",
             license="BSD-2-Clause-FreeBSD",
-            cite=[dict(name="lala", url=EXAMPLE_DOT_COM)],
+            cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
         ),
         context=ValidationContext(warning_level=WARNING),
-        raises=ValidationError,
+        is_invalid=True,
     )

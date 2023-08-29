@@ -1,5 +1,5 @@
 import collections.abc
-from typing import Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Literal, Mapping, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import (  # type: ignore
@@ -562,7 +562,7 @@ class TensorBase(Node):
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    axes: Tuple[AxisBase, ...]
+    axes: Tuple[AnyAxis, ...]
 
     @field_validator("axes", mode="after")
     @classmethod
@@ -614,7 +614,9 @@ class TensorBase(Node):
 
         dtypes = {t.type for t in value}
         if len(dtypes) > 1:
-            raise ValueError("Tensor data descriptions per channel need to agree in their data `type`.")
+            raise ValueError(
+                f"Tensor data descriptions per channel need to agree in their data `type`, but found {dtypes}."
+            )
 
         return value
 
@@ -730,7 +732,7 @@ Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
 class PytorchStateDictWeights(WeightsEntryBase):
-    type: Annotated[Literal["pytorch_state_dict"], Field(exclude=True)] = "pytorch_state_dict"
+    type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
@@ -877,12 +879,20 @@ class Model(
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_step_with_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
-                **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
+            valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
+                **{
+                    a.name: (ipt, a, a.size)
+                    for a in ipt.axes
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
+                },
                 **input_step_with_refs,
             }
-            valid_independent_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
-                **{a.name: (ipt, a) for a in ipt.axes if not isinstance(a, BatchAxis)},
+            valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]] = {
+                **{
+                    a.name: (ipt, a, a.size)
+                    for a in ipt.axes
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
+                },
                 **input_size_refs,
             }
             for a, ax in enumerate(ipt.axes):
@@ -904,8 +914,8 @@ class Model(
         tensor_name: str,
         a: int,
         axis: AnyAxis,
-        valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]],
-        valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]],
+        valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]],
+        valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
@@ -921,6 +931,11 @@ class Model(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}"
                 )
+            if isinstance(axis, WithHalo) and axis.size.min - 2 * axis.halo < 1:
+                raise ValueError(
+                    f"axis {axis.name} with minimum size {axis.size.min} is too small for halo {axis.halo}."
+                )
+
         elif isinstance(axis.size, SizeReference):
             if axis.size.reference not in valid_independent_refs:
                 raise ValueError(
@@ -940,6 +955,12 @@ class Model(
                 raise ValueError(
                     f"The units of an axis and its reference axis need to match, but '{ax_unit}' != '{ref_unit}'."
                 )
+            min_size = valid_independent_refs[axis.size.reference][2]
+            if isinstance(min_size, ParametrizedSize):
+                min_size = min_size.min
+
+            if isinstance(axis, WithHalo) and -2 * axis.halo < 1:
+                raise ValueError(f"axis {axis.name} with minimum size {min_size} is too small for halo {axis.halo}.")
 
         elif isinstance(axis.size, str):
             if axis.size not in valid_independent_refs:
@@ -993,7 +1014,7 @@ class Model(
     @staticmethod
     def _get_axes_with_parametrized_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
         return {
-            f"{t.name}.{a.name}": (t, a)
+            f"{t.name}.{a.name}": (t, a, a.size)
             for t in io
             for a in t.axes
             if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
@@ -1002,10 +1023,10 @@ class Model(
     @staticmethod
     def _get_axes_with_independent_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
         return {
-            f"{t.name}.{a.name}": (t, a)
+            f"{t.name}.{a.name}": (t, a, a.size)
             for t in io
             for a in t.axes
-            if not isinstance(a, BatchAxis) and (isinstance(a.size, int) or isinstance(a.size, ParametrizedSize))
+            if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
         }
 
     @field_validator("outputs", mode="after")
@@ -1020,13 +1041,21 @@ class Model(
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_step_with_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
-                **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
+            valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
+                **{
+                    a.name: (out, a, a.size)
+                    for a in out.axes
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
+                },
                 **input_step_with_refs,
                 **output_step_with_refs,
             }
-            valid_independent_refs: Dict[ShortId, Tuple[AnyTensor, AnyAxis]] = {
-                **{a.name: (out, a) for a in out.axes if not isinstance(a, BatchAxis)},
+            valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]] = {
+                **{
+                    a.name: (out, a, a.size)
+                    for a in out.axes
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
+                },
                 **input_size_refs,
                 **output_size_refs,
             }
@@ -1042,6 +1071,9 @@ class Model(
                 )
 
         return outputs
+
+    # @staticmethod
+    # def _validate_halo(output_idx: int, output_name: str, axis_idx: int, axis: OutputAxis, valid_independent_refs:  Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]]):
 
     packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
@@ -1066,25 +1098,6 @@ class Model(
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
-
-    @field_validator("weights", mode="before")
-    @classmethod
-    def weights_type_from_key(
-        cls, data: Union[Any, Mapping[Union[Any, str], Union[Any, Mapping[Union[Any, str], Any]]]]
-    ) -> Union[Any, Dict[Union[Any, str], Dict[str, Any]]]:
-        if not isinstance(data, collections.abc.Mapping):
-            return data
-
-        ret: Dict[Union[Any, str], Dict[str, Any]] = dict()
-        for key, value in data.items():
-            ret[key] = dict(value)
-            if isinstance(key, str) and isinstance(value, collections.abc.Mapping):
-                if "type" in value:
-                    raise ValueError(f"`type` should not be specified (redundantly) in weights entry {key}.")
-
-                ret[key]["type"] = key  # set type to descriminate weights entry union
-
-        return ret
 
     @classmethod
     def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
