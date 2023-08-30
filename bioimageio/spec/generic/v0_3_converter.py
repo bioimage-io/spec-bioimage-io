@@ -2,10 +2,10 @@ import collections.abc
 
 from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec.generic import v0_2_converter
-from bioimageio.spec.types import RawStringDict
+from bioimageio.spec.types import YamlMapping
 
 
-def convert_from_older_format(data: RawStringDict, context: ValContext) -> None:
+def convert_from_older_format(data: YamlMapping, context: ValContext) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
     fv = data.get("format_version", "0.2.0")
@@ -21,7 +21,7 @@ def convert_from_older_format(data: RawStringDict, context: ValContext) -> None:
     data["format_version"] = "0.3.0"
 
 
-def convert_attachments(data: RawStringDict) -> None:
+def convert_attachments(data: YamlMapping) -> None:
     a = data.get("attachments")
     if isinstance(a, collections.abc.Mapping):
         data["attachments"] = tuple({"source": file} for file in a.get("files", []))  # type: ignore

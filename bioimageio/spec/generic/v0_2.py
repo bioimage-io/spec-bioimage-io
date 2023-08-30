@@ -10,7 +10,7 @@ from bioimageio.spec._internal.constants import DOI_REGEX, LICENSES, TAG_CATEGOR
 from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
-from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, RawStringDict, Version
+from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, Version, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -292,7 +292,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
         convert_from_older_format(data, context)
 

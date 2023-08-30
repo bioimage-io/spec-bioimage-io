@@ -1,7 +1,8 @@
 import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
-from pydantic import ConfigDict, Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator, model_validator
+from pydantic import model_validator  # type: ignore
+from pydantic import ConfigDict, Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator
 from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
@@ -16,7 +17,7 @@ from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.notebook.v0_2 import Notebook
-from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue, RelativeFilePath
+from bioimageio.spec.types import NonEmpty, RelativeFilePath, YamlMapping, YamlValue
 
 __all__ = [
     "Attachments",
@@ -50,7 +51,7 @@ class CollectionEntryBase(Node):
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
     @property
-    def rdf_update(self) -> Dict[str, RawValue]:
+    def rdf_update(self) -> Dict[str, YamlValue]:
         return self.model_extra or {}
 
     @property
@@ -172,7 +173,7 @@ class Collection(GenericBase):
         context["collection_base_content"] = collection_base_content
 
     @staticmethod
-    def move_groups_to_collection_field(data: RawStringDict) -> None:
+    def move_groups_to_collection_field(data: YamlMapping) -> None:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):
             return
 
@@ -196,6 +197,6 @@ class Collection(GenericBase):
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         cls.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

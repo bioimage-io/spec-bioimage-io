@@ -11,6 +11,7 @@ from bioimageio.spec.types import ValidationContext
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
+EXAMPLE_DOT_COM_FILE = "https://example.com/file"
 
 
 @pytest.mark.parametrize(
@@ -28,7 +29,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
             version="1.0",
         ),
         dict(
-            attachments={"files": [Path(__file__)], "something": 42},
+            attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
             authors=[{"name": "Me"}],
             cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             description="my description",

@@ -8,13 +8,11 @@ import sys
 from abc import ABC
 from collections import UserString
 from typing import (
-    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
     Generic,
     Iterator,
-    Literal,
     Mapping,
     Optional,
     Set,
@@ -33,12 +31,9 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.field_validation import ValContext, get_validation_context, is_valid_raw_mapping
+from bioimageio.spec._internal.field_validation import ValContext, get_validation_context, is_valid_yaml_mapping
 from bioimageio.spec._internal.utils import unindent
-from bioimageio.spec.types import NonEmpty, RawStringDict, RawValue
-
-if TYPE_CHECKING:
-    from pydantic.main import IncEx
+from bioimageio.spec.types import NonEmpty, YamlMapping, YamlValue
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -170,7 +165,7 @@ class ResourceDescriptionBase(Node):
         cls.convert_from_older_format(data, context)
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         """A node may `convert` it's raw data from an older format."""
         pass
 
@@ -304,15 +299,15 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
 
     @model_validator(mode="after")
     def validate_raw_mapping(self) -> Self:
-        if not is_valid_raw_mapping(self):
-            raise AssertionError(f"{self} contains values unrepresentable in JSON/YAML")
+        if not is_valid_yaml_mapping(self):
+            raise AssertionError(f"{self} contains values unrepresentable in YAML")
 
         return self
 
 
-class ConfigNode(FrozenDictNode[NonEmpty[str], RawValue]):
+class ConfigNode(FrozenDictNode[NonEmpty[str], YamlValue]):
     model_config = {**Node.model_config, "extra": "allow"}
 
 
-class Kwargs(FrozenDictNode[NonEmpty[str], RawValue]):
+class Kwargs(FrozenDictNode[NonEmpty[str], YamlValue]):
     model_config = {**Node.model_config, "extra": "allow"}

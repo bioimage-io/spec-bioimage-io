@@ -10,7 +10,7 @@ from bioimageio.spec._internal.base_nodes import FrozenDictNode, Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
 from bioimageio.spec.description import ResourceDescription, dump_description
-from bioimageio.spec.types import FileName, Loc, RawStringMapping, RelativeFilePath
+from bioimageio.spec.types import FileName, Loc, RelativeFilePath, YamlMapping
 
 
 def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
@@ -67,7 +67,7 @@ def get_resource_package_content(
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
     package_urls: bool = True,
-) -> Dict[FileName, Union[HttpUrl, RelativeFilePath, RawStringMapping]]:
+) -> Dict[FileName, Union[HttpUrl, RelativeFilePath, YamlMapping]]:
     """
     Args:
         rd: resource description
@@ -87,11 +87,11 @@ def get_resource_package_content(
     file_names: Dict[Loc, str] = {}
     os_friendly_name = _get_os_friendly_file_name(rd.name)
     rdf_content = {}  # filled in below
-    reserved_file_sources: Dict[str, RawStringMapping] = {
+    reserved_file_sources: Dict[str, YamlMapping] = {
         "rdf.yaml": rdf_content,
         f"{os_friendly_name}.{rd.type}.bioimageio.yaml": rdf_content,
     }
-    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath, RawStringMapping]] = dict(reserved_file_sources)
+    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath, YamlMapping]] = dict(reserved_file_sources)
     for loc, src in package_content.items():
         file_name = extract_file_name(src)
         if file_name in file_sources and file_sources[file_name] != src:

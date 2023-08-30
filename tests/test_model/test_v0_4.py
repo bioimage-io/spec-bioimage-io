@@ -27,10 +27,10 @@ from tests.utils import check_node, check_type, not_set
 def test_model_rdf_file_ref():
     check_node(
         ModelRdf,
-        dict(rdf_source=__file__, sha256="s" * 64),
-        expected_dump_json=dict(rdf_source=__file__, sha256="s" * 64),
-        expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
-        context=ValidationContext(root=Path()),
+        dict(rdf_source=Path(__file__).name, sha256="s" * 64),
+        expected_dump_json=dict(rdf_source=Path(__file__).name, sha256="s" * 64),
+        expected_dump_python=dict(rdf_source=RelativeFilePath(Path(__file__).name), sha256="s" * 64),
+        context=ValidationContext(root=Path(__file__).parent),
     )
 
 

@@ -1,8 +1,7 @@
-from pathlib import Path
-from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union, get_args
+from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import AnyUrl, ConfigDict, DirectoryPath, Field, FieldValidationInfo, field_validator
+from pydantic import ConfigDict, Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
@@ -18,7 +17,7 @@ from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, Attachments, Author, Badge, CiteEntry, Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
-from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, RawStringDict, Sha256, Version
+from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, Sha256, Version, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -229,7 +228,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         """convert raw RDF data of an older format where possible"""
         convert_from_older_format(data, context)
 

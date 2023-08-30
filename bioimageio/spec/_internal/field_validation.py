@@ -1,23 +1,106 @@
+from __future__ import annotations
+
 import collections.abc
 import dataclasses
+import pathlib
 import re
 from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
-from pathlib import Path, PurePath
+from pathlib import Path, PurePath, PurePosixPath
 from typing import TYPE_CHECKING, Any, Dict, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
+from urllib.parse import urljoin
 
 import annotated_types
 import packaging.version
 from dateutil.parser import isoparse
-from pydantic import AnyUrl, DirectoryPath, GetCoreSchemaHandler, functional_validators
+from pydantic import AnyUrl, DirectoryPath, FilePath, GetCoreSchemaHandler, ValidationInfo, functional_validators
+from pydantic_core import core_schema
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 from typing_extensions import NotRequired, TypedDict
 
 from bioimageio.spec._internal.constants import ERROR, SLOTS
 
 if TYPE_CHECKING:
-    from bioimageio.spec.types import FileSource, RelativePath, WarningLevel
+    from bioimageio.spec.types import FileSource, WarningLevel
+
+
+class RelativePath:
+    path: PurePosixPath
+
+    def __init__(self, path: Union[str, Path, RelativePath]) -> None:
+        super().__init__()
+        self.path = (
+            path.path
+            if isinstance(path, RelativePath)
+            else PurePosixPath(path.as_posix())
+            if isinstance(path, Path)
+            else PurePosixPath(Path(path).as_posix())
+        )
+
+    @property
+    def __members(self):
+        return (self.path,)
+
+    def __eq__(self, __value: object) -> bool:
+        return type(__value) is type(self) and self.__members == __value.__members
+
+    def __hash__(self) -> int:
+        return hash(self.__members)
+
+    def __str__(self) -> str:
+        return self.path.as_posix()
+
+    def __repr__(self) -> str:
+        return f"RelativePath('{self.path.as_posix()}')"
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+        return core_schema.general_after_validator_function(
+            cls._validate,
+            core_schema.union_schema(
+                [
+                    core_schema.is_instance_schema(cls),
+                    core_schema.is_instance_schema(pathlib.Path),
+                    core_schema.str_schema(),
+                ]
+            ),
+            serialization=core_schema.to_string_ser_schema(),
+        )
+
+    def get_absolute(self, root: Union[DirectoryPath, AnyUrl]) -> Union[FilePath, AnyUrl]:
+        if isinstance(root, pathlib.Path):
+            return root / self.path
+        else:
+            return AnyUrl(urljoin(str(root), str(self.path)))
+
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.exists():
+            raise ValueError(f"{p} does not exist")
+
+    @classmethod
+    def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
+        if isinstance(value, str) and (value.startswith("https://") or value.startswith("http://")):
+            raise ValueError(f"{value} looks like a URL, not a relative path")
+
+        ret = cls(value)
+        root = (info.context or {}).get("root")
+        if root is not None:
+            ret._check_exists(root)
+
+        return ret
+
+
+class RelativeFilePath(RelativePath):
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_file():
+            raise ValueError(f"{p} does not point to an existing file")
+
+
+class RelativeDirectory(RelativePath):
+    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_dir():
+            raise ValueError(f"{p} does not point to an existing directory")
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
@@ -47,7 +130,7 @@ class WithSuffix:
     case_sensitive: bool
 
     def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
-        from bioimageio.spec.types import FileSource, RelativePath
+        from bioimageio.spec.types import FileSource
 
         if not self.suffix:
             raise ValueError("suffix may not be empty")
@@ -78,7 +161,7 @@ def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
     elif isinstance(dt, str):
         return isoparse(dt)
 
-    raise AssertionError(f"'{dt}' not a string or datetime.")
+    raise ValueError(f"'{dt}' not a string or datetime.")
 
 
 def validate_identifier(s: str) -> str:
@@ -110,24 +193,30 @@ def validate_orcid_id(orcid_id: str):
     raise ValueError(f"'{orcid_id} is not a valid ORCID iD in hyphenated groups of 4 digits.")
 
 
-def is_valid_raw_leaf_value(value: Any) -> bool:
-    from bioimageio.spec.types import RawLeafValue
+def is_valid_yaml_leaf_value(value: Any) -> bool:
+    from bioimageio.spec.types import YamlLeafValue
 
-    return isinstance(value, get_args(RawLeafValue))
+    return isinstance(value, get_args(YamlLeafValue))
 
 
-def is_valid_raw_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
-    return isinstance(value, collections.abc.Mapping) and all(
-        isinstance(k, str) and is_valid_raw_value(v) for k, v in value.items()
+def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
+    return (
+        is_valid_yaml_leaf_value(value) or isinstance(value, tuple) and all(is_valid_yaml_leaf_value(v) for v in value)
     )
 
 
-def is_valid_raw_sequence(value: Union[Any, Sequence[Any]]) -> bool:
-    return isinstance(value, collections.abc.Sequence) and all(is_valid_raw_value(v) for v in value)
+def is_valid_yaml_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
+    return isinstance(value, collections.abc.Mapping) and all(
+        is_valid_yaml_key(k) and is_valid_yaml_value(v) for k, v in value.items()
+    )
 
 
-def is_valid_raw_value(value: Any) -> bool:
-    return any(is_valid(value) for is_valid in (is_valid_raw_leaf_value, is_valid_raw_mapping, is_valid_raw_sequence))
+def is_valid_yaml_sequence(value: Union[Any, Sequence[Any]]) -> bool:
+    return isinstance(value, collections.abc.Sequence) and all(is_valid_yaml_value(v) for v in value)
+
+
+def is_valid_yaml_value(value: Any) -> bool:
+    return any(is_valid(value) for is_valid in (is_valid_yaml_key, is_valid_yaml_mapping, is_valid_yaml_sequence))
 
 
 V_suffix = TypeVar("V_suffix", bound=Union[AnyUrl, PurePath, "RelativePath"])
@@ -175,13 +264,24 @@ def validate_version(v: str) -> str:
     return v
 
 
+class ValidationContext(TypedDict):
+    root: NotRequired[Union[DirectoryPath, AnyUrl]]
+    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
+
+    file_name: NotRequired[str]
+    """The file name of the RDF used only for reporting"""
+
+    warning_level: NotRequired[WarningLevel]
+    """raise warnings of severity s as validation errors if s >= `warning_level`"""
+
+
 class ValContext(TypedDict):
     """internally used validation context"""
 
     root: Union[DirectoryPath, AnyUrl]
     """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
 
-    warning_level: "WarningLevel"
+    warning_level: WarningLevel
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
     file_name: str
@@ -197,7 +297,7 @@ class ValContext(TypedDict):
 def get_validation_context(
     *,
     root: Union[DirectoryPath, AnyUrl] = Path(),
-    warning_level: "WarningLevel" = ERROR,
+    warning_level: WarningLevel = ERROR,
     file_name: str = "rdf.yaml",
     **kwargs: Any,
 ) -> ValContext:

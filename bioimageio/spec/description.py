@@ -16,7 +16,7 @@ from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION
 from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
 from bioimageio.spec._internal.utils import iterate_annotated_union
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
-from bioimageio.spec.types import RawStringDict, RawStringMapping, ValidationContext
+from bioimageio.spec.types import ValidationContext, YamlMapping, YamlValue
 
 _ResourceDescription_v0_2 = Union[
     Annotated[
@@ -72,33 +72,34 @@ ResourceDescription = Union[
 
 
 def update_format(
-    rdf_content: RawStringMapping,
+    rdf_content: YamlMapping,
     update_to_format: str = "latest",
     context: Optional[ValidationContext] = None,
-) -> RawStringMapping:
+) -> YamlMapping:
     """Auto-update fields of a bioimage.io resource without any validation."""
-    assert "type" in rdf_content
-    assert isinstance(rdf_content["type"], str)
+    if not isinstance(rdf_content["type"], str):
+        raise TypeError(f"RDF type '{rdf_content['type']}' must be a string (not '{type(rdf_content['type'])}').")
+
     rd_class = _get_rd_class(rdf_content["type"], update_to_format)
     if isinstance(rd_class, str):
         raise ValueError(rd_class)
 
-    rd = dict(rdf_content)
+    updated = dict(rdf_content)
     val_context = get_validation_context(**(context or {}))
-    rd_class.convert_from_older_format(rd, val_context)
-    return rd
+    rd_class.convert_from_older_format(updated, val_context)
+    return updated
 
 
 RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def dump_description(rd: ResourceDescription, exclude_unset: bool = False) -> RawStringDict:
+def dump_description(rd: ResourceDescription, exclude_unset: bool = False) -> Dict[str, YamlValue]:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 
 
 def load_description(
-    rdf_content: RawStringMapping,
+    rdf_content: YamlMapping,
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -140,7 +141,7 @@ def load_description(
 
 
 def load_description_as_latest(
-    rdf_content: RawStringMapping,
+    rdf_content: YamlMapping,
     *,
     context: Optional[ValidationContext] = None,
 ) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
@@ -148,7 +149,7 @@ def load_description_as_latest(
 
 
 def validate_format(
-    rdf_content: RawStringMapping,
+    rdf_content: YamlMapping,
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
@@ -156,7 +157,7 @@ def validate_format(
     return summary
 
 
-def _check_type_and_format_version(data: RawStringMapping) -> Tuple[str, str, str]:
+def _check_type_and_format_version(data: YamlMapping) -> Tuple[str, str, str]:
     typ = data.get("type")
     if not isinstance(typ, str):
         raise TypeError(f"Invalid resource type '{typ}' of type {type(typ)}")
@@ -254,7 +255,7 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
 
 
 def _load_descr_with_known_rd_class(
-    rdf_content: RawStringMapping,
+    rdf_content: YamlMapping,
     *,
     context: Optional[ValidationContext] = None,
     rd_class: Type[RD],
@@ -295,7 +296,7 @@ def _load_descr_with_known_rd_class(
     return rd, summary
 
 
-def _load_descr_impl(rd_class: Type[RD], rdf_content: RawStringMapping, context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], rdf_content: YamlMapping, context: ValContext):
     rd: Optional[RD] = None
     val_errors: List[ErrorEntry] = []
     val_warnings: List[WarningEntry] = []

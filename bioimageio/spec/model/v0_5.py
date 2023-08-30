@@ -58,11 +58,11 @@ from bioimageio.spec.types import (
     LicenseId,
     LowerCaseIdentifier,
     NonEmpty,
-    RawStringDict,
     RelativeFilePath,
     Sha256,
     Unit,
     Version,
+    YamlMapping,
 )
 
 __all__ = [
@@ -931,7 +931,7 @@ class Model(
                     f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
                     f"{axis.size.step_with}"
                 )
-            if isinstance(axis, WithHalo) and axis.size.min - 2 * axis.halo < 1:
+            if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.name} with minimum size {axis.size.min} is too small for halo {axis.halo}."
                 )
@@ -959,7 +959,7 @@ class Model(
             if isinstance(min_size, ParametrizedSize):
                 min_size = min_size.min
 
-            if isinstance(axis, WithHalo) and -2 * axis.halo < 1:
+            if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
                 raise ValueError(f"axis {axis.name} with minimum size {min_size} is too small for halo {axis.halo}.")
 
         elif isinstance(axis.size, str):
@@ -1100,5 +1100,5 @@ class Model(
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         convert_from_older_format(data, context)

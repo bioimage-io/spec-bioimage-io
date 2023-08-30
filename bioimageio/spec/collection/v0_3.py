@@ -16,7 +16,7 @@ from bioimageio.spec.model.v0_4 import Model as Model04
 from bioimageio.spec.model.v0_5 import Model as Model05
 from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02
 from bioimageio.spec.notebook.v0_3 import Notebook as Notebook03
-from bioimageio.spec.types import NonEmpty, RawStringDict
+from bioimageio.spec.types import NonEmpty, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -89,6 +89,6 @@ class Collection(GenericBase):
         return value
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Union
 
 import pytest
@@ -30,9 +31,10 @@ from tests.utils import check_node, check_type
 def test_model_rdf_file_ref():
     check_node(
         ModelRdf,
-        dict(rdf_source=__file__, sha256="s" * 64),
-        expected_dump_json=dict(rdf_source=__file__, sha256="s" * 64),
-        expected_dump_python=dict(rdf_source=RelativeFilePath(__file__), sha256="s" * 64),
+        dict(rdf_source=Path(__file__).name, sha256="s" * 64),
+        expected_dump_json=dict(rdf_source=Path(__file__).name, sha256="s" * 64),
+        expected_dump_python=dict(rdf_source=RelativeFilePath(Path(__file__).name), sha256="s" * 64),
+        context=ValidationContext(root=Path(__file__).parent),
     )
 
 
@@ -306,16 +308,16 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.format()
 
 
-def test_model_has_parent_with_uri(model_data: Dict[str, Any]):
-    uri = "https://doi.org/10.5281/zenodo.5744489"
-    model_data["parent"] = dict(uri=uri, sha256="s" * 64)
+def test_model_parent(model_data: Dict[str, Any]):
+    rdf_source = "https://doi.org/10.5281/zenodo.5744489"
+    model_data["parent"] = dict(rdf_source=rdf_source, sha256="s" * 64)
 
     model, summary = load_description(model_data)
     assert summary.status == "passed", summary.format()
 
     assert isinstance(model, Model)
     assert isinstance(model.parent, ModelRdf)
-    assert str(model.parent.rdf_source) == uri
+    assert str(model.parent.rdf_source) == rdf_source
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
@@ -325,18 +327,11 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
 
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
-    model_data["outputs"] = [
-        {
-            "name": "output_1",
-            "description": "Output 1",
-            "data": {"type": "float32"},
-            "axes": [
-                {"type": "space", "name": "x", "size": {"reference": "input_1.x"}},
-                {"type": "space", "name": "y", "size": {"reference": "input_1.y"}},
-                {"type": "space", "name": "z", "size": 7},
-                {"type": "channel", "size": {"reference": "input_1.channel"}},
-            ],
-        }
+    model_data["outputs"][0]["axes"] = [
+        {"type": "space", "name": "x", "size": {"reference": "input_1.x"}},
+        {"type": "space", "name": "y", "size": {"reference": "input_1.y"}},
+        {"type": "space", "name": "z", "size": 7},
+        {"type": "channel", "size": {"reference": "input_1.channel"}},
     ]
 
     summary = validate_format(model_data)

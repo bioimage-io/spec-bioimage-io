@@ -3,16 +3,8 @@ from __future__ import annotations
 from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
-from pydantic import (  # type: ignore
-    AllowInfNan,
-    ConfigDict,
-    Field,
-    HttpUrl,
-    TypeAdapter,
-    ValidationInfo,
-    field_validator,
-    model_validator,
-)
+from pydantic import model_validator  # type: ignore
+from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, TypeAdapter, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
@@ -32,11 +24,10 @@ from bioimageio.spec.types import (
     LicenseId,
     LowerCaseIdentifier,
     NonEmpty,
-    RawMapping,
-    RawStringDict,
     RelativeFilePath,
     Sha256,
     Version,
+    YamlMapping,
 )
 
 __all__ = [
@@ -80,7 +71,6 @@ __all__ = [
     "TensorflowSavedModelBundleWeights",
     "TorchscriptWeights",
     "Weights",
-    "WeightsEntry",
     "ZeroMeanUnitVariance",
     "ZeroMeanUnitVarianceKwargs",
 ]
@@ -413,7 +403,7 @@ class Processing(Node):  # todo: add ABC
 
     @model_validator(mode="before")
     @classmethod
-    def check_name_given_for_raw_input(cls, data: Union[Processing, RawMapping]) -> Union[Processing, RawMapping]:
+    def check_name_given_for_raw_input(cls, data: Union[Processing, YamlMapping]) -> Union[Processing, YamlMapping]:
         if not isinstance(data, Processing) and "name" not in data:
             raise AssertionError("'name' field mandatory for raw data input.")
 
@@ -941,5 +931,5 @@ class Model(GenericBaseNoSource):
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RawStringDict, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
         convert_from_older_format(data, context)

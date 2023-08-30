@@ -13,16 +13,16 @@ from bioimageio.spec.types import RelativeFilePath, ValidationContext
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
+EXAMPLE_DOT_COM_FILE = "https://example.com/file"
 
 
 @pytest.mark.parametrize(
     "node_class,kwargs,is_valid",
     [
-        (Attachments, dict(files=(RelativeFilePath(__file__), HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5), True),
-        (Attachments, dict(files=(__file__, EXAMPLE_DOT_COM), extra=dict(more="of this")), True),
-        (Attachments, dict(files=(__file__, "http:example.com")), True),
+        (Attachments, dict(files=(EXAMPLE_DOT_COM_FILE, HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5), True),
+        (Attachments, dict(files=(EXAMPLE_DOT_COM_FILE, EXAMPLE_DOT_COM), extra=dict(more="of this")), True),
         (Attachments, dict(only="other stuff"), True),
-        (Attachments, dict(files=__file__), False),
+        (Attachments, dict(files="not a list"), False),
         (Attachments, dict(files=["non-existing-file"]), False),
         (Attachments, dict(files=[123]), False),
         (Author, dict(name="only_name"), True),
@@ -101,7 +101,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
                 format_version=Generic.implemented_format_version,
                 name="your name",
                 description="my description",
-                attachments={"files": [Path(__file__)], "something": 42},
+                attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
                 type="my_type",
                 version="0.1.0",
             ),
@@ -129,7 +129,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
                 format_version=Generic.implemented_format_version,
                 name="your name",
                 description="my description",
-                attachments={"files": [Path(__file__)], "something": 42},
+                attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
                 type="my_type",
                 version="0.1.0",
             ),
@@ -147,7 +147,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
                 version="0.1.0",
                 type="my_type",
                 name="its name",
-                attachments={"files": [Path(__file__), "missing"], "something": 42},
+                attachments={"files": ["missing"], "something": 42},
             ),
             False,
         ),

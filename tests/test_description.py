@@ -3,16 +3,16 @@ from pydantic import HttpUrl
 
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec.description import load_description, update_format, validate_format
-from bioimageio.spec.types import RawStringMapping, ValidationContext
+from bioimageio.spec.types import ValidationContext, YamlMapping
 
 
-def test_update_format(stardist04_data: RawStringMapping):
+def test_update_format(stardist04_data: YamlMapping):
     _ = update_format(stardist04_data)
     with pytest.raises(ValueError):
         _ = update_format(stardist04_data, context={"warning_level": ALERT})
 
 
-def test_forward_compatibility(unet2d_data: RawStringMapping):
+def test_forward_compatibility(unet2d_data: YamlMapping):
     data = dict(unet2d_data)
     v_future = "9999.0.0"
     data["format_version"] = v_future  # assume it is valid in a future format version
@@ -26,7 +26,7 @@ def test_forward_compatibility(unet2d_data: RawStringMapping):
     assert ws[0].loc == ("format_version",), ws[0].loc
 
 
-def test_no_forward_compatibility(unet2d_data: RawStringMapping):
+def test_no_forward_compatibility(unet2d_data: YamlMapping):
     data = dict(unet2d_data)
     data["authors"] = 42  # make sure rdf is invalid
     data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
