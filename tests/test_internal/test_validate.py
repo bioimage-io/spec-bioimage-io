@@ -5,7 +5,7 @@ from pydantic import TypeAdapter, ValidationError
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_validation import WithSuffix
-from bioimageio.spec.types import FileSource
+from bioimageio.spec._internal.types import FileSource
 
 
 def test_single_suffix():

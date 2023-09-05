@@ -2,15 +2,24 @@ from collections.abc import Mapping, Sequence
 from typing import List, Literal, Optional, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
-from pydantic import ConfigDict, EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
+from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
-from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
+from bioimageio.spec._internal.types import (
+    DeprecatedLicenseId,
+    FileSource,
+    LicenseId,
+    NonEmpty,
+    OrcidId,
+    RdfContent,
+    Version,
+)
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
-from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, OrcidId, Version, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -33,14 +42,14 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 )
 
 
-class Attachments(Node):
+class Attachments(Node, frozen=True):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
     files: Tuple[FileSource, ...] = ()
     """∈📦 File attachments"""
 
 
-class Person(Node):
+class Person(Node, frozen=True):
     name: Optional[str]
     """Full name"""
     affiliation: Optional[str] = None
@@ -57,17 +66,17 @@ class Person(Node):
     """
 
 
-class Author(Person):
+class Author(Person, frozen=True):
     name: str
     github_user: Optional[str] = None
 
 
-class Maintainer(Person):
+class Maintainer(Person, frozen=True):
     name: Optional[str] = None
     github_user: str
 
 
-class Badge(Node, title="Custom badge"):
+class Badge(Node, title="Custom badge", frozen=True):
     """A custom badge"""
 
     label: Annotated[str, Field(examples=["Open in Colab"])]
@@ -89,7 +98,7 @@ class Badge(Node, title="Custom badge"):
     """target URL"""
 
 
-class CiteEntry(Node):
+class CiteEntry(Node, frozen=True):
     text: str
     """free text description"""
 
@@ -110,14 +119,14 @@ class CiteEntry(Node):
         return value
 
 
-class LinkedResource(Node):
+class LinkedResource(Node, frozen=True):
     """Reference to a bioimage.io resource"""
 
     id: NonEmpty[str]
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase):
+class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     """GenericBaseNoFormatVersion without a source field
 
     (needed because `model.v0_4.Model` and `model.v0_5.Model` have no `source` field)
@@ -292,7 +301,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         """convert raw RDF data of an older format where possible"""
         convert_from_older_format(data, context)
 
@@ -300,7 +309,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
 
-class GenericBaseNoFormatVersion(GenericBaseNoSource):
+class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
     """A generic node base without format version
     to allow a derived resource description to define its format_version independently."""
 
@@ -310,23 +319,17 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource):
     """The primary source of the resource"""
 
 
-class GenericBase(GenericBaseNoFormatVersion):
+class GenericBase(GenericBaseNoFormatVersion, frozen=True):
     format_version: Literal["0.2.3"] = "0.2.3"
 
 
-class Generic(GenericBase):
+class Generic(GenericBase, extra="ignore", frozen=True, title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
     Note that those resources are described with a type-specific RDF.
     Use this generic resource description, if none of the known specific types matches your resource.
     """
-
-    model_config = {
-        **GenericBase.model_config,
-        **ConfigDict(title="bioimage.io generic specification", extra="ignore"),
-    }
-    """pydantic model_config"""
 
     type: Annotated[str, LowerCase] = "generic"
     """The resource type assigns a broad category to the resource."""

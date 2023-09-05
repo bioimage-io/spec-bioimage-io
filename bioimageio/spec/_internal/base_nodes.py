@@ -6,11 +6,11 @@ import inspect
 import os
 import sys
 from abc import ABC
-from collections import UserString
 from typing import (
     Any,
     ClassVar,
     Dict,
+    FrozenSet,
     Generic,
     Iterator,
     Mapping,
@@ -28,12 +28,13 @@ import pydantic
 from pydantic import model_validator  # type: ignore
 from pydantic import Field, GetCoreSchemaHandler, StringConstraints, TypeAdapter, ValidationInfo
 from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, Self
+from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.field_validation import ValContext, get_validation_context, is_valid_yaml_mapping
+from bioimageio.spec._internal.field_validation import is_valid_yaml_mapping
+from bioimageio.spec._internal.types import NonEmpty, RdfContent, YamlValue
 from bioimageio.spec._internal.utils import unindent
-from bioimageio.spec.types import NonEmpty, YamlMapping, YamlValue
+from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -49,24 +50,23 @@ else:
 
 class Node(
     pydantic.BaseModel,
+    extra="forbid",
+    frozen=True,
+    populate_by_name=True,
+    revalidate_instances="always",
+    validate_assignment=True,
+    validate_default=True,
+    validate_return=True,
 ):
     """Subpart of a resource description"""
-
-    model_config = pydantic.ConfigDict(
-        extra="forbid",
-        frozen=True,
-        populate_by_name=True,
-        revalidate_instances="always",
-        validate_assignment=True,
-        validate_default=True,
-        validate_return=True,
-    )
-    """pydantic model config"""
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if os.getenv("BIOIMAGEIO_set_undefined_field_descriptions_from_var_docstrings".upper(), True):
+        if os.getenv("BIOIMAGEIO_SET_UNDEFINED_FIELD_DESCRIPTIONS_FROM_VAR_DOCSTRINGS", "False").lower() in (
+            "1",
+            "true",
+        ):
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
 
@@ -125,10 +125,27 @@ class Node(
                 info.description = name
 
 
-class ResourceDescriptionBase(Node):
+class NodeWithExplicitlySetFields(Node, frozen=True):
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+    """set set these fields explicitly with their default value if they are not set,
+    such that they are always included even when dumping with 'exlude_unset'"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_fields_explicitly(cls, data: Union[Any, Dict[Any, Any]]) -> Union[Any, Dict[Any, Any]]:
+        if isinstance(data, dict):
+            for name in cls.fields_to_set_explicitly:
+                if name not in data:
+                    data[name] = cls.model_fields[name].get_default(call_default_factory=True)
+
+        return data
+
+
+class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     type: str
     format_version: str
 
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
@@ -141,8 +158,7 @@ class ResourceDescriptionBase(Node):
             else:
                 data_dict = dict(data)
 
-            context = get_validation_context(**(info.context or {}))
-            cls._update_context_and_data(context, data_dict)
+            cls._update_context_and_data(get_internal_validation_context(info.context), data_dict)
             return data_dict
         else:
             return data
@@ -156,7 +172,7 @@ class ResourceDescriptionBase(Node):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
+    def _update_context_and_data(cls, context: InternalValidationContext, data: Dict[Any, Any]) -> None:
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
@@ -165,7 +181,7 @@ class ResourceDescriptionBase(Node):
         cls.convert_from_older_format(data, context)
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         """A node may `convert` it's raw data from an older format."""
         pass
 
@@ -176,7 +192,7 @@ class ResourceDescriptionBase(Node):
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
-        context: Union[ValContext, Dict[str, Any], None] = None,
+        context: Union[InternalValidationContext, Dict[str, Any], None] = None,
     ) -> Self:
         """Validate a pydantic model instance.
 
@@ -195,7 +211,7 @@ class ResourceDescriptionBase(Node):
         """
         __tracebackhide__ = True
 
-        context = get_validation_context(**cast(Dict[str, Any], (context or {})))
+        context = get_internal_validation_context(context)
         if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj)
             cls._update_context_and_data(context, obj)
@@ -205,7 +221,7 @@ class ResourceDescriptionBase(Node):
         )
 
 
-class StringNode(UserString, ABC):
+class StringNode(collections.UserString, ABC):
     _pattern: ClassVar[str]
     _node_class: Type[Node]
     _node: Optional[Node] = None
@@ -275,7 +291,7 @@ class StringNode(UserString, ABC):
 D = TypeVar("D")
 
 
-class FrozenDictNode(FrozenDictBase[K, V], Node):
+class FrozenDictNode(FrozenDictBase[K, V], Node, frozen=True):
     def __getitem__(self, item: K) -> V:
         try:
             return getattr(self, item)
@@ -305,9 +321,9 @@ class FrozenDictNode(FrozenDictBase[K, V], Node):
         return self
 
 
-class ConfigNode(FrozenDictNode[NonEmpty[str], YamlValue]):
+class ConfigNode(FrozenDictNode[NonEmpty[str], YamlValue], frozen=True):
     model_config = {**Node.model_config, "extra": "allow"}
 
 
-class Kwargs(FrozenDictNode[NonEmpty[str], YamlValue]):
+class Kwargs(FrozenDictNode[NonEmpty[str], YamlValue], frozen=True):
     model_config = {**Node.model_config, "extra": "allow"}

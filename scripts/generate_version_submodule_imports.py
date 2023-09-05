@@ -1,8 +1,8 @@
-from difflib import ndiff
 import re
 import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
+from difflib import ndiff
 from pathlib import Path
 from typing import List, Literal
 

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
 from pathlib import Path, PurePath, PurePosixPath
-from typing import TYPE_CHECKING, Any, Dict, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
+from typing import TYPE_CHECKING, Any, Hashable, Mapping, Sequence, Type, TypeVar, Union, get_args
 from urllib.parse import urljoin
 
 import annotated_types
@@ -17,12 +17,11 @@ from dateutil.parser import isoparse
 from pydantic import AnyUrl, DirectoryPath, FilePath, GetCoreSchemaHandler, ValidationInfo, functional_validators
 from pydantic_core import core_schema
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
-from typing_extensions import NotRequired, TypedDict
 
-from bioimageio.spec._internal.constants import ERROR, SLOTS
+from bioimageio.spec._internal.constants import SLOTS
 
 if TYPE_CHECKING:
-    from bioimageio.spec.types import FileSource, WarningLevel
+    from bioimageio.spec._internal.types import FileSource
 
 
 class RelativePath:
@@ -130,7 +129,7 @@ class WithSuffix:
     case_sensitive: bool
 
     def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
-        from bioimageio.spec.types import FileSource
+        from bioimageio.spec._internal.types import FileSource
 
         if not self.suffix:
             raise ValueError("suffix may not be empty")
@@ -194,7 +193,7 @@ def validate_orcid_id(orcid_id: str):
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:
-    from bioimageio.spec.types import YamlLeafValue
+    from bioimageio.spec._internal.types import YamlLeafValue
 
     return isinstance(value, get_args(YamlLeafValue))
 
@@ -262,46 +261,6 @@ def validate_version(v: str) -> str:
             f"'{v}' is not a valid version string, " "see https://packaging.pypa.io/en/stable/version.html for help"
         )
     return v
-
-
-class ValidationContext(TypedDict):
-    root: NotRequired[Union[DirectoryPath, AnyUrl]]
-    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
-
-    file_name: NotRequired[str]
-    """The file name of the RDF used only for reporting"""
-
-    warning_level: NotRequired[WarningLevel]
-    """raise warnings of severity s as validation errors if s >= `warning_level`"""
-
-
-class ValContext(TypedDict):
-    """internally used validation context"""
-
-    root: Union[DirectoryPath, AnyUrl]
-    """url/path serving as base to any relative file paths. Default provided as data field `root`.0"""
-
-    warning_level: WarningLevel
-    """raise warnings of severity s as validation errors if s >= `warning_level`"""
-
-    file_name: str
-    """The file name of the RDF used only for reporting"""
-
-    original_format: NotRequired[Tuple[int, int, int]]
-    """original format version of the validation data (set dynamically during validation of resource descriptions)."""
-
-    collection_base_content: NotRequired[Dict[str, Any]]
-    """Collection base content (set dynamically during validation of collection resource descriptions)."""
-
-
-def get_validation_context(
-    *,
-    root: Union[DirectoryPath, AnyUrl] = Path(),
-    warning_level: WarningLevel = ERROR,
-    file_name: str = "rdf.yaml",
-    **kwargs: Any,
-) -> ValContext:
-    return ValContext(root=root, warning_level=warning_level, file_name=file_name, **kwargs)
 
 
 @dataclass(frozen=True, **SLOTS)

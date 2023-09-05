@@ -2,22 +2,22 @@ import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 from pydantic import model_validator  # type: ignore
-from pydantic import ConfigDict, Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator
+from pydantic import Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator
 from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.field_validation import ValContext
 from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePath, YamlValue
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application
 from bioimageio.spec.dataset.v0_2 import Dataset
 from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.model.v0_4 import Model
 from bioimageio.spec.notebook.v0_2 import Notebook
-from bioimageio.spec.types import NonEmpty, RelativeFilePath, YamlMapping, YamlValue
 
 __all__ = [
     "Attachments",
@@ -34,10 +34,7 @@ __all__ = [
 EntryNode = Union[Annotated[Union[Model, Dataset, Application, Notebook], Field(discriminator="type")], Generic]
 
 
-class CollectionEntryBase(Node):
-    model_config = ConfigDict({**Node.model_config, **ConfigDict(extra="allow")})
-    """pydantic model config set to allow additional keys"""
-
+class CollectionEntryBase(Node, extra="allow", frozen=True):
     entry_adapter: ClassVar[TypeAdapter[Any]]
 
     rdf_source: Annotated[
@@ -95,7 +92,7 @@ class CollectionEntryBase(Node):
         return self
 
 
-class CollectionEntry(CollectionEntryBase):
+class CollectionEntry(CollectionEntryBase, frozen=True):
     """A valid resource description (RD).
     The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
@@ -113,17 +110,11 @@ class CollectionEntry(CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase):
+class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io collection specification"):
     """A bioimage.io collection describes several other bioimage.io resources.
     Note that collections cannot be nested; resources listed under `collection` may not be collections themselves.
     """
 
-    model_config = ConfigDict(
-        {
-            **GenericBase.model_config,
-            **ConfigDict(extra="allow", title="bioimage.io collection specification"),
-        }
-    )
     type: Literal["collection"] = "collection"
 
     collection: NonEmpty[Tuple[CollectionEntry, ...]]
@@ -166,14 +157,14 @@ class Collection(GenericBase):
             seen[v.id] = i
 
     @classmethod
-    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
+    def _update_context_and_data(cls, context: InternalValidationContext, data: Dict[Any, Any]) -> None:
         super()._update_context_and_data(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
         context["collection_base_content"] = collection_base_content
 
     @staticmethod
-    def move_groups_to_collection_field(data: YamlMapping) -> None:
+    def move_groups_to_collection_field(data: RdfContent) -> None:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):
             return
 
@@ -197,6 +188,6 @@ class Collection(GenericBase):
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         cls.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

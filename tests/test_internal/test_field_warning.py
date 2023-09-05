@@ -7,16 +7,16 @@ from typing_extensions import Annotated
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec.types import ValidationContext
+from bioimageio.spec._internal.validation_context import ValidationContext
 from tests.utils import check_node
 
 
-class DummyNode(Node):
+class DummyNode(Node, frozen=True):
     a: Annotated[int, warn(Ge(0))] = 0
     b: Annotated[int, warn(Ge(0), WARNING)] = 0
 
 
-class NestedDummyNode(Node):
+class NestedDummyNode(Node, frozen=True):
     dummy: DummyNode
 
 

@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Tuple, Union
+from abc import ABC
+from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
 from pydantic import model_validator  # type: ignore
-from pydantic import AllowInfNan, ConfigDict, Field, HttpUrl, TypeAdapter, ValidationInfo, field_validator
-from typing_extensions import Annotated, Self
+from pydantic import AllowInfNan, Field, HttpUrl, TypeAdapter, ValidationInfo, field_validator
+from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, StringNode
+from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
-from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
-from bioimageio.spec.generic.v0_2 import *
-from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
-from bioimageio.spec.model.v0_4_converter import convert_from_older_format
-from bioimageio.spec.types import (
+from bioimageio.spec._internal.types import (
     AxesInCZYX,
     AxesStr,
     Datetime,
@@ -24,11 +21,16 @@ from bioimageio.spec.types import (
     LicenseId,
     LowerCaseIdentifier,
     NonEmpty,
+    RdfContent,
     RelativeFilePath,
     Sha256,
     Version,
-    YamlMapping,
 )
+from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
+from bioimageio.spec.generic.v0_2 import *
+from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
+from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 
 __all__ = [
     "Attachments",
@@ -137,7 +139,7 @@ WeightsFormat = Literal[
 ]
 
 
-class Weights(Node):
+class Weights(Node, frozen=True):
     keras_hdf5: Optional[KerasHdf5Weights] = None
     onnx: Optional[OnnxWeights] = None
     pytorch_state_dict: Optional[PytorchStateDictWeights] = None
@@ -192,7 +194,7 @@ class Weights(Node):
         return None
 
 
-class WeightsEntryBase(Node):
+class WeightsEntryBase(Node, frozen=True):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -237,21 +239,21 @@ class WeightsEntryBase(Node):
         return self
 
 
-class KerasHdf5Weights(WeightsEntryBase):
+class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[Union[Version, None], warn(Version, ALERT)] = None
     """TensorFlow version used to create these weights"""
 
 
-class OnnxWeights(WeightsEntryBase):
+class OnnxWeights(WeightsEntryBase, frozen=True):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[Union[Annotated[int, Ge(7)], None], warn(int, ALERT)] = None
     """ONNX opset version"""
 
 
-class PytorchStateDictWeights(WeightsEntryBase):
+class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
@@ -291,14 +293,14 @@ class PytorchStateDictWeights(WeightsEntryBase):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-class TorchscriptWeights(WeightsEntryBase):
+class TorchscriptWeights(WeightsEntryBase, frozen=True):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the PyTorch library used."""
 
 
-class TensorflowJsWeights(WeightsEntryBase):
+class TensorflowJsWeights(WeightsEntryBase, frozen=True):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
@@ -309,14 +311,14 @@ class TensorflowJsWeights(WeightsEntryBase):
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase):
+class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
     """Version of the TensorFlow library used."""
 
 
-class ParametrizedInputShape(Node):
+class ParametrizedInputShape(Node, frozen=True):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
     min: NonEmpty[Tuple[int, ...]]
@@ -336,7 +338,7 @@ class ParametrizedInputShape(Node):
         return self
 
 
-class ImplicitOutputShape(Node):
+class ImplicitOutputShape(Node, frozen=True):
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
@@ -365,7 +367,7 @@ class ImplicitOutputShape(Node):
         return self
 
 
-class TensorBase(Node):
+class TensorBase(Node, frozen=True):
     name: LowerCaseIdentifier
     """Tensor name. No duplicates are allowed."""
 
@@ -392,30 +394,23 @@ class TensorBase(Node):
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any]):
+class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any], frozen=True):
     """base class for pre-/postprocessing key word arguments"""
 
 
-class Processing(Node):  # todo: add ABC
+class Processing(NodeWithExplicitlySetFields, ABC, frozen=True):
     """abstract processing base class"""
 
     name: Literal[PreprocessingName, PostprocessingName]
-
-    @model_validator(mode="before")
-    @classmethod
-    def check_name_given_for_raw_input(cls, data: Union[Processing, YamlMapping]) -> Union[Processing, YamlMapping]:
-        if not isinstance(data, Processing) and "name" not in data:
-            raise AssertionError("'name' field mandatory for raw data input.")
-
-        return data
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
 
 
-class BinarizeKwargs(ProcessingKwargs):
+class BinarizeKwargs(ProcessingKwargs, frozen=True):
     threshold: float
     """The fixed threshold"""
 
 
-class Binarize(Processing):
+class Binarize(Processing, frozen=True):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -423,14 +418,14 @@ class Binarize(Processing):
     kwargs: BinarizeKwargs
 
 
-class ClipKwargs(ProcessingKwargs):
+class ClipKwargs(ProcessingKwargs, frozen=True):
     min: float
     """minimum value for clipping"""
     max: float
     """maximum value for clipping"""
 
 
-class Clip(Processing):
+class Clip(Processing, frozen=True):
     """Set tensor values below min to min and above max to max."""
 
     name: Literal["clip"] = "clip"
@@ -438,7 +433,7 @@ class Clip(Processing):
     kwargs: ClipKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs):
+class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
@@ -459,14 +454,14 @@ class ScaleLinearKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinear(Processing):
+class ScaleLinear(Processing, frozen=True):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(Processing):
+class Sigmoid(Processing, frozen=True):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
@@ -477,7 +472,7 @@ class Sigmoid(Processing):
         return ProcessingKwargs()
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -511,14 +506,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
         return self
 
 
-class ZeroMeanUnitVariance(Processing):
+class ZeroMeanUnitVariance(Processing, frozen=True):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs):
+class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing percentiles.
     |     mode    |             description              |
@@ -557,14 +552,14 @@ class ScaleRangeKwargs(ProcessingKwargs):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRange(Processing):
+class ScaleRange(Processing, frozen=True):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs):
+class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -586,7 +581,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(Processing):
+class ScaleMeanVariance(Processing, frozen=True):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -602,7 +597,7 @@ Postprocessing = Annotated[
 ]
 
 
-class InputTensor(TensorBase):
+class InputTensor(TensorBase, frozen=True):
     data_type: Literal["float32", "uint8", "uint16"]
     """For now an input tensor is expected to be given as `float32`.
     The data flow in bioimage.io models is explained
@@ -650,7 +645,7 @@ class InputTensor(TensorBase):
         return self
 
 
-class OutputTensor(TensorBase):
+class OutputTensor(TensorBase, frozen=True):
     data_type: Literal[
         "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
     ]
@@ -689,7 +684,7 @@ class OutputTensor(TensorBase):
 KnownRunMode = Literal["deepimagej"]
 
 
-class RunMode(Node):
+class RunMode(Node, frozen=True):
     name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode)]
     """Run mode name"""
 
@@ -697,7 +692,7 @@ class RunMode(Node):
     """Run mode specific key word arguments"""
 
 
-class ModelRdf(Node):
+class ModelRdf(Node, frozen=True):
     rdf_source: Annotated[FileSource, Field(alias="uri")]
     """URL or relative path of a model RDF"""
 
@@ -705,26 +700,18 @@ class ModelRdf(Node):
     """SHA256 checksum of the model RDF specified under `rdf_source`."""
 
 
-class LinkedModel(LinkedResource):
+class LinkedModel(LinkedResource, frozen=True):
     """Reference to a bioimage.io model."""
 
     id: NonEmpty[str]
     """A valid model `id` from the bioimage.io collection."""
 
 
-class Model(GenericBaseNoSource):
+class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
-
-    model_config = ConfigDict(
-        {
-            **GenericBaseNoSource.model_config,
-            **ConfigDict(title="bioimage.io model specification"),
-        }
-    )
-    """pydantic model_config"""
 
     format_version: Literal["0.4.9",] = "0.4.9"
     """Version of the bioimage.io model description specification used.
@@ -931,5 +918,5 @@ class Model(GenericBaseNoSource):
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         convert_from_older_format(data, context)

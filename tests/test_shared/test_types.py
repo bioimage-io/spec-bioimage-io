@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 
 from bioimageio.spec._internal.field_validation import RelativePath
-from bioimageio.spec.types import Datetime, SiUnit
+from bioimageio.spec._internal.types import Datetime, SiUnit
 from tests.utils import check_type
 
 
@@ -13,7 +13,7 @@ def test_relative_path():
     p = RelativePath(__file__)
     p2 = RelativePath(Path(__file__))
     assert p == p2
-    p3 = RelativePath(Path(__file__).parent.as_posix())
+    p3 = RelativePath(Path(__file__).as_posix())
     assert p == p3
 
 

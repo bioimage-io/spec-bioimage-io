@@ -90,6 +90,7 @@ weights:
       sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies: conda:environment.yaml
+    pytorch_version: "1.5.1"
   onnx:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
     source: weights.onnx
@@ -99,6 +100,7 @@ weights:
     sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
     source: weights.pt
     parent: pytorch_state_dict
+    pytorch_version: "1.5.1"
 
 training_data:
   id: ilastik/covid_if_training_data # note: not the real training data

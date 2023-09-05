@@ -6,8 +6,8 @@ from typing import Any, Dict
 import pytest
 
 from bioimageio.spec._internal.constants import WARNING
+from bioimageio.spec._internal.validation_context import ValidationContext, get_internal_validation_context
 from bioimageio.spec.generic.v0_3 import Generic
-from bioimageio.spec.types import ValidationContext
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -59,7 +59,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             ),
-            ValidationContext(warning_level=WARNING),
+            get_internal_validation_context(warning_level=WARNING),
             id="deprecated license",
         ),
         (

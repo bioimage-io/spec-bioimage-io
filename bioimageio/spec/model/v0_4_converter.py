@@ -1,12 +1,12 @@
 import collections.abc
 
-from bioimageio.spec._internal.field_validation import ValContext
+from bioimageio.spec._internal.types import RdfContent
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import remove_doi_prefix, remove_slashes_from_names
 from bioimageio.spec.model.v0_3_converter import convert_model_from_v0_3_to_0_4_0
-from bioimageio.spec.types import YamlMapping
 
 
-def convert_from_older_format(data: YamlMapping, context: ValContext) -> None:
+def convert_from_older_format(data: RdfContent, context: InternalValidationContext) -> None:
     fv = data.get("format_version", "0.3.0")
     if not isinstance(fv, str):
         return
@@ -41,7 +41,7 @@ def convert_from_older_format(data: YamlMapping, context: ValContext) -> None:
         del data["config"]
 
 
-def _convert_model_from_v0_4_0_to_0_4_1(data: YamlMapping):
+def _convert_model_from_v0_4_0_to_0_4_1(data: RdfContent):
     # move dependencies from root to pytorch_state_dict weights entry
     deps = data.pop("dependencies", None)
     weights = data.get("weights", {})
@@ -53,7 +53,7 @@ def _convert_model_from_v0_4_0_to_0_4_1(data: YamlMapping):
     data["format_version"] = "0.4.1"
 
 
-def _convert_model_from_v0_4_4_to_0_4_5(data: YamlMapping) -> None:
+def _convert_model_from_v0_4_4_to_0_4_5(data: RdfContent) -> None:
     parent = data.pop("parent", None)
     if isinstance(parent, collections.abc.Mapping) and "uri" in parent:
         data["parent"] = parent["uri"]

@@ -1,9 +1,10 @@
 from typing import Any, ClassVar, Dict, Literal, Tuple, Union
 
-from pydantic import ConfigDict, Field, TypeAdapter, field_validator
+from pydantic import Field, TypeAdapter, field_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.field_validation import ValContext
+from bioimageio.spec._internal.types import NonEmpty, RdfContent
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application02
 from bioimageio.spec.application.v0_3 import Application as Application03
 from bioimageio.spec.collection import v0_2
@@ -16,7 +17,6 @@ from bioimageio.spec.model.v0_4 import Model as Model04
 from bioimageio.spec.model.v0_5 import Model as Model05
 from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02
 from bioimageio.spec.notebook.v0_3 import Notebook as Notebook03
-from bioimageio.spec.types import NonEmpty, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -40,7 +40,7 @@ EntryNode = Union[
 ]
 
 
-class CollectionEntry(v0_2.CollectionEntryBase):
+class CollectionEntry(v0_2.CollectionEntryBase, frozen=True):
     """A valid resource description (RD).
     The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
@@ -58,22 +58,16 @@ class CollectionEntry(v0_2.CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase):
+class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io collection specification"):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
     """
 
-    model_config = ConfigDict(
-        {
-            **GenericBase.model_config,
-            **ConfigDict(extra="allow", title="bioimage.io collection specification"),
-        }
-    )
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _update_context_and_data(cls, context: ValContext, data: Dict[Any, Any]) -> None:
+    def _update_context_and_data(cls, context: InternalValidationContext, data: Dict[Any, Any]) -> None:
         super()._update_context_and_data(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
@@ -89,6 +83,6 @@ class Collection(GenericBase):
         return value
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

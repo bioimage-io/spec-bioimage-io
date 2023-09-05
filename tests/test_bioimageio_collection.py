@@ -1,14 +1,14 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Dict, Iterable, Literal
+from typing import Dict, Iterable
 
 import pooch
 import pytest
 from pydantic import AnyUrl
 
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
-from bioimageio.spec.types import FormatVersionPlaceholder
+from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.utils import ParameterSet, check_rdf
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"

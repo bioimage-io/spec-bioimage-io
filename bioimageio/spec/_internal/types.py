@@ -10,9 +10,8 @@ from typing_extensions import Annotated
 from bioimageio.spec._internal.constants import SI_UNIT_REGEX
 from bioimageio.spec._internal.field_validation import AfterValidator, BeforeValidator, Predicate
 from bioimageio.spec._internal.field_validation import RelativeFilePath as RelativeFilePath
-from bioimageio.spec._internal.field_validation import RestrictCharacters
-from bioimageio.spec._internal.field_validation import ValidationContext as ValidationContext
 from bioimageio.spec._internal.field_validation import (
+    RestrictCharacters,
     capitalize_first_letter,
     validate_datetime,
     validate_identifier,
@@ -23,6 +22,7 @@ from bioimageio.spec._internal.field_validation import (
 )
 from bioimageio.spec._internal.generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.generated_spdx_license_type import LicenseId as LicenseId
+from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
@@ -55,15 +55,8 @@ Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
 Version = Annotated[str, AfterValidator(validate_version)]
 
-# types for validation logic
 FormatVersionPlaceholder = Literal["latest", "discover"]
-Loc = Tuple[Union[int, str], ...]  # location of error/warning in a nested data structure
-WarningSeverity = Literal[20, 30, 35]
-WarningSeverityName = Literal["info", "warning", "alert"]
-WarningLevel = Literal[WarningSeverity, 50]
-"""With warning level x validation warnings of severity >=x are raised.
-Highest warning level 50/error does not raise any validaiton warnings (only validation errors)."""
-WarningLevelName = Literal[WarningSeverityName, "error"]
+
 
 # types as loaded from YAML 1.2 (with ruamel.yaml)
 YamlLeafValue = Union[bool, date, datetime, float, int, str, None]
@@ -73,3 +66,4 @@ YamlKey = Union[  # ... YAML Arrays are cast to tuples if used as key in mapping
 ]
 YamlMapping = Dict[YamlKey, "YamlValue"]  # YAML Mappings are cast to dict
 YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
+RdfContent = Dict[str, YamlValue]

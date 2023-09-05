@@ -1,17 +1,22 @@
-from typing import Any, List, Literal, Mapping, Union
+from typing import Any, List, Literal, Mapping, Tuple, Union
 
 from pydantic import model_validator  # type: ignore
 from pydantic import BaseModel, Field
 from pydantic_core.core_schema import ErrorType
 
-from bioimageio.spec import __version__
 from bioimageio.spec._internal.constants import (
+    VERSION,
     WANRING_NAME_TO_SEVERITY,
     WARNING,
     WARNING_NAME,
     WARNING_SEVERITY_TO_NAME,
 )
-from bioimageio.spec.types import Loc, WarningSeverity, WarningSeverityName
+from bioimageio.spec._internal.validation_context import WarningLevel as WarningLevel
+from bioimageio.spec._internal.validation_context import WarningSeverity as WarningSeverity
+
+Loc = Tuple[Union[int, str], ...]  # location of error/warning in a nested data structure
+WarningSeverityName = Literal["info", "warning", "alert"]
+WarningLevelName = Literal[WarningSeverityName, "error"]
 
 
 class ValidationEntry(BaseModel):
@@ -51,7 +56,7 @@ class ValidationSummary(BaseModel):
     errors: List[ErrorEntry] = Field(default_factory=list)
     traceback: List[str] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
-    bioimageio_spec_version: str = __version__
+    bioimageio_spec_version: str = VERSION
 
     @staticmethod
     def _format_loc(loc: Loc) -> str:

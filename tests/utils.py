@@ -1,7 +1,7 @@
 from contextlib import nullcontext
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Optional, Protocol, Sequence, Set, Type, Union
+from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Union
 
 import pytest
 from deepdiff import DeepDiff  # type: ignore
@@ -9,66 +9,79 @@ from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
 from bioimageio.spec._internal.base_nodes import Node
-from bioimageio.spec._internal.field_validation import get_validation_context
+from bioimageio.spec._internal.validation_context import (
+    InternalValidationContext,
+    ValidationContext,
+    get_internal_validation_context,
+)
 from bioimageio.spec.description import load_description
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
-from bioimageio.spec.types import ValidationContext
 
 yaml = YAML(typ="safe")
 
 
-class not_set:
-    pass
+unset = object()
 
 
 def check_node(
     node_class: Type[Node],
     kwargs: Union[Dict[str, Any], Node],
     *,
-    context: Optional[ValidationContext] = None,
-    expected_dump_json: Any = not_set,
-    expected_dump_python: Any = not_set,
+    context: Union[ValidationContext, InternalValidationContext, None] = None,
+    expected_dump_json: Any = unset,
+    expected_dump_python: Any = unset,
     is_invalid: bool = False,
 ):
     if is_invalid:
-        assert expected_dump_json is not_set
-        assert expected_dump_python is not_set
+        assert expected_dump_json is unset
+        assert expected_dump_python is unset
 
     error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
     with error_context:
         node = node_class.model_validate(
-            kwargs, context=dict(get_validation_context(**(context or {"root": Path(__file__).parent})))
+            kwargs,
+            context=dict(get_internal_validation_context(context or ValidationContext(root=Path(__file__).parent))),
         )
 
-    if expected_dump_json is not not_set:
+    if expected_dump_json is not unset:
         actual = node.model_dump(mode="json")
         assert actual, expected_dump_json
 
-    if expected_dump_python is not not_set:
+    if expected_dump_python is not unset:
         actual = node.model_dump(mode="python")
         assert actual, expected_dump_python
 
 
-class DummyNodeBase(Node):
+class DummyNodeBase(Node, frozen=True):
     value: Any
 
 
-def check_type(type_: Type[Any], value: Any, expected: Any = not_set, *, is_invalid: bool = False):
+def check_type(
+    type_: Type[Any], value: Any, expected: Any = unset, expected_deserialized: Any = unset, *, is_invalid: bool = False
+):
     type_adapter = TypeAdapter(type_)
     error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
 
     with error_context:
         actual = type_adapter.validate_python(value)
 
-    if not (is_invalid or expected is not_set):
-        assert actual == expected
+    if expected is not unset:
+        assert actual == expected, (actual, expected)
+
+    if expected_deserialized is not unset:
+        actual_deserialized = type_adapter.dump_python(actual, mode="json", exclude_unset=True)
+        assert actual_deserialized == expected_deserialized, (actual_deserialized, expected_deserialized)
 
     node = create_model("DummyNode", value=(type_, ...), __base__=DummyNodeBase)
     with error_context:
-        actual_in_node = node.model_validate(dict(value=value)).value
+        actual_node = node.model_validate(dict(value=value))
 
-    if not (is_invalid or expected is not_set):
-        assert actual_in_node == expected
+    if expected is not unset:
+        assert actual_node.value == expected, (actual_node.value, expected)
+
+    if expected_deserialized is not unset:
+        node_deserialized = actual_node.model_dump(mode="json", exclude_unset=True)
+        assert node_deserialized["value"] == expected_deserialized, (node_deserialized["value"], expected_deserialized)
 
 
 def check_rdf(
@@ -109,28 +122,33 @@ def check_rdf(
         return
 
     deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
-    diff: Any = DeepDiff(expect_back, deserialized)
-    if not diff:
-        return
+    assert_dict_equal(deserialized, expect_back, f"roundtrip {rdf_path.as_posix()}\n", ignore_known_rdf_diffs=True)
 
-    # ignore some known differences...
-    slim_diff = deepcopy(diff)
-    VC = "values_changed"
-    k: Any
-    for k in diff.get(VC, {}):
-        if (
-            isinstance(k, str)
-            and k.startswith("root['cite'][")
-            and k.endswith("]['doi']")
-            and any(diff[VC][k]["old_value"].startswith(dp) for dp in DOI_PREFIXES)
-        ):
-            # 1. we dop 'https://doi.org/' from cite.i.doi field
-            slim_diff[VC].pop(k)
 
-    if VC in slim_diff and not slim_diff[VC]:
-        slim_diff.pop(VC)
+def assert_dict_equal(
+    actual: Dict[Any, Any], expected: Dict[Any, Any], msg: str = "", *, ignore_known_rdf_diffs: bool = False
+):
+    diff: Any = DeepDiff(expected, actual)
+    if ignore_known_rdf_diffs:
+        slim_diff = deepcopy(diff)
+        VC = "values_changed"
+        k: Any
+        for k in diff.get(VC, {}):
+            if (
+                isinstance(k, str)
+                and k.startswith("root['cite'][")
+                and k.endswith("]['doi']")
+                and any(diff[VC][k]["old_value"].startswith(dp) for dp in DOI_PREFIXES)
+            ):
+                # 1. we dop 'https://doi.org/' from cite.i.doi field
+                slim_diff[VC].pop(k)
 
-    assert not slim_diff, f"roundtrip {rdf_path.as_posix()}\n" + slim_diff.pretty()
+        if VC in slim_diff and not slim_diff[VC]:
+            slim_diff.pop(VC)
+
+        diff = slim_diff
+
+    assert not diff, msg + diff.pretty()
 
 
 class ParameterSet(Protocol):

@@ -2,13 +2,13 @@ import collections.abc
 from typing import Any, Dict, List, Mapping, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.field_validation import ValContext
+from bioimageio.spec._internal.types import RdfContent, YamlValue
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 from bioimageio.spec.model import v0_4_converter
-from bioimageio.spec.types import YamlMapping, YamlValue
 
 
-def convert_from_older_format(data: YamlMapping, context: ValContext):
+def convert_from_older_format(data: RdfContent, context: InternalValidationContext):
     fv = data.get("format_version")
     if not isinstance(fv, str) or fv.count(".") != 2:
         return
@@ -23,7 +23,7 @@ def convert_from_older_format(data: YamlMapping, context: ValContext):
         _convert_model_from_v0_4_to_0_5_0(data, context)
 
 
-def _convert_model_from_v0_4_to_0_5_0(data: YamlMapping, context: ValContext) -> None:
+def _convert_model_from_v0_4_to_0_5_0(data: RdfContent, context: InternalValidationContext) -> None:
     _convert_axes_string_to_axis_descriptions(data, context=context)
     _convert_architecture(data)
     convert_attachments(data)
@@ -35,7 +35,7 @@ def _convert_model_from_v0_4_to_0_5_0(data: YamlMapping, context: ValContext) ->
     data["format_version"] = "0.5.0"
 
 
-def _convert_axes_string_to_axis_descriptions(data: YamlMapping, *, context: ValContext):
+def _convert_axes_string_to_axis_descriptions(data: RdfContent, *, context: InternalValidationContext):
     inputs = data.get("inputs")
     outputs = data.get("outputs")
     sample_inputs = data.pop("sample_inputs", None)
@@ -57,7 +57,7 @@ def _update_tensor_specs(
     test_tensors: Any,
     sample_tensors: Any,
     *,
-    context: ValContext,
+    context: InternalValidationContext,
 ):
     tts: Sequence[Any] = test_tensors if isinstance(test_tensors, collections.abc.Sequence) else ()
     sts: Sequence[Any] = sample_tensors if isinstance(sample_tensors, collections.abc.Sequence) else ()
@@ -128,7 +128,7 @@ def _reorder_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any
 
 
 def _get_axis_description_from_letter(
-    letter: str, size: Union[int, Dict[str, Any], None] = None, *, context: ValContext
+    letter: str, size: Union[int, Dict[str, Any], None] = None, *, context: InternalValidationContext
 ):
     AXIS_TYPE_MAP = {
         "b": "batch",

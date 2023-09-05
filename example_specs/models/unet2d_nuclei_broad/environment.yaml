@@ -1,5 +1,4 @@
-name:
-    unet2d_nuclei_broad
+name: unet2d_nuclei_broad
 channels:
     - conda-forge
     - defaults

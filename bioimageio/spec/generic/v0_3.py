@@ -1,23 +1,26 @@
+from functools import partial
 from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import ConfigDict, Field, FieldValidationInfo, field_validator
+from pydantic import Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
-from bioimageio.spec._internal.constants import (
-    ALERT,
-    ERROR,
-    LICENSES,
-    TAG_CATEGORIES,
-    WARNING,
-    WARNING_LEVEL_CONTEXT_KEY,
-)
-from bioimageio.spec._internal.field_validation import ValContext, WithSuffix
+from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES, WARNING
+from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
+from bioimageio.spec._internal.types import (
+    DeprecatedLicenseId,
+    FileSource,
+    LicenseId,
+    NonEmpty,
+    RdfContent,
+    Sha256,
+    Version,
+)
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, Attachments, Author, Badge, CiteEntry, Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
-from bioimageio.spec.types import DeprecatedLicenseId, FileSource, LicenseId, NonEmpty, Sha256, Version, YamlMapping
 
 __all__ = [
     "Attachments",
@@ -32,20 +35,20 @@ __all__ = [
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 
-class Attachment(Node):
+class Attachment(Node, frozen=True):
     source: FileSource
     """∈📦 """
     sha256: Annotated[Optional[Sha256], warn(Sha256)] = None
 
 
-class LinkedResource(Node):
+class LinkedResource(Node, frozen=True):
     """Reference to a bioimage.io resource"""
 
     id: NonEmpty[str]
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase):
+class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     """GenericBaseNoFormatVersion without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
@@ -182,6 +185,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     """Maintainers of this resource.
     If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""
 
+    @partial(as_warning, severity=ALERT)
     @field_validator("maintainers", mode="after")
     @classmethod
     def check_maintainers_exist(
@@ -189,9 +193,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     ) -> Tuple[Maintainer, ...]:
         if not maintainers and "authors" in info.data:
             authors: Tuple[Author, ...] = info.data["authors"]
-            if all(a.github_user is None for a in authors) and ALERT >= (info.context or {}).get(
-                WARNING_LEVEL_CONTEXT_KEY, ERROR
-            ):
+            if all(a.github_user is None for a in authors):
                 raise ValueError(
                     "Missing `maintainers` or any author in `authors` with a specified `github_user` name."
                 )
@@ -228,7 +230,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
     @classmethod
-    def convert_from_older_format(cls, data: YamlMapping, context: ValContext) -> None:
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         """convert raw RDF data of an older format where possible"""
         convert_from_older_format(data, context)
 
@@ -236,35 +238,24 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
 
-class GenericBaseNoFormatVersion(GenericBaseNoSource):
+class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
     """GenericBase without a format version"""
 
     source: Optional[FileSource] = None
     """The primary source of the resource"""
 
 
-class GenericBase(GenericBaseNoFormatVersion):
-    model_config = {**GenericBaseNoFormatVersion.model_config, "extra": "ignore"}
-    """pydantic model config"""
-
+class GenericBase(GenericBaseNoFormatVersion, frozen=True, extra="ignore"):
     format_version: Literal["0.3.0"] = "0.3.0"
 
 
-class Generic(GenericBase):
+class Generic(GenericBase, frozen=True, title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
     Note that those resources are described with a type-specific RDF.
     Use this generic resource description, if none of the known specific types matches your resource.
     """
-
-    model_config = ConfigDict(
-        {
-            **GenericBase.model_config,
-            **ConfigDict(title="bioimage.io generic specification"),
-        }
-    )
-    """pydantic model_config"""
 
     type: Annotated[str, LowerCase] = "generic"
     """The resource type assigns a broad category to the resource."""

@@ -5,7 +5,8 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import HttpUrl, ValidationError
 
-from bioimageio.spec._internal.constants import INFO
+from bioimageio.spec._internal.types import RelativeFilePath
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.description import load_description, validate_format
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
@@ -18,10 +19,12 @@ from bioimageio.spec.model.v0_4 import (
     Postprocessing,
     Preprocessing,
     ScaleLinearKwargs,
+    ScaleMeanVariance,
+    ScaleRange,
+    ScaleRangeKwargs,
     Weights,
 )
-from bioimageio.spec.types import RelativeFilePath, ValidationContext
-from tests.utils import check_node, check_type, not_set
+from tests.utils import check_node, check_type, unset
 
 
 def test_model_rdf_file_ref():
@@ -91,7 +94,7 @@ def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool
     check_node(
         OnnxWeights,
         kwargs,
-        expected_dump_json=expected if isinstance(expected, dict) else not_set,
+        expected_dump_json=expected if isinstance(expected, dict) else unset,
         is_invalid=expected is ValidationError,
     )
 
@@ -99,19 +102,20 @@ def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool
 VALID_PRE_AND_POSTPROCESSING = [
     dict(name="binarize", kwargs={"threshold": 0.5}),
     dict(name="clip", kwargs={"min": 0.2, "max": 0.5}),
-    dict(name="scale_linear", kwargs={"gain": 2, "offset": 0.5, "axes": "xy"}),
+    dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "xy"}),
     dict(name="sigmoid"),
-    dict(name="zero_mean_unit_variance", kwargs={"mode": "fixed", "mean": 1, "std": 2, "axes": "xy"}),
+    dict(name="zero_mean_unit_variance", kwargs={"mode": "fixed", "mean": 1.0, "std": 2.0, "axes": "xy"}),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 50}),
 ]
 
 INVALID_PRE_AND_POSTPROCESSING = [
+    dict(kwargs={"threshold": 0.5}),
     dict(name="binarize", kwargs={"mode": "fixed", "threshold": 0.5}),
     dict(name="clip", kwargs={"min": "min", "max": 0.5}),
-    dict(name="scale_linear", kwargs={"gain": 2, "offset": 0.5, "axes": "b"}),
+    dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "b"}),
     dict(name="sigmoid", kwargs={"axes": "x"}),
-    dict(name="zero_mean_unit_variance", kwargs={"mode": "unknown", "mean": 1, "std": 2, "axes": "xy"}),
+    dict(name="zero_mean_unit_variance", kwargs={"mode": "unknown", "mean": 1.0, "std": 2.0, "axes": "xy"}),
     dict(name="scale_range", kwargs={"mode": "fixed", "axes": "xy"}),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 50, "max_percentile": 50}),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min": 0}),
@@ -129,7 +133,7 @@ INVALID_PRE_AND_POSTPROCESSING = [
     ],
 )
 def test_preprocessing(kwargs: Dict[str, Any]):
-    check_type(Preprocessing, kwargs)
+    check_type(Preprocessing, kwargs, expected_deserialized=kwargs)
 
 
 @pytest.mark.parametrize("kwargs", INVALID_PRE_AND_POSTPROCESSING)
@@ -151,7 +155,24 @@ def test_invalid_preprocessing(kwargs: Dict[str, Any]):
     ],
 )
 def test_postprocessing(kwargs: Dict[str, Any]):
-    check_type(Postprocessing, kwargs)
+    check_type(Postprocessing, kwargs, expected_deserialized=kwargs)
+
+
+@pytest.mark.parametrize(
+    "node,expected",
+    [
+        (
+            ScaleRange(kwargs=ScaleRangeKwargs(mode="per_sample", axes="xy")),
+            dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
+        ),
+        (
+            ScaleMeanVariance(kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),  # type: ignore
+            dict(name="scale_mean_variance", kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),
+        ),
+    ],
+)
+def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
+    check_type(Postprocessing, node, expected_deserialized=expected)
 
 
 @pytest.mark.parametrize(
@@ -317,9 +338,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
 
 def test_warn_long_name(model_data: Dict[str, Any]):
     model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-    summary = validate_format(
-        model_data, context=ValidationContext(root=HttpUrl("https://example.com/"), warning_level=INFO)
-    )
+    summary = validate_format(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
     assert summary.status == "passed", summary.format()
     assert summary.warnings[0].loc == ("name",), summary.format()
     assert summary.warnings[0].msg in [

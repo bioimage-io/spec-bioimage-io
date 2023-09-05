@@ -5,7 +5,8 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal.constants import INFO
+from bioimageio.spec._internal.types import RelativeFilePath
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.description import load_description, validate_format
 from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
@@ -24,7 +25,6 @@ from bioimageio.spec.model.v0_5 import (
     TensorBase,
     Weights,
 )
-from bioimageio.spec.types import RelativeFilePath, ValidationContext
 from tests.utils import check_node, check_type
 
 
@@ -265,7 +265,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
 
 def test_warn_long_name(model_data: Dict[str, Any]):
     model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-    summary = validate_format(model_data, context=ValidationContext(warning_level=INFO))
+    summary = validate_format(model_data)
 
     assert summary.status == "passed", summary.format()
     assert summary.warnings[0].loc == ("name",), summary.format()

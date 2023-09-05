@@ -1,10 +1,8 @@
 from typing import Literal
 
-from pydantic import ConfigDict
-
+from bioimageio.spec._internal.types import NonEmpty
 from bioimageio.spec.generic.v0_3 import *
 from bioimageio.spec.generic.v0_3 import GenericBase
-from bioimageio.spec.types import NonEmpty
 
 __all__ = [
     "Attachments",
@@ -18,21 +16,15 @@ __all__ = [
 ]
 
 
-class Dataset(GenericBase):
+class Dataset(GenericBase, frozen=True, title="bioimage.io dataset specification"):
     """A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage
     processing.
     """
 
-    model_config = ConfigDict(
-        {
-            **GenericBase.model_config,
-            **ConfigDict(title="bioimage.io dataset specification"),
-        }
-    )
     type: Literal["dataset"] = "dataset"
 
 
-class LinkedDataset(LinkedResource):
+class LinkedDataset(LinkedResource, frozen=True):
     """Reference to a bioimage.io dataset."""
 
     id: NonEmpty[str]

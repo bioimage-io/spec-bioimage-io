@@ -1,12 +1,11 @@
 from typing import Literal
 
-from pydantic import ConfigDict
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_validation import WithSuffix
+from bioimageio.spec._internal.types import FileSource
 from bioimageio.spec.generic.v0_2 import *
 from bioimageio.spec.generic.v0_2 import GenericBase
-from bioimageio.spec.types import FileSource
 
 __all__ = [
     "Attachments",
@@ -19,16 +18,8 @@ __all__ = [
 ]
 
 
-class Notebook(GenericBase):
+class Notebook(GenericBase, frozen=True, title="bioimage.io notebook specification"):
     """Bioimage.io description of a Jupyter Notebook."""
-
-    model_config = ConfigDict(
-        {
-            **GenericBase.model_config,
-            **ConfigDict(title="bioimage.io notebook specification"),
-        }
-    )
-    """pydantic model_config"""
 
     type: Literal["notebook"] = "notebook"
 

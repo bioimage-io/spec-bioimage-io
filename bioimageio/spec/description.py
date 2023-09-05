@@ -12,11 +12,15 @@ from typing_extensions import Annotated
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
-from bioimageio.spec._internal.constants import DISCOVER, ERROR, LATEST, VERSION, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec._internal.field_validation import ValContext, get_validation_context
+from bioimageio.spec._internal.constants import DISCOVER, ERROR, INFO, LATEST, VERSION
+from bioimageio.spec._internal.types import RdfContent, YamlValue
 from bioimageio.spec._internal.utils import iterate_annotated_union
+from bioimageio.spec._internal.validation_context import (
+    InternalValidationContext,
+    ValidationContext,
+    get_internal_validation_context,
+)
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
-from bioimageio.spec.types import ValidationContext, YamlMapping, YamlValue
 
 _ResourceDescription_v0_2 = Union[
     Annotated[
@@ -72,10 +76,10 @@ ResourceDescription = Union[
 
 
 def update_format(
-    rdf_content: YamlMapping,
+    rdf_content: RdfContent,
     update_to_format: str = "latest",
     context: Optional[ValidationContext] = None,
-) -> YamlMapping:
+) -> RdfContent:
     """Auto-update fields of a bioimage.io resource without any validation."""
     if not isinstance(rdf_content["type"], str):
         raise TypeError(f"RDF type '{rdf_content['type']}' must be a string (not '{type(rdf_content['type'])}').")
@@ -85,21 +89,20 @@ def update_format(
         raise ValueError(rd_class)
 
     updated = dict(rdf_content)
-    val_context = get_validation_context(**(context or {}))
-    rd_class.convert_from_older_format(updated, val_context)
+    rd_class.convert_from_older_format(updated, get_internal_validation_context(context))
     return updated
 
 
 RD = TypeVar("RD", bound=ResourceDescriptionBase)
 
 
-def dump_description(rd: ResourceDescription, exclude_unset: bool = False) -> Dict[str, YamlValue]:
+def dump_description(rd: ResourceDescription, exclude_unset: bool = True) -> RdfContent:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 
 
 def load_description(
-    rdf_content: YamlMapping,
+    rdf_content: RdfContent,
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -118,16 +121,16 @@ def load_description(
 
     fv = use_format_version if format_version == DISCOVER else format_version
     rd_class = _get_rd_class(discovered_type, format_version=fv)
+    context = context or ValidationContext()
     if isinstance(rd_class, str):
         rd = None
-        val_context = get_validation_context(**(context or {}))
-        root = val_context["root"]
-        file_name = val_context["file_name"]
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=[ErrorEntry(loc=(), msg=rd_class, type="error")],
             name=f"bioimageio.spec static {discovered_type} validation (format version: {format_version}).",
-            source_name=(root / file_name).as_posix() if isinstance(root, PurePath) else urljoin(str(root), file_name),
+            source_name=(context.root / context.file_name).as_posix()
+            if isinstance(context.root, PurePath)
+            else urljoin(str(context.root), context.file_name),
             status="failed",
             warnings=[],
         )
@@ -141,7 +144,7 @@ def load_description(
 
 
 def load_description_as_latest(
-    rdf_content: YamlMapping,
+    rdf_content: RdfContent,
     *,
     context: Optional[ValidationContext] = None,
 ) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
@@ -149,7 +152,7 @@ def load_description_as_latest(
 
 
 def validate_format(
-    rdf_content: YamlMapping,
+    rdf_content: RdfContent,
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
@@ -157,7 +160,10 @@ def validate_format(
     return summary
 
 
-def _check_type_and_format_version(data: YamlMapping) -> Tuple[str, str, str]:
+def _check_type_and_format_version(data: Union[YamlValue, RdfContent]) -> Tuple[str, str, str]:
+    if not isinstance(data, dict):
+        raise TypeError(f"Invalid RDF content of type '{type(data)}'")
+
     typ = data.get("type")
     if not isinstance(typ, str):
         raise TypeError(f"Invalid resource type '{typ}' of type {type(typ)}")
@@ -255,20 +261,19 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
 
 
 def _load_descr_with_known_rd_class(
-    rdf_content: YamlMapping,
+    rdf_content: RdfContent,
     *,
-    context: Optional[ValidationContext] = None,
+    context: ValidationContext,
     rd_class: Type[RD],
 ) -> Tuple[Optional[RD], ValidationSummary]:
-    val_context = get_validation_context(**(context or {}))
-
     raw_rd = deepcopy(dict(rdf_content))
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
         raw_rd,
-        {**val_context, WARNING_LEVEL_CONTEXT_KEY: ERROR},
+        get_internal_validation_context(context.model_dump(), warning_level=ERROR),
     )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
     if rd is None:
+        assert errors
         resource_type = rd_class.model_fields["type"].default
         format_version = rd_class.implemented_format_version
     else:
@@ -277,17 +282,19 @@ def _load_descr_with_known_rd_class(
         assert not errors, f"got rd, but also errors: {errors}"
         assert not tb, f"got rd, but also an error traceback: {tb}"
         assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
-        _, error2, tb2, val_warnings = _load_descr_impl(rd_class, raw_rd, val_context)
-        assert not error2, f"increasing warning level caused errors: {error2}"
-        assert not tb2, f"increasing warning level lead to error traceback: {tb2}"
+        _, error2, tb2, val_warnings = _load_descr_impl(
+            rd_class, raw_rd, get_internal_validation_context(context.model_dump(), warning_level=INFO)
+        )
+        assert not error2, f"decreasing warning level caused errors: {error2}"
+        assert not tb2, f"decreasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
         bioimageio_spec_version=VERSION,
         errors=errors,
         name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
-        source_name=(val_context["root"] / val_context["file_name"]).as_posix()
-        if isinstance(val_context["root"], PurePath)
-        else urljoin(str(val_context["root"]), val_context["file_name"]),
+        source_name=(context.root / context.file_name).as_posix()
+        if isinstance(context.root, PurePath)
+        else urljoin(str(context.root), context.file_name),
         status="failed" if errors else "passed",
         warnings=val_warnings,
         traceback=tb,
@@ -296,7 +303,7 @@ def _load_descr_with_known_rd_class(
     return rd, summary
 
 
-def _load_descr_impl(rd_class: Type[RD], rdf_content: YamlMapping, context: ValContext):
+def _load_descr_impl(rd_class: Type[RD], rdf_content: RdfContent, context: InternalValidationContext):
     rd: Optional[RD] = None
     val_errors: List[ErrorEntry] = []
     val_warnings: List[WarningEntry] = []

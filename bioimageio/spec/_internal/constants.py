@@ -8,7 +8,9 @@ from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Unio
 from bioimageio.spec._internal.utils import files
 
 if TYPE_CHECKING:
-    from bioimageio.spec.types import FormatVersionPlaceholder, LicenseId, WarningSeverity, WarningSeverityName
+    from bioimageio.spec._internal.types import FormatVersionPlaceholder, LicenseId
+    from bioimageio.spec.summary import WarningSeverity, WarningSeverityName
+
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, bool] = {}

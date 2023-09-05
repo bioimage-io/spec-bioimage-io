@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, Type
 
 import pytest
-from pydantic import HttpUrl, ValidationError
+from pydantic import HttpUrl
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
+from bioimageio.spec._internal.validation_context import get_internal_validation_context
 from bioimageio.spec.generic.v0_2 import Attachments, Author, CiteEntry, Generic, Maintainer
-from bioimageio.spec.types import RelativeFilePath, ValidationContext
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -170,6 +169,6 @@ def test_deprecated_license_in_generic():
             license="BSD-2-Clause-FreeBSD",
             cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
         ),
-        context=ValidationContext(warning_level=WARNING),
+        context=get_internal_validation_context(warning_level=WARNING),
         is_invalid=True,
     )

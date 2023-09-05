@@ -10,8 +10,9 @@ from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal.constants import ERROR, WARNING, WARNING_LEVEL_CONTEXT_KEY, WARNING_SEVERITY_TO_NAME
-from bioimageio.spec.types import WarningSeverity
+from bioimageio.spec._internal.constants import ERROR, WARNING, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec.summary import WarningSeverity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
@@ -53,13 +54,25 @@ def call_validator_func(
         return func(value)  # type: ignore
 
 
+def raise_warning(
+    msg: LiteralString,
+    *,
+    value: Any,
+    severity: WarningSeverity = WARNING,
+    val_context: Optional[InternalValidationContext] = None,
+    msg_context: Optional[Dict[str, Any]] = None,
+):
+    if severity >= (val_context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
+        raise PydanticCustomError("warning", msg, {**(msg_context or {}), "value": value, "severity": severity})
+
+
 def as_warning(
     func: "_V2Validator",
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
     severity: WarningSeverity = WARNING,
     msg: Optional[LiteralString] = None,
-    context: Optional[Dict[str, Any]] = None,
+    msg_context: Optional[Dict[str, Any]] = None,
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
@@ -67,10 +80,13 @@ def as_warning(
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
-            if severity >= (info.context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
-                raise PydanticCustomError(
-                    "warning", msg or ",".join(e.args), {**(context or {}), "value": value, "severity": severity}
-                )
+            raise_warning(
+                msg or ",".join(e.args),
+                value=value,
+                severity=severity,
+                val_context=info.context,
+                msg_context=msg_context,
+            )
 
         return value
 
@@ -89,7 +105,7 @@ class AfterWarner(AfterValidator):
         object.__setattr__(
             self,
             "func",
-            as_warning(self.func, mode="after", severity=self.severity, msg=self.msg, context=self.context),
+            as_warning(self.func, mode="after", severity=self.severity, msg=self.msg, msg_context=self.context),
         )
 
 
@@ -105,5 +121,5 @@ class BeforeWarner(BeforeValidator):
         object.__setattr__(
             self,
             "func",
-            as_warning(self.func, mode="before", severity=self.severity, msg=self.msg, context=self.context),
+            as_warning(self.func, mode="before", severity=self.severity, msg=self.msg, msg_context=self.context),
         )

@@ -4,7 +4,7 @@ from typing import Iterable
 import pytest
 
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
-from bioimageio.spec.types import FormatVersionPlaceholder
+from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.conftest import EXAMPLE_SPECS
 from tests.utils import ParameterSet, check_rdf
 
