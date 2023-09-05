@@ -54,13 +54,13 @@ def test_model_rdf_invalid(kwargs: Dict[str, Any]):
     "kwargs",
     [
         dict(
-            name="t1",
+            id="t1",
             axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data={"values": ["cat", "dog", "parrot"]},
         ),
         dict(
-            name="t2",
+            id="t2",
             axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data=[
@@ -69,7 +69,7 @@ def test_model_rdf_invalid(kwargs: Dict[str, Any]):
             ],
         ),
         dict(
-            name="t3",
+            id="t3",
             axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data=[
@@ -79,7 +79,7 @@ def test_model_rdf_invalid(kwargs: Dict[str, Any]):
         ),
         pytest.param(
             dict(
-                name="t4",
+                id="t4",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
@@ -100,7 +100,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     [
         pytest.param(
             dict(
-                name="t5",
+                id="t5",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
@@ -112,7 +112,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         ),
         pytest.param(
             dict(
-                name="t6",
+                id="t6",
                 axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
@@ -124,7 +124,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         ),
         pytest.param(
             dict(
-                name="t7",
+                id="t7",
                 axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
@@ -208,7 +208,7 @@ def model_data():
         cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
         inputs=(
             InputTensor(
-                name="input_1",
+                id="input_1",
                 description="Input 1",
                 data=IntervalOrRatioData(type="float32"),
                 axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
@@ -217,7 +217,7 @@ def model_data():
         ),
         outputs=(
             OutputTensor(
-                name="output_1",
+                id="output_1",
                 description="Output 1",
                 axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
                 test_tensor=HttpUrl("https://example.com/test_out.npy"),

@@ -1,14 +1,23 @@
+from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import model_validator  # type: ignore
-from pydantic import Field, FieldValidationInfo, HttpUrl, StringConstraints, ValidationInfo, field_validator
+from pydantic import (
+    Field,
+    FieldValidationInfo,
+    HttpUrl,
+    StringConstraints,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+)
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec import generic
 from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
-from bioimageio.spec._internal.field_validation import Predicate
+from bioimageio.spec._internal.field_validation import AfterValidator
 from bioimageio.spec._internal.field_warning import raise_warning, warn
 from bioimageio.spec._internal.types import (
     Datetime,
@@ -29,19 +38,15 @@ from bioimageio.spec.dataset import Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset
 from bioimageio.spec.generic.v0_3 import *
 from bioimageio.spec.model.v0_4 import (
-    Binarize,
     BinarizeKwargs,
     CallableFromDepencency,
-    Clip,
     ClipKwargs,
     KerasHdf5Weights,
     KnownRunMode,
     LinkedModel,
     OnnxWeights,
-    Processing,
     ProcessingKwargs,
     RunMode,
-    Sigmoid,
     TensorflowJsWeights,
     TensorflowSavedModelBundleWeights,
     TorchscriptWeights,
@@ -56,6 +61,7 @@ __all__ = [
     "ArchitectureFromFile",
     "Attachments",
     "Author",
+    "AxisName",
     "AxisType",
     "Badge",
     "BatchAxis",
@@ -80,16 +86,18 @@ __all__ = [
     "LicenseId",
     "LinkedModel",
     "LinkedResource",
-    "LowerCaseIdentifier",
     "Maintainer",
     "Model",
     "ModelRdf",
     "NominalOrOrdinalData",
     "NonEmpty",
     "OnnxWeights",
+    "AxisId",
     "OutputTensor",
     "Postprocessing",
     "Preprocessing",
+    "PostprocessingId",
+    "PreprocessingId",
     "PytorchStateDictWeights",
     "RdfContent",
     "RelativeFilePath",
@@ -107,6 +115,7 @@ __all__ = [
     "TensorData",
     "TensorflowJsWeights",
     "TensorflowSavedModelBundleWeights",
+    "TensorId",
     "TimeInputAxis",
     "TimeOutputAxis",
     "TimeUnit",
@@ -176,11 +185,29 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-ShortId = Annotated[LowerCaseIdentifier, MaxLen(16)]
-OtherTensorAxisId = Annotated[
-    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.+\..+$"), Predicate(str.islower)
+TensorId = LowerCaseIdentifier
+AxisName = Annotated[LowerCaseIdentifier, MaxLen(16)]
+PostprocessingId = Literal[
+    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
-TensorAxisId = Union[ShortId, OtherTensorAxisId]
+PreprocessingId = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
+
+
+def validate_axis_id(s: str):
+    if s.count(".") != 1:
+        raise ValueError("Expected exactly 1 dot in axis id '{s}'")
+
+    tid, an = s.split(".")
+    _ = TypeAdapter(AxisName).validate_python(tid)
+    _ = TypeAdapter(TensorId).validate_python(an)
+
+    return s
+
+
+AxisId = Annotated[
+    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.+\..+$"), AfterValidator(validate_axis_id)
+]
+"""tensor_id.axis_id to identify a tensor axis across multiple tensors."""
 SAME_AS_TYPE = "<same as type>"
 
 
@@ -189,7 +216,7 @@ class ParametrizedSize(Node, frozen=True):
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
-    step_with: Optional[TensorAxisId] = None
+    step_with: Optional[Union[AxisName, AxisId]] = None
     """name of another axis with parametrixed size to resize jointly,
     i.e. `n=n_other` for `size = min + n*step`, `size_other = min_other + n_other*step_other`.
     To step with an axis of another tensor, use `step_with = <tensor name>.<axis name>`.
@@ -206,7 +233,7 @@ class SizeReference(Node, frozen=True):
     2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
     """
 
-    reference: TensorAxisId
+    reference: Union[AxisName, AxisId]
     offset: int = 0
 
 
@@ -216,7 +243,7 @@ class AxisBase(NodeWithExplicitlySetFields, frozen=True):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
     type: AxisType
 
-    name: ShortId
+    name: AxisName
     """An axis name unique across all axes of one tensor."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -233,7 +260,7 @@ class WithHalo(Node, frozen=True):
 
 class BatchAxis(AxisBase, frozen=True):
     type: Literal["batch"] = "batch"
-    name: ShortId = "batch"
+    name: AxisName = "batch"
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
@@ -245,8 +272,8 @@ ChannelNamePattern = Annotated[str, StringConstraints(min_length=3, max_length=1
 
 class ChannelAxis(AxisBase, frozen=True):
     type: Literal["channel"] = "channel"
-    name: ShortId = "channel"
-    channel_names: Union[Tuple[ShortId, ...], ChannelNamePattern] = "channel{i}"
+    name: AxisName = "channel"
+    channel_names: Union[Tuple[AxisName, ...], ChannelNamePattern] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
     def model_post_init(self, __context: Any):
@@ -269,7 +296,7 @@ class ChannelAxis(AxisBase, frozen=True):
 
 class IndexTimeSpaceAxisBase(AxisBase, frozen=True):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, TensorAxisId],
+        Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, AxisName, AxisId],
         Field(
             examples=[
                 10,
@@ -290,12 +317,12 @@ class IndexTimeSpaceAxisBase(AxisBase, frozen=True):
 
 class IndexAxis(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["index"] = "index"
-    name: ShortId = "index"
+    name: AxisName = "index"
 
 
 class TimeAxisBase(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["time"] = "time"
-    name: ShortId = "time"
+    name: AxisName = "time"
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -306,7 +333,7 @@ class TimeInputAxis(TimeAxisBase, frozen=True):
 
 class SpaceAxisBase(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["space"] = "space"
-    name: Annotated[ShortId, Field(examples=["x", "y", "z"])] = "x"
+    name: Annotated[AxisName, Field(examples=["x", "y", "z"])] = "x"
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -414,8 +441,30 @@ class IntervalOrRatioData(Node, frozen=True):
 TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
+class Processing(NodeWithExplicitlySetFields, ABC, frozen=True):
+    """abstract processing base class"""
+
+    id: Literal[PreprocessingId, PostprocessingId]
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
+
+
+class Binarize(Processing, frozen=True):
+    """Binarize the tensor with a fixed threshold.
+    Values above the threshold will be set to one, values below the threshold to zero."""
+
+    id: Literal["binarize"] = "binarize"
+    kwargs: BinarizeKwargs
+
+
+class Clip(Processing, frozen=True):
+    """Set tensor values below min to min and above max to max."""
+
+    id: Literal["clip"] = "clip"
+    kwargs: ClipKwargs
+
+
 class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
-    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to scale jointly.
     For example ('x', 'y') to scale two image axes for 2d data jointly."""
 
@@ -438,8 +487,19 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
 class ScaleLinear(Processing, frozen=True):
     """Fixed linear scaling."""
 
-    name: Literal["scale_linear"] = "scale_linear"
+    id: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
+
+
+class Sigmoid(Processing, frozen=True):
+    """The logistic sigmoid funciton, a.k.a. expit function."""
+
+    id: Literal["sigmoid"] = "sigmoid"
+
+    @property
+    def kwargs(self) -> ProcessingKwargs:
+        """empty kwargs"""
+        return ProcessingKwargs()
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
@@ -451,7 +511,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     | per_dataset | Compute for the entire dataset       |
     | per_sample  | Compute for each sample individually |
     """
-    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to normalize jointly.
     For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
 
@@ -479,13 +539,13 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
 class ZeroMeanUnitVariance(Processing, frozen=True):
     """Subtract mean and divide by variance."""
 
-    name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
 class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["per_dataset", "per_sample"]
-    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to normalize jointly.
     For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
 
@@ -503,7 +563,7 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[LowerCaseIdentifier] = None
+    reference_tensor: Optional[TensorId] = None
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
@@ -520,16 +580,16 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
 class ScaleRange(Processing, frozen=True):
     """Scale with percentiles."""
 
-    name: Literal["scale_range"] = "scale_range"
+    id: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["per_dataset", "per_sample"]
-    reference_tensor: LowerCaseIdentifier
+    reference_tensor: TensorId
     """Name of tensor to match."""
 
-    axes: Annotated[Tuple[ShortId, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
     """The subset of axes to scale jointly.
     For example xy to normalize the two image axes for 2d data jointly.
     Default: scale all non-batch axes jointly."""
@@ -542,23 +602,23 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
 class ScaleMeanVariance(Processing, frozen=True):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
-    name: Literal["scale_mean_variance"] = "scale_mean_variance"
+    id: Literal["scale_mean_variance"] = "scale_mean_variance"
     kwargs: ScaleMeanVarianceKwargs
 
 
 Preprocessing = Annotated[
     Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange],
-    Field(discriminator="name"),
+    Field(discriminator="id"),
 ]
 Postprocessing = Annotated[
     Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
-    Field(discriminator="name"),
+    Field(discriminator="id"),
 ]
 
 
 class TensorBase(Node, frozen=True):
-    name: LowerCaseIdentifier
-    """Tensor name. No duplicates are allowed."""
+    id: Annotated[TensorId, Field(alias="name")]
+    """Tensor id. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
 
@@ -645,8 +705,8 @@ class TensorBase(Node, frozen=True):
 
 
 class InputTensor(TensorBase, frozen=True):
-    name: LowerCaseIdentifier = "input"
-    """Input tensor name.
+    id: Annotated[TensorId, Field(alias="name")] = "input"
+    """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
     axes: Tuple[InputAxis, ...]
@@ -666,7 +726,7 @@ class InputTensor(TensorBase, frozen=True):
 
 
 class OutputTensor(TensorBase, frozen=True):
-    name: LowerCaseIdentifier = "output"
+    id: Annotated[TensorId, Field(alias="name")] = "output"
     """Output tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -873,7 +933,7 @@ class Model(
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
+            valid_step_with_refs: Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
                 **{
                     a.name: (ipt, a, a.size)
                     for a in ipt.axes
@@ -881,7 +941,9 @@ class Model(
                 },
                 **input_step_with_refs,
             }
-            valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]] = {
+            valid_independent_refs: Dict[
+                Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
+            ] = {
                 **{
                     a.name: (ipt, a, a.size)
                     for a in ipt.axes
@@ -893,7 +955,7 @@ class Model(
                 cls._validate_axis(
                     "inputs",
                     i,
-                    ipt.name,
+                    ipt.id,
                     a,
                     ax,
                     valid_step_with_refs=valid_step_with_refs,
@@ -908,8 +970,8 @@ class Model(
         tensor_name: str,
         a: int,
         axis: AnyAxis,
-        valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]],
-        valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]],
+        valid_step_with_refs: Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]],
+        valid_independent_refs: Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
@@ -1008,7 +1070,7 @@ class Model(
     @staticmethod
     def _get_axes_with_parametrized_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
         return {
-            f"{t.name}.{a.name}": (t, a, a.size)
+            f"{t.id}.{a.name}": (t, a, a.size)
             for t in io
             for a in t.axes
             if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
@@ -1017,7 +1079,7 @@ class Model(
     @staticmethod
     def _get_axes_with_independent_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
         return {
-            f"{t.name}.{a.name}": (t, a, a.size)
+            f"{t.id}.{a.name}": (t, a, a.size)
             for t in io
             for a in t.axes
             if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
@@ -1035,7 +1097,7 @@ class Model(
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_step_with_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
+            valid_step_with_refs: Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
                 **{
                     a.name: (out, a, a.size)
                     for a in out.axes
@@ -1044,7 +1106,9 @@ class Model(
                 **input_step_with_refs,
                 **output_step_with_refs,
             }
-            valid_independent_refs: Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]] = {
+            valid_independent_refs: Dict[
+                Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
+            ] = {
                 **{
                     a.name: (out, a, a.size)
                     for a in out.axes
@@ -1057,7 +1121,7 @@ class Model(
                 cls._validate_axis(
                     "outputs",
                     i,
-                    out.name,
+                    out.id,
                     a,
                     ax,
                     valid_step_with_refs=valid_step_with_refs,
@@ -1067,7 +1131,7 @@ class Model(
         return outputs
 
     # @staticmethod
-    # def _validate_halo(output_idx: int, output_name: str, axis_idx: int, axis: OutputAxis, valid_independent_refs:  Dict[TensorAxisId, Tuple[AnyTensor, AnyAxis]]):
+    # def _validate_halo(output_idx: int, output_name: str, axis_idx: int, axis: OutputAxis, valid_independent_refs:  Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis]]):
 
     packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.

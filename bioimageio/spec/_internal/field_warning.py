@@ -2,10 +2,10 @@ import dataclasses
 import sys
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
+import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
 from pydantic import FieldValidationInfo, TypeAdapter
 from pydantic._internal._decorators import inspect_validator
-from pydantic.functional_validators import AfterValidator, BeforeValidator
 from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
@@ -94,7 +94,7 @@ def as_warning(
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class AfterWarner(AfterValidator):
+class AfterWarner(pydantic.functional_validators.AfterValidator):
     """Like AfterValidator, but wraps validation `func` `as_warning`"""
 
     severity: WarningSeverity = WARNING
@@ -110,7 +110,7 @@ class AfterWarner(AfterValidator):
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
-class BeforeWarner(BeforeValidator):
+class BeforeWarner(pydantic.functional_validators.BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` `as_warning`"""
 
     severity: WarningSeverity = WARNING

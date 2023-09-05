@@ -96,6 +96,8 @@ def _update_tensor_specs(
             ):
                 p_axes = [_get_axis_description_from_letter(a, context=context) for a in p_kwargs_axes]
                 p_kwargs["axes"] = [a.get("name", a["type"]) for a in p_axes]
+                if "name" in p_kwargs:
+                    p_kwargs["id"] = p_kwargs.pop("name")
 
         tensor_data[idx] = new_d
 

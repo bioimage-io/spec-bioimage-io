@@ -71,6 +71,7 @@ __all__ = [
     "Sigmoid",
     "TensorflowJsWeights",
     "TensorflowSavedModelBundleWeights",
+    "TensorName",
     "TorchscriptWeights",
     "Weights",
     "ZeroMeanUnitVariance",
@@ -82,6 +83,7 @@ PostprocessingName = Literal[
 ]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 
+TensorName = LowerCaseIdentifier
 
 class CallableFromDepencency(StringNode):
     _pattern = r"^.+\..+$"
@@ -368,7 +370,7 @@ class ImplicitOutputShape(Node, frozen=True):
 
 
 class TensorBase(Node, frozen=True):
-    name: LowerCaseIdentifier
+    name: TensorName
     """Tensor name. No duplicates are allowed."""
 
     description: str = ""
@@ -546,7 +548,7 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[LowerCaseIdentifier] = None
+    reference_tensor: Optional[TensorName] = None
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
@@ -568,7 +570,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     | per_sample  | Compute for each sample individually |
     """
 
-    reference_tensor: LowerCaseIdentifier
+    reference_tensor: TensorName
     """Name of tensor to match."""
 
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None

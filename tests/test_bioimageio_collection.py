@@ -1,7 +1,7 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Dict, Iterable
+from typing import Any, Dict, Iterable
 
 import pooch
 import pytest
@@ -151,7 +151,8 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 
 def yield_rdf_paths() -> Iterable[ParameterSet]:
-    with open(pooch.retrieve(BASE_URL + "collection.json", None), encoding="utf-8") as f:
+    cache_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
+    with Path(cache_path).open(encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
 
     collection_registry: Dict[str, None] = {
