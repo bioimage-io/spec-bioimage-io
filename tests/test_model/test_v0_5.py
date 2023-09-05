@@ -144,7 +144,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
     "kwargs",
     [
         {
-            "name": "input_1",
+            "id": "input_1",
             "description": "Input 1",
             "data": {"type": "float32"},
             "axes": [
@@ -154,7 +154,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             ],
             "preprocessing": [
                 {
-                    "name": "scale_range",
+                    "id": "scale_range",
                     "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
                 }
             ],
@@ -276,8 +276,8 @@ def test_warn_long_name(model_data: Dict[str, Any]):
     ], summary.format()
 
 
-def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
-    model_data["inputs"][0]["name"] = "invalid/name"
+def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
+    model_data["inputs"][0]["id"] = "invalid/id"
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 

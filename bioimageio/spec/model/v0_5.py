@@ -4,6 +4,7 @@ from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set,
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import model_validator  # type: ignore
 from pydantic import (
+    AliasChoices,
     Field,
     FieldValidationInfo,
     HttpUrl,
@@ -617,7 +618,7 @@ Postprocessing = Annotated[
 
 
 class TensorBase(Node, frozen=True):
-    id: Annotated[TensorId, Field(alias="name")]
+    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))]
     """Tensor id. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -705,7 +706,7 @@ class TensorBase(Node, frozen=True):
 
 
 class InputTensor(TensorBase, frozen=True):
-    id: Annotated[TensorId, Field(alias="name")] = "input"
+    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))] = "input"
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -726,7 +727,7 @@ class InputTensor(TensorBase, frozen=True):
 
 
 class OutputTensor(TensorBase, frozen=True):
-    id: Annotated[TensorId, Field(alias="name")] = "output"
+    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))] = "output"
     """Output tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -1050,20 +1051,20 @@ class Model(
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_tensor_names(
+    def validate_tensor_ids(
         cls, outputs: Tuple[OutputTensor, ...], info: FieldValidationInfo
     ) -> Tuple[OutputTensor, ...]:
-        tensor_names = [t.name for t in info.data.get("inputs", ()) + info.data.get("outputs", ())]
-        duplicate_tensor_names: List[str] = []
+        tensor_ids = [t.id for t in info.data.get("inputs", ()) + info.data.get("outputs", ())]
+        duplicate_tensor_ids: List[str] = []
         seen: Set[str] = set()
-        for t in tensor_names:
+        for t in tensor_ids:
             if t in seen:
-                duplicate_tensor_names.append(t)
+                duplicate_tensor_ids.append(t)
 
             seen.add(t)
 
-        if duplicate_tensor_names:
-            raise ValueError(f"Duplicate tensor names: {duplicate_tensor_names}")
+        if duplicate_tensor_ids:
+            raise ValueError(f"Duplicate tensor ids: {duplicate_tensor_ids}")
 
         return outputs
 

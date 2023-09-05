@@ -34,7 +34,7 @@ attachments: []
 timestamp: 2019-12-11T12:22:32Z # ISO 8601
 
 inputs:
-  - name: raw
+  - id: raw
     description: raw input
     axes:
       - type: batch
@@ -49,13 +49,13 @@ inputs:
     test_tensor: test_input.npy
     sample_tensor: test_input.npy
     preprocessing: # list of preprocessing steps
-      - name: zero_mean_unit_variance # name of preprocessing step
+      - id: zero_mean_unit_variance # name of preprocessing step
         kwargs:
           mode: per_sample
           axes: [x, y]
 
 outputs:
-  - name: probability
+  - id: probability
     description: probability in [0,1]
     data:
       type: float32
