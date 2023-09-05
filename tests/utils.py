@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Union
 
 import pytest
-from deepdiff import DeepDiff  # type: ignore
+from deepdiff import DeepDiff
 from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 

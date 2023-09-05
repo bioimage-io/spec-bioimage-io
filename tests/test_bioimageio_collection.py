@@ -151,20 +151,20 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 
 def yield_rdf_paths() -> Iterable[ParameterSet]:
-    with open(pooch.retrieve(BASE_URL + "collection.json", None), encoding="utf-8") as f:  # type: ignore
+    with open(pooch.retrieve(BASE_URL + "collection.json", None), encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
 
     collection_registry: Dict[str, None] = {
         entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
     }
-    collection = pooch.create(  # type: ignore
+    collection = pooch.create(
         path=CACHE_PATH,
         base_url=RDF_BASE_URL,
         registry=collection_registry,
     )
 
     for rdf in collection_registry:
-        rdf_path = Path(collection.fetch(rdf))  # type: ignore
+        rdf_path = Path(collection.fetch(rdf))
         rdf_key = rdf_path.relative_to(CACHE_PATH).as_posix()
         yield pytest.param(rdf_path, rdf_key, id=rdf_key)
 

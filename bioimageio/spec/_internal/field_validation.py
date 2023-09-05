@@ -179,7 +179,6 @@ def validate_is_not_keyword(s: str) -> str:
 
     return s
 
-
 def validate_orcid_id(orcid_id: str):
     if len(orcid_id) == 19 and all(orcid_id[idx] == "-" for idx in [4, 9, 14]):
         check = 0
