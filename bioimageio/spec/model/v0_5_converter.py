@@ -69,9 +69,11 @@ def _update_tensor_specs(
 
         reordered_shape = _reorder_tensor_shape(d.get("shape"))
         new_d = {}
-        for keep in ("name", "description"):
-            if keep in d:
-                new_d[keep] = d[keep]
+        if "name" in d:
+            new_d["id"] = d["name"]
+
+        if "description" in d:
+            new_d["description"] = d["description"]
 
         if len(tts) > idx:
             new_d["test_tensor"] = tts[idx]

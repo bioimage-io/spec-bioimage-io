@@ -4,7 +4,6 @@ from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set,
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import model_validator  # type: ignore
 from pydantic import (
-    AliasChoices,
     Field,
     FieldValidationInfo,
     HttpUrl,
@@ -618,7 +617,7 @@ Postprocessing = Annotated[
 
 
 class TensorBase(Node, frozen=True):
-    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))]
+    id: TensorId
     """Tensor id. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -706,7 +705,7 @@ class TensorBase(Node, frozen=True):
 
 
 class InputTensor(TensorBase, frozen=True):
-    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))] = "input"
+    id: TensorId = "input"
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -727,7 +726,7 @@ class InputTensor(TensorBase, frozen=True):
 
 
 class OutputTensor(TensorBase, frozen=True):
-    id: Annotated[TensorId, Field(validation_alias=AliasChoices("name", "id"))] = "output"
+    id: TensorId = "output"
     """Output tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
