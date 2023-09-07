@@ -19,7 +19,15 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, Attachments, Author, Badge, CiteEntry, Maintainer
+from bioimageio.spec.generic.v0_2 import (
+    VALID_COVER_IMAGE_EXTENSIONS,
+    Attachments,
+    Author,
+    Badge,
+    CiteEntry,
+    Doi,
+    Maintainer,
+)
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 
 __all__ = [
@@ -27,6 +35,7 @@ __all__ = [
     "Author",
     "Badge",
     "CiteEntry",
+    "Doi",
     "Generic",
     "LinkedResource",
     "Maintainer",

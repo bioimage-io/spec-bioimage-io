@@ -5,7 +5,7 @@ target-version = ['py39', 'py310', 'py311']
 [tool.isort]
 line_length = 120
 profile = "black"
-sort_reexports = true
+# sort_reexports = true  # buggy
 
 [tool.pyright]
 exclude = ["**/node_modules", "**/__pycache__", "tests/old_*"]

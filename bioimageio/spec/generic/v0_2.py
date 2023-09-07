@@ -22,6 +22,7 @@ from bioimageio.spec._internal.validation_context import InternalValidationConte
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
 __all__ = [
+    "Doi",
     "Attachments",
     "Author",
     "Badge",
@@ -31,6 +32,7 @@ __all__ = [
     "Maintainer",
 ]
 
+Doi = Annotated[str, StringConstraints(pattern=DOI_REGEX)]
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 VALID_COVER_IMAGE_EXTENSIONS = (
@@ -102,7 +104,7 @@ class CiteEntry(Node, frozen=True):
     text: str
     """free text description"""
 
-    doi: Optional[Annotated[str, StringConstraints(pattern=DOI_REGEX)]] = None
+    doi: Optional[DOI] = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details. (alternatively specify `url`)"""
 
