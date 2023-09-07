@@ -1,4 +1,5 @@
 import dataclasses
+import logging
 import sys
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
@@ -54,6 +55,9 @@ def call_validator_func(
         return func(value)  # type: ignore
 
 
+logger = logging.getLogger(__name__)
+
+
 def raise_warning(
     msg: LiteralString,
     *,
@@ -62,8 +66,11 @@ def raise_warning(
     val_context: Optional[InternalValidationContext] = None,
     msg_context: Optional[Dict[str, Any]] = None,
 ):
+    msg_context = {**(msg_context or {}), "value": value, "severity": severity}
     if severity >= (val_context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
-        raise PydanticCustomError("warning", msg, {**(msg_context or {}), "value": value, "severity": severity})
+        raise PydanticCustomError("warning", msg, msg_context)
+    else:
+        logger.log(severity, msg, **msg_context)
 
 
 def as_warning(
