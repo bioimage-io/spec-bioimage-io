@@ -70,7 +70,7 @@ def raise_warning(
     if severity >= (val_context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
         raise PydanticCustomError("warning", msg, msg_context)
     else:
-        logger.log(severity, msg, **msg_context)
+        logger.log(severity, msg, extra=msg_context)
 
 
 def as_warning(
