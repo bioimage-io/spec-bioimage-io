@@ -13,6 +13,7 @@ from bioimageio.spec.description import (
 from bioimageio.spec.generic import AnyGeneric, Generic
 from bioimageio.spec.model import AnyModel, Model
 from bioimageio.spec.notebook import AnyNotebook, Notebook
+from bioimageio.spec.pretty_validation_errors import enable_pretty_validation_errors_in_ipynb
 
 __all__ = (
     "__version__",
@@ -28,6 +29,7 @@ __all__ = (
     "Collection",
     "dataset",
     "Dataset",
+    "enable_pretty_validation_errors_in_ipynb",
     "generic",
     "Generic",
     "LatestResourceDescription",
