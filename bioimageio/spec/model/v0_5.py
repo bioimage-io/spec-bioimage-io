@@ -14,125 +14,46 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec import generic
 from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_validation import AfterValidator
 from bioimageio.spec._internal.field_warning import raise_warning, warn
-from bioimageio.spec._internal.types import (
-    Datetime,
-    DeprecatedLicenseId,
-    FileSource,
-    Identifier,
-    LicenseId,
-    LowerCaseIdentifier,
-    NonEmpty,
-    RdfContent,
-    RelativeFilePath,
-    Sha256,
-    Unit,
-    Version,
-)
+from bioimageio.spec._internal.types import Datetime as Datetime
+from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
+from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import Identifier as Identifier
+from bioimageio.spec._internal.types import LicenseId as LicenseId
+from bioimageio.spec._internal.types import LowerCaseIdentifier as LowerCaseIdentifier
+from bioimageio.spec._internal.types import NonEmpty as NonEmpty
+from bioimageio.spec._internal.types import RdfContent as RdfContent
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types import Sha256 as Sha256
+from bioimageio.spec._internal.types import Unit as Unit
+from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.dataset import Dataset
-from bioimageio.spec.dataset.v0_3 import LinkedDataset
-from bioimageio.spec.generic.v0_3 import *
-from bioimageio.spec.model.v0_4 import (
-    BinarizeKwargs,
-    CallableFromDepencency,
-    ClipKwargs,
-    KerasHdf5Weights,
-    KnownRunMode,
-    LinkedModel,
-    OnnxWeights,
-    ProcessingKwargs,
-    RunMode,
-    TensorflowJsWeights,
-    TensorflowSavedModelBundleWeights,
-    TorchscriptWeights,
-    WeightsEntryBase,
-    WeightsFormat,
-)
+from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
+from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
+from bioimageio.spec.generic.v0_3 import GenericBaseNoSource
+from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
+from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
+from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
+from bioimageio.spec.model.v0_4 import KerasHdf5Weights as KerasHdf5Weights
+from bioimageio.spec.model.v0_4 import KnownRunMode as KnownRunMode
+from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
+from bioimageio.spec.model.v0_4 import OnnxWeights as OnnxWeights
+from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
+from bioimageio.spec.model.v0_4 import RunMode as RunMode
+from bioimageio.spec.model.v0_4 import TensorflowJsWeights as TensorflowJsWeights
+from bioimageio.spec.model.v0_4 import TensorflowSavedModelBundleWeights as TensorflowSavedModelBundleWeights
+from bioimageio.spec.model.v0_4 import TorchscriptWeights as TorchscriptWeights
+from bioimageio.spec.model.v0_4 import WeightsEntryBase as WeightsEntryBase
+from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
-
-__all__ = [
-    "Architecture",
-    "ArchitectureFromDependency",
-    "ArchitectureFromFile",
-    "Attachments",
-    "Author",
-    "AxisId",
-    "AxisName",
-    "AxisType",
-    "Badge",
-    "BatchAxis",
-    "Binarize",
-    "BinarizeKwargs",
-    "CallableFromDepencency",
-    "CallableFromFile",
-    "ChannelAxis",
-    "CiteEntry",
-    "Clip",
-    "ClipKwargs",
-    "Datetime",
-    "DeprecatedLicenseId",
-    "FileSource",
-    "Generic",
-    "Identifier",
-    "IndexAxis",
-    "InputTensor",
-    "IntervalOrRatioData",
-    "KerasHdf5Weights",
-    "KnownRunMode",
-    "LicenseId",
-    "LinkedModel",
-    "LinkedResource",
-    "Maintainer",
-    "Model",
-    "ModelRdf",
-    "NominalOrOrdinalData",
-    "NonEmpty",
-    "OnnxWeights",
-    "OutputTensor",
-    "Postprocessing",
-    "PostprocessingId",
-    "Preprocessing",
-    "PreprocessingId",
-    "ProcessingKwargs",
-    "PytorchStateDictWeights",
-    "RdfContent",
-    "RelativeFilePath",
-    "ScaleLinear",
-    "ScaleLinearKwargs",
-    "ScaleMeanVariance",
-    "ScaleMeanVarianceKwargs",
-    "ScaleRange",
-    "ScaleRangeKwargs",
-    "Sha256",
-    "Sigmoid",
-    "SpaceInputAxis",
-    "SpaceOutputAxis",
-    "SpaceUnit",
-    "TensorData",
-    "TensorflowJsWeights",
-    "TensorflowSavedModelBundleWeights",
-    "TensorId",
-    "TimeInputAxis",
-    "TimeOutputAxis",
-    "TimeUnit",
-    "TorchscriptWeights",
-    "Unit",
-    "Version",
-    "Weights",
-    "ZeroMeanUnitVariance",
-    "ZeroMeanUnitVarianceKwargs",
-]
-
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
-    "angstrom",
     "attometer",
+    "angstrom",
     "centimeter",
     "decimeter",
     "exameter",
@@ -889,7 +810,7 @@ class ModelRdf(Node, frozen=True):
 
 
 class Model(
-    generic.v0_3.GenericBaseNoSource, frozen=True, title="bioimage.io model specification"
+    GenericBaseNoSource, frozen=True, title="bioimage.io model specification"
 ):  # todo: do not inherite from v0_4.Model, e.g. 'inputs' are not compatible
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
