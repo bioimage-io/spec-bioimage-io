@@ -48,6 +48,13 @@ class WarningEntry(ValidationEntry):
         return data
 
 
+def format_loc(loc: Loc, root: str = "root") -> str:
+    if not loc:
+        loc = (root,)
+
+    return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+
+
 class ValidationSummary(BaseModel):
     name: str
     source_name: str
@@ -58,16 +65,9 @@ class ValidationSummary(BaseModel):
     warnings: List[WarningEntry] = Field(default_factory=list)
     bioimageio_spec_version: str = VERSION
 
-    @staticmethod
-    def _format_loc(loc: Loc) -> str:
-        if not loc:
-            loc = ("root",)
-
-        return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
-
     def format(self) -> str:
-        es = "\n    ".join(f"{self._format_loc(e.loc)}: {e.msg}" for e in self.errors)
-        ws = "\n    ".join(f"{self._format_loc(w.loc)}: {w.msg}" for w in self.warnings)
+        es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in self.errors)
+        ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in self.warnings)
 
         es_msg = f"errors: {es}" if es else ""
         ws_msg = f"warnings: {ws}" if ws else ""

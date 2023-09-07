@@ -290,6 +290,10 @@ todo: format version updates
 * all generic 0.3.0 changes +
 * Breaking canges that are fully auto-convertible
   * rename `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`
+  * rename `inputs[i].name` to `inputs[i].id`
+  * rename `outputs[i].name` to `outputs[i].id`
+  * rename `inputs[i].preprocessing.name` to `inputs[i].preprocessing.id`
+  * rename `outputs[i].postprocessing.name` to `outputs[i].postprocessing.id`
 
 #### model 0.4.9
 
