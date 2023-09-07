@@ -10,6 +10,7 @@ __all__ = [
     "Badge",
     "CiteEntry",
     "Dataset",
+    "Doi",
     "LinkedDataset",
     "LinkedResource",
     "Maintainer",

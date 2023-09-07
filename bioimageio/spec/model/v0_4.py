@@ -4,8 +4,15 @@ from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
-from pydantic import model_validator  # type: ignore
-from pydantic import AllowInfNan, Field, HttpUrl, TypeAdapter, ValidationInfo, field_validator
+from pydantic import (
+    AllowInfNan,
+    Field,
+    HttpUrl,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+    model_validator,  # type: ignore
+)
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, NodeWithExplicitlySetFields, StringNode
@@ -27,56 +34,15 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.dataset.v0_2 import Dataset, LinkedDataset
-from bioimageio.spec.generic.v0_2 import *
-from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
+from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
+from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
+from bioimageio.spec.generic.v0_2 import Attachments as Attachments
+from bioimageio.spec.generic.v0_2 import Author as Author
+from bioimageio.spec.generic.v0_2 import Badge as Badge
+from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_2 import GenericBaseNoSource, LinkedResource
+from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
-
-__all__ = [
-    "Attachments",
-    "Author",
-    "Badge",
-    "Binarize",
-    "BinarizeKwargs",
-    "CallableFromDepencency",
-    "CallableFromFile",
-    "CiteEntry",
-    "Clip",
-    "ClipKwargs",
-    "CustomCallable",
-    "Generic",
-    "ImplicitOutputShape",
-    "InputTensor",
-    "KerasHdf5Weights",
-    "KnownRunMode",
-    "LinkedModel",
-    "LinkedResource",
-    "Maintainer",
-    "Model",
-    "ModelRdf",
-    "OnnxWeights",
-    "OutputTensor",
-    "ParametrizedInputShape",
-    "Postprocessing",
-    "PostprocessingName",
-    "Preprocessing",
-    "PreprocessingName",
-    "PytorchStateDictWeights",
-    "ScaleLinear",
-    "ScaleLinearKwargs",
-    "ScaleMeanVariance",
-    "ScaleMeanVarianceKwargs",
-    "ScaleRange",
-    "ScaleRangeKwargs",
-    "Sigmoid",
-    "TensorflowJsWeights",
-    "TensorflowSavedModelBundleWeights",
-    "TensorName",
-    "TorchscriptWeights",
-    "Weights",
-    "ZeroMeanUnitVariance",
-    "ZeroMeanUnitVarianceKwargs",
-]
 
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
@@ -84,6 +50,7 @@ PostprocessingName = Literal[
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 
 TensorName = LowerCaseIdentifier
+
 
 class CallableFromDepencency(StringNode):
     _pattern = r"^.+\..+$"

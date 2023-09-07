@@ -2,7 +2,6 @@ from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
-from pydantic import model_validator  # type: ignore
 from pydantic import (
     Field,
     FieldValidationInfo,
@@ -11,6 +10,7 @@ from pydantic import (
     TypeAdapter,
     ValidationInfo,
     field_validator,
+    model_validator,  # type: ignore
 )
 from typing_extensions import Annotated, LiteralString, Self
 
@@ -33,7 +33,12 @@ from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
+from bioimageio.spec.generic.v0_3 import Attachment as Attachment
+from bioimageio.spec.generic.v0_3 import Author as Author
+from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import ConfigNode as ConfigNode
 from bioimageio.spec.generic.v0_3 import GenericBaseNoSource
+from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
@@ -1051,9 +1056,6 @@ class Model(
                 )
 
         return outputs
-
-    # @staticmethod
-    # def _validate_halo(output_idx: int, output_name: str, axis_idx: int, axis: OutputAxis, valid_independent_refs:  Dict[Union[AxisName, AxisId], Tuple[AnyTensor, AnyAxis]]):
 
     packaged_by: Tuple[Author, ...] = ()
     """The persons that have packaged and uploaded this model.
