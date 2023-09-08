@@ -1,44 +1,30 @@
-from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.constants import VERSION as __version__
-from bioimageio.spec.application import AnyApplication, Application
-from bioimageio.spec.collection import AnyCollection, Collection
-from bioimageio.spec.dataset import AnyDataset, Dataset
-from bioimageio.spec.description import (
-    LatestResourceDescription,
-    ResourceDescription,
-    SpecificResourceDescription,
-    load_description,
-    validate_format,
+from bioimageio.spec import application as application
+from bioimageio.spec import collection as collection
+from bioimageio.spec import dataset as dataset
+from bioimageio.spec import generic as generic
+from bioimageio.spec import model as model
+from bioimageio.spec import notebook as notebook
+from bioimageio.spec._internal.constants import VERSION
+from bioimageio.spec.application import AnyApplication as AnyApplication
+from bioimageio.spec.application import Application as Application
+from bioimageio.spec.collection import AnyCollection as AnyCollection
+from bioimageio.spec.collection import Collection as Collection
+from bioimageio.spec.dataset import AnyDataset as AnyDataset
+from bioimageio.spec.dataset import Dataset as Dataset
+from bioimageio.spec.description import LatestResourceDescription as LatestResourceDescription
+from bioimageio.spec.description import ResourceDescription as ResourceDescription
+from bioimageio.spec.description import SpecificResourceDescription as SpecificResourceDescription
+from bioimageio.spec.description import load_description as load_description
+from bioimageio.spec.description import update_format as update_format
+from bioimageio.spec.description import validate_format as validate_format
+from bioimageio.spec.generic import AnyGeneric as AnyGeneric
+from bioimageio.spec.generic import Generic as Generic
+from bioimageio.spec.model import AnyModel as AnyModel
+from bioimageio.spec.model import Model as Model
+from bioimageio.spec.notebook import AnyNotebook as AnyNotebook
+from bioimageio.spec.notebook import Notebook as Notebook
+from bioimageio.spec.pretty_validation_errors import (
+    enable_pretty_validation_errors_in_ipynb as enable_pretty_validation_errors_in_ipynb,
 )
-from bioimageio.spec.generic import AnyGeneric, Generic
-from bioimageio.spec.model import AnyModel, Model
-from bioimageio.spec.notebook import AnyNotebook, Notebook
-from bioimageio.spec.pretty_validation_errors import enable_pretty_validation_errors_in_ipynb
 
-__all__ = (
-    "__version__",
-    "AnyApplication",
-    "AnyCollection",
-    "AnyDataset",
-    "AnyGeneric",
-    "AnyModel",
-    "AnyNotebook",
-    "application",
-    "Application",
-    "collection",
-    "Collection",
-    "dataset",
-    "Dataset",
-    "enable_pretty_validation_errors_in_ipynb",
-    "generic",
-    "Generic",
-    "LatestResourceDescription",
-    "load_description",
-    "model",
-    "Model",
-    "notebook",
-    "Notebook",
-    "ResourceDescription",
-    "SpecificResourceDescription",
-    "validate_format",
-)
+__version__ = VERSION

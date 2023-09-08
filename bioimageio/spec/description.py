@@ -143,14 +143,6 @@ def load_description(
     return rd, summary
 
 
-def load_description_as_latest(
-    rdf_content: RdfContent,
-    *,
-    context: Optional[ValidationContext] = None,
-) -> Tuple[Optional[LatestResourceDescription], ValidationSummary]:
-    return load_description(rdf_content, context=context, format_version=LATEST)  # type: ignore
-
-
 def validate_format(
     rdf_content: RdfContent,
     context: Optional[ValidationContext] = None,
