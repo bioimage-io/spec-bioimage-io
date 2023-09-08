@@ -723,7 +723,7 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
-    pytorch_version: Annotated[Optional[Version], warn(Version)] = None
+    pytorch_version: Annotated[Optional[Version], warn(Version, msg="Please specify the PyTorch version these weights were created with.")] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it has to include pytorch and any verison pinning has to be compatible."""
 
@@ -1064,7 +1064,9 @@ class Model(
     parent: Optional[Union[LinkedModel, ModelRdf]] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    run_mode: Annotated[Optional[RunMode], warn(None)] = None
+    run_mode: Annotated[
+        Optional[RunMode], warn(None, msg="run mode {value} has limited support across consumer softwares.")
+    ] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""

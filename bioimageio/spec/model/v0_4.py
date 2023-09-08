@@ -188,7 +188,12 @@ class WeightsEntryBase(Node, frozen=True):
 
     dependencies: Annotated[
         Optional[Dependencies],
-        warn(None, ALERT),
+        warn(
+            None,
+            INFO,
+            "Avoid custom dependencies ({value}) where possible "
+            "to allow execution in a wider range of software environments.",
+        ),
         Field(examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]),
     ] = None
     """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
@@ -211,14 +216,20 @@ class WeightsEntryBase(Node, frozen=True):
 class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Annotated[Union[Version, None], warn(Version, ALERT)] = None
+    tensorflow_version: Annotated[
+        Union[Version, None],
+        warn(Version, ALERT, "Please specify the TensorFlow version these weights were created with."),
+    ] = None
     """TensorFlow version used to create these weights"""
 
 
 class OnnxWeights(WeightsEntryBase, frozen=True):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Annotated[Union[Annotated[int, Ge(7)], None], warn(int, ALERT)] = None
+    opset_version: Annotated[
+        Union[Annotated[int, Ge(7)], None],
+        warn(int, ALERT, "Please specify the Opset version these weights were created with."),
+    ] = None
     """ONNX opset version"""
 
 
@@ -256,7 +267,7 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     kwargs: Kwargs = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
+    pytorch_version: Annotated[Union[Version, None], warn(Version, msg="Please specify the PyTorch version these weights were created with.")] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
@@ -265,14 +276,19 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
 class TorchscriptWeights(WeightsEntryBase, frozen=True):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: Annotated[Union[Version, None], warn(Version)] = None
+    pytorch_version: Annotated[
+        Union[Version, None], warn(Version, msg="Please specify the PyTorch version these weights were created with.")
+    ] = None
     """Version of the PyTorch library used."""
 
 
 class TensorflowJsWeights(WeightsEntryBase, frozen=True):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
+    tensorflow_version: Annotated[
+        Union[Version, None],
+        warn(Version, msg="Please specify the TensorFlow version these weights were created with."),
+    ] = None
     """Version of the TensorFlow library used."""
 
     source: Union[HttpUrl, RelativeFilePath]
@@ -283,7 +299,10 @@ class TensorflowJsWeights(WeightsEntryBase, frozen=True):
 class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Annotated[Union[Version, None], warn(Version)] = None
+    tensorflow_version: Annotated[
+        Union[Version, None],
+        warn(Version, msg="Please specify the TensorFlow version these weights were created with."),
+    ] = None
     """Version of the TensorFlow library used."""
 
 
