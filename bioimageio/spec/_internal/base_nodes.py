@@ -13,6 +13,7 @@ from typing import (
     FrozenSet,
     Generic,
     Iterator,
+    List,
     Mapping,
     Optional,
     Set,
@@ -25,8 +26,15 @@ from typing import (
 )
 
 import pydantic
-from pydantic import model_validator  # type: ignore
-from pydantic import Field, GetCoreSchemaHandler, StringConstraints, TypeAdapter, ValidationInfo
+from pydantic import (
+    Field,
+    GetCoreSchemaHandler,
+    PrivateAttr,
+    StringConstraints,
+    TypeAdapter,
+    ValidationInfo,
+    model_validator,  # type: ignore
+)
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
@@ -35,6 +43,7 @@ from bioimageio.spec._internal.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.types import NonEmpty, RdfContent, YamlValue
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
+from bioimageio.spec.summary import ValidationSummary
 
 K = TypeVar("K", bound=str)
 V = TypeVar("V")
@@ -149,6 +158,13 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
+    _internal_validation_context: InternalValidationContext = PrivateAttr()
+    _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
+
+    @property
+    def validation_summaries(self) -> List[ValidationSummary]:
+        return self._validation_summaries
+
     @model_validator(mode="before")
     @classmethod
     def update_context_and_data(cls, data: Union[Any, Mapping[Any, Any]], info: ValidationInfo):
@@ -162,6 +178,11 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
             return data_dict
         else:
             return data
+
+    @model_validator(mode="after")
+    def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
+        self._internal_validation_context = info.context
+        return self
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -219,7 +240,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         return super().model_validate(
             obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
         )
-
 
 class StringNode(collections.UserString, ABC):
     _pattern: ClassVar[str]

@@ -1,7 +1,10 @@
 from typing import Any, List, Literal, Mapping, Tuple, Union
 
-from pydantic import model_validator  # type: ignore
-from pydantic import BaseModel, Field
+from pydantic import (
+    BaseModel,
+    Field,
+    model_validator,  # type: ignore
+)
 from pydantic_core.core_schema import ErrorType
 
 from bioimageio.spec._internal.constants import (
@@ -66,10 +69,13 @@ class ValidationSummary(BaseModel):
     bioimageio_spec_version: str = VERSION
 
     def format(self) -> str:
-        es = "\n    ".join(f"{format_loc(e.loc)}: {e.msg}" for e in self.errors)
-        ws = "\n    ".join(f"{format_loc(w.loc)}: {w.msg}" for w in self.warnings)
+        es = "".join(f"\n    {format_loc(e.loc)}: {e.msg}" for e in self.errors)
+        ws = "".join(f"\n    {format_loc(w.loc)}: {w.msg}" for w in self.warnings)
 
-        es_msg = f"errors: {es}" if es else ""
-        ws_msg = f"warnings: {ws}" if ws else ""
+        es_msg = f"\nerrors: {es}" if es else ""
+        ws_msg = f"\nwarnings: {ws}" if ws else ""
 
-        return f"{self.name.strip('.')}: {self.status}\nsource: {self.source_name}\n{es_msg}\n{ws_msg}"
+        return f"{self.name.strip('.')}: {self.status}\nsource: {self.source_name}{es_msg}{ws_msg}"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}:\n" + self.format()

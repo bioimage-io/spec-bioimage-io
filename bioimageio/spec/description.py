@@ -1,13 +1,27 @@
 import traceback
 from copy import deepcopy
 from pathlib import PurePath
-from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Type, TypeVar, Union
+from typing import (
+    Annotated,
+    Any,
+    ClassVar,
+    Dict,
+    FrozenSet,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 from urllib.parse import urljoin
 
 import pydantic
 from pydantic import Field
 from pydantic_core import PydanticUndefined
-from typing_extensions import Annotated
+from typing_extensions import LiteralString
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
@@ -75,6 +89,12 @@ ResourceDescription = Union[
 """Any of the implemented resource descriptions"""
 
 
+class InvalidDescription(ResourceDescriptionBase, frozen=True, extra="allow", title="An invalid resource description"):
+    type: Any = "unknown"
+    format_version: Any = "unknown"
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+
+
 def update_format(
     rdf_content: RdfContent,
     update_to_format: str = "latest",
@@ -102,11 +122,16 @@ def dump_description(rd: ResourceDescription, exclude_unset: bool = True) -> Rdf
 
 
 def load_description(
-    rdf_content: RdfContent,
+    rdf_content: Union[RdfContent, ResourceDescription],
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
-) -> Tuple[Optional[ResourceDescription], ValidationSummary]:
+) -> Union[ResourceDescription, InvalidDescription]:
+    if isinstance(rdf_content, ResourceDescriptionBase):
+        old_ctxt = rdf_content._internal_validation_context  # pyright: ignore[reportPrivateUsage]
+        context = context or ValidationContext(root=old_ctxt["root"], file_name=old_ctxt["file_name"])
+        rdf_content = dump_description(rdf_content)
+
     discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(rdf_content)
     if use_format_version != discovered_format_version:
         rdf_content = dict(rdf_content)
@@ -123,7 +148,7 @@ def load_description(
     rd_class = _get_rd_class(discovered_type, format_version=fv)
     context = context or ValidationContext()
     if isinstance(rd_class, str):
-        rd = None
+        rd = InvalidDescription()
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=[ErrorEntry(loc=(), msg=rd_class, type="error")],
@@ -140,7 +165,8 @@ def load_description(
     if future_patch_warning:
         summary.warnings.insert(0, future_patch_warning)
 
-    return rd, summary
+    rd.validation_summaries.append(summary)
+    return rd
 
 
 def validate_format(
@@ -148,8 +174,8 @@ def validate_format(
     context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
-    _rd, summary = load_description(rdf_content, context=context, format_version=as_format)
-    return summary
+    rd = load_description(rdf_content, context=context, format_version=as_format)
+    return rd.validation_summaries[0]
 
 
 def _check_type_and_format_version(data: Union[YamlValue, RdfContent]) -> Tuple[str, str, str]:
@@ -257,33 +283,27 @@ def _load_descr_with_known_rd_class(
     *,
     context: ValidationContext,
     rd_class: Type[RD],
-) -> Tuple[Optional[RD], ValidationSummary]:
+) -> Tuple[Union[RD, InvalidDescription], ValidationSummary]:
     raw_rd = deepcopy(dict(rdf_content))
     rd, errors, tb, val_warnings = _load_descr_impl(
         rd_class,
         raw_rd,
         get_internal_validation_context(context.model_dump(), warning_level=ERROR),
     )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
-    if rd is None:
-        assert errors
-        resource_type = rd_class.model_fields["type"].default
-        format_version = rd_class.implemented_format_version
-    else:
-        resource_type = rd.type
-        format_version = rd.format_version
-        assert not errors, f"got rd, but also errors: {errors}"
-        assert not tb, f"got rd, but also an error traceback: {tb}"
-        assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
-        _, error2, tb2, val_warnings = _load_descr_impl(
-            rd_class, raw_rd, get_internal_validation_context(context.model_dump(), warning_level=INFO)
-        )
-        assert not error2, f"decreasing warning level caused errors: {error2}"
-        assert not tb2, f"decreasing warning level lead to error traceback: {tb2}"
+
+    assert not errors, f"got rd, but also errors: {errors}"
+    assert not tb, f"got rd, but also an error traceback: {tb}"
+    assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
+    _, error2, tb2, val_warnings = _load_descr_impl(
+        rd_class, raw_rd, get_internal_validation_context(context.model_dump(), warning_level=INFO)
+    )
+    assert not error2, f"decreasing warning level caused errors: {error2}"
+    assert not tb2, f"decreasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
         bioimageio_spec_version=VERSION,
         errors=errors,
-        name=f"bioimageio.spec static {resource_type} validation (format version: {format_version}).",
+        name=f"bioimageio.spec static validation of {rd.type} (format version: {rd.format_version}).",
         source_name=(context.root / context.file_name).as_posix()
         if isinstance(context.root, PurePath)
         else urljoin(str(context.root), context.file_name),
@@ -296,7 +316,7 @@ def _load_descr_with_known_rd_class(
 
 
 def _load_descr_impl(rd_class: Type[RD], rdf_content: RdfContent, context: InternalValidationContext):
-    rd: Optional[RD] = None
+    rd: Union[RD, InvalidDescription, None] = None
     val_errors: List[ErrorEntry] = []
     val_warnings: List[WarningEntry] = []
     tb: List[str] = []
@@ -309,9 +329,16 @@ def _load_descr_impl(rd_class: Type[RD], rdf_content: RdfContent, context: Inter
                 val_warnings.append(WarningEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"], severity=severity))
             else:
                 val_errors.append(ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
-
     except Exception as e:
         val_errors.append(ErrorEntry(loc=(), msg=str(e), type=type(e).__name__))
         tb = traceback.format_tb(e.__traceback__)
+
+    if rd is None:
+        try:
+            rd = InvalidDescription(**rdf_content)
+        except Exception:
+            resource_type = rd_class.model_fields["type"].default
+            format_version = rd_class.implemented_format_version
+            rd = InvalidDescription(type=resource_type, format_version=format_version)
 
     return rd, val_errors, tb, val_warnings

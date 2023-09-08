@@ -14,6 +14,7 @@ from bioimageio.spec.dataset import Dataset as Dataset
 from bioimageio.spec.description import LatestResourceDescription as LatestResourceDescription
 from bioimageio.spec.description import ResourceDescription as ResourceDescription
 from bioimageio.spec.description import SpecificResourceDescription as SpecificResourceDescription
+from bioimageio.spec.description import dump_description as dump_description
 from bioimageio.spec.description import load_description as load_description
 from bioimageio.spec.description import update_format as update_format
 from bioimageio.spec.description import validate_format as validate_format

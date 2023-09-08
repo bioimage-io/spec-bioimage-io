@@ -37,9 +37,9 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     for d in tree.body:
         if isinstance(d, look_for):
             assert hasattr(d, "name")
-            if d.name == name:  # type: ignore
+            if d.name == name:
                 assert hasattr(d, "decorator_list")
-                start = d.decorator_list[0].lineno if d.decorator_list else d.lineno  # type: ignore
+                start = d.decorator_list[0].lineno if d.decorator_list else d.lineno
                 if sys.version_info >= (3, 8):
                     stop = d.end_lineno
                 else:
