@@ -17,7 +17,7 @@ from typing_extensions import Annotated, LiteralString, Self
 from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_validation import AfterValidator
-from bioimageio.spec._internal.field_warning import raise_warning, warn
+from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import FileSource as FileSource
@@ -747,7 +747,7 @@ class Weights(Node, frozen=True):
             name for name, entry in self if entry is not None and hasattr(entry, "parent") and entry.parent is None
         }
         if len(entries_wo_parent) != 1:
-            raise_warning(
+            issue_warning(
                 "Exactly one weights entry may not specify the `parent` field (got {value})."
                 "That entry is considered the original set of model weights. "
                 "Other weight formats are created through conversion of the orignal or already converted weights. "

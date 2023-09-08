@@ -58,7 +58,7 @@ def call_validator_func(
 logger = logging.getLogger(__name__)
 
 
-def raise_warning(
+def issue_warning(
     msg: LiteralString,
     *,
     value: Any,
@@ -71,6 +71,7 @@ def raise_warning(
         raise PydanticCustomError("warning", msg, msg_context)
     else:
         logger.log(severity, msg, extra=msg_context)
+        # warnings.warn()
 
 
 def as_warning(
@@ -87,7 +88,7 @@ def as_warning(
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
-            raise_warning(
+            issue_warning(
                 msg or ",".join(e.args),
                 value=value,
                 severity=severity,
