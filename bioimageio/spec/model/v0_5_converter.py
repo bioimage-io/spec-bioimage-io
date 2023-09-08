@@ -1,5 +1,5 @@
 import collections.abc
-from typing import Any, Dict, List, Mapping, Sequence, Union
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.types import RdfContent, YamlValue
@@ -67,7 +67,7 @@ def _update_tensor_specs(
         if not isinstance(d, dict):
             continue
 
-        reordered_shape = _reorder_tensor_shape(d.get("shape"))
+        reordered_shape = _analyze_tensor_shape(d.get("shape"))
         new_d = {}
         if "name" in d:
             new_d["id"] = d["name"]
@@ -83,9 +83,15 @@ def _update_tensor_specs(
 
         new_d["data"] = dict(type="float32")
 
+        halo_seq = d.get("halo")
+        if isinstance(halo_seq, (list, tuple)):
+            halo = {i: h for i, h in enumerate(halo_seq)}
+        else:
+            halo = {}
+
         if isinstance(d["axes"], str):
             new_axes = [
-                _get_axis_description_from_letter(a, reordered_shape.get(i), context=context)
+                _get_axis_description_from_letter(a, reordered_shape.get(i), context=context, halo=halo.get(i))
                 for i, a in enumerate(d["axes"])
             ]
             new_d["axes"] = new_axes
@@ -104,7 +110,7 @@ def _update_tensor_specs(
         tensor_data[idx] = new_d
 
 
-def _reorder_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
+def _analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
     if isinstance(orig_shape, collections.abc.Mapping):
         if "reference_tensor" in orig_shape:
             x: Union[Any, Sequence[Any]]
@@ -132,7 +138,11 @@ def _reorder_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any
 
 
 def _get_axis_description_from_letter(
-    letter: str, size: Union[int, Dict[str, Any], None] = None, *, context: InternalValidationContext
+    letter: str,
+    size: Union[int, Dict[str, Any], None] = None,
+    *,
+    context: InternalValidationContext,
+    halo: Optional[Any],
 ):
     AXIS_TYPE_MAP = {
         "b": "batch",
@@ -174,6 +184,9 @@ def _get_axis_description_from_letter(
             size = size["min"]
 
     axis["size"] = size
+    if halo is not None:
+        if halo or axis["type"] in ("time", "space"):  # ignore zero halo for non-time/space axes
+            axis["halo"] = halo
 
     return axis
 
