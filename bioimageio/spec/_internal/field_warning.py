@@ -1,6 +1,7 @@
 import dataclasses
 import logging
 import sys
+import warnings
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators
@@ -70,8 +71,7 @@ def issue_warning(
     if severity >= (val_context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
         raise PydanticCustomError("warning", msg, msg_context)
     else:
-        logger.log(severity, msg, extra=msg_context)
-        # warnings.warn()
+        logger.log(severity, msg.format(**msg_context))
 
 
 def as_warning(
