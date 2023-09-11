@@ -12,13 +12,8 @@ import black.mode
 ROOT_PATH = Path(__file__).parent.parent
 
 AUTOGEN_START = "# autogen: start\n"
-AUTOGEN_BODY_SINGLE = """from . import {info.all_version_modules_plain}
-from .{info.latest_version_module} import {info.target_node}
-
-__all__ = [{info.all_version_modules_quoted},
-    "Any{info.target_node}",
-    "{info.target_node}"
-]
+AUTOGEN_BODY_SINGLE = """from . import {info.all_version_modules_import_as}
+from .{info.latest_version_module} import {info.target_node} as {info.target_node}
 
 Any{info.target_node} = {info.target_node}
 """
@@ -27,12 +22,8 @@ AUTOGEN_BODY_MULTIPLE = """from typing import Union
 from pydantic import Field
 from typing_extensions import Annotated
 
-from . import {info.all_version_modules_plain}
-from .{info.latest_version_module} import {info.target_node}
-
-__all__ = [{info.all_version_modules_quoted},
-    "{info.target_node}"
-]
+from . import {info.all_version_modules_import_as}
+from .{info.latest_version_module} import {info.target_node} as {info.target_node}
 
 Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Field(discriminator="format_version")]
 """
@@ -66,16 +57,14 @@ class Info:
     target_node: str = field(init=False)
     all_target_nodes_plain: str = field(init=False)
     latest_version_module: str = field(init=False)
-    all_version_modules_quoted: str = field(init=False)
-    all_version_modules_plain: str = field(init=False)
+    all_version_modules_import_as: str = field(init=False)
     package_path: Path = field(init=False)
 
     def __post_init__(self):
         self.target_node = dict(generic="Generic").get(self.target, self.target.capitalize())
         self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules])
         self.latest_version_module = self.all_version_modules[-1]
-        self.all_version_modules_quoted = ",\n".join(f'"{vm}"' for vm in self.all_version_modules)
-        self.all_version_modules_plain = ", ".join(self.all_version_modules)
+        self.all_version_modules_import_as = ", ".join(f"{m} as {m}" for m in self.all_version_modules)
         self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
 
 

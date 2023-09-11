@@ -11,32 +11,27 @@ from bioimageio.spec.collection import v0_2
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset02
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset03
 from bioimageio.spec.generic.v0_2 import Generic as Generic02
-from bioimageio.spec.generic.v0_3 import *
-from bioimageio.spec.generic.v0_3 import GenericBase
+from bioimageio.spec.generic.v0_3 import Attachments as Attachments
+from bioimageio.spec.generic.v0_3 import Author as Author
+from bioimageio.spec.generic.v0_3 import Badge as Badge
+from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import Generic, GenericBase
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import Model as Model04
 from bioimageio.spec.model.v0_5 import Model as Model05
 from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02
 from bioimageio.spec.notebook.v0_3 import Notebook as Notebook03
 
-__all__ = [
-    "Attachments",
-    "Author",
-    "Badge",
-    "CiteEntry",
-    "Collection",
-    "CollectionEntry",
-    "LinkedResource",
-    "Maintainer",
-]
-
-
-AnyApplication = Annotated[Union[Application02, Application03], Field(discriminator="format_version")]
-AnyDataset = Annotated[Union[Dataset02, Dataset03], Field(discriminator="format_version")]
-AnyModel = Annotated[Union[Model04, Model05], Field(discriminator="format_version")]
-AnyNotebook = Annotated[Union[Notebook02, Notebook03], Field(discriminator="format_version")]
+_AnyApplication = Annotated[Union[Application02, Application03], Field(discriminator="format_version")]
+_AnyDataset = Annotated[Union[Dataset02, Dataset03], Field(discriminator="format_version")]
+_AnyModel = Annotated[Union[Model04, Model05], Field(discriminator="format_version")]
+_AnyNotebook = Annotated[Union[Notebook02, Notebook03], Field(discriminator="format_version")]
 
 EntryNode = Union[
-    Annotated[Union[AnyApplication, AnyDataset, AnyModel, AnyNotebook], Field(discriminator="type")], Generic02, Generic
+    Annotated[Union[_AnyApplication, _AnyDataset, _AnyModel, _AnyNotebook], Field(discriminator="type")],
+    Generic02,
+    Generic,
 ]
 
 
