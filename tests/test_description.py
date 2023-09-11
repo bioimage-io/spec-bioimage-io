@@ -14,7 +14,9 @@ def test_forward_compatibility(unet2d_data: RdfContent):
     v_future = "9999.0.0"
     data["format_version"] = v_future  # assume it is valid in a future format version
 
-    _, summary = load_description(data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = load_description(
+        data, context=ValidationContext(root=HttpUrl("https://example.com/"))
+    ).validation_summaries[0]
     assert summary.status == "passed", summary
 
     # expect warning about treating future format version as latest

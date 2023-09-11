@@ -108,8 +108,8 @@ def check_rdf(
 
     format_version = "latest" if as_latest else "discover"
     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
-    rd, summary = load_description(data, context=context, format_version=format_version)
-
+    rd = load_description(data, context=context, format_version=format_version)
+    summary = rd.validation_summaries[0]
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
         assert rd is None

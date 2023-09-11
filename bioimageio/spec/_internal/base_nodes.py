@@ -7,6 +7,7 @@ import os
 import sys
 from abc import ABC
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -158,8 +159,13 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    _internal_validation_context: InternalValidationContext = PrivateAttr()
-    _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
+    if TYPE_CHECKING:
+        # hide private attributes from __init__ by pretending that they are class variables.
+        _internal_validation_context: ClassVar[InternalValidationContext]
+        _validation_summaries: ClassVar[List[ValidationSummary]]
+    else:
+        _internal_validation_context: InternalValidationContext = PrivateAttr()
+        _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
 
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
@@ -181,7 +187,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
-        self._internal_validation_context = info.context
+        object.__setattr__(self, "_internal_validation_context", get_internal_validation_context(info.context))
         return self
 
     @classmethod
@@ -189,7 +195,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         super().__pydantic_init_subclass__(**kwargs)
         if cls.model_fields["format_version"].default is not PydanticUndefined:
             cls.implemented_format_version = cls.model_fields["format_version"].default
-            cls.implemented_format_version_tuple = tuple(int(x) for x in cls.implemented_format_version.split("."))
+            cls.implemented_format_version_tuple = cast(
+                Tuple[int, int, int], tuple(int(x) for x in cls.implemented_format_version.split("."))
+            )
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
@@ -197,7 +205,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
-            context["original_format"] = tuple(map(int, original_format.split(".")))
+            context["original_format"] = cast(Tuple[int, int, int], tuple(map(int, original_format.split("."))))
+            assert len(context["original_format"]) == 3
 
         cls.convert_from_older_format(data, context)
 
@@ -240,6 +249,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         return super().model_validate(
             obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
         )
+
 
 class StringNode(collections.UserString, ABC):
     _pattern: ClassVar[str]

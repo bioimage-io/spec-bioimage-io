@@ -312,7 +312,8 @@ def test_model_parent(model_data: Dict[str, Any]):
     rdf_source = "https://doi.org/10.5281/zenodo.5744489"
     model_data["parent"] = dict(rdf_source=rdf_source, sha256="s" * 64)
 
-    model, summary = load_description(model_data)
+    model = load_description(model_data)
+    summary = model.validation_summaries[0]
     assert summary.status == "passed", summary.format()
 
     assert isinstance(model, Model)

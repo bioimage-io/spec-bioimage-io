@@ -2,7 +2,6 @@ import traceback
 from copy import deepcopy
 from pathlib import PurePath
 from typing import (
-    Annotated,
     Any,
     ClassVar,
     Dict,
@@ -21,7 +20,7 @@ from urllib.parse import urljoin
 import pydantic
 from pydantic import Field
 from pydantic_core import PydanticUndefined
-from typing_extensions import LiteralString
+from typing_extensions import Annotated, LiteralString
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
@@ -315,7 +314,9 @@ def _load_descr_with_known_rd_class(
     return rd, summary
 
 
-def _load_descr_impl(rd_class: Type[RD], rdf_content: RdfContent, context: InternalValidationContext):
+def _load_descr_impl(
+    rd_class: Type[RD], rdf_content: RdfContent, context: InternalValidationContext
+) -> Tuple[Union[RD, InvalidDescription], List[ErrorEntry], List[str], List[WarningEntry]]:
     rd: Union[RD, InvalidDescription, None] = None
     val_errors: List[ErrorEntry] = []
     val_warnings: List[WarningEntry] = []

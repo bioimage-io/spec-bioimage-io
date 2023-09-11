@@ -1,7 +1,6 @@
 import dataclasses
 import logging
 import sys
-import warnings
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators

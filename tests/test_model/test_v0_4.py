@@ -404,7 +404,8 @@ def test_model_has_parent_with_uri(model_data: Dict[str, Any]):
     uri = "https://doi.org/10.5281/zenodo.5744489"
     model_data["parent"] = dict(uri=uri, sha256="s" * 64)
 
-    model, summary = load_description(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    model = load_description(model_data, context=ValidationContext(root=HttpUrl("https://example.com/")))
+    summary = model.validation_summaries[0]
     assert summary.status == "passed", summary.format()
 
     assert isinstance(model, Model)
