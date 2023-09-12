@@ -1,8 +1,14 @@
 import collections.abc
 from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
-from pydantic import model_validator  # type: ignore
-from pydantic import Field, HttpUrl, PrivateAttr, TypeAdapter, field_validator
+from pydantic import (
+    Field,
+    HttpUrl,
+    PrivateAttr,
+    TypeAdapter,
+    field_validator,
+    model_validator,  # type: ignore
+)
 from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
@@ -39,7 +45,7 @@ class CollectionEntryBase(Node, extra="allow", frozen=True):
 
     rdf_source: Annotated[
         Union[HttpUrl, RelativeFilePath, None],
-        warn(None, ALERT, "Cannot statically validate remote resource description."),
+        warn(None, "Cannot statically validate remote resource description.", ALERT),
     ] = None
     """resource description file (RDF) source to load entry from"""
 

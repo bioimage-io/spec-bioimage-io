@@ -47,7 +47,7 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model"
 class Attachment(Node, frozen=True):
     source: FileSource
     """∈📦 """
-    sha256: Annotated[Optional[Sha256], warn(Sha256)] = None
+    sha256: Annotated[Optional[Sha256], warn(Sha256, "Missing SHA-256 hash value.")] = None
 
 
 class LinkedResource(Node, frozen=True):
@@ -70,7 +70,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     name: Annotated[NonEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description"""
 
-    description: Annotated[str, MaxLen(1024), warn(MaxLen(512))]
+    description: Annotated[str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")]
     """A string containing a brief description."""
 
     documentation: Annotated[
@@ -158,7 +158,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 
     license: Annotated[
         Union[LicenseId, Annotated[DeprecatedLicenseId, "deprecated"]],
-        warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
+        warn(LicenseId, "'{value}' is a deprecated or unknown license identifier."),
         Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).

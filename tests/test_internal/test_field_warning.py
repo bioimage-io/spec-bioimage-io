@@ -12,8 +12,8 @@ from tests.utils import check_node
 
 
 class DummyNode(Node, frozen=True):
-    a: Annotated[int, warn(Ge(0))] = 0
-    b: Annotated[int, warn(Ge(0), WARNING)] = 0
+    a: Annotated[int, warn(Ge(0), "smaller than zero")] = 0
+    b: Annotated[int, warn(Ge(0), "smaller than zero", WARNING)] = 0
 
 
 class NestedDummyNode(Node, frozen=True):

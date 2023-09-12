@@ -723,7 +723,10 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
-    pytorch_version: Annotated[Optional[Version], warn(Version, msg="Please specify the PyTorch version these weights were created with.")] = None
+    pytorch_version: Annotated[
+        Optional[Version],
+        warn(Version, "Missing Pytorch version. Please specify the PyTorch version these weights were created with."),
+    ] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it has to include pytorch and any verison pinning has to be compatible."""
 
@@ -955,7 +958,7 @@ class Model(
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId],
-        warn(LicenseId, msg="{value} is deprecated, see https://spdx.org/licenses/{value}.html"),
+        warn(LicenseId, "{value} is deprecated, see https://spdx.org/licenses/{value}.html"),
         Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -966,7 +969,7 @@ class Model(
     name: Annotated[
         str,
         MinLen(5),
-        warn(MaxLen(64), INFO),
+        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
@@ -1065,7 +1068,7 @@ class Model(
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
     run_mode: Annotated[
-        Optional[RunMode], warn(None, msg="run mode {value} has limited support across consumer softwares.")
+        Optional[RunMode], warn(None, "Run mode '{value}' has limited support across consumer softwares.")
     ] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.

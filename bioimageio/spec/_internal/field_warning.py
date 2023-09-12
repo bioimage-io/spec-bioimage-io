@@ -31,8 +31,8 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
 def warn(
     typ: Union[AnnotationMetaData, Any],
+    msg: LiteralString,  # warning message, e.g. "'{value}' incompatible with {typ}
     severity: WarningSeverity = WARNING,
-    msg: LiteralString = "'{value}' incompatible with {typ}",
 ):
     """treat a type or its annotation metadata as a warning condition"""
     if isinstance(typ, get_args(AnnotationMetaData)):

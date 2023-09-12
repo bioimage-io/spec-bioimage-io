@@ -130,7 +130,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[NonEmpty[str], warn(MaxLen(128))]
+    name: Annotated[NonEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
     """A human-friendly name of the resource description"""
 
     description: str
@@ -162,7 +162,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     id: Optional[str] = None
     """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: Annotated[Tuple[Author, ...], warn(MinLen(1), WARNING, "Please specify at least one author.")] = ()
+    authors: Annotated[Tuple[Author, ...], warn(MinLen(1), "No author specified.")] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Optional[Attachments] = None
@@ -173,7 +173,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 
     cite: Annotated[
         Tuple[CiteEntry, ...],
-        warn(MinLen(1), WARNING, "Please specify at least one source to cite."),
+        warn(MinLen(1), "No cite entry specified."),
     ] = ()
     """citations"""
 
@@ -226,7 +226,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
-        warn(LicenseId, WARNING, "'{value}' is a deprecated or unknown license identifier."),
+        warn(LicenseId, "'{value}' is a deprecated or unknown license identifier."),
         Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
 
-from annotated_types import Ge, Interval, Len, MinLen, MultipleOf
+from annotated_types import Ge, Interval, Len, MaxLen, MinLen, MultipleOf
 from pydantic import (
     AllowInfNan,
     Field,
@@ -171,11 +171,15 @@ class WeightsEntryBase(Node, frozen=True):
     """∈📦 The weights file."""
 
     sha256: Annotated[
-        Optional[Sha256], warn(Sha256), Field(description="SHA256 checksum of the source file\n" + SHA256_HINT)
+        Optional[Sha256],
+        warn(Sha256, "Missing SHA-256 hash value."),
+        Field(description="SHA256 checksum of the source file\n" + SHA256_HINT),
     ] = None
     """SHA256 checksum of the source file"""
 
-    attachments: Annotated[Union[Attachments, None], warn(None, ALERT)] = None
+    attachments: Annotated[
+        Union[Attachments, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
+    ] = None
     """Attachments that are specific to this weights entry."""
 
     authors: Union[Tuple[Author, ...], None] = None
@@ -190,9 +194,9 @@ class WeightsEntryBase(Node, frozen=True):
         Optional[Dependencies],
         warn(
             None,
-            INFO,
-            "Avoid custom dependencies ({value}) where possible "
+            "Custom dependencies ({value}) specified. Avoid this whenever possible "
             "to allow execution in a wider range of software environments.",
+            INFO,
         ),
         Field(examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]),
     ] = None
@@ -218,7 +222,11 @@ class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[
         Union[Version, None],
-        warn(Version, ALERT, "Please specify the TensorFlow version these weights were created with."),
+        warn(
+            Version,
+            "Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
+            ALERT,
+        ),
     ] = None
     """TensorFlow version used to create these weights"""
 
@@ -228,7 +236,12 @@ class OnnxWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[
         Union[Annotated[int, Ge(7)], None],
-        warn(int, ALERT, "Please specify the Opset version these weights were created with."),
+        warn(
+            int,
+            "Missing ONNX opset version (aka ONNX opset number). "
+            "Please specify the ONNX opset version these weights were created with.",
+            ALERT,
+        ),
     ] = None
     """ONNX opset version"""
 
@@ -267,7 +280,12 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     kwargs: Kwargs = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Annotated[Union[Version, None], warn(Version, msg="Please specify the PyTorch version these weights were created with.")] = None
+    pytorch_version: Annotated[
+        Union[Version, None],
+        warn(
+            Version, msg="Missing PyTorch version. Please specify the PyTorch version these weights were created with."
+        ),
+    ] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
@@ -277,7 +295,10 @@ class TorchscriptWeights(WeightsEntryBase, frozen=True):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[
-        Union[Version, None], warn(Version, msg="Please specify the PyTorch version these weights were created with.")
+        Union[Version, None],
+        warn(
+            Version, msg="Missing Pytorch version. Please specify the PyTorch version these weights were created with."
+        ),
     ] = None
     """Version of the PyTorch library used."""
 
@@ -287,7 +308,10 @@ class TensorflowJsWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[
         Union[Version, None],
-        warn(Version, msg="Please specify the TensorFlow version these weights were created with."),
+        warn(
+            Version,
+            msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
+        ),
     ] = None
     """Version of the TensorFlow library used."""
 
@@ -301,7 +325,10 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[
         Union[Version, None],
-        warn(Version, msg="Please specify the TensorFlow version these weights were created with."),
+        warn(
+            Version,
+            msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
+        ),
     ] = None
     """Version of the TensorFlow library used."""
 
@@ -673,7 +700,7 @@ KnownRunMode = Literal["deepimagej"]
 
 
 class RunMode(Node, frozen=True):
-    name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode)]
+    name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")]
     """Run mode name"""
 
     kwargs: Kwargs = Field(default_factory=dict)
@@ -733,7 +760,11 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     inputs: NonEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
-    license: Annotated[Union[LicenseId, str], warn(LicenseId), Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"])]
+    license: Annotated[
+        Union[LicenseId, str],
+        warn(LicenseId, "Unknown license id '{value}'."),
+        Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
+    ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
@@ -742,7 +773,8 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     name: Annotated[
         str,
         MinLen(1),
-        warn(Len(5, 64), INFO),
+        warn(MinLen(5), "Name shorter than 5 characters.", INFO),
+        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
