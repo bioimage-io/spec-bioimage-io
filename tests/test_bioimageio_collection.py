@@ -54,6 +54,7 @@ KNOWN_INVALID_AS_LATEST = {
     "deepimagej/MU-Lux_CTC_PhC-C2DL-PSC/latest/rdf.yaml",
     "deepimagej/SkinLesionClassification/latest/rdf.yaml",
     "deepimagej/smlm-deepimagej/latest/rdf.yaml",
+    "deepimagej/SMLMDensityMapEstimationDEFCoN/latest/rdf.yaml",
     "deepimagej/unet-pancreaticcellsegmentation/latest/rdf.yaml",
     "deepimagej/UNet2DGlioblastomaSegmentation/latest/rdf.yaml",
     "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",

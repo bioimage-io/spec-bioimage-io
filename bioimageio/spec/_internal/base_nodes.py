@@ -152,6 +152,7 @@ class NodeWithExplicitlySetFields(Node, frozen=True):
 
 
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
+    """base class for all resource descriptions"""
     type: str
     format_version: str
 
@@ -164,8 +165,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         _internal_validation_context: ClassVar[InternalValidationContext]
         _validation_summaries: ClassVar[List[ValidationSummary]]
     else:
-        _internal_validation_context: InternalValidationContext = PrivateAttr()
-        _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
+        _internal_validation_context: InternalValidationContext
+        _validation_summaries: List[ValidationSummary]
 
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
@@ -187,6 +188,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
+        object.__setattr__(self, "_validation_summaries", [])
         object.__setattr__(self, "_internal_validation_context", get_internal_validation_context(info.context))
         return self
 
@@ -195,9 +197,12 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         super().__pydantic_init_subclass__(**kwargs)
         if cls.model_fields["format_version"].default is not PydanticUndefined:
             cls.implemented_format_version = cls.model_fields["format_version"].default
-            cls.implemented_format_version_tuple = cast(
-                Tuple[int, int, int], tuple(int(x) for x in cls.implemented_format_version.split("."))
-            )
+            if "." not in cls.implemented_format_version:
+                cls.implemented_format_version_tuple = (0, 0, 0)
+            else:
+                cls.implemented_format_version_tuple = cast(
+                    Tuple[int, int, int], tuple(int(x) for x in cls.implemented_format_version.split("."))
+                )
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod

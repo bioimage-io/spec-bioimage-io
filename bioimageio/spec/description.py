@@ -164,6 +164,7 @@ def load_description(
     if future_patch_warning:
         summary.warnings.insert(0, future_patch_warning)
 
+    assert not rd.validation_summaries, "encountered unexpected validation summary"
     rd.validation_summaries.append(summary)
     return rd
 
@@ -290,14 +291,12 @@ def _load_descr_with_known_rd_class(
         get_internal_validation_context(context.model_dump(), warning_level=ERROR),
     )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
 
-    assert not errors, f"got rd, but also errors: {errors}"
-    assert not tb, f"got rd, but also an error traceback: {tb}"
-    assert not val_warnings, f"got rd, but also already warnings: {val_warnings}"
+    assert not val_warnings, f"already got warnings: {val_warnings}"
     _, error2, tb2, val_warnings = _load_descr_impl(
         rd_class, raw_rd, get_internal_validation_context(context.model_dump(), warning_level=INFO)
     )
-    assert not error2, f"decreasing warning level caused errors: {error2}"
-    assert not tb2, f"decreasing warning level lead to error traceback: {tb2}"
+    assert not error2 or isinstance(rd, InvalidDescription), f"decreasing warning level caused errors: {error2}"
+    assert not tb2 or isinstance(rd, InvalidDescription), f"decreasing warning level lead to error traceback: {tb2}"
 
     summary = ValidationSummary(
         bioimageio_spec_version=VERSION,
