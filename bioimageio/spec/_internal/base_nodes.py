@@ -153,6 +153,7 @@ class NodeWithExplicitlySetFields(Node, frozen=True):
 
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     """base class for all resource descriptions"""
+
     type: str
     format_version: str
 
@@ -162,6 +163,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     if TYPE_CHECKING:
         # hide private attributes from __init__ by pretending that they are class variables.
+        # todo: wait for better support for for BaseModel fields with init_var=False
+        # or use pydantic's dataclass decorator (then fields suppor tinit_var=False)
         _internal_validation_context: ClassVar[InternalValidationContext]
         _validation_summaries: ClassVar[List[ValidationSummary]]
     else:
@@ -188,8 +191,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
-        object.__setattr__(self, "_validation_summaries", [])
-        object.__setattr__(self, "_internal_validation_context", get_internal_validation_context(info.context))
+        self._validation_summaries = []
+        self._internal_validation_context = get_internal_validation_context(info.context)
         return self
 
     @classmethod

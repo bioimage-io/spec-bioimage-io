@@ -93,8 +93,7 @@ class CollectionEntryBase(Node, extra="allow", frozen=True):
         if type_ == "collection":
             raise ValueError("Collections may not be nested!")
 
-        entry = self.entry_adapter.validate_python(entry_data)
-        object.__setattr__(self, "_entry", entry)
+        self._entry = self.entry_adapter.validate_python(entry_data)
         return self
 
 
