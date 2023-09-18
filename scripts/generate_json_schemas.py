@@ -13,8 +13,8 @@ def export_json_schemas_from_type(folder: Path, type_: Any, *, name: str, title:
         config=ConfigDict(title=title),
     )
     schema = adapter.json_schema()
-    for version in ("_".join(bioimageio.spec.__version__.split(".")), "latest"):
-        write_schema(schema, folder / f"{name}_{version}.json")
+    for version in ("-".join(bioimageio.spec.__version__.split(".")), "latest"):
+        write_schema(schema, folder / f"{name}_v{version}.json")
 
 
 def write_schema(schema: Dict[str, Any], path: Path):
