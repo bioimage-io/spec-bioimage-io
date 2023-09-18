@@ -16,40 +16,52 @@ All the bioimage.io-compatible RDF must fulfill the following rules:
 
 As a general guideline, please follow the model description spec to describe AI models and use the generic description spec for other resource types including `dataset`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is bioimage.io-compliant is to run the bioimage.io validator against it.
 
+## Format version overview
+
+All bioimage.io description formats are defined as [Pydantic models](https://docs.pydantic.dev/latest/).
+To fully verify any resource description `bioimageio.core.validate` from the [bioimageio.core]() Python package should be used.
+
+| type | format version | documentation |
+| --- | --- | --- |
+| model | 0.5 </br> 0.4 | [model_spec_v0-5.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_v0-5.md) </br> [model_spec_v0-4.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_v0-4.md) |
+| dataset | 0.3 </br> 0.2 | [dataset_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_v0-3.md) </br> [dataset_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_v0-2.md) |
+| notebook | 0.3 </br> 0.2 | [notebook_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/notebook_spec_v0-3.md) </br> [notebook_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/notebook_spec_v0-2.md) |
+| application | 0.3 </br> 0.2 | [application_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/application_spec_v0-3.md) </br> [application_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/application_spec_v0-2.md) |
+| collection | 0.3 </br> 0.2 | [collection_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_v0-3.md) </br> [collection_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_v0-2.md) |
+| generic | 0.3 </br> 0.2 | [generic_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_v0-3.md) </br> [generic_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_v0-2.md) |
+
+## JSON schema
+
+Simplified descriptions are available as [JSON schema]():
+
+| bioimageio.spec version | JSON schema |
+| --- | --- |
+| latest | [bioimageio_spec_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_spec_latest.json) |
+| 0.5 | [bioimageio_spec_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_spec_v0-5.json) |
+
+These are primarily intended for syntax highlighting and form generation.
+
 ## Resource Description Specification
 
-A bioimage.io-compatible Resource Description File (RDF) is a YAML file with a set of specifically defined fields.
+A bioimage.io-compatible Resource Description File (RDF) is a YAML file with a set of [specifically defined fields](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_latest.md).
 
-You can find detailed field definitions here:
-
-* [generic description (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_latest.md)
-* [generic description (0.2.x)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_0_2.md)
-
-The specifications are also available as json schemas:
-
-* [generic description (0.2.x, json schema)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_0_2.json)
-
-[Here](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/rdf-examples.md) you can find some examples for using RDFs to describe applications, notebooks, datasets etc.
+We provide some [examples for using RDFs to describe applications, notebooks, datasets etc](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/rdf-examples.md).
 
 ## Model Description Specification
 
-Besides the generic description spec, the `model description spec` defines a file format for representing pretrained AI models in [YAML format](https://en.wikipedia.org/wiki/YAML). This format is used to describe models hosted on the [bioimage.io](https://bioimage.io) model repository site.
+Besides the generic description spec, the `model description spec` defines a file format based on the [YAML 1.2](https://en.wikipedia.org/wiki/YAML) for representing pretrained AI models. This format is used to describe models hosted on the [bioimage.io](https://bioimage.io) model repository site.
 
-You can find the latest `model description` here:
+You can find documentation of the `model description` [here](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md).
 
-* [model description spec (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)
+Here is a list of model description examples:
 
-Here is a list of model description Examples:
-
-* [Model RDF Examples](https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models).
+* [Model RDF examples](https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models).
 
 ## Collection Specification
 
 The [`Collection Description Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection description`) defines a file format for representing collections of resources for the [bioimage.io](https://bioimage.io) website.
 
-You can find the latest `collection description` here:
-
-* [collection description spec (latest)](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)
+You can find the latest `collection description` [here](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md).
 
 ## Linking resource items
 
