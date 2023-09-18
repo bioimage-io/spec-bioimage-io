@@ -19,10 +19,8 @@ from bioimageio.spec._internal.types import (
     RdfContent,
     Version,
 )
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
-
-if TYPE_CHECKING:
-    from bioimageio.spec._internal.validation_context import InternalValidationContext
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -42,7 +40,7 @@ class Attachments(Node, frozen=True):
     """∈📦 File attachments"""
 
 
-class Person(Node, frozen=True):
+class _Person(Node, frozen=True):
     name: Optional[str]
     """Full name"""
     affiliation: Optional[str] = None
@@ -59,12 +57,12 @@ class Person(Node, frozen=True):
     """
 
 
-class Author(Person, frozen=True):
+class Author(_Person, frozen=True):
     name: str
     github_user: Optional[str] = None
 
 
-class Maintainer(Person, frozen=True):
+class Maintainer(_Person, frozen=True):
     name: Optional[str] = None
     github_user: str
 

@@ -22,6 +22,7 @@ from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePa
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
+from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry

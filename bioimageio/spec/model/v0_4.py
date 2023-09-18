@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
 
-from annotated_types import Ge, Interval, Len, MaxLen, MinLen, MultipleOf
+from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
     AllowInfNan,
     Field,
@@ -40,7 +40,8 @@ from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import GenericBaseNoSource, LinkedResource
+from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 

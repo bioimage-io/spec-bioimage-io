@@ -5,13 +5,13 @@ from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from pydantic import (
     Field,
     FieldValidationInfo,
-    HttpUrl,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,  # type: ignore
 )
+from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
@@ -35,9 +35,11 @@ from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
 from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
+from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import ConfigNode as ConfigNode
 from bioimageio.spec.generic.v0_3 import GenericBaseNoSource
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency

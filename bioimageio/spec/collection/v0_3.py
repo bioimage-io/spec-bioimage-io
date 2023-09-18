@@ -1,9 +1,11 @@
 from typing import Any, ClassVar, Dict, Literal, Tuple, Union
 
 from pydantic import Field, TypeAdapter, field_validator
+from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.types import NonEmpty, RdfContent
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application02
 from bioimageio.spec.application.v0_3 import Application as Application03
