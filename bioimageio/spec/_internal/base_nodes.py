@@ -30,7 +30,6 @@ import pydantic
 from pydantic import (
     Field,
     GetCoreSchemaHandler,
-    PrivateAttr,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
@@ -280,7 +279,7 @@ class StringNode(collections.UserString, ABC):
         def __setattr__(self: Self, __name: str, __value: Any):
             raise AttributeError(f"{self} is immutable.")
 
-        setattr(self, "__setattr__", __setattr__)
+        self.__setattr__ = __setattr__
 
     @property
     def model_fields(self):

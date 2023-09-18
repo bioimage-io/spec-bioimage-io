@@ -204,13 +204,15 @@ class ChannelAxis(AxisBase, frozen=True):
     size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
     def model_post_init(self, __context: Any):
+        self.model_config["frozen"] = False  # todo: create unfreeze context manager
         if self.size == "#channel_names":
-            object.__setattr__(self, "size", len(self.channel_names))
+            self.size = len(self.channel_names)
 
         if self.channel_names == CHANNEL_NAMES_PLACEHOLDER:
             assert isinstance(self.size, int)
-            object.__setattr__(self, "channel_names", (f"channel{i}" for i in range(1, self.size + 1)))
+            self.channel_names = tuple(f"channel{i}" for i in range(1, self.size + 1))
 
+        self.model_config["frozen"] = True
         return super().model_post_init(__context)
 
     @model_validator(mode="after")
