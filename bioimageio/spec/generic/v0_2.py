@@ -1,16 +1,17 @@
 from collections.abc import Mapping, Sequence
-from typing import List, Literal, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
-from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, StringConstraints, field_validator
+from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
-from bioimageio.spec._internal.constants import DOI_REGEX, LICENSES, TAG_CATEGORIES, WARNING
+from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
+    Doi,
     FileSource,
     LicenseId,
     NonEmpty,
@@ -18,10 +19,11 @@ from bioimageio.spec._internal.types import (
     RdfContent,
     Version,
 )
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
-Doi = Annotated[str, StringConstraints(pattern=DOI_REGEX)]
+if TYPE_CHECKING:
+    from bioimageio.spec._internal.validation_context import InternalValidationContext
+
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 VALID_COVER_IMAGE_EXTENSIONS = (

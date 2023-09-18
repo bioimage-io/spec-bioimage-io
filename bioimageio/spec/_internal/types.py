@@ -7,10 +7,11 @@ import annotated_types
 from pydantic import HttpUrl, StringConstraints
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.constants import SI_UNIT_REGEX
-from bioimageio.spec._internal.field_validation import AfterValidator, BeforeValidator, Predicate
-from bioimageio.spec._internal.field_validation import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.field_validation import (
+    AfterValidator,
+    BeforeValidator,
+    Predicate,
     RestrictCharacters,
     capitalize_first_letter,
     validate_datetime,
@@ -20,6 +21,7 @@ from bioimageio.spec._internal.field_validation import (
     validate_unique_entries,
     validate_version,
 )
+from bioimageio.spec._internal.field_validation import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.generated_spdx_license_type import LicenseId as LicenseId
 from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
@@ -67,3 +69,4 @@ YamlKey = Union[  # ... YAML Arrays are cast to tuples if used as key in mapping
 YamlMapping = Dict[YamlKey, "YamlValue"]  # YAML Mappings are cast to dict
 YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
 RdfContent = Dict[str, YamlValue]
+Doi = Annotated[str, StringConstraints(pattern=DOI_REGEX)]

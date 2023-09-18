@@ -3,11 +3,13 @@ from typing import Any, ClassVar, Dict, Literal, Optional, Tuple, Union
 
 from pydantic import (
     Field,
-    HttpUrl,
     PrivateAttr,
     TypeAdapter,
     field_validator,
     model_validator,  # type: ignore
+)
+from pydantic import (
+    HttpUrl as HttpUrl,
 )
 from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
@@ -18,24 +20,17 @@ from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePath, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.application.v0_2 import Application
-from bioimageio.spec.dataset.v0_2 import Dataset
-from bioimageio.spec.generic.v0_2 import *
+from bioimageio.spec.application.v0_2 import Application as Application
+from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
+from bioimageio.spec.generic.v0_2 import Author as Author
+from bioimageio.spec.generic.v0_2 import Badge as Badge
+from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_2 import Generic as Generic
 from bioimageio.spec.generic.v0_2 import GenericBase
-from bioimageio.spec.model.v0_4 import Model
-from bioimageio.spec.notebook.v0_2 import Notebook
-
-__all__ = [
-    "Attachments",
-    "Author",
-    "Badge",
-    "CiteEntry",
-    "Collection",
-    "CollectionEntry",
-    "LinkedResource",
-    "Maintainer",
-]
-
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
+from bioimageio.spec.model.v0_4 import Model as Model
+from bioimageio.spec.notebook.v0_2 import Notebook as Notebook
 
 EntryNode = Union[Annotated[Union[Model, Dataset, Application, Notebook], Field(discriminator="type")], Generic]
 

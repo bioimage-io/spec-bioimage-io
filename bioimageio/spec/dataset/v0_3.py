@@ -1,20 +1,15 @@
 from typing import Literal
 
 from bioimageio.spec._internal.types import NonEmpty
-from bioimageio.spec.generic.v0_3 import *
+from bioimageio.spec.generic.v0_3 import Attachment as Attachment
+from bioimageio.spec.generic.v0_3 import Author as Author
+from bioimageio.spec.generic.v0_3 import Badge as Badge
+from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import GenericBase
-
-__all__ = [
-    "Attachments",
-    "Author",
-    "Badge",
-    "CiteEntry",
-    "Dataset",
-    "Doi",
-    "LinkedDataset",
-    "LinkedResource",
-    "Maintainer",
-]
+from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 
 
 class Dataset(GenericBase, frozen=True, title="bioimage.io dataset specification"):

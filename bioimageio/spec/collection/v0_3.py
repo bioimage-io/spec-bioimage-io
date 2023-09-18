@@ -11,7 +11,7 @@ from bioimageio.spec.collection import v0_2
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset02
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset03
 from bioimageio.spec.generic.v0_2 import Generic as Generic02
-from bioimageio.spec.generic.v0_3 import Attachments as Attachments
+from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
