@@ -162,16 +162,21 @@ conda install -c conda-forge bioimageio.core
 
 ### bioimageio.spec Python package
 
-<details>
-<summary></summary>
 #### bioimageio.spec 0.5.0
-- various API changes
-- switch from Marshmallow to Pydantic
+
+* new description formats: [generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3](generic-030--application-030--collection-030--dataset-030--notebook-030) and [model 0.5](model-050).
+* various API changes, most important functions:
+  * `bioimageio.spec.load_description` (replaces `load_raw_resource_description`, interface changed)
+  * `bioimageio.spec.validate_format` (new)
+  * `bioimageio.spec.dump_description` (replaces `serialize_raw_resource_description_to_dict`, interface changed)
+  * `bioimageio.spec.update_format` (interface changed)
+* switch from Marshmallow to Pydantic
+  * extended validation
+  * one joint, more precise JSON schema
 
 #### bioimageio.spec 0.4.9
 
 * small bugixes
-
 * better type hints
 * improved tests
 
@@ -290,12 +295,9 @@ conda install -c conda-forge bioimageio.core
 
 * `load_raw_resource_description` accepts `update_to_format` kwarg
 
-</details>
+### Resource Description Format Versions
 
-<details>
-<summary>### Resource Description Format Versions</summary>
-
-#### application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / generic 0.3.0 / notebook 0.3.0
+#### generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0
 
 * Breaking canges that are fully auto-convertible
   * dropped `download_url`
@@ -444,84 +446,6 @@ all generic 0.3.0 changes plus:
   * Add a mandatory `type` field to comply with the generic description. Only valid value is 'model' for model description;
   * Only allow `license` identifier from the [SPDX license list](https://spdx.org/licenses/);
 
-* Other changes
+* Non-breaking changes
   * Add optional `version` field (default 0.1.0) to keep track of model changes;
   * Allow the values in the `attachments` list to be any values besides URI;
-
-</details>
-
-<details>
-<summary>### Model Description Format Versions</summary>
-#### model 0.4.9
-- Non-breaking changes
-  - make pre-/postprocessing kwargs `mode` and `axes` always optional for model description 0.3 and 0.4
-
-#### model 0.4.8
-
-* Non-breaking changes
-  * `cite` field is now optional
-
-#### RDF 0.2.2 and model 0.4.7
-
-* Breaking changes that are fully auto-convertible
-  * name field may not include '/' or '\' (conversion removes these)
-
-#### model 0.4.6
-
-* Non-breaking changes
-  * Implicit output shape can be expanded by inserting `null` into `shape:scale` and indicating length of new dimension D in the `offset` field. Keep in mind that `D=2*'offset'`.
-
-#### model 0.4.5
-
-* Breaking changes that are fully auto-convertible
-  * `parent` field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields `uri` and `sha256`)
-
-#### model 0.4.4
-
-* Non-breaking changes
-  * new optional field `training_data`
-
-#### dataset 0.2.2
-
-* Non-breaking changes
-  * explicitly define and document dataset description (for now, clone of generic description with type="dataset")
-
-#### model 0.4.3
-
-* Non-breaking changes
-  * add optional field `download_url`
-  * add optional field `dependencies` to all weight formats (not only pytorch_state_dict)
-  * add optional `pytorch_version` to the pytorch_state_dict and torchscript weight formats
-
-#### model 0.4.2
-
-* Bug fixes:
-  * in a `pytorch_state_dict` weight entry `architecture` is no longer optional.
-
-#### collection 0.2.2
-
-* Non-breaking changes
-  * make `authors`, `cite`, `documentation` and `tags` optional
-
-* Breaking changes that are fully auto-convertible
-  * Simplifies collection description 0.2.1 by merging resource type fields together to a `collection` field,
-    holindg a list of all resources in the specified collection.
-
-#### generic 0.2.2 / model 0.3.6 / model 0.4.2
-
-* Non-breaking changes
-  * `rdf_source` new optional field
-  * `id` new optional field
-
-#### collection 0.2.1
-
-* First official release, extends generic description with fields `application`, `model`, `dataset`, `notebook` and (nested)
-  `collection`, which hold lists linking to respective resources.
-
-#### generic 0.2.1
-
-* Non-breaking changes
-  * add optional `email` and `github_user` fields to entries in `authors`
-  * add optional `maintainers` field (entries like in `authors` but  `github_user` is required (and `name` is not))
-
-</details>
