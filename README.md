@@ -282,18 +282,32 @@ conda install -c conda-forge bioimageio.core
 
 <details>
 <summary>### Resource Description Format Versions</summary>
+
 #### application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / generic 0.3.0 / notebook 0.3.0
-todo: format version updates
+
+* Breaking canges that are fully auto-convertible
+  * dropped `download_url`
+  * dropped non-file attachments
+  * `attachments.files` moved to `attachments.i.source`
 
 #### model 0.5.0
 
-* all generic 0.3.0 changes +
-* Breaking canges that are fully auto-convertible
-  * rename `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`
-  * rename `inputs[i].name` to `inputs[i].id`
-  * rename `outputs[i].name` to `outputs[i].id`
-  * rename `inputs[i].preprocessing.name` to `inputs[i].preprocessing.id`
-  * rename `outputs[i].postprocessing.name` to `outputs[i].postprocessing.id`
+all generic 0.3.0 changes plus:
+
+* Breaking changes that are partially auto-convertible
+  * `inputs.i.axes` are now defined in more detail (same for `outputs.i.axes`)
+  * `inputs.i.shape` moved per axes to `inputs.i.axes.size` (same for `outputs.i.shape`)
+* Breaking changes that are fully auto-convertible
+  * changes in `weights.pytorch_state_dict.architecture`
+  * renamed `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`
+  * moved `test_inputs` to `inputs.i.test_tensor`
+  * moved `test_outputs` to `outputs.i.test_tensor`
+  * moved `sample_inputs` to `inputs.i.sample_tensor`
+  * moved `sample_outputs` to `outputs.i.sample_tensor`
+  * renamed `inputs.i.name` to `inputs.i.id`
+  * renamed `outputs.i.name` to `outputs.i.id`
+  * renamed `inputs.i.preprocessing.name` to `inputs.i.preprocessing.id`
+  * renamed `outputs.i.postprocessing.name` to `outputs.i.postprocessing.id`
 
 #### model 0.4.9
 
