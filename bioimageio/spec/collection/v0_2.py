@@ -158,8 +158,8 @@ class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io col
             seen[v.id] = i
 
     @classmethod
-    def _update_context_and_data(cls, context: InternalValidationContext, data: Dict[Any, Any]) -> None:
-        super()._update_context_and_data(context, data)
+    def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
+        super()._update_context(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
         context["collection_base_content"] = collection_base_content

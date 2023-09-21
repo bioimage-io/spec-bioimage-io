@@ -176,17 +176,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="before")
     @classmethod
-    def update_context_and_data(cls, data: Union[Any, Mapping[Any, Any]], info: ValidationInfo):
-        if isinstance(data, collections.abc.Mapping):
-            if isinstance(data, dict):
-                data_dict = data
-            else:
-                data_dict = dict(data)
-
-            cls._update_context_and_data(get_internal_validation_context(info.context), data_dict)
-            return data_dict
-        else:
-            return data
+    def update_context(cls, data: RdfContent, info: ValidationInfo):
+        cls._update_context(get_internal_validation_context(info.context), data)
+        return data
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
@@ -208,18 +200,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _update_context_and_data(cls, context: InternalValidationContext, data: Dict[Any, Any]) -> None:
-        # set original format if possible
-        original_format = data.get("format_version")
-        if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
-            context["original_format"] = cast(Tuple[int, int, int], tuple(map(int, original_format.split("."))))
-            assert len(context["original_format"]) == 3
-
-        cls.convert_from_older_format(data, context)
-
-    @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
-        """A node may `convert` it's raw data from an older format."""
+    def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
         pass
 
     @classmethod
@@ -251,7 +232,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         context = get_internal_validation_context(context)
         if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj)
-            cls._update_context_and_data(context, obj)
+            cls._update_context(context, obj)
 
         return super().model_validate(
             obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
