@@ -322,6 +322,8 @@ all generic 0.3.0 changes plus:
   * renamed `outputs.i.name` to `outputs.i.id`
   * renamed `inputs.i.preprocessing.name` to `inputs.i.preprocessing.id`
   * renamed `outputs.i.postprocessing.name` to `outputs.i.postprocessing.id`
+* Non-breaking changes:
+  * new pre-/postprocessing: `id`='ensure_dtype' with kwarg `dtype`
 
 #### model 0.4.9
 

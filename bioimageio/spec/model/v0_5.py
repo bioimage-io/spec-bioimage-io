@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
 
-from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
+from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from pydantic import (
     Field,
     FieldValidationInfo,
@@ -116,6 +116,7 @@ TimeUnit = Literal[
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 TensorId = LowerCaseIdentifier
 AxisName = Annotated[LowerCaseIdentifier, MaxLen(16)]
+NonBatchAxisName = Annotated[AxisName, Predicate(lambda x: x != "batch")]
 PostprocessingId = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
@@ -189,7 +190,7 @@ class WithHalo(Node, frozen=True):
 
 class BatchAxis(AxisBase, frozen=True):
     type: Literal["batch"] = "batch"
-    name: AxisName = "batch"
+    name: Literal["batch"] = "batch"
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
@@ -394,15 +395,25 @@ class Clip(Processing, frozen=True):
     kwargs: ClipKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
-    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
-    """The subset of axes to scale jointly.
-    For example ('x', 'y') to scale two image axes for 2d data jointly."""
+class EnsureDtypeKwargs(ProcessingKwargs, frozen=True):
+    dtype: str
 
-    gain: Union[float, Tuple[float, ...]] = 1.0
+
+class EnsureDtype(Processing, frozen=True):
+    id: Literal["ensure_dtype"] = "ensure_dtype"
+    kwargs: EnsureDtypeKwargs
+
+
+class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
+    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
+    """The subset of axes to normalize jointly.
+    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
+    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
+
+    gain: Union[float, NonEmpty[Tuple[float, ...]]] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, Tuple[float, ...]] = 0.0
+    offset: Union[float, NonEmpty[Tuple[float, ...]]] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
@@ -442,13 +453,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     | per_dataset | Compute for the entire dataset       |
     | per_sample  | Compute for each sample individually |
     """
-    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
     """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
+    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
+    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
 
     mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
     """The mean value(s) to use for `mode: fixed`.
-    For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
+    For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: ('x', 'y')`."""
     # todo: check if means match input axes (for mode 'fixed')
 
     std: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
@@ -476,9 +488,10 @@ class ZeroMeanUnitVariance(Processing, frozen=True):
 
 class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     mode: Literal["per_dataset", "per_sample"]
-    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
+    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
     """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize the two image axes for 2d data jointly."""
+    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
+    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
     """The lower percentile used for normalization."""
@@ -520,10 +533,10 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     reference_tensor: TensorId
     """Name of tensor to match."""
 
-    axes: Annotated[Tuple[AxisName, ...], Field(examples=[("x", "y")])] = ()
-    """The subset of axes to scale jointly.
-    For example xy to normalize the two image axes for 2d data jointly.
-    Default: scale all non-batch axes jointly."""
+    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
+    """The subset of axes to normalize jointly.
+    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
+    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """Epsilon for numeric stability:
@@ -538,11 +551,11 @@ class ScaleMeanVariance(Processing, frozen=True):
 
 
 Preprocessing = Annotated[
-    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange],
+    Union[Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange],
     Field(discriminator="id"),
 ]
 Postprocessing = Annotated[
-    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+    Union[Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
     Field(discriminator="id"),
 ]
 

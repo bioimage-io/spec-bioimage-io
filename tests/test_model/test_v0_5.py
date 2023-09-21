@@ -269,11 +269,7 @@ def test_warn_long_name(model_data: Dict[str, Any]):
 
     assert summary.status == "passed", summary.format()
     assert summary.warnings[0].loc == ("name",), summary.format()
-    assert summary.warnings[0].msg in [
-        "'veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name' incompatible with "
-        f"{typing_module}.Annotated[typing.Any, MaxLen(max_length=64)]"
-        for typing_module in ("typing", "typing_extensions")
-    ], summary.format()
+    assert summary.warnings[0].msg == "Name longer than 64 characters."
 
 
 def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):

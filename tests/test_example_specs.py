@@ -37,7 +37,6 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
         "weights",
     },
     "models/unet2d_multi_tensor/rdf_v0_4.yaml": {"dependencies", "weights"},
-    "models/unet2d_multi_tensor/rdf_v0_4.yaml": {"dependencies", "weights"},
     "models/unet2d_nuclei_broad/rdf_v0_4_0.yaml": {
         "dependencies",
         "weights",
