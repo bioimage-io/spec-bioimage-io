@@ -466,7 +466,11 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             # download with tqdm adapted from:
             # https://github.com/shaypal5/tqdl/blob/189f7fd07f265d29af796bee28e0893e1396d237/tqdl/core.py
             # Streaming, so we can iterate over the response.
-            r = requests.get(str(uri), stream=True)
+            headers = {}
+            if os.environ.get("CI", "false").lower() in ("1", "t", "true", "yes", "y"):
+                headers["User-Agent"] = "ci"
+
+            r = requests.get(str(uri), stream=True, headers=headers)
             r.raise_for_status()
             # Total size in bytes.
             total_size = int(r.headers.get("content-length", 0))
