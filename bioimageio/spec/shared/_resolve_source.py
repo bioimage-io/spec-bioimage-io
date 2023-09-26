@@ -472,7 +472,7 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
 
             user_agent = os.environ.get("BIOIMAGEIO_USER_AGENT")
             if user_agent is not None:
-                headers["User-Agent"] =  user_agent
+                headers["User-Agent"] = user_agent
 
             r = requests.get(str(uri), stream=True, headers=headers)
             r.raise_for_status()
