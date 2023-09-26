@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, List, Literal, Optional, Tuple, TypeVar, Union
+from typing import Any, List, Literal, Optional, Tuple, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen, MinLen
+from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
 from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
 from typing_extensions import Annotated
 
@@ -19,7 +19,7 @@ from bioimageio.spec._internal.types import (
     RdfContent,
     Version,
 )
-from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
@@ -41,8 +41,18 @@ class Attachments(Node, frozen=True):
 
 
 class _Person(Node, frozen=True):
-    name: Optional[str]
+    name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]]
     """Full name"""
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def convert_name(cls, name: Any, info: FieldValidationInfo):
+        ctxt = get_internal_validation_context(info.context)
+        if "original_format" in ctxt and ctxt["original_format"] < (0, 2, 3) and isinstance(name, str):
+            name = name.replace("/", "").replace("\\", "")
+
+        return name
+
     affiliation: Optional[str] = None
     """Affiliation"""
     email: Optional[EmailStr] = None
@@ -58,12 +68,12 @@ class _Person(Node, frozen=True):
 
 
 class Author(_Person, frozen=True):
-    name: str
+    name: Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]
     github_user: Optional[str] = None
 
 
 class Maintainer(_Person, frozen=True):
-    name: Optional[str] = None
+    name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]] = None
     github_user: str
 
 
@@ -96,6 +106,17 @@ class CiteEntry(Node, frozen=True):
     doi: Optional[Doi] = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details. (alternatively specify `url`)"""
+
+    @field_validator("doi", mode="before")
+    @classmethod
+    def accept_prefixed_doi(cls, doi: Any) -> Any:
+        if isinstance(doi, str):
+            for doi_prefix in ("https://doi.org/", "http://dx.doi.org/"):
+                if doi.startswith(doi_prefix):
+                    doi = doi[len(doi_prefix) :]
+                    break
+
+        return doi
 
     url: Optional[str] = None
     """URL to cite (preferably specify a `doi` instead)"""
@@ -164,6 +185,15 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 
     authors: Annotated[Tuple[Author, ...], warn(MinLen(1), "No author specified.")] = ()
     """The authors are the creators of the RDF and the primary points of contact."""
+
+    @field_validator("authors", mode="before")
+    @classmethod
+    def accept_author_strings(cls, authors: Union[Any, Sequence[Any]]) -> Any:
+        """we unofficially accept strings as author entries"""
+        if isinstance(authors, Sequence):
+            authors = [{"name": a} if isinstance(a, str) else a for a in authors]
+
+        return authors
 
     attachments: Optional[Attachments] = None
     """file and other attachments"""

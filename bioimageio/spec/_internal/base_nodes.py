@@ -201,7 +201,11 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @classmethod
     def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
-        pass
+        # set original format if possible
+        original_format = data.get("format_version")
+        if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
+            context["original_format"] = cast(Tuple[int, int, int], tuple(map(int, original_format.split("."))))
+            assert len(context["original_format"]) == 3
 
     @classmethod
     def model_validate(

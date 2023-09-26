@@ -32,6 +32,9 @@ class InternalValidationContext(TypedDict):
     warning_level: WarningLevel
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
+    original_format: NotRequired[Tuple[int, int, int]]
+    """original format version of the validation data (set dynamically during validation of resource descriptions)."""
+
     collection_base_content: NotRequired[Dict[str, Any]]
     """Collection base content (set dynamically during validation of collection resource descriptions)."""
 
@@ -52,7 +55,8 @@ def get_internal_validation_context(
         file_name=file_name or given_context.get("file_name", "rdf.bioimageio.yaml"),
         warning_level=warning_level or given_context.get(WARNING_LEVEL_CONTEXT_KEY, ERROR),
     )
-    if "collection_base_content" in given_context:
-        ret["collection_base_content"] = given_context["collection_base_content"]
+    for k in {"original_format", "collection_base_content"}:  # TypedDict.__optional_keys__ requires py>=3.9
+        if k in given_context:
+            ret[k] = given_context[k]
 
     return ret
