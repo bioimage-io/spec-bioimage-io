@@ -470,6 +470,10 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             if os.environ.get("CI", "false").lower() in ("1", "t", "true", "yes", "y"):
                 headers["User-Agent"] = "ci"
 
+            user_agent = os.environ.get("BIOIMAGEIO_USER_AGENT")
+            if user_agent is not None:
+                headers["User-Agent"] =  user_agent
+
             r = requests.get(str(uri), stream=True, headers=headers)
             r.raise_for_status()
             # Total size in bytes.
