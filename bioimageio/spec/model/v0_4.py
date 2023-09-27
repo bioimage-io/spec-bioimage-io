@@ -30,6 +30,7 @@ from bioimageio.spec._internal.types import (
     NonEmpty,
     RdfContent,
     RelativeFilePath,
+    ResourceId,
     Sha256,
     Version,
 )
@@ -719,7 +720,7 @@ class ModelRdf(Node, frozen=True):
 class LinkedModel(LinkedResource, frozen=True):
     """Reference to a bioimage.io model."""
 
-    id: NonEmpty[str]
+    id: ResourceId
     """A valid model `id` from the bioimage.io collection."""
 
 

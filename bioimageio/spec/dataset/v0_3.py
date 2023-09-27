@@ -1,6 +1,6 @@
 from typing import Literal
 
-from bioimageio.spec._internal.types import NonEmpty
+from bioimageio.spec._internal.types import DatasetId
 from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
@@ -23,5 +23,5 @@ class Dataset(GenericBase, frozen=True, title="bioimage.io dataset specification
 class LinkedDataset(LinkedResource, frozen=True):
     """Reference to a bioimage.io dataset."""
 
-    id: NonEmpty[str]
+    id: DatasetId
     """A valid dataset `id` from the bioimage.io collection."""

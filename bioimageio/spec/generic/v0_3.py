@@ -1,7 +1,7 @@
 from functools import partial
 from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen
+from annotated_types import IsLower, Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, FieldValidationInfo, field_validator
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
@@ -14,8 +14,10 @@ from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
+    LowerCaseIdentifier,
     NonEmpty,
     RdfContent,
+    ResourceId,
     Sha256,
     Version,
 )
@@ -40,7 +42,7 @@ class Attachment(Node, frozen=True):
 class LinkedResource(Node, frozen=True):
     """Reference to a bioimage.io resource"""
 
-    id: NonEmpty[str]
+    id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
 
 
@@ -84,7 +86,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     ] = ()
     """∈📦 Cover images."""
 
-    id: Optional[str] = None
+    id: Optional[ResourceId] = None
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 

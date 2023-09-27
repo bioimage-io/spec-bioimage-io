@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, List, Literal, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Literal, NewType, Sequence, Tuple, TypeVar, Union
 
 import annotated_types
 from pydantic import HttpUrl, StringConstraints
@@ -11,7 +11,6 @@ from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.field_validation import (
     AfterValidator,
     BeforeValidator,
-    Predicate,
     RestrictCharacters,
     capitalize_first_letter,
     validate_datetime,
@@ -43,7 +42,9 @@ Identifier = Annotated[
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
-LowerCaseIdentifier = Annotated[Identifier, Predicate(str.islower)]
+LowerCaseIdentifier = Annotated[Identifier, annotated_types.IsLower()]
+ResourceId = NewType("ResourceId", LowerCaseIdentifier)
+DatasetId = NewType("DatasetId", ResourceId)
 FileName = str
 FileSource = Union[HttpUrl, RelativeFilePath]
 OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]

@@ -18,7 +18,7 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePath, YamlValue
+from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePath, ResourceId, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
@@ -45,7 +45,7 @@ class CollectionEntryBase(Node, extra="allow", frozen=True):
     ] = None
     """resource description file (RDF) source to load entry from"""
 
-    id: Optional[NonEmpty[str]] = None
+    id: Optional[ResourceId] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 

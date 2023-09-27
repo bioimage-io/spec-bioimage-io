@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
+from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from pydantic import (
@@ -114,7 +114,7 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = LowerCaseIdentifier
+TensorId = NewType("TensorId", LowerCaseIdentifier)
 AxisName = Annotated[LowerCaseIdentifier, MaxLen(16)]
 NonBatchAxisName = Annotated[AxisName, Predicate(lambda x: x != "batch")]
 PostprocessingId = Literal[

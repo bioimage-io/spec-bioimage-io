@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
 from typing import Any, List, Literal, Optional, Tuple, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
+from annotated_types import IsLower, Len, LowerCase, MaxLen, MinLen, Predicate
 from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
 from typing_extensions import Annotated
 
@@ -17,6 +17,7 @@ from bioimageio.spec._internal.types import (
     NonEmpty,
     OrcidId,
     RdfContent,
+    ResourceId,
     Version,
 )
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
@@ -134,7 +135,7 @@ class CiteEntry(Node, frozen=True):
 class LinkedResource(Node, frozen=True):
     """Reference to a bioimage.io resource"""
 
-    id: NonEmpty[str]
+    id: ResourceId
     """A valid resource `id` from the bioimage.io collection."""
 
 
@@ -180,7 +181,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     ] = ()
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
-    id: Optional[str] = None
+    id: Optional[ResourceId] = None
     """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
     authors: Annotated[Tuple[Author, ...], warn(MinLen(1), "No author specified.")] = ()
