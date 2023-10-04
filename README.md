@@ -106,6 +106,7 @@ Use the `validate` command to check for formatting errors like missing or invali
 
 ```
 bioimageio validate <MY-MODEL-SOURCE>
+
 ```
 
 `<MY-MODEL-SOURCE>` may be a local RDF yaml "`<MY-MODEL>/rdf.yaml`" or a DOI / URL to a zenodo record, or a URL to an rdf.yaml file.
@@ -113,19 +114,25 @@ bioimageio validate <MY-MODEL-SOURCE>
 To see if your model is compatible to the [latest bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) use the spec validator with the `--update-format` flag:
 
 ```
+
 bioimageio validate --update-format `<MY-MODEL-SOURCE>`
+
 ```
 
 The output of the `validate` command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
 
 ```
+
 {'timestamp': ['Missing data for required field.']}
+
 ```
 
 or if the field `test_inputs` does not contain a list, it would print:
 
 ```
+
 {'test_inputs': ['Not a valid list.']}.
+
 ```
 
 ## update-format
@@ -134,7 +141,9 @@ Similar to the `validate` command with `--update-format` flag the `update-format
 to the latest applicable format version, but saves the result in a file for further manual editing:
 
 ```
+
 bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
+
 ```
 
 # bioimageio.spec and bioimageio.core Python package
@@ -311,6 +320,8 @@ all generic 0.3.0 changes plus:
 * Breaking changes that are partially auto-convertible
   * `inputs.i.axes` are now defined in more detail (same for `outputs.i.axes`)
   * `inputs.i.shape` moved per axes to `inputs.i.axes.size` (same for `outputs.i.shape`)
+  * new pre-/postprocessing 'fixed_zero_mean_unit_variance' separated from 'zero_mean_unit_variance', where `mode=fixed` is no longer valid.
+    (for scalar values this is auto-convertible.)
 * Breaking changes that are fully auto-convertible
   * changes in `weights.pytorch_state_dict.architecture`
   * renamed `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`

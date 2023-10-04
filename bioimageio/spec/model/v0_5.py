@@ -1,4 +1,4 @@
-from abc import ABC
+import warnings
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
@@ -118,7 +118,14 @@ TensorId = NewType("TensorId", LowerCaseIdentifier)
 AxisName = Annotated[LowerCaseIdentifier, MaxLen(16)]
 NonBatchAxisName = Annotated[AxisName, Predicate(lambda x: x != "batch")]
 PostprocessingId = Literal[
-    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
+    "binarize",
+    "clip",
+    "scale_linear",
+    "sigmoid",
+    "fixed_zero_mean_unit_variance",
+    "zero_mean_unit_variance",
+    "scale_range",
+    "scale_mean_variance",
 ]
 PreprocessingId = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 
@@ -373,14 +380,14 @@ class IntervalOrRatioData(Node, frozen=True):
 TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
-class Processing(NodeWithExplicitlySetFields, ABC, frozen=True):
-    """abstract processing base class"""
+class ProcessingBase(NodeWithExplicitlySetFields, frozen=True):
+    """processing base class"""
 
     id: Literal[PreprocessingId, PostprocessingId]
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
-class Binarize(Processing, frozen=True):
+class Binarize(ProcessingBase, frozen=True):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -388,7 +395,7 @@ class Binarize(Processing, frozen=True):
     kwargs: BinarizeKwargs
 
 
-class Clip(Processing, frozen=True):
+class Clip(ProcessingBase, frozen=True):
     """Set tensor values below min to min and above max to max."""
 
     id: Literal["clip"] = "clip"
@@ -399,16 +406,16 @@ class EnsureDtypeKwargs(ProcessingKwargs, frozen=True):
     dtype: str
 
 
-class EnsureDtype(Processing, frozen=True):
+class EnsureDtype(ProcessingBase, frozen=True):
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
 
 class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
-    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
-    """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
-    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
+    axis: Annotated[Optional[NonBatchAxisName], Field(examples=["channel"])] = None  # todo: validate existence of axis
+    """The axis of non-scalar gains/offsets.
+    Invalid for scalar gains/offsets.
+    """
 
     gain: Union[float, NonEmpty[Tuple[float, ...]]] = 1.0
     """multiplicative factor"""
@@ -421,19 +428,19 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
         if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
             self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
         ):
-            raise ValueError("Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
+            raise ValueError("Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
 
         return self
 
 
-class ScaleLinear(Processing, frozen=True):
+class ScaleLinear(ProcessingBase, frozen=True):
     """Fixed linear scaling."""
 
     id: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(Processing, frozen=True):
+class Sigmoid(ProcessingBase, frozen=True):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     id: Literal["sigmoid"] = "sigmoid"
@@ -444,42 +451,61 @@ class Sigmoid(Processing, frozen=True):
         return ProcessingKwargs()
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
-    mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
-    """Mode for computing mean and variance.
-    |     mode    |             description              |
-    | ----------- | ------------------------------------ |
-    |   fixed     | Fixed values for mean and variance   |
-    | per_dataset | Compute for the entire dataset       |
-    | per_sample  | Compute for each sample individually |
-    """
-    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
-    """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
-    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
+class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
+    """Normalize with fixed, precomputed values for mean and variance.
+    See `ZeroMeanUnitVariance`/`ZeroMeanUnitVarianceKwargs` for data dependent normalization."""
 
-    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
-    """The mean value(s) to use for `mode: fixed`.
-    For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: ('x', 'y')`."""
+    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
+    """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
-    """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
+    std: Annotated[
+        Union[Annotated[float, Ge(1e-6)], NonEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]],
+        Field(examples=[1.05, (0.1, 0.2, 0.3)]),
+    ]
+    """The standard deviation value(s) to normalize with. Size must match `mean` values."""
 
-    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
-    """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
+    axis: Annotated[
+        Optional[NonBatchAxisName], Field(examples=["channel", "index"])
+    ] = None  # todo: validate existence of axis
+    """The axis of the mean/std values to normalize each entry along that dimension separately.
+    Invalid for scalar gains/offsets.
+    """
 
     @model_validator(mode="after")
-    def mean_and_std_match_mode(self) -> Self:
-        if self.mode == "fixed" and (self.mean is None or self.std is None):
-            raise ValueError("`mean` and `std` are required for `mode: fixed`.")
-        elif self.mode != "fixed" and (self.mean is not None or self.std is not None):
-            raise ValueError(f"`mean` and `std` not allowed for `mode: {self.mode}`")
+    def mean_and_std_match(self) -> Self:
+        mean_len = 1 if isinstance(self.mean, float) else len(self.mean)
+        std_len = 1 if isinstance(self.std, float) else len(self.std)
+        if mean_len != std_len:
+            raise ValueError("size of `mean` ({mean_len}) and `std` ({std_len}) must match.")
 
         return self
 
 
-class ZeroMeanUnitVariance(Processing, frozen=True):
+class FixedZeroMeanUnitVariance(ProcessingBase, frozen=True):
+    """Subtract a given mean and divide by a given variance."""
+
+    id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
+    kwargs: FixedZeroMeanUnitVarianceKwargs
+
+
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
+    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
+    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
+
+    axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
+    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
+    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
+    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
+    or `mode=per_sample` to normalize samples independently.
+    Default: Scale all non-batch axes jointly."""
+
+    eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
+    """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
+
+
+class ZeroMeanUnitVariance(ProcessingBase, frozen=True):
     """Subtract mean and divide by variance."""
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
@@ -487,11 +513,16 @@ class ZeroMeanUnitVariance(Processing, frozen=True):
 
 
 class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
-    mode: Literal["per_dataset", "per_sample"]
+    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
+    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
+
     axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
-    """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
-    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
+    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
+    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
+    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
+    or `mode=per_sample` to normalize samples independently.
+    Default: Scale all non-batch axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
     """The lower percentile used for normalization."""
@@ -521,7 +552,7 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
         return value
 
 
-class ScaleRange(Processing, frozen=True):
+class ScaleRange(ProcessingBase, frozen=True):
     """Scale with percentiles."""
 
     id: Literal["scale_range"] = "scale_range"
@@ -529,21 +560,28 @@ class ScaleRange(Processing, frozen=True):
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
-    mode: Literal["per_dataset", "per_sample"]
+    """Scale a tensor's data distribution to match another tensor's mean/std.
+    `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
+
+    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
+    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
     reference_tensor: TensorId
     """Name of tensor to match."""
 
     axes: Annotated[Optional[Tuple[NonBatchAxisName, ...]], Field(examples=[("x", "y")])] = None
-    """The subset of axes to normalize jointly.
-    For example ('x', 'y') to normalize a ('batch', 'channel', 'y', 'x') tensor separately per sample (along 'batch')
-    and channel (along 'channel'). Default: scale all non-batch axes jointly."""
+    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
+    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
+    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
+    or `mode=per_sample` to normalize samples independently.
+    Default: Scale all non-batch axes jointly."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """Epsilon for numeric stability:
-    "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
+    `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
 
-class ScaleMeanVariance(Processing, frozen=True):
+class ScaleMeanVariance(ProcessingBase, frozen=True):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     id: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -551,11 +589,23 @@ class ScaleMeanVariance(Processing, frozen=True):
 
 
 Preprocessing = Annotated[
-    Union[Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange],
+    Union[
+        Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, FixedZeroMeanUnitVariance, ZeroMeanUnitVariance, ScaleRange
+    ],
     Field(discriminator="id"),
 ]
 Postprocessing = Annotated[
-    Union[Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+    Union[
+        Binarize,
+        Clip,
+        EnsureDtype,
+        ScaleLinear,
+        Sigmoid,
+        FixedZeroMeanUnitVariance,
+        ZeroMeanUnitVariance,
+        ScaleRange,
+        ScaleMeanVariance,
+    ],
     Field(discriminator="id"),
 ]
 
@@ -799,23 +849,19 @@ class Weights(Node, frozen=True):
                 "tensorflow_js",
             )
 
-        for priority in priority_order:
-            if priority == "keras_hdf5" and self.keras_hdf5 is not None:
-                return self.keras_hdf5
-            elif priority == "onnx" and self.onnx is not None:
-                return self.onnx
-            elif priority == "pytorch_state_dict" and self.pytorch_state_dict is not None:
-                return self.pytorch_state_dict
-            elif priority == "tensorflow_js" and self.tensorflow_js is not None:
-                return self.tensorflow_js
-            elif priority == "tensorflow_saved_model_bundle" and self.tensorflow_saved_model_bundle is not None:
-                return self.tensorflow_saved_model_bundle
-            elif priority == "torchscript" and self.torchscript is not None:
-                return self.torchscript
-            else:
-                raise ValueError(f"Invalid weights priority: {priority}")
+        d = dict(self)
+        for p in priority_order:
+            if p not in d:
+                warnings.warn(f"Encountered unknown weights format {p}")
 
-        return None
+            weights = d.get(p)
+            if weights is not None:
+                return weights
+
+        raise ValueError(
+            f"None of the preferred weights formats ({priority_order}) is available "
+            f"({k for k, v in d.items() if v is not None})."
+        )
 
 
 class ModelRdf(Node, frozen=True):

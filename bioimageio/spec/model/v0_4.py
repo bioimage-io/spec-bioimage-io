@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+import warnings
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
@@ -146,24 +146,19 @@ class Weights(Node, frozen=True):
                 "tensorflow_js",
             )
 
-        for priority in priority_order:
-            if priority == "keras_hdf5" and self.keras_hdf5 is not None:
-                return self.keras_hdf5
-            elif priority == "onnx" and self.onnx is not None:
-                return self.onnx
-            elif priority == "pytorch_state_dict" and self.pytorch_state_dict is not None:
-                return self.pytorch_state_dict
-            elif priority == "tensorflow_js" and self.tensorflow_js is not None:
-                return self.tensorflow_js
-            elif priority == "tensorflow_saved_model_bundle" and self.tensorflow_saved_model_bundle is not None:
-                return self.tensorflow_saved_model_bundle
-            elif priority == "torchscript" and self.torchscript is not None:
-                return self.torchscript
-            else:
-                raise ValueError(f"Invalid weights priority: {priority}")
+        d = dict(self)
+        for p in priority_order:
+            if p not in d:
+                warnings.warn(f"Encountered unknown weights format {p}")
 
-        return None
+            weights = d.get(p)
+            if weights is not None:
+                return weights
 
+        raise ValueError(
+            f"None of the preferred weights formats ({priority_order}) is available "
+            f"({k for k, v in d.items() if v is not None})."
+        )
 
 class WeightsEntryBase(Node, frozen=True):
     type: ClassVar[WeightsFormat]
@@ -415,8 +410,8 @@ class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any], frozen=True):
     """base class for pre-/postprocessing key word arguments"""
 
 
-class Processing(NodeWithExplicitlySetFields, ABC, frozen=True):
-    """abstract processing base class"""
+class ProcessingBase(NodeWithExplicitlySetFields, frozen=True):
+    """processing base class"""
 
     name: Literal[PreprocessingName, PostprocessingName]
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
@@ -427,7 +422,7 @@ class BinarizeKwargs(ProcessingKwargs, frozen=True):
     """The fixed threshold"""
 
 
-class Binarize(Processing, frozen=True):
+class Binarize(ProcessingBase, frozen=True):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -442,7 +437,7 @@ class ClipKwargs(ProcessingKwargs, frozen=True):
     """maximum value for clipping"""
 
 
-class Clip(Processing, frozen=True):
+class Clip(ProcessingBase, frozen=True):
     """Set tensor values below min to min and above max to max."""
 
     name: Literal["clip"] = "clip"
@@ -471,14 +466,14 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class ScaleLinear(Processing, frozen=True):
+class ScaleLinear(ProcessingBase, frozen=True):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(Processing, frozen=True):
+class Sigmoid(ProcessingBase, frozen=True):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
@@ -523,7 +518,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class ZeroMeanUnitVariance(Processing, frozen=True):
+class ZeroMeanUnitVariance(ProcessingBase, frozen=True):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
@@ -569,7 +564,7 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRange(Processing, frozen=True):
+class ScaleRange(ProcessingBase, frozen=True):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
@@ -598,7 +593,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(Processing, frozen=True):
+class ScaleMeanVariance(ProcessingBase, frozen=True):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
