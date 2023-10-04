@@ -15,7 +15,6 @@ from typing import (
     Generic,
     Iterator,
     List,
-    Mapping,
     Optional,
     Set,
     Tuple,
@@ -313,7 +312,7 @@ class StringNode(collections.UserString, ABC):
 D = TypeVar("D")
 
 
-class FrozenDictNode(FrozenDictBase[K, V], Node, frozen=True):
+class FrozenDictNode(Node, FrozenDictBase[K, V], frozen=True):
     def __getitem__(self, item: K) -> V:
         try:
             return getattr(self, item)

@@ -18,12 +18,13 @@ from bioimageio.spec._internal.field_validation import (
     validate_is_not_keyword,
     validate_orcid_id,
     validate_unique_entries,
-    validate_version,
 )
 from bioimageio.spec._internal.field_validation import RelativeFilePath as RelativeFilePath
-from bioimageio.spec._internal.generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
-from bioimageio.spec._internal.generated_spdx_license_type import LicenseId as LicenseId
 from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
+
+from ._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
+from ._generated_spdx_license_type import LicenseId as LicenseId
+from ._version import Version as Version
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
@@ -42,7 +43,7 @@ Identifier = Annotated[
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
-LowerCaseIdentifier = Annotated[Identifier, annotated_types.IsLower()]
+LowerCaseIdentifier = Annotated[Identifier, annotated_types.LowerCase()]
 ResourceId = NewType("ResourceId", LowerCaseIdentifier)
 DatasetId = NewType("DatasetId", ResourceId)
 FileName = str
@@ -56,7 +57,6 @@ SiUnit = Annotated[
 ]
 Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
 UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
-Version = Annotated[str, AfterValidator(validate_version)]
 
 FormatVersionPlaceholder = Literal["latest", "discover"]
 
