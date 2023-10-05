@@ -17,7 +17,6 @@ from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
-from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.types import (
     AxesInCZYX,
@@ -34,6 +33,7 @@ from bioimageio.spec._internal.types import (
     Sha256,
     Version,
 )
+from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
@@ -157,8 +157,9 @@ class Weights(Node, frozen=True):
 
         raise ValueError(
             f"None of the preferred weights formats ({priority_order}) is available "
-            f"({k for k, v in d.items() if v is not None})."
+            f"({set(k for k, v in d.items() if v is not None)})."
         )
+
 
 class WeightsEntryBase(Node, frozen=True):
     type: ClassVar[WeightsFormat]

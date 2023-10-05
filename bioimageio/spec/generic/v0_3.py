@@ -1,20 +1,18 @@
 from functools import partial
 from typing import List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
-from annotated_types import IsLower, Len, LowerCase, MaxLen, MinLen
+from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, FieldValidationInfo, field_validator
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
-    LowerCaseIdentifier,
     NonEmpty,
     RdfContent,
     ResourceId,
@@ -22,6 +20,7 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS
 from bioimageio.spec.generic.v0_2 import Author as Author

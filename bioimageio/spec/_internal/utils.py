@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
 
+from pydantic import BaseModel
 from typing_extensions import Annotated
 
 K = TypeVar("K")
@@ -91,3 +92,6 @@ def unindent(text: str, ignore_first_line: bool = False):
 
     indent = min(len(line) - len(line.lstrip(" ")) for line in filled_lines)
     return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])
+
+
+Model = TypeVar("Model", bound=BaseModel)

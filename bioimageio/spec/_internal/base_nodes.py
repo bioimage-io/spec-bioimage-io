@@ -7,7 +7,6 @@ import os
 import sys
 from abc import ABC
 from typing import (
-    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -38,8 +37,8 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.types import NonEmpty, RdfContent, YamlValue
+from bioimageio.spec._internal.types.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.summary import ValidationSummary
@@ -152,22 +151,14 @@ class NodeWithExplicitlySetFields(Node, frozen=True):
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     """base class for all resource descriptions"""
 
+    __slots__ = ("_internal_validation_context", "_validation_summaries")
+
     type: str
     format_version: str
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
-
-    if TYPE_CHECKING:
-        # hide private attributes from __init__ by pretending that they are class variables.
-        # todo: wait for better support for for BaseModel fields with init_var=False
-        # or use pydantic's dataclass decorator (then fields suppor tinit_var=False)
-        _internal_validation_context: ClassVar[InternalValidationContext]
-        _validation_summaries: ClassVar[List[ValidationSummary]]
-    else:
-        _internal_validation_context: InternalValidationContext
-        _validation_summaries: List[ValidationSummary]
 
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
@@ -181,8 +172,11 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
-        self._validation_summaries = []
-        self._internal_validation_context = get_internal_validation_context(info.context)
+        self.model_config["frozen"] = False
+        self._validation_summaries: List[ValidationSummary] = []  # type: ignore[frozen]
+        self._internal_validation_context: InternalValidationContext
+        self._internal_validation_context = get_internal_validation_context(info.context)  # type: ignore[frozen]
+        self.model_config["frozen"] = True
         return self
 
     @classmethod
@@ -263,7 +257,7 @@ class StringNode(collections.UserString, ABC):
         def __setattr__(self: Self, __name: str, __value: Any):
             raise AttributeError(f"{self} is immutable.")
 
-        self.__setattr__ = __setattr__
+        self.__setattr__ = __setattr__  # type: ignore
 
     @property
     def model_fields(self):

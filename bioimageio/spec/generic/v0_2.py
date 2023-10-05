@@ -1,13 +1,12 @@
 from collections.abc import Mapping, Sequence
 from typing import Any, List, Literal, Optional, Tuple, TypeVar, Union
 
-from annotated_types import IsLower, Len, LowerCase, MaxLen, MinLen, Predicate
+from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
 from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
@@ -20,6 +19,7 @@ from bioimageio.spec._internal.types import (
     ResourceId,
     Version,
 )
+from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 

@@ -4,11 +4,11 @@ from datetime import date, datetime
 from typing import Any, Dict, List, Literal, NewType, Sequence, Tuple, TypeVar, Union
 
 import annotated_types
-from pydantic import HttpUrl, StringConstraints
+from pydantic import StringConstraints
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
-from bioimageio.spec._internal.field_validation import (
+from bioimageio.spec._internal.types.field_validation import (
     AfterValidator,
     BeforeValidator,
     RestrictCharacters,
@@ -19,11 +19,12 @@ from bioimageio.spec._internal.field_validation import (
     validate_orcid_id,
     validate_unique_entries,
 )
-from bioimageio.spec._internal.field_validation import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
 
 from ._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
 from ._generated_spdx_license_type import LicenseId as LicenseId
+from ._relative_path import FileSource as FileSource
+from ._relative_path import RelativeFilePath as RelativeFilePath
 from ._version import Version as Version
 
 T = TypeVar("T")
@@ -47,7 +48,6 @@ LowerCaseIdentifier = Annotated[Identifier, annotated_types.LowerCase()]
 ResourceId = NewType("ResourceId", LowerCaseIdentifier)
 DatasetId = NewType("DatasetId", ResourceId)
 FileName = str
-FileSource = Union[HttpUrl, RelativeFilePath]
 OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
 Sha256 = Annotated[str, annotated_types.Len(64, 64)]
 SiUnit = Annotated[

@@ -108,7 +108,7 @@ def _update_tensor_specs(
                 p_axes = [_get_axis_description_from_letter(a, context=context, halo=None) for a in p_kwargs_axes]
                 if p.get("id") == "zero_mean_unit_variance" and p_kwargs.get("mode") == "fixed":
                     p["id"] = "fixed_zero_mean_unit_variance"
-                    p_kwargs.pop("axes", None)
+                    _ = p_kwargs.pop("axes", None)
                 else:
                     p_kwargs["axes"] = [a.get("name", a["type"]) for a in p_axes]
 

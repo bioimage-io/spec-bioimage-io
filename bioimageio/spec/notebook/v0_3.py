@@ -3,9 +3,9 @@ from typing import Literal
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.types import FileSource
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge

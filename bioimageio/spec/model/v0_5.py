@@ -16,7 +16,6 @@ from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
-from bioimageio.spec._internal.field_validation import AfterValidator
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
@@ -30,6 +29,7 @@ from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Unit as Unit
 from bioimageio.spec._internal.types import Version as Version
+from bioimageio.spec._internal.types.field_validation import AfterValidator
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
@@ -120,14 +120,17 @@ NonBatchAxisName = Annotated[AxisName, Predicate(lambda x: x != "batch")]
 PostprocessingId = Literal[
     "binarize",
     "clip",
-    "scale_linear",
-    "sigmoid",
+    "ensure_dtype",
     "fixed_zero_mean_unit_variance",
-    "zero_mean_unit_variance",
-    "scale_range",
+    "scale_linear",
     "scale_mean_variance",
+    "scale_range",
+    "sigmoid",
+    "zero_mean_unit_variance",
 ]
-PreprocessingId = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
+PreprocessingId = Literal[
+    "binarize", "clip", "ensure_dtype", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"
+]
 
 
 def validate_axis_id(s: str):
@@ -214,13 +217,13 @@ class ChannelAxis(AxisBase, frozen=True):
     size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
     def model_post_init(self, __context: Any):
-        self.model_config["frozen"] = False  # todo: create unfreeze context manager
+        self.model_config["frozen"] = False
         if self.size == "#channel_names":
-            self.size = len(self.channel_names)
+            self.size = len(self.channel_names)  # type: ignore
 
         if self.channel_names == CHANNEL_NAMES_PLACEHOLDER:
             assert isinstance(self.size, int)
-            self.channel_names = tuple(f"channel{i}" for i in range(1, self.size + 1))
+            self.channel_names = tuple(f"channel{i}" for i in range(1, self.size + 1))  # type: ignore
 
         self.model_config["frozen"] = True
         return super().model_post_init(__context)
@@ -474,8 +477,8 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
 
     @model_validator(mode="after")
     def mean_and_std_match(self) -> Self:
-        mean_len = 1 if isinstance(self.mean, float) else len(self.mean)
-        std_len = 1 if isinstance(self.std, float) else len(self.std)
+        mean_len = 1 if isinstance(self.mean, (float, int)) else len(self.mean)
+        std_len = 1 if isinstance(self.std, (float, int)) else len(self.std)
         if mean_len != std_len:
             raise ValueError("size of `mean` ({mean_len}) and `std` ({std_len}) must match.")
 
@@ -699,7 +702,7 @@ class TensorBase(Node, frozen=True):
 
 
 class InputTensor(TensorBase, frozen=True):
-    id: TensorId = "input"
+    id: TensorId = TensorId("input")
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -720,7 +723,7 @@ class InputTensor(TensorBase, frozen=True):
 
 
 class OutputTensor(TensorBase, frozen=True):
-    id: TensorId = "output"
+    id: TensorId = TensorId("output")
     """Output tensor name.
     No duplicates are allowed across all inputs and outputs."""
 
@@ -860,7 +863,7 @@ class Weights(Node, frozen=True):
 
         raise ValueError(
             f"None of the preferred weights formats ({priority_order}) is available "
-            f"({k for k, v in d.items() if v is not None})."
+            f"({set(k for k, v in d.items() if v is not None)})."
         )
 
 

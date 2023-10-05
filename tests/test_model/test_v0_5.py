@@ -23,6 +23,7 @@ from bioimageio.spec.model.v0_5 import (
     SpaceInputAxis,
     SpaceOutputAxis,
     TensorBase,
+    TensorId,
     Weights,
 )
 from tests.utils import check_node, check_type
@@ -208,7 +209,7 @@ def model_data():
         cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
         inputs=(
             InputTensor(
-                id="input_1",
+                id=TensorId("input_1"),
                 description="Input 1",
                 data=IntervalOrRatioData(type="float32"),
                 axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
@@ -217,7 +218,7 @@ def model_data():
         ),
         outputs=(
             OutputTensor(
-                id="output_1",
+                id=TensorId("output_1"),
                 description="Output 1",
                 axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
                 test_tensor=HttpUrl("https://example.com/test_out.npy"),

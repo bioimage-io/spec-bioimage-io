@@ -2,8 +2,8 @@ from typing import Literal
 
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.field_validation import WithSuffix
 from bioimageio.spec._internal.types import FileSource
+from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
