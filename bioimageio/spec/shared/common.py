@@ -1,6 +1,7 @@
 import getpass
 import os
 import pathlib
+import sys
 import tempfile
 import warnings
 from typing import Any, Dict, Generic, Iterable, List, Optional, Sequence, Union
@@ -73,6 +74,13 @@ no_cache_tmp_list: List[Any] = []
 
 BIOIMAGEIO_SITE_CONFIG_URL = "https://raw.githubusercontent.com/bioimage-io/bioimage.io/main/site.config.json"
 BIOIMAGEIO_COLLECTION_URL = "https://bioimage-io.github.io/collection-bioimage-io/collection.json"
+
+
+COUNT_RDF_DOWNLOADS = os.getenv("BIOIMAGEIO_COUNT_RDF_DOWNLOADS", "true").lower() in ("true", "yes", "1")
+CONSUMER_ID = os.getenv("BIOIMAGEIO_CONSUMER_ID", "python").lower()
+CONSUMER_VERSION = os.getenv("BIOIMAGEIO_CONSUMER_VERSION")
+if CONSUMER_ID == "python" and CONSUMER_VERSION is None:
+    CONSUMER_VERSION = ".".join([str(v) for v in [sys.version_info.major, sys.version_info.minor]])
 
 
 DOI_REGEX = r"^10[.][0-9]{4,9}\/[-._;()\/:A-Za-z0-9]+$"

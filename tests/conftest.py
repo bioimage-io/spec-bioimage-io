@@ -1,6 +1,9 @@
+import os
 import pathlib
 
 import pytest
+
+os.environ["BIOIMAGEIO_COUNT_RDF_DOWNLOADS"] = "false"
 
 
 @pytest.fixture

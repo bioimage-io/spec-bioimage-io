@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import pathlib
 import re
@@ -20,15 +21,19 @@ from .common import (
     BIOIMAGEIO_COLLECTION_URL,
     BIOIMAGEIO_SITE_CONFIG_URL,
     BIOIMAGEIO_USE_CACHE,
+    COUNT_RDF_DOWNLOADS,
+    CacheWarning,
     DOI_REGEX,
     RDF_NAMES,
-    CacheWarning,
     get_spec_type_from_type,
     no_cache_tmp_list,
     tqdm,
     yaml,
 )
 from .raw_nodes import URI
+from .tracking import report_resource_download
+
+logger = logging.getLogger(__name__)
 
 
 class DownloadCancelled(Exception):
@@ -70,11 +75,12 @@ def resolve_rdf_source(
     if not isinstance(source, (dict, pathlib.Path, str, bytes)):
         raise TypeError(f"Unexpected source type {type(source)}")
 
+    # check for local/in-memory sources
     if isinstance(source, pathlib.Path):
         source_name = str(source)
         root: typing.Union[pathlib.Path, raw_nodes.URI] = source.parent
     elif isinstance(source, dict):
-        source_name = f"{{name: {source.get('name', '<unknown>')}, ...}}"
+        source_name = f"{{name: {source.get('name', '<unknown>')}, " + str(source)[1:100]
         source = dict(source)
         given_root = source.pop("root_path", pathlib.Path())
         if _is_path(given_root):
@@ -97,6 +103,7 @@ def resolve_rdf_source(
     else:
         raise TypeError(source)
 
+    # source might be remote
     if isinstance(source, str):
         # source might be bioimageio nickname, id, doi, url or file path -> resolve to pathlib.Path
 
@@ -479,10 +486,11 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             # Total size in bytes.
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
+            file_name = uri.path.split("/")[-1]
             if pbar:
-                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=file_name)
             else:
-                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=file_name)
             tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
             with tmp_path.open("wb") as f:
                 for data in r.iter_content(block_size):
@@ -495,6 +503,20 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
                 warnings.warn(f"Download ({t.n}) does not have expected size ({total_size}).")
 
             shutil.move(f.name, str(local_path))
+            if file_name == "rdf.yaml" and COUNT_RDF_DOWNLOADS:
+                try:
+                    assert yaml
+                    data = yaml.load(local_path)
+                    if data["type"] == "model":  # only report model downloads for now
+                        id_ = data["id"]
+                        if id_.count("/") > 1:  # a version id has additional forward slashes
+                            id_ = "/".join(id_.split("/")[:2])  # only use resource id/'concept' part
+
+                        report_resource_download(id_)
+
+                except Exception as e:
+                    logger.debug(f"failed to report download: {e}")
+
         except DownloadCancelled as e:
             # let calling code handle this exception specifically -> allow for cancellation of
             # long running downloads per user request
@@ -542,12 +564,14 @@ if BIOIMAGEIO_COLLECTION is None:
 else:
     BIOIMAGEIO_COLLECTION_ENTRIES = {}
     for cr in BIOIMAGEIO_COLLECTION.get("collection", []):
-        if "id" in cr and "rdf_source" in cr and "type" in cr:
-            entry = (cr["type"], cr["rdf_source"])
-            BIOIMAGEIO_COLLECTION_ENTRIES[cr["id"]] = entry
+        if not ("id" in cr and "rdf_source" in cr and "type" in cr):
+            continue
 
-            if "nickname" in cr:
-                BIOIMAGEIO_COLLECTION_ENTRIES[cr["nickname"]] = entry
+        entry = (cr["type"], cr["rdf_source"])
+        BIOIMAGEIO_COLLECTION_ENTRIES[cr["id"]] = entry
+
+        if "nickname" in cr:
+            BIOIMAGEIO_COLLECTION_ENTRIES[cr["nickname"]] = entry
 
         # add resource versions explicitly
         for cv in cr.get("versions", []):
