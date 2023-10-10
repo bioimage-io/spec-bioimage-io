@@ -1,5 +1,5 @@
-from collections.abc import Mapping, Sequence
-from typing import Any, List, Literal, Optional, Tuple, TypeVar, Union
+import collections.abc
+from typing import Any, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
 from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
@@ -191,7 +191,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     @classmethod
     def accept_author_strings(cls, authors: Union[Any, Sequence[Any]]) -> Any:
         """we unofficially accept strings as author entries"""
-        if isinstance(authors, Sequence):
+        if isinstance(authors, collections.abc.Sequence):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
 
         return authors
@@ -325,6 +325,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     @classmethod
     def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         """convert raw RDF data of an older format where possible"""
+        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)
 
 

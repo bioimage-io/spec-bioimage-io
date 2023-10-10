@@ -937,4 +937,5 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
 
     @classmethod
     def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

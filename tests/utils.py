@@ -14,7 +14,7 @@ from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     get_internal_validation_context,
 )
-from bioimageio.spec.description import load_description
+from bioimageio.spec.description import InvalidDescription, load_description
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 
 yaml = YAML(typ="safe")
@@ -97,8 +97,8 @@ def check_rdf(
 
     context = ValidationContext(root=root_path, file_name=rdf_path.name)
     if is_invalid:
-        rd, _ = load_description(data, context=context)
-        assert rd is None, "Invalid RDF passed validation"
+        rd = load_description(data, context=context)
+        assert isinstance(rd, InvalidDescription), "Invalid RDF passed validation"
 
     exclude_from_comp = {
         "format_version",
@@ -112,7 +112,7 @@ def check_rdf(
     summary = rd.validation_summaries[0]
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
-        assert rd is None
+        assert isinstance(rd, InvalidDescription)
         return
 
     assert summary.status == "passed", summary.format()

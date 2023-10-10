@@ -8,6 +8,11 @@ from pydantic import StringConstraints
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
+from bioimageio.spec._internal.types._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
+from bioimageio.spec._internal.types._generated_spdx_license_type import LicenseId as LicenseId
+from bioimageio.spec._internal.types._relative_path import FileSource as FileSource
+from bioimageio.spec._internal.types._relative_path import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types._version import Version as Version
 from bioimageio.spec._internal.types.field_validation import (
     AfterValidator,
     BeforeValidator,
@@ -20,12 +25,6 @@ from bioimageio.spec._internal.types.field_validation import (
     validate_unique_entries,
 )
 from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
-
-from ._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
-from ._generated_spdx_license_type import LicenseId as LicenseId
-from ._relative_path import FileSource as FileSource
-from ._relative_path import RelativeFilePath as RelativeFilePath
-from ._version import Version as Version
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
@@ -44,8 +43,15 @@ Identifier = Annotated[
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
-LowerCaseIdentifier = Annotated[Identifier, annotated_types.LowerCase()]
-ResourceId = NewType("ResourceId", LowerCaseIdentifier)
+LowerCaseIdentifier = Annotated[Identifier, annotated_types.LowerCase]
+ResourceId = NewType(
+    "ResourceId",
+    Annotated[
+        NonEmpty[str],
+        annotated_types.LowerCase,
+        annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
+    ],
+)
 DatasetId = NewType("DatasetId", ResourceId)
 FileName = str
 OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]

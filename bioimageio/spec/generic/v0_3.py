@@ -229,6 +229,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     @classmethod
     def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
         """convert raw RDF data of an older format where possible"""
+        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)
 
 

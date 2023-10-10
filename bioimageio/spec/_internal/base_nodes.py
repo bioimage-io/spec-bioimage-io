@@ -164,10 +164,16 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     def validation_summaries(self) -> List[ValidationSummary]:
         return self._validation_summaries
 
+    @classmethod
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+        pass
+
     @model_validator(mode="before")
     @classmethod
-    def update_context(cls, data: RdfContent, info: ValidationInfo):
-        cls._update_context(get_internal_validation_context(info.context), data)
+    def update_context_and_data(cls, data: RdfContent, info: ValidationInfo):
+        context = get_internal_validation_context(info.context)
+        cls._update_context(context, data)
+        cls.convert_from_older_format(data, context)
         return data
 
     @model_validator(mode="after")

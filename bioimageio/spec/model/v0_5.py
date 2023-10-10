@@ -220,10 +220,12 @@ class ChannelAxis(AxisBase, frozen=True):
         self.model_config["frozen"] = False
         if self.size == "#channel_names":
             self.size = len(self.channel_names)  # type: ignore
+            self.__pydantic_fields_set__.remove("size")
 
         if self.channel_names == CHANNEL_NAMES_PLACEHOLDER:
             assert isinstance(self.size, int)
             self.channel_names = tuple(f"channel{i}" for i in range(1, self.size + 1))  # type: ignore
+            self.__pydantic_fields_set__.remove("channel_names")
 
         self.model_config["frozen"] = True
         return super().model_post_init(__context)
@@ -1154,4 +1156,5 @@ class Model(
 
     @classmethod
     def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

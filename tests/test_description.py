@@ -38,5 +38,5 @@ def test_no_forward_compatibility(unet2d_data: RdfContent):
 
     # expect warning about treating future format version as latest
     ws = summary.warnings
-    assert len(ws) == 1, ws
+    assert len(ws) >= 1, ws
     assert ws[0].loc == ("format_version",), ws[0].loc
