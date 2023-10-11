@@ -788,14 +788,14 @@ Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Version
+    tensorflow_version: Version  # todo: dynamic default from tf lib
     """TensorFlow version used to create these weights."""
 
 
 class OnnxWeights(WeightsEntryBase, frozen=True):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Annotated[int, Ge(7)]
+    opset_version: Annotated[int, Ge(7)]  # todo: dynamic default from onnx runtime
     """ONNX opset version"""
 
 

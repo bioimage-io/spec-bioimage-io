@@ -226,7 +226,7 @@ def model_data():
         ),
         name="Model",
         tags=(),
-        weights=Weights(onnx=OnnxWeights(source=HttpUrl("https://example.com/weights.onnx"))),
+        weights=Weights(onnx=OnnxWeights(source=HttpUrl("https://example.com/weights.onnx"), opset_version=15)),
         type="model",
     ).model_dump()
     # make data more editable
@@ -240,15 +240,20 @@ def model_data():
     [
         pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
         dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(weights={"torchscript": {"source": "https://example.com/weights"}}),
-        dict(weights={"keras_hdf5": {"source": "https://example.com/weights"}}),
-        dict(weights={"tensorflow_js": {"source": "https://example.com/weights"}}),
-        dict(weights={"tensorflow_saved_model_bundle": {"source": "https://example.com/weights"}}),
-        dict(weights={"onnx": {"source": "https://example.com/weights"}}),
+        dict(weights={"torchscript": {"source": "https://example.com/weights", "pytorch_version": 1.15}}),
+        dict(weights={"keras_hdf5": {"source": "https://example.com/weights", "tensorflow_version": 1.10}}),
+        dict(weights={"tensorflow_js": {"source": "https://example.com/weights", "tensorflow_version": 1.10}}),
+        dict(
+            weights={
+                "tensorflow_saved_model_bundle": {"source": "https://example.com/weights", "tensorflow_version": 1.10}
+            }
+        ),
+        dict(weights={"onnx": {"source": "https://example.com/weights", "opset_version": 15}}),
         dict(
             weights={
                 "pytorch_state_dict": {
                     "source": "https://example.com/weights",
+                    "pytorch_version": "1.15",
                     "architecture": {
                         "callable": "https://example.com/file.py:Model",
                         "sha256": "0" * 64,  # dummy sha256
