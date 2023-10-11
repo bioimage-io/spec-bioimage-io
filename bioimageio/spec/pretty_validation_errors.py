@@ -40,10 +40,11 @@ try:
         assert issubclass(etype, ValidationError)
         assert isinstance(evalue, ValidationError)
 
-        stb: Union[List[Union[str, Any]], Any] = self.InteractiveTB.structured_traceback(etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset)  # type: ignore
+        stb: Union[List[Union[str, Any]], Any] = self.InteractiveTB.structured_traceback(  # type: ignore
+            etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
+        )
         if isinstance(stb, list):
             orig_stb = list(stb)
-            stb: List[Any] = []
             for line in orig_stb:
                 if isinstance(line, str) and "pydantic" in line and "__tracebackhide__" in line:
                     # ignore pydantic internal frame in traceback
