@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
@@ -18,22 +18,23 @@ from typing_extensions import Annotated, LiteralString, Self
 from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import (
-    AxesInCZYX,
-    AxesStr,
-    Datetime,
-    FileSource,
-    Identifier,
-    LicenseId,
-    LowerCaseIdentifier,
-    NonEmpty,
-    RdfContent,
-    RelativeFilePath,
-    ResourceId,
-    Sha256,
-    Version,
+from bioimageio.spec._internal.types import Datetime as Datetime
+from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import Identifier as Identifier
+from bioimageio.spec._internal.types import LicenseId as LicenseId
+from bioimageio.spec._internal.types import LowerCaseIdentifierStr
+from bioimageio.spec._internal.types import NonEmpty as NonEmpty
+from bioimageio.spec._internal.types import RdfContent as RdfContent
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types import ResourceId as ResourceId
+from bioimageio.spec._internal.types import Sha256 as Sha256
+from bioimageio.spec._internal.types import Version as Version
+from bioimageio.spec._internal.types.field_validation import (
+    AfterValidator,
+    RestrictCharacters,
+    WithSuffix,
+    validate_unique_entries,
 )
-from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
@@ -46,12 +47,15 @@ from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 
+AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
+AxesInCZYX = NewType("AxesInCZYX", Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)])
+
 PostprocessingName = Literal[
     "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
 ]
 PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
 
-TensorName = LowerCaseIdentifier
+TensorName = NewType("TensorName", LowerCaseIdentifierStr)
 
 
 class CallableFromDepencency(StringNode):

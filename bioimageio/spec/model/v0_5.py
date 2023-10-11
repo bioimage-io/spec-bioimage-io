@@ -22,7 +22,7 @@ from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLic
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import LowerCaseIdentifier as LowerCaseIdentifier
+from bioimageio.spec._internal.types import LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import NonEmpty as NonEmpty
 from bioimageio.spec._internal.types import RdfContent as RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
@@ -109,9 +109,10 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = NewType("TensorId", LowerCaseIdentifier)
-AxisName = Annotated[LowerCaseIdentifier, MaxLen(16)]
-NonBatchAxisName = Annotated[AxisName, Predicate(lambda x: x != "batch")]
+TensorId = NewType("TensorId", LowerCaseIdentifierStr)
+_AxisName = Annotated[LowerCaseIdentifierStr, MaxLen(16)]
+AxisName = NewType("AxisName", _AxisName)
+NonBatchAxisName = NewType("NonBatchAxisName", Annotated[_AxisName, Predicate(lambda x: x != "batch")])
 PostprocessingId = Literal[
     "binarize",
     "clip",
@@ -178,7 +179,7 @@ class AxisBase(NodeWithExplicitlySetFields, frozen=True):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
     type: AxisType
 
-    name: AxisName
+    name: Union[Literal["batch"], AxisName]
     """An axis name unique across all axes of one tensor."""
 
     description: Annotated[str, MaxLen(128)] = ""
@@ -207,7 +208,7 @@ ChannelNamePattern = Annotated[str, StringConstraints(min_length=3, max_length=1
 
 class ChannelAxis(AxisBase, frozen=True):
     type: Literal["channel"] = "channel"
-    name: AxisName = "channel"
+    name: AxisName = AxisName("channel")
     channel_names: Union[Tuple[AxisName, ...], ChannelNamePattern] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
@@ -256,12 +257,12 @@ class IndexTimeSpaceAxisBase(AxisBase, frozen=True):
 
 class IndexAxis(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["index"] = "index"
-    name: AxisName = "index"
+    name: AxisName = AxisName("index")
 
 
 class TimeAxisBase(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["time"] = "time"
-    name: AxisName = "time"
+    name: AxisName = AxisName("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -272,7 +273,7 @@ class TimeInputAxis(TimeAxisBase, frozen=True):
 
 class SpaceAxisBase(IndexTimeSpaceAxisBase, frozen=True):
     type: Literal["space"] = "space"
-    name: Annotated[AxisName, Field(examples=["x", "y", "z"])] = "x"
+    name: Annotated[AxisName, Field(examples=["x", "y", "z"])] = AxisName("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -370,7 +371,7 @@ class IntervalOrRatioData(Node, frozen=True):
     )
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     `None` corresponds to min/max of what can be expressed by `data_type`."""
-    unit: Optional[Unit] = "arbitrary intensity"
+    unit: Optional[Unit] = "arbitrary unit"
     scale: float = 1.0
     """Scale for data on an interval (or ratio) scale."""
     offset: Optional[float] = None

@@ -5,11 +5,12 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import HttpUrl, ValidationError
 
-from bioimageio.spec._internal.types import RelativeFilePath
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.description import load_description, validate_format
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
+    AxesInCZYX,
+    AxesStr,
     InputTensor,
     LinkedModel,
     Model,
@@ -18,10 +19,12 @@ from bioimageio.spec.model.v0_4 import (
     OutputTensor,
     Postprocessing,
     Preprocessing,
+    RelativeFilePath,
     ScaleLinearKwargs,
     ScaleMeanVariance,
     ScaleRange,
     ScaleRangeKwargs,
+    TensorName,
     Weights,
 )
 from tests.utils import check_node, check_type, unset
@@ -162,7 +165,7 @@ def test_postprocessing(kwargs: Dict[str, Any]):
     "node,expected",
     [
         (
-            ScaleRange(kwargs=ScaleRangeKwargs(mode="per_sample", axes="xy")),
+            ScaleRange(kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))),
             dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         ),
         (
@@ -284,19 +287,19 @@ def model_data():
         cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
         inputs=(
             InputTensor(
-                name="input_1",
+                name=TensorName("input_1"),
                 description="Input 1",
                 data_type="float32",
-                axes="xyc",
+                axes=AxesStr("xyc"),
                 shape=(128, 128, 3),
             ),
         ),
         outputs=(
             OutputTensor(
-                name="output_1",
+                name=TensorName("output_1"),
                 description="Output 1",
                 data_type="float32",
-                axes="xyc",
+                axes=AxesStr("xyc"),
                 shape=(128, 128, 3),
             ),
         ),

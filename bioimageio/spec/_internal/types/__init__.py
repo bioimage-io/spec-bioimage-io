@@ -16,13 +16,10 @@ from bioimageio.spec._internal.types._version import Version as Version
 from bioimageio.spec._internal.types.field_validation import (
     AfterValidator,
     BeforeValidator,
-    RestrictCharacters,
-    capitalize_first_letter,
     validate_datetime,
     validate_identifier,
     validate_is_not_keyword,
     validate_orcid_id,
-    validate_unique_entries,
 )
 from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
 
@@ -32,18 +29,18 @@ S = TypeVar("S", bound=Sequence[Any])
 # types to describe RDF as pydantic models
 NonEmpty = Annotated[S, annotated_types.MinLen(1)]
 
-AxesStr = Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)]
-AxesInCZYX = Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)]
-CapitalStr = Annotated[NonEmpty[str], AfterValidator(capitalize_first_letter)]
 Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
-Identifier = Annotated[
+
+IdentifierStr = Annotated[  # allows to init child NewTypes with str
     NonEmpty[str],
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
-LowerCaseIdentifier = Annotated[Identifier, annotated_types.LowerCase]
+Identifier = NewType("Identifier", IdentifierStr)
+LowerCaseIdentifierStr = Annotated[IdentifierStr, annotated_types.LowerCase]  # allows to init child NewTypes with str
+LowerCaseIdentifier = NewType("LowerCaseIdentifier", LowerCaseIdentifierStr)
 ResourceId = NewType(
     "ResourceId",
     Annotated[
@@ -54,16 +51,18 @@ ResourceId = NewType(
 )
 DatasetId = NewType("DatasetId", ResourceId)
 FileName = str
-OrcidId = Annotated[str, AfterValidator(validate_orcid_id)]
-Sha256 = Annotated[str, annotated_types.Len(64, 64)]
-SiUnit = Annotated[
-    str,
-    StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
-    BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
-]
-Unit = Union[Literal["px", "arbitrary intensity"], SiUnit]
-UniqueTuple = Annotated[Tuple[T], AfterValidator(validate_unique_entries)]
+OrcidId = NewType("OrcidId", Annotated[str, AfterValidator(validate_orcid_id)])
+Sha256 = NewType("Sha256", Annotated[str, annotated_types.Len(64, 64)])
 
+SiUnit = NewType(
+    "SiUnit",
+    Annotated[
+        str,
+        StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
+        BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
+    ],
+)
+Unit = Union[Literal["arbitrary unit", "px"], SiUnit]
 FormatVersionPlaceholder = Literal["latest", "discover"]
 
 
@@ -76,4 +75,4 @@ YamlKey = Union[  # ... YAML Arrays are cast to tuples if used as key in mapping
 YamlMapping = Dict[YamlKey, "YamlValue"]  # YAML Mappings are cast to dict
 YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
 RdfContent = Dict[str, YamlValue]
-Doi = Annotated[str, StringConstraints(pattern=DOI_REGEX)]
+Doi = NewType("Doi", Annotated[str, StringConstraints(pattern=DOI_REGEX)])

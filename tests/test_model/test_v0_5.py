@@ -10,6 +10,7 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.description import load_description, validate_format
 from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
+    AxisName,
     BatchAxis,
     ChannelAxis,
     CiteEntry,
@@ -181,7 +182,7 @@ def test_batch_axis(kwargs: Dict[str, Any]):
     "kwargs",
     [
         {"type": "space", "name": "x", "size": 10},
-        SpaceInputAxis(name="x", size=10),
+        SpaceInputAxis(name=AxisName("x"), size=10),
         {"type": "batch"},
     ],
 )
@@ -212,7 +213,11 @@ def model_data():
                 id=TensorId("input_1"),
                 description="Input 1",
                 data=IntervalOrRatioData(type="float32"),
-                axes=(SpaceInputAxis(name="x", size=10), SpaceInputAxis(name="y", size=20), ChannelAxis(size=3)),
+                axes=(
+                    SpaceInputAxis(name=AxisName("x"), size=10),
+                    SpaceInputAxis(name=AxisName("y"), size=20),
+                    ChannelAxis(size=3),
+                ),
                 test_tensor=HttpUrl("https://example.com/test_ipt.npy"),
             ),
         ),
@@ -220,7 +225,11 @@ def model_data():
             OutputTensor(
                 id=TensorId("output_1"),
                 description="Output 1",
-                axes=(SpaceOutputAxis(name="x", size=15), SpaceOutputAxis(name="y", size=25), ChannelAxis(size=6)),
+                axes=(
+                    SpaceOutputAxis(name=AxisName("x"), size=15),
+                    SpaceOutputAxis(name=AxisName("y"), size=25),
+                    ChannelAxis(size=6),
+                ),
                 test_tensor=HttpUrl("https://example.com/test_out.npy"),
             ),
         ),
