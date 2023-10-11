@@ -14,6 +14,8 @@ def convert_from_older_format(data: RdfContent, context: InternalValidationConte
         return
 
     v0_4_converter.convert_from_older_format(data, context)
+    fv = data.get("format_version")
+    assert isinstance(fv, str) and fv.count(".") == 2
     major, minor = map(int, fv.split(".")[:2])
 
     if (major, minor) > (0, 5):

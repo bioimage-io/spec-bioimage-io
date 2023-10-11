@@ -322,12 +322,6 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     https://packaging.pypa.io/en/stable/version.html.
     The initial version should be '0.1.0'."""
 
-    @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
-        """convert raw RDF data of an older format where possible"""
-        super().convert_from_older_format(data, context)
-        convert_from_older_format(data, context)
-
 
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
@@ -344,6 +338,12 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
 
 class GenericBase(GenericBaseNoFormatVersion, frozen=True):
     format_version: Literal["0.2.3"] = "0.2.3"
+
+    @classmethod
+    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+        """convert raw RDF data of an older format where possible"""
+        super().convert_from_older_format(data, context)
+        convert_from_older_format(data, context)
 
 
 class Generic(GenericBase, extra="ignore", frozen=True, title="bioimage.io generic specification"):
