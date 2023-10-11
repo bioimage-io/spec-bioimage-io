@@ -44,15 +44,10 @@ from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
-from bioimageio.spec.model.v0_4 import KerasHdf5Weights as KerasHdf5Weights
 from bioimageio.spec.model.v0_4 import KnownRunMode as KnownRunMode
 from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
-from bioimageio.spec.model.v0_4 import OnnxWeights as OnnxWeights
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
-from bioimageio.spec.model.v0_4 import TensorflowJsWeights as TensorflowJsWeights
-from bioimageio.spec.model.v0_4 import TensorflowSavedModelBundleWeights as TensorflowSavedModelBundleWeights
-from bioimageio.spec.model.v0_4 import TorchscriptWeights as TorchscriptWeights
 from bioimageio.spec.model.v0_4 import WeightsEntryBase as WeightsEntryBase
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
@@ -790,17 +785,57 @@ class ArchitectureFromDependency(Node, frozen=True):
 Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
+class KerasHdf5Weights(WeightsEntryBase, frozen=True):
+    type = "keras_hdf5"
+    weights_format_name: ClassVar[str] = "Keras HDF5"
+    tensorflow_version: Version
+    """TensorFlow version used to create these weights."""
+
+
+class OnnxWeights(WeightsEntryBase, frozen=True):
+    type = "onnx"
+    weights_format_name: ClassVar[str] = "ONNX"
+    opset_version: Annotated[int, Ge(7)]
+    """ONNX opset version"""
+
+
 class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
 
-    pytorch_version: Annotated[
-        Optional[Version],
-        warn(Version, "Missing Pytorch version. Please specify the PyTorch version these weights were created with."),
-    ] = None
+    pytorch_version: Version
     """Version of the PyTorch library used.
-    If `depencencies` is specified it has to include pytorch and any verison pinning has to be compatible."""
+    If `depencencies` is specified it has to include pytorch and any version pinning has to be compatible."""
+
+
+class TensorflowJsWeights(WeightsEntryBase, frozen=True):
+    type = "tensorflow_js"
+    weights_format_name: ClassVar[str] = "Tensorflow.js"
+    tensorflow_version: Version
+    """Version of the TensorFlow library used."""
+
+    source: Union[HttpUrl, RelativeFilePath]
+    """∈📦 The multi-file weights.
+    All required files/folders should be a zip archive."""
+
+
+class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
+    type = "tensorflow_saved_model_bundle"
+    weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
+    tensorflow_version: Version
+    """Version of the TensorFlow library used."""
+
+    source: Union[HttpUrl, RelativeFilePath]
+    """∈📦 The multi-file weights.
+    All required files/folders should be a zip archive."""
+
+
+class TorchscriptWeights(WeightsEntryBase, frozen=True):
+    type = "torchscript"
+    weights_format_name: ClassVar[str] = "TorchScript"
+    pytorch_version: Version
+    """Version of the PyTorch library used."""
 
 
 class Weights(Node, frozen=True):

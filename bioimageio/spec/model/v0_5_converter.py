@@ -27,6 +27,7 @@ def _convert_model_from_v0_4_to_0_5_0(data: RdfContent, context: InternalValidat
     _convert_axes_string_to_axis_descriptions(data, context=context)
     _convert_architecture(data)
     convert_attachments(data)
+    _convert_weights(data)
     _ = data.pop("download_url", None)
 
     if (p := data.get("parent")) and isinstance(p, dict) and "uri" in p:
@@ -50,6 +51,27 @@ def _convert_axes_string_to_axis_descriptions(data: RdfContent, *, context: Inte
     if isinstance(outputs, collections.abc.Sequence):
         data["outputs"] = list(outputs)
         _update_tensor_specs(data["outputs"], test_outputs, sample_outputs, context=context)
+
+
+def _convert_weights(data: RdfContent):
+    if "weights" in data and isinstance((weights := data["weights"]), dict):
+        for weights_name in ("pytorch_state_dict", "torchscript"):
+            entry = weights.get(weights_name)
+            if not isinstance(entry, dict):
+                continue
+
+            entry["pytorch_version"] = entry.get("pytorch_version", "1.10")
+
+        for weights_name in ("keras_hdf5", "tensorflow_saved_model_bundle", "tensorflow_js"):
+            entry = weights.get(weights_name)
+            if not isinstance(entry, dict):
+                continue
+
+            entry["tensorflow_version"] = entry.get("tensorflow_version", "1.15")
+
+        entry = weights.get("onnx")
+        if isinstance(entry, dict):
+            entry["opset_version"] = entry.get("opset_version", 15)
 
 
 def _update_tensor_specs(
