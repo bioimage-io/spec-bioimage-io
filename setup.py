@@ -36,7 +36,7 @@ setup(
         "typing-extensions",
     ],
     extras_require={
-        "dev": ["ruamel.yaml", "black", "deepdiff", "pyright", "pooch", "pre-commit", "numpy", "pytest", "lxml"]
+        "dev": ["ruamel.yaml", "black", "deepdiff", "pdoc", "pyright", "pooch", "pre-commit", "numpy", "pytest", "lxml"]
     },
     scripts=[],
     include_package_data=True,

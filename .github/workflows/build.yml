@@ -16,9 +16,8 @@ jobs:
         include:
           - python-version: '3.8'
             test-format: true
-            deploy: true
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
@@ -44,21 +43,32 @@ jobs:
       if: matrix.test-format
     - run: pyright
     - run: pytest
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -e .[dev]
     - name: Generate spec docs
-      if: matrix.deploy
       run: python scripts/generate_spec_documentation.py
     - name: Generate JSON schemas
-      if: matrix.deploy
       run: python scripts/generate_json_schemas.py
+    - name: Generate developer docs
+      run: pdoc -o ./dist bioimageio.spec
     - name: Get branch name to deploy to
-      if: matrix.deploy
       id: get_branch
       shell: bash
       run: |
         if [[ -n '${{ github.event.pull_request.head.ref }}' ]]; then branch=gh-pages-${{ github.event.pull_request.head.ref }}; else branch=gh-pages; fi
         echo "::set-output name=branch::$branch"
     - name: Deploy to ${{ steps.get_branch.outputs.branch }} 🚀
-      if: matrix.deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: ${{ steps.get_branch.outputs.branch }}
