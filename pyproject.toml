@@ -3,7 +3,7 @@ line-length = 120
 target-version = ["py38", "py39", "py310", "py311"]
 
 [tool.pyright]
-exclude = ["**/node_modules", "**/__pycache__", "tests/old_*"]
+exclude = ["**/node_modules", "**/__pycache__", "tests/old_*", "tests/cache"]
 include = ["bioimageio", "scripts", "tests"]
 pythonPlatform = "All"
 pythonVersion = "3.9"
