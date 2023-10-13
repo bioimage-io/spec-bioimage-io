@@ -942,14 +942,14 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     """Badges are not allowed for model RDFs"""
 
     documentation: Annotated[
-        Optional[FileSource],
+        FileSource,   # todo: suffix
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
         ),
-    ] = None
+    ]
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
