@@ -27,7 +27,7 @@ T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
 
 # types to describe RDF as pydantic models
-NonEmpty = Annotated[S, annotated_types.MinLen(1)]
+NonEmpty = Annotated[S, annotated_types.MinLen(1)]  # todo: refactor to NotEmpty
 
 Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format

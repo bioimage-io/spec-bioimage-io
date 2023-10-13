@@ -87,4 +87,4 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{p} does not point to an existing directory")
 
 
-FileSource = Union[HttpUrl, RelativeFilePath]
+FileSource = Union[HttpUrl, RelativeFilePath]  # todo: move to types/__init__
