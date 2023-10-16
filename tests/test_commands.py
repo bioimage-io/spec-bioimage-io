@@ -10,7 +10,8 @@ from bioimageio.spec import (
 )
 from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
-from tests.conftest import SKIP_ZENODO
+
+SKIP_ZENODO = True
 
 
 def test_validate_dataset(dataset_rdf):

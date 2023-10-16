@@ -5,7 +5,8 @@ from marshmallow import ValidationError
 
 from bioimageio.spec.model.v0_4 import raw_nodes as raw_nodes_m04
 from bioimageio.spec.shared import yaml
-from tests.conftest import SKIP_ZENODO
+
+SKIP_ZENODO = True
 
 
 def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):

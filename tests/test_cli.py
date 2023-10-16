@@ -11,7 +11,8 @@ from bioimageio.spec.io_ import (
     serialize_raw_resource_description,
 )
 from bioimageio.spec.shared import yaml
-from tests.conftest import SKIP_ZENODO
+
+SKIP_ZENODO = True
 
 
 def run_subprocess(commands: Sequence[str], **kwargs) -> subprocess.CompletedProcess:
