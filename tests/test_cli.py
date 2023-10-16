@@ -3,7 +3,7 @@ import subprocess
 import zipfile
 from typing import Sequence
 
-import pytest.mark
+import pytest
 
 from bioimageio.spec.io_ import (
     load_raw_resource_description,

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import pytest.mark
+import pytest
 from marshmallow import ValidationError
 
 from bioimageio.spec.model.v0_4 import raw_nodes as raw_nodes_m04

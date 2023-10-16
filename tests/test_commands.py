@@ -1,7 +1,7 @@
 import zipfile
 from io import BytesIO, StringIO
 
-import pytest.mark
+import pytest
 
 from bioimageio.spec import (
     load_raw_resource_description,
