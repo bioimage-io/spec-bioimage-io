@@ -6,6 +6,9 @@ from marshmallow import ValidationError
 from bioimageio.spec.model.v0_4 import raw_nodes as raw_nodes_m04
 from bioimageio.spec.shared import yaml
 
+SKIP_ZENODO = True
+SKIP_ZENODO_REASON = "zenodo api changes"
+
 
 def test_model_rdf_is_valid_general_rdf(unet2d_nuclei_broad_latest):
     from bioimageio.spec.rdf.schema import RDF
@@ -216,6 +219,7 @@ def test_output_ref_shape_too_small(model_dict):
     }
 
 
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_model_has_parent_with_uri(model_dict):
     from bioimageio.spec.model.schema import Model
 
@@ -225,6 +229,7 @@ def test_model_has_parent_with_uri(model_dict):
     assert isinstance(valid_data, raw_nodes_m04.Model)
 
 
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_model_has_parent_with_id(model_dict):
     from bioimageio.spec.model.schema import Model
 
