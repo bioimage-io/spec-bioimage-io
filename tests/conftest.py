@@ -2,6 +2,8 @@ import pathlib
 
 import pytest
 
+SKIP_ZENODO = True  # skip tests relying on zenodo
+
 
 @pytest.fixture
 def unet2d_nuclei_broad_base_path():

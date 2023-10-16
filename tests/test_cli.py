@@ -3,12 +3,15 @@ import subprocess
 import zipfile
 from typing import Sequence
 
+import pytest.mark
+
 from bioimageio.spec.io_ import (
     load_raw_resource_description,
     save_raw_resource_description,
     serialize_raw_resource_description,
 )
 from bioimageio.spec.shared import yaml
+from tests.conftest import SKIP_ZENODO
 
 
 def run_subprocess(commands: Sequence[str], **kwargs) -> subprocess.CompletedProcess:
@@ -45,6 +48,7 @@ def test_cli_validate_model_url_wo_cache():
     assert ret.returncode == 0
 
 
+@pytest.mark.skipif(SKIP_ZENODO)
 def test_cli_validate_model_doi():
     ret = run_subprocess(["bioimageio", "validate", "10.5281/zenodo.5744489"])
     assert ret.returncode == 0
