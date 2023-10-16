@@ -12,6 +12,7 @@ from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
 
 SKIP_ZENODO = True
+SKIP_ZENODO_REASON = "zenodo api changes"
 
 
 def test_validate_dataset(dataset_rdf):
@@ -45,7 +46,7 @@ def test_validate_model_as_url():
     )["error"]
 
 
-@pytest.mark.skipif(SKIP_ZENODO)
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_validate_model_as_zenodo_sandbox_doi():
     from bioimageio.spec.commands import validate
 
@@ -53,7 +54,7 @@ def test_validate_model_as_zenodo_sandbox_doi():
     assert not validate(doi, update_format=False, update_format_inner=False)["error"]
 
 
-@pytest.mark.skipif(SKIP_ZENODO)
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_validate_model_as_zenodo_doi():
     from bioimageio.spec.commands import validate
 
@@ -72,7 +73,7 @@ def test_validate_model_as_bioimageio_full_version_id_partner():
     assert summary["status"] == "passed", summary["error"]
 
 
-@pytest.mark.skipif(SKIP_ZENODO)
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_validate_model_as_bioimageio_full_version_id_zenodo():
     from bioimageio.spec.commands import validate
 
@@ -89,7 +90,7 @@ def test_validate_model_as_bioimageio_resource_id_partner():
     assert summary["status"] == "passed", summary["error"]
 
 
-@pytest.mark.skipif(SKIP_ZENODO)
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_validate_model_as_bioimageio_resource_id_zenodo():
     from bioimageio.spec.commands import validate
 
