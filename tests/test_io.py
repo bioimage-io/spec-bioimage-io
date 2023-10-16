@@ -2,6 +2,9 @@ import pathlib
 
 from bioimageio.spec.shared import yaml
 
+SKIP_ZENODO = True
+SKIP_ZENODO_REASON = "zenodo api changes"
+
 
 def test_get_resource_package_content(unet2d_nuclei_broad_latest, unet2d_nuclei_broad_url):
     from bioimageio.spec import get_resource_package_content
@@ -13,6 +16,7 @@ def test_get_resource_package_content(unet2d_nuclei_broad_latest, unet2d_nuclei_
     assert local_keys == remote_keys
 
 
+@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_load_animal_nickname():
     from bioimageio.spec import load_raw_resource_description
     from bioimageio.spec.model.v0_4.raw_nodes import Model as Model04
