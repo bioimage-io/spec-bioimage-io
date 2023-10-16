@@ -1,5 +1,7 @@
 import pathlib
 
+import pytest
+
 from bioimageio.spec.shared import yaml
 
 SKIP_ZENODO = True
