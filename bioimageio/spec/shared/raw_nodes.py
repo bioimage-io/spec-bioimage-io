@@ -6,14 +6,13 @@ RDF <--schema--> raw nodes
 """
 import dataclasses
 import os
-
-import packaging.version
 import pathlib
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Sequence, Union
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
+import packaging.version
 from marshmallow import missing
 from marshmallow.utils import _Missing
 
@@ -72,9 +71,15 @@ class URI(RawNode):
                 return other
             else:
                 other = pathlib.PurePosixPath(other)
-                return dataclasses.replace(
-                    self, path=(pathlib.PurePosixPath(self.path) / other).as_posix(), uri_string=None
-                )
+                if (
+                    self.authority == "zenodo.org"
+                    and self.path.startswith("/api/records/")
+                    and self.path.endswith("/content")
+                ):
+                    new_path = (pathlib.PurePosixPath(self.path).parent / other / "content").as_posix()
+                else:
+                    new_path = (pathlib.PurePosixPath(self.path) / other).as_posix()
+                return dataclasses.replace(self, path=new_path, uri_string=None)
         elif isinstance(other, URI):
             return other
         else:
