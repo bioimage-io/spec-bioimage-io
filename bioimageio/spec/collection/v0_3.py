@@ -4,7 +4,7 @@ from pydantic import Field, TypeAdapter, field_validator
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.types import NonEmpty, RdfContent
+from bioimageio.spec._internal.types import NotEmpty, RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application02
@@ -70,12 +70,12 @@ class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io col
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
         context["collection_base_content"] = collection_base_content
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]]
+    collection: NotEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""
 
     @field_validator("collection")
     @classmethod
-    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]) -> NonEmpty[Tuple[CollectionEntry, ...]]:
+    def check_unique_ids(cls, value: NotEmpty[Tuple[CollectionEntry, ...]]) -> NotEmpty[Tuple[CollectionEntry, ...]]:
         v0_2.Collection.check_unique_ids_impl(value)
         return value
 

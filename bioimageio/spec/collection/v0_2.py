@@ -18,7 +18,7 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import NonEmpty, RdfContent, RelativeFilePath, ResourceId, YamlValue
+from bioimageio.spec._internal.types import NotEmpty, RdfContent, RelativeFilePath, ResourceId, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
@@ -120,17 +120,17 @@ class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io col
 
     type: Literal["collection"] = "collection"
 
-    collection: NonEmpty[Tuple[CollectionEntry, ...]]
+    collection: NotEmpty[Tuple[CollectionEntry, ...]]
     """Collection entries"""
 
     @field_validator("collection")
     @classmethod
-    def check_unique_ids(cls, value: NonEmpty[Tuple[CollectionEntry, ...]]) -> NonEmpty[Tuple[CollectionEntry, ...]]:
+    def check_unique_ids(cls, value: NotEmpty[Tuple[CollectionEntry, ...]]) -> NotEmpty[Tuple[CollectionEntry, ...]]:
         cls.check_unique_ids_impl(value)
         return value
 
     @staticmethod
-    def check_unique_ids_impl(value: NonEmpty[Tuple[CollectionEntryBase, ...]]):
+    def check_unique_ids_impl(value: NotEmpty[Tuple[CollectionEntryBase, ...]]):
         seen: Dict[str, int] = {}
         for i, v in enumerate(value):
             if v.id is None:

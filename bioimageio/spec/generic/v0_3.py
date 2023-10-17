@@ -13,7 +13,7 @@ from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
-    NonEmpty,
+    NotEmpty,
     RdfContent,
     ResourceId,
     Sha256,
@@ -55,7 +55,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     """The format version of this resource specification
     (not the `version` of the resource description)"""
 
-    name: Annotated[NonEmpty[str], MaxLen(128)]
+    name: Annotated[NotEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description"""
 
     description: Annotated[str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")]
@@ -89,7 +89,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: NonEmpty[Tuple[Author, ...]]
+    authors: NotEmpty[Tuple[Author, ...]]
     """The authors are the creators of the RDF and the primary points of contact."""
 
     attachments: Tuple[Attachment, ...] = ()
@@ -98,7 +98,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     badges: Tuple[Badge, ...] = ()
     """badges associated with this resource"""
 
-    cite: NonEmpty[Tuple[CiteEntry, ...]]
+    cite: NotEmpty[Tuple[CiteEntry, ...]]
     """citations"""
 
     config: Annotated[

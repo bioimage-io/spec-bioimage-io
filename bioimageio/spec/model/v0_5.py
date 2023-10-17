@@ -23,7 +23,7 @@ from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import IdentifierStr, LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import NonEmpty as NonEmpty
+from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import RdfContent as RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -306,7 +306,7 @@ OutputAxis = Annotated[
 AnyAxis = Union[InputAxis, OutputAxis]
 
 TVs = Union[
-    NonEmpty[Tuple[int, ...]], NonEmpty[Tuple[float, ...]], NonEmpty[Tuple[bool, ...]], NonEmpty[Tuple[str, ...]]
+    NotEmpty[Tuple[int, ...]], NotEmpty[Tuple[float, ...]], NotEmpty[Tuple[bool, ...]], NotEmpty[Tuple[str, ...]]
 ]
 
 
@@ -432,10 +432,10 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
     Invalid for scalar gains/offsets.
     """
 
-    gain: Union[float, NonEmpty[Tuple[float, ...]]] = 1.0
+    gain: Union[float, NotEmpty[Tuple[float, ...]]] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, NonEmpty[Tuple[float, ...]]] = 0.0
+    offset: Union[float, NotEmpty[Tuple[float, ...]]] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
@@ -470,12 +470,12 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     """Normalize with fixed, precomputed values for mean and variance.
     See `ZeroMeanUnitVariance`/`ZeroMeanUnitVarianceKwargs` for data dependent normalization."""
 
-    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
+    mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
     """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
     # todo: check if means match input axes (for mode 'fixed')
 
     std: Annotated[
-        Union[Annotated[float, Ge(1e-6)], NonEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]],
+        Union[Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]],
         Field(examples=[1.05, (0.1, 0.2, 0.3)]),
     ]
     """The standard deviation value(s) to normalize with. Size must match `mean` values."""
@@ -669,15 +669,15 @@ class TensorBase(Node, frozen=True):
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
-    data: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]] = IntervalOrRatioData()
+    data: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]] = IntervalOrRatioData()
     """Description of the tensor's data values, optionally per channel.
     If specified per channel, the data `type` needs to match across channels."""
 
     @field_validator("data", mode="after")
     @classmethod
     def check_data_type_across_channels(
-        cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]
-    ) -> Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]:
+        cls, value: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]
+    ) -> Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]:
         if not isinstance(value, tuple):
             return value
 
@@ -692,8 +692,8 @@ class TensorBase(Node, frozen=True):
     @field_validator("data", mode="after")
     @classmethod
     def check_data_matches_channelaxis(
-        cls, value: Union[TensorData, NonEmpty[Tuple[TensorData, ...]]], info: FieldValidationInfo
-    ) -> Union[TensorData, NonEmpty[Tuple[TensorData, ...]]]:
+        cls, value: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]], info: FieldValidationInfo
+    ) -> Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]:
         if not isinstance(value, tuple) or "axes" not in info.data:
             return value
 
@@ -718,7 +718,7 @@ class InputTensor(TensorBase, frozen=True):
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    axes: NonEmpty[Tuple[InputAxis, ...]]
+    axes: NotEmpty[Tuple[InputAxis, ...]]
 
     preprocessing: Tuple[Preprocessing, ...] = ()
     """Description of how this input should be preprocessed."""
@@ -949,7 +949,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
 
-    authors: NonEmpty[Tuple[Author, ...]]
+    authors: NotEmpty[Tuple[Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     badges: ClassVar[tuple] = ()  # type: ignore
@@ -969,7 +969,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]]
+    inputs: NotEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
@@ -1091,7 +1091,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]]
+    outputs: NotEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")

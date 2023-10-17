@@ -23,7 +23,7 @@ from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import LowerCaseIdentifierStr
-from bioimageio.spec._internal.types import NonEmpty as NonEmpty
+from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import RdfContent as RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
@@ -97,7 +97,7 @@ CustomCallable = Union[CallableFromFile, CallableFromDepencency]
 
 class Dependencies(StringNode):
     _pattern = r"^.+:.+$"
-    manager: Annotated[NonEmpty[str], Field(examples=["conda", "maven", "pip"])]
+    manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
     file: Annotated[FileSource, Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])]
@@ -338,10 +338,10 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
 class ParametrizedInputShape(Node, frozen=True):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
-    min: NonEmpty[Tuple[int, ...]]
+    min: NotEmpty[Tuple[int, ...]]
     """The minimum input shape"""
 
-    step: NonEmpty[Tuple[int, ...]]
+    step: NotEmpty[Tuple[int, ...]]
     """The minimum shape change"""
 
     def __len__(self) -> int:
@@ -359,14 +359,14 @@ class ImplicitOutputShape(Node, frozen=True):
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
-    reference_tensor: NonEmpty[str]
+    reference_tensor: NotEmpty[str]
     """Name of the reference tensor."""
 
-    scale: NonEmpty[Tuple[Union[float, None], ...]]
+    scale: NotEmpty[Tuple[Union[float, None], ...]]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: NonEmpty[Tuple[Union[int, Annotated[float, MultipleOf(0.5)]], ...]]
+    offset: NotEmpty[Tuple[Union[int, Annotated[float, MultipleOf(0.5)]], ...]]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -411,7 +411,7 @@ class TensorBase(Node, frozen=True):
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(FrozenDictNode[NonEmpty[str], Any], frozen=True):
+class ProcessingKwargs(FrozenDictNode[NotEmpty[str], Any], frozen=True):
     """base class for pre-/postprocessing key word arguments"""
 
 
@@ -502,12 +502,12 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     """The subset of axes to normalize jointly.
     For example `xy` to normalize the two image axes for 2d data jointly."""
 
-    mean: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
+    mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Annotated[Union[float, NonEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
+    std: Annotated[Union[float, NotEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
@@ -739,7 +739,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
 
-    authors: NonEmpty[Tuple[Author, ...]]
+    authors: NotEmpty[Tuple[Author, ...]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     badges: ClassVar[tuple] = ()  # type: ignore
@@ -759,7 +759,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NonEmpty[Tuple[InputTensor, ...]]
+    inputs: NotEmpty[Tuple[InputTensor, ...]]
     """Describes the input tensors expected by this model."""
 
     license: Annotated[
@@ -781,7 +781,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NonEmpty[Tuple[OutputTensor, ...]]
+    outputs: NotEmpty[Tuple[OutputTensor, ...]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
@@ -917,14 +917,14 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     sample_outputs: Tuple[FileSource, ...] = ()
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
+    test_inputs: NotEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NonEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
+    test_outputs: NotEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime

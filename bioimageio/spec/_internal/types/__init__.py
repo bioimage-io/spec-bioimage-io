@@ -27,14 +27,14 @@ T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
 
 # types to describe RDF as pydantic models
-NonEmpty = Annotated[S, annotated_types.MinLen(1)]  # todo: refactor to NotEmpty
+NotEmpty = Annotated[S, annotated_types.MinLen(1)]
 
 Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
 IdentifierStr = Annotated[  # allows to init child NewTypes with str
-    NonEmpty[str],
+    NotEmpty[str],
     AfterValidator(validate_identifier),
     AfterValidator(validate_is_not_keyword),
 ]
@@ -44,7 +44,7 @@ LowerCaseIdentifier = NewType("LowerCaseIdentifier", LowerCaseIdentifierStr)
 ResourceId = NewType(
     "ResourceId",
     Annotated[
-        NonEmpty[str],
+        NotEmpty[str],
         annotated_types.LowerCase,
         annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
     ],

@@ -13,7 +13,7 @@ from bioimageio.spec._internal.types import (
     Doi,
     FileSource,
     LicenseId,
-    NonEmpty,
+    NotEmpty,
     OrcidId,
     RdfContent,
     ResourceId,
@@ -152,7 +152,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    name: Annotated[NonEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
+    name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
     """A human-friendly name of the resource description"""
 
     description: str

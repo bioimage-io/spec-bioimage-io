@@ -37,7 +37,7 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.types import NonEmpty, RdfContent, YamlValue
+from bioimageio.spec._internal.types import NotEmpty, RdfContent, YamlValue
 from bioimageio.spec._internal.types.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
@@ -342,9 +342,9 @@ class FrozenDictNode(Node, FrozenDictBase[K, V], frozen=True):
         return self
 
 
-class ConfigNode(FrozenDictNode[NonEmpty[str], YamlValue], frozen=True):
+class ConfigNode(FrozenDictNode[NotEmpty[str], YamlValue], frozen=True):
     model_config = {**Node.model_config, "extra": "allow"}
 
 
-class Kwargs(FrozenDictNode[NonEmpty[str], YamlValue], frozen=True):
+class Kwargs(FrozenDictNode[NotEmpty[str], YamlValue], frozen=True):
     model_config = {**Node.model_config, "extra": "allow"}
