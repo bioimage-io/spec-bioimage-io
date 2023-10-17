@@ -65,6 +65,7 @@ You can find the latest `collection description` [here](https://github.com/bioim
 
 ## Linking resource items
 
+todo: outdated
 You can create links to connect resource items by adding another resource item id to the `links` field. For example, if you want to associate an applicaiton with a model, you can set the links field of the models like the following:
 
 ```yaml
@@ -81,10 +82,13 @@ model:
 
 ## 🖧 Hosting RDFs
 
+todo: outdated
 In order to make a resource description file (RDF) available on <https://bioimage.io>, you can use the [bioimage.io uploader](https://bioimage.io/#/upload/), which assists you in uploading it and any associated files to [Zenodo](https://zenodo.org/).
 Alternatively you can upload directly to [Zenodo](https://zenodo.org/). In this case keep in mind to create an `rdf.yaml` file and add the keyword `bioimage.io` to your zenodo record for our CI to discover it.
 
 ## 💁 Recommendations
+
+todo: outdated
 
 * For AI models, consider using the model-specific spec (i.e. [model description](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the generic description. Only fallback to the generic description if writing model specific RDF is not possible for some reason.
 * The RDF or package file name should not contain spaces or special characters, it should be concise, descriptive, in kebab case or camel case.
@@ -95,11 +99,13 @@ Alternatively you can upload directly to [Zenodo](https://zenodo.org/). In this 
 
 # ⌨ bioimageio command-line interface (CLI)
 
+todo: outdated
 The bioimage.io command line tool makes it easy to work with bioimage.io RDFs.
 A basic version of it, documented here, is provided by the [bioimageio.spec package](bioimageio-python-package), which is extended by the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package.
 
 ## 🧪 validate
 
+todo: outdated
 It is recommended to use this validator to verify your models when you write it manually or develop tools for generating RDF files.
 
 Use the `validate` command to check for formatting errors like missing or invalid values:
@@ -166,6 +172,16 @@ or
 ```console
 conda install -c conda-forge bioimageio.core
 ```
+
+## 🤝 How to contribute
+
+## ♥ Contributors
+
+<a href="https://github.com/bioimage-io/spec-bioimage-io/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=bioimage-io/spec-bioimage-io" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 
 ## Δ Changelog
 
