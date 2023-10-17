@@ -3,7 +3,15 @@ import warnings
 from copy import deepcopy
 from types import ModuleType
 
-from marshmallow import RAISE, ValidationError, missing as missing_, post_load, pre_dump, pre_load, validates_schema
+from marshmallow import (
+    RAISE,
+    ValidationError,
+    post_load,
+    pre_dump,
+    pre_load,
+    validates_schema,
+)
+from marshmallow import missing as missing_
 
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import field_validators, fields
@@ -15,6 +23,7 @@ from bioimageio.spec.shared.schema import (
     SharedProcessingSchema,
 )
 from bioimageio.spec.shared.utils import get_ref_url
+
 from . import raw_nodes
 
 Author = rdf.schema.Author
