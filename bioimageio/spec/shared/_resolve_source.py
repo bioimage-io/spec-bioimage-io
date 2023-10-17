@@ -106,8 +106,6 @@ def resolve_rdf_source(
             # source is bioimageio id or bioimageio nickname
             source = bioimageio_rdf_source
         elif re.fullmatch(DOI_REGEX, source):  # turn doi into url
-            import requests  # not available in pyodide
-
             zenodo_prefix = "10.5281/zenodo."
             zenodo_record_api = "https://zenodo.org/api/records"
             zenodo_sandbox_prefix = "10.5072/zenodo."
@@ -136,23 +134,7 @@ def resolve_rdf_source(
 
                     record_id = record_id.split("/")[-1]
 
-                response = requests.get(f"{zenodo_record_api}/{record_id}")
-                if not response.ok:
-                    raise RuntimeError(response.status_code)
-
-                zenodo_record = response.json()
-                for rdf_name in RDF_NAMES:
-                    for f in zenodo_record["files"]:
-                        if f["key"] == rdf_name:
-                            source = f["links"]["self"]
-                            break
-                    else:
-                        continue
-
-                    break
-                else:
-                    raise ValidationError(f"No RDF found; looked for {RDF_NAMES}")
-
+                source = f"{zenodo_record_api}/{record_id}/files/rdf.yaml/content"
             else:
                 # resolve doi
                 # todo: make sure the resolved url points to a rdf.yaml or a zipped package
