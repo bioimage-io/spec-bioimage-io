@@ -3,23 +3,49 @@ from copy import deepcopy
 from types import ModuleType
 
 import numpy
-from marshmallow import RAISE, ValidationError, missing, pre_load, validates, validates_schema
+from marshmallow import (
+    RAISE,
+    ValidationError,
+    missing,
+    pre_load,
+    validates,
+    validates_schema,
+)
 
 from bioimageio.spec.dataset.v0_2.schema import Dataset as _Dataset
 from bioimageio.spec.model.v0_3.schema import (
     KerasHdf5WeightsEntry as KerasHdf5WeightsEntry03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     OnnxWeightsEntry as OnnxWeightsEntry03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     Postprocessing as Postprocessing03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     Preprocessing as Preprocessing03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     TensorflowJsWeightsEntry as TensorflowJsWeightsEntry03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     TensorflowSavedModelBundleWeightsEntry as TensorflowSavedModelBundleWeightsEntry03,
-    _WeightsEntryBase as _WeightsEntryBase03,
+)
+from bioimageio.spec.model.v0_3.schema import (
     _common_sha256_hint,
+)
+from bioimageio.spec.model.v0_3.schema import (
+    _WeightsEntryBase as _WeightsEntryBase03,
 )
 from bioimageio.spec.rdf import v0_2 as rdf
 from bioimageio.spec.shared import LICENSES, field_validators, fields
 from bioimageio.spec.shared.common import get_args, get_args_flat
-from bioimageio.spec.shared.schema import ImplicitOutputShape, ParametrizedInputShape, SharedBioImageIOSchema
+from bioimageio.spec.shared.schema import (
+    ImplicitOutputShape,
+    ParametrizedInputShape,
+    SharedBioImageIOSchema,
+)
+
 from . import raw_nodes
 
 
@@ -356,14 +382,7 @@ config:
     documentation = fields.Union(
         [
             fields.URL(),
-            fields.Path(
-                validate=field_validators.Attribute(
-                    "suffix",
-                    field_validators.Equal(
-                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
-                    ),
-                )
-            ),
+            fields.Path(),
         ],
         required=True,
         bioimageio_description="Relative path or URL to file with additional documentation in markdown. "
