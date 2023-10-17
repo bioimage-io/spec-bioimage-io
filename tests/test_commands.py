@@ -11,7 +11,7 @@ from bioimageio.spec import (
 from bioimageio.spec.model import format_version, raw_nodes
 from bioimageio.spec.shared import yaml
 
-SKIP_ZENODO = True
+SKIP_ZENODO = False
 SKIP_ZENODO_REASON = "zenodo api changes"
 
 
