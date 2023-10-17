@@ -512,14 +512,7 @@ _optional*_ with an asterisk indicates the field is optional depending on the va
     documentation = fields.Union(
         [
             fields.URL(),
-            fields.Path(
-                validate=field_validators.Attribute(
-                    "suffix",
-                    field_validators.Equal(
-                        ".md", error="{!r} is invalid; expected markdown file with '.md' extension."
-                    ),
-                )
-            ),
+            fields.Path(),
         ],
         required=True,
         bioimageio_description="Relative path to file with additional documentation in markdown. This means: 1) only "

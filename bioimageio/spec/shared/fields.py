@@ -1,13 +1,14 @@
 """fields to be used in the versioned schemas (may return shared raw nodes on `deserialize`"""
 import datetime
-import packaging.version
 import logging
 import pathlib
 import typing
 
 import marshmallow_union
 import numpy
-from marshmallow import Schema, ValidationError, fields as marshmallow_fields, missing
+import packaging.version
+from marshmallow import Schema, ValidationError, missing
+from marshmallow import fields as marshmallow_fields
 
 from . import field_validators, raw_nodes
 from .utils._docs import resolve_bioimageio_descrcription
@@ -361,14 +362,7 @@ class ImportableSource(String):
             source_file_field = Union(
                 [
                     URL(),
-                    Path(
-                        validate=field_validators.Attribute(
-                            "suffix",
-                            field_validators.Equal(
-                                ".py", error="{!r} is invalid; expected python source file with '.py' extension."
-                            ),
-                        )
-                    ),
+                    Path(),
                 ]
             )
             return raw_nodes.ImportableSourceFile(
