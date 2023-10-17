@@ -87,8 +87,13 @@ class URI(RawNode):
 
     @property
     def parent(self):
-        path_parent = pathlib.PurePosixPath(self.path).parent.as_posix()
-        return dataclasses.replace(self, path=path_parent, uri_string=None)
+        path = pathlib.PurePosixPath(self.path)
+        if self.authority == "zenodo.org" and self.path.startswith("/api/records/") and self.path.endswith("/content"):
+            parent_path = (path.parent.parent / "content").as_posix()
+        else:
+            parent_path = path.parent.as_posix()
+
+        return dataclasses.replace(self, path=parent_path, uri_string=None)
 
     def __post_init__(self):
         uri_string = self.uri_string  # should be InitVar, see comment at definition above

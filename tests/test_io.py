@@ -4,7 +4,7 @@ import pytest
 
 from bioimageio.spec.shared import yaml
 
-SKIP_ZENODO = True
+SKIP_ZENODO = False
 SKIP_ZENODO_REASON = "zenodo api changes"
 
 

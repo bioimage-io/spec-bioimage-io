@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from bioimageio.spec.model.v0_4 import raw_nodes as raw_nodes_m04
 from bioimageio.spec.shared import yaml
 
-SKIP_ZENODO = True
+SKIP_ZENODO = False
 SKIP_ZENODO_REASON = "zenodo api changes"
 
 
