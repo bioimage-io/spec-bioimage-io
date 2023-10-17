@@ -47,14 +47,6 @@ def test_validate_model_as_url():
 
 
 @pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
-def test_validate_model_as_zenodo_sandbox_doi():
-    from bioimageio.spec.commands import validate
-
-    doi = "10.5281/zenodo.5744489"
-    assert not validate(doi, update_format=False, update_format_inner=False)["error"]
-
-
-@pytest.mark.skipif(SKIP_ZENODO, reason=SKIP_ZENODO_REASON)
 def test_validate_model_as_zenodo_doi():
     from bioimageio.spec.commands import validate
 
