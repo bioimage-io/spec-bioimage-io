@@ -94,6 +94,6 @@ jobs:
         create-args: >-
           boa
     - name: linux conda build
-      shell: bash -l {0}
       run: |
         conda mambabuild -c conda-forge conda-recipe
+      shell: bash -l {0}

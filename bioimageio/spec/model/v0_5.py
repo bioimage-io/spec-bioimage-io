@@ -893,31 +893,6 @@ class Weights(Node, frozen=True):
 
         return self
 
-    def get(self, *priority_order: WeightsFormat):
-        if not priority_order:
-            priority_order = (
-                "pytorch_state_dict",
-                "onnx",
-                "torchscript",
-                "keras_hdf5",
-                "tensorflow_saved_model_bundle",
-                "tensorflow_js",
-            )
-
-        d = dict(self)
-        for p in priority_order:
-            if p not in d:
-                warnings.warn(f"Encountered unknown weights format {p}")
-
-            weights = d.get(p)
-            if weights is not None:
-                return weights
-
-        raise ValueError(
-            f"None of the preferred weights formats ({priority_order}) is available "
-            f"({set(k for k, v in d.items() if v is not None)})."
-        )
-
 
 class ModelRdf(Node, frozen=True):
     rdf_source: FileSource
