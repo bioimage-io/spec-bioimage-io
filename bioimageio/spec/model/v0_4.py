@@ -684,14 +684,6 @@ class RunMode(Node, frozen=True):
     """Run mode specific key word arguments"""
 
 
-class ModelRdf(Node, frozen=True):
-    rdf_source: Annotated[FileSource, Field(alias="uri")]
-    """URL or relative path of a model RDF"""
-
-    sha256: Sha256
-    """SHA256 checksum of the model RDF specified under `rdf_source`."""
-
-
 class LinkedModel(LinkedResource, frozen=True):
     """Reference to a bioimage.io model."""
 
@@ -876,7 +868,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[Union[LinkedModel, ModelRdf]] = None
+    parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
     run_mode: Optional[RunMode] = None

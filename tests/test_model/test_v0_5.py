@@ -18,7 +18,6 @@ from bioimageio.spec.model.v0_5 import (
     InputTensor,
     IntervalOrRatioData,
     Model,
-    ModelRdf,
     OnnxWeights,
     OutputTensor,
     SpaceInputAxis,
@@ -28,28 +27,6 @@ from bioimageio.spec.model.v0_5 import (
     Weights,
 )
 from tests.utils import check_node, check_type
-
-
-def test_model_rdf_file_ref():
-    check_node(
-        ModelRdf,
-        dict(rdf_source=Path(__file__).name, sha256="s" * 64),
-        expected_dump_json=dict(rdf_source=Path(__file__).name, sha256="s" * 64),
-        expected_dump_python=dict(rdf_source=RelativeFilePath(Path(__file__).name), sha256="s" * 64),
-        context=ValidationContext(root=Path(__file__).parent),
-    )
-
-
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        dict(uri="https://example.com", sha256="s" * 64),
-        dict(id="lala", uri="https://example.com", sha256="s" * 64),
-        dict(url="https://example.com", sha256="s" * 64),
-    ],
-)
-def test_model_rdf_invalid(kwargs: Dict[str, Any]):
-    check_node(ModelRdf, kwargs, is_invalid=True)
 
 
 @pytest.mark.parametrize(
@@ -317,19 +294,6 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"][0]["halo"] = 999
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
-
-
-def test_model_parent(model_data: Dict[str, Any]):
-    rdf_source = "https://doi.org/10.5281/zenodo.5744489"
-    model_data["parent"] = dict(rdf_source=rdf_source, sha256="s" * 64)
-
-    model = load_description(model_data)
-    summary = model.validation_summaries[0]
-    assert summary.status == "passed", summary.format()
-
-    assert isinstance(model, Model)
-    assert isinstance(model.parent, ModelRdf)
-    assert str(model.parent.rdf_source) == rdf_source
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):

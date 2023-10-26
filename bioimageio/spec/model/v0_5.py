@@ -892,15 +892,6 @@ class Weights(Node, frozen=True):
 
         return self
 
-
-class ModelRdf(Node, frozen=True):
-    rdf_source: FileSource
-    """URL or relative path to a model RDF"""
-
-    sha256: Sha256
-    """SHA256 checksum of the model RDF specified under `rdf_source`."""
-
-
 # def get_default_partial_inputs():
 #     return (
 #         InputTensor(axes=(BatchAxis(),), test_tensor=HttpUrl("https://example.com/test.npy")).model_dump(
@@ -1154,7 +1145,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[Union[LinkedModel, ModelRdf]] = None
+    parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
     run_mode: Annotated[
