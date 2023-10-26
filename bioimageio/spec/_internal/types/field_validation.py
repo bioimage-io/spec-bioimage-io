@@ -142,8 +142,11 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
     if isinstance(value, AnyUrl):
         if value.path is None or "." not in value.path:
             suffix = ""
+        elif value.host == "zenodo.org" and value.path.startswith("/api/records/") and value.path.endswith("/content"):
+            suffix = "." + value.path[: -len("/content")].split(".")[-1]
         else:
             suffix = "." + value.path.split(".")[-1]
+
     elif isinstance(value, PurePath):
         suffix = value.suffixes[-1]
     else:
