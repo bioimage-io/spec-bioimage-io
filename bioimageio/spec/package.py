@@ -76,10 +76,14 @@ def get_resource_package_content(
     """
     if weights_priority_order is not None and isinstance(rd, (model.v0_4.Model, model.v0_5.Model)):
         # select single weights entry
-        weights_entry = rd.weights.get(*weights_priority_order)
-        if weights_entry is None:
+        for wf in weights_priority_order:
+            w = getattr(rd.weights, wf, None)
+            if w is not None:
+                break
+        else:
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
-        rd = rd.model_copy(update=dict(weights={weights_entry.type: weights_entry}))
+
+        rd = rd.model_copy(update=dict(weights={wf: w}))
 
     package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
     _fill_resource_package_content(package_content, rd, node_loc=())
