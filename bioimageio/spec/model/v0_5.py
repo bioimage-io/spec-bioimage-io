@@ -812,11 +812,6 @@ class WeightsEntryBase(Node, frozen=True):
     ] = None
     """SHA256 checksum of the source file"""
 
-    attachments: Annotated[
-        Union[Attachments, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
-    ] = None
-    """Attachments that are specific to this weights entry."""
-
     authors: Union[Tuple[Author, ...], None] = None
     """Authors:
     If this is the initial weights entry (in other words: it does not have a `parent` field):
@@ -948,6 +943,7 @@ class Weights(Node, frozen=True):
                 raise ValueError(f"`weights.{wtype}.parent={entry.parent} not in specified weight formats: {entries}")
 
         return self
+
 
 # def get_default_partial_inputs():
 #     return (
