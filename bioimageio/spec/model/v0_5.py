@@ -1,4 +1,5 @@
-from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Set, Tuple, Union
+import collections.abc
+from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Sequence, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from pydantic import (
@@ -204,7 +205,6 @@ class BatchAxis(AxisBase, frozen=True):
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
 
 
-CHANNEL_NAMES_PLACEHOLDER = ("channel1", "channel2", "etc")
 ChannelName = Annotated[IdentifierStr, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
 
 
@@ -214,19 +214,22 @@ class ChannelAxis(AxisBase, frozen=True):
     channel_names: Union[Tuple[ChannelName, ...], ChannelName] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference, Literal["#channel_names"]] = "#channel_names"
 
-    def model_post_init(self, __context: Any):
-        self.model_config["frozen"] = False
-        if self.size == "#channel_names":
-            self.size = len(self.channel_names)  # type: ignore
-            self.__pydantic_fields_set__.remove("size")
+    @model_validator(mode="before")
+    @classmethod
+    def set_size_or_channel_names(cls, data: Dict[str, Any]):
+        channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
+        size = data.get("size", "#channel_names")
+        if (
+            size == "#channel_names"
+            and not isinstance(channel_names, str)
+            and isinstance(channel_names, collections.abc.Sequence)
+        ):
+            data["size"] = len(channel_names)
 
-        if self.channel_names == CHANNEL_NAMES_PLACEHOLDER:
-            assert isinstance(self.size, int)
-            self.channel_names = tuple(f"channel{i}" for i in range(1, self.size + 1))  # type: ignore
-            self.__pydantic_fields_set__.remove("channel_names")
+        if isinstance(channel_names, str) and "{i}" in channel_names and isinstance(size, int):
+            data["channel_names"] = tuple(channel_names.format(i=i) for i in range(1, size + 1))
 
-        self.model_config["frozen"] = True
-        return super().model_post_init(__context)
+        return data
 
     @model_validator(mode="after")
     def validate_size_is_known(self):
