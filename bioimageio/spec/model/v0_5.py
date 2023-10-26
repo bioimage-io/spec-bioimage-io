@@ -1,4 +1,3 @@
-import warnings
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
@@ -658,14 +657,14 @@ class TensorBase(Node, frozen=True):
         return axes
 
     test_tensor: FileSource
-    """An example tensor to use for testing.
+    """∈📦 An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
     sample_tensor: Optional[FileSource] = None
-    """A sample tensor to illustrate a possible input/output for the model,
+    """∈📦 A sample tensor to illustrate a possible input/output for the model,
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
