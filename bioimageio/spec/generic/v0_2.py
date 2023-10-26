@@ -49,7 +49,7 @@ class _Person(Node, frozen=True):
     @classmethod
     def convert_name(cls, name: Any, info: FieldValidationInfo):
         ctxt = get_internal_validation_context(info.context)
-        if "original_format" in ctxt and ctxt["original_format"] < (0, 2, 3) and isinstance(name, str):
+        if "original_format" in ctxt and ctxt["original_format"] < Version("0.2.3") and isinstance(name, str):
             name = name.replace("/", "").replace("\\", "")
 
         return name

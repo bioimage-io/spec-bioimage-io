@@ -39,7 +39,7 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.types import NotEmpty, RdfContent, YamlValue
+from bioimageio.spec._internal.types import NotEmpty, RdfContent, Version, YamlValue
 from bioimageio.spec._internal.types.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
@@ -50,7 +50,7 @@ V = TypeVar("V")
 
 if sys.version_info < (3, 9):
 
-    class FrozenDictBase(collections.abc.Mapping, Generic[K, V]):
+    class FrozenDictBase(collections.abc.Mapping, Generic[K, V]):  # pyright: ignore[reportMissingTypeArgument]
         pass
 
 else:
@@ -209,8 +209,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
-            context["original_format"] = cast(Tuple[int, int, int], tuple(map(int, original_format.split("."))))
-            assert len(context["original_format"]) == 3
+            context["original_format"] = Version(original_format)
 
     @classmethod
     def model_validate(
@@ -337,7 +336,7 @@ class FrozenDictNode(Node, FrozenDictBase[K, V], frozen=True):
     def __contains__(self, key: Any):
         return key in self.model_fields_set
 
-    def get(self, item: Any, default: D = None) -> Union[V, D]:  # type: ignore
+    def get(self, item: Any, default: D = None) -> Union[V, D]:
         return getattr(self, item, default)
 
     @model_validator(mode="after")

@@ -5,6 +5,7 @@ from pydantic import AnyUrl, BaseModel, DirectoryPath
 from typing_extensions import NotRequired, TypedDict
 
 from bioimageio.spec._internal.constants import ERROR, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.types._version import Version
 
 WarningSeverity = Literal[20, 30, 35]
 WarningLevel = Literal[WarningSeverity, 50]
@@ -32,7 +33,7 @@ class InternalValidationContext(TypedDict):
     warning_level: WarningLevel
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
-    original_format: NotRequired[Tuple[int, int, int]]
+    original_format: NotRequired[Version]
     """original format version of the validation data (set dynamically during validation of resource descriptions)."""
 
     collection_base_content: NotRequired[Dict[str, Any]]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Sequence, Tuple, Union
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
