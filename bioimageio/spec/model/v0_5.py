@@ -47,7 +47,6 @@ from bioimageio.spec.model.v0_4 import KnownRunMode as KnownRunMode
 from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
-from bioimageio.spec.model.v0_4 import WeightsEntryBase as WeightsEntryBase
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
 
@@ -799,6 +798,48 @@ class ArchitectureFromDependency(Node, frozen=True):
 Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
+class WeightsEntryBase(Node, frozen=True):
+    type: ClassVar[WeightsFormat]
+    weights_format_name: ClassVar[str]  # human readable
+
+    source: FileSource
+    """∈📦 The weights file."""
+
+    sha256: Annotated[
+        Optional[Sha256],
+        warn(Sha256, "Missing SHA-256 hash value."),
+        Field(description="SHA256 checksum of the source file\n" + SHA256_HINT),
+    ] = None
+    """SHA256 checksum of the source file"""
+
+    attachments: Annotated[
+        Union[Attachments, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
+    ] = None
+    """Attachments that are specific to this weights entry."""
+
+    authors: Union[Tuple[Author, ...], None] = None
+    """Authors:
+    If this is the initial weights entry (in other words: it does not have a `parent` field):
+        the person(s) that have trained this model.
+    If this is a child weight (it has a `parent` field):
+        the person(s) who have converted the weights to this format.
+    """
+
+    parent: Annotated[Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])] = None
+    """The source weights these weights were converted from.
+    For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
+    The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
+    All weight entries except one (the initial set of weights resulting from training the model),
+    need to have this field."""
+
+    @model_validator(mode="after")
+    def check_parent_is_not_self(self) -> Self:
+        if self.type == self.parent:
+            raise ValueError("Weights entry can't be it's own parent.")
+
+        return self
+
+
 class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
@@ -813,11 +854,27 @@ class OnnxWeights(WeightsEntryBase, frozen=True):
     """ONNX opset version"""
 
 
+class Dependencies(StringNode):
+    _pattern = r"^.+:.+$"
+    manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
+    """Dependency manager"""
+
+    file: Annotated[FileSource, Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])]
+    """∈📦 Dependency file"""
+
+    @classmethod
+    def _get_data(cls, valid_string_data: str):
+        manager, *file_parts = valid_string_data.split(":")
+        return dict(manager=manager, file=":".join(file_parts))
+
+
 class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
-
+    dependencies: Optional[Dependencies] = None
+    """Custom dependencies beyond pytorch.
+    Should include pytorch and any version pinning has to be compatible with `pytorch_version`."""
     pytorch_version: Version
     """Version of the PyTorch library used.
     If `depencencies` is specified it has to include pytorch and any version pinning has to be compatible."""
