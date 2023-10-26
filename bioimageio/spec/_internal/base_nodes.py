@@ -26,6 +26,8 @@ from typing import (
 
 import pydantic
 from pydantic import (
+    AnyUrl,
+    DirectoryPath,
     Field,
     GetCoreSchemaHandler,
     StringConstraints,
@@ -163,6 +165,10 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
         return self._validation_summaries
+
+    @property
+    def root(self) -> Union[AnyUrl, DirectoryPath]:
+        return self._internal_validation_context["root"]
 
     @classmethod
     def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
