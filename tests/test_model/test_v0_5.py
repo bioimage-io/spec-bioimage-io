@@ -1,13 +1,10 @@
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, Union
 
 import pytest
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal.types import RelativeFilePath
-from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.description import load_description, validate_format
+from bioimageio.spec.description import validate_format
 from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
     AxisId,
