@@ -160,11 +160,11 @@ class WeightsEntryBase(Node, frozen=True):
     """Attachments that are specific to this weights entry."""
 
     authors: Union[Tuple[Author, ...], None] = None
-    """Authors:
-    If this is the initial weights entry (in other words: it does not have a `parent` field):
-        the person(s) that have trained this model.
-    If this is a child weight (it has a `parent` field):
-        the person(s) who have converted the weights to this format.
+    """Authors
+    Either the person(s) that have trained this model resulting in the original weights file.
+        (If this is the initial weights entry, i.e. it does not have a `parent`)
+    Or the person(s) who have converted the weights to this weights format.
+        (If this is a child weight, i.e. it has a `parent` field)
     """
 
     dependencies: Annotated[
