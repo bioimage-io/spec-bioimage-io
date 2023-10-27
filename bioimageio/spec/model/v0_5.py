@@ -880,12 +880,13 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
-    dependencies: Optional[Dependencies] = None
-    """Custom dependencies beyond pytorch.
-    Should include pytorch and any version pinning has to be compatible with `pytorch_version`."""
     pytorch_version: Version
     """Version of the PyTorch library used.
     If `depencencies` is specified it has to include pytorch and any version pinning has to be compatible."""
+
+    dependencies: Optional[Dependencies] = None
+    """Custom dependencies beyond pytorch.
+    Should include pytorch and any version pinning has to be compatible with `pytorch_version`."""
 
 
 class TensorflowJsWeights(WeightsEntryBase, frozen=True):
@@ -904,6 +905,10 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
+
+    dependencies: Optional[Dependencies] = None
+    """Custom dependencies beyond tensorflow.
+    Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
     source: Union[HttpUrl, RelativeFilePath]
     """∈📦 The multi-file weights.

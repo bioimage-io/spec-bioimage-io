@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple, Union
+from typing import Any, Dict, Literal, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, DirectoryPath
 from typing_extensions import NotRequired, TypedDict
