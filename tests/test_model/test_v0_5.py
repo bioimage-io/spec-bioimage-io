@@ -124,8 +124,8 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             "description": "Input 1",
             "data": {"type": "float32"},
             "axes": [
-                dict(type="space", name="x", size=10),
-                dict(type="space", name="y", size=11),
+                dict(type="space", id="x", size=10),
+                dict(type="space", id="y", size=11),
                 dict(type="channel", channel_names=tuple("abc")),
             ],
             "preprocessing": [
@@ -155,7 +155,7 @@ def test_batch_axis(kwargs: Dict[str, Any]):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"type": "space", "name": "x", "size": 10},
+        {"type": "space", "id": "x", "size": 10},
         SpaceInputAxis(id=AxisId("x"), size=10),
         {"type": "batch"},
     ],
@@ -274,17 +274,17 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.x"}, "halo": 2}
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.x"}, "halo": 2}
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
     # input_1.x -> input_1.z
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.z"}, "halo": 2}
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.z"}, "halo": 2}
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 
 
 def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "name": "x", "size": {"reference": "input_1.x"}, "halo": 2}
+    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.x"}, "halo": 2}
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 
@@ -301,9 +301,9 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"] = [
-        {"type": "space", "name": "x", "size": {"reference": "input_1.x"}},
-        {"type": "space", "name": "y", "size": {"reference": "input_1.y"}},
-        {"type": "space", "name": "z", "size": 7},
+        {"type": "space", "id": "x", "size": {"reference": "input_1.x"}},
+        {"type": "space", "id": "y", "size": {"reference": "input_1.y"}},
+        {"type": "space", "id": "z", "size": 7},
         {"type": "channel", "size": {"reference": "input_1.channel"}},
     ]
 

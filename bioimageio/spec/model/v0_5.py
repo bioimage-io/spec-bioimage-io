@@ -193,7 +193,7 @@ class AxisBase(NodeWithExplicitlySetFields, frozen=True):
             "name" in data
             and "id" not in data
             and "original_format" in context
-            and context["original_format"].release[:2] == (0, 4)
+            and context["original_format"].release[:2] <= (0, 4)
         ):
             data["id"] = data.pop("name")
 

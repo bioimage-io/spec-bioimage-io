@@ -40,11 +40,12 @@ inputs:
       - type: batch
       - type: channel
         channel_names: [raw_intensity]
+        size: 1
       - type: space # todo: scale/unit
-        name: y
+        id: y
         size: 512
       - type: space
-        name: x
+        id: x
         size: 512
     test_tensor: test_input.npy
     sample_tensor: test_input.npy
@@ -66,13 +67,14 @@ outputs:
       - type: batch
       - type: channel
         channel_names: [probability]
+        size: 1
       - type: space
-        name: y
+        id: y
         size: raw.y
         halo: 32
       - type: space
         size: raw.x
-        name: x
+        id: x
         halo: 32
     test_tensor: test_output.npy
     sample_tensor: test_output.npy
