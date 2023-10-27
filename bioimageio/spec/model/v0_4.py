@@ -870,6 +870,15 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
     parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
+    @field_validator("parent", mode="before")
+    @classmethod
+    def ignore_url_parent(cls, parent: Any):
+        if isinstance(parent, dict):
+            return None
+
+        else:
+            return parent
+
     run_mode: Optional[RunMode] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.

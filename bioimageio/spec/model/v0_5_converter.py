@@ -32,8 +32,8 @@ def _convert_model_from_v0_4_to_0_5_0(data: RdfContent, context: InternalValidat
     _convert_weights(data)
     _ = data.pop("download_url", None)
 
-    if (p := data.get("parent")) and isinstance(p, dict) and "uri" in p:
-        p["rdf_source"] = p.pop("uri")
+    if isinstance(data.get("parent"), dict):
+        _ = data.pop("parent")
 
     data["format_version"] = "0.5.0"
 
