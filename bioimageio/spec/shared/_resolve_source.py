@@ -424,7 +424,7 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
     elif BIOIMAGEIO_USE_CACHE:
         # todo: proper caching
         if uri.authority == "zenodo.org" and uri.path.startswith("/api/records/") and uri.path.endswith("/content"):
-            p = uri.path[: -len("/content")].stipr("/")
+            p = uri.path[: -len("/content")].strip("/")
         else:
             p = uri.path.strip("/")
 
