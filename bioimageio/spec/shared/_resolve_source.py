@@ -423,7 +423,12 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
         local_path = pathlib.Path(output)
     elif BIOIMAGEIO_USE_CACHE:
         # todo: proper caching
-        local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / uri.path.strip("/") / uri.query
+        if uri.authority == "zenodo.org" and uri.path.startswith("/api/records/") and uri.path.endswith("/content"):
+            p = uri.path[: -len("/content")]
+        else:
+            p = uri.path.strip("/")
+
+        local_path = BIOIMAGEIO_CACHE_PATH / uri.scheme / uri.authority / p / uri.query
     else:
         tmp_dir = TemporaryDirectory()
         no_cache_tmp_list.append(tmp_dir)  # keep temporary file until process ends
@@ -462,9 +467,9 @@ def _download_url(uri: raw_nodes.URI, output: typing.Optional[os.PathLike] = Non
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024  # 1 Kibibyte
             if pbar:
-                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+                t = pbar(total=total_size, unit="iB", unit_scale=True, desc=local_path.name)
             else:
-                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=uri.path.split("/")[-1])
+                t = tqdm(total=total_size, unit="iB", unit_scale=True, desc=local_path.name)
             tmp_path = local_path.with_suffix(f"{local_path.suffix}.part")
             with tmp_path.open("wb") as f:
                 for data in r.iter_content(block_size):
