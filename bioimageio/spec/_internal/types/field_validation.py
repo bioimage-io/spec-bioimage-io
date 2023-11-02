@@ -15,7 +15,7 @@ from pydantic_core.core_schema import CoreSchema, no_info_after_validator_functi
 
 from bioimageio.spec._internal.constants import SLOTS
 
-from ._relative_path import FileSource, RelativePath
+from ._file_source import FileSource, RelativePath
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)

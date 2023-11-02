@@ -8,10 +8,10 @@ from pydantic import StringConstraints
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
+from bioimageio.spec._internal.types._file_source import FileSource as FileSource
+from bioimageio.spec._internal.types._file_source import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types._generated_spdx_license_type import LicenseId as LicenseId
-from bioimageio.spec._internal.types._relative_path import FileSource as FileSource
-from bioimageio.spec._internal.types._relative_path import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types._version import Version as Version
 from bioimageio.spec._internal.types.field_validation import (
     AfterValidator,

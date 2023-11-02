@@ -5,16 +5,26 @@ from typing import Any
 import pytest
 
 from bioimageio.spec._internal.types import Datetime, SiUnit
-from bioimageio.spec._internal.types.field_validation import RelativePath
+from bioimageio.spec._internal.types._file_source import RelativePath
 from tests.utils import check_type
 
 
-def test_relative_path():
-    p = RelativePath(__file__)
-    p2 = RelativePath(Path(__file__))
+@pytest.mark.parametrize("path", ["a.test", "there/b", "./here/or/there/c"])
+def test_relative_path(path: str):
+    p = RelativePath(path)
+    p2 = RelativePath(Path(path))
     assert p == p2
-    p3 = RelativePath(Path(__file__).as_posix())
+    p3 = RelativePath(Path(path).as_posix())
     assert p == p3
+
+    with pytest.raises(ValueError):
+        _ = RelativePath(Path(path).absolute())
+
+    with pytest.raises(ValueError):
+        _ = RelativePath(str(Path(path).absolute()))
+
+    with pytest.raises(ValueError):
+        _ = RelativePath(Path(path).absolute().as_posix())
 
 
 @pytest.mark.parametrize("value", ["lx·s", "kg/m^2·s^-2"])

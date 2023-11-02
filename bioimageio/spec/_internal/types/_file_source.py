@@ -5,8 +5,17 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Union
 from urllib.parse import urljoin
 
-from pydantic import AnyUrl, DirectoryPath, FilePath, GetCoreSchemaHandler, HttpUrl, ValidationInfo
+from annotated_types import Predicate
+from pydantic import (
+    AnyUrl,
+    DirectoryPath,
+    FilePath,
+    GetCoreSchemaHandler,
+    HttpUrl,
+    ValidationInfo,
+)
 from pydantic_core import core_schema
+from typing_extensions import Annotated
 
 
 class RelativePath:
@@ -14,13 +23,16 @@ class RelativePath:
 
     def __init__(self, path: Union[str, Path, RelativePath]) -> None:
         super().__init__()
-        self.path = (
-            path.path
-            if isinstance(path, RelativePath)
-            else PurePosixPath(path.as_posix())
-            if isinstance(path, Path)
-            else PurePosixPath(Path(path).as_posix())
-        )
+        if isinstance(path, RelativePath):
+            self.path = path.path
+        else:
+            if not isinstance(path, Path):
+                path = Path(path)
+
+            if path.is_absolute():
+                raise ValueError(f"{path} is an absolute path.")
+
+            self.path = PurePosixPath(path.as_posix())
 
     @property
     def __members(self):
@@ -68,6 +80,9 @@ class RelativePath:
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
         ret = cls(value)
+        if ret.path.is_absolute():
+            raise ValueError(f"{value} is an absolute path.")
+
         root = (info.context or {}).get("root")
         if root is not None:
             ret._check_exists(root)
@@ -87,4 +102,6 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{p} does not point to an existing directory")
 
 
-FileSource = Union[HttpUrl, RelativeFilePath]  # todo: move to types/__init__
+AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
+
+FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
