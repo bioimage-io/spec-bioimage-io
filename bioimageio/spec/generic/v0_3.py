@@ -32,20 +32,20 @@ from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
 
-class Attachment(Node, frozen=True):
+class Attachment(Node):
     source: FileSource
     """∈📦 """
     sha256: Annotated[Optional[Sha256], warn(Sha256, "Missing SHA-256 hash value.")] = None
 
 
-class LinkedResource(Node, frozen=True):
+class LinkedResource(Node
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
+class GenericBaseNoSource(ResourceDescriptionBase ):
     """GenericBaseNoFormatVersion without a source field
 
     (because `bioimageio.spec.model.v0_5.ModelDescription has no source field)
@@ -230,14 +230,14 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
 
-class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
+class GenericBaseNoFormatVersion(GenericBaseNoSource ):
     """GenericBase without a format version"""
 
     source: Optional[FileSource] = None
     """The primary source of the resource"""
 
 
-class GenericBase(GenericBaseNoFormatVersion, frozen=True, extra="ignore"):
+class GenericBase(GenericBaseNoFormatVersion , extra="ignore"):
     format_version: Literal["0.3.0"] = "0.3.0"
 
     @classmethod
@@ -247,7 +247,7 @@ class GenericBase(GenericBaseNoFormatVersion, frozen=True, extra="ignore"):
         convert_from_older_format(data, context)
 
 
-class Generic(GenericBase, frozen=True, title="bioimage.io generic specification"):
+class Generic(GenericBase , title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

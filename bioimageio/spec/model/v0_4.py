@@ -113,7 +113,7 @@ WeightsFormat = Literal[
 ]
 
 
-class Weights(Node, frozen=True):
+class Weights(Node):
     keras_hdf5: Optional[KerasHdf5Weights] = None
     onnx: Optional[OnnxWeights] = None
     pytorch_state_dict: Optional[PytorchStateDictWeights] = None
@@ -139,7 +139,7 @@ class Weights(Node, frozen=True):
         return self
 
 
-class WeightsEntryBase(Node, frozen=True):
+class WeightsEntryBase(Node):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -193,7 +193,7 @@ class WeightsEntryBase(Node, frozen=True):
         return self
 
 
-class KerasHdf5Weights(WeightsEntryBase, frozen=True):
+class KerasHdf5Weights(WeightsEntryBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[
@@ -207,7 +207,7 @@ class KerasHdf5Weights(WeightsEntryBase, frozen=True):
     """TensorFlow version used to create these weights"""
 
 
-class OnnxWeights(WeightsEntryBase, frozen=True):
+class OnnxWeights(WeightsEntryBase ):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[
@@ -222,7 +222,7 @@ class OnnxWeights(WeightsEntryBase, frozen=True):
     """ONNX opset version"""
 
 
-class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
+class PytorchStateDictWeights(WeightsEntryBase ):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
@@ -267,7 +267,7 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-class TorchscriptWeights(WeightsEntryBase, frozen=True):
+class TorchscriptWeights(WeightsEntryBase ):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[
@@ -279,7 +279,7 @@ class TorchscriptWeights(WeightsEntryBase, frozen=True):
     """Version of the PyTorch library used."""
 
 
-class TensorflowJsWeights(WeightsEntryBase, frozen=True):
+class TensorflowJsWeights(WeightsEntryBase ):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[
@@ -296,7 +296,7 @@ class TensorflowJsWeights(WeightsEntryBase, frozen=True):
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
+class TensorflowSavedModelBundleWeights(WeightsEntryBase ):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[
@@ -309,7 +309,7 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     """Version of the TensorFlow library used."""
 
 
-class ParametrizedInputShape(Node, frozen=True):
+class ParametrizedInputShape(Node ):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
     min: NotEmpty[Tuple[int, ...]]
@@ -329,7 +329,7 @@ class ParametrizedInputShape(Node, frozen=True):
         return self
 
 
-class ImplicitOutputShape(Node, frozen=True):
+class ImplicitOutputShape(Node
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
@@ -358,7 +358,7 @@ class ImplicitOutputShape(Node, frozen=True):
         return self
 
 
-class TensorBase(Node, frozen=True):
+class TensorBase(Node ):
     name: TensorName
     """Tensor name. No duplicates are allowed."""
 
@@ -385,23 +385,23 @@ class TensorBase(Node, frozen=True):
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(FrozenDictNode[NotEmpty[str], Any], frozen=True):
+class ProcessingKwargs(FrozenDictNode[NotEmpty[str], Any] ):
     """base class for pre-/postprocessing key word arguments"""
 
 
-class ProcessingBase(NodeWithExplicitlySetFields, frozen=True):
+class ProcessingBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
     name: Literal[PreprocessingName, PostprocessingName]
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
 
 
-class BinarizeKwargs(ProcessingKwargs, frozen=True):
+class BinarizeKwargs(ProcessingKwargs ):
     threshold: float
     """The fixed threshold"""
 
 
-class Binarize(ProcessingBase, frozen=True):
+class Binarize(ProcessingBase ):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -409,14 +409,14 @@ class Binarize(ProcessingBase, frozen=True):
     kwargs: BinarizeKwargs
 
 
-class ClipKwargs(ProcessingKwargs, frozen=True):
+class ClipKwargs(ProcessingKwargs ):
     min: float
     """minimum value for clipping"""
     max: float
     """maximum value for clipping"""
 
 
-class Clip(ProcessingBase, frozen=True):
+class Clip(ProcessingBase ):
     """Set tensor values below min to min and above max to max."""
 
     name: Literal["clip"] = "clip"
@@ -424,7 +424,7 @@ class Clip(ProcessingBase, frozen=True):
     kwargs: ClipKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
+class ScaleLinearKwargs(ProcessingKwargs ):
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
@@ -445,14 +445,14 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class ScaleLinear(ProcessingBase, frozen=True):
+class ScaleLinear(ProcessingBase ):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(ProcessingBase, frozen=True):
+class Sigmoid(ProcessingBase ):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
@@ -463,7 +463,7 @@ class Sigmoid(ProcessingBase, frozen=True):
         return ProcessingKwargs()
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs ):
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -497,14 +497,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class ZeroMeanUnitVariance(ProcessingBase, frozen=True):
+class ZeroMeanUnitVariance(ProcessingBase ):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
+class ScaleRangeKwargs(ProcessingKwargs ):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing percentiles.
     |     mode    |             description              |
@@ -543,14 +543,14 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRange(ProcessingBase, frozen=True):
+class ScaleRange(ProcessingBase ):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
+class ScaleMeanVarianceKwargs(ProcessingKwargs ):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -572,7 +572,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(ProcessingBase, frozen=True):
+class ScaleMeanVariance(ProcessingBase ):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -588,7 +588,7 @@ Postprocessing = Annotated[
 ]
 
 
-class InputTensor(TensorBase, frozen=True):
+class InputTensor(TensorBase ):
     data_type: Literal["float32", "uint8", "uint16"]
     """For now an input tensor is expected to be given as `float32`.
     The data flow in bioimage.io models is explained
@@ -636,7 +636,7 @@ class InputTensor(TensorBase, frozen=True):
         return self
 
 
-class OutputTensor(TensorBase, frozen=True):
+class OutputTensor(TensorBase ):
     data_type: Literal[
         "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
     ]
@@ -675,7 +675,7 @@ class OutputTensor(TensorBase, frozen=True):
 KnownRunMode = Literal["deepimagej"]
 
 
-class RunMode(Node, frozen=True):
+class RunMode(Node ):
     name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")]
     """Run mode name"""
 
@@ -683,14 +683,14 @@ class RunMode(Node, frozen=True):
     """Run mode specific key word arguments"""
 
 
-class LinkedModel(LinkedResource, frozen=True):
+class LinkedModel(LinkedResource ):
     """Reference to a bioimage.io model."""
 
     id: ResourceId
     """A valid model `id` from the bioimage.io collection."""
 
 
-class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specification"):
+class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).

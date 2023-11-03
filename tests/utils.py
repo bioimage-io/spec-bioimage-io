@@ -52,7 +52,7 @@ def check_node(
         assert actual, expected_dump_python
 
 
-class DummyNodeBase(Node, frozen=True):
+class DummyNodeBase(Node):
     value: Any
 
 

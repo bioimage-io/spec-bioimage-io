@@ -11,12 +11,12 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 from tests.utils import check_node
 
 
-class DummyNode(Node, frozen=True):
+class DummyNode(Node):
     a: Annotated[int, warn(Ge(0), "smaller than zero")] = 0
     b: Annotated[int, warn(Ge(0), "smaller than zero", WARNING)] = 0
 
 
-class NestedDummyNode(Node, frozen=True):
+class NestedDummyNode(Node):
     dummy: DummyNode
 
 

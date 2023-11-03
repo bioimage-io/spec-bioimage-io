@@ -12,7 +12,7 @@ from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 
 
-class Application(GenericBase, frozen=True, title="bioimage.io application specification"):
+class Application(GenericBase, title="bioimage.io application specification"):
     """Bioimage.io description of an application."""
 
     type: Literal["application"] = "application"

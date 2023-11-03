@@ -36,7 +36,7 @@ from bioimageio.spec.notebook.v0_2 import Notebook as Notebook
 EntryNode = Union[Annotated[Union[Model, Dataset, Application, Notebook], Field(discriminator="type")], Generic]
 
 
-class CollectionEntryBase(Node, extra="allow", frozen=True):
+class CollectionEntryBase(Node, extra="allow"):
     entry_adapter: ClassVar[TypeAdapter[Any]]
 
     rdf_source: Annotated[
@@ -89,13 +89,11 @@ class CollectionEntryBase(Node, extra="allow", frozen=True):
         if type_ == "collection":
             raise ValueError("Collections may not be nested!")
 
-        self.model_config["frozen"] = False
-        self._entry = self.entry_adapter.validate_python(entry_data)  # type: ignore[frozen]
-        self.model_config["frozen"] = True
+        self._entry = self.entry_adapter.validate_python(entry_data)
         return self
 
 
-class CollectionEntry(CollectionEntryBase, frozen=True):
+class CollectionEntry(CollectionEntryBase):
     """A valid resource description (RD).
     The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
@@ -113,7 +111,7 @@ class CollectionEntry(CollectionEntryBase, frozen=True):
         return self._entry
 
 
-class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io collection specification"):
+class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection describes several other bioimage.io resources.
     Note that collections cannot be nested; resources listed under `collection` may not be collections themselves.
     """

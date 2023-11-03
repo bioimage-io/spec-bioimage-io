@@ -34,14 +34,14 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 )
 
 
-class Attachments(Node, frozen=True):
+class Attachments(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
     files: Tuple[FileSource, ...] = ()
     """∈📦 File attachments"""
 
 
-class _Person(Node, frozen=True):
+class _Person(Node):
     name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]]
     """Full name"""
 
@@ -68,17 +68,17 @@ class _Person(Node, frozen=True):
     """
 
 
-class Author(_Person, frozen=True):
+class Author(_Person):
     name: Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]
     github_user: Optional[str] = None
 
 
-class Maintainer(_Person, frozen=True):
+class Maintainer(_Person):
     name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]] = None
     github_user: str
 
 
-class Badge(Node, title="Custom badge", frozen=True):
+class Badge(Node, title="Custom badge"):
     """A custom badge"""
 
     label: Annotated[str, Field(examples=["Open in Colab"])]
@@ -100,7 +100,7 @@ class Badge(Node, title="Custom badge", frozen=True):
     """target URL"""
 
 
-class CiteEntry(Node, frozen=True):
+class CiteEntry(Node):
     text: str
     """free text description"""
 
@@ -132,14 +132,14 @@ class CiteEntry(Node, frozen=True):
         return value
 
 
-class LinkedResource(Node, frozen=True):
+class LinkedResource(Node):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
+class GenericBaseNoSource(ResourceDescriptionBase):
     """GenericBaseNoFormatVersion without a source field
 
     (needed because `model.v0_4.Model` and `model.v0_5.Model` have no `source` field)
@@ -326,7 +326,7 @@ class GenericBaseNoSource(ResourceDescriptionBase, frozen=True):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
 
 
-class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
+class GenericBaseNoFormatVersion(GenericBaseNoSource):
     """A generic node base without format version
     to allow a derived resource description to define its format_version independently."""
 
@@ -336,7 +336,7 @@ class GenericBaseNoFormatVersion(GenericBaseNoSource, frozen=True):
     """The primary source of the resource"""
 
 
-class GenericBase(GenericBaseNoFormatVersion, frozen=True):
+class GenericBase(GenericBaseNoFormatVersion):
     format_version: Literal["0.2.3"] = "0.2.3"
 
     @classmethod
@@ -346,7 +346,7 @@ class GenericBase(GenericBaseNoFormatVersion, frozen=True):
         convert_from_older_format(data, context)
 
 
-class Generic(GenericBase, extra="ignore", frozen=True, title="bioimage.io generic specification"):
+class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

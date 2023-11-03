@@ -4,21 +4,16 @@ import ast
 import collections.abc
 import inspect
 import os
-import sys
 from abc import ABC
 from typing import (
     Any,
     ClassVar,
     Dict,
     FrozenSet,
-    Generic,
-    Iterator,
     List,
     Optional,
-    Set,
     Tuple,
     Type,
-    TypeVar,
     Union,
     cast,
     get_type_hints,
@@ -30,6 +25,7 @@ from pydantic import (
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
+    PrivateAttr,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
@@ -40,27 +36,15 @@ from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.types import NotEmpty, RdfContent, Version, YamlValue
-from bioimageio.spec._internal.types.field_validation import is_valid_yaml_mapping
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.summary import ValidationSummary
-
-K = TypeVar("K", bound=str)
-V = TypeVar("V")
-
-if sys.version_info < (3, 9):
-
-    class FrozenDictBase(collections.abc.Mapping, Generic[K, V]):  # pyright: ignore[reportMissingTypeArgument]
-        pass
-
-else:
-    FrozenDictBase = collections.abc.Mapping[K, V]
 
 
 class Node(
     pydantic.BaseModel,
     extra="forbid",
-    frozen=True,
+    frozen=False,
     populate_by_name=True,
     revalidate_instances="always",
     validate_assignment=True,
@@ -134,7 +118,7 @@ class Node(
                 info.description = name
 
 
-class NodeWithExplicitlySetFields(Node, frozen=True):
+class NodeWithExplicitlySetFields(Node):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
     """set set these fields explicitly with their default value if they are not set,
     such that they are always included even when dumping with 'exlude_unset'"""
@@ -150,13 +134,13 @@ class NodeWithExplicitlySetFields(Node, frozen=True):
         return data
 
 
-class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
+class ResourceDescriptionBase(NodeWithExplicitlySetFields):
     """base class for all resource descriptions"""
-
-    __slots__ = ("_internal_validation_context", "_validation_summaries")
 
     type: str
     format_version: str
+    _internal_validation_context: InternalValidationContext
+    _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
     implemented_format_version: ClassVar[str]
@@ -184,11 +168,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, frozen=True):
 
     @model_validator(mode="after")
     def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
-        self.model_config["frozen"] = False
-        self._validation_summaries: List[ValidationSummary] = []  # type: ignore[frozen]
-        self._internal_validation_context: InternalValidationContext
-        self._internal_validation_context = get_internal_validation_context(info.context)  # type: ignore[frozen]
-        self.model_config["frozen"] = True
+        self._internal_validation_context = get_internal_validation_context(info.context)
         return self
 
     @classmethod
@@ -314,42 +294,5 @@ class StringNode(collections.UserString, ABC):
         return self.data
 
 
-D = TypeVar("D")
-
-
-class FrozenDictNode(Node, FrozenDictBase[K, V], frozen=True):
-    def __getitem__(self, item: K) -> V:
-        try:
-            return getattr(self, item)
-        except AttributeError:
-            raise KeyError(item) from None
-
-    def __iter__(self) -> Iterator[K]:  # type: ignore  iterate over keys like a dict, not (key, value) tuples
-        yield from self.model_fields_set  # type: ignore
-
-    def __len__(self) -> int:
-        return len(self.model_fields_set)
-
-    def keys(self) -> Set[K]:  # type: ignore
-        return set(self.model_fields_set)  # type: ignore
-
-    def __contains__(self, key: Any):
-        return key in self.model_fields_set
-
-    def get(self, item: Any, default: D = None) -> Union[V, D]:
-        return getattr(self, item, default)
-
-    @model_validator(mode="after")
-    def validate_raw_mapping(self) -> Self:
-        if not is_valid_yaml_mapping(self):
-            raise AssertionError(f"{self} contains values unrepresentable in YAML")
-
-        return self
-
-
-class ConfigNode(FrozenDictNode[NotEmpty[str], YamlValue], frozen=True):
-    model_config = {**Node.model_config, "extra": "allow"}
-
-
-class Kwargs(FrozenDictNode[NotEmpty[str], YamlValue], frozen=True):
-    model_config = {**Node.model_config, "extra": "allow"}
+ConfigNode = Dict[NotEmpty[str], YamlValue]
+Kwargs = Dict[NotEmpty[str], YamlValue]

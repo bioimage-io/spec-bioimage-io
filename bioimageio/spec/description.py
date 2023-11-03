@@ -88,7 +88,7 @@ ResourceDescription = Union[
 """Any of the implemented resource descriptions"""
 
 
-class InvalidDescription(ResourceDescriptionBase, frozen=True, extra="allow", title="An invalid resource description"):
+class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An invalid resource description"):
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()

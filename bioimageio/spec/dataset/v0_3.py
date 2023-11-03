@@ -12,7 +12,7 @@ from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 
 
-class Dataset(GenericBase, frozen=True, title="bioimage.io dataset specification"):
+class Dataset(GenericBase, title="bioimage.io dataset specification"):
     """A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage
     processing.
     """
@@ -20,7 +20,7 @@ class Dataset(GenericBase, frozen=True, title="bioimage.io dataset specification
     type: Literal["dataset"] = "dataset"
 
 
-class LinkedDataset(LinkedResource, frozen=True):
+class LinkedDataset(LinkedResource):
     """Reference to a bioimage.io dataset."""
 
     id: DatasetId

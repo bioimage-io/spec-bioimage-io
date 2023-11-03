@@ -150,7 +150,7 @@ PreprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
-class ParametrizedSize(Node, frozen=True):
+class ParametrizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step."""
 
     min: Annotated[int, Gt(0)]
@@ -162,7 +162,7 @@ class ParametrizedSize(Node, frozen=True):
     """
 
 
-class SizeReference(Node, frozen=True):
+class SizeReference(Node):
     """A tensor axis size defined in relation to another reference tensor axis.
 
     `size = reference.size / reference.scale * axis.scale + offset`
@@ -178,7 +178,7 @@ class SizeReference(Node, frozen=True):
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
 # https://ngff.openmicroscopy.org/latest/#axes-md
-class AxisBase(NodeWithExplicitlySetFields, frozen=True):
+class AxisBase(NodeWithExplicitlySetFields):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
     type: AxisType
 
@@ -204,14 +204,14 @@ class AxisBase(NodeWithExplicitlySetFields, frozen=True):
     __hash__ = NodeWithExplicitlySetFields.__hash__
 
 
-class WithHalo(Node, frozen=True):
+class WithHalo(Node):
     halo: Annotated[int, Ge(0)] = 0
     """The halo should be cropped from the output tensor to avoid boundary effects.
     It is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.
     To document a halo that is already cropped by the model use `size.offset` instead."""
 
 
-class BatchAxis(AxisBase, frozen=True):
+class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
     id: Annotated[AxisId, Predicate(lambda x: x == AxisId("batch"))] = AxisId("batch")
     size: Optional[Literal[1]] = None
@@ -222,7 +222,7 @@ class BatchAxis(AxisBase, frozen=True):
 GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
 
 
-class ChannelAxis(AxisBase, frozen=True):
+class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: AxisId = AxisId("channel")
     channel_names: Union[Tuple[Identifier, ...], Identifier, GenericChannelName] = "channel{i}"
@@ -249,7 +249,7 @@ class ChannelAxis(AxisBase, frozen=True):
         return data
 
 
-class IndexTimeSpaceAxisBase(AxisBase, frozen=True):
+class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
         Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, AxisId, TensorAxisId],
         Field(
@@ -270,30 +270,30 @@ class IndexTimeSpaceAxisBase(AxisBase, frozen=True):
     """
 
 
-class IndexAxis(IndexTimeSpaceAxisBase, frozen=True):
+class IndexAxis(IndexTimeSpaceAxisBase):
     type: Literal["index"] = "index"
     id: AxisId = AxisId("index")
 
 
-class TimeAxisBase(IndexTimeSpaceAxisBase, frozen=True):
+class TimeAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["time"] = "time"
     id: AxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-class TimeInputAxis(TimeAxisBase, frozen=True):
+class TimeInputAxis(TimeAxisBase):
     pass
 
 
-class SpaceAxisBase(IndexTimeSpaceAxisBase, frozen=True):
+class SpaceAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
     id: Annotated[AxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-class SpaceInputAxis(SpaceAxisBase, frozen=True):
+class SpaceInputAxis(SpaceAxisBase):
     pass
 
 
@@ -302,11 +302,11 @@ InputAxis = Annotated[
 ]
 
 
-class TimeOutputAxis(TimeAxisBase, WithHalo, frozen=True):
+class TimeOutputAxis(TimeAxisBase, WithHalo):
     pass
 
 
-class SpaceOutputAxis(SpaceAxisBase, WithHalo, frozen=True):
+class SpaceOutputAxis(SpaceAxisBase, WithHalo):
     pass
 
 
@@ -326,7 +326,7 @@ NominalOrOrdinalDType = Literal[
 ]
 
 
-class NominalOrOrdinalData(Node, frozen=True):
+class NominalOrOrdinalData(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
     String `values` are interpreted as labels for tensor values 0, ..., N.
@@ -383,7 +383,7 @@ IntervalOrRatioDType = Literal[
 ]
 
 
-class IntervalOrRatioData(Node, frozen=True):
+class IntervalOrRatioData(Node):
     type: Annotated[  # todo: rename to dtype
         IntervalOrRatioDType,
         Field(
@@ -406,14 +406,14 @@ class IntervalOrRatioData(Node, frozen=True):
 TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
-class ProcessingBase(NodeWithExplicitlySetFields, frozen=True):
+class ProcessingBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
     id: Literal[PreprocessingId, PostprocessingId]
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
-class Binarize(ProcessingBase, frozen=True):
+class Binarize(ProcessingBase):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -421,23 +421,23 @@ class Binarize(ProcessingBase, frozen=True):
     kwargs: BinarizeKwargs
 
 
-class Clip(ProcessingBase, frozen=True):
+class Clip(ProcessingBase):
     """Set tensor values below min to min and above max to max."""
 
     id: Literal["clip"] = "clip"
     kwargs: ClipKwargs
 
 
-class EnsureDtypeKwargs(ProcessingKwargs, frozen=True):
+class EnsureDtypeKwargs(ProcessingKwargs):
     dtype: str
 
 
-class EnsureDtype(ProcessingBase, frozen=True):
+class EnsureDtype(ProcessingBase):
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
+class ScaleLinearKwargs(ProcessingKwargs):
     axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel"])] = None  # todo: validate existence of axis
     """The axis of non-scalar gains/offsets.
     Invalid for scalar gains/offsets.
@@ -459,14 +459,14 @@ class ScaleLinearKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class ScaleLinear(ProcessingBase, frozen=True):
+class ScaleLinear(ProcessingBase):
     """Fixed linear scaling."""
 
     id: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(ProcessingBase, frozen=True):
+class Sigmoid(ProcessingBase):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     id: Literal["sigmoid"] = "sigmoid"
@@ -477,7 +477,7 @@ class Sigmoid(ProcessingBase, frozen=True):
         return ProcessingKwargs()
 
 
-class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
+class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """Normalize with fixed, precomputed values for mean and variance.
     See `ZeroMeanUnitVariance`/`ZeroMeanUnitVarianceKwargs` for data dependent normalization."""
 
@@ -508,14 +508,14 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
         return self
 
 
-class FixedZeroMeanUnitVariance(ProcessingBase, frozen=True):
+class FixedZeroMeanUnitVariance(ProcessingBase):
     """Subtract a given mean and divide by a given variance."""
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
     kwargs: FixedZeroMeanUnitVarianceKwargs
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"] = "per_dataset"
     """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
 
@@ -531,14 +531,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, frozen=True):
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
 
-class ZeroMeanUnitVariance(ProcessingBase, frozen=True):
+class ZeroMeanUnitVariance(ProcessingBase):
     """Subtract mean and divide by variance."""
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
+class ScaleRangeKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"] = "per_dataset"
     """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
 
@@ -578,14 +578,14 @@ class ScaleRangeKwargs(ProcessingKwargs, frozen=True):
         return value
 
 
-class ScaleRange(ProcessingBase, frozen=True):
+class ScaleRange(ProcessingBase):
     """Scale with percentiles."""
 
     id: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
+class ScaleMeanVarianceKwargs(ProcessingKwargs):
     """Scale a tensor's data distribution to match another tensor's mean/std.
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
@@ -607,7 +607,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs, frozen=True):
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
 
-class ScaleMeanVariance(ProcessingBase, frozen=True):
+class ScaleMeanVariance(ProcessingBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     id: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -636,7 +636,7 @@ Postprocessing = Annotated[
 ]
 
 
-class TensorBase(Node, frozen=True):
+class TensorBase(Node):
     id: TensorId
     """Tensor id. No duplicates are allowed."""
 
@@ -724,7 +724,7 @@ class TensorBase(Node, frozen=True):
         return value
 
 
-class InputTensor(TensorBase, frozen=True):
+class InputTensor(TensorBase):
     id: TensorId = TensorId("input")
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
@@ -745,7 +745,7 @@ class InputTensor(TensorBase, frozen=True):
         return self
 
 
-class OutputTensor(TensorBase, frozen=True):
+class OutputTensor(TensorBase):
     id: TensorId = TensorId("output")
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
@@ -782,7 +782,7 @@ class CallableFromFile(StringNode):
         return dict(file=":".join(file_parts), callable_name=callname)
 
 
-class ArchitectureFromFile(Node, frozen=True):
+class ArchitectureFromFile(Node):
     callable: Annotated[CallableFromFile, Field(examples=["my_function.py:MyNetworkClass"])]
     """Callable returning a torch.nn.Module instance.
     `<relative path to file>:<identifier of implementation within the file>`."""
@@ -799,7 +799,7 @@ class ArchitectureFromFile(Node, frozen=True):
     """key word arguments for the `callable`"""
 
 
-class ArchitectureFromDependency(Node, frozen=True):
+class ArchitectureFromDependency(Node):
     callable: Annotated[CallableFromDepencency, Field(examples=["my_module.submodule.get_my_model"])]
     """callable returning a torch.nn.Module instance.
     `<dependency-package>.<[dependency-module]>.<identifier>`."""
@@ -811,7 +811,7 @@ class ArchitectureFromDependency(Node, frozen=True):
 Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
-class WeightsEntryBase(Node, frozen=True):
+class WeightsEntryBase(Node):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -848,14 +848,14 @@ class WeightsEntryBase(Node, frozen=True):
         return self
 
 
-class KerasHdf5Weights(WeightsEntryBase, frozen=True):
+class KerasHdf5Weights(WeightsEntryBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Version  # todo: dynamic default from tf lib
     """TensorFlow version used to create these weights."""
 
 
-class OnnxWeights(WeightsEntryBase, frozen=True):
+class OnnxWeights(WeightsEntryBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[int, Ge(7)]  # todo: dynamic default from onnx runtime
@@ -876,7 +876,7 @@ class Dependencies(StringNode):
         return dict(manager=manager, file=":".join(file_parts))
 
 
-class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
+class PytorchStateDictWeights(WeightsEntryBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
@@ -889,7 +889,7 @@ class PytorchStateDictWeights(WeightsEntryBase, frozen=True):
     Should include pytorch and any version pinning has to be compatible with `pytorch_version`."""
 
 
-class TensorflowJsWeights(WeightsEntryBase, frozen=True):
+class TensorflowJsWeights(WeightsEntryBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Version
@@ -900,7 +900,7 @@ class TensorflowJsWeights(WeightsEntryBase, frozen=True):
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
+class TensorflowSavedModelBundleWeights(WeightsEntryBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Version
@@ -915,14 +915,14 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase, frozen=True):
     All required files/folders should be a zip archive."""
 
 
-class TorchscriptWeights(WeightsEntryBase, frozen=True):
+class TorchscriptWeights(WeightsEntryBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Version
     """Version of the PyTorch library used."""
 
 
-class Weights(Node, frozen=True):
+class Weights(Node):
     keras_hdf5: Optional[KerasHdf5Weights] = None
     onnx: Optional[OnnxWeights] = None
     pytorch_state_dict: Optional[PytorchStateDictWeights] = None
@@ -963,7 +963,7 @@ class Weights(Node, frozen=True):
         return self
 
 
-class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specification"):
+class Model(GenericBaseNoSource, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
@@ -1088,9 +1088,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
                     generated_channel_names = tuple(
                         Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
                     )
-                    axis.model_config["frozen"] = False
-                    axis.channel_names = generated_channel_names  # type: ignore
-                    axis.model_config["frozen"] = True
+                    axis.channel_names = generated_channel_names
 
             if (ax_unit := getattr(axis, "unit", None)) != (
                 ref_unit := getattr(valid_independent_refs[axis.size.reference][1], "unit", None)
@@ -1121,9 +1119,7 @@ class Model(GenericBaseNoSource, frozen=True, title="bioimage.io model specifica
                     generated_channel_names = tuple(
                         Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
                     )
-                    axis.model_config["frozen"] = False
-                    axis.channel_names = generated_channel_names  # type: ignore
-                    axis.model_config["frozen"] = True
+                    axis.channel_names = generated_channel_names
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId],

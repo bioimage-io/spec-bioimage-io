@@ -37,7 +37,7 @@ EntryNode = Union[
 ]
 
 
-class CollectionEntry(v0_2.CollectionEntryBase, frozen=True):
+class CollectionEntry(v0_2.CollectionEntryBase):
     """A valid resource description (RD).
     The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
@@ -55,7 +55,7 @@ class CollectionEntry(v0_2.CollectionEntryBase, frozen=True):
         return self._entry
 
 
-class Collection(GenericBase, extra="allow", frozen=True, title="bioimage.io collection specification"):
+class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.

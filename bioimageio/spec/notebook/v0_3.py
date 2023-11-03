@@ -15,7 +15,7 @@ from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 
 
-class Notebook(GenericBase, frozen=True, title="bioimage.io notebook specification"):
+class Notebook(GenericBase, title="bioimage.io notebook specification"):
     """Bioimage.io description of a Jupyter notebook."""
 
     type: Literal["notebook"] = "notebook"
