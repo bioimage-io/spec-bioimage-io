@@ -6,12 +6,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
 from pathlib import PurePath
-from typing import Any, Hashable, Mapping, Sequence, Type, TypeVar, Union, get_args
+from typing import Any, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
 
 import annotated_types
 from dateutil.parser import isoparse
 from pydantic import AnyUrl, GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
+from typing_extensions import LiteralString
 
 from bioimageio.spec._internal.constants import SLOTS
 
@@ -41,7 +42,7 @@ class RestrictCharacters:
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
 class WithSuffix:
-    suffix: Union[str, Sequence[str]]
+    suffix: Union[LiteralString, Tuple[LiteralString, ...]]
     case_sensitive: bool
 
     def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
@@ -49,7 +50,7 @@ class WithSuffix:
             raise ValueError("suffix may not be empty")
 
         schema = handler(source)
-        if schema["type"] != str and source != FileSource and not issubclass(source, (RelativePath, PurePath)):
+        if schema["type"] != str and source != FileSource and not issubclass(source, (AnyUrl, RelativePath, PurePath)):
             raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
 
         return no_info_after_validator_function(
@@ -132,7 +133,7 @@ def is_valid_yaml_value(value: Any) -> bool:
     return any(is_valid(value) for is_valid in (is_valid_yaml_key, is_valid_yaml_mapping, is_valid_yaml_sequence))
 
 
-V_suffix = TypeVar("V_suffix", bound=Union[AnyUrl, PurePath, RelativePath])
+V_suffix = TypeVar("V_suffix", bound=FileSource)
 
 
 def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:

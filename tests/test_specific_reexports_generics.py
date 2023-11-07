@@ -10,7 +10,6 @@ import bioimageio.spec
 GENERIC_ONLY_MEMBERS = {
     "Generic",
     "GenericBase",
-    "GenericBaseNoSource",
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "GenericBaseNoSource",
     "ResourceDescriptionType",

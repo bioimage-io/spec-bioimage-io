@@ -1,4 +1,4 @@
-from typing import ClassVar, Literal, Tuple, Union
+from typing import ClassVar, List, Literal, Tuple, Union
 
 from pydantic import Field, TypeAdapter, field_validator
 from pydantic import HttpUrl as HttpUrl
@@ -17,7 +17,7 @@ from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import Generic, GenericBase
+from bioimageio.spec.generic.v0_3 import Generic, GenericBase, WithGenericFormatVersion
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import Model as Model04
@@ -55,7 +55,7 @@ class CollectionEntry(v0_2.CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
+class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
@@ -70,12 +70,12 @@ class Collection(GenericBase, extra="allow", title="bioimage.io collection speci
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
         context["collection_base_content"] = collection_base_content
 
-    collection: NotEmpty[Tuple[CollectionEntry, ...]]
+    collection: NotEmpty[List[CollectionEntry]]
     """Collection entries"""
 
     @field_validator("collection")
     @classmethod
-    def check_unique_ids(cls, value: NotEmpty[Tuple[CollectionEntry, ...]]) -> NotEmpty[Tuple[CollectionEntry, ...]]:
+    def check_unique_ids(cls, value: NotEmpty[List[CollectionEntry]]) -> NotEmpty[List[CollectionEntry]]:
         v0_2.Collection.check_unique_ids_impl(value)
         return value
 

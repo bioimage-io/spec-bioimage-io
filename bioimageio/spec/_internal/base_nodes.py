@@ -29,13 +29,13 @@ from pydantic import (
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
-    model_validator,  # type: ignore
+    model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.types import NotEmpty, RdfContent, Version, YamlValue
+from bioimageio.spec._internal.types import RdfContent, Version
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.summary import ValidationSummary
@@ -137,9 +137,9 @@ class NodeWithExplicitlySetFields(Node):
 class ResourceDescriptionBase(NodeWithExplicitlySetFields):
     """base class for all resource descriptions"""
 
-    type: str
-    format_version: str
-    _internal_validation_context: InternalValidationContext
+    _internal_validation_context: InternalValidationContext = PrivateAttr(
+        default_factory=get_internal_validation_context
+    )
     _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
@@ -174,7 +174,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if cls.model_fields["format_version"].default is not PydanticUndefined:
+        if "format_version" in cls.model_fields and cls.model_fields["format_version"].default is not PydanticUndefined:
             cls.implemented_format_version = cls.model_fields["format_version"].default
             if "." not in cls.implemented_format_version:
                 cls.implemented_format_version_tuple = (0, 0, 0)
@@ -228,6 +228,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
 
 
 class StringNode(collections.UserString, ABC):
+    """deprecated! don't use for new spec fields!"""
+
     _pattern: ClassVar[str]
     _node_class: Type[Node]
     _node: Optional[Node] = None
@@ -266,7 +268,7 @@ class StringNode(collections.UserString, ABC):
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
         assert issubclass(source, StringNode)
-        return core_schema.general_after_validator_function(
+        return core_schema.with_info_after_validator_function(
             cls._validate,
             core_schema.str_schema(pattern=cls._pattern),
             serialization=core_schema.plain_serializer_function_ser_schema(
@@ -294,5 +296,15 @@ class StringNode(collections.UserString, ABC):
         return self.data
 
 
-ConfigNode = Dict[NotEmpty[str], YamlValue]
-Kwargs = Dict[NotEmpty[str], YamlValue]
+class KwargsNode(Node):
+    def get(self, item: str, default: Any = None) -> Any:
+        return self[item] if item in self else default
+
+    def __getitem__(self, item: str) -> Any:
+        if item in self.model_fields:
+            return getattr(self, item)
+        else:
+            raise KeyError(item)
+
+    def __contains__(self, item: str) -> int:
+        return item in self.model_fields

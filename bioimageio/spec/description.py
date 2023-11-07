@@ -108,11 +108,11 @@ def update_format(
         raise ValueError(rd_class)
 
     updated = dict(rdf_content)
-    rd_class.convert_from_older_format(updated, get_internal_validation_context(context))
+    _ = rd_class.convert_from_older_format(updated, get_internal_validation_context(context))
     return updated
 
 
-RD = TypeVar("RD", bound=ResourceDescriptionBase)
+RD = TypeVar("RD", bound=ResourceDescription)
 
 
 def dump_description(rd: ResourceDescription, exclude_unset: bool = True) -> RdfContent:
@@ -208,7 +208,7 @@ def _check_type_and_format_version(data: Union[YamlValue, RdfContent]) -> Tuple[
         use_fv = rd_class.implemented_format_version
     else:
         # fallback: type is not specialized (yet) and format version is unknown
-        use_fv = bioimageio.spec.generic.Generic.implemented_format_version  # latest generic
+        use_fv = generic.Generic.implemented_format_version  # latest generic
 
     return typ, fv, use_fv
 
@@ -335,7 +335,7 @@ def _load_descr_impl(
 
     if rd is None:
         try:
-            rd = InvalidDescription(**rdf_content)
+            rd = InvalidDescription.model_validate(rdf_content)
         except Exception:
             resource_type = rd_class.model_fields["type"].default
             format_version = rd_class.implemented_format_version

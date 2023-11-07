@@ -1,22 +1,23 @@
 import collections.abc
+from abc import ABC
 from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Sequence, Set, Tuple, Union
 
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from pydantic import (
     Field,
-    FieldValidationInfo,
     StringConstraints,
     TypeAdapter,
     ValidationInfo,
     field_validator,
-    model_validator,  # type: ignore
+    model_validator,
 )
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec._internal.base_nodes import Kwargs, Node, NodeWithExplicitlySetFields, StringNode
+from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import issue_warning, warn
+from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import FileSource as FileSource
@@ -37,8 +38,7 @@ from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import ConfigNode as ConfigNode
-from bioimageio.spec.generic.v0_3 import GenericBaseNoSource
+from bioimageio.spec.generic.v0_3 import GenericModelBase, MarkdownSource
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
@@ -180,7 +180,6 @@ class SizeReference(Node):
 # https://ngff.openmicroscopy.org/latest/#axes-md
 class AxisBase(NodeWithExplicitlySetFields):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
-    type: AxisType
 
     id: AxisId
     """An axis id unique across all axes of one tensor."""
@@ -225,7 +224,7 @@ GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=1
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: AxisId = AxisId("channel")
-    channel_names: Union[Tuple[Identifier, ...], Identifier, GenericChannelName] = "channel{i}"
+    channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference] = "#channel_names"  # type: ignore
 
     @model_validator(mode="before")
@@ -244,7 +243,7 @@ class ChannelAxis(AxisBase):
             data["size"] = len(channel_names)
 
         if isinstance(channel_names, str) and "{i}" in channel_names and isinstance(size, int):
-            data["channel_names"] = tuple(channel_names.format(i=i) for i in range(1, size + 1))
+            data["channel_names"] = [channel_names.format(i=i) for i in range(1, size + 1)]
 
         return data
 
@@ -316,9 +315,7 @@ OutputAxis = Annotated[
 
 AnyAxis = Union[InputAxis, OutputAxis]
 
-TVs = Union[
-    NotEmpty[Tuple[int, ...]], NotEmpty[Tuple[float, ...]], NotEmpty[Tuple[bool, ...]], NotEmpty[Tuple[str, ...]]
-]
+TVs = Union[NotEmpty[List[int]], NotEmpty[List[float]], NotEmpty[List[bool]], NotEmpty[List[str]]]
 
 
 NominalOrOrdinalDType = Literal[
@@ -329,8 +326,11 @@ NominalOrOrdinalDType = Literal[
 class NominalOrOrdinalData(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
+    In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
     String `values` are interpreted as labels for tensor values 0, ..., N.
-    In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'"""
+    Note: as YAML 1.2 does not natively support a "set" datatype,
+    nominal values should be given as a sequence (aka list/array) as well.
+    """
 
     type: Annotated[
         NominalOrOrdinalDType,
@@ -406,10 +406,10 @@ class IntervalOrRatioData(Node):
 TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
 
 
-class ProcessingBase(NodeWithExplicitlySetFields):
+class ProcessingBase(NodeWithExplicitlySetFields, ABC):
     """processing base class"""
 
-    id: Literal[PreprocessingId, PostprocessingId]
+    # id: Literal[PreprocessingId, PostprocessingId]  # make abstract field
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
@@ -443,16 +443,16 @@ class ScaleLinearKwargs(ProcessingKwargs):
     Invalid for scalar gains/offsets.
     """
 
-    gain: Union[float, NotEmpty[Tuple[float, ...]]] = 1.0
+    gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, NotEmpty[Tuple[float, ...]]] = 0.0
+    offset: Union[float, NotEmpty[List[float]]] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
-        if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
-            self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
+        if (self.gain == 1.0 or isinstance(self.gain, list) and all(g == 1.0 for g in self.gain)) and (
+            self.offset == 0.0 or isinstance(self.offset, list) and all(off == 0.0 for off in self.offset)
         ):
             raise ValueError("Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
 
@@ -519,7 +519,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"] = "per_dataset"
     """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
 
-    axes: Annotated[Optional[Tuple[NonBatchAxisId, ...]], Field(examples=[("x", "y")])] = None
+    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
     """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
@@ -542,7 +542,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"] = "per_dataset"
     """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
 
-    axes: Annotated[Optional[Tuple[NonBatchAxisId, ...]], Field(examples=[("x", "y")])] = None
+    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
     """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
@@ -571,7 +571,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
 
     @field_validator("max_percentile", mode="after")
     @classmethod
-    def min_smaller_max(cls, value: float, info: FieldValidationInfo) -> float:
+    def min_smaller_max(cls, value: float, info: ValidationInfo) -> float:
         if (min_p := info.data["min_percentile"]) >= value:
             raise ValueError(f"min_percentile {min_p} >= max_percentile {value}")
 
@@ -594,7 +594,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     reference_tensor: TensorId
     """Name of tensor to match."""
 
-    axes: Annotated[Optional[Tuple[NonBatchAxisId, ...]], Field(examples=[("x", "y")])] = None
+    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
     """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
@@ -642,11 +642,11 @@ class TensorBase(Node):
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    axes: Tuple[AnyAxis, ...]
+    # axes: List[AnyAxis]  # TODO: make abstract
 
-    @field_validator("axes", mode="after")
+    @field_validator("axes", mode="after", check_fields=False)
     @classmethod
-    def validate_axes(cls, axes: Tuple[AxisBase, ...]) -> Tuple[AxisBase, ...]:
+    def validate_axes(cls, axes: List[AnyAxis]) -> List[AnyAxis]:
         seen_types: Set[str] = set()
         duplicate_axes_types: Set[str] = set()
         for a in axes:
@@ -680,16 +680,16 @@ class TensorBase(Node):
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
-    data: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]] = IntervalOrRatioData()
+    data: Union[TensorData, NotEmpty[List[TensorData]]] = IntervalOrRatioData()
     """Description of the tensor's data values, optionally per channel.
     If specified per channel, the data `type` needs to match across channels."""
 
     @field_validator("data", mode="after")
     @classmethod
     def check_data_type_across_channels(
-        cls, value: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]
-    ) -> Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]:
-        if not isinstance(value, tuple):
+        cls, value: Union[TensorData, NotEmpty[List[TensorData]]]
+    ) -> Union[TensorData, NotEmpty[List[TensorData]]]:
+        if not isinstance(value, list):
             return value
 
         dtypes = {t.type for t in value}
@@ -703,9 +703,9 @@ class TensorBase(Node):
     @field_validator("data", mode="after")
     @classmethod
     def check_data_matches_channelaxis(
-        cls, value: Union[TensorData, NotEmpty[Tuple[TensorData, ...]]], info: FieldValidationInfo
-    ) -> Union[TensorData, NotEmpty[Tuple[TensorData, ...]]]:
-        if not isinstance(value, tuple) or "axes" not in info.data:
+        cls, value: Union[TensorData, NotEmpty[List[TensorData]]], info: ValidationInfo
+    ) -> Union[TensorData, NotEmpty[List[TensorData]]]:
+        if not isinstance(value, list) or "axes" not in info.data:
             return value
 
         for a in info.data["axes"]:
@@ -729,17 +729,20 @@ class InputTensor(TensorBase):
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    axes: NotEmpty[Tuple[InputAxis, ...]]
+    axes: NotEmpty[List[InputAxis]]
 
-    preprocessing: Tuple[Preprocessing, ...] = ()
+    preprocessing: List[Preprocessing] = Field(default_factory=list)
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
     def validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwarg_axes = p.kwargs.get("axes", ())
-            if any(a not in axes_ids for a in kwarg_axes):
+            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            if not isinstance(kwargs_axes, collections.abc.Sequence):
+                raise ValueError(f"Expeted `axes` to be a sequence, but got {type(kwargs_axes)}")
+
+            if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
         return self
@@ -750,17 +753,20 @@ class OutputTensor(TensorBase):
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    axes: Tuple[OutputAxis, ...]
+    axes: List[OutputAxis]
 
-    postprocessing: Tuple[Postprocessing, ...] = ()
+    postprocessing: List[Postprocessing] = Field(default_factory=list)
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
     def validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
-            kwarg_axes = p.kwargs.get("axes", ())
-            if any(a not in axes_ids for a in kwarg_axes):
+            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            if not isinstance(kwargs_axes, collections.abc.Sequence):
+                raise ValueError(f"expected `axes` sequence, but got {type(kwargs_axes)}")
+
+            if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
         return self
@@ -795,7 +801,7 @@ class ArchitectureFromFile(Node):
     ]
     """The SHA256 of the callable source file."""
 
-    kwargs: Kwargs = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
@@ -804,7 +810,7 @@ class ArchitectureFromDependency(Node):
     """callable returning a torch.nn.Module instance.
     `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
-    kwargs: Kwargs = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
@@ -825,7 +831,7 @@ class WeightsEntryBase(Node):
     ] = None
     """SHA256 checksum of the source file"""
 
-    authors: Union[Tuple[Author, ...], None] = None
+    authors: Optional[List[Author]] = None
     """Authors
     Either the person(s) that have trained this model resulting in the original weights file.
         (If this is the initial weights entry, i.e. it does not have a `parent`)
@@ -895,7 +901,7 @@ class TensorflowJsWeights(WeightsEntryBase):
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    source: Union[HttpUrl, RelativeFilePath]
+    source: FileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -910,7 +916,7 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase):
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
-    source: Union[HttpUrl, RelativeFilePath]
+    source: FileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -963,7 +969,7 @@ class Weights(Node):
         return self
 
 
-class Model(GenericBaseNoSource, title="bioimage.io model specification"):
+class Model(GenericModelBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
@@ -977,14 +983,11 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
 
-    authors: NotEmpty[Tuple[Author, ...]]
+    authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
-    badges: ClassVar[tuple] = ()  # type: ignore
-    """Badges are not allowed for model RDFs"""
-
     documentation: Annotated[
-        FileSource,  # todo: suffix
+        MarkdownSource,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -994,15 +997,15 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
     ]
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
-    The documentation should include a '[#[#]]# Validation' (sub)section
+    The documentation should include a '#[#] Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NotEmpty[Tuple[InputTensor, ...]]
+    inputs: NotEmpty[List[InputTensor]]
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
     @classmethod
-    def validate_input_axes(cls, inputs: Tuple[InputTensor, ...]) -> Tuple[InputTensor, ...]:
+    def validate_input_axes(cls, inputs: List[InputTensor]) -> List[InputTensor]:
         input_step_with_refs = cls._get_axes_with_parametrized_size(inputs)
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
@@ -1085,9 +1088,9 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
                     assert isinstance(
                         ref_size, int
                     ), "channel axis ref (another channel axis) has to specify fixed size"
-                    generated_channel_names = tuple(
+                    generated_channel_names = [
                         Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
-                    )
+                    ]
                     axis.channel_names = generated_channel_names
 
             if (ax_unit := getattr(axis, "unit", None)) != (
@@ -1116,9 +1119,9 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
                     assert isinstance(
                         ref_size, int
                     ), "channel axis ref (another channel axis) has to specify fixed size"
-                    generated_channel_names = tuple(
+                    generated_channel_names = [
                         Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
-                    )
+                    ]
                     axis.channel_names = generated_channel_names
 
     license: Annotated[
@@ -1140,15 +1143,13 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[Tuple[OutputTensor, ...]]
+    outputs: NotEmpty[List[OutputTensor]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_tensor_ids(
-        cls, outputs: Tuple[OutputTensor, ...], info: FieldValidationInfo
-    ) -> Tuple[OutputTensor, ...]:
-        tensor_ids = [t.id for t in info.data.get("inputs", ()) + info.data.get("outputs", ())]
+    def validate_tensor_ids(cls, outputs: List[OutputTensor], info: ValidationInfo) -> List[OutputTensor]:
+        tensor_ids = [t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])]
         duplicate_tensor_ids: List[str] = []
         seen: Set[str] = set()
         for t in tensor_ids:
@@ -1163,7 +1164,7 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
         return outputs
 
     @staticmethod
-    def _get_axes_with_parametrized_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
+    def _get_axes_with_parametrized_size(io: Union[List[InputTensor], List[OutputTensor]]):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
             for t in io
@@ -1172,7 +1173,7 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
         }
 
     @staticmethod
-    def _get_axes_with_independent_size(io: Union[Tuple[InputTensor, ...], Tuple[OutputTensor, ...]]):
+    def _get_axes_with_independent_size(io: Union[List[InputTensor], List[OutputTensor]]):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
             for t in io
@@ -1182,13 +1183,11 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_output_axes(
-        cls, outputs: Tuple[OutputTensor, ...], info: FieldValidationInfo
-    ) -> Tuple[OutputTensor, ...]:
-        input_step_with_refs = cls._get_axes_with_parametrized_size(info.data.get("inputs", ()))
+    def validate_output_axes(cls, outputs: List[OutputTensor], info: ValidationInfo) -> List[OutputTensor]:
+        input_step_with_refs = cls._get_axes_with_parametrized_size(info.data.get("inputs", []))
         output_step_with_refs = cls._get_axes_with_parametrized_size(outputs)
 
-        input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", ()))
+        input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
@@ -1225,7 +1224,7 @@ class Model(GenericBaseNoSource, title="bioimage.io model specification"):
 
         return outputs
 
-    packaged_by: Tuple[Author, ...] = ()
+    packaged_by: List[Author] = Field(default_factory=list)
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 

@@ -243,17 +243,17 @@ def model_data():
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.4.9",
         description="description",
-        authors=(
+        authors=[
             Author(name="Author 1", affiliation="Affiliation 1"),
             Author(name="Author 2"),
-        ),
-        maintainers=(
+        ],
+        maintainers=[
             Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
             Maintainer(github_user="githubuser2"),
-        ),
+        ],
         timestamp=datetime.now(),
-        cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
-        inputs=(
+        cite=[CiteEntry(text="Paper title", url="https://example.com/")],
+        inputs=[
             InputTensor(
                 name=TensorName("input_1"),
                 description="Input 1",
@@ -261,8 +261,8 @@ def model_data():
                 axes=AxesStr("xyc"),
                 shape=(128, 128, 3),
             ),
-        ),
-        outputs=(
+        ],
+        outputs=[
             OutputTensor(
                 name=TensorName("output_1"),
                 description="Output 1",
@@ -270,12 +270,12 @@ def model_data():
                 axes=AxesStr("xyc"),
                 shape=(128, 128, 3),
             ),
-        ),
+        ],
         name="Model",
-        tags=(),
+        tags=[],
         weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
-        test_inputs=(RelativeFilePath("test_ipt.npy"),),
-        test_outputs=(RelativeFilePath("test_out.npy"),),
+        test_inputs=[RelativeFilePath("test_ipt.npy")],
+        test_outputs=[RelativeFilePath("test_out.npy")],
         type="model",
     ).model_dump()
 

@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from pydantic import AnyUrl, HttpUrl
 
 from bioimageio.spec import model
-from bioimageio.spec._internal.base_nodes import FrozenDictNode, Node
+from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
 from bioimageio.spec.description import ResourceDescription, dump_description
@@ -33,13 +33,12 @@ def _fill_resource_package_content(
         loc = node_loc + (field_name,)
         # nested node
         if isinstance(field_value, Node):
-            if not isinstance(field_value, FrozenDictNode):
-                _fill_resource_package_content(package_content, field_value, loc)
+            _fill_resource_package_content(package_content, field_value, loc)
 
         # nested node in tuple
         elif isinstance(field_value, tuple):
             for i, fv in enumerate(field_value):
-                if isinstance(fv, Node) and not isinstance(fv, FrozenDictNode):
+                if isinstance(fv, Node):
                     _fill_resource_package_content(package_content, fv, loc + (i,))
 
         elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):

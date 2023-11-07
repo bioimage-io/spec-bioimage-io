@@ -1,8 +1,8 @@
 import collections.abc
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
+from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.types import RdfContent, YamlValue
+from bioimageio.spec._internal.types import RdfContent, YamlArray
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 from bioimageio.spec.model import v0_4_converter
@@ -62,6 +62,7 @@ def _convert_weights(data: RdfContent):
             if not isinstance(entry, dict):
                 continue
 
+            # a = entry["pytorch_version"]
             entry["pytorch_version"] = entry.get("pytorch_version", "1.10")
 
         for weights_name in ("keras_hdf5", "tensorflow_saved_model_bundle", "tensorflow_js"):
@@ -77,7 +78,7 @@ def _convert_weights(data: RdfContent):
 
 
 def _update_tensor_specs(
-    tensor_data: List[YamlValue],
+    tensor_data: YamlArray,
     test_tensors: Any,
     sample_tensors: Any,
     *,

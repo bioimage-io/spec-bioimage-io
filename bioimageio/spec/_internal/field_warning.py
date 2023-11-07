@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
-from pydantic import FieldValidationInfo, TypeAdapter
+from pydantic import TypeAdapter
 from pydantic._internal._decorators import inspect_validator
 from pydantic_core import PydanticCustomError
-from pydantic_core.core_schema import FieldValidatorFunction, NoInfoValidatorFunction
+from pydantic_core.core_schema import NoInfoValidatorFunction, ValidationInfo, WithInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec._internal.constants import ERROR, WARNING, WARNING_LEVEL_CONTEXT_KEY
@@ -24,7 +24,7 @@ else:
     SLOTS = {"slots": True}
 
 
-ValidatorFunction = Union[NoInfoValidatorFunction, FieldValidatorFunction]
+ValidatorFunction = Union[NoInfoValidatorFunction, WithInfoValidatorFunction]
 
 AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
@@ -46,7 +46,7 @@ def call_validator_func(
     func: "_V2Validator",
     mode: Literal["after", "before", "plain", "wrap"],
     value: Any,
-    info: FieldValidationInfo,
+    info: ValidationInfo,
 ) -> Any:
     info_arg = inspect_validator(func, mode)
     if info_arg:
@@ -83,7 +83,7 @@ def as_warning(
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
-    def wrapper(value: Any, info: FieldValidationInfo) -> Any:
+    def wrapper(value: Any, info: ValidationInfo) -> Any:
         try:
             call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:

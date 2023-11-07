@@ -172,43 +172,43 @@ def model_data():
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.5.0",
         description="description",
-        authors=(
+        authors=[
             Author(name="Author 1", affiliation="Affiliation 1"),
             Author(name="Author 2"),
-        ),
-        maintainers=(
+        ],
+        maintainers=[
             Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
             Maintainer(github_user="githubuser2"),
-        ),
+        ],
         timestamp=datetime.now(),
-        cite=(CiteEntry(text="Paper title", url="https://example.com/"),),
-        inputs=(
+        cite=[CiteEntry(text="Paper title", url="https://example.com/")],
+        inputs=[
             InputTensor(
                 id=TensorId("input_1"),
                 description="Input 1",
                 data=IntervalOrRatioData(type="float32"),
-                axes=(
+                axes=[
                     SpaceInputAxis(id=AxisId("x"), size=10),
                     SpaceInputAxis(id=AxisId("y"), size=20),
                     ChannelAxis(size=3),
-                ),
+                ],
                 test_tensor=HttpUrl("https://example.com/test_ipt.npy"),
             ),
-        ),
-        outputs=(
+        ],
+        outputs=[
             OutputTensor(
                 id=TensorId("output_1"),
                 description="Output 1",
-                axes=(
+                axes=[
                     SpaceOutputAxis(id=AxisId("x"), size=15),
                     SpaceOutputAxis(id=AxisId("y"), size=25),
                     ChannelAxis(size=6),
-                ),
+                ],
                 test_tensor=HttpUrl("https://example.com/test_out.npy"),
             ),
-        ),
+        ],
         name="Model",
-        tags=(),
+        tags=[],
         weights=Weights(onnx=OnnxWeights(source=HttpUrl("https://example.com/weights.onnx"), opset_version=15)),
         type="model",
     ).model_dump()

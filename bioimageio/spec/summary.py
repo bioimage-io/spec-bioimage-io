@@ -3,7 +3,7 @@ from typing import Any, List, Literal, Mapping, Tuple, Union
 from pydantic import (
     BaseModel,
     Field,
-    model_validator,  # type: ignore
+    model_validator,
 )
 from pydantic_core.core_schema import ErrorType
 
@@ -42,10 +42,10 @@ class WarningEntry(ValidationEntry):
         if isinstance(data, dict):
             data = dict(data)
             assert isinstance(data, dict)
-            if "severity" in data and not "severity_name" in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+            if "severity" in data and "severity_name" not in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
                 data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
 
-            if "severity" in data and not "severity_name" in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+            if "severity" in data and "severity_name" not in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
                 data["severity"] = WANRING_NAME_TO_SEVERITY[data["severity_name"]]
 
         return data

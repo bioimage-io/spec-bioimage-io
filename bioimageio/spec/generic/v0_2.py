@@ -1,27 +1,27 @@
 import collections.abc
-from typing import Any, List, Literal, Mapping, Optional, Sequence, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
-from pydantic import EmailStr, Field, FieldValidationInfo, HttpUrl, field_validator
+from pydantic import EmailStr, Field, HttpUrl, ValidationInfo, field_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.base_nodes import ConfigNode, Node, ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import (
+    AbsoluteFilePath,
     DeprecatedLicenseId,
     Doi,
     FileSource,
     LicenseId,
     NotEmpty,
     OrcidId,
-    RdfContent,
+    RelativeFilePath,
     ResourceId,
     Version,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
-from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
+from bioimageio.spec._internal.validation_context import get_internal_validation_context
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -33,21 +33,25 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".svg",
 )
 
+_WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
+CoverImageSource = Union[
+    Annotated[HttpUrl, _WithImageSuffix],
+    Annotated[AbsoluteFilePath, _WithImageSuffix],
+    Annotated[RelativeFilePath, _WithImageSuffix],
+]
+
 
 class Attachments(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: Tuple[FileSource, ...] = ()
+    files: List[FileSource] = Field(default_factory=list)
     """∈📦 File attachments"""
 
 
 class _Person(Node):
-    name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]]
-    """Full name"""
-
-    @field_validator("name", mode="before")
+    @field_validator("name", mode="before", check_fields=False)
     @classmethod
-    def convert_name(cls, name: Any, info: FieldValidationInfo):
+    def convert_name(cls, name: Any, info: ValidationInfo):
         ctxt = get_internal_validation_context(info.context)
         if "original_format" in ctxt and ctxt["original_format"] < Version("0.2.3") and isinstance(name, str):
             name = name.replace("/", "").replace("\\", "")
@@ -56,10 +60,10 @@ class _Person(Node):
 
     affiliation: Optional[str] = None
     """Affiliation"""
+
     email: Optional[EmailStr] = None
     """Email"""
-    github_user: Optional[str]
-    """GitHub user name"""
+
     orcid: Annotated[Optional[OrcidId], Field(examples=["0000-0001-2345-6789"])] = None
     """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
     ) in hyphenated groups of 4 digits, (and [valid](
@@ -70,7 +74,7 @@ class _Person(Node):
 
 class Author(_Person):
     name: Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]
-    github_user: Optional[str] = None
+    github_user: Optional[str] = None  # TODO: validate github_user
 
 
 class Maintainer(_Person):
@@ -124,7 +128,7 @@ class CiteEntry(Node):
 
     @field_validator("url", mode="after")
     @classmethod
-    def check_doi_or_url(cls, value: Optional[str], info: FieldValidationInfo) -> Optional[str]:
+    def check_doi_or_url(cls, value: Optional[str], info: ValidationInfo) -> Optional[str]:
         no_error_for_doi = "doi" in info.data
         if no_error_for_doi and not info.data["doi"] and not value:
             raise ValueError("Either 'doi' or 'url' is required")
@@ -139,38 +143,16 @@ class LinkedResource(Node):
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericBaseNoSource(ResourceDescriptionBase):
-    """GenericBaseNoFormatVersion without a source field
-
-    (needed because `model.v0_4.Model` and `model.v0_5.Model` have no `source` field)
-    """
-
-    format_version: str
-    """The format version of this resource specification
-    (not the `version` of the resource description)
-    When creating a new resource always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
+class GenericModelBase(ResourceDescriptionBase):
+    """Base with common fields"""
 
     name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
     """A human-friendly name of the resource description"""
 
     description: str
 
-    documentation: Annotated[
-        Union[FileSource, None],
-        Field(
-            examples=[
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
-                "README.md",
-            ],
-        ),
-    ] = None
-    """∈📦 URL or relative path to a markdown file with additional documentation.
-    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
-
     covers: Annotated[
-        Tuple[Annotated[FileSource, WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)], ...],
+        List[CoverImageSource],
         Field(
             examples=["cover.png"],
             description=(
@@ -178,13 +160,13 @@ class GenericBaseNoSource(ResourceDescriptionBase):
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
-    ] = ()
+    ] = Field(default_factory=list)
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id: Optional[ResourceId] = None
     """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
-    authors: Annotated[Tuple[Author, ...], warn(MinLen(1), "No author specified.")] = ()
+    authors: Annotated[List[Author], warn(MinLen(1), "No author specified.")] = Field(default_factory=list)
     """The authors are the creators of the RDF and the primary points of contact."""
 
     @field_validator("authors", mode="before")
@@ -199,17 +181,14 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     attachments: Optional[Attachments] = None
     """file and other attachments"""
 
-    badges: Tuple[Badge, ...] = ()
-    """badges associated with this resource"""
-
     cite: Annotated[
-        Tuple[CiteEntry, ...],
+        List[CiteEntry],
         warn(MinLen(1), "No cite entry specified."),
-    ] = ()
+    ] = Field(default_factory=list)
     """citations"""
 
     config: Annotated[
-        ConfigNode,
+        Dict[str, Any],
         Field(
             examples=[
                 dict(
@@ -218,7 +197,7 @@ class GenericBaseNoSource(ResourceDescriptionBase):
                 )
             ],
         ),
-    ] = ConfigNode()
+    ] = Field(default_factory=dict)
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a github repo URL in `config` since we already have the
     `git_repo` field defined in the spec.
@@ -255,6 +234,72 @@ class GenericBaseNoSource(ResourceDescriptionBase):
     icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """An icon for illustration"""
 
+    links: Annotated[
+        List[str],
+        Field(
+            examples=[
+                (
+                    "ilastik/ilastik",
+                    "deepimagej/deepimagej",
+                    "zero/notebook_u-net_3d_zerocostdl4mic",
+                )
+            ],
+        ),
+    ] = Field(default_factory=list)
+    """IDs of other bioimage.io resources"""
+
+    maintainers: List[Maintainer] = Field(default_factory=list)
+    """Maintainers of this resource.
+    If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
+
+    rdf_source: Optional[FileSource] = None
+    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.
+    Do not set this field in a YAML file."""
+
+    tags: Annotated[List[str], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = Field(
+        default_factory=list
+    )
+    """Associated tags"""
+
+    @as_warning
+    @field_validator("tags")
+    @classmethod
+    def warn_about_tag_categories(cls, value: List[str], info: ValidationInfo) -> List[str]:
+        categories = TAG_CATEGORIES.get(info.data["type"], {})
+        missing_categories: List[Mapping[str, Sequence[str]]] = []
+        for cat, entries in categories.items():
+            if not any(e in value for e in entries):
+                missing_categories.append({cat: entries})
+
+        if missing_categories:
+            raise ValueError("Missing tags from bioimage.io categories: {missing_categories}")
+
+        return value
+
+    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
+    """The version number of the resource. Its format must be a string in
+    `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
+    Hyphens and plus signs are not allowed to be compatible with
+    https://packaging.pypa.io/en/stable/version.html.
+    The initial version should be '0.1.0'."""
+
+
+class GenericBase(GenericModelBase):
+    badges: List[Badge] = Field(default_factory=list)
+    """badges associated with this resource"""
+
+    documentation: Annotated[
+        Union[FileSource, None],
+        Field(
+            examples=[
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "README.md",
+            ],
+        ),
+    ] = None
+    """∈📦 URL or relative path to a markdown file with additional documentation.
+    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
+
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
         warn(LicenseId, "'{value}' is a deprecated or unknown license identifier."),
@@ -275,78 +320,21 @@ class GenericBaseNoSource(ResourceDescriptionBase):
 
         return value
 
-    links: Annotated[
-        Tuple[str, ...],
-        Field(
-            examples=[
-                (
-                    "ilastik/ilastik",
-                    "deepimagej/deepimagej",
-                    "zero/notebook_u-net_3d_zerocostdl4mic",
-                )
-            ],
-        ),
-    ] = ()
-    """IDs of other bioimage.io resources"""
 
-    maintainers: Tuple[Maintainer, ...] = ()
-    """Maintainers of this resource.
-    If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
-
-    rdf_source: Optional[FileSource] = None
-    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.
-    Do not set this field in a YAML file."""
-
-    tags: Annotated[Tuple[str, ...], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = ()
-    """Associated tags"""
-
-    @as_warning
-    @field_validator("tags")
-    @classmethod
-    def warn_about_tag_categories(cls, value: Tuple[str, ...], info: FieldValidationInfo) -> Tuple[str, ...]:
-        categories = TAG_CATEGORIES.get(info.data["type"], {})
-        missing_categories: List[Mapping[str, Sequence[str]]] = []
-        for cat, entries in categories.items():
-            if not any(e in value for e in entries):
-                missing_categories.append({cat: entries})
-
-        if missing_categories:
-            raise ValueError("Missing tags from bioimage.io categories: {missing_categories}")
-
-        return value
-
-    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
-    """The version number of the resource. Its format must be a string in
-    `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
-    Hyphens and plus signs are not allowed to be compatible with
-    https://packaging.pypa.io/en/stable/version.html.
-    The initial version should be '0.1.0'."""
+ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
 
 
-ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBaseNoSource)
-
-
-class GenericBaseNoFormatVersion(GenericBaseNoSource):
-    """A generic node base without format version
-    to allow a derived resource description to define its format_version independently."""
-
-    source: Annotated[
-        Optional[FileSource], Field(description="URL or relative path to the source of the resource")
-    ] = None
-    """The primary source of the resource"""
-
-
-class GenericBase(GenericBaseNoFormatVersion):
+class WithGenericFormatVersion(Node):
     format_version: Literal["0.2.3"] = "0.2.3"
 
-    @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
-        """convert raw RDF data of an older format where possible"""
-        super().convert_from_older_format(data, context)
-        convert_from_older_format(data, context)
+    """The format version of this resource specification
+    (not the `version` of the resource description)
+    When creating a new resource always use the latest micro/patch version described here.
+    The `format_version` is important for any consumer software to understand how to parse the fields.
+    """
 
 
-class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
+class Generic(GenericBase, WithGenericFormatVersion, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
@@ -354,8 +342,13 @@ class Generic(GenericBase, extra="ignore", title="bioimage.io generic specificat
     Use this generic resource description, if none of the known specific types matches your resource.
     """
 
-    type: Annotated[str, LowerCase] = "generic"
+    type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
+
+    source: Annotated[
+        Optional[FileSource], Field(description="URL or relative path to the source of the resource")
+    ] = None
+    """The primary source of the resource"""
 
     @field_validator("type", mode="after")
     @classmethod

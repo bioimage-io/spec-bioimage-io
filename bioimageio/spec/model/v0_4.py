@@ -10,11 +10,11 @@ from pydantic import (
     TypeAdapter,
     ValidationInfo,
     field_validator,
-    model_validator,  # type: ignore
+    model_validator,
 )
 from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec._internal.base_nodes import FrozenDictNode, Kwargs, Node, NodeWithExplicitlySetFields, StringNode
+from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.types import Datetime as Datetime
@@ -41,7 +41,7 @@ from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import GenericBaseNoSource
+from bioimageio.spec.generic.v0_2 import GenericModelBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
@@ -158,7 +158,7 @@ class WeightsEntryBase(Node):
     ] = None
     """Attachments that are specific to this weights entry."""
 
-    authors: Union[Tuple[Author, ...], None] = None
+    authors: Union[List[Author], None] = None
     """Authors
     Either the person(s) that have trained this model resulting in the original weights file.
         (If this is the initial weights entry, i.e. it does not have a `parent`)
@@ -207,7 +207,7 @@ class KerasHdf5Weights(WeightsEntryBase):
     """TensorFlow version used to create these weights"""
 
 
-class OnnxWeights(WeightsEntryBase ):
+class OnnxWeights(WeightsEntryBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[
@@ -222,7 +222,7 @@ class OnnxWeights(WeightsEntryBase ):
     """ONNX opset version"""
 
 
-class PytorchStateDictWeights(WeightsEntryBase ):
+class PytorchStateDictWeights(WeightsEntryBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
@@ -253,7 +253,7 @@ class PytorchStateDictWeights(WeightsEntryBase ):
 
         return self
 
-    kwargs: Kwargs = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Annotated[
@@ -267,7 +267,7 @@ class PytorchStateDictWeights(WeightsEntryBase ):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-class TorchscriptWeights(WeightsEntryBase ):
+class TorchscriptWeights(WeightsEntryBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[
@@ -279,7 +279,7 @@ class TorchscriptWeights(WeightsEntryBase ):
     """Version of the PyTorch library used."""
 
 
-class TensorflowJsWeights(WeightsEntryBase ):
+class TensorflowJsWeights(WeightsEntryBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[
@@ -291,12 +291,12 @@ class TensorflowJsWeights(WeightsEntryBase ):
     ] = None
     """Version of the TensorFlow library used."""
 
-    source: Union[HttpUrl, RelativeFilePath]
+    source: FileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase ):
+class TensorflowSavedModelBundleWeights(WeightsEntryBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[
@@ -309,13 +309,13 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase ):
     """Version of the TensorFlow library used."""
 
 
-class ParametrizedInputShape(Node ):
+class ParametrizedInputShape(Node):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
-    min: NotEmpty[Tuple[int, ...]]
+    min: NotEmpty[List[int]]
     """The minimum input shape"""
 
-    step: NotEmpty[Tuple[int, ...]]
+    step: NotEmpty[List[int]]
     """The minimum shape change"""
 
     def __len__(self) -> int:
@@ -329,18 +329,18 @@ class ParametrizedInputShape(Node ):
         return self
 
 
-class ImplicitOutputShape(Node
+class ImplicitOutputShape(Node):
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
     reference_tensor: NotEmpty[str]
     """Name of the reference tensor."""
 
-    scale: NotEmpty[Tuple[Union[float, None], ...]]
+    scale: NotEmpty[List[Union[float, None]]]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: NotEmpty[Tuple[Union[int, Annotated[float, MultipleOf(0.5)]], ...]]
+    offset: NotEmpty[List[Union[int, Annotated[float, MultipleOf(0.5)]]]]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -358,7 +358,7 @@ class ImplicitOutputShape(Node
         return self
 
 
-class TensorBase(Node ):
+class TensorBase(Node):
     name: TensorName
     """Tensor name. No duplicates are allowed."""
 
@@ -377,31 +377,28 @@ class TensorBase(Node ):
     |  x  |  spatial dimension x |
     """
 
-    data_type: str
-    """The data type of this tensor."""
-
     data_range: Optional[Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]] = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(FrozenDictNode[NotEmpty[str], Any] ):
+class ProcessingKwargs(KwargsNode):
     """base class for pre-/postprocessing key word arguments"""
 
 
 class ProcessingBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
-    name: Literal[PreprocessingName, PostprocessingName]
+    # name: Literal[PreprocessingName, PostprocessingName]  # todo: make abstract field
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
 
 
-class BinarizeKwargs(ProcessingKwargs ):
+class BinarizeKwargs(ProcessingKwargs):
     threshold: float
     """The fixed threshold"""
 
 
-class Binarize(ProcessingBase ):
+class Binarize(ProcessingBase):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -409,14 +406,14 @@ class Binarize(ProcessingBase ):
     kwargs: BinarizeKwargs
 
 
-class ClipKwargs(ProcessingKwargs ):
+class ClipKwargs(ProcessingKwargs):
     min: float
     """minimum value for clipping"""
     max: float
     """maximum value for clipping"""
 
 
-class Clip(ProcessingBase ):
+class Clip(ProcessingBase):
     """Set tensor values below min to min and above max to max."""
 
     name: Literal["clip"] = "clip"
@@ -424,35 +421,35 @@ class Clip(ProcessingBase ):
     kwargs: ClipKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs ):
+class ScaleLinearKwargs(ProcessingKwargs):
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
 
-    gain: Union[float, Tuple[float, ...]] = 1.0
+    gain: Union[float, List[float]] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, Tuple[float, ...]] = 0.0
+    offset: Union[float, List[float]] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
-        if (self.gain == 1.0 or isinstance(self.gain, tuple) and all(g == 1.0 for g in self.gain)) and (
-            self.offset == 0.0 or isinstance(self.offset, tuple) and all(off == 0.0 for off in self.offset)
+        if (self.gain == 1.0 or isinstance(self.gain, list) and all(g == 1.0 for g in self.gain)) and (
+            self.offset == 0.0 or isinstance(self.offset, list) and all(off == 0.0 for off in self.offset)
         ):
             raise ValueError("Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
 
         return self
 
 
-class ScaleLinear(ProcessingBase ):
+class ScaleLinear(ProcessingBase):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(ProcessingBase ):
+class Sigmoid(ProcessingBase):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
@@ -463,7 +460,7 @@ class Sigmoid(ProcessingBase ):
         return ProcessingKwargs()
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs ):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -476,12 +473,12 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs ):
     """The subset of axes to normalize jointly.
     For example `xy` to normalize the two image axes for 2d data jointly."""
 
-    mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
+    mean: Annotated[Union[float, NotEmpty[List[float]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Annotated[Union[float, NotEmpty[Tuple[float, ...]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
+    std: Annotated[Union[float, NotEmpty[List[float]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
@@ -497,14 +494,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs ):
         return self
 
 
-class ZeroMeanUnitVariance(ProcessingBase ):
+class ZeroMeanUnitVariance(ProcessingBase):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs ):
+class ScaleRangeKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing percentiles.
     |     mode    |             description              |
@@ -543,14 +540,14 @@ class ScaleRangeKwargs(ProcessingKwargs ):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRange(ProcessingBase ):
+class ScaleRange(ProcessingBase):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs ):
+class ScaleMeanVarianceKwargs(ProcessingKwargs):
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -572,7 +569,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs ):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(ProcessingBase ):
+class ScaleMeanVariance(ProcessingBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
@@ -588,19 +585,19 @@ Postprocessing = Annotated[
 ]
 
 
-class InputTensor(TensorBase ):
+class InputTensor(TensorBase):
     data_type: Literal["float32", "uint8", "uint16"]
     """For now an input tensor is expected to be given as `float32`.
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
     shape: Annotated[
-        Union[Tuple[int, ...], ParametrizedInputShape],
+        Union[Sequence[int], ParametrizedInputShape],
         Field(examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]),
     ]
     """Specification of input tensor shape."""
 
-    preprocessing: Tuple[Preprocessing, ...] = ()
+    preprocessing: List[Preprocessing] = Field(default_factory=list)
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
@@ -629,14 +626,17 @@ class InputTensor(TensorBase ):
     @model_validator(mode="after")
     def validate_preprocessing_kwargs(self) -> Self:
         for p in self.preprocessing:
-            kwarg_axes = p.kwargs.get("axes", "")
-            if any(a not in self.axes for a in kwarg_axes):
-                raise ValueError("`kwargs.axes` needs to be subset of axes")
+            kwargs_axes = p.kwargs.get("axes", "")
+            if not isinstance(kwargs_axes, str):
+                raise ValueError(f"Expected an `axes` string, but got {type(kwargs_axes)}")
+
+            if any(a not in self.axes for a in kwargs_axes):
+                raise ValueError("`kwargs.axes` needs to be subset of `axes`")
 
         return self
 
 
-class OutputTensor(TensorBase ):
+class OutputTensor(TensorBase):
     data_type: Literal[
         "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
     ]
@@ -644,15 +644,15 @@ class OutputTensor(TensorBase ):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
-    shape: Union[Tuple[int, ...], ImplicitOutputShape]
+    shape: Union[Sequence[int], ImplicitOutputShape]
     """Output tensor shape."""
 
-    halo: Optional[Tuple[int, ...]] = None
+    halo: Optional[Sequence[int]] = None
     """The `halo` that should be cropped from the output tensor to avoid boundary effects.
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: Tuple[Postprocessing, ...] = ()
+    postprocessing: List[Postprocessing] = Field(default_factory=list)
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -665,8 +665,11 @@ class OutputTensor(TensorBase ):
     @model_validator(mode="after")
     def validate_postprocessing_kwargs(self) -> Self:
         for p in self.postprocessing:
-            kwarg_axes = p.kwargs.get("axes", "")
-            if any(a not in self.axes for a in kwarg_axes):
+            kwargs_axes = p.kwargs.get("axes", "")
+            if not isinstance(kwargs_axes, str):
+                raise ValueError(f"Expected {kwargs_axes} to be a string")
+
+            if any(a not in self.axes for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes")
 
         return self
@@ -675,22 +678,22 @@ class OutputTensor(TensorBase ):
 KnownRunMode = Literal["deepimagej"]
 
 
-class RunMode(Node ):
+class RunMode(Node):
     name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")]
     """Run mode name"""
 
-    kwargs: Kwargs = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(default_factory=dict)
     """Run mode specific key word arguments"""
 
 
-class LinkedModel(LinkedResource ):
+class LinkedModel(LinkedResource):
     """Reference to a bioimage.io model."""
 
     id: ResourceId
     """A valid model `id` from the bioimage.io collection."""
 
 
-class Model(GenericBaseNoSource , title="bioimage.io model specification"):
+class Model(GenericModelBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -705,11 +708,8 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
 
-    authors: NotEmpty[Tuple[Author, ...]]
+    authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""
-
-    badges: ClassVar[tuple] = ()  # type: ignore
-    """Badges are not allowed for model RDFs"""
 
     documentation: Annotated[
         FileSource,
@@ -725,7 +725,7 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NotEmpty[Tuple[InputTensor, ...]]
+    inputs: NotEmpty[List[InputTensor]]
     """Describes the input tensors expected by this model."""
 
     license: Annotated[
@@ -747,7 +747,7 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[Tuple[OutputTensor, ...]]
+    outputs: NotEmpty[List[OutputTensor]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
@@ -806,11 +806,11 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     @classmethod
     def _get_min_shape(
         cls, t: Union[InputTensor, OutputTensor], tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]]
-    ) -> Tuple[int, ...]:
+    ) -> List[int]:
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
         """
-        if isinstance(t.shape, tuple):
+        if isinstance(t.shape, list):
             return t.shape
 
         if isinstance(t.shape, ParametrizedInputShape):
@@ -822,18 +822,19 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
         if None not in t.shape.scale:
             scale: Sequence[float, ...] = t.shape.scale  # type: ignore
         else:
-            expanded_dims = tuple(idx for idx, sc in enumerate(t.shape.scale) if sc is None)
+            expanded_dims = [idx for idx, sc in enumerate(t.shape.scale) if sc is None]
             new_ref_shape: List[int] = []
             for idx in range(len(t.shape.scale)):
                 ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
                 new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
-            ref_shape = tuple(new_ref_shape)
+
+            ref_shape = new_ref_shape
             assert len(ref_shape) == len(t.shape.scale)
             scale = [0.0 if sc is None else sc for sc in t.shape.scale]
 
         offset = t.shape.offset
         assert len(offset) == len(scale)
-        return tuple(int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset))
+        return [int(rs * s + 2 * off) for rs, s, off in zip(ref_shape, scale, offset)]
 
     @model_validator(mode="after")
     def validate_tensor_references_in_inputs(self) -> Self:
@@ -843,7 +844,7 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
                     continue
 
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor not in {t.name for t in self.inputs}:
+                if ref_tensor is not None and ref_tensor not in {t.name for t in self.inputs}:
                     raise ValueError(f"'{ref_tensor}' not found in inputs")
 
                 if ref_tensor == t.name:
@@ -858,12 +859,12 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
                 if "reference_tensor" not in proc.kwargs:
                     continue
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor not in {t.name for t in self.inputs}:
+                if ref_tensor is not None and ref_tensor not in {t.name for t in self.inputs}:
                     raise ValueError(f"{ref_tensor} not found in inputs")
 
         return self
 
-    packaged_by: Tuple[Author, ...] = ()
+    packaged_by: List[Author] = Field(default_factory=list)
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
@@ -884,22 +885,22 @@ class Model(GenericBaseNoSource , title="bioimage.io model specification"):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: Tuple[FileSource, ...] = ()
+    sample_inputs: List[FileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: Tuple[FileSource, ...] = ()
+    sample_outputs: List[FileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NotEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
+    test_inputs: NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NotEmpty[Tuple[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)], ...]]
+    test_outputs: NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime

@@ -8,6 +8,7 @@ from pydantic import StringConstraints
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
+from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types._file_source import FileSource as FileSource
 from bioimageio.spec._internal.types._file_source import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
@@ -21,12 +22,10 @@ from bioimageio.spec._internal.types.field_validation import (
     validate_is_not_keyword,
     validate_orcid_id,
 )
-from bioimageio.spec._internal.validation_context import ValidationContext as ValidationContext
 
 T = TypeVar("T")
 S = TypeVar("S", bound=Sequence[Any])
 
-# types to describe RDF as pydantic models
 NotEmpty = Annotated[S, annotated_types.MinLen(1)]
 
 Datetime = Annotated[datetime, BeforeValidator(validate_datetime)]
@@ -68,11 +67,14 @@ FormatVersionPlaceholder = Literal["latest", "discover"]
 
 # types as loaded from YAML 1.2 (with ruamel.yaml)
 YamlLeafValue = Union[bool, date, datetime, float, int, str, None]
-YamlArray = List["YamlValue"]  # YAML Array is cast to list, but...
-YamlKey = Union[  # ... YAML Arrays are cast to tuples if used as key in mappings
+YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
 ]
-YamlMapping = Dict[YamlKey, "YamlValue"]  # YAML Mappings are cast to dict
+YamlArray = List["YamlValue"]
+YamlMapping = Dict[YamlKey, "YamlValue"]
+# note: for use in pydantic see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
+#   and don't open another issue a la https://github.com/pydantic/pydantic/issues/8021
 YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
+
 RdfContent = Dict[str, YamlValue]
 Doi = NewType("Doi", Annotated[str, StringConstraints(pattern=DOI_REGEX)])

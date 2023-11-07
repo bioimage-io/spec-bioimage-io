@@ -22,7 +22,7 @@ def test_case_sensitive_suffix():
 
 
 def test_multiple_suffix():
-    adapter = TypeAdapter(Annotated[FileSource, WithSuffix([".py", ".md"], case_sensitive=True)])
+    adapter = TypeAdapter(Annotated[FileSource, WithSuffix((".py", ".md"), case_sensitive=True)])
     _ = adapter.validate_python(Path(__file__).name, context=dict(root=Path(__file__).parent))
     _ = adapter.validate_python("https://example.com/lala.py")
     _ = adapter.validate_python("https://example.com/lala.md#section")
