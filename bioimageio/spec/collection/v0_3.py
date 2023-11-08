@@ -1,4 +1,4 @@
-from typing import ClassVar, List, Literal, Tuple, Union
+from typing import ClassVar, List, Literal, Union
 
 from pydantic import Field, TypeAdapter, field_validator
 from pydantic import HttpUrl as HttpUrl

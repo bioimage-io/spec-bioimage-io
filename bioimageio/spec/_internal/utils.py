@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import sys
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
+from urllib.parse import urlparse
 
-from pydantic import BaseModel
+from pydantic import HttpUrl
 from typing_extensions import Annotated
+
+from bioimageio.spec.typing import RelativeFilePath
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -94,4 +97,10 @@ def unindent(text: str, ignore_first_line: bool = False):
     return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])
 
 
-Model = TypeVar("Model", bound=BaseModel)
+def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
+    if isinstance(src, RelativeFilePath):
+        return src.path.name
+    elif isinstance(src, PurePath):
+        return src.name
+    else:
+        return urlparse(str(src)).path.split("/")[-1]

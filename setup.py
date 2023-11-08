@@ -28,15 +28,29 @@ setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "annotated-types",
+        "annotated-types>=0.5.0",
         "email_validator",
         "packaging>=17.0",
+        "pooch",
         "pydantic[email]>=2.0.1",
+        "pyodide-http;platform_system=='Emscripten'",
         "python-dateutil",
+        "ruamel.yaml",
+        "tqdm",
         "typing-extensions",
     ],
     extras_require={
-        "dev": ["ruamel.yaml", "black", "deepdiff", "pdoc", "pyright", "pooch", "pre-commit", "numpy", "pytest", "lxml"]
+        "dev": [
+            "black",
+            "deepdiff",
+            "lxml",
+            "numpy",
+            "pdoc",
+            "pre-commit",
+            "pyright",
+            "pytest-pyodide",  # TODO: write tests for pyodide
+            "pytest",
+        ]
     },
     scripts=[],
     include_package_data=True,

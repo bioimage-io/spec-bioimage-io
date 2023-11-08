@@ -1,26 +1,15 @@
 import re
-from pathlib import PurePath
 from typing import Any, Dict, Optional, Sequence, Tuple, Union
-from urllib.parse import urlparse
 
 from pydantic import AnyUrl, HttpUrl
 
 from bioimageio.spec import model
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
+from bioimageio.spec._internal.utils import extract_file_name, nest_dict_with_narrow_first_key
 from bioimageio.spec.description import ResourceDescription, dump_description
 from bioimageio.spec.summary import Loc
 from bioimageio.spec.typing import FileName, RdfContent, RelativeFilePath
-
-
-def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
-    if isinstance(src, RelativeFilePath):
-        return src.path.name
-    elif isinstance(src, PurePath):
-        return src.name
-    else:
-        return urlparse(str(src)).path.split("/")[-1]
 
 
 def _fill_resource_package_content(

@@ -102,6 +102,8 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{p} does not point to an existing directory")
 
 
+FileName = str
 AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
-
 FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
+PermissiveFileSource = Union[FileSource, str]
+StrictFileSource = Union[HttpUrl, AbsoluteFilePath]
