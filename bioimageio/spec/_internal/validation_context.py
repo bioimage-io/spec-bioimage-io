@@ -17,8 +17,8 @@ class ValidationContext(BaseModel):
     root: Union[DirectoryPath, AnyUrl] = Path()
     """url/directory serving as base to resolve any relative file paths."""
 
-    file_name: str = "rdf.bioimageio.yaml"
-    """The file name of the RDF"""
+    file_name: str = "bioimageio.yaml"
+    """File name of the bioimageio Yaml file."""
 
 
 class InternalValidationContext(TypedDict):

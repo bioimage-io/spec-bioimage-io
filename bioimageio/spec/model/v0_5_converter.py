@@ -2,13 +2,13 @@ import collections.abc
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.types import RdfContent, YamlArray
+from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 from bioimageio.spec.model import v0_4_converter
 
 
-def convert_from_older_format(data: RdfContent, context: InternalValidationContext):
+def convert_from_older_format(data: BioimageioYamlContent, context: InternalValidationContext):
     fv = data.get("format_version")
     if not isinstance(fv, str) or fv.count(".") != 2:
         return
@@ -25,12 +25,13 @@ def convert_from_older_format(data: RdfContent, context: InternalValidationConte
         _convert_model_from_v0_4_to_0_5_0(data, context)
 
 
-def _convert_model_from_v0_4_to_0_5_0(data: RdfContent, context: InternalValidationContext) -> None:
+def _convert_model_from_v0_4_to_0_5_0(data: BioimageioYamlContent, context: InternalValidationContext) -> None:
     _convert_axes_string_to_axis_descriptions(data, context=context)
     _convert_architecture(data)
     convert_attachments(data)
     _convert_weights(data)
     _ = data.pop("download_url", None)
+    _ = data.pop("rdf_source", None)
 
     if isinstance(data.get("parent"), dict):
         _ = data.pop("parent")
@@ -38,7 +39,7 @@ def _convert_model_from_v0_4_to_0_5_0(data: RdfContent, context: InternalValidat
     data["format_version"] = "0.5.0"
 
 
-def _convert_axes_string_to_axis_descriptions(data: RdfContent, *, context: InternalValidationContext):
+def _convert_axes_string_to_axis_descriptions(data: BioimageioYamlContent, *, context: InternalValidationContext):
     inputs = data.get("inputs")
     outputs = data.get("outputs")
     sample_inputs = data.pop("sample_inputs", None)
@@ -55,7 +56,7 @@ def _convert_axes_string_to_axis_descriptions(data: RdfContent, *, context: Inte
         _update_tensor_specs(data["outputs"], test_outputs, sample_outputs, context=context)
 
 
-def _convert_weights(data: RdfContent):
+def _convert_weights(data: BioimageioYamlContent):
     if "weights" in data and isinstance((weights := data["weights"]), dict):
         for weights_name in ("pytorch_state_dict", "torchscript"):
             entry = weights.get(weights_name)

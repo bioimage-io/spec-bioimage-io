@@ -4,7 +4,7 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import HttpUrl
 
-from bioimageio.spec.description import validate_format
+from bioimageio.spec._description import validate_format
 from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
     AxisId,

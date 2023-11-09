@@ -76,4 +76,4 @@ YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
 
 # derived types
 DatasetId = NewType("DatasetId", ResourceId)
-RdfContent = Dict[str, YamlValue]
+BioimageioYamlContent = Dict[str, YamlValue]

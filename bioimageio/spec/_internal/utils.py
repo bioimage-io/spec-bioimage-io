@@ -3,12 +3,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path, PurePath
 from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit, urlunsplit
 
-from pydantic import HttpUrl
+from pydantic import AnyUrl, HttpUrl
 from typing_extensions import Annotated
 
-from bioimageio.spec.typing import RelativeFilePath
+from bioimageio.spec._internal.types._file_source import RelativeFilePath
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -25,6 +25,17 @@ else:
     from importlib.resources import files as files
 
 _annot_type = type(Annotated[int, "int"])
+
+
+def get_parent_url(url: HttpUrl) -> HttpUrl:
+    parsed = urlsplit(str(url))
+    path = list(parsed.path.split("/"))
+    if parsed.netloc == "zenodo.org" and parsed.path.startswith("/api/records/") and parsed.path.endswith("/content"):
+        path[-2:-1] = []
+    else:
+        path = path[:-1]
+
+    return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
 
 
 def iterate_annotated_union(typ: type) -> Iterator[Any]:

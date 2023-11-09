@@ -4,7 +4,9 @@ import ast
 import collections.abc
 import inspect
 import os
+import traceback
 from abc import ABC
+from copy import deepcopy
 from typing import (
     Any,
     ClassVar,
@@ -34,11 +36,15 @@ from pydantic import (
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.types import RdfContent, Version
+from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION
+from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath, Version
 from bioimageio.spec._internal.utils import unindent
-from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
-from bioimageio.spec.summary import ValidationSummary
+from bioimageio.spec._internal.validation_context import (
+    InternalValidationContext,
+    ValidationContext,
+    get_internal_validation_context,
+)
+from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
 
 class Node(
@@ -146,6 +152,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
+    # type: LiteralString  # TODO: make abstract fields
+    # format_version: LiteralString  # TODO: make abstract fields
+
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
         return self._validation_summaries
@@ -155,12 +164,12 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
         return self._internal_validation_context["root"]
 
     @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         pass
 
     @model_validator(mode="before")
     @classmethod
-    def update_context_and_data(cls, data: RdfContent, info: ValidationInfo):
+    def update_context_and_data(cls, data: BioimageioYamlContent, info: ValidationInfo):
         context = get_internal_validation_context(info.context)
         cls._update_context(context, data)
         cls.convert_from_older_format(data, context)
@@ -185,7 +194,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
             assert len(cls.implemented_format_version_tuple) == 3
 
     @classmethod
-    def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
+    def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
         # set original format if possible
         original_format = data.get("format_version")
         if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
@@ -225,6 +234,75 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
         return super().model_validate(
             obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
         )
+
+    @classmethod
+    def load(
+        cls,
+        data: BioimageioYamlContent,
+        *,
+        context: ValidationContext,
+    ) -> Union[Self, InvalidDescription]:
+        data = deepcopy(data)
+        rd, errors, tb, val_warnings = cls._load_impl(
+            data,
+            get_internal_validation_context(context.model_dump(), warning_level=ERROR),
+        )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
+
+        assert not val_warnings, f"already got warnings: {val_warnings}"
+        _, error2, tb2, val_warnings = cls._load_impl(
+            data, get_internal_validation_context(context.model_dump(), warning_level=INFO)
+        )
+        assert not error2 or isinstance(rd, InvalidDescription), f"decreasing warning level caused errors: {error2}"
+        assert not tb2 or isinstance(rd, InvalidDescription), f"decreasing warning level lead to error traceback: {tb2}"
+        summary = ValidationSummary(
+            bioimageio_spec_version=VERSION,
+            errors=errors,
+            name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",  # type: ignore
+            source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
+            status="failed" if errors else "passed",
+            warnings=val_warnings,
+            traceback=tb,
+        )
+
+        rd._validation_summaries.append(summary)
+        return rd
+
+    @classmethod
+    def _load_impl(
+        cls, data: BioimageioYamlContent, context: InternalValidationContext
+    ) -> Tuple[Union[Self, InvalidDescription], List[ErrorEntry], List[str], List[WarningEntry]]:
+        rd: Union[Self, InvalidDescription, None] = None
+        val_errors: List[ErrorEntry] = []
+        val_warnings: List[WarningEntry] = []
+        tb: List[str] = []
+
+        try:
+            rd = cls.model_validate(data, context=dict(context))
+        except pydantic.ValidationError as e:
+            for ee in e.errors(include_url=False):
+                if (severity := ee.get("ctx", {}).get("severity", ERROR)) < ERROR:
+                    val_warnings.append(WarningEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"], severity=severity))
+                else:
+                    val_errors.append(ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
+        except Exception as e:
+            val_errors.append(ErrorEntry(loc=(), msg=str(e), type=type(e).__name__))
+            tb = traceback.format_tb(e.__traceback__)
+
+        if rd is None:
+            try:
+                rd = InvalidDescription.model_validate(data)
+            except Exception:
+                resource_type = cls.model_fields["type"].default
+                format_version = cls.implemented_format_version
+                rd = InvalidDescription(type=resource_type, format_version=format_version)
+
+        return rd, val_errors, tb, val_warnings
+
+
+class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An invalid resource description"):
+    type: Any = "unknown"
+    format_version: Any = "unknown"
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
 
 
 class StringNode(collections.UserString, ABC):

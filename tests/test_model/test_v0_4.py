@@ -4,8 +4,8 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import HttpUrl, ValidationError
 
+from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.description import validate_format
 from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     AxesInCZYX,

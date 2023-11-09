@@ -17,13 +17,12 @@ from typing_extensions import Annotated, LiteralString, Self
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec._internal.types import BioimageioYamlContent, LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import RdfContent as RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -916,6 +915,6 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

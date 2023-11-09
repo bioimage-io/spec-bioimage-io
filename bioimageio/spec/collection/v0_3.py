@@ -4,7 +4,7 @@ from pydantic import Field, TypeAdapter, field_validator
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.types import NotEmpty, RdfContent
+from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application02
@@ -64,7 +64,7 @@ class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bi
     type: Literal["collection"] = "collection"
 
     @classmethod
-    def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
+    def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
         super()._update_context(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
@@ -80,6 +80,6 @@ class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bi
         return value
 
     @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         v0_2.Collection.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

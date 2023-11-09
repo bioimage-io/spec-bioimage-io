@@ -158,7 +158,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 }
 
 
-def yield_rdf_paths() -> Iterable[ParameterSet]:
+def yield_bioimageio_yaml_paths() -> Iterable[ParameterSet]:
     cache_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
     with Path(cache_path).open(encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
@@ -173,14 +173,14 @@ def yield_rdf_paths() -> Iterable[ParameterSet]:
     )
 
     for rdf in collection_registry:
-        rdf_path = Path(collection.fetch(rdf))
-        rdf_key = rdf_path.relative_to(CACHE_PATH).as_posix()
-        yield pytest.param(rdf_path, rdf_key, id=rdf_key)
+        descr_path = Path(collection.fetch(rdf))
+        rdf_key = descr_path.relative_to(CACHE_PATH).as_posix()
+        yield pytest.param(descr_path, rdf_key, id=rdf_key)
 
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
-@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_rdf_paths()))
-def test_rdf(rdf_path: Path, rdf_key: str, format_version: FormatVersionPlaceholder):
+@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_bioimageio_yaml_paths()))
+def test_rdf(descr_path: Path, rdf_key: str, format_version: FormatVersionPlaceholder):
     if (
         format_version == DISCOVER
         and rdf_key in KNOWN_INVALID
@@ -191,7 +191,7 @@ def test_rdf(rdf_path: Path, rdf_key: str, format_version: FormatVersionPlacehol
 
     check_rdf(
         AnyUrl("https://example.com/"),
-        rdf_path,
+        descr_path,
         as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(rdf_key, set()),
     )

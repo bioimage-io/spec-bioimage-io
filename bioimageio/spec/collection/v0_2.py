@@ -18,7 +18,7 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import NotEmpty, RdfContent, RelativeFilePath, ResourceId, YamlValue
+from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, RelativeFilePath, ResourceId, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
@@ -158,14 +158,14 @@ class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bi
             seen[v.id] = i
 
     @classmethod
-    def _update_context(cls, context: InternalValidationContext, data: RdfContent) -> None:
+    def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
         super()._update_context(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
         assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
         context["collection_base_content"] = collection_base_content
 
     @staticmethod
-    def move_groups_to_collection_field(data: RdfContent) -> None:
+    def move_groups_to_collection_field(data: BioimageioYamlContent) -> None:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):
             return
 
@@ -189,6 +189,6 @@ class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bi
                 data["id"] = id_
 
     @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         cls.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

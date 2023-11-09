@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from pathlib import Path, PurePosixPath
 from typing import Any, Union
-from urllib.parse import urljoin
+from urllib.parse import urlsplit, urlunsplit
 
 from annotated_types import Predicate
 from pydantic import (
@@ -64,13 +64,25 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: Union[DirectoryPath, AnyUrl]) -> Union[FilePath, AnyUrl]:
+    def get_absolute(self, root: Union[DirectoryPath, HttpUrl]) -> Union[FilePath, HttpUrl]:
         if isinstance(root, pathlib.Path):
-            return root / self.path
-        else:
-            return AnyUrl(urljoin(str(root), str(self.path)))
+            return (root / self.path).absolute()
 
-    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+        parsed = urlsplit(str(root))
+        path = list(parsed.path.strip("/").split("/"))
+        rel_path = self.path.as_posix().strip("/")
+        if (
+            parsed.netloc == "zenodo.org"
+            and parsed.path.startswith("/api/records/")
+            and parsed.path.endswith("/content")
+        ):
+            path.insert(-2, rel_path)
+        else:
+            path.append(rel_path)
+
+        return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+
+    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
         if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.exists():
             raise ValueError(f"{p} does not exist")
 
@@ -91,13 +103,13 @@ class RelativePath:
 
 
 class RelativeFilePath(RelativePath):
-    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
         if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_file():
             raise ValueError(f"{p} does not point to an existing file")
 
 
 class RelativeDirectory(RelativePath):
-    def _check_exists(self, root: Union[DirectoryPath, AnyUrl]) -> None:
+    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
         if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_dir():
             raise ValueError(f"{p} does not point to an existing directory")
 

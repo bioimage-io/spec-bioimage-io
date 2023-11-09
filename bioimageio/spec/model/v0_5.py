@@ -18,6 +18,7 @@ from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFiel
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
+from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import FileSource as FileSource
@@ -25,7 +26,6 @@ from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import RdfContent as RdfContent
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Unit as Unit
@@ -1259,6 +1259,6 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     The available weight formats determine which consumers can use this model."""
 
     @classmethod
-    def convert_from_older_format(cls, data: RdfContent, context: InternalValidationContext) -> None:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

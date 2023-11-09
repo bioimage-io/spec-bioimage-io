@@ -1,20 +1,20 @@
 from pydantic import HttpUrl
 
-from bioimageio.spec._internal.types import RdfContent
+from bioimageio.spec._description import build_description, update_format, validate_format
+from bioimageio.spec._internal.types import BioimageioYamlContent
 from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.description import load_description, update_format, validate_format
 
 
-def test_update_format(stardist04_data: RdfContent):
+def test_update_format(stardist04_data: BioimageioYamlContent):
     _ = update_format(stardist04_data)
 
 
-def test_forward_compatibility(unet2d_data: RdfContent):
+def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data = dict(unet2d_data)
     v_future = "9999.0.0"
     data["format_version"] = v_future  # assume it is valid in a future format version
 
-    summary = load_description(
+    summary = build_description(
         data, context=ValidationContext(root=HttpUrl("https://example.com/"))
     ).validation_summaries[0]
     assert summary.status == "passed", summary
@@ -25,7 +25,7 @@ def test_forward_compatibility(unet2d_data: RdfContent):
     assert ws[0].loc == ("format_version",), ws[0].loc
 
 
-def test_no_forward_compatibility(unet2d_data: RdfContent):
+def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data = dict(unet2d_data)
     data["authors"] = 42  # make sure rdf is invalid
     data["format_version"] = "9999.0.0"  # assume it is valid in a future format version

@@ -174,10 +174,6 @@ class GenericModelBase(ResourceDescriptionBase):
 
         return maintainers
 
-    rdf_source: Optional[FileSource] = None
-    """Resource description file (RDF) source; used to keep track of where an rdf.yaml was downloaded from.
-    Do not set this field in a YAML file."""
-
     tags: Annotated[List[str], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = Field(
         default_factory=list
     )

@@ -8,13 +8,13 @@ from deepdiff import DeepDiff
 from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
+from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.validation_context import (
     InternalValidationContext,
     ValidationContext,
     get_internal_validation_context,
 )
-from bioimageio.spec.description import InvalidDescription, load_description
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 
 yaml = YAML(typ="safe")
@@ -97,7 +97,7 @@ def check_rdf(
 
     context = ValidationContext(root=root_path, file_name=rdf_path.name)
     if is_invalid:
-        rd = load_description(data, context=context)
+        rd = build_description(data, context=context)
         assert isinstance(rd, InvalidDescription), "Invalid RDF passed validation"
 
     exclude_from_comp = {
@@ -108,7 +108,7 @@ def check_rdf(
 
     format_version = "latest" if as_latest else "discover"
     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
-    rd = load_description(data, context=context, format_version=format_version)
+    rd = build_description(data, context=context, format_version=format_version)
     summary = rd.validation_summaries[0]
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
