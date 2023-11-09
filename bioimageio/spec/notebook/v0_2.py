@@ -10,7 +10,7 @@ from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import GenericBase, WithGenericFormatVersion
+from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 
@@ -22,7 +22,7 @@ NotebookSource = Union[
 ]
 
 
-class Notebook(GenericBase, WithGenericFormatVersion, title="bioimage.io notebook specification"):
+class Notebook(GenericBase, title="bioimage.io notebook specification"):
     """Bioimage.io description of a Jupyter Notebook."""
 
     type: Literal["notebook"] = "notebook"

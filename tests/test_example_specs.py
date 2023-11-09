@@ -6,26 +6,24 @@ import pytest
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.conftest import EXAMPLE_SPECS
-from tests.utils import ParameterSet, check_rdf
+from tests.utils import ParameterSet, check_bioimageio_yaml
 
 
 def get_param(rdf: Path) -> ParameterSet:
-    rdf_key = rdf.relative_to(EXAMPLE_SPECS).as_posix()
-    return pytest.param(rdf, rdf_key, id=rdf_key)
+    key = rdf.relative_to(EXAMPLE_SPECS).as_posix()
+    return pytest.param(rdf, key, id=key)
 
 
-def yield_valid_rdf_paths() -> Iterable[ParameterSet]:
+def yield_valid_descr_paths() -> Iterable[ParameterSet]:
     assert EXAMPLE_SPECS.exists()
-    for rdf in EXAMPLE_SPECS.glob("**/*.yaml"):
-        if rdf.name.startswith("rdf"):
-            yield get_param(rdf)
+    for p in EXAMPLE_SPECS.glob("**/*bioimageio.yaml"):
+        yield get_param(p)
 
 
-def yield_invalid_rdf_paths() -> Iterable[ParameterSet]:
+def yield_invalid_descr_paths() -> Iterable[ParameterSet]:
     assert EXAMPLE_SPECS.exists()
-    for rdf in EXAMPLE_SPECS.glob("**/*.yaml"):
-        if rdf.name.startswith("invalid_rdf"):
-            yield get_param(rdf)
+    for p in EXAMPLE_SPECS.glob("**/invalid*bioimageio.yaml"):
+        yield get_param(p)
 
 
 EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
@@ -46,16 +44,16 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
-@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_valid_rdf_paths()))
-def test_example_rdfs(rdf_path: Path, rdf_key: str, format_version: FormatVersionPlaceholder):
-    check_rdf(
-        rdf_path.parent,
-        rdf_path,
+@pytest.mark.parametrize("descr_path,key", list(yield_valid_descr_paths()))
+def test_example_rdfs(descr_path: Path, key: str, format_version: FormatVersionPlaceholder):
+    check_bioimageio_yaml(
+        descr_path,
+        root=descr_path.parent,
         as_latest=format_version == LATEST,
-        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(rdf_key, set()),
+        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
     )
 
 
-@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_invalid_rdf_paths()))
-def test_invalid_example_rdfs(rdf_path: Path, rdf_key: str):
-    check_rdf(rdf_path.parent, rdf_path, as_latest=False, is_invalid=True)
+@pytest.mark.parametrize("descr_path,key", list(yield_invalid_descr_paths()))
+def test_invalid_example_rdfs(descr_path: Path, key: str):
+    check_bioimageio_yaml(descr_path, root=descr_path.parent, as_latest=False, is_invalid=True)

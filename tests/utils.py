@@ -5,7 +5,7 @@ from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Uni
 
 import pytest
 from deepdiff import DeepDiff
-from pydantic import AnyUrl, TypeAdapter, ValidationError, create_model
+from pydantic import HttpUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
 from bioimageio.spec._description import InvalidDescription, build_description
@@ -84,18 +84,19 @@ def check_type(
         assert node_deserialized["value"] == expected_deserialized, (node_deserialized["value"], expected_deserialized)
 
 
-def check_rdf(
-    root_path: Union[Path, AnyUrl],
-    rdf_path: Path,
+def check_bioimageio_yaml(
+    source: Path,
+    /,
+    *,
+    root: Union[Path, HttpUrl],
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
-    *,
     is_invalid: bool = False,
 ) -> None:
-    with rdf_path.open(encoding="utf-8") as f:
+    with source.open(encoding="utf-8") as f:
         data = yaml.load(f)
 
-    context = ValidationContext(root=root_path, file_name=rdf_path.name)
+    context = ValidationContext(root=root, file_name=source.name)
     if is_invalid:
         rd = build_description(data, context=context)
         assert isinstance(rd, InvalidDescription), "Invalid RDF passed validation"
@@ -122,7 +123,7 @@ def check_rdf(
         return
 
     deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
-    assert_dict_equal(deserialized, expect_back, f"roundtrip {rdf_path.as_posix()}\n", ignore_known_rdf_diffs=True)
+    assert_dict_equal(deserialized, expect_back, f"roundtrip {source.as_posix()}\n", ignore_known_rdf_diffs=True)
 
 
 def assert_dict_equal(

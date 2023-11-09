@@ -11,6 +11,7 @@ from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
     DeprecatedLicenseId,
     FileSource,
     LicenseId,
@@ -21,11 +22,13 @@ from bioimageio.spec._internal.types import (
 )
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types.field_validation import WithSuffix
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -51,13 +54,8 @@ class LinkedResource(Node):
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class WithGenericFormatVersion(Node):
-    format_version: Literal["0.3.0"] = "0.3.0"
-    """The **format** version of this resource specification"""
-
-
 class GenericModelBase(ResourceDescriptionBase):
-    """Base with with common fields"""
+    """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description"""
@@ -203,6 +201,15 @@ class GenericModelBase(ResourceDescriptionBase):
 
 
 class GenericBase(GenericModelBase):
+    """Base for all resource descriptions except for the model descriptions"""
+
+    format_version: Literal["0.3.0"] = "0.3.0"
+    """The **format** version of this resource specification"""
+
+    @classmethod
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
+        convert_from_older_format(data, context)
+
     documentation: Annotated[
         Optional[MarkdownSource],
         Field(
@@ -232,7 +239,7 @@ class GenericBase(GenericModelBase):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
 
 
-class Generic(GenericBase, WithGenericFormatVersion, title="bioimage.io generic specification"):
+class Generic(GenericBase, title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

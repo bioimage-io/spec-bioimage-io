@@ -5,7 +5,7 @@ import collections.abc
 import inspect
 import os
 import traceback
-from abc import ABC
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import (
     Any,
@@ -140,7 +140,7 @@ class NodeWithExplicitlySetFields(Node):
         return data
 
 
-class ResourceDescriptionBase(NodeWithExplicitlySetFields):
+class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     """base class for all resource descriptions"""
 
     _internal_validation_context: InternalValidationContext = PrivateAttr(
@@ -163,15 +163,15 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields):
     def root(self) -> Union[AnyUrl, DirectoryPath]:
         return self._internal_validation_context["root"]
 
+    @abstractmethod
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        pass
+        ...
 
     @model_validator(mode="before")
     @classmethod
-    def update_context_and_data(cls, data: BioimageioYamlContent, info: ValidationInfo):
+    def _convert_from_older_format(cls, data: BioimageioYamlContent, info: ValidationInfo):
         context = get_internal_validation_context(info.context)
-        cls._update_context(context, data)
         cls.convert_from_older_format(data, context)
         return data
 
@@ -303,6 +303,10 @@ class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An inval
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+
+    @classmethod
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
+        pass
 
 
 class StringNode(collections.UserString, ABC):

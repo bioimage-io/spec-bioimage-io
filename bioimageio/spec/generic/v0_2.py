@@ -10,6 +10,7 @@ from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, warn
 from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
+    BioimageioYamlContent,
     DeprecatedLicenseId,
     Doi,
     FileSource,
@@ -21,7 +22,8 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import get_internal_validation_context
+from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
+from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -144,7 +146,7 @@ class LinkedResource(Node):
 
 
 class GenericModelBase(ResourceDescriptionBase):
-    """Base with common fields"""
+    """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
     """A human-friendly name of the resource description"""
@@ -285,6 +287,19 @@ class GenericModelBase(ResourceDescriptionBase):
 
 
 class GenericBase(GenericModelBase):
+    """Base for all resource descriptions except for the model descriptions"""
+
+    format_version: Literal["0.2.3"] = "0.2.3"
+    """The format version of this resource specification
+    (not the `version` of the resource description)
+    When creating a new resource always use the latest micro/patch version described here.
+    The `format_version` is important for any consumer software to understand how to parse the fields.
+    """
+
+    @classmethod
+    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
+        convert_from_older_format(data, context)
+
     badges: List[Badge] = Field(default_factory=list)
     """badges associated with this resource"""
 
@@ -324,17 +339,7 @@ class GenericBase(GenericModelBase):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
 
 
-class WithGenericFormatVersion(Node):
-    format_version: Literal["0.2.3"] = "0.2.3"
-
-    """The format version of this resource specification
-    (not the `version` of the resource description)
-    When creating a new resource always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
-
-
-class Generic(GenericBase, WithGenericFormatVersion, extra="ignore", title="bioimage.io generic specification"):
+class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

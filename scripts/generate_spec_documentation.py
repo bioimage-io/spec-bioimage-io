@@ -49,7 +49,7 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "They are not always intuitively understandable and merely a hint at more complex validation.|\n"
     r"| \<type\>.v\<major\>_\<minor\>.\<sub spec\> | "
     "Subparts of a spec might be taken from another spec type or format version. |\n"
-    "| `field` ≝ `default` | Default field values are indicated after '=' and make a field optional. "
+    "| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. "
     "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
     "and determine which bioimage.io specification applies. They are optional only when creating a resource "
     "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"

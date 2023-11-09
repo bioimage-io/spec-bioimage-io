@@ -27,7 +27,7 @@ from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Generic as Generic
-from bioimageio.spec.generic.v0_2 import GenericBase, WithGenericFormatVersion
+from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import Model as Model
@@ -111,7 +111,7 @@ class CollectionEntry(CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase, WithGenericFormatVersion, extra="allow", title="bioimage.io collection specification"):
+class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection describes several other bioimage.io resources.
     Note that collections cannot be nested; resources listed under `collection` may not be collections themselves.
     """

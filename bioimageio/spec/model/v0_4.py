@@ -916,5 +916,4 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
 
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

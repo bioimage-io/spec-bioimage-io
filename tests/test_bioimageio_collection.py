@@ -9,7 +9,7 @@ from pydantic import AnyUrl
 
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
-from tests.utils import ParameterSet, check_rdf
+from tests.utils import ParameterSet, check_bioimageio_yaml
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
 RDF_BASE_URL = BASE_URL + "rdfs/"
@@ -174,24 +174,24 @@ def yield_bioimageio_yaml_paths() -> Iterable[ParameterSet]:
 
     for rdf in collection_registry:
         descr_path = Path(collection.fetch(rdf))
-        rdf_key = descr_path.relative_to(CACHE_PATH).as_posix()
-        yield pytest.param(descr_path, rdf_key, id=rdf_key)
+        key = descr_path.relative_to(CACHE_PATH).as_posix()
+        yield pytest.param(descr_path, key, id=key)
 
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
-@pytest.mark.parametrize("rdf_path,rdf_key", list(yield_bioimageio_yaml_paths()))
-def test_rdf(descr_path: Path, rdf_key: str, format_version: FormatVersionPlaceholder):
+@pytest.mark.parametrize("descr_path,key", list(yield_bioimageio_yaml_paths()))
+def test_rdf(descr_path: Path, key: str, format_version: FormatVersionPlaceholder):
     if (
         format_version == DISCOVER
-        and rdf_key in KNOWN_INVALID
+        and key in KNOWN_INVALID
         or format_version == LATEST
-        and rdf_key in KNOWN_INVALID_AS_LATEST
+        and key in KNOWN_INVALID_AS_LATEST
     ):
         pytest.skip("known failure")
 
-    check_rdf(
-        AnyUrl("https://example.com/"),
+    check_bioimageio_yaml(
         descr_path,
+        root=AnyUrl("https://example.com/"),
         as_latest=format_version == LATEST,
-        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(rdf_key, set()),
+        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
     )
