@@ -4,22 +4,24 @@
 
 # Specifications for bioimage.io
 
-This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML files which we called `Resource Description Files` or `RDF`. The RDFs can be downloaded or uploaded to the [bioimage.io website](https://bioimage.io), produced or consumed by bioimage.io-compatible consumers(e.g. image analysis software or other website). Currently we defined two types of RDFs: a dedicated RDF specification for AI models (i.e. `model description`) and a generic description specification. The model description is a RDF with additional fields that specifically designed for describing AI models.
+This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named `bioimageio.yaml`. Such a bioimageio.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).
 
-All the bioimage.io-compatible RDF must fulfill the following rules:
+bioimage.io-compatible resources must fulfill the following rules:
 
-* Must be a YAML file encoded as UTF-8; If yaml syntax version is not specified to be 1.1 in the first line by `% YAML 1.1` it must be equivalent in yaml 1.1 and yaml 1.2. For differences see <https://yaml.readthedocs.io/en/latest/pyyaml.html#differences-with-pyyaml>.
-* The RDF file extension must be `.yaml` (not `.yml`)
-* The RDF file can be saved in a folder (or virtual folder) or in a zip package, the following additional rules must apply:
-   1. When stored in a local file system folder, github repo, zenodo deposition, blob storage virtual folder or similar kind, the RDF file name should match the pattern of `*.rdf.yaml`, for example `my-model.rdf.yaml`.
-   2. When the RDF file and other files are zipped into a RDF package, it must be named as `rdf.yaml`.
+Note that the Python package PyYAML does not support YAML 1.2 .
+We therefore use and recommend [ruamel.yaml](https://ruamelyaml.readthedocs.io/en/latest/).
+For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
 
-As a general guideline, please follow the model description spec to describe AI models and use the generic description spec for other resource types including `dataset`, `application`. You will find more details about these two specifications in the following sections. Please also note that the best way to check whether your RDF file is bioimage.io-compliant is to run the bioimage.io validator against it.
+Please also note that the best way to check whether your `bioimageio.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
+The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package also provides the bioimageio command line interface (CLI) with the `validate` command:
+
+```terminal
+bioimageio validate path/to/your/bioimageio.yaml
+```
 
 ## Format version overview
 
 All bioimage.io description formats are defined as [Pydantic models](https://docs.pydantic.dev/latest/).
-To fully verify any resource description `bioimageio.core.validate` from the [bioimageio.core]() Python package should be used.
 
 | type | format version | documentation |
 | --- | --- | --- |
@@ -32,7 +34,7 @@ To fully verify any resource description `bioimageio.core.validate` from the [bi
 
 ## JSON schema
 
-Simplified descriptions are available as [JSON schema]():
+Simplified descriptions are available as [JSON schema](https://json-schema.org/):
 
 | bioimageio.spec version | JSON schema |
 | --- | --- |
@@ -41,136 +43,32 @@ Simplified descriptions are available as [JSON schema]():
 
 These are primarily intended for syntax highlighting and form generation.
 
-## Resource Description Specification
+## Examples
 
-A bioimage.io-compatible Resource Description File (RDF) is a YAML file with a set of [specifically defined fields](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_latest.md).
-
-We provide some [examples for using RDFs to describe applications, notebooks, datasets etc](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/rdf-examples.md).
-
-## Model Description Specification
-
-Besides the generic description spec, the `model description spec` defines a file format based on the [YAML 1.2](https://en.wikipedia.org/wiki/YAML) for representing pretrained AI models. This format is used to describe models hosted on the [bioimage.io](https://bioimage.io) model repository site.
-
-You can find documentation of the `model description` [here](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md).
-
-Here is a list of model description examples:
-
-* [Model RDF examples](https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models).
-
-## Collection Specification
-
-The [`Collection Description Specification`](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md)(`collection description`) defines a file format for representing collections of resources for the [bioimage.io](https://bioimage.io) website.
-
-You can find the latest `collection description` [here](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_latest.md).
-
-## Linking resource items
-
-todo: outdated
-You can create links to connect resource items by adding another resource item id to the `links` field. For example, if you want to associate an applicaiton with a model, you can set the links field of the models like the following:
-
-```yaml
-application:
-  - id: HPA-Classification
-    source: https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/apps/HPA-Classification.imjoy.html
-
-model:
-  - id: HPAShuffleNetV2
-    source: https://raw.githubusercontent.com/bioimage-io/tfjs-bioimage-io/master/models/HPAShuffleNetV2/HPAShuffleNetV2.model.yaml
-    links:
-      - HPA-Classification
-```
-
-## 🖧 Hosting RDFs
-
-todo: outdated
-In order to make a resource description file (RDF) available on <https://bioimage.io>, you can use the [bioimage.io uploader](https://bioimage.io/#/upload/), which assists you in uploading it and any associated files to [Zenodo](https://zenodo.org/).
-Alternatively you can upload directly to [Zenodo](https://zenodo.org/). In this case keep in mind to create an `rdf.yaml` file and add the keyword `bioimage.io` to your zenodo record for our CI to discover it.
+We provide some [examples for using bioimageio.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
 
 ## 💁 Recommendations
 
-todo: outdated
+* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `bioimageio.yaml` file and try to avoid using subdirectories.
+* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `bioimageio.yaml` file.
+* bioimageio.spec keeps evolving. Try to use and upgrade to the most current format version!
 
-* For AI models, consider using the model-specific spec (i.e. [model description](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md)) instead of the generic description. Only fallback to the generic description if writing model specific RDF is not possible for some reason.
-* The RDF or package file name should not contain spaces or special characters, it should be concise, descriptive, in kebab case or camel case.
-* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the RDF file and try to avoid using subdirectories.
-* Use the [bioimage.io spec validator](#bioimageio-spec-validator) to verify your YAML file
-* Store the yaml file in a version controlled Git repository (e.g. Github or Gitlab)
-* Use or upgrade to the latest format version
+## ⌨ bioimageio command-line interface (CLI)
 
-# ⌨ bioimageio command-line interface (CLI)
-
-todo: outdated
-The bioimage.io command line tool makes it easy to work with bioimage.io RDFs.
-A basic version of it, documented here, is provided by the [bioimageio.spec package](bioimageio-python-package), which is extended by the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package.
-
-## 🧪 validate
-
-todo: outdated
-It is recommended to use this validator to verify your models when you write it manually or develop tools for generating RDF files.
-
-Use the `validate` command to check for formatting errors like missing or invalid values:
-
-```
-bioimageio validate <MY-MODEL-SOURCE>
-
-```
-
-`<MY-MODEL-SOURCE>` may be a local RDF yaml "`<MY-MODEL>/rdf.yaml`" or a DOI / URL to a zenodo record, or a URL to an rdf.yaml file.
-
-To see if your model is compatible to the [latest bioimage.io model format](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_latest.md) use the spec validator with the `--update-format` flag:
-
-```
-
-bioimageio validate --update-format `<MY-MODEL-SOURCE>`
-
-```
-
-The output of the `validate` command will indicate missing or invalid fields in the model file. For example, if the field `timestamp` was missing it would print the following:
-
-```
-
-{'timestamp': ['Missing data for required field.']}
-
-```
-
-or if the field `test_inputs` does not contain a list, it would print:
-
-```
-
-{'test_inputs': ['Not a valid list.']}.
-
-```
-
-## update-format
-
-Similar to the `validate` command with `--update-format` flag the `update-format` command attempts to convert an RDF
-to the latest applicable format version, but saves the result in a file for further manual editing:
-
-```
-
-bioimageio update-format <MY-MODEL-SOURCE> <OUTPUT-PATH>
-
-```
-
-# bioimageio.spec and bioimageio.core Python package
-
-The bioimageio.spec package allows to represent bioimage.io RDFs in Python.
-The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) package extends bioimageio.spec by providing a CLI and an extended API.
-
-note: The CLI has moved entirely to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
+The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
 
 ## 🖥 Installation
 
-bioimageio.spec can be installed with either `pip` or `conda`, we recommend to install `bioimageio.core` instead:
+bioimageio.spec can be installed with either `conda` or `pip`, we recommend to install `bioimageio.core` instead:
 
 ```console
-pip install -U bioimageio.core
+conda install -c conda-forge bioimageio.core
 ```
 
 or
 
 ```console
-conda install -c conda-forge bioimageio.core
+pip install -U bioimageio.core
 ```
 
 ## 🤝 How to contribute
