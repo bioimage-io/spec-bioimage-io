@@ -28,7 +28,8 @@ from bioimageio.spec._internal.types import (
     StrictFileSource,
     YamlValue,
 )
-from bioimageio.spec._internal.utils import extract_file_name, get_parent_url
+from bioimageio.spec._internal.types._file_source import extract_file_name
+from bioimageio.spec._internal.utils import get_parent_url
 from bioimageio.spec._internal.validation_context import ValidationContext
 
 if platform.machine() == "wasm32":

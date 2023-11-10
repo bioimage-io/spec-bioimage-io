@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pathlib
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePath, PurePosixPath
 from typing import Any, Union
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urlparse, urlsplit, urlunsplit
 
 from annotated_types import Predicate
 from pydantic import (
@@ -119,3 +119,12 @@ AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
 FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
 PermissiveFileSource = Union[FileSource, str]
 StrictFileSource = Union[HttpUrl, AbsoluteFilePath]
+
+
+def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
+    if isinstance(src, RelativeFilePath):
+        return src.path.name
+    elif isinstance(src, PurePath):
+        return src.name
+    else:
+        return urlparse(str(src)).path.split("/")[-1]

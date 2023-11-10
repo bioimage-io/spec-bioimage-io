@@ -18,18 +18,22 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, RelativeFilePath, ResourceId, YamlValue
+from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
+from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import Attachments as Attachments
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_2 import FileSource as FileSource
 from bioimageio.spec.generic.v0_2 import Generic as Generic
 from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
+from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
 from bioimageio.spec.model.v0_4 import Model as Model
 from bioimageio.spec.notebook.v0_2 import Notebook as Notebook
 
@@ -161,7 +165,9 @@ class Collection(GenericBase, extra="allow", title="bioimage.io collection speci
     def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
         super()._update_context(context, data)
         collection_base_content = {k: v for k, v in data.items() if k != "collection"}
-        assert "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
+        assert (
+            "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
+        ), context
         context["collection_base_content"] = collection_base_content
 
     @staticmethod

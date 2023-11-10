@@ -214,7 +214,7 @@ def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Res
 
         ma, mi, _pa = rd_class.implemented_format_version_tuple
         key = f"{ma}.{mi}"
-        assert key not in per_fv
+        assert key not in per_fv, (key, per_fv)
         per_fv[key] = rd_class
 
     for typ, rd_class in _iterate_over_latest_rd_classes():
@@ -245,7 +245,7 @@ def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]
         if typ is PydanticUndefined:
             typ = "generic"
 
-        assert isinstance(typ, str)
+        assert isinstance(typ, str), typ
         yield typ, rd_class
 
 
@@ -255,5 +255,5 @@ def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescri
         if typ is PydanticUndefined:
             typ = "generic"
 
-        assert isinstance(typ, str)
+        assert isinstance(typ, str), typ
         yield typ, rd_class

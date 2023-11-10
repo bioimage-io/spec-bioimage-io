@@ -5,7 +5,6 @@ from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import Application as Application02
 from bioimageio.spec.application.v0_3 import Application as Application03
@@ -13,13 +12,16 @@ from bioimageio.spec.collection import v0_2
 from bioimageio.spec.dataset.v0_2 import Dataset as Dataset02
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset03
 from bioimageio.spec.generic.v0_2 import Generic as Generic02
+from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import FileSource as FileSource
 from bioimageio.spec.generic.v0_3 import Generic, GenericBase
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.model.v0_4 import Model as Model04
 from bioimageio.spec.model.v0_5 import Model as Model05
 from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02

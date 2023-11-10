@@ -700,28 +700,27 @@ class TensorBase(Node):
 
         return value
 
-    @field_validator("data", mode="after")
-    @classmethod
+    @model_validator(mode="after")
     def check_data_matches_channelaxis(
-        cls, value: Union[TensorData, NotEmpty[List[TensorData]]], info: ValidationInfo
-    ) -> Union[TensorData, NotEmpty[List[TensorData]]]:
-        if not isinstance(value, list) or "axes" not in info.data:
-            return value
+        self
+    ) -> Self:
+        if not isinstance(self.data, list) or not isinstance(self, (InputTensor, OutputTensor)):
+            return self
 
-        for a in info.data["axes"]:
+        for a in self.axes:
             if isinstance(a, ChannelAxis):
                 size = a.size
                 assert isinstance(size, int)
                 break
         else:
-            return value
+            return self
 
-        if len(value) != size:
+        if len(self.data) != size:
             raise ValueError(
-                f"Got tensor data descriptions for {len(value)} channels, but '{a.id}' axis has size {size}."
+                f"Got tensor data descriptions for {len(self.data)} channels, but '{a.id}' axis has size {size}."
             )
 
-        return value
+        return self
 
 
 class InputTensor(TensorBase):
@@ -1260,5 +1259,4 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
 
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        super().convert_from_older_format(data, context)
         convert_from_older_format(data, context)

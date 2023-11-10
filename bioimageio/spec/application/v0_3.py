@@ -4,15 +4,16 @@ from pydantic import Field
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.types import FileSource as FileSource
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import FileSource as FileSource
 from bioimageio.spec.generic.v0_3 import GenericBase
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 
 
 class Application(GenericBase, title="bioimage.io application specification"):

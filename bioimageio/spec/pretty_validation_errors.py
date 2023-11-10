@@ -37,8 +37,8 @@ try:
         tb: TracebackType,
         tb_offset: Any = None,
     ):
-        assert issubclass(etype, ValidationError)
-        assert isinstance(evalue, ValidationError)
+        assert issubclass(etype, ValidationError), type(etype)
+        assert isinstance(evalue, ValidationError), type(etype)
 
         stb: Union[List[Union[str, Any]], Any] = self.InteractiveTB.structured_traceback(  # type: ignore
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset

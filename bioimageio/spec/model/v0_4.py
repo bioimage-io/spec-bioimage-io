@@ -1,6 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, FrozenSet, List, Literal, NewType, Optional, Sequence, Tuple, Union
+import collections.abc
+from typing import (
+    Any,
+    ClassVar,
+    Dict,
+    FrozenSet,
+    List,
+    Literal,
+    NewType,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
@@ -12,7 +25,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self
+from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
@@ -805,17 +818,19 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     @classmethod
     def _get_min_shape(
         cls, t: Union[InputTensor, OutputTensor], tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]]
-    ) -> List[int]:
+    ) -> Sequence[int]:
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
         """
-        if isinstance(t.shape, list):
+        if isinstance(t.shape, collections.abc.Sequence):
             return t.shape
-
-        if isinstance(t.shape, ParametrizedInputShape):
+        elif isinstance(t.shape, ParametrizedInputShape):
             return t.shape.min
+        elif isinstance(t.shape, ImplicitOutputShape):  # pyright: ignore[reportUnnecessaryIsInstance]
+            pass
+        else:
+            assert_never(t.shape)
 
-        assert isinstance(t.shape, ImplicitOutputShape)
         ref_shape = cls._get_min_shape(tensors_by_name[t.shape.reference_tensor], tensors_by_name)
 
         if None not in t.shape.scale:

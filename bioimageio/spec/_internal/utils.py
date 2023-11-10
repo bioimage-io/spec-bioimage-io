@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import sys
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
-from urllib.parse import urlparse, urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl
 from typing_extensions import Annotated
-
-from bioimageio.spec._internal.types._file_source import RelativeFilePath
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -18,7 +16,7 @@ NestedDict = Dict[K, "NestedDict[K, V] | V"]
 if sys.version_info < (3, 9):
 
     def files(package_name: str):
-        assert package_name == "bioimageio.spec"
+        assert package_name == "bioimageio.spec", package_name
         return Path(__file__).parent.parent
 
 else:
@@ -106,12 +104,3 @@ def unindent(text: str, ignore_first_line: bool = False):
 
     indent = min(len(line) - len(line.lstrip(" ")) for line in filled_lines)
     return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])
-
-
-def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
-    if isinstance(src, RelativeFilePath):
-        return src.path.name
-    elif isinstance(src, PurePath):
-        return src.name
-    else:
-        return urlparse(str(src)).path.split("/")[-1]

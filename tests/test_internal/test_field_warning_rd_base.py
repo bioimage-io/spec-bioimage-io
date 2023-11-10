@@ -4,21 +4,21 @@ import pytest
 from annotated_types import Ge
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import ALERT, ERROR, INFO, WARNING, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.validation_context import ValidationContext
 from tests.utils import check_node
 
 
-class DummyNode(ResourceDescriptionBase):
+class DummyNode(Node):
     type: str = "generic"
     format_version: str = "0.1.0"
     a: Annotated[int, warn(Ge(0), "smaller than zero")] = 0
     b: Annotated[int, warn(Ge(0), "smaller than zero")] = 0
 
 
-class NestedDummyNode(ResourceDescriptionBase):
+class NestedDummyNode(Node):
     type: str = "generic"
     format_version: str = "0.1.0"
     dummy: DummyNode

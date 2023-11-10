@@ -239,7 +239,7 @@ class GenericBase(GenericModelBase):
 ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
 
 
-class Generic(GenericBase, title="bioimage.io generic specification"):
+class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
@@ -250,9 +250,7 @@ class Generic(GenericBase, title="bioimage.io generic specification"):
     type: Annotated[str, LowerCase] = Field("generic", frozen=True)
     """The resource type assigns a broad category to the resource."""
 
-    source: Annotated[
-        Optional[FileSource], Field(description="URL or relative path to the source of the resource")
-    ] = None
+    source: Optional[FileSource] = None
     """The primary source of the resource"""
 
     @field_validator("type", mode="after")
@@ -264,6 +262,3 @@ class Generic(GenericBase, title="bioimage.io generic specification"):
             )
 
         return value
-
-    source: Optional[FileSource] = None
-    """The primary source of the resource"""

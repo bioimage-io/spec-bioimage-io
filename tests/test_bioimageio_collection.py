@@ -44,6 +44,7 @@ KNOWN_INVALID = {
     "zero/Notebook_U-Net_3D_ZeroCostDL4Mic/latest/rdf.yaml",
 }
 KNOWN_INVALID_AS_LATEST = {
+    "10.5281/zenodo.6865412/6919253/rdf.yaml",
     "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
     "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
     "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",

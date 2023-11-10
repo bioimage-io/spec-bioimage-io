@@ -31,13 +31,11 @@ from tests.utils import check_node, check_type
     [
         dict(
             id="t1",
-            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data={"values": ["cat", "dog", "parrot"]},
         ),
         dict(
             id="t2",
-            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data=[
                 {"values": ["cat", "dog", "parrot"]},
@@ -46,7 +44,6 @@ from tests.utils import check_node, check_type
         ),
         dict(
             id="t3",
-            axes=[{"type": "channel", "channel_names": ["a", "b"]}],
             test_tensor="https://example.com/test.npy",
             data=[
                 {"values": [1, 2, 3]},
@@ -56,7 +53,6 @@ from tests.utils import check_node, check_type
         pytest.param(
             dict(
                 id="t4",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
@@ -77,7 +73,6 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="t5",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
@@ -88,20 +83,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         ),
         pytest.param(
             dict(
-                id="t6",
-                axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
-                test_tensor="https://example.com/test.npy",
-                data=[
-                    {"values": ["cat", "dog", "parrot"]},
-                    {"values": ["mouse", "zebra", "elephant"]},
-                ],
-            ),
-            id="channel mismatch",
-        ),
-        pytest.param(
-            dict(
                 id="t7",
-                axes=[{"type": "channel", "channel_names": ["a", "b"]}],
                 test_tensor="https://example.com/test.npy",
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
@@ -135,11 +117,32 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
                 }
             ],
             "test_tensor": "https://example.com/test.npy",
-        }
+        },
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
     check_node(InputTensor, kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        pytest.param(
+            dict(
+                id="input_2",
+                test_tensor="https://example.com/test.npy",
+                data=[
+                    {"values": ["cat", "dog", "parrot"]},
+                    {"values": ["mouse", "zebra", "elephant"]},
+                ],
+                axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
+            ),
+            id="channel mismatch",
+        ),
+    ],
+)
+def test_input_tensor_invalid(kwargs: Dict[str, Any]):
+    check_node(InputTensor, kwargs, is_invalid=True)
 
 
 @pytest.mark.parametrize(

@@ -88,9 +88,9 @@ class Node(
 
         unindented_source = unindent(source)
         module = ast.parse(unindented_source)
-        assert isinstance(module, ast.Module)
+        assert isinstance(module, ast.Module), module
         class_def = module.body[0]
-        assert isinstance(class_def, ast.ClassDef)
+        assert isinstance(class_def, ast.ClassDef), class_def
         if len(class_def.body) < 2:
             return
 
@@ -163,8 +163,8 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     def root(self) -> Union[AnyUrl, DirectoryPath]:
         return self._internal_validation_context["root"]
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         ...
 
@@ -191,7 +191,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
                 cls.implemented_format_version_tuple = cast(
                     Tuple[int, int, int], tuple(int(x) for x in cls.implemented_format_version.split("."))
                 )
-            assert len(cls.implemented_format_version_tuple) == 3
+            assert len(cls.implemented_format_version_tuple) == 3, cls.implemented_format_version_tuple
 
     @classmethod
     def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
@@ -228,7 +228,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
 
         context = get_internal_validation_context(context)
         if isinstance(obj, dict):
-            assert all(isinstance(k, str) for k in obj)
+            assert all(isinstance(k, str) for k in obj), obj
             cls._update_context(context, obj)
 
         return super().model_validate(
@@ -349,7 +349,7 @@ class StringNode(collections.UserString, ABC):
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
-        assert issubclass(source, StringNode)
+        assert issubclass(source, StringNode), source
         return core_schema.with_info_after_validator_function(
             cls._validate,
             core_schema.str_schema(pattern=cls._pattern),
