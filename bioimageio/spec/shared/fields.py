@@ -89,6 +89,10 @@ class Array(DocumentedField, marshmallow_fields.Field):
             return value
 
 
+class Boolean(DocumentedField, marshmallow_fields.Boolean):
+    pass
+
+
 class DateTime(DocumentedField, marshmallow_fields.DateTime):
     """
     Parses datetime in ISO8601 or if value already has datetime.datetime type
@@ -181,6 +185,12 @@ class List(DocumentedField, marshmallow_fields.List):
         assert isinstance(instance, DocumentedField), "classes not allowd to avoid trouble"
         super().__init__(instance, *super_args, **super_kwargs)
         self.type_name += f"\\[{self.inner.type_name}\\]"  # add type of list elements
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.List[typing.Any]]:
+        if isinstance(value, str):
+            raise TypeError("Avoiding bugs by prohibiting to serialize a list from a string.")
+
+        return super()._serialize(value, attr, obj, **kwargs)
 
 
 class Number(DocumentedField, marshmallow_fields.Number):
@@ -326,14 +336,10 @@ class ExplicitShape(List):
         super().__init__(Integer(), **super_kwargs)
 
 
-class ImportableSource(String):
+class CallableFromModule(String):
     @staticmethod
     def _is_import(path):
         return ":" not in path
-
-    @staticmethod
-    def _is_filepath(path):
-        return ":" in path
 
     def _deserialize(self, *args, **kwargs) -> typing.Any:
         source_str: str = super()._deserialize(*args, **kwargs)
@@ -344,18 +350,34 @@ class ImportableSource(String):
             object_name = source_str[last_dot_idx + 1 :]
 
             if not module_name:
-                raise ValidationError(
-                    f"Missing module name in importable source: {source_str}. Is it just missing a dot?"
-                )
+                raise ValidationError(f"Missing module name in callable source: {source_str}.")
 
             if not object_name:
                 raise ValidationError(
-                    f"Missing object/callable name in importable source: {source_str}. Is it just missing a dot?"
+                    f"Missing object/callable name in callable source: {source_str}. Is it just missing a dot?"
                 )
 
-            return raw_nodes.ImportableModule(callable_name=object_name, module_name=module_name)
+            return raw_nodes.CallableFromModule(callable_name=object_name, module_name=module_name)
+        else:
+            raise ValidationError(source_str)
 
-        elif self._is_filepath(source_str):
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        if value is None:
+            return None
+        elif isinstance(value, raw_nodes.CallableFromModule):
+            return f"{value.module_name}.{value.callable_name}"
+        else:
+            raise TypeError(f"{value} has unexpected type {type(value)}")
+
+
+class CallableFromSourceFile(String):
+    @staticmethod
+    def _is_filepath(path):
+        return ":" in path
+
+    def _deserialize(self, *args, **kwargs) -> typing.Any:
+        source_str: str = super()._deserialize(*args, **kwargs)
+        if self._is_filepath(source_str):
             *module_uri_parts, object_name = source_str.split(":")
             module_uri = ":".join(module_uri_parts).strip(":")
 
@@ -365,7 +387,7 @@ class ImportableSource(String):
                     Path(),
                 ]
             )
-            return raw_nodes.ImportableSourceFile(
+            return raw_nodes.CallableFromSourceFile(
                 callable_name=object_name, source_file=source_file_field.deserialize(module_uri)
             )
         else:
@@ -374,12 +396,15 @@ class ImportableSource(String):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
         if value is None:
             return None
-        elif isinstance(value, raw_nodes.ImportableModule):
-            return f"{value.module_name}.{value.callable_name}"
-        elif isinstance(value, raw_nodes.ImportableSourceFile):
+        elif isinstance(value, raw_nodes.CallableFromSourceFile):
             return f"{value.source_file}:{value.callable_name}"
         else:
             raise TypeError(f"{value} has unexpected type {type(value)}")
+
+
+class CallableSource(Union):
+    def __init__(self, **kwargs):
+        super().__init__([CallableFromModule(), CallableFromSourceFile()], **kwargs)
 
 
 class Kwargs(Dict):

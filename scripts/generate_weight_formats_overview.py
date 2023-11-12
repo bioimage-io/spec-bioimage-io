@@ -23,7 +23,7 @@ consumer_defaults = {
 
 
 def parse_args():
-    p = ArgumentParser(description=("script that generates weights formats overview"))
+    p = ArgumentParser(description="script that generates weights formats overview")
     p.add_argument("command", choices=["check", "generate"])
 
     args = p.parse_args()

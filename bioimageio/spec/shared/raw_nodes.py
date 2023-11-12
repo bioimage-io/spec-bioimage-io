@@ -174,7 +174,7 @@ class ImplicitOutputShape(RawNode):
 
 
 @dataclass
-class ImportableModule(RawNode):
+class CallableFromModule(RawNode):
     module_name: str = missing
     callable_name: str = missing
 
@@ -183,8 +183,8 @@ class ImportableModule(RawNode):
 
 
 @dataclass
-class LocalImportableModule(ImportableModule):
-    """intermediate between raw_nodes.ImportableModule and core.resource_io.nodes.ImportedSource.
+class LocalCallableFromModule(CallableFromModule):
+    """intermediate between raw_nodes.CallableFromModule and core.resource_io.nodes.ImportedCallable.
 
     Used by SourceNodeTransformer
     """
@@ -193,7 +193,7 @@ class LocalImportableModule(ImportableModule):
 
 
 @dataclass
-class ImportableSourceFile(RawNode):
+class CallableFromSourceFile(RawNode):
     _include_in_package = ("source_file",)
 
     callable_name: str = missing
@@ -204,8 +204,8 @@ class ImportableSourceFile(RawNode):
 
 
 @dataclass
-class ResolvedImportableSourceFile(ImportableSourceFile):
-    """intermediate between raw_nodes.ImportableSourceFile and core.resource_io.nodes.ImportedSource.
+class ResolvedCallableFromSourceFile(CallableFromSourceFile):
+    """intermediate between raw_nodes.CallableFromSourceFile and core.resource_io.nodes.ImportedCallable.
 
     Used by SourceNodeTransformer
     """
@@ -213,4 +213,11 @@ class ResolvedImportableSourceFile(ImportableSourceFile):
     source_file: pathlib.Path = missing
 
 
-ImportableSource = Union[ImportableModule, ImportableSourceFile, ResolvedImportableSourceFile, LocalImportableModule]
+CallableSource = Union[
+    CallableFromModule, CallableFromSourceFile, ResolvedCallableFromSourceFile, LocalCallableFromModule
+]
+# some aliases for backward compatibility
+ImportableModule = CallableFromModule
+LocalImportableModule = LocalCallableFromModule
+ImportableSourceFile = CallableFromSourceFile
+ResolvedImportableSourceFile = ResolvedCallableFromSourceFile

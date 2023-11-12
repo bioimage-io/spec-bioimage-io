@@ -604,7 +604,7 @@ is in an unsupported format version. The current format version described here i
         + " This field is only required if the field source is present.",
     )
 
-    source = fields.ImportableSource(
+    source = fields.CallableSource(
         bioimageio_maybe_required=True,
         bioimageio_description="Language and framework specific implementation. As some weights contain the model "
         "architecture, the source is optional depending on the present weight formats. `source` can either point to a "

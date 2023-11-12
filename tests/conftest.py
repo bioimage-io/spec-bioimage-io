@@ -111,3 +111,18 @@ def dataset_rdf():
 @pytest.fixture
 def upsamle_model_rdf():
     return pathlib.Path(__file__).parent / "../example_specs/models/upsample_test_model/rdf.yaml"
+
+
+@pytest.fixture
+def stardist_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/stardist/stardist_example.yaml"
+
+
+@pytest.fixture
+def hpa_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/hpa/single_cell_classification.yaml"
+
+
+@pytest.fixture
+def dummy_workflow_rdf():
+    return pathlib.Path(__file__).parent / "../example_specs/workflows/hello.yaml"

@@ -167,7 +167,7 @@ def get_patched_format_version(type_: str, format_version: str):
 
 
 def get_spec_type_from_type(type_: Optional[str]):
-    if type_ in ("model", "collection", "dataset"):
+    if type_ in ("model", "collection", "dataset", "workflow"):
         return type_
     else:
         return "rdf"
@@ -214,3 +214,7 @@ def nested_default_dict_as_nested_dict(nested_dd):
         return [nested_default_dict_as_nested_dict(value) for value in nested_dd]
     else:
         return nested_dd
+
+
+AXIS_LETTER_TO_NAME = dict(b="batch", t="time", c="channel", i="index")
+AXIS_NAME_TO_LETTER = {v: k for k, v in AXIS_LETTER_TO_NAME.items()}

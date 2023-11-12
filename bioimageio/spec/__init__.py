@@ -1,4 +1,4 @@
-from . import collection, model, rdf, shared
+from . import collection, model, rdf, shared, workflow
 from .commands import update_format, update_rdf, validate
 from .io_ import (
     get_resource_package_content,

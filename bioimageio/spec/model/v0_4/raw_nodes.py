@@ -26,8 +26,8 @@ from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF_Base as _
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
-    ImportableModule,
-    ImportableSourceFile,
+    CallableFromModule,
+    CallableFromSourceFile,
     ParametrizedInputShape,
     RawNode,
     URI,
@@ -56,7 +56,7 @@ WeightsFormat = Literal[
     "pytorch_state_dict", "torchscript", "keras_hdf5", "tensorflow_js", "tensorflow_saved_model_bundle", "onnx"
 ]
 
-ImportableSource = Union[ImportableSourceFile, ImportableModule]
+CallableSource = Union[CallableFromSourceFile, CallableFromModule]
 
 
 @dataclass
@@ -77,7 +77,7 @@ class OnnxWeightsEntry(_WeightsEntryBase, OnnxWeightsEntry03):
 @dataclass
 class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     weights_format_name = "Pytorch State Dict"
-    architecture: ImportableSource = missing
+    architecture: CallableSource = missing
     architecture_sha256: Union[_Missing, str] = missing
     kwargs: Union[_Missing, Dict[str, Any]] = missing
     pytorch_version: Union[_Missing, packaging.version.Version] = missing

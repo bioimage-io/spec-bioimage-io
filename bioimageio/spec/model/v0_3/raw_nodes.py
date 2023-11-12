@@ -11,8 +11,8 @@ from bioimageio.spec.rdf.v0_2.raw_nodes import Author, Maintainer, RDF_Base
 from bioimageio.spec.shared.raw_nodes import (
     Dependencies,
     ImplicitOutputShape,
-    ImportableModule,
-    ImportableSourceFile,
+    CallableFromModule,
+    CallableFromSourceFile,
     ParametrizedInputShape,
     RawNode,
     URI,
@@ -136,7 +136,7 @@ WeightsEntry = Union[
     TensorflowSavedModelBundleWeightsEntry,
 ]
 
-ImportableSource = Union[ImportableSourceFile, ImportableModule]
+CallableSource = Union[CallableFromSourceFile, CallableFromModule]
 
 
 @dataclass
@@ -168,7 +168,7 @@ class Model(RDF_Base):
     timestamp: datetime = missing
     type: Literal["model"] = missing
 
-    source: Union[_Missing, ImportableSource] = missing
+    source: Union[_Missing, CallableSource] = missing
     test_inputs: List[Union[URI, Path]] = missing
     test_outputs: List[Union[URI, Path]] = missing
     weights: Dict[WeightsFormat, WeightsEntry] = missing

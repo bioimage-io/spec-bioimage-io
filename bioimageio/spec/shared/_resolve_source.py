@@ -276,25 +276,25 @@ def _resolve_source_path(
 
 
 @resolve_source.register
-def _resolve_source_resolved_importable_path(
-    source: raw_nodes.ResolvedImportableSourceFile,
+def _resolve_source_resolved_callable_path(
+    source: raw_nodes.ResolvedCallableFromSourceFile,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
     pbar=None,
-) -> raw_nodes.ResolvedImportableSourceFile:
-    return raw_nodes.ResolvedImportableSourceFile(
+) -> raw_nodes.ResolvedCallableFromSourceFile:
+    return raw_nodes.ResolvedCallableFromSourceFile(
         callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 
 
 @resolve_source.register
-def _resolve_source_importable_path(
-    source: raw_nodes.ImportableSourceFile,
+def _resolve_source_callable_path(
+    source: raw_nodes.CallableFromSourceFile,
     root_path: typing.Union[os.PathLike, URI] = pathlib.Path(),
     output: typing.Optional[os.PathLike] = None,
     pbar=None,
-) -> raw_nodes.ResolvedImportableSourceFile:
-    return raw_nodes.ResolvedImportableSourceFile(
+) -> raw_nodes.ResolvedCallableFromSourceFile:
+    return raw_nodes.ResolvedCallableFromSourceFile(
         callable_name=source.callable_name, source_file=resolve_source(source.source_file, root_path, output, pbar)
     )
 

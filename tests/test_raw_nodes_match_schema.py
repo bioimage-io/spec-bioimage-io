@@ -35,9 +35,9 @@ def test_model_spec(schema_raw_nodes_pair):
     }
     assert field_names  # did we get any?
     node_names -= field_names
-    # if present, ignore raw_nodes.ImportableModule and raw_nodes.ImportableSourceFile which are coming from
-    # fields.ImportableSource
-    node_names -= {n for n in {"ImportableModule", "ImportableSourceFile"} if hasattr(raw_nodes, n)}
+    # if present, ignore raw_nodes.CallableFromModule and raw_nodes.CallableFromSourceFile which are coming from
+    # fields.CallableSource
+    node_names -= {n for n in {"CallableFromModule", "CallableFromSourceFile"} if hasattr(raw_nodes, n)}
 
     assert node_names  # did we get any?
 

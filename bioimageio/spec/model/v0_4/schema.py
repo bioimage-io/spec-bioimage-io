@@ -230,7 +230,7 @@ class OnnxWeightsEntry(OnnxWeightsEntry03, _WeightsEntryBase):
 class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     bioimageio_description = "PyTorch state dictionary weights format"
     weights_format = fields.String(validate=field_validators.Equal("pytorch_state_dict"), required=True, load_only=True)
-    architecture = fields.ImportableSource(
+    architecture = fields.CallableSource(
         required=True,
         bioimageio_description="Source code of the model architecture that either points to a "
         "local implementation: `<relative path to file>:<identifier of implementation within the file>` or the "
@@ -252,9 +252,9 @@ class PytorchStateDictWeightsEntry(_WeightsEntryBase):
     @validates_schema
     def sha_for_source_code_file(self, data, **kwargs):
         arch = data.get("architecture")
-        if isinstance(arch, raw_nodes.ImportableModule):
+        if isinstance(arch, raw_nodes.CallableFromModule):
             return
-        elif isinstance(arch, raw_nodes.ImportableSourceFile):
+        elif isinstance(arch, raw_nodes.CallableFromSourceFile):
             sha = data.get("architecture_sha256")
             if sha is None:
                 raise ValidationError(
