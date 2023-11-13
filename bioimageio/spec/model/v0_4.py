@@ -56,6 +56,7 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import GenericModelBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_3 import FileSourceWithSha256
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 
 AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
@@ -151,19 +152,12 @@ class Weights(Node):
         return self
 
 
-class WeightsEntryBase(Node):
+class WeightsEntryBase(FileSourceWithSha256):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
     source: FileSource
     """∈📦 The weights file."""
-
-    sha256: Annotated[
-        Optional[Sha256],
-        warn(Sha256, "Missing SHA-256 hash value."),
-        Field(description="SHA256 checksum of the source file\n" + SHA256_HINT),
-    ] = None
-    """SHA256 checksum of the source file"""
 
     attachments: Annotated[
         Union[Attachments, None], warn(None, "Weights entry depends on additional attachments.", ALERT)

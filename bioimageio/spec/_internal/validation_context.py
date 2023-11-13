@@ -1,10 +1,11 @@
+import os
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, DirectoryPath
 from typing_extensions import NotRequired, TypedDict
 
-from bioimageio.spec._internal.constants import ERROR, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME, ERROR, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.types._version import Version
 
 WarningSeverity = Literal[20, 30, 35]
@@ -33,6 +34,9 @@ class InternalValidationContext(TypedDict):
     warning_level: WarningLevel
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
+    perform_io_checks: bool
+    """wether or not to perfrom validation that requires IO operations like download or reading a file from disk."""
+
     original_format: NotRequired[Version]
     """original format version of the validation data (set dynamically during validation of resource descriptions)."""
 
@@ -45,6 +49,7 @@ def get_internal_validation_context(
     root: Union[DirectoryPath, AnyUrl, None] = None,  # option to overwrite given context
     file_name: Optional[str] = None,  # option to overwrite given context
     warning_level: Optional[WarningLevel] = None,  # option to overwrite given context
+    perform_io_checks: Optional[bool] = None,
 ):
     if given_context is None:
         given_context = {}
@@ -53,8 +58,11 @@ def get_internal_validation_context(
 
     ret = InternalValidationContext(
         root=root or given_context.get("root", Path()),
-        file_name=file_name or given_context.get("file_name", "rdf.bioimageio.yaml"),
+        file_name=file_name or given_context.get("file_name", "bioimageio.yaml"),
         warning_level=warning_level or given_context.get(WARNING_LEVEL_CONTEXT_KEY, ERROR),
+        perform_io_checks=perform_io_checks
+        if perform_io_checks is not None
+        else given_context.get("perform_io_checks", os.getenv(BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME, True)),
     )
     for k in {"original_format", "collection_base_content"}:  # TypedDict.__optional_keys__ requires py>=3.9
         if k in given_context:

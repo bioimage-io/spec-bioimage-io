@@ -12,20 +12,22 @@ from bioimageio.spec import model
 from bioimageio.spec._description import InvalidDescription, ResourceDescription, build_description, dump_description
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
-from bioimageio.spec._internal.types import BioimageioYamlContent, FileName, RelativeFilePath, YamlValue
-from bioimageio.spec._internal.types._file_source import extract_file_name
-from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec._io import (
+from bioimageio.spec._internal.io_utils import (
     BIOIMAGEIO_YAML,
-    BioimageioYamlSource,
+    PermissiveFileSource,
     download,
     open_bioimageio_yaml,
     write_yaml,
     write_zip,
 )
+from bioimageio.spec._internal.types import BioimageioYamlContent, FileName, RelativeFilePath, YamlValue
+from bioimageio.spec._internal.types._file_source import extract_file_name
+from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.summary import Loc
+
+BioimageioYamlSource = Union[PermissiveFileSource, ResourceDescription, BioimageioYamlContent]
 
 
 def fill_resource_package_content(

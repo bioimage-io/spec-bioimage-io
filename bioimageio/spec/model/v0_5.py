@@ -38,7 +38,7 @@ from bioimageio.spec.generic.v0_3 import Attachment as Attachment
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import GenericModelBase, MarkdownSource
+from bioimageio.spec.generic.v0_3 import FileSourceWithSha256, GenericModelBase, MarkdownSource
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
@@ -701,9 +701,7 @@ class TensorBase(Node):
         return value
 
     @model_validator(mode="after")
-    def check_data_matches_channelaxis(
-        self
-    ) -> Self:
+    def check_data_matches_channelaxis(self) -> Union[Self, "InputTensor", "OutputTensor"]:
         if not isinstance(self.data, list) or not isinstance(self, (InputTensor, OutputTensor)):
             return self
 
@@ -816,19 +814,12 @@ class ArchitectureFromDependency(Node):
 Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
 
 
-class WeightsEntryBase(Node):
+class WeightsEntryBase(FileSourceWithSha256):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
     source: FileSource
     """∈📦 The weights file."""
-
-    sha256: Annotated[
-        Optional[Sha256],
-        warn(Sha256, "Missing SHA-256 hash value."),
-        Field(description="SHA256 checksum of the source file\n" + SHA256_HINT),
-    ] = None
-    """SHA256 checksum of the source file"""
 
     authors: Optional[List[Author]] = None
     """Authors

@@ -98,3 +98,5 @@ LATEST: FormatVersionPlaceholder = "latest"
 
 DISCOVER: FormatVersionPlaceholder = "discover"
 """placeholder for whatever format version an RDF specifies"""
+
+BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME = "BIOIMAGEIO_PERFORM_IO_CHECKS"

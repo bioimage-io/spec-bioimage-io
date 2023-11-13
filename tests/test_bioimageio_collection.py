@@ -18,7 +18,11 @@ CACHE_PATH = Path(__file__).parent / "cache" / WEEK
 
 
 KNOWN_INVALID = {
+    "10.5281/zenodo.5749843/5888237/rdf.yaml",
     "10.5281/zenodo.5910854/6539073/rdf.yaml",
+    "10.5281/zenodo.5910163/5942853/rdf.yaml",
+    "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.7614645/7642674/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
     "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
     "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
@@ -30,6 +34,7 @@ KNOWN_INVALID = {
     "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
     "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
     "fiji/N2VSEMDemo/latest/rdf.yaml",
+    "ilastik/mitoem_segmentation_challenge/latest/rdf.yaml",
     "zero/Notebook_CycleGAN_2D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_DecoNoising_2D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_Detectron2_ZeroCostDL4Mic/latest/rdf.yaml",
@@ -44,27 +49,31 @@ KNOWN_INVALID = {
     "zero/Notebook_U-Net_3D_ZeroCostDL4Mic/latest/rdf.yaml",
 }
 KNOWN_INVALID_AS_LATEST = {
-    "10.5281/zenodo.6865412/6919253/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
-    "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",
-    "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
+    "10.5281/zenodo.5749843/5888237/rdf.yaml",
+    "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.5910163/5942853/rdf.yaml",
     "10.5281/zenodo.6559929/6559930/rdf.yaml",
+    "10.5281/zenodo.6865412/6919253/rdf.yaml",
     "10.5281/zenodo.7380171/7405349/rdf.yaml",
+    "10.5281/zenodo.7614645/7642674/rdf.yaml",
     "bioimageio/stardist/latest/rdf.yaml",
     "deepimagej/deepimagej-web/latest/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
+    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
+    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
+    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
+    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
     "deepimagej/EVsTEMsegmentationFRUNet/latest/rdf.yaml",
     "deepimagej/MoNuSeg_digital_pathology_miccai2018/latest/rdf.yaml",
+    "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
     "deepimagej/MU-Lux_CTC_PhC-C2DL-PSC/latest/rdf.yaml",
     "deepimagej/SkinLesionClassification/latest/rdf.yaml",
     "deepimagej/smlm-deepimagej/latest/rdf.yaml",
     "deepimagej/SMLMDensityMapEstimationDEFCoN/latest/rdf.yaml",
     "deepimagej/unet-pancreaticcellsegmentation/latest/rdf.yaml",
     "deepimagej/UNet2DGlioblastomaSegmentation/latest/rdf.yaml",
+    "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",
+    "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
     "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
     "fiji/Fiji/latest/rdf.yaml",
     "hpa/HPA-Classification/latest/rdf.yaml",
@@ -156,6 +165,7 @@ KNOWN_INVALID_AS_LATEST = {
 EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
     "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
+    "10.5281/zenodo.7315440/7315441/rdf.yaml": {"weights", "cite"},  # weights.onnx: missing sh256, cite[0].doi: prefix
 }
 
 

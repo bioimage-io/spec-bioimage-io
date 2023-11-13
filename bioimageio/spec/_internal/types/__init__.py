@@ -52,7 +52,10 @@ ResourceId = NewType(
         annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
     ],
 )
-Sha256 = NewType("Sha256", Annotated[str, annotated_types.Len(64, 64)])
+Sha256 = NewType(
+    "Sha256",
+    Annotated[str, StringConstraints(strip_whitespace=True, to_lower=True, min_length=64, max_length=64)],
+)
 SiUnit = NewType(
     "SiUnit",
     Annotated[

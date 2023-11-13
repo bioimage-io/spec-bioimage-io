@@ -350,9 +350,7 @@ class Generic(GenericBase, extra="ignore", title="bioimage.io generic specificat
     type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
 
-    source: Annotated[
-        Optional[FileSource], Field(description="URL or relative path to the source of the resource")
-    ] = None
+    source: Optional[HttpUrl] = None
     """The primary source of the resource"""
 
     @field_validator("type", mode="after")

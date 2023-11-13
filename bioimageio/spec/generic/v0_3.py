@@ -2,27 +2,28 @@ from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, ValidationInfo, field_validator, model_validator
 from pydantic import HttpUrl as HttpUrl
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, warn
+from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
     DeprecatedLicenseId,
-    FileSource,
     LicenseId,
     NotEmpty,
-    ResourceId,
-    Sha256,
     Version,
 )
+from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types import ResourceId as ResourceId
+from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import Badge as Badge
@@ -41,10 +42,34 @@ MarkdownSource = Union[
 ]
 
 
-class Attachment(Node):
+class FileSourceWithSha256(Node):
     source: FileSource
-    """∈📦 """
-    sha256: Annotated[Optional[Sha256], warn(Sha256, "Missing SHA-256 hash value.")] = None
+    """∈📦 file source"""
+
+    sha256: Optional[Sha256] = None
+    """SHA256 checksum of the source file"""
+
+    @model_validator(mode="after")
+    def validate_sha256(self, info: ValidationInfo) -> Self:
+        context = get_internal_validation_context(info.context)
+        if not context["perform_io_checks"]:
+            return self
+
+        local_source = download(self.source, sha256=self.sha256).path
+        actual_sha = get_sha256(local_source)
+        if self.sha256 is None:
+            self.sha256 = actual_sha
+        elif self.sha256 != actual_sha:
+            raise ValueError(
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got {actual_sha}. "
+                "Update expected `sha256` or point to the matching file."
+            )
+
+        return self
+
+
+class Attachment(FileSourceWithSha256):
+    pass
 
 
 class LinkedResource(Node):
@@ -250,7 +275,7 @@ class Generic(GenericBase, extra="ignore", title="bioimage.io generic specificat
     type: Annotated[str, LowerCase] = Field("generic", frozen=True)
     """The resource type assigns a broad category to the resource."""
 
-    source: Optional[FileSource] = None
+    source: Optional[HttpUrl] = None
     """The primary source of the resource"""
 
     @field_validator("type", mode="after")
