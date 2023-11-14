@@ -14,8 +14,8 @@ from pydantic import (
 from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated, LiteralString, Self
 
-from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields, StringNode
-from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO, SHA256_HINT
+from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
+from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
@@ -31,7 +31,7 @@ from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Unit as Unit
 from bioimageio.spec._internal.types import Version as Version
-from bioimageio.spec._internal.types.field_validation import AfterValidator
+from bioimageio.spec._internal.types.field_validation import AfterValidator, WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
@@ -773,46 +773,35 @@ class OutputTensor(TensorBase):
 AnyTensor = Union[InputTensor, OutputTensor]
 
 
-class CallableFromFile(StringNode):
-    _pattern = r"^.+:.+$"
-    file: Union[HttpUrl, RelativeFilePath]
-    """∈📦 Python module that implements `callable_name`"""
-    callable_name: Identifier
-    """The Python identifier of  """
-
-    @classmethod
-    def _get_data(cls, valid_string_data: str):
-        *file_parts, callname = valid_string_data.split(":")
-        return dict(file=":".join(file_parts), callable_name=callname)
-
-
-class ArchitectureFromFile(Node):
-    callable: Annotated[CallableFromFile, Field(examples=["my_function.py:MyNetworkClass"])]
-    """Callable returning a torch.nn.Module instance.
-    `<relative path to file>:<identifier of implementation within the file>`."""
-
-    sha256: Annotated[
-        Sha256,
-        Field(
-            description="The SHA256 of the architecture source file." + SHA256_HINT,
-        ),
+class EnvironmentFile(FileSourceWithSha256):
+    source: Annotated[
+        FileSource, WithSuffix((".yaml", ".yml"), case_sensitive=True), Field(examples=["environment.yaml"])
     ]
-    """The SHA256 of the callable source file."""
+    """∈📦 Conda environment file.
+    Allows to specify custom dependencies, see conda docs:
+    - [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
+    - [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)
+    """
+
+
+class _ArchitectureCallable(Node):
+    callable: Annotated[Identifier, Field(examples=["MyNetworkClass", "get_my_model"])]
+    """Identifier of the callable that returns a torch.nn.Module instance."""
 
     kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
-class ArchitectureFromDependency(Node):
-    callable: Annotated[CallableFromDepencency, Field(examples=["my_module.submodule.get_my_model"])]
-    """callable returning a torch.nn.Module instance.
-    `<dependency-package>.<[dependency-module]>.<identifier>`."""
-
-    kwargs: Dict[str, Any] = Field(default_factory=dict)
-    """key word arguments for the `callable`"""
+class ArchitectureFromFile(_ArchitectureCallable, FileSourceWithSha256):
+    pass
 
 
-Architecture = Union[ArchitectureFromFile, ArchitectureFromDependency]
+class ArchitectureFromLibrary(_ArchitectureCallable):
+    import_from: str
+    """Where to import the callable from, i.e. `from <import_from> import <callable>`"""
+
+
+Architecture = Union[ArchitectureFromFile, ArchitectureFromLibrary]
 
 
 class WeightsEntryBase(FileSourceWithSha256):
@@ -859,31 +848,19 @@ class OnnxWeights(WeightsEntryBase):
     """ONNX opset version"""
 
 
-class Dependencies(StringNode):
-    _pattern = r"^.+:.+$"
-    manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
-    """Dependency manager"""
-
-    file: Annotated[FileSource, Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])]
-    """∈📦 Dependency file"""
-
-    @classmethod
-    def _get_data(cls, valid_string_data: str):
-        manager, *file_parts = valid_string_data.split(":")
-        return dict(manager=manager, file=":".join(file_parts))
-
-
 class PytorchStateDictWeights(WeightsEntryBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Architecture
     pytorch_version: Version
     """Version of the PyTorch library used.
-    If `depencencies` is specified it has to include pytorch and any version pinning has to be compatible."""
-
-    dependencies: Optional[Dependencies] = None
-    """Custom dependencies beyond pytorch.
-    Should include pytorch and any version pinning has to be compatible with `pytorch_version`."""
+    If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
+    """
+    dependencies: Optional[EnvironmentFile] = None
+    """Custom depencies beyond pytorch.
+    The conda environment file should include pytorch and any version pinning has to be compatible with
+    `pytorch_version`.
+    """
 
 
 class TensorflowJsWeights(WeightsEntryBase):
@@ -903,7 +880,7 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase):
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    dependencies: Optional[Dependencies] = None
+    dependencies: Optional[EnvironmentFile] = None
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 

@@ -88,10 +88,12 @@ weights:
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: https://zenodo.org/record/3446812/files/unet2d_weights.torch
     architecture:
-      callable: unet2d.py:UNet2d
+      callable: UNet2d
+      source: unet2d.py
       sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
       kwargs: { input_channels: 1, output_channels: 1 }
-    dependencies: conda:environment.yaml
+    dependencies:
+      source: environment.yaml
     pytorch_version: "1.5.1"
   onnx:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c

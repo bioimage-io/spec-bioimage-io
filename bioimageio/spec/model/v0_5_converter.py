@@ -63,7 +63,6 @@ def _convert_weights(data: BioimageioYamlContent):
             if not isinstance(entry, dict):
                 continue
 
-            # a = entry["pytorch_version"]
             entry["pytorch_version"] = entry.get("pytorch_version", "1.10")
 
         for weights_name in ("keras_hdf5", "tensorflow_saved_model_bundle", "tensorflow_js"):
@@ -72,6 +71,9 @@ def _convert_weights(data: BioimageioYamlContent):
                 continue
 
             entry["tensorflow_version"] = entry.get("tensorflow_version", "1.15")
+            deps = entry.get("depdencies")
+            if isinstance(deps, str) and deps.startswith("conda:"):
+                entry["dependencies"] = deps[len("conda:") :]
 
         entry = weights.get("onnx")
         if isinstance(entry, dict):
@@ -231,18 +233,34 @@ def _convert_architecture(data: Dict[str, Any]) -> None:
     if not isinstance(state_dict_entry, dict):
         return
 
-    callable_: Union[Any, Dict[Any, Any]] = state_dict_entry.pop("architecture", None)
-    if isinstance(callable_, dict):
-        if (src_file := callable_.pop("source_file", None)) is not None:
-            callable_["file"] = src_file
-    elif isinstance(callable_, str):
-        pass
-    else:
-        return
+    arch: Any = state_dict_entry.pop("architecture", None)
+    if isinstance(arch, str):
+        if arch.startswith("http") and arch.count(":") == 2:
+            http, source, callable_ = arch.split(":")
+            arch = dict(source=":".join((http, source)), callable=callable_)
+        elif not arch.startswith("http") and arch.count(":") == 1:
+            source, callable_ = arch.split(":")
+            arch = dict(source=source, callable=callable_)
+        elif "." in arch:
+            *mods, callable_ = arch.split(".")
+            import_from = ".".join(mods)
+            arch = dict(import_from=import_from, callable=callable_)
+        else:
+            arch = dict(callable=arch)  # will throw validation error
+    elif not isinstance(arch, dict):
+        arch = dict(callalbe=arch)
 
-    state_dict_entry["architecture"] = dict(callable=callable_)
     if sha := state_dict_entry.pop("architecture_sha256", None):
-        state_dict_entry["architecture"]["sha256"] = sha
+        arch["sha256"] = sha
 
     if kwargs := state_dict_entry.pop("kwargs", None):
-        state_dict_entry["architecture"]["kwargs"] = kwargs
+        arch["kwargs"] = kwargs
+
+    state_dict_entry["architecture"] = arch
+
+    deps = state_dict_entry.get("dependencies", None)
+    if isinstance(deps, str):
+        if deps.startswith("conda:"):
+            deps = deps[len("conda:") :]
+
+        state_dict_entry["dependencies"] = dict(source=deps)
