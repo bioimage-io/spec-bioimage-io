@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Union
 
 import pytest
@@ -17,7 +18,6 @@ from bioimageio.spec.model.v0_4 import (
     OutputTensor,
     Postprocessing,
     Preprocessing,
-    RelativeFilePath,
     ScaleLinearKwargs,
     ScaleMeanVariance,
     ScaleRange,
@@ -25,6 +25,7 @@ from bioimageio.spec.model.v0_4 import (
     TensorName,
     Weights,
 )
+from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node, check_type, unset
 
 
@@ -47,16 +48,12 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
     "kwargs,expected",
     [
         (
-            dict(opset_version=8, source="https://example.com", sha256="s" * 64),
-            dict(opset_version=8, source="https://example.com/", sha256="s" * 64),
+            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
+            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
         ),
+        (dict(opset_version=5, source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64), ValidationError),
         (
-            dict(source="https://example.com", sha256="s" * 64),
-            dict(source="https://example.com/", sha256="s" * 64),
-        ),
-        (dict(opset_version=5, source="https://example.com", sha256="s" * 64), ValidationError),
-        (
-            dict(source="https://example.com", sha256="s"),
+            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s"),
             ValidationError,
         ),
     ],
@@ -237,9 +234,9 @@ def test_output_tensor(kwargs: Dict[str, Any]):
 
 
 @pytest.fixture
-def model_data():
+def model_data(unet2d_root: Path):
     return Model(
-        documentation=RelativeFilePath("docs.md"),
+        documentation=unet2d_root / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.4.9",
@@ -274,9 +271,9 @@ def model_data():
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=RelativeFilePath("weights.onnx"))),
-        test_inputs=[RelativeFilePath("test_ipt.npy")],
-        test_outputs=[RelativeFilePath("test_out.npy")],
+        weights=Weights(onnx=OnnxWeights(source=unet2d_root / "weights.onnx")),
+        test_inputs=[unet2d_root / "test_ipt.npy"],
+        test_outputs=[unet2d_root / "test_out.npy"],
         type="model",
     ).model_dump()
 
@@ -304,17 +301,13 @@ def model_data():
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     model_data.update(update)
-    summary = validate_format(
-        model_data, context=ValidationContext(root=HttpUrl("https://example.com/"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "passed", summary.format()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
     model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-    summary = validate_format(
-        model_data, context=ValidationContext(root=HttpUrl("https://example.com/"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "passed", summary.format()
     assert summary.warnings[0].loc == ("name",), summary.format()
     assert summary.warnings[0].msg in "Name longer than 64 characters."

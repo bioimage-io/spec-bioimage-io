@@ -17,6 +17,8 @@ from pydantic import (
 from pydantic_core import core_schema
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.validation_context import get_internal_validation_context
+
 
 class RelativePath:
     path: PurePosixPath
@@ -95,9 +97,9 @@ class RelativePath:
         if ret.path.is_absolute():
             raise ValueError(f"{value} is an absolute path.")
 
-        root = (info.context or {}).get("root")
-        if root is not None:
-            ret._check_exists(root)
+        context = get_internal_validation_context(info.context)
+        if context["perform_io_checks"]:
+            ret._check_exists(context["root"])
 
         return ret
 

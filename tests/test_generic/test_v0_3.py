@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import pytest
 
 from bioimageio.spec._internal.constants import WARNING
-from bioimageio.spec._internal.validation_context import ValidationContext, get_internal_validation_context
+from bioimageio.spec._internal.validation_context import (
+    InternalValidationContext,
+    ValidationContext,
+    get_internal_validation_context,
+)
 from bioimageio.spec.generic.v0_3 import Generic
 from tests.utils import check_node
 
@@ -42,7 +46,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
     ],
 )
 def test_generic_valid(kwargs: Dict[str, Any]):
-    check_node(Generic, kwargs)
+    check_node(Generic, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -59,12 +63,12 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             ),
-            get_internal_validation_context(warning_level=WARNING),
+            get_internal_validation_context(warning_level=WARNING, perform_io_checks=False),
             id="deprecated license",
         ),
         (
             dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name"),
-            {},
+            ValidationContext(perform_io_checks=False),
         ),
         (
             dict(
@@ -74,9 +78,9 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 name="its name",
                 attachments={"files": [Path(__file__), "missing"], "something": 42},
             ),
-            {},
+            ValidationContext(perform_io_checks=False),
         ),
     ],
 )
-def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
+def test_generic_invalid(kwargs: Dict[str, Any], context: Union[ValidationContext, InternalValidationContext]):
     check_node(Generic, kwargs, context=context, is_invalid=True)

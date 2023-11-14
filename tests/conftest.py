@@ -8,6 +8,8 @@ yaml = YAML(typ="safe")
 
 EXAMPLE_SPECS = Path(__file__).parent / "../example_specs"
 
+UNET2D_ROOT = EXAMPLE_SPECS / "models/unet2d_nuclei_broad"
+
 
 @pytest.fixture(scope="session")
 def stardist04_data():
@@ -17,12 +19,13 @@ def stardist04_data():
 
 @pytest.fixture(scope="session")
 def unet2d_root() -> Path:
-    return EXAMPLE_SPECS / "models/unet2d_nuclei_broad"
+    """deprecated, use constant UNET2D_ROOT instead"""
+    return UNET2D_ROOT
 
 
 @pytest.fixture(scope="session")
-def unet2d_data(unet2d_root: Path):
-    with (unet2d_root / "rdf.yaml").open() as f:
+def unet2d_data():
+    with (UNET2D_ROOT / "rdf.yaml").open() as f:
         data = yaml.load(f)
 
     return MappingProxyType(data)

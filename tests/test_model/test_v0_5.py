@@ -1,8 +1,8 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Union
 
 import pytest
-from pydantic import HttpUrl
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
@@ -24,6 +24,7 @@ from bioimageio.spec.model.v0_5 import (
     TensorId,
     Weights,
 )
+from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node, check_type
 
 
@@ -32,12 +33,12 @@ from tests.utils import check_node, check_type
     [
         dict(
             id="t1",
-            test_tensor="https://example.com/test.npy",
+            test_tensor=UNET2D_ROOT / "test_input.npy",
             data={"values": ["cat", "dog", "parrot"]},
         ),
         dict(
             id="t2",
-            test_tensor="https://example.com/test.npy",
+            test_tensor=UNET2D_ROOT / "test_input.npy",
             data=[
                 {"values": ["cat", "dog", "parrot"]},
                 {"values": ["mouse", "zebra", "elephant"]},
@@ -45,7 +46,7 @@ from tests.utils import check_node, check_type
         ),
         dict(
             id="t3",
-            test_tensor="https://example.com/test.npy",
+            test_tensor=UNET2D_ROOT / "test_input.npy",
             data=[
                 {"values": [1, 2, 3]},
                 {"type": "uint8"},
@@ -54,7 +55,7 @@ from tests.utils import check_node, check_type
         pytest.param(
             dict(
                 id="t4",
-                test_tensor="https://example.com/test.npy",
+                test_tensor=UNET2D_ROOT / "test_input.npy",
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "uint8"},
@@ -74,7 +75,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="t5",
-                test_tensor="https://example.com/test.npy",
+                test_tensor=UNET2D_ROOT / "test_input.npy",
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": [1.1, 2.2, 3.3]},
@@ -85,7 +86,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="t7",
-                test_tensor="https://example.com/test.npy",
+                test_tensor=UNET2D_ROOT / "test.npy",
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "int8"},
@@ -117,7 +118,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
                     "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
                 }
             ],
-            "test_tensor": "https://example.com/test.npy",
+            "test_tensor": UNET2D_ROOT / "test_input.npy",
         },
     ],
 )
@@ -131,7 +132,7 @@ def test_input_tensor(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="input_2",
-                test_tensor="https://example.com/test.npy",
+                test_tensor=UNET2D_ROOT / "test.npy",
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": ["mouse", "zebra", "elephant"]},
@@ -169,9 +170,9 @@ def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
 
 
 @pytest.fixture
-def model_data():
+def model_data(unet2d_root: Path):
     data = Model(
-        documentation=HttpUrl("https://example.com/docs.md"),
+        documentation=unet2d_root / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.5.0",
@@ -196,7 +197,7 @@ def model_data():
                     SpaceInputAxis(id=AxisId("y"), size=20),
                     ChannelAxis(size=3),
                 ],
-                test_tensor=HttpUrl("https://example.com/test_ipt.npy"),
+                test_tensor=unet2d_root / "test_ipt.npy",
             ),
         ],
         outputs=[
@@ -208,17 +209,14 @@ def model_data():
                     SpaceOutputAxis(id=AxisId("y"), size=25),
                     ChannelAxis(size=6),
                 ],
-                test_tensor=HttpUrl("https://example.com/test_out.npy"),
+                test_tensor=unet2d_root / "test_out.npy",
             ),
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=HttpUrl("https://example.com/weights.onnx"), opset_version=15)),
+        weights=Weights(onnx=OnnxWeights(source=unet2d_root / "weights.onnx", opset_version=15)),
         type="model",
     ).model_dump()
-    # make data more editable
-    data["outputs"] = list(data["outputs"])
-    data["outputs"][0]["axes"] = list(data["outputs"][0]["axes"])
     return data
 
 
@@ -227,19 +225,19 @@ def model_data():
     [
         pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
         dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(weights={"torchscript": {"source": "https://example.com/weights", "pytorch_version": 1.15}}),
-        dict(weights={"keras_hdf5": {"source": "https://example.com/weights", "tensorflow_version": 1.10}}),
-        dict(weights={"tensorflow_js": {"source": "https://example.com/weights", "tensorflow_version": 1.10}}),
+        dict(weights={"torchscript": {"source": UNET2D_ROOT / "weights.onnx", "pytorch_version": 1.15}}),
+        dict(weights={"keras_hdf5": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}}),
+        dict(weights={"tensorflow_js": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}}),
         dict(
             weights={
-                "tensorflow_saved_model_bundle": {"source": "https://example.com/weights", "tensorflow_version": 1.10}
+                "tensorflow_saved_model_bundle": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}
             }
         ),
-        dict(weights={"onnx": {"source": "https://example.com/weights", "opset_version": 15}}),
+        dict(weights={"onnx": {"source": UNET2D_ROOT / "weights.onnx", "opset_version": 15}}),
         dict(
             weights={
                 "pytorch_state_dict": {
-                    "source": "https://example.com/weights",
+                    "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": "1.15",
                     "architecture": {
                         "callable": "https://example.com/file.py:Model",
