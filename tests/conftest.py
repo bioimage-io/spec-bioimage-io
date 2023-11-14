@@ -18,12 +18,6 @@ def stardist04_data():
 
 
 @pytest.fixture(scope="session")
-def unet2d_root() -> Path:
-    """deprecated, use constant UNET2D_ROOT instead"""
-    return UNET2D_ROOT
-
-
-@pytest.fixture(scope="session")
 def unet2d_data():
     with (UNET2D_ROOT / "rdf.yaml").open() as f:
         data = yaml.load(f)

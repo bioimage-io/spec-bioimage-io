@@ -1,5 +1,4 @@
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, Union
 
 import pytest
@@ -234,9 +233,9 @@ def test_output_tensor(kwargs: Dict[str, Any]):
 
 
 @pytest.fixture
-def model_data(unet2d_root: Path):
+def model_data():
     return Model(
-        documentation=unet2d_root / "README.md",
+        documentation=UNET2D_ROOT / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.4.9",
@@ -271,9 +270,9 @@ def model_data(unet2d_root: Path):
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=unet2d_root / "weights.onnx")),
-        test_inputs=[unet2d_root / "test_input.npy"],
-        test_outputs=[unet2d_root / "test_output.npy"],
+        weights=Weights(onnx=OnnxWeights(source=UNET2D_ROOT / "weights.onnx")),
+        test_inputs=[UNET2D_ROOT / "test_input.npy"],
+        test_outputs=[UNET2D_ROOT / "test_output.npy"],
         type="model",
     ).model_dump()
 

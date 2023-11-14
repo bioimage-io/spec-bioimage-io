@@ -238,7 +238,12 @@ all generic 0.3.0 changes plus:
     (for scalar values this is auto-convertible.)
 * Breaking changes that are fully auto-convertible
   * changes in `weights.pytorch_state_dict.architecture`
-  * renamed `weights.pytorch_state_dict.architecture.source_file` to `...architecture.file`
+    * renamed `weights.pytorch_state_dict.architecture.source_file` to `...architecture.source`
+  * changes in `weights.pytorch_state_dict.dependencies`
+    * only conda environment allowed and specified by `weights.pytorch_state_dict.dependencies.source`
+    * new optional field `weights.pytorch_state_dict.dependencies.sha256`
+  * changes in `weights.tensorflow_model_bundle.dependencies`
+    * same as changes in `weights.pytorch_state_dict.dependencies`
   * moved `test_inputs` to `inputs.i.test_tensor`
   * moved `test_outputs` to `outputs.i.test_tensor`
   * moved `sample_inputs` to `inputs.i.sample_tensor`

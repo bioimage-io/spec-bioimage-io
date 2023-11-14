@@ -20,10 +20,7 @@ from bioimageio.spec._internal.base_nodes import InvalidDescription, ResourceDes
 from bioimageio.spec._internal.constants import DISCOVER, LATEST, VERSION
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath, YamlValue
 from bioimageio.spec._internal.utils import iterate_annotated_union
-from bioimageio.spec._internal.validation_context import (
-    ValidationContext,
-    get_internal_validation_context,
-)
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
 _ResourceDescription_v0_2 = Union[
