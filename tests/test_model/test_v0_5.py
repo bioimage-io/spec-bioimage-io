@@ -170,9 +170,9 @@ def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
 
 
 @pytest.fixture
-def model_data(unet2d_root: Path):
+def model_data():
     data = Model(
-        documentation=unet2d_root / "README.md",
+        documentation=UNET2D_ROOT / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.5.0",
@@ -197,7 +197,7 @@ def model_data(unet2d_root: Path):
                     SpaceInputAxis(id=AxisId("y"), size=20),
                     ChannelAxis(size=3),
                 ],
-                test_tensor=unet2d_root / "test_ipt.npy",
+                test_tensor=UNET2D_ROOT / "test_input.npy",
             ),
         ],
         outputs=[
@@ -209,12 +209,12 @@ def model_data(unet2d_root: Path):
                     SpaceOutputAxis(id=AxisId("y"), size=25),
                     ChannelAxis(size=6),
                 ],
-                test_tensor=unet2d_root / "test_out.npy",
+                test_tensor=UNET2D_ROOT / "test_output.npy",
             ),
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=unet2d_root / "weights.onnx", opset_version=15)),
+        weights=Weights(onnx=OnnxWeights(source=UNET2D_ROOT / "weights.onnx", opset_version=15)),
         type="model",
     ).model_dump()
     return data
@@ -240,7 +240,8 @@ def model_data(unet2d_root: Path):
                     "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": "1.15",
                     "architecture": {
-                        "callable": "https://example.com/file.py:Model",
+                        "callable": "Model",
+                        "source": "https://example.com/file.py",
                         "sha256": "0" * 64,  # dummy sha256
                     },
                 },

@@ -71,9 +71,11 @@ def _convert_weights(data: BioimageioYamlContent):
                 continue
 
             entry["tensorflow_version"] = entry.get("tensorflow_version", "1.15")
-            deps = entry.get("depdencies")
+            deps = entry.get("dependencies")
             if isinstance(deps, str) and deps.startswith("conda:"):
-                entry["dependencies"] = deps[len("conda:") :]
+                entry["dependencies"] = dict(source=deps[len("conda:") :])
+            else:
+                entry["dependencies"] = dict(source=deps)
 
         entry = weights.get("onnx")
         if isinstance(entry, dict):

@@ -272,8 +272,8 @@ def model_data(unet2d_root: Path):
         name="Model",
         tags=[],
         weights=Weights(onnx=OnnxWeights(source=unet2d_root / "weights.onnx")),
-        test_inputs=[unet2d_root / "test_ipt.npy"],
-        test_outputs=[unet2d_root / "test_out.npy"],
+        test_inputs=[unet2d_root / "test_input.npy"],
+        test_outputs=[unet2d_root / "test_output.npy"],
         type="model",
     ).model_dump()
 
