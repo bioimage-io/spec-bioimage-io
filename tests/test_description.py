@@ -1,12 +1,8 @@
 from pydantic import HttpUrl
 
-from bioimageio.spec._description import build_description, update_format, validate_format
+from bioimageio.spec._description import build_description, validate_format
 from bioimageio.spec._internal.types import BioimageioYamlContent
 from bioimageio.spec._internal.validation_context import ValidationContext
-
-
-def test_update_format(stardist04_data: BioimageioYamlContent):
-    _ = update_format(stardist04_data)
 
 
 def test_forward_compatibility(unet2d_data: BioimageioYamlContent):

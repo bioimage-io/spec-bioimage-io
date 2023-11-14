@@ -79,26 +79,6 @@ ResourceDescription = Union[
 """Any of the implemented resource descriptions"""
 
 
-def update_format(
-    data: BioimageioYamlContent,
-    /,
-    *,
-    update_to_format: str = "latest",
-    context: Optional[ValidationContext] = None,
-) -> BioimageioYamlContent:
-    """Auto-update fields of a bioimage.io resource without any validation."""
-    if not isinstance(data["type"], str):
-        raise TypeError(f"Description type '{data['type']}' must be a string (not '{type(data['type'])}').")
-
-    rd_class = _get_rd_class(data["type"], update_to_format)
-    if isinstance(rd_class, str):
-        raise ValueError(rd_class)
-
-    updated = dict(data)
-    _ = rd_class.convert_from_older_format(updated, get_internal_validation_context(context))
-    return updated
-
-
 def dump_description(rd: ResourceDescription, exclude_unset: bool = True) -> BioimageioYamlContent:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)

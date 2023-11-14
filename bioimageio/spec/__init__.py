@@ -9,7 +9,6 @@ from bioimageio.spec._description import ResourceDescription as ResourceDescript
 from bioimageio.spec._description import SpecificResourceDescription as SpecificResourceDescription
 from bioimageio.spec._description import build_description as build_description
 from bioimageio.spec._description import dump_description as dump_description
-from bioimageio.spec._description import update_format as update_format
 from bioimageio.spec._description import validate_format as validate_format
 from bioimageio.spec._internal.constants import VERSION
 from bioimageio.spec._io import load_description as load_description
