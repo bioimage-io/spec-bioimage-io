@@ -27,6 +27,7 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Unit as Unit
 from bioimageio.spec._internal.types import Version as Version

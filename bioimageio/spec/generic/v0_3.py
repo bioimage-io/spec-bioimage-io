@@ -55,7 +55,7 @@ class FileSourceWithSha256(Node):
         if not context["perform_io_checks"]:
             return self
 
-        local_source = download(self.source, sha256=self.sha256).path
+        local_source = download(self.source, sha256=self.sha256, root=context["root"]).path
         actual_sha = get_sha256(local_source)
         if self.sha256 is None:
             self.sha256 = actual_sha

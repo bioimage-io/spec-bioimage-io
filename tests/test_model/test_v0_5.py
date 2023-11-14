@@ -5,6 +5,7 @@ import pytest
 from pydantic import HttpUrl
 
 from bioimageio.spec._description import validate_format
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
     AxisId,
@@ -64,7 +65,7 @@ from tests.utils import check_node, check_type
     ],
 )
 def test_tensor_base(kwargs: Dict[str, Any]):
-    check_node(TensorBase, kwargs)
+    check_node(TensorBase, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -95,7 +96,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     ],
 )
 def test_tensor_base_invalid(kwargs: Dict[str, Any]):
-    check_node(TensorBase, kwargs, is_invalid=True)
+    check_node(TensorBase, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -121,7 +122,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
-    check_node(InputTensor, kwargs)
+    check_node(InputTensor, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -142,7 +143,7 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor_invalid(kwargs: Dict[str, Any]):
-    check_node(InputTensor, kwargs, is_invalid=True)
+    check_node(InputTensor, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -251,7 +252,7 @@ def model_data():
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     model_data.update(update)
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "passed", summary.format()
 
 

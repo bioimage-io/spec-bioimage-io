@@ -14,6 +14,7 @@ from bioimageio.spec.generic.v0_2 import GenericBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
+from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
 
 
 class Application(GenericBase, title="bioimage.io application specification"):

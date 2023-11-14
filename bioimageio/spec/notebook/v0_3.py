@@ -12,6 +12,8 @@ from bioimageio.spec.generic.v0_3 import GenericBase
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
+from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
+from bioimageio.spec.generic.v0_3 import Sha256 as Sha256
 from bioimageio.spec.notebook.v0_2 import NotebookSource
 
 
