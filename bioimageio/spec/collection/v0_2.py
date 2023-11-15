@@ -8,9 +8,6 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic import (
-    HttpUrl as HttpUrl,
-)
 from pydantic_core import PydanticUndefined
 from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
@@ -31,6 +28,7 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import FileSource as FileSource
 from bioimageio.spec.generic.v0_2 import Generic as Generic
 from bioimageio.spec.generic.v0_2 import GenericBase
+from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath

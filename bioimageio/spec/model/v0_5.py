@@ -11,7 +11,6 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
@@ -22,6 +21,7 @@ from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioY
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import LowerCaseIdentifierStr

@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
-from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
@@ -19,6 +18,7 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256

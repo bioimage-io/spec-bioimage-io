@@ -11,6 +11,7 @@ from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types._file_source import FileName as FileName
 from bioimageio.spec._internal.types._file_source import FileSource as FileSource
+from bioimageio.spec._internal.types._file_source import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types._file_source import PermissiveFileSource as PermissiveFileSource
 from bioimageio.spec._internal.types._file_source import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types._file_source import StrictFileSource as StrictFileSource

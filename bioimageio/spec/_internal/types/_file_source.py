@@ -5,19 +5,36 @@ from pathlib import Path, PurePath, PurePosixPath
 from typing import Any, Union
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
+import pydantic
+import requests
 from annotated_types import Predicate
 from pydantic import (
+    AfterValidator,
     AnyUrl,
     DirectoryPath,
     FilePath,
     GetCoreSchemaHandler,
-    HttpUrl,
     ValidationInfo,
 )
 from pydantic_core import core_schema
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.validation_context import get_internal_validation_context
+
+
+def validate_url_ok(url: pydantic.HttpUrl, info: ValidationInfo):
+    context = get_internal_validation_context(info.context)
+    if not context["perform_io_checks"]:
+        return url
+
+    response = requests.head(str(url))
+    if response.status_code != 200:
+        raise ValueError(response.reason)
+
+    return url
+
+
+HttpUrl = Annotated[pydantic.HttpUrl, AfterValidator(validate_url_ok)]
 
 
 class RelativePath:

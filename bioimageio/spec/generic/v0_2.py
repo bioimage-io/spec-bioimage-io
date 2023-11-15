@@ -2,7 +2,7 @@ import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
-from pydantic import EmailStr, Field, HttpUrl, ValidationInfo, field_validator
+from pydantic import EmailStr, Field, ValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
@@ -14,6 +14,7 @@ from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     Doi,
     FileSource,
+    HttpUrl,
     LicenseId,
     NotEmpty,
     OrcidId,

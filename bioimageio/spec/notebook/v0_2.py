@@ -1,6 +1,5 @@
 from typing import Literal, Union
 
-from pydantic import HttpUrl
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.types.field_validation import WithSuffix
@@ -11,6 +10,7 @@ from bioimageio.spec.generic.v0_2 import Badge as Badge
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import FileSource as FileSource
 from bioimageio.spec.generic.v0_2 import GenericBase
+from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath

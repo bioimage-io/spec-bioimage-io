@@ -1,7 +1,6 @@
 from typing import Literal, Optional
 
 from pydantic import Field
-from pydantic import HttpUrl as HttpUrl
 from typing_extensions import Annotated
 
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
@@ -11,6 +10,7 @@ from bioimageio.spec.generic.v0_3 import Badge as Badge
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import FileSource as FileSource
 from bioimageio.spec.generic.v0_3 import GenericBase
+from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath

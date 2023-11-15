@@ -19,7 +19,6 @@ from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from pydantic import (
     AllowInfNan,
     Field,
-    HttpUrl,
     TypeAdapter,
     ValidationInfo,
     field_validator,
@@ -33,6 +32,7 @@ from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.types import BioimageioYamlContent, LowerCaseIdentifierStr
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
