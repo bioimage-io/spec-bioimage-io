@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "bioimageio-spec"
+name = "bioimageio"
 version = "0.5.0"
 description = ""
 authors = ["Bioimage.IO Contributors"]
-packages = [{include = "spec", from="bioimageio"}]
+packages = [{include = "bioimageio" }]
 
 
 [tool.poetry.dependencies]
@@ -26,6 +26,9 @@ pyright = {version="^1.1.336", optional = true}
 pooch = {version="^1.8.0", optional = true}
 pre-commit = {version="^3.5.0", optional = true}
 pytest = {version="^7.4.3", optional = true}
+marshmallow = "^3.20.1"
+marshmallow-union = "^0.1.15.post1"
+typer = "^0.9.0"
 
 [tool.poetry.extras]
 test = ["pytest-cov", "black", "pyright", "pooch", "pre-commit", "pytest"]
@@ -37,3 +40,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 120
 target-version = ['py38']
+
+
+[tool.poetry.scripts]
+bioimageio = "bioimageio.spec.__main__:app"
