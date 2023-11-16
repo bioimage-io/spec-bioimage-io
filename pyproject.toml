@@ -1,8 +1,10 @@
 [tool.poetry]
-name = "biospec"
-version = "0.1.0"
+name = "bioimageio-spec"
+version = "0.5.0"
 description = ""
-authors = ["Your Name <youremail@example.com>"]
+authors = ["Bioimage.IO Contributors"]
+packages = [{include = "spec", from="bioimageio"}]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
