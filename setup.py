@@ -30,6 +30,7 @@ setup(
     install_requires=[
         "annotated-types>=0.5.0",
         "email_validator",
+        "numpy>=1.21",
         "packaging>=17.0",
         "pooch",
         "pydantic[email]>=2.0.1",
