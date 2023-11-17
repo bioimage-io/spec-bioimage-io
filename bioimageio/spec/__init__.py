@@ -12,7 +12,7 @@ from bioimageio.spec._description import dump_description as dump_description
 from bioimageio.spec._description import validate_format as validate_format
 from bioimageio.spec._internal.constants import VERSION
 from bioimageio.spec._io import load_description as load_description
-from bioimageio.spec._io import save_description as save_description
+from bioimageio.spec._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
 from bioimageio.spec.application import AnyApplication as AnyApplication
 from bioimageio.spec.application import Application as Application
 from bioimageio.spec.collection import AnyCollection as AnyCollection

@@ -10,7 +10,7 @@ from typing import Any, Dict, Final, Mapping, Optional, Sequence, TextIO, TypedD
 from zipfile import ZipFile, is_zipfile
 
 import pooch
-from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, TypeAdapter
+from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath, TypeAdapter
 from ruamel.yaml import YAML
 from typing_extensions import NotRequired, Unpack
 
@@ -87,7 +87,7 @@ def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
         yaml.load(f)
 
 
-def write_yaml(content: YamlValue, /, file: Union[FilePath, TextIO]):
+def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
     else:

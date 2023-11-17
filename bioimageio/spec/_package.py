@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, cast
 from zipfile import ZIP_DEFLATED
 
-from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl
+from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
 
 from bioimageio.spec import model
 from bioimageio.spec._description import InvalidDescription, ResourceDescription, build_description, dump_description
@@ -14,20 +14,23 @@ from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.io_utils import (
     BIOIMAGEIO_YAML,
-    PermissiveFileSource,
     download,
     open_bioimageio_yaml,
     write_yaml,
     write_zip,
 )
-from bioimageio.spec._internal.types import BioimageioYamlContent, FileName, RelativeFilePath, YamlValue
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
+    BioimageioYamlSource,
+    FileName,
+    RelativeFilePath,
+    YamlValue,
+)
 from bioimageio.spec._internal.types._file_source import extract_file_name
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.summary import Loc
-
-BioimageioYamlSource = Union[PermissiveFileSource, ResourceDescription, BioimageioYamlContent]
 
 
 def fill_resource_package_content(
@@ -131,7 +134,7 @@ def get_resource_package_content(
 
 
 def _prepare_resource_package(
-    rdf_source: BioimageioYamlSource,
+    source: Union[BioimageioYamlSource, ResourceDescription],
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
@@ -144,18 +147,18 @@ def _prepare_resource_package(
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
     """
-    if isinstance(rdf_source, ResourceDescriptionBase):
-        rd = rdf_source
+    if isinstance(source, ResourceDescriptionBase):
+        rd = source
         _ctxt = rd._internal_validation_context  # pyright: ignore[reportPrivateUsage]
         context = ValidationContext(root=_ctxt["root"], file_name=_ctxt["file_name"])
-    elif isinstance(rdf_source, dict):
+    elif isinstance(source, dict):
         context = ValidationContext()
         rd = build_description(
-            rdf_source,
+            source,
             context=context,
         )
     else:
-        rdf = open_bioimageio_yaml(rdf_source)
+        rdf = open_bioimageio_yaml(source)
         context = ValidationContext(root=rdf.original_root, file_name=rdf.original_file_name)
         rd = build_description(
             rdf.content,
@@ -163,7 +166,7 @@ def _prepare_resource_package(
         )
 
     if isinstance(rd, InvalidDescription):
-        raise ValueError(f"{rdf_source} is invalid: {rd.validation_summaries[0]}")
+        raise ValueError(f"{source} is invalid: {rd.validation_summaries[0]}")
 
     package_content = get_resource_package_content(rd, weights_priority_order=weights_priority_order)
 
@@ -177,11 +180,11 @@ def _prepare_resource_package(
     return local_package_content
 
 
-def write_package_as_folder(
-    rdf_source: BioimageioYamlSource,
+def save_bioimageio_package_as_folder(
+    source: Union[BioimageioYamlSource, ResourceDescription],
     /,
     *,
-    output_path: Optional[DirectoryPath] = None,
+    output_path: Union[NewPath, DirectoryPath, None] = None,
     weights_priority_order: Optional[  # model only
         Sequence[
             Literal[
@@ -198,16 +201,16 @@ def write_package_as_folder(
     """Write the content of a bioimage.io resource package to a folder.
 
     Args:
-        rd: bioimage.io resource description
+        source: bioimageio resource description
         output_path: file path to write package to
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        path to zipped bioimage.io package in BIOIMAGEIO_CACHE_PATH or 'output_path'
+        directory path to bioimageio package folder
     """
     package_content = _prepare_resource_package(
-        rdf_source,
+        source,
         weights_priority_order=weights_priority_order,
     )
     if output_path is None:
@@ -224,13 +227,13 @@ def write_package_as_folder(
     return output_path
 
 
-def write_package(
-    rdf_source: BioimageioYamlSource,
+def save_bioimageio_package(
+    source: Union[BioimageioYamlSource, ResourceDescription],
     /,
     *,
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
-    output_path: Optional[Path] = None,
+    output_path: Union[NewPath, FilePath, None] = None,
     weights_priority_order: Optional[  # model only
         Sequence[
             Literal[
@@ -244,10 +247,10 @@ def write_package(
         ]
     ] = None,
 ) -> FilePath:
-    """Package a bioimage.io resource as a zip file.
+    """Package a bioimageio resource as a zip file.
 
     Args:
-        rd: bioimage.io resource description
+        rd: bioimageio resource description
         compression: The numeric constant of compression method.
         compression_level: Compression level to use when writing files to the archive.
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
@@ -256,10 +259,10 @@ def write_package(
                                 If none of the prioritized weights formats is found all are included.
 
     Returns:
-        path to zipped bioimage.io package in BIOIMAGEIO_CACHE_PATH or 'output_path'
+        path to zipped bioimageio package
     """
     package_content = _prepare_resource_package(
-        rdf_source,
+        source,
         weights_priority_order=weights_priority_order,
     )
     if output_path is None:

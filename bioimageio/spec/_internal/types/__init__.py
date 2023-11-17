@@ -65,7 +65,6 @@ SiUnit = NewType(
         BeforeValidator(lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s),
     ],
 )
-Unit = Union[Literal["arbitrary unit", "px"], SiUnit]
 
 # types as loaded from YAML 1.2 (with ruamel.yaml)
 YamlLeafValue = Union[bool, date, datetime, float, int, str, None]
@@ -81,3 +80,4 @@ YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
 # derived types
 DatasetId = NewType("DatasetId", ResourceId)
 BioimageioYamlContent = Dict[str, YamlValue]
+BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]

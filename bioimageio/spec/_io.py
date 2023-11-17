@@ -1,6 +1,6 @@
 from typing import Literal, TextIO, Union, cast
 
-from pydantic import FilePath
+from pydantic import FilePath, NewPath
 
 from bioimageio.spec import ResourceDescription
 from bioimageio.spec._description import InvalidDescription, build_description, dump_description
@@ -30,7 +30,9 @@ def load_description(
     )
 
 
-def save_description(rd: Union[ResourceDescription, BioimageioYamlContent], /, file: Union[FilePath, TextIO]):
+def save_bioimageio_yaml_only(
+    rd: Union[ResourceDescription, BioimageioYamlContent], /, file: Union[NewPath, FilePath, TextIO]
+):
     if isinstance(rd, ResourceDescriptionBase):
         content = dump_description(rd)
     else:
