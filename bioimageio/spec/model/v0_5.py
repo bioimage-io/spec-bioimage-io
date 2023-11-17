@@ -173,15 +173,11 @@ SAME_AS_TYPE = "<same as type>"
 
 
 class ParametrizedSize(Node):
-    """Describes a range of valid tensor axis sizes as `size = min + n*step."""
+    """Describes a range of valid tensor axis sizes as `size = min + n*step`.
+    `n` in this equation is the same for all axis parametrized in this manner across the whole model."""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
-    step_with: Optional[Union[AxisId, TensorAxisId]] = None
-    """ID of another axis with parametrixed size to resize jointly,
-    i.e. `n=n_other` for `size = min + n*step`, `size_other = min_other + n_other*step_other`.
-    To step jointly with an axis of another tensor, use `step_with = <tensor id>.<axis id>`.
-    """
 
     def validate_size(self, size: int) -> int:
         if size < self.min:
@@ -285,7 +281,7 @@ class IndexTimeSpaceAxisBase(AxisBase):
             examples=[
                 10,
                 "other_axis",
-                ParametrizedSize(min=32, step=16, step_with="other_tensor.axis").model_dump(),
+                ParametrizedSize(min=32, step=16).model_dump(),
                 SizeReference(reference="other_tensor.axis").model_dump(),
                 SizeReference(reference="other_axis", offset=8).model_dump(),
             ]
@@ -790,7 +786,7 @@ class TensorBase(Node, Generic[AxisVar]):
                     raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {a.size}")
             elif isinstance(a.size, ParametrizedSize):
                 _ = a.size.validate_size(shape[i])
-            # TODO: remove step_with
+
             elif isinstance(a.size, str):
                 if "." in a.size:
                     assert a.size.count(".") == 1
@@ -812,6 +808,7 @@ class TensorBase(Node, Generic[AxisVar]):
                     raise ValueError(
                         f"axis size mismatch: array axis {i} of size " f"{shape[i]} != {other_size} given by {a.size}."
                     )
+            # elif isinstance(a.size, ):
             else:
                 assert_never(a.size)
 
@@ -1066,18 +1063,9 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     @field_validator("inputs", mode="after")
     @classmethod
     def validate_input_axes(cls, inputs: List[InputTensor]) -> List[InputTensor]:
-        input_step_with_refs = cls._get_axes_with_parametrized_size(inputs)
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_step_with_refs: Dict[Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
-                **{
-                    a.id: (ipt, a, a.size)
-                    for a in ipt.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
-                },
-                **input_step_with_refs,
-            }
             valid_independent_refs: Dict[
                 Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
             ] = {
@@ -1095,7 +1083,6 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
                     ipt.id,
                     a,
                     ax,
-                    valid_step_with_refs=valid_step_with_refs,
                     valid_independent_refs=valid_independent_refs,
                 )
         return inputs
@@ -1107,7 +1094,6 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
         tensor_id: str,
         a: int,
         axis: AnyAxis,
-        valid_step_with_refs: Dict[Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]],
         valid_independent_refs: Dict[
             Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
         ],
@@ -1115,21 +1101,14 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
 
-        if isinstance(axis.size, ParametrizedSize) and axis.size.step_with is not None:
-            if axis.size.step_with not in valid_step_with_refs:
-                raise ValueError(
-                    f"Invalid tensor axis reference in {field_name}[{i}].axes[{a}].size.step_with: "
-                    f"{axis.size.step_with}. Another (tensor's) axis id with a parametrized size is required."
-                )
-            if axis.size.step_with in (axis.id, f"{tensor_id}.{axis.id}"):
-                raise ValueError(
-                    f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.step_with: "
-                    f"{axis.size.step_with}"
-                )
-            if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
-                raise ValueError(f"axis {axis.id} with minimum size {axis.size.min} is too small for halo {axis.halo}.")
+        if (
+            isinstance(axis.size, ParametrizedSize)
+            and isinstance(axis, WithHalo)
+            and (axis.size.min - 2 * axis.halo) < 1
+        ):
+            raise ValueError(f"axis {axis.id} with minimum size {axis.size.min} is too small for halo {axis.halo}.")
 
-        elif isinstance(axis.size, SizeReference):
+        if isinstance(axis.size, SizeReference):
             if axis.size.reference not in valid_independent_refs:
                 raise ValueError(
                     f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
@@ -1264,22 +1243,10 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     @field_validator("outputs", mode="after")
     @classmethod
     def validate_output_axes(cls, outputs: List[OutputTensor], info: ValidationInfo) -> List[OutputTensor]:
-        input_step_with_refs = cls._get_axes_with_parametrized_size(info.data.get("inputs", []))
-        output_step_with_refs = cls._get_axes_with_parametrized_size(outputs)
-
         input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_step_with_refs: Dict[Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, ParametrizedSize]] = {
-                **{
-                    a.id: (out, a, a.size)
-                    for a in out.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
-                },
-                **input_step_with_refs,
-                **output_step_with_refs,
-            }
             valid_independent_refs: Dict[
                 Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
             ] = {
@@ -1298,7 +1265,6 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
                     out.id,
                     a,
                     ax,
-                    valid_step_with_refs=valid_step_with_refs,
                     valid_independent_refs=valid_independent_refs,
                 )
 
