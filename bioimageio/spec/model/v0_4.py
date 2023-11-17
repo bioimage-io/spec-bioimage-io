@@ -47,16 +47,16 @@ from bioimageio.spec._internal.types.field_validation import (
     validate_unique_entries,
 )
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
-from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
-from bioimageio.spec.generic.v0_2 import Attachments as Attachments
+from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
+from bioimageio.spec.dataset.v0_2 import LinkedDatasetDescr as LinkedDatasetDescr
+from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
-from bioimageio.spec.generic.v0_2 import Badge as Badge
+from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import GenericModelBase
-from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
+from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_3 import FileSourceWithSha256
+from bioimageio.spec.generic.v0_3 import FileDescrWithSha256
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 
 AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
@@ -126,13 +126,13 @@ WeightsFormat = Literal[
 ]
 
 
-class Weights(Node):
-    keras_hdf5: Optional[KerasHdf5Weights] = None
-    onnx: Optional[OnnxWeights] = None
-    pytorch_state_dict: Optional[PytorchStateDictWeights] = None
-    tensorflow_js: Optional[TensorflowJsWeights] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeights] = None
-    torchscript: Optional[TorchscriptWeights] = None
+class WeightsDescr(Node):
+    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
+    onnx: Optional[OnnxWeightsDescr] = None
+    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
+    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = None
+    torchscript: Optional[TorchscriptWeightsDescr] = None
 
     @model_validator(mode="after")
     def check_one_entry(self) -> Self:
@@ -152,7 +152,7 @@ class Weights(Node):
         return self
 
 
-class WeightsEntryBase(FileSourceWithSha256):
+class WeightsEntryDescrBase(FileDescrWithSha256):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -160,7 +160,7 @@ class WeightsEntryBase(FileSourceWithSha256):
     """∈📦 The weights file."""
 
     attachments: Annotated[
-        Union[Attachments, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
+        Union[AttachmentsDescr, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
     ] = None
     """Attachments that are specific to this weights entry."""
 
@@ -199,7 +199,7 @@ class WeightsEntryBase(FileSourceWithSha256):
         return self
 
 
-class KerasHdf5Weights(WeightsEntryBase):
+class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[
@@ -213,7 +213,7 @@ class KerasHdf5Weights(WeightsEntryBase):
     """TensorFlow version used to create these weights"""
 
 
-class OnnxWeights(WeightsEntryBase):
+class OnnxWeightsDescr(WeightsEntryDescrBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[
@@ -228,7 +228,7 @@ class OnnxWeights(WeightsEntryBase):
     """ONNX opset version"""
 
 
-class PytorchStateDictWeights(WeightsEntryBase):
+class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
@@ -273,7 +273,7 @@ class PytorchStateDictWeights(WeightsEntryBase):
     (`dependencies` overrules `pytorch_version`)"""
 
 
-class TorchscriptWeights(WeightsEntryBase):
+class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[
@@ -285,7 +285,7 @@ class TorchscriptWeights(WeightsEntryBase):
     """Version of the PyTorch library used."""
 
 
-class TensorflowJsWeights(WeightsEntryBase):
+class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[
@@ -302,7 +302,7 @@ class TensorflowJsWeights(WeightsEntryBase):
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase):
+class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[
@@ -364,7 +364,7 @@ class ImplicitOutputShape(Node):
         return self
 
 
-class TensorBase(Node):
+class TensorDescrBase(Node):
     name: TensorName
     """Tensor name. No duplicates are allowed."""
 
@@ -392,7 +392,7 @@ class ProcessingKwargs(KwargsNode):
     """base class for pre-/postprocessing key word arguments"""
 
 
-class ProcessingBase(NodeWithExplicitlySetFields):
+class ProcessingDescrBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
     # name: Literal[PreprocessingName, PostprocessingName]  # todo: make abstract field
@@ -404,8 +404,8 @@ class BinarizeKwargs(ProcessingKwargs):
     """The fixed threshold"""
 
 
-class Binarize(ProcessingBase):
-    """Binarize the tensor with a fixed threshold.
+class BinarizeDescr(ProcessingDescrBase):
+    """BinarizeDescr the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
     name: Literal["binarize"] = "binarize"
@@ -419,7 +419,7 @@ class ClipKwargs(ProcessingKwargs):
     """maximum value for clipping"""
 
 
-class Clip(ProcessingBase):
+class ClipDescr(ProcessingDescrBase):
     """Set tensor values below min to min and above max to max."""
 
     name: Literal["clip"] = "clip"
@@ -448,14 +448,14 @@ class ScaleLinearKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinear(ProcessingBase):
+class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(ProcessingBase):
+class SigmoidDescr(ProcessingDescrBase):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     name: Literal["sigmoid"] = "sigmoid"
@@ -500,7 +500,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
         return self
 
 
-class ZeroMeanUnitVariance(ProcessingBase):
+class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract mean and divide by variance."""
 
     name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
@@ -546,7 +546,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRange(ProcessingBase):
+class ScaleRangeDescr(ProcessingDescrBase):
     """Scale with percentiles."""
 
     name: Literal["scale_range"] = "scale_range"
@@ -575,23 +575,32 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVariance(ProcessingBase):
+class ScaleMeanVarianceDescr(ProcessingDescrBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     name: Literal["scale_mean_variance"] = "scale_mean_variance"
     kwargs: ScaleMeanVarianceKwargs
 
 
-Preprocessing = Annotated[
-    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange], Field(discriminator="name")
+PreprocessingDescr = Annotated[
+    Union[BinarizeDescr, ClipDescr, ScaleLinearDescr, SigmoidDescr, ZeroMeanUnitVarianceDescr, ScaleRangeDescr],
+    Field(discriminator="name"),
 ]
-Postprocessing = Annotated[
-    Union[Binarize, Clip, ScaleLinear, Sigmoid, ZeroMeanUnitVariance, ScaleRange, ScaleMeanVariance],
+PostprocessingDescr = Annotated[
+    Union[
+        BinarizeDescr,
+        ClipDescr,
+        ScaleLinearDescr,
+        SigmoidDescr,
+        ZeroMeanUnitVarianceDescr,
+        ScaleRangeDescr,
+        ScaleMeanVarianceDescr,
+    ],
     Field(discriminator="name"),
 ]
 
 
-class InputTensor(TensorBase):
+class InputTensorDescr(TensorDescrBase):
     data_type: Literal["float32", "uint8", "uint16"]
     """For now an input tensor is expected to be given as `float32`.
     The data flow in bioimage.io models is explained
@@ -603,7 +612,7 @@ class InputTensor(TensorBase):
     ]
     """Specification of input tensor shape."""
 
-    preprocessing: List[Preprocessing] = Field(default_factory=list)
+    preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
@@ -642,7 +651,7 @@ class InputTensor(TensorBase):
         return self
 
 
-class OutputTensor(TensorBase):
+class OutputTensorDescr(TensorDescrBase):
     data_type: Literal[
         "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
     ]
@@ -658,7 +667,7 @@ class OutputTensor(TensorBase):
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: List[Postprocessing] = Field(default_factory=list)
+    postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -692,14 +701,14 @@ class RunMode(Node):
     """Run mode specific key word arguments"""
 
 
-class LinkedModel(LinkedResource):
+class LinkedModel(LinkedResourceDescr):
     """Reference to a bioimage.io model."""
 
     id: ResourceId
     """A valid model `id` from the bioimage.io collection."""
 
 
-class Model(GenericModelBase, title="bioimage.io model specification"):
+class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -731,7 +740,7 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NotEmpty[List[InputTensor]]
+    inputs: NotEmpty[List[InputTensorDescr]]
     """Describes the input tensors expected by this model."""
 
     license: Annotated[
@@ -753,17 +762,17 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[List[OutputTensor]]
+    outputs: NotEmpty[List[OutputTensorDescr]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
     @classmethod
-    def unique_tensor_names(
-        cls, value: Sequence[Union[InputTensor, OutputTensor]]
-    ) -> Sequence[Union[InputTensor, OutputTensor]]:
+    def unique_tensor_descr_names(
+        cls, value: Sequence[Union[InputTensorDescr, OutputTensorDescr]]
+    ) -> Sequence[Union[InputTensorDescr, OutputTensorDescr]]:
         unique_names = {v.name for v in value}
         if len(unique_names) != len(value):
-            raise ValueError("Duplicate tensor names")
+            raise ValueError("Duplicate tensor descriptor names")
 
         return value
 
@@ -771,13 +780,15 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     def unique_io_names(self) -> Self:
         unique_names = {ss.name for s in (self.inputs, self.outputs) for ss in s}
         if len(unique_names) != (len(self.inputs) + len(self.outputs)):
-            raise ValueError("Duplicate tensor names across inputs/outputs")
+            raise ValueError("Duplicate tensor descriptor names across inputs/outputs")
 
         return self
 
     @model_validator(mode="after")
     def minimum_shape2valid_output(self) -> Self:
-        tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]] = {t.name: t for t in self.inputs + self.outputs}
+        tensors_by_name: Dict[str, Union[InputTensorDescr, OutputTensorDescr]] = {
+            t.name: t for t in self.inputs + self.outputs
+        }
 
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
@@ -811,7 +822,9 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
 
     @classmethod
     def _get_min_shape(
-        cls, t: Union[InputTensor, OutputTensor], tensors_by_name: Dict[str, Union[InputTensor, OutputTensor]]
+        cls,
+        t: Union[InputTensorDescr, OutputTensorDescr],
+        tensors_by_name: Dict[str, Union[InputTensorDescr, OutputTensorDescr]],
     ) -> Sequence[int]:
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
@@ -915,10 +928,10 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
-    training_data: Union[LinkedDataset, Dataset, None] = None
+    training_data: Union[LinkedDatasetDescr, DatasetDescr, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights
+    weights: WeightsDescr
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

@@ -44,7 +44,7 @@ CoverImageSource = Union[
 ]
 
 
-class Attachments(Node):
+class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
     files: List[FileSource] = Field(default_factory=list)
@@ -85,7 +85,7 @@ class Maintainer(_Person):
     github_user: str
 
 
-class Badge(Node, title="Custom badge"):
+class BadgeDescr(Node, title="Custom badge"):
     """A custom badge"""
 
     label: Annotated[str, Field(examples=["Open in Colab"])]
@@ -139,14 +139,14 @@ class CiteEntry(Node):
         return value
 
 
-class LinkedResource(Node):
+class LinkedResourceDescr(Node):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericModelBase(ResourceDescriptionBase):
+class GenericModelDescrBase(ResourceDescriptionBase):
     """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
@@ -181,7 +181,7 @@ class GenericModelBase(ResourceDescriptionBase):
 
         return authors
 
-    attachments: Optional[Attachments] = None
+    attachments: Optional[AttachmentsDescr] = None
     """file and other attachments"""
 
     cite: Annotated[
@@ -287,7 +287,7 @@ class GenericModelBase(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
 
-class GenericBase(GenericModelBase):
+class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
     format_version: Literal["0.2.3"] = "0.2.3"
@@ -301,7 +301,7 @@ class GenericBase(GenericModelBase):
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         convert_from_older_format(data, context)
 
-    badges: List[Badge] = Field(default_factory=list)
+    badges: List[BadgeDescr] = Field(default_factory=list)
     """badges associated with this resource"""
 
     documentation: Annotated[
@@ -337,10 +337,10 @@ class GenericBase(GenericModelBase):
         return value
 
 
-ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
+ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
+class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

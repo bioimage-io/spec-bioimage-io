@@ -12,16 +12,16 @@ from bioimageio.spec.model.v0_5 import (
     ChannelAxis,
     CiteEntry,
     InputAxis,
-    InputTensor,
-    IntervalOrRatioData,
-    Model,
-    OnnxWeights,
-    OutputTensor,
+    InputTensorDescr,
+    IntervalOrRatioDataDescr,
+    ModelDescr,
+    OnnxWeightsDescr,
+    OutputTensorDescr,
     SpaceInputAxis,
     SpaceOutputAxis,
-    TensorBase,
+    TensorDescrBase,
     TensorId,
-    Weights,
+    WeightsDescr,
 )
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node, check_type
@@ -65,7 +65,7 @@ from tests.utils import check_node, check_type
     ],
 )
 def test_tensor_base(kwargs: Dict[str, Any]):
-    check_node(TensorBase, kwargs, context=ValidationContext(perform_io_checks=False))
+    check_node(TensorDescrBase, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -96,7 +96,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     ],
 )
 def test_tensor_base_invalid(kwargs: Dict[str, Any]):
-    check_node(TensorBase, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
+    check_node(TensorDescrBase, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -122,7 +122,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
-    check_node(InputTensor, kwargs, context=ValidationContext(perform_io_checks=False))
+    check_node(InputTensorDescr, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -143,7 +143,7 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor_invalid(kwargs: Dict[str, Any]):
-    check_node(InputTensor, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
+    check_node(InputTensorDescr, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -170,7 +170,7 @@ def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
 
 @pytest.fixture
 def model_data():
-    data = Model(
+    data = ModelDescr(
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
@@ -187,10 +187,10 @@ def model_data():
         timestamp=datetime.now(),
         cite=[CiteEntry(text="Paper title", url="https://example.com/")],
         inputs=[
-            InputTensor(
+            InputTensorDescr(
                 id=TensorId("input_1"),
                 description="Input 1",
-                data=IntervalOrRatioData(type="float32"),
+                data=IntervalOrRatioDataDescr(type="float32"),
                 axes=[
                     SpaceInputAxis(id=AxisId("x"), size=10),
                     SpaceInputAxis(id=AxisId("y"), size=20),
@@ -200,7 +200,7 @@ def model_data():
             ),
         ],
         outputs=[
-            OutputTensor(
+            OutputTensorDescr(
                 id=TensorId("output_1"),
                 description="Output 1",
                 axes=[
@@ -213,7 +213,7 @@ def model_data():
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=UNET2D_ROOT / "weights.onnx", opset_version=15)),
+        weights=WeightsDescr(onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx", opset_version=15)),
         type="model",
     ).model_dump()
     return data

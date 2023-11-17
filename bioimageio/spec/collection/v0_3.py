@@ -5,39 +5,41 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.application.v0_2 import Application as Application02
-from bioimageio.spec.application.v0_3 import Application as Application03
+from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
+from bioimageio.spec.application.v0_3 import ApplicationDescr as ApplicationDescr03
 from bioimageio.spec.collection import v0_2
-from bioimageio.spec.dataset.v0_2 import Dataset as Dataset02
-from bioimageio.spec.dataset.v0_3 import Dataset as Dataset03
-from bioimageio.spec.generic.v0_2 import Generic as Generic02
+from bioimageio.spec.dataset.v0_2 import DatasetDescr as Dataset02
+from bioimageio.spec.dataset.v0_3 import DatasetDescr as Dataset03
+from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec.generic.v0_3 import Attachment as Attachment
+from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
-from bioimageio.spec.generic.v0_3 import Badge as Badge
+from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import FileSource as FileSource
-from bioimageio.spec.generic.v0_3 import Generic, GenericBase
+from bioimageio.spec.generic.v0_3 import GenericDescr, GenericDescrBase
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
 from bioimageio.spec.generic.v0_3 import Sha256 as Sha256
-from bioimageio.spec.model.v0_4 import Model as Model04
-from bioimageio.spec.model.v0_5 import Model as Model05
-from bioimageio.spec.notebook.v0_2 import Notebook as Notebook02
-from bioimageio.spec.notebook.v0_3 import Notebook as Notebook03
+from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr04
+from bioimageio.spec.model.v0_5 import ModelDescr as ModelDescr05
+from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
+from bioimageio.spec.notebook.v0_3 import NotebookDescr as NotebookDescr03
 
-_AnyApplication = Annotated[Union[Application02, Application03], Field(discriminator="format_version")]
-_AnyDataset = Annotated[Union[Dataset02, Dataset03], Field(discriminator="format_version")]
-_AnyModel = Annotated[Union[Model04, Model05], Field(discriminator="format_version")]
-_AnyNotebook = Annotated[Union[Notebook02, Notebook03], Field(discriminator="format_version")]
+_AnyApplicationDescr = Annotated[Union[ApplicationDescr02, ApplicationDescr03], Field(discriminator="format_version")]
+_AnyDatasetDescr = Annotated[Union[Dataset02, Dataset03], Field(discriminator="format_version")]
+_AnyModelDescr = Annotated[Union[ModelDescr04, ModelDescr05], Field(discriminator="format_version")]
+_AnyNotebookDescr = Annotated[Union[NotebookDescr02, NotebookDescr03], Field(discriminator="format_version")]
 
 EntryNode = Union[
-    Annotated[Union[_AnyApplication, _AnyDataset, _AnyModel, _AnyNotebook], Field(discriminator="type")],
-    Generic02,
-    Generic,
+    Annotated[
+        Union[_AnyApplicationDescr, _AnyDatasetDescr, _AnyModelDescr, _AnyNotebookDescr], Field(discriminator="type")
+    ],
+    GenericDescr02,
+    GenericDescr,
 ]
 
 
@@ -59,7 +61,7 @@ class CollectionEntry(v0_2.CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
+class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
@@ -80,10 +82,10 @@ class Collection(GenericBase, extra="allow", title="bioimage.io collection speci
     @field_validator("collection")
     @classmethod
     def check_unique_ids(cls, value: NotEmpty[List[CollectionEntry]]) -> NotEmpty[List[CollectionEntry]]:
-        v0_2.Collection.check_unique_ids_impl(value)
+        v0_2.CollectionDescr.check_unique_ids_impl(value)
         return value
 
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        v0_2.Collection.move_groups_to_collection_field(data)
+        v0_2.CollectionDescr.move_groups_to_collection_field(data)
         super().convert_from_older_format(data, context)

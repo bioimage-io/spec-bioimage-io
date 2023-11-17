@@ -10,19 +10,19 @@ from bioimageio.spec.generic.v0_2 import Author, CiteEntry, Maintainer
 from bioimageio.spec.model.v0_4 import (
     AxesInCZYX,
     AxesStr,
-    InputTensor,
+    InputTensorDescr,
     LinkedModel,
-    Model,
-    OnnxWeights,
-    OutputTensor,
-    Postprocessing,
-    Preprocessing,
+    ModelDescr,
+    OnnxWeightsDescr,
+    OutputTensorDescr,
+    PostprocessingDescr,
+    PreprocessingDescr,
     ScaleLinearKwargs,
-    ScaleMeanVariance,
-    ScaleRange,
+    ScaleMeanVarianceDescr,
+    ScaleRangeDescr,
     ScaleRangeKwargs,
     TensorName,
-    Weights,
+    WeightsDescr,
 )
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node, check_type, unset
@@ -59,7 +59,7 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
 )
 def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool]):
     check_node(
-        OnnxWeights,
+        OnnxWeightsDescr,
         kwargs,
         expected_dump_json=expected if isinstance(expected, dict) else unset,
         is_invalid=expected is ValidationError,
@@ -101,12 +101,12 @@ INVALID_PRE_AND_POSTPROCESSING = [
     ],
 )
 def test_preprocessing(kwargs: Dict[str, Any]):
-    check_type(Preprocessing, kwargs, expected_deserialized=kwargs)
+    check_type(PreprocessingDescr, kwargs, expected_deserialized=kwargs)
 
 
 @pytest.mark.parametrize("kwargs", INVALID_PRE_AND_POSTPROCESSING)
 def test_invalid_preprocessing(kwargs: Dict[str, Any]):
-    check_type(Preprocessing, kwargs, is_invalid=True)
+    check_type(PreprocessingDescr, kwargs, is_invalid=True)
 
 
 @pytest.mark.parametrize(
@@ -123,24 +123,24 @@ def test_invalid_preprocessing(kwargs: Dict[str, Any]):
     ],
 )
 def test_postprocessing(kwargs: Dict[str, Any]):
-    check_type(Postprocessing, kwargs, expected_deserialized=kwargs)
+    check_type(PostprocessingDescr, kwargs, expected_deserialized=kwargs)
 
 
 @pytest.mark.parametrize(
     "node,expected",
     [
         (
-            ScaleRange(kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))),
+            ScaleRangeDescr(kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))),
             dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         ),
         (
-            ScaleMeanVariance(kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),  # type: ignore
+            ScaleMeanVarianceDescr(kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),  # type: ignore
             dict(name="scale_mean_variance", kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),
         ),
     ],
 )
 def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
-    check_type(Postprocessing, node, expected_deserialized=expected)
+    check_type(PostprocessingDescr, node, expected_deserialized=expected)
 
 
 @pytest.mark.parametrize(
@@ -152,7 +152,7 @@ def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
     ],
 )
 def test_invalid_postprocessing(kwargs: Dict[str, Any]):
-    check_type(Postprocessing, kwargs, is_invalid=True)
+    check_type(PostprocessingDescr, kwargs, is_invalid=True)
 
 
 @pytest.mark.parametrize(
@@ -199,7 +199,7 @@ def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
-    check_node(InputTensor, kwargs)
+    check_node(InputTensorDescr, kwargs)
 
 
 @pytest.mark.parametrize(
@@ -229,12 +229,12 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     ],
 )
 def test_output_tensor(kwargs: Dict[str, Any]):
-    check_node(OutputTensor, kwargs)
+    check_node(OutputTensorDescr, kwargs)
 
 
 @pytest.fixture
 def model_data():
-    return Model(
+    return ModelDescr(
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
@@ -251,7 +251,7 @@ def model_data():
         timestamp=datetime.now(),
         cite=[CiteEntry(text="Paper title", url="https://example.com/")],
         inputs=[
-            InputTensor(
+            InputTensorDescr(
                 name=TensorName("input_1"),
                 description="Input 1",
                 data_type="float32",
@@ -260,7 +260,7 @@ def model_data():
             ),
         ],
         outputs=[
-            OutputTensor(
+            OutputTensorDescr(
                 name=TensorName("output_1"),
                 description="Output 1",
                 data_type="float32",
@@ -270,7 +270,7 @@ def model_data():
         ],
         name="Model",
         tags=[],
-        weights=Weights(onnx=OnnxWeights(source=UNET2D_ROOT / "weights.onnx")),
+        weights=WeightsDescr(onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx")),
         test_inputs=[UNET2D_ROOT / "test_input.npy"],
         test_outputs=[UNET2D_ROOT / "test_output.npy"],
         type="model",

@@ -61,7 +61,7 @@ class Info:
     package_path: Path = field(init=False)
 
     def __post_init__(self):
-        self.target_node = dict(generic="Generic").get(self.target, self.target.capitalize())
+        self.target_node = dict(generic="GenericDescr").get(self.target, self.target.capitalize() + "Descr")
         self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules])
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_import_as = ", ".join(f"{m} as {m}" for m in self.all_version_modules)

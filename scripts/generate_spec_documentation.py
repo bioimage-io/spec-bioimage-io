@@ -13,7 +13,7 @@ from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
-from bioimageio.spec import ResourceDescription, application, collection, dataset, generic, model, notebook
+from bioimageio.spec import ResourceDescr, application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import unindent
@@ -217,7 +217,7 @@ class Field:
         info: FieldInfo,
         *,
         footnotes: OrderedDict[str, str],
-        rd_class: type[ResourceDescription],
+        rd_class: type[ResourceDescr],
         all_examples: List[Tuple[str, List[Any]]],
     ) -> None:
         super().__init__()
@@ -350,7 +350,7 @@ class Field:
         return ret
 
 
-def get_documentation_file_name(rd_class: Type[ResourceDescription], *, latest: bool = False):
+def get_documentation_file_name(rd_class: Type[ResourceDescr], *, latest: bool = False):
     typ = to_snake(rd_class.__name__)
     if latest:
         v = "latest"
@@ -360,7 +360,7 @@ def get_documentation_file_name(rd_class: Type[ResourceDescription], *, latest: 
     return f"{typ}_{v}.md"
 
 
-def export_documentation(folder: Path, rd_class: Type[ResourceDescription]) -> Path:
+def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
     footnotes: OrderedDict[str, str] = OrderedDict()
     all_examples: List[Tuple[str, List[Any]]] = []
     md = (

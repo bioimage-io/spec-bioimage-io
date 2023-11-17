@@ -9,7 +9,7 @@ from zipfile import ZIP_DEFLATED
 from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
 
 from bioimageio.spec import model
-from bioimageio.spec._description import InvalidDescription, ResourceDescription, build_description, dump_description
+from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description, dump_description
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.io_utils import (
@@ -67,7 +67,7 @@ def get_os_friendly_file_name(name: str) -> str:
 
 
 def get_resource_package_content(
-    rd: ResourceDescription,
+    rd: ResourceDescr,
     /,
     *,
     bioimageio_yaml_file_name: str = "{name}.{type}.bioimageio.yaml",
@@ -88,7 +88,7 @@ def get_resource_package_content(
             f"Invalid `bioimageio_yaml_file_name`. Must be {BIOIMAGEIO_YAML} or end with '.{BIOIMAGEIO_YAML}'"
         )
 
-    if weights_priority_order is not None and isinstance(rd, (model.v0_4.Model, model.v0_5.Model)):
+    if weights_priority_order is not None and isinstance(rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)):
         # select single weights entry
         for wf in weights_priority_order:
             w = getattr(rd.weights, wf, None)
@@ -134,7 +134,7 @@ def get_resource_package_content(
 
 
 def _prepare_resource_package(
-    source: Union[BioimageioYamlSource, ResourceDescription],
+    source: Union[BioimageioYamlSource, ResourceDescr],
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
@@ -181,7 +181,7 @@ def _prepare_resource_package(
 
 
 def save_bioimageio_package_as_folder(
-    source: Union[BioimageioYamlSource, ResourceDescription],
+    source: Union[BioimageioYamlSource, ResourceDescr],
     /,
     *,
     output_path: Union[NewPath, DirectoryPath, None] = None,
@@ -228,7 +228,7 @@ def save_bioimageio_package_as_folder(
 
 
 def save_bioimageio_package(
-    source: Union[BioimageioYamlSource, ResourceDescription],
+    source: Union[BioimageioYamlSource, ResourceDescr],
     /,
     *,
     compression: int = ZIP_DEFLATED,

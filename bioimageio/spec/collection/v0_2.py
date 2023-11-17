@@ -17,26 +17,29 @@ from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
-from bioimageio.spec.application.v0_2 import Application as Application
-from bioimageio.spec.dataset.v0_2 import Dataset as Dataset
+from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
+from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import DatasetId as DatasetId
 from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec.generic.v0_2 import Attachments as Attachments
+from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
-from bioimageio.spec.generic.v0_2 import Badge as Badge
+from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import FileSource as FileSource
-from bioimageio.spec.generic.v0_2 import Generic as Generic
-from bioimageio.spec.generic.v0_2 import GenericBase
+from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
+from bioimageio.spec.generic.v0_2 import GenericDescrBase
 from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
-from bioimageio.spec.model.v0_4 import Model as Model
-from bioimageio.spec.notebook.v0_2 import Notebook as Notebook
+from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr
+from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
 
-EntryNode = Union[Annotated[Union[Model, Dataset, Application, Notebook], Field(discriminator="type")], Generic]
+EntryNode = Union[
+    Annotated[Union[ModelDescr, DatasetDescr, ApplicationDescr02, NotebookDescr02], Field(discriminator="type")],
+    GenericDescr02,
+]
 
 
 class CollectionEntryBase(Node, extra="allow"):
@@ -114,7 +117,7 @@ class CollectionEntry(CollectionEntryBase):
         return self._entry
 
 
-class Collection(GenericBase, extra="allow", title="bioimage.io collection specification"):
+class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collection specification"):
     """A bioimage.io collection describes several other bioimage.io resources.
     Note that collections cannot be nested; resources listed under `collection` may not be collections themselves.
     """

@@ -5,7 +5,9 @@ from pydantic import Field
 from typing_extensions import Annotated
 
 from . import v0_2 as v0_2, v0_3 as v0_3
-from .v0_3 import Application as Application
+from .v0_3 import ApplicationDescr as ApplicationDescr
 
-AnyApplication = Annotated[Union[v0_2.Application, v0_3.Application], Field(discriminator="format_version")]
+AnyApplicationDescr = Annotated[
+    Union[v0_2.ApplicationDescr, v0_3.ApplicationDescr], Field(discriminator="format_version")
+]
 # autogen: stop

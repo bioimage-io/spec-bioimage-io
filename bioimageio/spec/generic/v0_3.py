@@ -26,7 +26,7 @@ from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import Author as Author
-from bioimageio.spec.generic.v0_2 import Badge as Badge
+from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
@@ -42,7 +42,7 @@ MarkdownSource = Union[
 ]
 
 
-class FileSourceWithSha256(Node):
+class FileDescrWithSha256(Node):
     source: FileSource
     """∈📦 file source"""
 
@@ -68,18 +68,18 @@ class FileSourceWithSha256(Node):
         return self
 
 
-class Attachment(FileSourceWithSha256):
+class AttachmentDescr(FileDescrWithSha256):
     pass
 
 
-class LinkedResource(Node):
+class LinkedResourceDescr(Node):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericModelBase(ResourceDescriptionBase):
+class GenericModelDescrBase(ResourceDescriptionBase):
     """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], MaxLen(128)]
@@ -107,7 +107,7 @@ class GenericModelBase(ResourceDescriptionBase):
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the RDF and the primary points of contact."""
 
-    attachments: List[Attachment] = Field(default_factory=list)
+    attachments: List[AttachmentDescr] = Field(default_factory=list)
     """file and other attachments"""
 
     cite: NotEmpty[List[CiteEntry]]
@@ -225,7 +225,7 @@ class GenericModelBase(ResourceDescriptionBase):
     The initial version should be '0.1.0'."""
 
 
-class GenericBase(GenericModelBase):
+class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
     format_version: Literal["0.3.0"] = "0.3.0"
@@ -257,14 +257,14 @@ class GenericBase(GenericModelBase):
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
     ) to discuss your intentions with the community."""
 
-    badges: List[Badge] = Field(default_factory=list)
+    badges: List[BadgeDescr] = Field(default_factory=list)
     """badges associated with this resource"""
 
 
-ResourceDescriptionType = TypeVar("ResourceDescriptionType", bound=GenericBase)
+ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class Generic(GenericBase, extra="ignore", title="bioimage.io generic specification"):
+class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic specification"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

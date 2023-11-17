@@ -8,7 +8,7 @@ from pydantic import HttpUrl
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
 from bioimageio.spec._internal.validation_context import get_internal_validation_context
-from bioimageio.spec.generic.v0_2 import Attachments, Author, CiteEntry, Generic, Maintainer
+from bioimageio.spec.generic.v0_2 import AttachmentsDescr, Author, CiteEntry, GenericDescr, Maintainer
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -18,12 +18,12 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
 @pytest.mark.parametrize(
     "node_class,kwargs,is_valid",
     [
-        (Attachments, dict(files=(EXAMPLE_DOT_COM_FILE, HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5), True),
-        (Attachments, dict(files=(EXAMPLE_DOT_COM_FILE, EXAMPLE_DOT_COM), extra=dict(more="of this")), True),
-        (Attachments, dict(only="other stuff"), True),
-        (Attachments, dict(files="not a list"), False),
-        (Attachments, dict(files=["non-existing-file"]), False),
-        (Attachments, dict(files=[123]), False),
+        (AttachmentsDescr, dict(files=(EXAMPLE_DOT_COM_FILE, HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5), True),
+        (AttachmentsDescr, dict(files=(EXAMPLE_DOT_COM_FILE, EXAMPLE_DOT_COM), extra=dict(more="of this")), True),
+        (AttachmentsDescr, dict(only="other stuff"), True),
+        (AttachmentsDescr, dict(files="not a list"), False),
+        (AttachmentsDescr, dict(files=["non-existing-file"]), False),
+        (AttachmentsDescr, dict(files=[123]), False),
         (Author, dict(name="only_name"), True),
         (
             Author,
@@ -81,11 +81,11 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
         (CiteEntry, dict(text="lala"), False),
         (CiteEntry, dict(url=EXAMPLE_DOT_COM), False),
         (
-            Generic,
+            GenericDescr,
             dict(
                 authors=[{"name": "Me"}],
                 description="the description",
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 license="BSD-2-Clause-FreeBSD",
                 name="my name",
                 type="my_type",
@@ -95,9 +95,9 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             True,
         ),
         (
-            Generic,
+            GenericDescr,
             dict(
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 name="your name",
                 description="my description",
                 attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
@@ -106,14 +106,14 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             ),
             True,
         ),
-        (Generic, dict(text="lala"), False),
-        (Generic, dict(url=EXAMPLE_DOT_COM), False),
+        (GenericDescr, dict(text="lala"), False),
+        (GenericDescr, dict(url=EXAMPLE_DOT_COM), False),
         (
-            Generic,
+            GenericDescr,
             dict(
                 authors=[{"name": "Me"}],
                 description="the description",
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 license="BSD-2-Clause-FreeBSD",
                 name="my name",
                 type="my_type",
@@ -123,9 +123,9 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             True,
         ),
         (
-            Generic,
+            GenericDescr,
             dict(
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 name="your name",
                 description="my description",
                 attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
@@ -135,14 +135,19 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             True,
         ),
         (
-            Generic,
-            dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name"),
+            GenericDescr,
+            dict(
+                format_version=GenericDescr.implemented_format_version,
+                version="0.1.0",
+                type="my_type",
+                name="their name",
+            ),
             False,
         ),
         (
-            Generic,
+            GenericDescr,
             dict(
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 version="0.1.0",
                 type="my_type",
                 name="its name",
@@ -158,9 +163,9 @@ def test_node(node_class: Type[Node], kwargs: Dict[str, Any], is_valid: bool):
 
 def test_deprecated_license_in_generic():
     check_node(
-        Generic,
+        GenericDescr,
         dict(
-            format_version=Generic.implemented_format_version,
+            format_version=GenericDescr.implemented_format_version,
             name="my name",
             description="my description",
             authors=[{"name": "Me"}],

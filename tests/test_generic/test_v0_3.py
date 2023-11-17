@@ -11,7 +11,7 @@ from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     get_internal_validation_context,
 )
-from bioimageio.spec.generic.v0_3 import Generic
+from bioimageio.spec.generic.v0_3 import GenericDescr
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -25,7 +25,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             authors=[{"name": "Me"}],
             cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             description="the description",
-            format_version=Generic.implemented_format_version,
+            format_version=GenericDescr.implemented_format_version,
             license="BSD-2-Clause-FreeBSD",
             name="my name",
             type="my_type",
@@ -37,7 +37,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             authors=[{"name": "Me"}],
             cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             description="my description",
-            format_version=Generic.implemented_format_version,
+            format_version=GenericDescr.implemented_format_version,
             license="BSD-2-Clause-FreeBSD",
             name="your name",
             type="my_type",
@@ -46,7 +46,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
     ],
 )
 def test_generic_valid(kwargs: Dict[str, Any]):
-    check_node(Generic, kwargs, context=ValidationContext(perform_io_checks=False))
+    check_node(GenericDescr, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
 @pytest.mark.parametrize(
@@ -54,7 +54,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
     [
         pytest.param(
             dict(
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 name="my name",
                 description="my description",
                 authors=[{"name": "Me"}],
@@ -67,12 +67,17 @@ def test_generic_valid(kwargs: Dict[str, Any]):
             id="deprecated license",
         ),
         (
-            dict(format_version=Generic.implemented_format_version, version="0.1.0", type="my_type", name="their name"),
+            dict(
+                format_version=GenericDescr.implemented_format_version,
+                version="0.1.0",
+                type="my_type",
+                name="their name",
+            ),
             ValidationContext(perform_io_checks=False),
         ),
         (
             dict(
-                format_version=Generic.implemented_format_version,
+                format_version=GenericDescr.implemented_format_version,
                 version="0.1.0",
                 type="my_type",
                 name="its name",
@@ -83,4 +88,4 @@ def test_generic_valid(kwargs: Dict[str, Any]):
     ],
 )
 def test_generic_invalid(kwargs: Dict[str, Any], context: Union[ValidationContext, InternalValidationContext]):
-    check_node(Generic, kwargs, context=context, is_invalid=True)
+    check_node(GenericDescr, kwargs, context=context, is_invalid=True)

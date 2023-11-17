@@ -5,7 +5,7 @@ from pydantic import Field
 from typing_extensions import Annotated
 
 from . import v0_2 as v0_2, v0_3 as v0_3
-from .v0_3 import Collection as Collection
+from .v0_3 import CollectionDescr as CollectionDescr
 
-AnyCollection = Annotated[Union[v0_2.Collection, v0_3.Collection], Field(discriminator="format_version")]
+AnyCollectionDescr = Annotated[Union[v0_2.CollectionDescr, v0_3.CollectionDescr], Field(discriminator="format_version")]
 # autogen: stop

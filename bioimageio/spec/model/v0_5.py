@@ -53,14 +53,14 @@ from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import AfterValidator, WithSuffix
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
-from bioimageio.spec.dataset.v0_3 import Dataset as Dataset
-from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
-from bioimageio.spec.generic.v0_3 import Attachment as Attachment
+from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
+from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
+from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
-from bioimageio.spec.generic.v0_3 import Badge as Badge
+from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import FileSourceWithSha256, GenericModelBase, MarkdownSource
-from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
+from bioimageio.spec.generic.v0_3 import FileDescrWithSha256, GenericModelDescrBase, MarkdownSource
+from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -172,7 +172,7 @@ PreprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
-class ParametrizedSize(Node):
+class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`.
     `n` in this equation is the same for all axis parametrized in this manner across the whole model."""
 
@@ -276,12 +276,12 @@ class ChannelAxis(AxisBase):
 
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], ParametrizedSize, SizeReference, AxisId, TensorAxisId],
+        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference, AxisId, TensorAxisId],
         Field(
             examples=[
                 10,
                 "other_axis",
-                ParametrizedSize(min=32, step=16).model_dump(),
+                ParameterizedSize(min=32, step=16).model_dump(),
                 SizeReference(reference="other_tensor.axis").model_dump(),
                 SizeReference(reference="other_axis", offset=8).model_dump(),
             ]
@@ -349,7 +349,7 @@ NominalOrOrdinalDType = Literal[
 ]
 
 
-class NominalOrOrdinalData(Node):
+class NominalOrOrdinalDataDescr(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
     In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
@@ -409,7 +409,7 @@ IntervalOrRatioDType = Literal[
 ]
 
 
-class IntervalOrRatioData(Node):
+class IntervalOrRatioDataDescr(Node):
     type: Annotated[  # todo: rename to dtype
         IntervalOrRatioDType,
         Field(
@@ -429,17 +429,17 @@ class IntervalOrRatioData(Node):
     """Offset for data on a ratio scale."""
 
 
-TensorData = Union[NominalOrOrdinalData, IntervalOrRatioData]
+TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
 
 
-class ProcessingBase(NodeWithExplicitlySetFields, ABC):
+class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     """processing base class"""
 
     # id: Literal[PreprocessingId, PostprocessingId]  # make abstract field
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
-class Binarize(ProcessingBase):
+class BinarizeDescr(ProcessingDescrBase):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero."""
 
@@ -447,7 +447,7 @@ class Binarize(ProcessingBase):
     kwargs: BinarizeKwargs
 
 
-class Clip(ProcessingBase):
+class ClipDescr(ProcessingDescrBase):
     """Set tensor values below min to min and above max to max."""
 
     id: Literal["clip"] = "clip"
@@ -458,7 +458,7 @@ class EnsureDtypeKwargs(ProcessingKwargs):
     dtype: str
 
 
-class EnsureDtype(ProcessingBase):
+class EnsureDtypeDescr(ProcessingDescrBase):
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
@@ -485,14 +485,14 @@ class ScaleLinearKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinear(ProcessingBase):
+class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
     id: Literal["scale_linear"] = "scale_linear"
     kwargs: ScaleLinearKwargs
 
 
-class Sigmoid(ProcessingBase):
+class SigmoidDescr(ProcessingDescrBase):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     id: Literal["sigmoid"] = "sigmoid"
@@ -534,7 +534,7 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
         return self
 
 
-class FixedZeroMeanUnitVariance(ProcessingBase):
+class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract a given mean and divide by a given variance."""
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
@@ -557,7 +557,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
 
-class ZeroMeanUnitVariance(ProcessingBase):
+class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract mean and divide by variance."""
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
@@ -604,7 +604,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
         return value
 
 
-class ScaleRange(ProcessingBase):
+class ScaleRangeDescr(ProcessingDescrBase):
     """Scale with percentiles."""
 
     id: Literal["scale_range"] = "scale_range"
@@ -633,30 +633,37 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
 
-class ScaleMeanVariance(ProcessingBase):
+class ScaleMeanVarianceDescr(ProcessingDescrBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     id: Literal["scale_mean_variance"] = "scale_mean_variance"
     kwargs: ScaleMeanVarianceKwargs
 
 
-Preprocessing = Annotated[
+PreprocessingDescr = Annotated[
     Union[
-        Binarize, Clip, EnsureDtype, ScaleLinear, Sigmoid, FixedZeroMeanUnitVariance, ZeroMeanUnitVariance, ScaleRange
+        BinarizeDescr,
+        ClipDescr,
+        EnsureDtypeDescr,
+        ScaleLinearDescr,
+        SigmoidDescr,
+        FixedZeroMeanUnitVarianceDescr,
+        ZeroMeanUnitVarianceDescr,
+        ScaleRangeDescr,
     ],
     Field(discriminator="id"),
 ]
-Postprocessing = Annotated[
+PostprocessingDescr = Annotated[
     Union[
-        Binarize,
-        Clip,
-        EnsureDtype,
-        ScaleLinear,
-        Sigmoid,
-        FixedZeroMeanUnitVariance,
-        ZeroMeanUnitVariance,
-        ScaleRange,
-        ScaleMeanVariance,
+        BinarizeDescr,
+        ClipDescr,
+        EnsureDtypeDescr,
+        ScaleLinearDescr,
+        SigmoidDescr,
+        FixedZeroMeanUnitVarianceDescr,
+        ZeroMeanUnitVarianceDescr,
+        ScaleRangeDescr,
+        ScaleMeanVarianceDescr,
     ],
     Field(discriminator="id"),
 ]
@@ -664,7 +671,7 @@ Postprocessing = Annotated[
 AxisVar = TypeVar("AxisVar", InputAxis, OutputAxis)
 
 
-class TensorBase(Node, Generic[AxisVar]):
+class TensorDescrBase(Node, Generic[AxisVar]):
     id: TensorId
     """Tensor id. No duplicates are allowed."""
 
@@ -710,7 +717,7 @@ class TensorBase(Node, Generic[AxisVar]):
     The sample files primarily serve to inform a human user about an example use case
     and are typically stored as HDF5, PNG or TIFF images."""
 
-    data: Union[TensorData, NotEmpty[Sequence[TensorData]]] = IntervalOrRatioData()
+    data: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]] = IntervalOrRatioDataDescr()
     """Description of the tensor's data values, optionally per channel.
     If specified per channel, the data `type` needs to match across channels."""
 
@@ -729,8 +736,8 @@ class TensorBase(Node, Generic[AxisVar]):
     @field_validator("data", mode="after")
     @classmethod
     def check_data_type_across_channels(
-        cls, value: Union[TensorData, NotEmpty[Sequence[TensorData]]]
-    ) -> Union[TensorData, NotEmpty[Sequence[TensorData]]]:
+        cls, value: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]
+    ) -> Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]:
         if not isinstance(value, list):
             return value
 
@@ -743,8 +750,8 @@ class TensorBase(Node, Generic[AxisVar]):
         return value
 
     @model_validator(mode="after")
-    def check_data_matches_channelaxis(self) -> Union[Self, InputTensor, OutputTensor]:
-        if not isinstance(self.data, list) or not isinstance(self, (InputTensor, OutputTensor)):
+    def check_data_matches_channelaxis(self) -> Union[Self, InputTensorDescr, OutputTensorDescr]:
+        if not isinstance(self.data, list) or not isinstance(self, (InputTensorDescr, OutputTensorDescr)):
             return self
 
         for a in self.axes:
@@ -784,7 +791,7 @@ class TensorBase(Node, Generic[AxisVar]):
             if isinstance(a.size, int):
                 if shape[i] != a.size:
                     raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {a.size}")
-            elif isinstance(a.size, ParametrizedSize):
+            elif isinstance(a.size, ParameterizedSize):
                 _ = a.size.validate_size(shape[i])
 
             elif isinstance(a.size, str):
@@ -815,12 +822,12 @@ class TensorBase(Node, Generic[AxisVar]):
         return array
 
 
-class InputTensor(TensorBase[InputAxis]):
+class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    preprocessing: List[Preprocessing] = Field(default_factory=list)
+    preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
@@ -837,12 +844,12 @@ class InputTensor(TensorBase[InputAxis]):
         return self
 
 
-class OutputTensor(TensorBase[OutputAxis]):
+class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     id: TensorId = TensorId("output")
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    postprocessing: List[Postprocessing] = Field(default_factory=list)
+    postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -859,10 +866,10 @@ class OutputTensor(TensorBase[OutputAxis]):
         return self
 
 
-AnyTensor = Union[InputTensor, OutputTensor]
+TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 
-class EnvironmentFile(FileSourceWithSha256):
+class EnvironmentFileDescr(FileDescrWithSha256):
     source: Annotated[
         FileSource, WithSuffix((".yaml", ".yml"), case_sensitive=True), Field(examples=["environment.yaml"])
     ]
@@ -873,7 +880,7 @@ class EnvironmentFile(FileSourceWithSha256):
     """
 
 
-class _ArchitectureCallable(Node):
+class _ArchitectureCallableDescr(Node):
     callable: Annotated[Identifier, Field(examples=["MyNetworkClass", "get_my_model"])]
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
@@ -881,19 +888,19 @@ class _ArchitectureCallable(Node):
     """key word arguments for the `callable`"""
 
 
-class ArchitectureFromFile(_ArchitectureCallable, FileSourceWithSha256):
+class ArchitectureFromFileDescr(_ArchitectureCallableDescr, FileDescrWithSha256):
     pass
 
 
-class ArchitectureFromLibrary(_ArchitectureCallable):
+class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
     import_from: str
     """Where to import the callable from, i.e. `from <import_from> import <callable>`"""
 
 
-Architecture = Union[ArchitectureFromFile, ArchitectureFromLibrary]
+ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
 
 
-class WeightsEntryBase(FileSourceWithSha256):
+class WeightsEntryDescrBase(FileDescrWithSha256):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -923,36 +930,36 @@ class WeightsEntryBase(FileSourceWithSha256):
         return self
 
 
-class KerasHdf5Weights(WeightsEntryBase):
+class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Version  # todo: dynamic default from tf lib
     """TensorFlow version used to create these weights."""
 
 
-class OnnxWeights(WeightsEntryBase):
+class OnnxWeightsDescr(WeightsEntryDescrBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[int, Ge(7)]  # todo: dynamic default from onnx runtime
     """ONNX opset version"""
 
 
-class PytorchStateDictWeights(WeightsEntryBase):
+class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
-    architecture: Architecture
+    architecture: ArchitectureDescr
     pytorch_version: Version
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
     """
-    dependencies: Optional[EnvironmentFile] = None
+    dependencies: Optional[EnvironmentFileDescr] = None
     """Custom depencies beyond pytorch.
     The conda environment file should include pytorch and any version pinning has to be compatible with
     `pytorch_version`.
     """
 
 
-class TensorflowJsWeights(WeightsEntryBase):
+class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Version
@@ -963,13 +970,13 @@ class TensorflowJsWeights(WeightsEntryBase):
     All required files/folders should be a zip archive."""
 
 
-class TensorflowSavedModelBundleWeights(WeightsEntryBase):
+class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    dependencies: Optional[EnvironmentFile] = None
+    dependencies: Optional[EnvironmentFileDescr] = None
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
@@ -978,20 +985,20 @@ class TensorflowSavedModelBundleWeights(WeightsEntryBase):
     All required files/folders should be a zip archive."""
 
 
-class TorchscriptWeights(WeightsEntryBase):
+class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Version
     """Version of the PyTorch library used."""
 
 
-class Weights(Node):
-    keras_hdf5: Optional[KerasHdf5Weights] = None
-    onnx: Optional[OnnxWeights] = None
-    pytorch_state_dict: Optional[PytorchStateDictWeights] = None
-    tensorflow_js: Optional[TensorflowJsWeights] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeights] = None
-    torchscript: Optional[TorchscriptWeights] = None
+class WeightsDescr(Node):
+    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
+    onnx: Optional[OnnxWeightsDescr] = None
+    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
+    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = None
+    torchscript: Optional[TorchscriptWeightsDescr] = None
 
     @model_validator(mode="after")
     def check_entries(self, info: ValidationInfo) -> Self:
@@ -1026,7 +1033,7 @@ class Weights(Node):
         return self
 
 
-class Model(GenericModelBase, title="bioimage.io model specification"):
+class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
@@ -1057,22 +1064,22 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     The documentation should include a '#[#] Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NotEmpty[List[InputTensor]]
+    inputs: NotEmpty[Sequence[InputTensorDescr]]
     """Describes the input tensors expected by this model."""
 
     @field_validator("inputs", mode="after")
     @classmethod
-    def validate_input_axes(cls, inputs: List[InputTensor]) -> List[InputTensor]:
+    def validate_input_axes(cls, inputs: Sequence[InputTensorDescr]) -> Sequence[InputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
             valid_independent_refs: Dict[
-                Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
+                Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
             ] = {
                 **{
                     a.id: (ipt, a, a.size)
                     for a in ipt.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
                 },
                 **input_size_refs,
             }
@@ -1095,14 +1102,14 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
         a: int,
         axis: AnyAxis,
         valid_independent_refs: Dict[
-            Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
+            Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
         ],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
 
         if (
-            isinstance(axis.size, ParametrizedSize)
+            isinstance(axis.size, ParameterizedSize)
             and isinstance(axis, WithHalo)
             and (axis.size.min - 2 * axis.halo) < 1
         ):
@@ -1139,7 +1146,7 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
                     f"The units of an axis and its reference axis need to match, but '{ax_unit}' != '{ref_unit}'."
                 )
             min_size = valid_independent_refs[axis.size.reference][2]
-            if isinstance(min_size, ParametrizedSize):
+            if isinstance(min_size, ParameterizedSize):
                 min_size = min_size.min
 
             if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
@@ -1183,6 +1190,8 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
 
         return self
 
+    # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> :
+
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId],
         warn(LicenseId, "{value} is deprecated, see https://spdx.org/licenses/{value}.html"),
@@ -1202,12 +1211,12 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[List[OutputTensor]]
+    outputs: NotEmpty[List[OutputTensorDescr]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_tensor_ids(cls, outputs: List[OutputTensor], info: ValidationInfo) -> List[OutputTensor]:
+    def validate_tensor_ids(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
         tensor_ids = [t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])]
         duplicate_tensor_ids: List[str] = []
         seen: Set[str] = set()
@@ -1223,37 +1232,37 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
         return outputs
 
     @staticmethod
-    def _get_axes_with_parametrized_size(io: Union[List[InputTensor], List[OutputTensor]]):
+    def _get_axes_with_parameterized_size(io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
             for t in io
             for a in t.axes
-            if not isinstance(a, BatchAxis) and isinstance(a.size, ParametrizedSize)
+            if not isinstance(a, BatchAxis) and isinstance(a.size, ParameterizedSize)
         }
 
     @staticmethod
-    def _get_axes_with_independent_size(io: Union[List[InputTensor], List[OutputTensor]]):
+    def _get_axes_with_independent_size(io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
             for t in io
             for a in t.axes
-            if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
+            if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
         }
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_output_axes(cls, outputs: List[OutputTensor], info: ValidationInfo) -> List[OutputTensor]:
+    def validate_output_axes(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
             valid_independent_refs: Dict[
-                Union[AxisId, TensorAxisId], Tuple[AnyTensor, AnyAxis, Union[int, ParametrizedSize]]
+                Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
             ] = {
                 **{
                     a.id: (out, a, a.size)
                     for a in out.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParametrizedSize))
+                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
                 },
                 **input_size_refs,
                 **output_size_refs,
@@ -1296,10 +1305,10 @@ class Model(GenericModelBase, title="bioimage.io model specification"):
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
-    training_data: Union[LinkedDataset, Dataset, None] = None
+    training_data: Union[LinkedDatasetDescr, DatasetDescr, None] = None
     """The dataset used to train this model"""
 
-    weights: Weights
+    weights: WeightsDescr
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

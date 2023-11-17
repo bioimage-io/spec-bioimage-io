@@ -23,60 +23,60 @@ from bioimageio.spec._internal.utils import iterate_annotated_union
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
-_ResourceDescription_v0_2 = Union[
+_ResourceDescr_v0_2 = Union[
     Annotated[
         Union[
-            application.v0_2.Application,
-            collection.v0_2.Collection,
-            dataset.v0_2.Dataset,
-            model.v0_4.Model,
-            notebook.v0_2.Notebook,
+            application.v0_2.ApplicationDescr,
+            collection.v0_2.CollectionDescr,
+            dataset.v0_2.DatasetDescr,
+            model.v0_4.ModelDescr,
+            notebook.v0_2.NotebookDescr,
         ],
         Field(discriminator="type"),
     ],
-    generic.v0_2.Generic,
+    generic.v0_2.GenericDescr,
 ]
 """A resource description following the 0.2.x (model: 0.4.x) specification format"""
 
 _ResourceDescription_v0_3 = Union[
     Annotated[
         Union[
-            application.v0_3.Application,
-            collection.v0_3.Collection,
-            dataset.v0_3.Dataset,
-            model.v0_5.Model,
-            notebook.v0_3.Notebook,
+            application.v0_3.ApplicationDescr,
+            collection.v0_3.CollectionDescr,
+            dataset.v0_3.DatasetDescr,
+            model.v0_5.ModelDescr,
+            notebook.v0_3.NotebookDescr,
         ],
         Field(discriminator="type"),
     ],
-    generic.v0_3.Generic,
+    generic.v0_3.GenericDescr,
 ]
 """A resource description following the 0.3.x (model: 0.5.x) specification format"""
 
-LatestResourceDescription = _ResourceDescription_v0_3
+LatestResourceDescr = _ResourceDescription_v0_3
 """A resource description following the latest specification format"""
 
 
-SpecificResourceDescription = Annotated[
+SpecificResourceDescr = Annotated[
     Union[
-        application.AnyApplication,
-        collection.AnyCollection,
-        dataset.AnyDataset,
-        model.AnyModel,
-        notebook.AnyNotebook,
+        application.AnyApplicationDescr,
+        collection.AnyCollectionDescr,
+        dataset.AnyDatasetDescr,
+        model.AnyModelDescr,
+        notebook.AnyNotebookDescr,
     ],
     Field(discriminator="type"),
 ]
 """Any of the implemented, non-generic resource descriptions"""
 
-ResourceDescription = Union[
-    SpecificResourceDescription,
-    generic.AnyGeneric,
+ResourceDescr = Union[
+    SpecificResourceDescr,
+    generic.AnyGenericDescr,
 ]
 """Any of the implemented resource descriptions"""
 
 
-def dump_description(rd: ResourceDescription, exclude_unset: bool = True) -> BioimageioYamlContent:
+def dump_description(rd: ResourceDescr, exclude_unset: bool = True) -> BioimageioYamlContent:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 
@@ -87,7 +87,7 @@ def build_description(
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
-) -> Union[ResourceDescription, InvalidDescription]:
+) -> Union[ResourceDescr, InvalidDescription]:
     discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(data)
     if use_format_version != discovered_format_version:
         data = dict(data)
@@ -166,12 +166,12 @@ def _check_type_and_format_version(data: Union[YamlValue, BioimageioYamlContent]
         use_fv = rd_class.implemented_format_version
     else:
         # fallback: type is not specialized (yet) and format version is unknown
-        use_fv = generic.Generic.implemented_format_version  # latest generic
+        use_fv = generic.GenericDescr.implemented_format_version  # latest generic
 
     return typ, fv, use_fv
 
 
-def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[ResourceDescription], str]:
+def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[ResourceDescr], str]:
     """Get the appropriate resource description class for a given `type` and `format_version`.
 
     returns:
@@ -185,9 +185,9 @@ def _get_rd_class(type_: str, /, format_version: str = LATEST) -> Union[Type[Res
     elif format_version.count(".") == 2:
         format_version = format_version[: format_version.rfind(".")]
 
-    rd_classes: Dict[str, Dict[str, Type[ResourceDescription]]] = {}
+    rd_classes: Dict[str, Dict[str, Type[ResourceDescr]]] = {}
     for typ, rd_class in _iterate_over_rd_classes():
-        per_fv: Dict[str, Type[ResourceDescription]] = rd_classes.setdefault(typ, {})
+        per_fv: Dict[str, Type[ResourceDescr]] = rd_classes.setdefault(typ, {})
 
         ma, mi, _pa = rd_class.implemented_format_version_tuple
         key = f"{ma}.{mi}"
@@ -216,8 +216,8 @@ def _get_supported_format_versions(typ: str) -> Tuple[str, ...]:
     return tuple(supported.get(typ, supported["generic"]))
 
 
-def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in iterate_annotated_union(ResourceDescription):
+def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescr]]]:
+    for rd_class in iterate_annotated_union(ResourceDescr):
         typ = rd_class.model_fields["type"].default
         if typ is PydanticUndefined:
             typ = "generic"
@@ -226,8 +226,8 @@ def _iterate_over_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]
         yield typ, rd_class
 
 
-def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescription]]]:
-    for rd_class in iterate_annotated_union(LatestResourceDescription):
+def _iterate_over_latest_rd_classes() -> Iterable[Tuple[str, Type[ResourceDescr]]]:
+    for rd_class in iterate_annotated_union(LatestResourceDescr):
         typ: Any = rd_class.model_fields["type"].default
         if typ is PydanticUndefined:
             typ = "generic"
