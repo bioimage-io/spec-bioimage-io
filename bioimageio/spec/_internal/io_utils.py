@@ -84,7 +84,9 @@ def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
         cm = nullcontext(file)
 
     with cm as f:
-        yaml.load(f)
+        content = yaml.load(f)
+
+    return content
 
 
 def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):

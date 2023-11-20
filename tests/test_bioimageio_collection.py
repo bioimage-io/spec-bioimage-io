@@ -9,6 +9,7 @@ from pydantic import AnyUrl
 
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
+from bioimageio.spec._internal.utils import get_parent_url
 from tests.utils import ParameterSet, check_bioimageio_yaml
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
@@ -170,7 +171,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 }
 
 
-def yield_bioimageio_yaml_paths() -> Iterable[ParameterSet]:
+def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
     cache_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
     with Path(cache_path).open(encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
@@ -178,21 +179,16 @@ def yield_bioimageio_yaml_paths() -> Iterable[ParameterSet]:
     collection_registry: Dict[str, None] = {
         entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
     }
-    collection = pooch.create(
-        path=CACHE_PATH,
-        base_url=RDF_BASE_URL,
-        registry=collection_registry,
-    )
 
     for rdf in collection_registry:
-        descr_path = Path(collection.fetch(rdf))
-        key = descr_path.relative_to(CACHE_PATH).as_posix()
-        yield pytest.param(descr_path, key, id=key)
+        descr_url = RDF_BASE_URL + rdf
+        key = rdf
+        yield pytest.param(descr_url, key, id=key)
 
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
-@pytest.mark.parametrize("descr_path,key", list(yield_bioimageio_yaml_paths()))
-def test_rdf(descr_path: Path, key: str, format_version: FormatVersionPlaceholder):
+@pytest.mark.parametrize("descr_url,key", list(yield_bioimageio_yaml_urls()))
+def test_rdf(descr_url: Path, key: str, format_version: FormatVersionPlaceholder):
     if (
         format_version == DISCOVER
         and key in KNOWN_INVALID
@@ -202,8 +198,7 @@ def test_rdf(descr_path: Path, key: str, format_version: FormatVersionPlaceholde
         pytest.skip("known failure")
 
     check_bioimageio_yaml(
-        descr_path,
-        root=AnyUrl("https://example.com/"),
+        descr_url,
         as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
     )

@@ -18,10 +18,12 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    cast,
 )
 
 import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
+from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Field,
@@ -183,7 +185,9 @@ class ParameterizedSize(Node):
         if size < self.min:
             raise ValueError(f"size {size} < {self.min}")
         if size - self.min % self.step != 0:
-            raise ValueError(f"axis of size {size} is not parametrized by min + n*step = {self.min} + n*{self.step}")
+            raise ValueError(
+                f"axis of size {size} is not parametrized by `min + n*step` = `{self.min} + n*{self.step}`"
+            )
 
         return size
 
@@ -200,6 +204,37 @@ class SizeReference(Node):
 
     reference: Union[AxisId, TensorAxisId]
     offset: int = 0
+
+    def validate_size(
+        self,
+        size: int,
+        *,
+        tensor_id: TensorId,  # needed for when `reference` is an AxisId
+        known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]],
+    ):
+        dot_count = self.reference.count(".")
+        if dot_count == 0:
+            axis_id = cast(AxisId, self.reference)
+        elif dot_count == 1:
+            _tensor_id, _axis_id = self.reference.split(".")
+            actual_tensor_id = TensorId(_tensor_id)
+            if tensor_id != actual_tensor_id:
+                raise ValueError("Expected tensor id of `reference` to be {tensor_id}, but got {actual_tensor_id}.")
+            axis_id = AxisId(_axis_id)
+        else:
+            raise ValueError(f"Invalid `reference`: {self.reference} (expected 0-1 dots)")
+
+        if tensor_id not in known_tensor_sizes:
+            raise ValueError(f"tensor sizes of '{tensor_id}' are unknown.")
+
+        other_size = known_tensor_sizes[tensor_id].get(axis_id)
+        if other_size is None:
+            raise ValueError(f"axis size '{self.reference}' is unknown.")
+
+        if size != other_size:
+            raise ValueError(
+                f"axis size mismatch: axis {tensor_id}.{axis_id} of size " f"{size} != {other_size} given by {size}."
+            )
 
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
@@ -681,6 +716,10 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     axes: NotEmpty[Sequence[AxisVar]]
     """tensor axes"""
 
+    @property
+    def shape(self):
+        return tuple(a.size for a in self.axes)
+
     @field_validator("axes", mode="after", check_fields=False)
     @classmethod
     def validate_axes(cls, axes: Sequence[AnyAxis]) -> Sequence[AnyAxis]:
@@ -714,8 +753,37 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
     sample_tensor: Optional[FileSource] = None
     """∈📦 A sample tensor to illustrate a possible input/output for the model,
-    The sample files primarily serve to inform a human user about an example use case
-    and are typically stored as HDF5, PNG or TIFF images."""
+    The sample image primarily serves to inform a human user about an example use case
+    and is typically stored as .hdf5, .png or .tiff.
+    It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats).
+    And the image dimensionality has to match the number of axes specified in this tensor description.
+    """
+
+    @model_validator(mode="after")
+    def validate_sample_tensor(self, info: ValidationInfo) -> Self:
+        if self.sample_tensor is None:
+            return self
+
+        context = get_internal_validation_context(info.context)
+        if not context["perform_io_checks"]:
+            return self
+
+        local_source = download(self.sample_tensor).path
+        tensor: NDArray[Any] = imread(local_source)
+        n_dims = len(tensor.squeeze().shape)
+        n_dims_min = n_dims_max = len(self.axes)
+
+        for a in self.axes:
+            if isinstance(a, BatchAxis):
+                n_dims_min -= 1
+            elif isinstance(a.size, int) and a.size == 1:
+                n_dims_min -= 1
+
+        n_dims_min = max(0, n_dims_min)
+        if n_dims < n_dims_min or n_dims > n_dims_max:
+            raise ValueError("Expected sample tensor to have {n_dims_min} to {n_dims_max} dimensions")
+
+        return self
 
     data: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]] = IntervalOrRatioDataDescr()
     """Description of the tensor's data values, optionally per channel.
@@ -769,57 +837,47 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return self
 
-    def get_axis_sizes(self, array: NDArray[Any]) -> Dict[AxisId, int]:
-        if len(array.shape) != len(self.axes):
+    def get_axis_sizes(self, tensor: NDArray[Any]) -> Dict[AxisId, int]:
+        if len(tensor.shape) != len(self.axes):
             raise ValueError(
-                f"Dimension mismatch: array shape {array.shape} (#{len(array.shape)}) "
+                f"Dimension mismatch: array shape {tensor.shape} (#{len(tensor.shape)}) "
                 f"incompatible with {len(self.axes)} axes."
             )
-        return {a.id: array.shape[i] for i, a in enumerate(self.axes)}
+        return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
 
-    def validate_array(
-        self, array: NDArray[Any], *, other_known_tensor_sizes: Optional[Mapping[TensorId, Mapping[AxisId, int]]] = None
+    def validate_tensor(
+        self,
+        tensor: NDArray[Any],
+        *,
+        other_known_tensor_sizes: Optional[Mapping[TensorId, Mapping[AxisId, int]]] = None,
     ) -> NDArray[Any]:
         known_tensor_sizes = dict(other_known_tensor_sizes or {})
-        known_tensor_sizes[self.id] = self.get_axis_sizes(array)
+        known_tensor_sizes[self.id] = self.get_axis_sizes(tensor)
 
-        if array.dtype.name != self.dtype:
+        if tensor.dtype.name != self.dtype:
             raise ValueError("tensor with dtype {data.dtype.name} does not match specified dtype {self.dtype}")
 
-        shape = list(array.shape)
+        shape = list(tensor.shape)
         for i, a in enumerate(self.axes):
-            if isinstance(a.size, int):
-                if shape[i] != a.size:
-                    raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {a.size}")
-            elif isinstance(a.size, ParameterizedSize):
-                _ = a.size.validate_size(shape[i])
+            if a.size is None:
+                continue
 
-            elif isinstance(a.size, str):
-                if "." in a.size:
-                    assert a.size.count(".") == 1
-                    _tensor_id, _axis_id = a.size.split(".")
-                    tensor_id = TensorId(_tensor_id)
-                    axis_id = AxisId(_axis_id)
-                else:
-                    tensor_id = self.id
-                    axis_id = AxisId(a.size)
-
-                if tensor_id not in known_tensor_sizes:
-                    raise ValueError(f"tensor sizes of '{tensor_id}' are unknown.")
-
-                other_size = known_tensor_sizes[tensor_id].get(axis_id)
-                if other_size is None:
-                    raise ValueError(f"axis size '{a.size}' is unknown.")
-
-                if shape[i] != other_size:
-                    raise ValueError(
-                        f"axis size mismatch: array axis {i} of size " f"{shape[i]} != {other_size} given by {a.size}."
-                    )
-            # elif isinstance(a.size, ):
+            if isinstance(a.size, str):
+                size = SizeReference(reference=a.size)
             else:
-                assert_never(a.size)
+                size = a.size
 
-        return array
+            if isinstance(size, int):
+                if shape[i] != size:
+                    raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {size}")
+            elif isinstance(size, ParameterizedSize):
+                _ = size.validate_size(shape[i])
+            elif isinstance(size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+                _ = size.validate_size(shape[i], tensor_id=self.id, known_tensor_sizes=known_tensor_sizes)
+            else:
+                assert_never(size)
+
+        return tensor
 
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
@@ -1180,13 +1238,13 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         known_sizes = {ipt.id: ipt.get_axis_sizes(ta) for ipt, ta in zip(self.inputs, ipt_test_arrays)}
 
         for i, ipt in enumerate(self.inputs):
-            _ = ipt.validate_array(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            _ = ipt.validate_tensor(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
 
         out_test_arrays = [np.load(download(out.test_tensor).path) for out in self.outputs]
         known_sizes.update({out.id: out.get_axis_sizes(ta) for out, ta in zip(self.outputs, out_test_arrays)})
 
         for i, out in enumerate(self.outputs):
-            _ = out.validate_array(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
 
         return self
 

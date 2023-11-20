@@ -10,6 +10,7 @@ from ruamel.yaml import YAML
 
 from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.validation_context import (
     InternalValidationContext,
     ValidationContext,
@@ -85,18 +86,20 @@ def check_type(
 
 
 def check_bioimageio_yaml(
-    source: Path,
+    source: Union[Path, HttpUrl],
     /,
     *,
-    root: Union[Path, HttpUrl],
+    root: Union[Path, HttpUrl, None] = None,
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
 ) -> None:
-    with source.open(encoding="utf-8") as f:
+    downloaded_source = download(source)
+    root = root or downloaded_source.original_root
+    with downloaded_source.path.open(encoding="utf-8") as f:
         data = yaml.load(f)
 
-    context = ValidationContext(root=root, file_name=source.name)
+    context = ValidationContext(root=root, file_name=downloaded_source.original_file_name)
     if is_invalid:
         rd = build_description(data, context=context)
         assert isinstance(rd, InvalidDescription), "Invalid RDF passed validation"
@@ -123,7 +126,7 @@ def check_bioimageio_yaml(
         return
 
     deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
-    assert_dict_equal(deserialized, expect_back, f"roundtrip {source.as_posix()}\n", ignore_known_rdf_diffs=True)
+    assert_dict_equal(deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True)
 
 
 def assert_dict_equal(
