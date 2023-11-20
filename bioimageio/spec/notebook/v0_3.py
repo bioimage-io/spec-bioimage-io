@@ -1,10 +1,10 @@
 from typing import Literal
 
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import FileSource as FileSource
 from bioimageio.spec.generic.v0_3 import GenericDescrBase
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl

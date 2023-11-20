@@ -5,11 +5,9 @@ from typing import Any, Dict, Iterable
 
 import pooch
 import pytest
-from pydantic import AnyUrl
 
 from bioimageio.spec._internal.constants import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
-from bioimageio.spec._internal.utils import get_parent_url
 from tests.utils import ParameterSet, check_bioimageio_yaml
 
 BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"

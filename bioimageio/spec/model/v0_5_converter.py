@@ -71,8 +71,10 @@ def _convert_weights(data: BioimageioYamlContent):
                 continue
 
             entry["tensorflow_version"] = entry.get("tensorflow_version", "1.15")
-            deps = entry.get("dependencies")
-            if isinstance(deps, str) and deps.startswith("conda:"):
+            deps = entry.pop("dependencies", None)
+            if deps is None:
+                pass
+            elif isinstance(deps, str) and deps.startswith("conda:"):
                 entry["dependencies"] = dict(source=deps[len("conda:") :])
             else:
                 entry["dependencies"] = dict(source=deps)
@@ -106,12 +108,12 @@ def _update_tensor_specs(
             new_d["description"] = d["description"]
 
         if len(tts) > idx:
-            new_d["test_tensor"] = tts[idx]
+            new_d["test_tensor"] = dict(source=tts[idx])
 
         if len(sts) > idx:
-            new_d["sample_tensor"] = sts[idx]
+            new_d["sample_tensor"] = dict(source=sts[idx])
 
-        new_d["data"] = dict(type="float32")
+        new_d["data"] = dict(type=d.get("data_type", "float32"))
 
         halo_seq = d.get("halo")
         if isinstance(halo_seq, (list, tuple)):

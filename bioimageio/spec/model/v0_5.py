@@ -62,7 +62,8 @@ from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import FileDescrWithSha256, GenericModelDescrBase, MarkdownSource
+from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
+from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
@@ -139,7 +140,7 @@ AxisId = NewType("AxisId", _AxisId)
 
 def validate_tensor_axis_id(s: str):
     if s.count(".") != 1:
-        raise ValueError("Expected exactly 1 dot in tensor axis id '{s}'")
+        raise ValueError(f"Expected exactly 1 dot in tensor axis id '{s}'")
 
     tid, an = s.split(".")
     _ = TypeAdapter(TensorId).validate_python(tid)
@@ -185,7 +186,7 @@ class ParameterizedSize(Node):
     def validate_size(self, size: int) -> int:
         if size < self.min:
             raise ValueError(f"size {size} < {self.min}")
-        if size - self.min % self.step != 0:
+        if (size - self.min) % self.step != 0:
             raise ValueError(
                 f"axis of size {size} is not parametrized by `min + n*step` = `{self.min} + n*{self.step}`"
             )
@@ -218,9 +219,7 @@ class SizeReference(Node):
             axis_id = cast(AxisId, self.reference)
         elif dot_count == 1:
             _tensor_id, _axis_id = self.reference.split(".")
-            actual_tensor_id = TensorId(_tensor_id)
-            if tensor_id != actual_tensor_id:
-                raise ValueError("Expected tensor id of `reference` to be {tensor_id}, but got {actual_tensor_id}.")
+            tensor_id = TensorId(_tensor_id)  # use explicit tensor_id
             axis_id = AxisId(_axis_id)
         else:
             raise ValueError(f"Invalid `reference`: {self.reference} (expected 0-1 dots)")
@@ -745,14 +744,14 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return axes
 
-    test_tensor: FileSource
+    test_tensor: FileDescr
     """∈📦 An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: Optional[FileSource] = None
+    sample_tensor: Optional[FileDescr] = None
     """∈📦 A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -769,7 +768,7 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         if not context["perform_io_checks"]:
             return self
 
-        down = download(self.sample_tensor)
+        down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
 
         local_source = down.path
         tensor: NDArray[Any] = imread(local_source, extension=PurePosixPath(down.original_file_name).suffix)
@@ -781,10 +780,19 @@ class TensorDescrBase(Node, Generic[AxisVar]):
                 n_dims_min -= 1
             elif isinstance(a.size, int) and a.size == 1:
                 n_dims_min -= 1
+            elif isinstance(a.size, ParameterizedSize):
+                if a.size.min == 1:
+                    n_dims_min -= 1
+            elif isinstance(a.size, (SizeReference, str)):
+                # TODO: validate with known other tensor sizes if this axis may be a singleton axis
+                n_dims_min -= 1
 
         n_dims_min = max(0, n_dims_min)
         if n_dims < n_dims_min or n_dims > n_dims_max:
-            raise ValueError("Expected sample tensor to have {n_dims_min} to {n_dims_max} dimensions")
+            raise ValueError(
+                f"Expected sample tensor to have {n_dims_min} to {n_dims_max} dimensions, "
+                f"but found {n_dims} (shape: {tensor.shape})."
+            )
 
         return self
 
@@ -858,7 +866,7 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         known_tensor_sizes[self.id] = self.get_axis_sizes(tensor)
 
         if tensor.dtype.name != self.dtype:
-            raise ValueError("tensor with dtype {data.dtype.name} does not match specified dtype {self.dtype}")
+            raise ValueError(f"tensor with dtype {tensor.dtype.name} does not match specified dtype {self.dtype}")
 
         shape = list(tensor.shape)
         for i, a in enumerate(self.axes):
@@ -930,7 +938,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 
-class EnvironmentFileDescr(FileDescrWithSha256):
+class EnvironmentFileDescr(FileDescr):
     source: Annotated[
         FileSource, WithSuffix((".yaml", ".yml"), case_sensitive=True), Field(examples=["environment.yaml"])
     ]
@@ -949,7 +957,7 @@ class _ArchitectureCallableDescr(Node):
     """key word arguments for the `callable`"""
 
 
-class ArchitectureFromFileDescr(_ArchitectureCallableDescr, FileDescrWithSha256):
+class ArchitectureFromFileDescr(_ArchitectureCallableDescr, FileDescr):
     pass
 
 
@@ -961,7 +969,7 @@ class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
 ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
 
 
-class WeightsEntryDescrBase(FileDescrWithSha256):
+class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
@@ -1237,21 +1245,28 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if not context["perform_io_checks"]:
             return self
 
-        ipt_test_arrays = [np.load(download(ipt.test_tensor).path) for ipt in self.inputs]
+        ipt_test_arrays = [np.load(ipt.test_tensor.download().path) for ipt in self.inputs]
         known_sizes = {ipt.id: ipt.get_axis_sizes(ta) for ipt, ta in zip(self.inputs, ipt_test_arrays)}
 
         for i, ipt in enumerate(self.inputs):
-            _ = ipt.validate_tensor(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            try:
+                _ = ipt.validate_tensor(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            except ValueError as e:
+                raise ValueError(f"inputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
 
-        out_test_arrays = [np.load(download(out.test_tensor).path) for out in self.outputs]
+        out_test_arrays = [np.load(out.test_tensor.download().path) for out in self.outputs]
         known_sizes.update({out.id: out.get_axis_sizes(ta) for out, ta in zip(self.outputs, out_test_arrays)})
 
         for i, out in enumerate(self.outputs):
-            _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            try:
+                _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
+            except ValueError as e:
+                raise ValueError(f"outputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
 
         return self
 
-    # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> :
+    # TODO: use validate funcs in validate_test_tensors
+    # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId],

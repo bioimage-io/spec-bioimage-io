@@ -2,13 +2,13 @@ from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import Field, ValidationInfo, field_validator, model_validator
-from typing_extensions import Annotated, Self
+from pydantic import Field, ValidationInfo, field_validator
+from typing_extensions import Annotated
 
+from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, warn
-from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
@@ -23,7 +23,7 @@ from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
@@ -40,37 +40,6 @@ MarkdownSource = Union[
     Annotated[AbsoluteFilePath, _WithMdSuffix],
     Annotated[RelativeFilePath, _WithMdSuffix],
 ]
-
-
-class FileDescrWithSha256(Node):
-    source: FileSource
-    """∈📦 file source"""
-
-    sha256: Optional[Sha256] = None
-    """SHA256 checksum of the source file"""
-
-    @model_validator(mode="after")
-    def validate_sha256(self, info: ValidationInfo) -> Self:
-        context = get_internal_validation_context(info.context)
-        if not context["perform_io_checks"]:
-            return self
-
-        local_source = download(self.source, sha256=self.sha256, root=context["root"]).path
-        actual_sha = get_sha256(local_source)
-        if self.sha256 is None:
-            self.sha256 = actual_sha
-        elif self.sha256 != actual_sha:
-            raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got {actual_sha}. "
-                "Update expected `sha256` or point to the matching file."
-            )
-
-        return self
-
-
-class AttachmentDescr(FileDescrWithSha256):
-    pass
-
 
 class LinkedResourceDescr(Node):
     """Reference to a bioimage.io resource"""
@@ -107,8 +76,8 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the RDF and the primary points of contact."""
 
-    attachments: List[AttachmentDescr] = Field(default_factory=list)
-    """file and other attachments"""
+    attachments: List[FileDescr] = Field(default_factory=list)
+    """file attachments"""
 
     cite: NotEmpty[List[CiteEntry]]
     """citations"""

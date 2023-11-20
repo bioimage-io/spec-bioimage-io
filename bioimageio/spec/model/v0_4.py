@@ -26,6 +26,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
+from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import warn
@@ -56,7 +57,6 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_3 import FileDescrWithSha256
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
 
 AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
@@ -152,7 +152,7 @@ class WeightsDescr(Node):
         return self
 
 
-class WeightsEntryDescrBase(FileDescrWithSha256):
+class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
