@@ -30,6 +30,7 @@ setup(
     install_requires=[
         "annotated-types>=0.5.0",
         "email_validator",
+        "imageio",
         "numpy>=1.21",
         "packaging>=17.0",
         "pooch",
@@ -45,7 +46,6 @@ setup(
             "black",
             "deepdiff",
             "lxml",
-            "numpy",
             "pdoc",
             "pre-commit",
             "pyright",
