@@ -58,7 +58,6 @@ from bioimageio.spec._internal.types.field_validation import AfterValidator, Wit
 from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
-from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
@@ -1388,6 +1387,16 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
+
+    @model_validator(mode="after")
+    def add_default_cover(self, info: ValidationInfo) -> Self:
+        context = get_internal_validation_context(info.context)
+        if not context["perform_io_checks"] or self.covers:
+            return self
+
+        assert False, "todo"
+
+        return self
 
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:

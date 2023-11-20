@@ -12,7 +12,6 @@ from bioimageio.spec.dataset.v0_2 import DatasetDescr as Dataset02
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as Dataset03
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec.generic.v0_3 import AttachmentDescr as AttachmentDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
