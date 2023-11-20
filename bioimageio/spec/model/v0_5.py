@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 from abc import ABC
+from pathlib import PurePosixPath
 from typing import (
     Any,
     ClassVar,
@@ -768,8 +769,10 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         if not context["perform_io_checks"]:
             return self
 
-        local_source = download(self.sample_tensor).path
-        tensor: NDArray[Any] = imread(local_source)
+        down = download(self.sample_tensor)
+
+        local_source = down.path
+        tensor: NDArray[Any] = imread(local_source, extension=PurePosixPath(down.original_file_name).suffix)
         n_dims = len(tensor.squeeze().shape)
         n_dims_min = n_dims_max = len(self.axes)
 

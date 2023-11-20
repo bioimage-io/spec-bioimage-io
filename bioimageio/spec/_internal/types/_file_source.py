@@ -146,4 +146,13 @@ def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
     elif isinstance(src, PurePath):
         return src.name
     else:
-        return urlparse(str(src)).path.split("/")[-1]
+        url = urlparse(str(src))
+        if (
+            url.scheme == "https"
+            and url.hostname == "zenodo.org"
+            and url.path.startswith("/api/records/")
+            and url.path.endswith("/content")
+        ):
+            return url.path.split("/")[-2]
+        else:
+            return url.path.split("/")[-1]

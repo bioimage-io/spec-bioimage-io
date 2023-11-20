@@ -121,7 +121,10 @@ def download(
             headers["User-Agent"] = user_agent
 
         downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
-        _ls: Any = pooch.retrieve(url=str(strict_source), known_hash=_get_known_hash(kwargs), downloader=downloader)
+        fname = get_unique_file_name(strict_source)
+        _ls: Any = pooch.retrieve(
+            url=str(strict_source), known_hash=_get_known_hash(kwargs), downloader=downloader, fname=fname
+        )
         local_source = Path(_ls).absolute()
         root = get_parent_url(strict_source)
     else:
@@ -133,6 +136,20 @@ def download(
         root,
         extract_file_name(strict_source),
     )
+
+
+def get_unique_file_name(url: HttpUrl):
+    """
+    Create a unique file name based on the given URL;
+    adapted from pooch.utils.unique_file_name
+    """
+    md5 = hashlib.md5(str(url).encode()).hexdigest()
+    fname = extract_file_name(url)
+    # Crop the start of the file name to fit 255 characters including the hash
+    # and the :
+    fname = fname[-(255 - len(md5) - 1) :]
+    unique_name = f"{md5}-{fname}"
+    return unique_name
 
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
