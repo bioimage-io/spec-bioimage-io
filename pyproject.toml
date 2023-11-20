@@ -21,6 +21,7 @@ useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
 addopts = "--capture=no --doctest-modules --failed-first"
+testpaths = ["bioimageio/spec", "tests", "scripts"]
 
 [tool.ruff]
 line-length = 120
