@@ -1,7 +1,7 @@
 from copy import deepcopy
 from pathlib import Path
-from tempfile import TemporaryDirectory
-from typing import Any, List, Sequence, Tuple, Union
+from tempfile import mkdtemp
+from typing import Any, List, Optional, Sequence, Tuple
 
 import imageio
 import numpy as np
@@ -30,7 +30,7 @@ def squeeze(data: NDArray[Any], axes: Sequence[AnyAxis]) -> Tuple[NDArray[Any], 
     return data.squeeze(), axes
 
 
-def normalize(data: NDArray[Any], axis: Union[int, Sequence[int], None], eps: float = 1e-7) -> NDArray[np.float32]:
+def normalize(data: NDArray[Any], axis: Optional[Tuple[int, ...]], eps: float = 1e-7) -> NDArray[np.float32]:
     data = data.astype("float32")
     data -= data.min(axis=axis, keepdims=True)
     data /= data.max(axis=axis, keepdims=True) + eps
@@ -38,6 +38,7 @@ def normalize(data: NDArray[Any], axis: Union[int, Sequence[int], None], eps: fl
 
 
 def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
+    original_shape = data.shape
     data, axes = squeeze(data, axes)
 
     # take slice fom any batch or index axis if needed
@@ -60,25 +61,27 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
             else:
                 has_c_axis = True
                 if s == 2:
+                    # visualize two channels with cyan and magenta
                     data = np.concatenate(
                         [
                             data[slices + (slice(1, 2),)],
                             data[slices + (slice(0, 1),)],
-                            (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)]) / 2,
+                            (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])
+                            / 2,  # TODO: take maximum instead?
                         ],
                         axis=i,
                     )
                 elif data.shape[i] == 3:
-                    pass
+                    pass  # visualize 3 channels as RGB
                 else:
-                    data = data[slices + (slice(3),)]
+                    data = data[slices + (slice(3),)]  # visualize first 3 channels as RGB
 
                 assert data.shape[i] == 3
 
         slices += (slice(None),)
 
     data, axes = squeeze(data, axes)
-
+    assert len(axes) == ndim
     # take slice from z axis if needed
     slices = ()
     if ndim > ndim_need:
@@ -109,23 +112,38 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
 
     del slices
     data, axes = squeeze(data, axes)
+    assert len(axes) == ndim
 
-    norm_along = [i for i, a in enumerate(axes) if a.type in ("space", "time")] or None
+    if (has_c_axis and ndim != 3) or ndim != 2:
+        raise ValueError(f"Failed to construct cover image from shape {original_shape}")
+
+    if not has_c_axis:
+        assert ndim == 2
+        data = np.repeat(data[:, :, None], 3, axis=2)
+        axes.append(ChannelAxis(size=3))
+        ndim += 1
+
+    assert ndim == 3
+
+    # transpose axis order such that longest axis comes first...
+    axis_order = list(np.argsort(list(data.shape)))
+    axis_order.reverse()
+    # ... and channel axis is last
+    c = [i for i in range(3) if isinstance(axes[i], ChannelAxis)][0]
+    axis_order.append(axis_order.pop(c))
+    axes = [axes[ao] for ao in axis_order]
+    data = data.transpose(axis_order)
+
+    # h, w = data.shape[:2]
+    # if h / w  in (1.0 or 2.0):
+    #     pass
+    # elif h / w < 2:
+    # TODO: continue here
+
+    norm_along = tuple(i for i, a in enumerate(axes) if a.type in ("space", "time")) or None
     # normalize the data and map to 8 bit
     data = normalize(data, norm_along)
     data = (data * 255).astype("uint8")
-
-    if has_c_axis:
-        axes_order = [0, 1, 2]
-        c = [i for i in range(3) if isinstance(axes[i], ChannelAxis)][0]
-        axes_order.append(axes_order.pop(c))
-        axes = [axes[ao] for ao in axes_order]
-        data = data.transpose(axes_order)
-    else:
-        data = np.repeat(data[:, :, None], 3, axis=2)
-
-    if data.ndim != 3 or data.shape[0] != 3 or data.shape[1] < 10 or data.shape[2] < 10:
-        raise ValueError("Failed to construct cover image")
 
     return data
 
@@ -156,7 +174,7 @@ def generate_covers(
     ipt_img = to_2d_image(ipt, ipt_descr.axes)
     out_img = to_2d_image(out, out_descr.axes)
 
-    cover_folder = Path(str(TemporaryDirectory()))
+    cover_folder = Path(mkdtemp())
     if ipt_img.shape == out_img.shape:
         covers = [cover_folder / "cover.png"]
         imageio.imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
