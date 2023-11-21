@@ -138,7 +138,7 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
     # if h / w  in (1.0 or 2.0):
     #     pass
     # elif h / w < 2:
-    # TODO: continue here
+    # TODO: enforce 2:1 or 1:1 aspect ratio for generated cover images
 
     norm_along = tuple(i for i, a in enumerate(axes) if a.type in ("space", "time")) or None
     # normalize the data and map to 8 bit

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 from abc import ABC
+from datetime import datetime
 from pathlib import PurePosixPath
 from typing import (
     Any,
@@ -38,7 +39,6 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
-from bioimageio.spec._internal.cover import generate_covers
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
@@ -62,6 +62,7 @@ from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDesc
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
@@ -1377,9 +1378,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime
+    timestamp: Datetime = datetime.now()
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
-    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
+    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
+    (In Python a datetime object is valid, too)."""
 
     training_data: Union[LinkedDatasetDescr, DatasetDescr, None] = None
     """The dataset used to train this model"""
@@ -1396,6 +1398,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return self
 
         try:
+            from bioimageio.spec._internal.cover import generate_covers
+
             generated_covers = generate_covers(
                 [(t, np.load(t.test_tensor.download().path)) for t in self.inputs],
                 [(t, np.load(t.test_tensor.download().path)) for t in self.outputs],

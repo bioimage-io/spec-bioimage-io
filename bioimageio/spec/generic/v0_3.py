@@ -28,6 +28,7 @@ from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImag
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 
@@ -40,6 +41,7 @@ MarkdownSource = Union[
     Annotated[AbsoluteFilePath, _WithMdSuffix],
     Annotated[RelativeFilePath, _WithMdSuffix],
 ]
+
 
 class LinkedResourceDescr(Node):
     """Reference to a bioimage.io resource"""
@@ -62,7 +64,8 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         Field(
             examples=[],
             description=(
-                "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
+                "Cover images. "
+                "Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\n"
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
@@ -113,7 +116,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     an altered rdf.yaml file with local references to the downloaded files.)"""
 
     git_repo: Annotated[
-        Optional[str],
+        Optional[HttpUrl],
         Field(
             examples=[
                 "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
