@@ -38,6 +38,7 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
+from bioimageio.spec._internal.cover import generate_covers
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
@@ -1394,7 +1395,17 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if not context["perform_io_checks"] or self.covers:
             return self
 
-        assert False, "todo"
+        try:
+            generated_covers = generate_covers(
+                [(t, np.load(t.test_tensor.download().path)) for t in self.inputs],
+                [(t, np.load(t.test_tensor.download().path)) for t in self.outputs],
+            )
+        except Exception as e:
+            issue_warning(
+                "Failed to generate cover image(s): {e}", value=self.covers, val_context=context, msg_context=dict(e=e)
+            )
+        else:
+            self.covers.extend(generated_covers)
 
         return self
 
