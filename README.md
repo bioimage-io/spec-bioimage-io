@@ -4,24 +4,11 @@
 
 # Specifications for bioimage.io
 
-This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named `bioimageio.yaml`. Such a bioimageio.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).
+This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the [bioimage.io website](https://bioimage.io). Each item in the content is always described using a YAML 1.2 file named `bioimageio.yaml`. Such a `bioimageio.yaml` --- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., ilastik). The following specifications define each of the fields in the `bioimageio.yaml`. 
 
-bioimage.io-compatible resources must fulfill the following rules:
+## Versioned specifications
 
-Note that the Python package PyYAML does not support YAML 1.2 .
-We therefore use and recommend [ruamel.yaml](https://ruamelyaml.readthedocs.io/en/latest/).
-For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
-
-Please also note that the best way to check whether your `bioimageio.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
-The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package also provides the bioimageio command line interface (CLI) with the `validate` command:
-
-```terminal
-bioimageio validate path/to/your/bioimageio.yaml
-```
-
-## Format version overview
-
-All bioimage.io description formats are defined as [Pydantic models](https://docs.pydantic.dev/latest/).
+The bioimage.io content description is defined as [Pydantic models](https://docs.pydantic.dev/latest/). The version of the bioimage.io content format is determined by the version of the specifications:
 
 | type | format version | documentation |
 | --- | --- | --- |
@@ -43,23 +30,13 @@ Simplified descriptions are available as [JSON schema](https://json-schema.org/)
 
 These are primarily intended for syntax highlighting and form generation.
 
-## Examples
+## Programmatic access to bioimage.io specifications
 
-We provide some [examples for using bioimageio.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
+We provide programmatic tools in Python to operate with the formats defined in the bioimage.io community: saving content following the bioimage.io standards as well as consuming it. This is the `bioimageio.spec` Python package. 
 
-## 💁 Recommendations
+### 🖥 Installation
 
-* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `bioimageio.yaml` file and try to avoid using subdirectories.
-* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `bioimageio.yaml` file.
-* bioimageio.spec keeps evolving. Try to use and upgrade to the most current format version!
-
-## ⌨ bioimageio command-line interface (CLI)
-
-The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
-
-## 🖥 Installation
-
-bioimageio.spec can be installed with either `conda` or `pip`, we recommend to install `bioimageio.core` instead:
+`bioimageio.spec` can be installed with either `conda` or `pip`. We recommend to install `bioimageio.core` instead:
 
 ```console
 conda install -c conda-forge bioimageio.core
@@ -70,6 +47,27 @@ or
 ```console
 pip install -U bioimageio.core
 ```
+
+### Examples
+
+We provide some [examples for using bioimageio.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
+
+## 💁 Recommendations
+
+* It is recommended to place other files in the same directory level as the `bioimageio.yaml` file and avoid using subdirectories.
+* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `bioimageio.yaml` file before uploading.
+  * Please also note that the best way to check whether your `bioimageio.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
+    The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package also provides the bioimageio command line interface (CLI) with the `validate` command:
+    
+    ```terminal
+    bioimageio validate path/to/your/bioimageio.yaml
+    ```
+* `bioimageio.spec` keeps evolving. Try to use and upgrade to the most current format version!
+* We use and recommend [ruamel.yaml](https://ruamelyaml.readthedocs.io/en/latest/), as PyYAML does not support YAML 1.2. For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
+
+## ⌨ bioimageio command-line interface (CLI)
+
+The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
 
 ## 🤝 How to contribute
 
