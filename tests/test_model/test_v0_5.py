@@ -12,6 +12,7 @@ from bioimageio.spec.model.v0_5 import (
     ChannelAxis,
     CiteEntry,
     FileDescr,
+    HttpUrl,
     InputAxis,
     InputTensorDescr,
     IntervalOrRatioDataDescr,
@@ -174,7 +175,7 @@ def model_data():
     data = ModelDescr(
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
-        git_repo="https://github.com/bioimage-io/python-bioimage-io",
+        git_repo=HttpUrl("https://github.com/bioimage-io/python-bioimage-io"),
         format_version="0.5.0",
         description="description",
         authors=[
