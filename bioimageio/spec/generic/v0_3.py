@@ -77,7 +77,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
     authors: NotEmpty[List[Author]]
-    """The authors are the creators of the RDF and the primary points of contact."""
+    """The authors are the creators of this resource description and the primary points of contact."""
 
     attachments: List[FileDescr] = Field(default_factory=list)
     """file attachments"""

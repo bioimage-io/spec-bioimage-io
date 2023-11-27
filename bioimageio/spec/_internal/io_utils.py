@@ -9,7 +9,9 @@ from pathlib import Path
 from typing import Any, Dict, Final, Mapping, Optional, Sequence, TextIO, TypedDict, Union, cast
 from zipfile import ZipFile, is_zipfile
 
+import numpy
 import pooch
+from numpy.typing import NDArray
 from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath, TypeAdapter
 from ruamel.yaml import YAML
 from typing_extensions import NotRequired, Unpack
@@ -272,3 +274,12 @@ def get_sha256(path: Path) -> Sha256:
     sha = h.hexdigest()
     assert len(sha) == 64
     return Sha256(sha)
+
+
+def load_array(source: FileSource) -> NDArray[Any]:
+    local_source = download(source).path
+    return numpy.load(local_source, allow_pickle=False)
+
+
+def save_array(path: Path, array: NDArray[Any]) -> None:
+    return numpy.save(path, array, allow_pickle=False)

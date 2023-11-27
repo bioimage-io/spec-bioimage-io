@@ -23,7 +23,6 @@ from typing import (
     cast,
 )
 
-import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
@@ -40,7 +39,7 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io_utils import download
+from bioimageio.spec._internal.io_utils import download, load_array
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
 from bioimageio.spec._internal.types import Datetime as Datetime
@@ -1246,7 +1245,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if not context["perform_io_checks"]:
             return self
 
-        ipt_test_arrays = [np.load(ipt.test_tensor.download().path) for ipt in self.inputs]
+        ipt_test_arrays = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
         known_sizes = {ipt.id: ipt.get_axis_sizes(ta) for ipt, ta in zip(self.inputs, ipt_test_arrays)}
 
         for i, ipt in enumerate(self.inputs):
@@ -1255,7 +1254,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             except ValueError as e:
                 raise ValueError(f"inputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
 
-        out_test_arrays = [np.load(out.test_tensor.download().path) for out in self.outputs]
+        out_test_arrays = [load_array(out.test_tensor.download().path) for out in self.outputs]
         known_sizes.update({out.id: out.get_axis_sizes(ta) for out, ta in zip(self.outputs, out_test_arrays)})
 
         for i, out in enumerate(self.outputs):
@@ -1401,8 +1400,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             from bioimageio.spec._internal.cover import generate_covers
 
             generated_covers = generate_covers(
-                [(t, np.load(t.test_tensor.download().path)) for t in self.inputs],
-                [(t, np.load(t.test_tensor.download().path)) for t in self.outputs],
+                [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],
+                [(t, load_array(t.test_tensor.download().path)) for t in self.outputs],
             )
         except Exception as e:
             issue_warning(
