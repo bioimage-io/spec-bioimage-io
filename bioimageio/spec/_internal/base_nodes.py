@@ -382,20 +382,6 @@ class StringNode(collections.UserString, ABC):
         return self.data
 
 
-class KwargsNode(Node):
-    def get(self, item: str, default: Any = None) -> Any:
-        return self[item] if item in self else default
-
-    def __getitem__(self, item: str) -> Any:
-        if item in self.model_fields:
-            return getattr(self, item)
-        else:
-            raise KeyError(item)
-
-    def __contains__(self, item: str) -> int:
-        return item in self.model_fields
-
-
 class FileDescr(Node):
     source: FileSource
     """∈📦 file source"""
