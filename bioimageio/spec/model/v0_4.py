@@ -15,7 +15,9 @@ from typing import (
     Union,
 )
 
+import numpy as np
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
+from numpy.typing import NDArray
 from pydantic import (
     AllowInfNan,
     Field,
@@ -58,6 +60,7 @@ from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.model.v0_4_converter import convert_from_older_format
+from bioimageio.spec.utils import download, load_array
 
 AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
 AxesInCZYX = NewType("AxesInCZYX", Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)])
@@ -939,3 +942,13 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         convert_from_older_format(data, context)
+
+    def get_input_test_arrays(self) -> List[NDArray[Any]]:
+        data = [load_array(download(ipt).path) for ipt in self.test_inputs]
+        assert all(isinstance(d, np.ndarray) for d in data)
+        return data
+
+    def get_output_test_arrays(self) -> List[NDArray[Any]]:
+        data = [load_array(download(out).path) for out in self.test_outputs]
+        assert all(isinstance(d, np.ndarray) for d in data)
+        return data

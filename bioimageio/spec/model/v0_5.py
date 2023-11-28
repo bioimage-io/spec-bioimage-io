@@ -23,6 +23,7 @@ from typing import (
     cast,
 )
 
+import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
@@ -75,6 +76,7 @@ from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
+from bioimageio.spec.utils import download, load_array
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -1415,3 +1417,13 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
         convert_from_older_format(data, context)
+
+    def get_input_test_arrays(self) -> List[NDArray[Any]]:
+        data = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
+        assert all(isinstance(d, np.ndarray) for d in data)
+        return data
+
+    def get_output_test_arrays(self) -> List[NDArray[Any]]:
+        data = [load_array(out.test_tensor.download().path) for out in self.outputs]
+        assert all(isinstance(d, np.ndarray) for d in data)
+        return data
