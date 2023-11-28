@@ -26,7 +26,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, TypedDict, assert_never
+from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
@@ -391,7 +391,7 @@ class TensorDescrBase(Node):
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(TypedDict):
+class ProcessingKwargs(KwargsNode):
     """base class for pre-/postprocessing key word arguments"""
 
 
