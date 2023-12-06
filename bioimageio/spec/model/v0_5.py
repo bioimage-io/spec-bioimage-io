@@ -151,11 +151,9 @@ def validate_tensor_axis_id(s: str):
     return s
 
 
-# TODO: make TensorAxisId a Node?
-TensorAxisId = Annotated[
-    str, StringConstraints(min_length=1, max_length=33, pattern=r"^.+\..+$"), AfterValidator(validate_tensor_axis_id)
-]
-"""tensor_id.axis_id to identify a tensor axis across multiple tensors."""
+class TensorAxisId(Node):
+    tensor_id: TensorId
+    axis_id: AxisId
 
 NonBatchAxisId = NewType("NonBatchAxisId", Annotated[_AxisId, Predicate(lambda x: x != "batch")])
 
@@ -206,36 +204,29 @@ class SizeReference(Node):
     2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
     """
 
-    reference: Union[AxisId, TensorAxisId]
+    reference: TensorAxisId
     offset: int = 0
 
     def validate_size(
         self,
         size: int,
         *,
-        tensor_id: TensorId,  # needed for when `reference` is an AxisId
         known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]],
     ):
-        dot_count = self.reference.count(".")
-        if dot_count == 0:
-            axis_id = cast(AxisId, self.reference)
-        elif dot_count == 1:
-            _tensor_id, _axis_id = self.reference.split(".")
-            tensor_id = TensorId(_tensor_id)  # use explicit tensor_id
-            axis_id = AxisId(_axis_id)
-        else:
-            raise ValueError(f"Invalid `reference`: {self.reference} (expected 0-1 dots)")
+        tensor_id = self.reference.tensor_id
+        axis_id = self.reference.axis_id
 
-        if tensor_id not in known_tensor_sizes:
+        other_tensor_sizes = known_tensor_sizes.get(tensor_id)
+        if other_tensor_sizes is None:
             raise ValueError(f"tensor sizes of '{tensor_id}' are unknown.")
 
-        other_size = known_tensor_sizes[tensor_id].get(axis_id)
-        if other_size is None:
-            raise ValueError(f"axis size '{self.reference}' is unknown.")
+        other_axis_size = other_tensor_sizes.get(axis_id)
+        if other_axis_size is None:
+            raise ValueError(f"axis size '{axis_id}' is unknown.")
 
-        if size != other_size:
+        if size != other_axis_size:
             raise ValueError(
-                f"axis size mismatch: axis {tensor_id}.{axis_id} of size " f"{size} != {other_size} given by {size}."
+                f"axis size mismatch: axis {tensor_id}.{axis_id} of size " f"{size} != {other_axis_size} given by {size}."
             )
 
 
