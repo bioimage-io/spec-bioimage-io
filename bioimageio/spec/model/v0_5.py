@@ -76,7 +76,6 @@ from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
 from bioimageio.spec.model.v0_5_converter import convert_from_older_format
-from bioimageio.spec.utils import download, load_array
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -542,7 +541,7 @@ class SigmoidDescr(ProcessingDescrBase):
 
 class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """Normalize with fixed, precomputed values for mean and variance.
-    See `ZeroMeanUnitVariance`/`ZeroMeanUnitVarianceKwargs` for data dependent normalization."""
+    See `zero_mean_unit_variance` for data dependent normalization."""
 
     mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
     """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
@@ -579,16 +578,12 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
-    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
-
-    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
+    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("batch", "x", "y")])] = None
     """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
-    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
-    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
-    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
-    or `mode=per_sample` to normalize samples independently.
-    Default: Scale all non-batch axes jointly."""
+    For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
+    To normalize each sample independently leave out the 'batch' axis
+    Default: Scale all axes jointly."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
@@ -602,16 +597,12 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
-    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
-    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
-
-    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
-    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
-    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
-    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
-    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
-    or `mode=per_sample` to normalize samples independently.
-    Default: Scale all non-batch axes jointly."""
+    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
+    """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
+    For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
+    To normalize samples indepdencently, leave out the "batch" axis.
+    Default: Scale all axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
     """The lower percentile used for normalization."""
@@ -652,18 +643,15 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     """Scale a tensor's data distribution to match another tensor's mean/std.
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
-    mode: Literal["per_dataset", "per_sample"] = "per_dataset"
-    """Compute percentiles independently ('per_sample') or across many samples ('per_dataset')."""
     reference_tensor: TensorId
     """Name of tensor to match."""
 
-    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("x", "y")])] = None
-    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
-    For example to normalize 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
-    resulting in a tensor of equal shape normalized per channel, specify `axes=('x', 'y')`.
-    The batch axis cannot be normalized across; use `mode=per_dataset` to normalize samples jointly
-    or `mode=per_sample` to normalize samples independently.
-    Default: Scale all non-batch axes jointly."""
+    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
+    """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
+    For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
+    To normalize samples independently, leave out the 'batch' axis.
+    Default: Scale all axes jointly."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
     """Epsilon for numeric stability:
