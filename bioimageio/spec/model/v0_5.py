@@ -545,7 +545,6 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
 
     mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
     """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
-    # todo: check if means match input axes (for mode 'fixed')
 
     std: Annotated[
         Union[Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]],
@@ -598,10 +597,10 @@ class WithConvertedModeField(Node):
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, WithConvertedModeField):
     axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
-    """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
+    """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
-    To normalize each sample independently leave out the 'batch' axis
+    To normalize each sample independently leave out the 'batch' axis.
     Default: Scale all axes jointly."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
