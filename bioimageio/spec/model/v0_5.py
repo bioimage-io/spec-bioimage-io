@@ -333,7 +333,7 @@ class ChannelAxis(AxisBase):
 
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference, AxisId, TensorAxisId],
+        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
         Field(
             examples=[
                 10,
