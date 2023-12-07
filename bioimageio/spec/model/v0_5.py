@@ -174,6 +174,16 @@ PreprocessingId = Literal[
 
 SAME_AS_TYPE = "<same as type>"
 
+class FixedSize(Node):
+    extent: int
+
+    def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "FixedSize":
+        return FixedSize(extent=round(self.extent * scale) + offset)
+
+    def validate_size(self, size: int) -> int:
+        if size != self.extent:
+            raise ValueError(f"Size {size} is incompatible with fixed axis size {self.extent}")
+        return size
 
 class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`.
@@ -195,7 +205,6 @@ class ParameterizedSize(Node):
             raise ValueError(
                 f"axis of size {size} is not parametrized by `min + n*step` = `{self.min} + n*{self.step}`"
             )
-
         return size
 
 
@@ -218,7 +227,7 @@ class SizeReference(Node):
         *,
         others: Mapping[TensorId, Mapping[AxisId, "AxisSize"]],
         visited: "Set[TensorId] | None" = None,
-    ) -> "int | ParameterizedSize | None":
+    ) -> "FixedSize | ParameterizedSize | None":
         visited = visited or set()
         if self.reference.tensor_id in visited:
             return None
@@ -229,35 +238,11 @@ class SizeReference(Node):
         size = axes_sizes.get(self.reference.axis_id)
         if size is None:
             return None
-        if isinstance(size, int):
-            return int(size / 1 * self.scale + self.offset)
-        if isinstance(size, ParameterizedSize):
+        if isinstance(size, (FixedSize, ParameterizedSize)):
             return size.transformed(scale=self.scale, offset=self.offset)
         return size.try_resolve(others=others, visited=visited)
 
-    def validate_size(
-        self,
-        size: int,
-        *,
-        known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]],
-    ):
-        tensor_id = self.reference.tensor_id
-        axis_id = self.reference.axis_id
-
-        other_tensor_sizes = known_tensor_sizes.get(tensor_id)
-        if other_tensor_sizes is None:
-            raise ValueError(f"tensor sizes of '{tensor_id}' are unknown.")
-
-        other_axis_size = other_tensor_sizes.get(axis_id)
-        if other_axis_size is None:
-            raise ValueError(f"axis size '{axis_id}' is unknown.")
-
-        if size != other_axis_size:
-            raise ValueError(
-                f"axis size mismatch: axis {tensor_id}.{axis_id} of size " f"{size} != {other_axis_size} given by {size}."
-            )
-
-AxisSize: TypeAlias = Union[int, SizeReference, ParameterizedSize]
+AxisSize: TypeAlias = Union[FixedSize, SizeReference, ParameterizedSize]
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
 # https://ngff.openmicroscopy.org/latest/#axes-md
