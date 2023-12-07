@@ -293,7 +293,7 @@ class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: AxisId = AxisId("channel")
     channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
-    size: Union[Annotated[int, Gt(0)], SizeReference] = "#channel_names"  # type: ignore
+    size: Union[FixedSize, SizeReference] = "#channel_names"  # type: ignore
 
     @model_validator(mode="before")
     @classmethod
@@ -318,14 +318,16 @@ class ChannelAxis(AxisBase):
 
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
+        AxisSize,
         Field(
             examples=[
-                10,
+                FixedSize(extent=10),
                 "other_axis",
                 ParameterizedSize(min=32, step=16).model_dump(),
-                SizeReference(reference="other_tensor.axis").model_dump(),
-                SizeReference(reference="other_axis", offset=8).model_dump(),
+                SizeReference(
+                    reference=TensorAxisId(tensor_id="other_tensor", axis_id="other_axis"),
+                    offset=8,
+                ).model_dump(),
             ]
         ),
     ]
