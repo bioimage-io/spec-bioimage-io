@@ -183,6 +183,12 @@ class ParameterizedSize(Node):
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
 
+    def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "ParameterizedSize":
+        return ParameterizedSize(
+            min=round(self.min * scale) + offset, #FIXME: does rounding make sense?
+            step=round(self.step * scale) #FIXME: does rounding make sense?
+        )
+
     def validate_size(self, size: int) -> int:
         if size < self.min:
             raise ValueError(f"size {size} < {self.min}")
