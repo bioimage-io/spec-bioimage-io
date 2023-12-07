@@ -211,7 +211,30 @@ class SizeReference(Node):
     """
 
     reference: TensorAxisId
+    scale: Annotated[float, Gt(0)] = 1.0
     offset: int = 0
+
+    def try_resolve(
+        self,
+        *,
+        others: Mapping[TensorId, Mapping[AxisId, AxisSize]],
+        visited: "Set[TensorId] | None" = None,
+    ) -> "int | ParameterizedSize | None":
+        visited = visited or set()
+        if self.reference.tensor_id in visited:
+            return None
+        axes_sizes = others.get(self.reference.tensor_id)
+        if axes_sizes is None:
+            return None
+        visited.add(self.reference.tensor_id)
+        size = axes_sizes.get(self.reference.axis_id)
+        if size is None:
+            return None
+        if isinstance(size, int):
+            return int(size / 1 * self.scale + self.offset)
+        if isinstance(size, ParameterizedSize):
+            return size.transformed(scale=self.scale, offset=self.offset)
+        return size.try_resolve(others=others, visited=visited)
 
     def validate_size(
         self,
@@ -235,6 +258,7 @@ class SizeReference(Node):
                 f"axis size mismatch: axis {tensor_id}.{axis_id} of size " f"{size} != {other_axis_size} given by {size}."
             )
 
+AxisSize: TypeAlias = Union[int, SizeReference, ParameterizedSize]
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
 # https://ngff.openmicroscopy.org/latest/#axes-md
