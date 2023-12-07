@@ -577,8 +577,27 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     kwargs: FixedZeroMeanUnitVarianceKwargs
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    axes: Annotated[Optional[Sequence[NonBatchAxisId]], Field(examples=[("batch", "x", "y")])] = None
+class WithConvertedModeField(Node):
+    @model_validator(mode="before")
+    @classmethod
+    def convert_mode(cls, data: Dict[str, Any], info: ValidationInfo):
+        context = get_internal_validation_context(info.context)
+        if "mode" in data and "original_format" in context and context["original_format"].release[:2] <= (0, 4):
+            if data["mode"] == "per_dataset":
+                a = data.get("axes")
+                if a is not None:
+                    try:
+                        a_list = list(a)
+                    except Exception as e:
+                        raise ValueError(f"Failed to convert `mode` to `axes` (error: {e})")
+                    else:
+                        data["axes"] = ["batch"] + a_list
+
+        return data
+
+
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, WithConvertedModeField):
+    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
     """The subset of non-batch axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -596,7 +615,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs):
+class ScaleRangeKwargs(ProcessingKwargs, WithConvertedModeField):
     axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
@@ -620,8 +639,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
 
     reference_tensor: Optional[TensorId] = None
     """Tensor ID to compute the percentiles from. Default: The tensor itself.
-    For any tensor in `inputs` only input tensor references are allowed.
-    For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
+    For any tensor in `inputs` only input tensor references are allowed."""
 
     @field_validator("max_percentile", mode="after")
     @classmethod
@@ -639,7 +657,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs):
+class ScaleMeanVarianceKwargs(ProcessingKwargs, WithConvertedModeField):
     """Scale a tensor's data distribution to match another tensor's mean/std.
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
@@ -1252,6 +1270,33 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
             except ValueError as e:
                 raise ValueError(f"outputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_tensor_references_in_proc_kwargs(self, info: ValidationInfo) -> Self:
+        ipt_refs = {t.id for t in self.inputs}
+        out_refs = {t.id for t in self.outputs}
+        for ipt in self.inputs:
+            for p in ipt.preprocessing:
+                ref = p.kwargs.get("reference_tensor")
+                if ref is None:
+                    continue
+                if ref not in ipt_refs:
+                    raise ValueError(
+                        f"`reference_tensor` '{ref}' not found. Valid input tensor references are: {ipt_refs}."
+                    )
+
+        for out in self.outputs:
+            for p in out.postprocessing:
+                ref = p.kwargs.get("reference_tensor")
+                if ref is None:
+                    continue
+
+                if ref not in ipt_refs and ref not in out_refs:
+                    raise ValueError(
+                        f"`reference_tensor` '{ref}' not found. Valid tensor references are: {ipt_refs | out_refs}."
+                    )
 
         return self
 
