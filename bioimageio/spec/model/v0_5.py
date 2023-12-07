@@ -230,7 +230,7 @@ class SizeReference(Node):
     ) -> "FixedSize | ParameterizedSize | None":
         visited = visited or set()
         if self.reference.tensor_id in visited:
-            return None
+            raise RuntimeError(f"Size reference loop detected")
         axes_sizes = others.get(self.reference.tensor_id)
         if axes_sizes is None:
             return None
