@@ -34,7 +34,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never
+from typing_extensions import Annotated, LiteralString, Self, TypeAlias, assert_never
 
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
@@ -216,7 +216,7 @@ class SizeReference(Node):
     def try_resolve(
         self,
         *,
-        others: Mapping[TensorId, Mapping[AxisId, AxisSize]],
+        others: Mapping[TensorId, Mapping[AxisId, "AxisSize"]],
         visited: "Set[TensorId] | None" = None,
     ) -> "int | ParameterizedSize | None":
         visited = visited or set()
