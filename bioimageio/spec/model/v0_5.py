@@ -156,7 +156,7 @@ TensorAxisId = Annotated[
 ]
 """tensor_id.axis_id to identify a tensor axis across multiple tensors."""
 
-NonBatchAxisId = NewType("NonBatchAxisId", Annotated[_AxisId, Predicate(lambda x: x != "batch")])
+NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
 
 PostprocessingId = Literal[
     "binarize",
@@ -285,7 +285,7 @@ GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=1
 
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
-    id: AxisId = AxisId("channel")
+    id: NonBatchAxisId = AxisId("channel")
     channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference] = "#channel_names"  # type: ignore
 
@@ -333,12 +333,12 @@ class IndexTimeSpaceAxisBase(AxisBase):
 
 class IndexAxis(IndexTimeSpaceAxisBase):
     type: Literal["index"] = "index"
-    id: AxisId = AxisId("index")
+    id: NonBatchAxisId = AxisId("index")
 
 
 class TimeAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["time"] = "time"
-    id: AxisId = AxisId("time")
+    id: NonBatchAxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -349,7 +349,7 @@ class TimeInputAxis(TimeAxisBase):
 
 class SpaceAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
-    id: Annotated[AxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
+    id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
