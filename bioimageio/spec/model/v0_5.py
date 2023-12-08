@@ -223,7 +223,7 @@ class SizeReference(Node):
     2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
     """
 
-    reference: TensorAxisId
+    target: TensorAxisId
     scale: float = 1.0
     offset: int = 0
 
