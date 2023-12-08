@@ -1272,25 +1272,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         context = get_internal_validation_context(info.context)
         if not context["perform_io_checks"]:
             return self
-
-        ipt_test_arrays = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
-        known_sizes = {ipt.id: ipt.get_axis_sizes(ta) for ipt, ta in zip(self.inputs, ipt_test_arrays)}
-
-        for i, ipt in enumerate(self.inputs):
-            try:
-                _ = ipt.validate_tensor(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
-            except ValueError as e:
-                raise ValueError(f"inputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
-
-        out_test_arrays = [load_array(out.test_tensor.download().path) for out in self.outputs]
-        known_sizes.update({out.id: out.get_axis_sizes(ta) for out, ta in zip(self.outputs, out_test_arrays)})
-
-        for i, out in enumerate(self.outputs):
-            try:
-                _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
-            except ValueError as e:
-                raise ValueError(f"outputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
-
+        tensor_descrs = list(self.inputs) + list(self.outputs)
+        resolved_sizes = resolve_sizes(tensor_descrs)
+        for tensor_descr in self.inputs:
+            test_array = load_array(tensor_descr.test_tensor.download().path)
+            if len(test_array.shape) != len(tensor_descr.axes):
+                raise ValueError(f"Axes mismatch in test input for {tensor_descr.id}")
+            for axis, input_size in zip(tensor_descr.axes, test_array.shape):
+                size = resolved_sizes[TensorAxisId(tensor_id=tensor_descr.id, axis_id=axis.id)]
+                _ = size.validate_size(input_size)
         return self
 
     # TODO: use validate funcs in validate_test_tensors
