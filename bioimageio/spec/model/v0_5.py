@@ -300,6 +300,13 @@ class ChannelAxis(AxisBase):
     id: AxisId = AxisId("channel")
     size_descr: "InferredChannels | Sequence[Identifier]"
 
+    @property
+    def size(self) -> "FixedSize | SizeReference":
+        if isinstance(self.size_descr, InferredChannels):
+            return self.size_descr
+        else:
+            return FixedSize(extent=len(self.size_descr))
+
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
         AxisSize,
