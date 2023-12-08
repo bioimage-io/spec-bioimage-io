@@ -286,9 +286,16 @@ class WithHalo(Node):
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
     id: Annotated[AxisId, Predicate(lambda x: x == AxisId("batch"))] = AxisId("batch")
-    size: Optional[Literal[1]] = None
+    batch_size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
+
+    @property
+    def size(self) -> "FixedSize | ParameterizedSize":
+        if self.batch_size == 1:
+            return FixedSize(extent=1)
+        else:
+            return ParameterizedSize(min=1, step=1)
 
 
 class InferredChannels(SizeReference):
