@@ -876,48 +876,6 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return self
 
-    def get_axis_sizes(self, tensor: NDArray[Any]) -> Dict[AxisId, int]:
-        if len(tensor.shape) != len(self.axes):
-            raise ValueError(
-                f"Dimension mismatch: array shape {tensor.shape} (#{len(tensor.shape)}) "
-                f"incompatible with {len(self.axes)} axes."
-            )
-        return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
-
-    def validate_tensor(
-        self,
-        tensor: NDArray[Any],
-        *,
-        other_known_tensor_sizes: Optional[Mapping[TensorId, Mapping[AxisId, int]]] = None,
-    ) -> NDArray[Any]:
-        known_tensor_sizes = dict(other_known_tensor_sizes or {})
-        known_tensor_sizes[self.id] = self.get_axis_sizes(tensor)
-
-        if tensor.dtype.name != self.dtype:
-            raise ValueError(f"tensor with dtype {tensor.dtype.name} does not match specified dtype {self.dtype}")
-
-        shape = list(tensor.shape)
-        for i, a in enumerate(self.axes):
-            if a.size is None:
-                continue
-
-            if isinstance(a.size, str):
-                size = SizeReference(reference=a.size)
-            else:
-                size = a.size
-
-            if isinstance(size, int):
-                if shape[i] != size:
-                    raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {size}")
-            elif isinstance(size, ParameterizedSize):
-                _ = size.validate_size(shape[i])
-            elif isinstance(size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
-                _ = size.validate_size(shape[i], tensor_id=self.id, known_tensor_sizes=known_tensor_sizes)
-            else:
-                assert_never(size)
-
-        return tensor
-
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
