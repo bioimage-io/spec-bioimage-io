@@ -349,7 +349,6 @@ class TimeAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["time"] = "time"
     id: AxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
-    scale: Annotated[float, Gt(0)] = 1.0
 
 
 class TimeInputAxis(TimeAxisBase):
@@ -360,7 +359,6 @@ class SpaceAxisBase(IndexTimeSpaceAxisBase):
     type: Literal["space"] = "space"
     id: Annotated[AxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
-    scale: Annotated[float, Gt(0)] = 1.0
 
 
 class SpaceInputAxis(SpaceAxisBase):
