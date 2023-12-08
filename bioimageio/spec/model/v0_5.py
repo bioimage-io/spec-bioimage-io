@@ -230,6 +230,7 @@ class SizeReference(Node):
 AxisSize: TypeAlias = Union[FixedSize, SizeReference, ParameterizedSize]
 
 def resolve_sizes(slots: Sequence["InputTensorDescr | OutputTensorDescr"]) -> Mapping[TensorAxisId, "FixedSize | ParameterizedSize"]:
+    #FIXME: don't allow channels to reference non-channel axes?
     resolved_sizes: Dict[TensorAxisId, "FixedSize | ParameterizedSize"] = {
         TensorAxisId(tensor_id=slot.id, axis_id=axis.id): axis.size
         for slot in slots
@@ -1207,6 +1208,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def validate_test_tensors(self, info: ValidationInfo) -> Self:
+        #FIXME: special-case batch axis?
         context = get_internal_validation_context(info.context)
         if not context["perform_io_checks"]:
             return self
