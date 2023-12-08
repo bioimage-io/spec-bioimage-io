@@ -324,7 +324,6 @@ class IndexTimeSpaceAxisBase(AxisBase):
         Field(
             examples=[
                 FixedSize(extent=10),
-                "other_axis",
                 ParameterizedSize(min=32, step=16).model_dump(),
                 SizeReference(
                     reference=TensorAxisId(tensor_id="other_tensor", axis_id="other_axis"),
