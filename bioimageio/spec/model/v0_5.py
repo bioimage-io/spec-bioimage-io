@@ -227,27 +227,48 @@ class SizeReference(Node):
     scale: float = 1.0
     offset: int = 0
 
-    def try_resolve(
-        self,
-        *,
-        others: Mapping[TensorId, Mapping[AxisId, "AxisSize"]],
-        visited: "Set[TensorId] | None" = None,
-    ) -> "FixedSize | ParameterizedSize | None":
-        visited = visited or set()
-        if self.reference.tensor_id in visited:
-            raise RuntimeError(f"Size reference loop detected")
-        axes_sizes = others.get(self.reference.tensor_id)
-        if axes_sizes is None:
-            return None
-        visited.add(self.reference.tensor_id)
-        size = axes_sizes.get(self.reference.axis_id)
-        if size is None:
-            return None
-        if isinstance(size, (FixedSize, ParameterizedSize)):
-            return size.transformed(scale=self.scale, offset=self.offset)
-        return size.try_resolve(others=others, visited=visited)
-
 AxisSize: TypeAlias = Union[FixedSize, SizeReference, ParameterizedSize]
+
+def resolve_sizes(slots: Sequence["InputTensorDescr | OutputTensorDescr"]) -> Mapping[TensorAxisId, "FixedSize | ParameterizedSize"]:
+    resolved_sizes: Dict[TensorAxisId, "FixedSize | ParameterizedSize"] = {
+        TensorAxisId(tensor_id=slot.id, axis_id=axis.id): axis.size
+        for slot in slots
+        for axis in slot.axes
+        if not isinstance(axis.size, SizeReference)
+    }
+    unresolved_sizes: Dict[TensorAxisId, SizeReference] = {
+        TensorAxisId(tensor_id=slot.id, axis_id=axis.id): axis.size
+        for slot in slots
+        for axis in slot.axes
+        if not isinstance(axis.size, (FixedSize, ParameterizedSize))
+    }
+
+    def _resolve(
+        *,
+        current: TensorAxisId,
+        visited: Set[TensorAxisId],
+    ) -> "FixedSize | ParameterizedSize":
+        if current in visited:
+            raise RuntimeError(f"Tensor size reference loop detected")
+        ref = unresolved_sizes.get(current)
+        if ref is None:
+            raise KeyError(f"Unresolvable reference to {current}")
+        resolved = resolved_sizes.get(ref.target)
+        if resolved is None:
+            visited.add(current)
+            next_step = unresolved_sizes.get(ref.target)
+            if next_step is None:
+                raise KeyError(f"Unresolvable reference to {ref.target}")
+            resolved = _resolve(current=ref.target, visited=visited)
+        out = resolved_sizes[current] = resolved.transformed(scale=ref.scale, offset=ref.offset)
+        del unresolved_sizes[current]
+        return out
+
+    while len(unresolved_sizes) != 0:
+        current = next(iter(unresolved_sizes.keys()))
+        _ = _resolve(current=current, visited=set())
+    return resolved_sizes
+
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
 # https://ngff.openmicroscopy.org/latest/#axes-md
