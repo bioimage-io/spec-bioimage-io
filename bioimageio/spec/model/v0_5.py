@@ -288,35 +288,17 @@ class BatchAxis(AxisBase):
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
 
 
-GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
+class InferredChannels(SizeReference):
+    name_prefix: str
+    name_suffix: str
 
+    def make_channel_name(self, index: int) -> str:
+        return f"{self.name_prefix}{index}{self.name_suffix}"
 
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: AxisId = AxisId("channel")
-    channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
-    size: Union[FixedSize, SizeReference] = "#channel_names"  # type: ignore
-
-    @model_validator(mode="before")
-    @classmethod
-    def set_size_or_channel_names(cls, data: Dict[str, Any]):
-        channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
-        size = data.get("size", "#channel_names")
-        if size == "#channel_names" and channel_names == "channel{i}":
-            raise ValueError("Channel dimension has unknown size. Please specify `size` or `channel_names`.")
-
-        if (
-            size == "#channel_names"
-            and not isinstance(channel_names, str)
-            and isinstance(channel_names, collections.abc.Sequence)
-        ):
-            data["size"] = len(channel_names)
-
-        if isinstance(channel_names, str) and "{i}" in channel_names and isinstance(size, int):
-            data["channel_names"] = [channel_names.format(i=i) for i in range(1, size + 1)]
-
-        return data
-
+    size_descr: "InferredChannels | Sequence[Identifier]"
 
 class IndexTimeSpaceAxisBase(AxisBase):
     size: Annotated[
