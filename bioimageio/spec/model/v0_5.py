@@ -856,26 +856,6 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return value
 
-    @model_validator(mode="after")
-    def check_data_matches_channelaxis(self) -> Union[Self, InputTensorDescr, OutputTensorDescr]:
-        if not isinstance(self.data, list) or not isinstance(self, (InputTensorDescr, OutputTensorDescr)):
-            return self
-
-        for a in self.axes:
-            if isinstance(a, ChannelAxis):
-                size = a.size
-                assert isinstance(size, int)
-                break
-        else:
-            return self
-
-        if len(self.data) != size:
-            raise ValueError(
-                f"Got tensor data descriptions for {len(self.data)} channels, but '{a.id}' axis has size {size}."
-            )
-
-        return self
-
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
@@ -1239,6 +1219,12 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             for axis, input_size in zip(tensor_descr.axes, test_array.shape):
                 size = resolved_sizes[TensorAxisId(tensor_id=tensor_descr.id, axis_id=axis.id)]
                 _ = size.validate_size(input_size)
+                if not isinstance(axis, ChannelAxis) or not isinstance(tensor_descr.data, Sequence):
+                    continue
+                if isinstance(size, FixedSize) and size.extent != len(tensor_descr.data):
+                    raise ValueError(
+                        f"Got tensor data descriptions for {len(tensor_descr.data)} channels, but '{axis.id}' axis has size {size.extent}."
+                    )
         return self
 
     # TODO: use validate funcs in validate_test_tensors
