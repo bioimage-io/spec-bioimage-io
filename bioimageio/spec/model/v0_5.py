@@ -178,10 +178,12 @@ SAME_AS_TYPE = "<same as type>"
 
 class FixedSize(Node):
     extent: int
+    unit: "TimeUnit | SpaceUnit" #FIXME: generic?
 
     def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "FixedSize":
         return FixedSize(
             extent=round(self.extent * scale) + offset,
+            unit=self.unit,
         )
 
     def validate_size(self, size: int) -> int:
@@ -195,11 +197,13 @@ class ParameterizedSize(Node):
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
+    unit: "TimeUnit | SpaceUnit" #FIXME: generic?
 
     def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "ParameterizedSize":
         return ParameterizedSize(
             min=round(self.min * scale) + offset, #FIXME: does rounding make sense?
             step=round(self.step * scale), #FIXME: does rounding make sense?
+            unit=self.unit,
         )
 
     def validate_size(self, size: int) -> int:
