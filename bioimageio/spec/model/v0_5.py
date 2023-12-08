@@ -28,13 +28,12 @@ from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Field,
-    StringConstraints,
     TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, TypeAlias, assert_never
+from typing_extensions import Annotated, LiteralString, Self, TypeAlias
 
 from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
@@ -1103,109 +1102,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     inputs: NotEmpty[Sequence[InputTensorDescr]]
     """Describes the input tensors expected by this model."""
 
-    @field_validator("inputs", mode="after")
-    @classmethod
-    def validate_input_axes(cls, inputs: Sequence[InputTensorDescr]) -> Sequence[InputTensorDescr]:
-        input_size_refs = cls._get_axes_with_independent_size(inputs)
-
-        for i, ipt in enumerate(inputs):
-            valid_independent_refs: Dict[
-                Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
-            ] = {
-                **{
-                    a.id: (ipt, a, a.size)
-                    for a in ipt.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
-                },
-                **input_size_refs,
-            }
-            for a, ax in enumerate(ipt.axes):
-                cls._validate_axis(
-                    "inputs",
-                    i,
-                    ipt.id,
-                    a,
-                    ax,
-                    valid_independent_refs=valid_independent_refs,
-                )
-        return inputs
-
-    @staticmethod
-    def _validate_axis(
-        field_name: str,
-        i: int,
-        tensor_id: str,
-        a: int,
-        axis: AnyAxis,
-        valid_independent_refs: Dict[
-            Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
-        ],
-    ):
-        if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
-            return
-
-        if (
-            isinstance(axis.size, ParameterizedSize)
-            and isinstance(axis, WithHalo)
-            and (axis.size.min - 2 * axis.halo) < 1
-        ):
-            raise ValueError(f"axis {axis.id} with minimum size {axis.size.min} is too small for halo {axis.halo}.")
-
-        if isinstance(axis.size, SizeReference):
-            if axis.size.reference not in valid_independent_refs:
-                raise ValueError(
-                    f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size.reference: "
-                    f"{axis.size.reference}."
-                )
-            if axis.size.reference in (axis.id, f"{tensor_id}.{axis.id}"):
-                raise ValueError(
-                    f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size.reference: "
-                    f"{axis.size.reference}"
-                )
-            if axis.type == "channel":
-                if valid_independent_refs[axis.size.reference][1].type != "channel":
-                    raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
-                if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
-                    ref_size = valid_independent_refs[axis.size.reference][2]
-                    assert isinstance(
-                        ref_size, int
-                    ), "channel axis ref (another channel axis) has to specify fixed size"
-                    generated_channel_names = [
-                        Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
-                    ]
-                    axis.channel_names = generated_channel_names
-
-            if (ax_unit := getattr(axis, "unit", None)) != (
-                ref_unit := getattr(valid_independent_refs[axis.size.reference][1], "unit", None)
-            ):
-                raise ValueError(
-                    f"The units of an axis and its reference axis need to match, but '{ax_unit}' != '{ref_unit}'."
-                )
-            min_size = valid_independent_refs[axis.size.reference][2]
-            if isinstance(min_size, ParameterizedSize):
-                min_size = min_size.min
-
-            if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
-                raise ValueError(f"axis {axis.id} with minimum size {min_size} is too small for halo {axis.halo}.")
-
-        elif isinstance(axis.size, str):
-            if axis.size not in valid_independent_refs:
-                raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
-            if axis.size in (axis.id, f"{tensor_id}.{axis.id}"):
-                raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}.")
-            if axis.type == "channel":
-                if valid_independent_refs[axis.size][1].type != "channel":
-                    raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
-                if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
-                    ref_size = valid_independent_refs[axis.size][2]
-                    assert isinstance(
-                        ref_size, int
-                    ), "channel axis ref (another channel axis) has to specify fixed size"
-                    generated_channel_names = [
-                        Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
-                    ]
-                    axis.channel_names = generated_channel_names
-
     @model_validator(mode="after")
     def validate_test_tensors(self, info: ValidationInfo) -> Self:
         #FIXME: special-case batch axis?
@@ -1279,45 +1175,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             for a in t.axes
             if not isinstance(a, BatchAxis) and isinstance(a.size, ParameterizedSize)
         }
-
-    @staticmethod
-    def _get_axes_with_independent_size(io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]):
-        return {
-            f"{t.id}.{a.id}": (t, a, a.size)
-            for t in io
-            for a in t.axes
-            if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
-        }
-
-    @field_validator("outputs", mode="after")
-    @classmethod
-    def validate_output_axes(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
-        input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
-        output_size_refs = cls._get_axes_with_independent_size(outputs)
-
-        for i, out in enumerate(outputs):
-            valid_independent_refs: Dict[
-                Union[AxisId, TensorAxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
-            ] = {
-                **{
-                    a.id: (out, a, a.size)
-                    for a in out.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
-                },
-                **input_size_refs,
-                **output_size_refs,
-            }
-            for a, ax in enumerate(out.axes):
-                cls._validate_axis(
-                    "outputs",
-                    i,
-                    out.id,
-                    a,
-                    ax,
-                    valid_independent_refs=valid_independent_refs,
-                )
-
-        return outputs
 
     packaged_by: List[Author] = Field(default_factory=list)
     """The persons that have packaged and uploaded this model.
