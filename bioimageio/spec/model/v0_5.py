@@ -174,23 +174,12 @@ PreprocessingId = Literal[
 
 SAME_AS_TYPE = "<same as type>"
 
-class ElementUnit(Node):
-    """How much each element of an array measures"""
-
-    unit: "TimeUnit | SpaceUnit" #FIXME?
-    scale: float = 1.0
-
-    def transformed(self, scale: float) -> ElementUnit:
-        return ElementUnit(unit=self.unit, scale=self.scale * scale)
-
 class FixedSize(Node):
     extent: int
-    element_unit: ElementUnit
 
     def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "FixedSize":
         return FixedSize(
             extent=round(self.extent * scale) + offset,
-            element_unit=self.element_unit.transformed(scale=1 / scale)
         )
 
     def validate_size(self, size: int) -> int:
@@ -204,13 +193,11 @@ class ParameterizedSize(Node):
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
-    elemen_unit: ElementUnit
 
     def transformed(self, *, scale: float = 1.0, offset: int = 0) -> "ParameterizedSize":
         return ParameterizedSize(
             min=round(self.min * scale) + offset, #FIXME: does rounding make sense?
             step=round(self.step * scale), #FIXME: does rounding make sense?
-            elemen_unit=self.elemen_unit.transformed(scale=1 / scale),
         )
 
     def validate_size(self, size: int) -> int:
