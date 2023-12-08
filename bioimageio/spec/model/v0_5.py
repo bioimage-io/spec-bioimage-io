@@ -154,6 +154,9 @@ class TensorAxisId(Node):
     tensor_id: TensorId
     axis_id: AxisId
 
+    def __str__(self) -> str:
+        return f"{self.tensor_id}.{self.axis_id}"
+
 NonBatchAxisId = NewType("NonBatchAxisId", Annotated[_AxisId, Predicate(lambda x: x != "batch")])
 
 PostprocessingId = Literal[
