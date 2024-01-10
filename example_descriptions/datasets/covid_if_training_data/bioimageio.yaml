@@ -14,7 +14,7 @@ description: Training data for cell and nucleus segmentation as well as infectio
 documentation: https://raw.githubusercontent.com/ilastik/bioimage-io-models/main/dataset_src/covid-if.md
 license: CC-BY-4.0
 name: Covid-IF Training Data
-source: https://zenodo.org/record/5092850
+source: https://zenodo.org/records/5092850
 tags:
   - high-content-imaging
   - fluorescence-light-microscopy
