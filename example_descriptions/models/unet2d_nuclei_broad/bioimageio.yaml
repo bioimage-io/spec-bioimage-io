@@ -47,12 +47,13 @@ inputs:
       - type: space
         id: x
         size: 512
-    test_tensor: test_input.npy
-    sample_tensor: test_input.npy
+    test_tensor:
+      source: test_input.npy
+    sample_tensor:
+      source: test_input.npy
     preprocessing: # list of preprocessing steps
       - id: zero_mean_unit_variance # name of preprocessing step
         kwargs:
-          mode: per_sample
           axes: [x, y]
 
 outputs:
@@ -70,14 +71,20 @@ outputs:
         size: 1
       - type: space
         id: y
-        size: raw.y
+        size:
+          tensor_id: raw
+          axis_id: y
         halo: 32
       - type: space
-        size: raw.x
+        size:
+          tensor_id: raw
+          axis_id: x
         id: x
         halo: 32
-    test_tensor: test_output.npy
-    sample_tensor: test_output.npy
+    test_tensor:
+      source: test_output.npy
+    sample_tensor:
+      source: test_output.npy
 
 weights:
   pytorch_state_dict:
