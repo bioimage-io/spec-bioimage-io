@@ -54,7 +54,7 @@ from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -546,7 +546,7 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     kwargs: FixedZeroMeanUnitVarianceKwargs
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, WithConvertedModeField):
+class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
@@ -565,7 +565,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs, WithConvertedModeField):
+class ScaleRangeKwargs(ProcessingKwargs):
     axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
@@ -607,7 +607,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs, WithConvertedModeField):
+class ScaleMeanVarianceKwargs(ProcessingKwargs):
     """Scale a tensor's data distribution to match another tensor's mean/std.
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
@@ -718,12 +718,8 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     """
 
     @model_validator(mode="after")
-    def validate_sample_tensor(self, info: ValidationInfo) -> Self:
-        if self.sample_tensor is None:
-            return self
-
-        context = get_internal_validation_context(info.context)
-        if not context["perform_io_checks"]:
+    def validate_sample_tensor(self) -> Self:
+        if self.sample_tensor is None or not self._internal_validation_context["perform_io_checks"]:
             return self
 
         down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
@@ -1173,9 +1169,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             assert_never(axis.size)
 
     @model_validator(mode="after")
-    def validate_test_tensors(self, info: ValidationInfo) -> Self:
-        context = get_internal_validation_context(info.context)
-        if not context["perform_io_checks"]:
+    def validate_test_tensors(self) -> Self:
+        if not self._internal_validation_context["perform_io_checks"]:
             return self
 
         ipt_test_arrays = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
@@ -1351,9 +1346,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     The available weight formats determine which consumers can use this model."""
 
     @model_validator(mode="after")
-    def add_default_cover(self, info: ValidationInfo) -> Self:
-        context = get_internal_validation_context(info.context)
-        if not context["perform_io_checks"] or self.covers:
+    def add_default_cover(self) -> Self:
+        if not self._internal_validation_context["perform_io_checks"] or self.covers:
             return self
 
         try:
@@ -1365,7 +1359,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             )
         except Exception as e:
             issue_warning(
-                "Failed to generate cover image(s): {e}", value=self.covers, val_context=context, msg_context=dict(e=e)
+                "Failed to generate cover image(s): {e}",
+                value=self.covers,
+                val_context=self._internal_validation_context,
+                msg_context=dict(e=e),
             )
         else:
             self.covers.extend(generated_covers)

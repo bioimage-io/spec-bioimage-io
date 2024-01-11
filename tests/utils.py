@@ -14,7 +14,7 @@ from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.validation_context import (
     InternalValidationContext,
     ValidationContext,
-    get_internal_validation_context,
+    create_internal_validation_context,
 )
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 
@@ -41,7 +41,7 @@ def check_node(
     with error_context:
         node = node_class.model_validate(
             kwargs,
-            context=dict(get_internal_validation_context(context or ValidationContext(root=Path(__file__).parent))),
+            context=dict(create_internal_validation_context(context or ValidationContext(root=Path(__file__).parent))),
         )
 
     if expected_dump_json is not unset:

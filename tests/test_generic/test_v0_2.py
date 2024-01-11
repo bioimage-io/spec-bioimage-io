@@ -6,7 +6,7 @@ import pytest
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
-from bioimageio.spec._internal.validation_context import get_internal_validation_context
+from bioimageio.spec._internal.validation_context import create_internal_validation_context
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr, Author, CiteEntry, GenericDescr, Maintainer
 from tests.utils import check_node
 
@@ -172,6 +172,6 @@ def test_deprecated_license_in_generic():
             license="BSD-2-Clause-FreeBSD",
             cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
         ),
-        context=get_internal_validation_context(warning_level=WARNING),
+        context=create_internal_validation_context(warning_level=WARNING),
         is_invalid=True,
     )

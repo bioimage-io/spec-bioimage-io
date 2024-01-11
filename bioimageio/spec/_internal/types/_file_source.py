@@ -20,11 +20,11 @@ from pydantic_core import core_schema
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.validation_context import get_internal_validation_context
+from bioimageio.spec._internal.validation_context import create_internal_validation_context
 
 
 def validate_url_ok(url: pydantic.HttpUrl, info: ValidationInfo):
-    context = get_internal_validation_context(info.context)
+    context = create_internal_validation_context(info.context)
     if not context["perform_io_checks"]:
         return url
 
@@ -122,7 +122,7 @@ class RelativePath:
         if ret.path.is_absolute():
             raise ValueError(f"{value} is an absolute path.")
 
-        context = get_internal_validation_context(info.context)
+        context = create_internal_validation_context(info.context)
         if context["perform_io_checks"]:
             ret._check_exists(context["root"])
 

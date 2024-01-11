@@ -9,7 +9,7 @@ from bioimageio.spec._internal.constants import WARNING
 from bioimageio.spec._internal.validation_context import (
     InternalValidationContext,
     ValidationContext,
-    get_internal_validation_context,
+    create_internal_validation_context,
 )
 from bioimageio.spec.generic.v0_3 import GenericDescr
 from tests.utils import check_node
@@ -63,7 +63,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             ),
-            get_internal_validation_context(warning_level=WARNING, perform_io_checks=False),
+            create_internal_validation_context(warning_level=WARNING, perform_io_checks=False),
             id="deprecated license",
         ),
         (

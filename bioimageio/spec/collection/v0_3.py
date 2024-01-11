@@ -1,8 +1,8 @@
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Self, Union
+from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
 
-from pydantic import Field, PrivateAttr, TypeAdapter, ValidationError, field_validator, model_validator
+from pydantic import Field, PrivateAttr, TypeAdapter, ValidationError, model_validator
 from pydantic_core import PydanticUndefined
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_warning import issue_warning

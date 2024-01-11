@@ -38,7 +38,7 @@ from typing_extensions import Annotated, LiteralString, Self
 
 from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION
 from bioimageio.spec._internal.io_utils import download, get_sha256
-from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath, Version
+from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.utils import unindent
@@ -232,7 +232,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         context = create_internal_validation_context(context)
         if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj), obj
-            cls._update_context(context, obj)
 
         return super().model_validate(
             obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
@@ -248,12 +247,12 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         data = deepcopy(data)
         rd, errors, tb, val_warnings = cls._load_impl(
             data,
-            get_internal_validation_context(context.model_dump(), warning_level=ERROR),
+            create_internal_validation_context(context.model_dump(), warning_level=ERROR),
         )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
 
         assert not val_warnings, f"already got warnings: {val_warnings}"
         _, error2, tb2, val_warnings = cls._load_impl(
-            data, get_internal_validation_context(context.model_dump(), warning_level=INFO)
+            data, create_internal_validation_context(context.model_dump(), warning_level=INFO)
         )
         assert not error2 or isinstance(rd, InvalidDescription), f"decreasing warning level caused errors: {error2}"
         assert not tb2 or isinstance(rd, InvalidDescription), f"decreasing warning level lead to error traceback: {tb2}"
@@ -403,8 +402,8 @@ class FileDescr(Node):
     """SHA256 checksum of the source file"""
 
     @model_validator(mode="after")
-    def validate_sha256(self, info: ValidationInfo) -> Self:
-        context = get_internal_validation_context(info.context)
+    def validate_sha256(self) -> Self:
+        context = self._internal_validation_context
         if not context["perform_io_checks"]:
             return self
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, DirectoryPath
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 from bioimageio.spec._internal.constants import (
     BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME,
@@ -11,7 +11,6 @@ from bioimageio.spec._internal.constants import (
     TRUE_ENV_VAR,
     WARNING_LEVEL_CONTEXT_KEY,
 )
-from bioimageio.spec._internal.types._version import Version
 
 WarningSeverity = Literal[20, 30, 35]
 WarningLevel = Literal[WarningSeverity, 50]
