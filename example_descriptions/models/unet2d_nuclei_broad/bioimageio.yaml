@@ -49,8 +49,10 @@ inputs:
         size: 512
     test_tensor:
       source: test_input.npy
+      sha256: 49b1cc7b02973aa97659e410337193d878f0f20d8b21e8ff86f48b7a6f870bdc
     sample_tensor:
       source: test_input.npy
+      sha256: 49b1cc7b02973aa97659e410337193d878f0f20d8b21e8ff86f48b7a6f870bdc
     preprocessing: # list of preprocessing steps
       - id: zero_mean_unit_variance # name of preprocessing step
         kwargs:

@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, Dict, Type
 
 import pytest
-from pydantic import HttpUrl
 
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
@@ -12,14 +11,13 @@ from bioimageio.spec.generic.v0_2 import AttachmentsDescr, Author, CiteEntry, Ge
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
-EXAMPLE_DOT_COM_FILE = "https://example.com/file"
 
 
 @pytest.mark.parametrize(
     "node_class,kwargs,is_valid",
     [
-        (AttachmentsDescr, dict(files=(EXAMPLE_DOT_COM_FILE, HttpUrl(EXAMPLE_DOT_COM)), another_attachment=5), True),
-        (AttachmentsDescr, dict(files=(EXAMPLE_DOT_COM_FILE, EXAMPLE_DOT_COM), extra=dict(more="of this")), True),
+        (AttachmentsDescr, dict(magic_number=5), True),
+        (AttachmentsDescr, dict(extra=dict(more="of this")), True),
         (AttachmentsDescr, dict(only="other stuff"), True),
         (AttachmentsDescr, dict(files="not a list"), False),
         (AttachmentsDescr, dict(files=["non-existing-file"]), False),
@@ -100,7 +98,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
                 format_version=GenericDescr.implemented_format_version,
                 name="your name",
                 description="my description",
-                attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
+                attachments={"something": None},
                 type="my_type",
                 version="0.1.0",
             ),
@@ -128,7 +126,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
                 format_version=GenericDescr.implemented_format_version,
                 name="your name",
                 description="my description",
-                attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
+                attachments={"something": 42},
                 type="my_type",
                 version="0.1.0",
             ),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Dict, Iterator, Tuple, Type, TypeVar, Union, get_args, get_origin
+from typing import Any, Dict, Iterator, List, Tuple, Type, TypeVar, Union, cast, get_args, get_origin
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl
@@ -29,7 +29,7 @@ def get_parent_url(url: HttpUrl) -> HttpUrl:
     parsed = urlsplit(str(url))
     path = list(parsed.path.split("/"))
     if parsed.netloc == "zenodo.org" and parsed.path.startswith("/api/records/") and parsed.path.endswith("/content"):
-        path[-2:-1] = []
+        path[-2:-1] = cast(List[str], [])
     else:
         path = path[:-1]
 

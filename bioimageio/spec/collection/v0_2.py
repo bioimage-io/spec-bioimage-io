@@ -64,7 +64,7 @@ class CollectionEntryBase(Node, extra="allow"):
         if self._entry is PydanticUndefined:
             raise RuntimeError(
                 "Collection entry cannot be accessed. Is this entry part of a Collection? "
-                "A collection entry is only valid within a collection resrouce description."
+                "A collection entry is only valid within a collection resource description."
             )
 
         return self._entry

@@ -9,11 +9,9 @@ import bioimageio.spec
 
 GENERIC_ONLY_MEMBERS = {
     "FileSourceWithSha256",
-    "Generic",
-    "GenericBase",
-    "GenericBaseNoFormatVersion",
-    "GenericBaseNoSource",
-    "GenericModelBase",
+    "GenericDescr",
+    "GenericDescrBase",
+    "GenericModelDescrBase",
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "ResourceDescriptionType",
     "VALID_COVER_IMAGE_EXTENSIONS",

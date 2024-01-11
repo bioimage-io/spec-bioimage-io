@@ -33,34 +33,38 @@ from tests.utils import check_node, check_type
     "kwargs",
     [
         dict(
-            id="t1",
-            test_tensor=UNET2D_ROOT / "test_input.npy",
+            id="t0",
+            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
             data={"values": ["cat", "dog", "parrot"]},
+            axes=[{"type": "channel", "channel_names": ["animal"]}],
         ),
         dict(
-            id="t2",
-            test_tensor=UNET2D_ROOT / "test_input.npy",
+            id="t1",
+            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
             data=[
                 {"values": ["cat", "dog", "parrot"]},
                 {"values": ["mouse", "zebra", "elephant"]},
             ],
+            axes=[{"type": "channel", "channel_names": ["animal", "other_animal"]}],
         ),
         dict(
-            id="t3",
-            test_tensor=UNET2D_ROOT / "test_input.npy",
+            id="t2",
+            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
             data=[
                 {"values": [1, 2, 3]},
                 {"type": "uint8"},
             ],
+            axes=[{"type": "channel", "channel_names": ["animal_code", "animal_count"]}],
         ),
         pytest.param(
             dict(
-                id="t4",
-                test_tensor=UNET2D_ROOT / "test_input.npy",
+                id="t3",
+                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "uint8"},
                 ],
+                axes=[{"type": "channel", "channel_names": ["animal_code", "count"]}],
             ),
             id="string values and uint data type",
         ),
@@ -76,7 +80,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="t5",
-                test_tensor=UNET2D_ROOT / "test_input.npy",
+                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": [1.1, 2.2, 3.3]},
@@ -87,7 +91,7 @@ def test_tensor_base(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="t7",
-                test_tensor=UNET2D_ROOT / "test.npy",
+                test_tensor={"source": UNET2D_ROOT / "test.npy"},
                 data=[
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "int8"},
@@ -116,10 +120,10 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             "preprocessing": [
                 {
                     "id": "scale_range",
-                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": ("x", "y")},
+                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "axes": ("x", "y")},
                 }
             ],
-            "test_tensor": UNET2D_ROOT / "test_input.npy",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
         },
     ],
 )
@@ -133,7 +137,7 @@ def test_input_tensor(kwargs: Dict[str, Any]):
         pytest.param(
             dict(
                 id="input_2",
-                test_tensor=UNET2D_ROOT / "test.npy",
+                test_tensor={"source": UNET2D_ROOT / "test.npy"},
                 data=[
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": ["mouse", "zebra", "elephant"]},
