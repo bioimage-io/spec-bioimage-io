@@ -161,7 +161,7 @@ def _check_type_and_format_version(data: Union[YamlValue, BioimageioYamlContent]
                 # ...and we know the major/minor format version (only patch is unknown)
                 v_module = getattr(type_module, v_module_name)
 
-        rd_class = getattr(v_module, typ.capitalize())
+        rd_class = getattr(v_module, typ.capitalize() + "Descr")
         assert issubclass(rd_class, ResourceDescriptionBase)
         use_fv = rd_class.implemented_format_version
     else:
