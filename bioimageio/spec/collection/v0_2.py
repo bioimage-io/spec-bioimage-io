@@ -1,20 +1,19 @@
 import collections.abc
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Sequence, Union
+from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
 
 from pydantic import (
     Field,
     PrivateAttr,
     TypeAdapter,
-    field_validator,
+    ValidationError,
     model_validator,
 )
 from pydantic_core import PydanticUndefined
-from pydantic_core.core_schema import ValidationInfo
 from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node
-from bioimageio.spec._internal.constants import ALERT
-from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec._internal.field_warning import issue_warning
+from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
@@ -36,70 +35,13 @@ from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
 from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr
 from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
 
-EntryNode = Union[
+EntryDescr = Union[
     Annotated[Union[ModelDescr, DatasetDescr, ApplicationDescr02, NotebookDescr02], Field(discriminator="type")],
     GenericDescr02,
 ]
 
 
-class CollectionEntryBase(Node, extra="allow"):
-    entry_adapter: ClassVar[TypeAdapter[Any]]
-
-    rdf_source: Annotated[
-        Union[HttpUrl, RelativeFilePath, None],
-        warn(None, "Cannot statically validate remote resource description.", ALERT),
-    ] = None
-    """resource description file (RDF) source to load entry from"""
-
-    id: Optional[ResourceId] = None
-    """Collection entry sub id overwriting `rdf_source.id`.
-    The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
-
-    @property
-    def rdf_update(self) -> Dict[str, YamlValue]:
-        return self.model_extra or {}
-
-    @property
-    def entry(self) -> Any:
-        if self._entry is PydanticUndefined:
-            raise RuntimeError(
-                "Collection entry cannot be accessed. Is this entry part of a Collection? "
-                "A collection entry is only valid within a collection resource description."
-            )
-
-        return self._entry
-
-    _entry: Any = PrivateAttr()
-
-    @model_validator(mode="after")
-    def set_entry(self, info: ValidationInfo) -> Self:
-        if self.rdf_source is not None:
-            return self  # todo: add resolve_rdf_source callback
-
-        if self.id is None:
-            raise ValueError("Missing `id`")
-
-        context = info.context
-        if context is None:
-            return self
-
-        entry_data: Dict[str, Any] = context["collection_base_content"]
-        base_id: Any = entry_data.pop("id", None)
-        if not isinstance(base_id, (str, int, float, bool)):
-            return self  # invalid base id
-
-        entry_data.update(self.rdf_update)
-        entry_data["id"] = f"{base_id}/{self.id}"
-
-        type_ = entry_data.get("type")
-        if type_ == "collection":
-            raise ValueError("Collections may not be nested!")
-
-        self._entry = self.entry_adapter.validate_python(entry_data)
-        return self
-
-
-class CollectionEntry(CollectionEntryBase):
+class CollectionEntry(Node, extra="allow"):
     """A valid resource description (RD).
     The entry RD is based on the collection description itself.
     Fields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,
@@ -109,12 +51,30 @@ class CollectionEntry(CollectionEntryBase):
     and the entry's 'sub-'`id`, specified remotely as part of `rdf_source` or superseeded in-place,
     such that the `final_entry_id = <collection_id>/<entry_id>`"""
 
-    entry_adapter: ClassVar[TypeAdapter[EntryNode]] = TypeAdapter(EntryNode)
-    _entry: EntryNode
+    entry_adapter: ClassVar[TypeAdapter[EntryDescr]] = TypeAdapter(EntryDescr)
+
+    rdf_source: Union[HttpUrl, RelativeFilePath, None] = None
+    """resource description file (RDF) source to load entry from"""
+
+    id: Optional[ResourceId] = None
+    """Collection entry sub id overwriting `rdf_source.id`.
+    The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
+
+    _descr: EntryDescr = PrivateAttr()
 
     @property
-    def entry(self) -> EntryNode:
-        return self._entry
+    def rdf_update(self) -> Dict[str, YamlValue]:
+        return self.model_extra or {}
+
+    @property
+    def descr(self) -> EntryDescr:
+        if self._descr is PydanticUndefined:
+            raise RuntimeError(
+                "Collection entry description cannot be accessed. Is this entry part of a Collection? "
+                "A collection entry is only valid within a collection resource description."
+            )
+
+        return self._descr
 
 
 class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collection specification"):
@@ -127,50 +87,59 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
     collection: NotEmpty[List[CollectionEntry]]
     """Collection entries"""
 
-    @field_validator("collection")
-    @classmethod
-    def check_unique_ids(cls, value: NotEmpty[List[CollectionEntry]]) -> NotEmpty[List[CollectionEntry]]:
-        cls.check_unique_ids_impl(value)
-        return value
+    @model_validator(mode="after")
+    def finalize_entries(self) -> Self:
+        common_entry_content = {k: v for k, v in self if k not in ("id", "collection")}
+        base_id: Optional[ResourceId] = self.id
 
-    @staticmethod
-    def check_unique_ids_impl(value: NotEmpty[Sequence[CollectionEntryBase]]):
-        seen: Dict[str, int] = {}
-        for i, v in enumerate(value):
-            if v.id is None:
-                if v.rdf_source is not None:
-                    continue  # cannot check id in rdf_source
-                raise ValueError(f"Missing `id` field in collection[{i}]")
-                # error: pydantic_core.InitErrorDetails = {
-                #     "type": pydantic_core.PydanticCustomError("value_error", "Missing `id` field."),
-                #     "loc": ("collection", i),
-                #     "input": v,
-                # }
-                # raise pydantic_core.ValidationError("Collection", [error])
+        seen_entry_ids: Dict[str, int] = {}
 
-            if v.id in seen:
-                raise ValueError(f"Dublicate `id` in collection[{v.id}]/collection[{i}]")
-                # error = {
-                #     "type": pydantic_core.PydanticCustomError(
-                #         "value_error",
-                #         "Duplicate `id` in collection[{previous_entry}].",
-                #         dict(previous_entry=seen[v.id]),
-                #     ),
-                #     "loc": ("collection", i),
-                #     "input": v,
-                # }
-                # raise pydantic_core.ValidationError("Collection", [error])
+        for i, entry in enumerate(self.collection):
+            entry_data: Dict[str, Any] = dict(common_entry_content)
+            if entry.rdf_source is not None:
+                if not self._internal_validation_context["perform_io_checks"]:
+                    issue_warning(
+                        "Skipping IO relying validation for collection[{i}]",
+                        value=entry.rdf_source,
+                        val_context=self._internal_validation_context,
+                        msg_context=dict(i=i),
+                    )
+                    continue
 
-            seen[v.id] = i
+                external_data = open_bioimageio_yaml(entry.rdf_source)
+                # add/overwrite common collection entry content with external source
+                entry_data.update(external_data.content)
 
-    @classmethod
-    def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
-        super()._update_context(context, data)
-        collection_base_content = {k: v for k, v in data.items() if k != "collection"}
-        assert (
-            "collection_base_content" not in context or context["collection_base_content"] == collection_base_content
-        ), context
-        context["collection_base_content"] = collection_base_content
+            # add/overwrite common+external entry content with in-place entry update
+            entry_data.update(entry.rdf_update)
+
+            # also update explicitly specified `id` field data
+            if entry.id is not None:
+                entry_data["id"] = entry.id
+
+            if "id" in entry_data:
+                if (seen_i := seen_entry_ids.get(entry_data["id"])) is not None:
+                    raise ValueError(f"Dublicate `id` '{entry_data['id']}' in collection[{seen_i}]/collection[{i}]")
+
+                seen_entry_ids[entry_data["id"]] = i
+            else:
+                raise ValueError(f"Missing `id` for entry {i}")
+
+            if base_id is not None:
+                entry_data["id"] = f"{base_id}/{entry_data['id']}"
+
+            type_ = entry_data.get("type")
+            if type_ == "collection":
+                raise ValueError(f"collection[{i}] has invalid entry type; collections may not be nested!")
+
+            try:
+                entry_descr = entry.entry_adapter.validate_python(entry_data)
+            except ValidationError as e:
+                raise ValueError(f"Invalid collection entry collection[{i}]") from e
+            else:
+                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage]
+
+        return self
 
     @staticmethod
     def move_groups_to_collection_field(data: BioimageioYamlContent) -> None:

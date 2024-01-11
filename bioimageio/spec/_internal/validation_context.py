@@ -48,9 +48,6 @@ class InternalValidationContext(TypedDict):
     original_format: NotRequired[Version]
     """original format version of the validation data (set dynamically during validation of resource descriptions)"""
 
-    collection_base_content: NotRequired[Dict[str, Any]]
-    """collection base content (set dynamically during validation of collection resource descriptions)"""
-
 
 def create_internal_validation_context(
     given_context: Union[ValidationContext, InternalValidationContext, Dict[str, Any], None] = None,
@@ -73,7 +70,7 @@ def create_internal_validation_context(
         if perform_io_checks is not None
         else given_context.get("perform_io_checks", default.perform_io_checks),
     )
-    for k in {"original_format", "collection_base_content"}:  # TypedDict.__optional_keys__ requires py>=3.9
+    for k in {"original_format"}:  # TypedDict.__optional_keys__ requires py>=3.9
         if k in given_context:
             ret[k] = given_context[k]
 
