@@ -19,6 +19,7 @@ from pydantic import (
 from pydantic_core import core_schema
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.validation_context import get_internal_validation_context
 
 
@@ -28,8 +29,15 @@ def validate_url_ok(url: pydantic.HttpUrl, info: ValidationInfo):
         return url
 
     response = requests.head(str(url))
-    if response.status_code != 200:
-        raise ValueError(response.reason)
+    if response.status_code in (301, 308):
+        issue_warning(
+            "URL redirected ({status_code}): consider updating {value} with new location: {location}",
+            value=url,
+            val_context=context,
+            msg_context={"status_code": response.status_code, "location": response.headers.get("location")},
+        )
+    elif response.status_code != 200:
+        raise ValueError(f"{response.status_code}: {response.reason} {url}")
 
     return url
 
