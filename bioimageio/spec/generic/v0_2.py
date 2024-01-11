@@ -2,7 +2,7 @@ import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
-from pydantic import EmailStr, Field, ValidationInfo, field_validator
+from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
@@ -52,15 +52,6 @@ class AttachmentsDescr(Node):
 
 
 class _Person(Node):
-    @field_validator("name", mode="before", check_fields=False)
-    @classmethod
-    def convert_name(cls, name: Any, info: ValidationInfo):
-        ctxt = get_internal_validation_context(info.context)
-        if "original_format" in ctxt and ctxt["original_format"] < Version("0.2.3") and isinstance(name, str):
-            name = name.replace("/", "").replace("\\", "")
-
-        return name
-
     affiliation: Optional[str] = None
     """Affiliation"""
 
@@ -75,13 +66,17 @@ class _Person(Node):
     """
 
 
+def _remove_slashes(s: str):
+    return s.replace("/", "").replace("\\", "")
+
+
 class Author(_Person):
-    name: Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]
+    name: Annotated[str, AfterValidator(_remove_slashes)]
     github_user: Optional[str] = None  # TODO: validate github_user
 
 
 class Maintainer(_Person):
-    name: Optional[Annotated[str, Predicate(lambda s: "/" not in s and "\\" not in s)]] = None
+    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
     github_user: str
 
 

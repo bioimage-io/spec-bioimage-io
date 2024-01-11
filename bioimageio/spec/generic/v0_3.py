@@ -22,14 +22,12 @@ from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
-from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
+from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
-from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
-from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
@@ -41,6 +39,24 @@ MarkdownSource = Union[
     Annotated[AbsoluteFilePath, _WithMdSuffix],
     Annotated[RelativeFilePath, _WithMdSuffix],
 ]
+
+
+def _has_no_slash(s: str) -> bool:
+    return "/" not in s and "\\" not in s
+
+
+
+
+class Author(v0_2.Author):
+    name: Annotated[str, Predicate(_has_no_slash)]
+    github_user: Optional[str] = None
+
+
+
+class Maintainer(v0_2.Maintainer):
+    name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
+    github_user: str
+
 
 
 class LinkedResourceDescr(Node):
