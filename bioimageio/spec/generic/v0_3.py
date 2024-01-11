@@ -1,6 +1,7 @@
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
+import requests
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Annotated
@@ -23,6 +24,7 @@ from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
+from bioimageio.spec._internal.validation_context import InternalValidationContext, create_internal_validation_context
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
@@ -45,18 +47,37 @@ def _has_no_slash(s: str) -> bool:
     return "/" not in s and "\\" not in s
 
 
+def _validate_gh_user(username: str, perform_io_checks: bool):
+    if not perform_io_checks:
+        return
+
+    r = requests.get(f"https://api.github.com/users/{username}")
+    if r.status_code != 200:
+        raise ValueError(f"Could not find GitHub user '{username}'")
 
 
 class Author(v0_2.Author):
     name: Annotated[str, Predicate(_has_no_slash)]
     github_user: Optional[str] = None
 
+    @field_validator("github_user", mode="after")
+    def validate_gh_user(cls, value: Optional[str], info: ValidationInfo):
+        if value is not None:
+            context = create_internal_validation_context(info.context)
+            _validate_gh_user(value, context["perform_io_checks"])
+
+        return value
 
 
 class Maintainer(v0_2.Maintainer):
     name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
     github_user: str
 
+    @field_validator("github_user", mode="after")
+    def validate_gh_user(cls, value: str, info: ValidationInfo):
+        context = create_internal_validation_context(info.context)
+        _validate_gh_user(value, context["perform_io_checks"])
+        return value
 
 
 class LinkedResourceDescr(Node):
