@@ -67,16 +67,12 @@ class OpenedBioimageioYaml:
     original_file_name: str
 
 
-def _interprete_file_source(file_source: PermissiveFileSource, root: Union[HttpUrl, DirectoryPath]) -> StrictFileSource:
-    source = TypeAdapter(FileSource).validate_python(file_source)
+def _interprete_file_source(file_source: PermissiveFileSource, root: Union[DirectoryPath, HttpUrl]) -> StrictFileSource:
+    source = TypeAdapter(FileSource).validate_python(file_source, context={"root": root})
     if isinstance(source, RelativeFilePath):
         source = source.get_absolute(root)
 
     return source
-
-    # todo: prettier file source validation error
-    # try:
-    # except ValidationError as e:
 
 
 def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
