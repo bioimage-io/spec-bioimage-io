@@ -52,7 +52,7 @@ class InternalValidationContext(TypedDict):
     """collection base content (set dynamically during validation of collection resource descriptions)"""
 
 
-def get_internal_validation_context(
+def create_internal_validation_context(
     given_context: Union[ValidationContext, InternalValidationContext, Dict[str, Any], None] = None,
     root: Union[DirectoryPath, AnyUrl, None] = None,  # option to overwrite given context
     file_name: Optional[str] = None,  # option to overwrite given context

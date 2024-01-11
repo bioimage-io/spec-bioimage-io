@@ -45,7 +45,7 @@ from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import (
     InternalValidationContext,
     ValidationContext,
-    get_internal_validation_context,
+    create_internal_validation_context,
 )
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
@@ -62,6 +62,12 @@ class Node(
 ):
     """Subpart of a resource description"""
 
+    _internal_validation_context: InternalValidationContext = PrivateAttr(
+        default_factory=create_internal_validation_context
+    )
+    """the validation context used to validate the node
+    (reused to validate assignments)"""
+
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
@@ -71,6 +77,14 @@ class Node(
         ):
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
+
+    def model_post_init(
+        self, __context: "ValidationContext | InternalValidationContext | Dict[str, Any] | None"
+    ) -> None:
+        # save the final validation context for validation upon assignment
+        # (may also be used for model after validations)
+        self._internal_validation_context = create_internal_validation_context(__context)
+        super().model_post_init(self._internal_validation_context)
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
@@ -146,9 +160,6 @@ class NodeWithExplicitlySetFields(Node):
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     """base class for all resource descriptions"""
 
-    _internal_validation_context: InternalValidationContext = PrivateAttr(
-        default_factory=get_internal_validation_context
-    )
     _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
@@ -175,14 +186,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     @model_validator(mode="before")
     @classmethod
     def _convert_from_older_format(cls, data: BioimageioYamlContent, info: ValidationInfo):
-        context = get_internal_validation_context(info.context)
+        context = create_internal_validation_context(info.context)
         cls.convert_from_older_format(data, context)
         return data
-
-    @model_validator(mode="after")
-    def remember_internal_validation_context(self, info: ValidationInfo) -> Self:
-        self._internal_validation_context = get_internal_validation_context(info.context)
-        return self
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
