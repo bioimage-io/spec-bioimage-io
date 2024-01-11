@@ -100,7 +100,7 @@ def _update_tensor_specs(
             continue
 
         reordered_shape = _analyze_tensor_shape(d.get("shape"))
-        new_d = {}
+        new_d: Dict[str, Any] = {}
         if "name" in d:
             new_d["id"] = d["name"]
 
@@ -142,7 +142,10 @@ def _update_tensor_specs(
                     p["id"] = "fixed_zero_mean_unit_variance"
                     _ = p_kwargs.pop("axes", None)
                 else:
-                    p_kwargs["axes"] = [a.get("name", a["type"]) for a in p_axes]
+                    p_kwargs["axes"] = [a.get("id", a["type"]) for a in p_axes]
+
+                if p_kwargs.get("mode") == "per_dataset" and isinstance(p_kwargs["axes"], list):
+                    p_kwargs["axes"] = ["batch"] + p_kwargs["axes"]
 
         tensor_data[idx] = new_d
 
@@ -192,7 +195,7 @@ def _get_axis_description_from_letter(
     }
     axis: Dict[str, Any] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
     if axis["type"] == "space":
-        axis["name"] = letter
+        axis["id"] = letter
 
     if size is None or axis["type"] == "batch":
         return axis

@@ -233,20 +233,6 @@ class AxisBase(NodeWithExplicitlySetFields):
     id: AxisId
     """An axis id unique across all axes of one tensor."""
 
-    @model_validator(mode="before")
-    @classmethod
-    def convert_name_to_id(cls, data: Dict[str, Any], info: ValidationInfo):
-        context = get_internal_validation_context(info.context)
-        if (
-            "name" in data
-            and "id" not in data
-            and "original_format" in context
-            and context["original_format"].release[:2] <= (0, 4)
-        ):
-            data["id"] = data.pop("name")
-
-        return data
-
     description: Annotated[str, MaxLen(128)] = ""
 
     __hash__ = NodeWithExplicitlySetFields.__hash__
@@ -558,25 +544,6 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
     kwargs: FixedZeroMeanUnitVarianceKwargs
-
-
-class WithConvertedModeField(Node):
-    @model_validator(mode="before")
-    @classmethod
-    def convert_mode(cls, data: Dict[str, Any], info: ValidationInfo):
-        context = get_internal_validation_context(info.context)
-        if "mode" in data and "original_format" in context and context["original_format"].release[:2] <= (0, 4):
-            if data["mode"] == "per_dataset":
-                a = data.get("axes")
-                if a is not None:
-                    try:
-                        a_list = list(a)
-                    except Exception as e:
-                        raise ValueError(f"Failed to convert `mode` to `axes` (error: {e})")
-                    else:
-                        data["axes"] = ["batch"] + a_list
-
-        return data
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs, WithConvertedModeField):

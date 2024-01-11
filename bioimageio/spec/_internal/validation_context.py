@@ -45,9 +45,6 @@ class InternalValidationContext(TypedDict):
     perform_io_checks: bool
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
 
-    original_format: NotRequired[Version]
-    """original format version of the validation data (set dynamically during validation of resource descriptions)"""
-
 
 def create_internal_validation_context(
     given_context: Union[ValidationContext, InternalValidationContext, Dict[str, Any], None] = None,
@@ -62,7 +59,7 @@ def create_internal_validation_context(
         given_context = given_context.model_dump(mode="python")
 
     default = ValidationContext()
-    ret = InternalValidationContext(
+    return InternalValidationContext(
         root=root or given_context.get("root", default.root),
         file_name=file_name or given_context.get("file_name", default.file_name),
         warning_level=warning_level or given_context.get(WARNING_LEVEL_CONTEXT_KEY, ERROR),
@@ -70,8 +67,3 @@ def create_internal_validation_context(
         if perform_io_checks is not None
         else given_context.get("perform_io_checks", default.perform_io_checks),
     )
-    for k in {"original_format"}:  # TypedDict.__optional_keys__ requires py>=3.9
-        if k in given_context:
-            ret[k] = given_context[k]
-
-    return ret

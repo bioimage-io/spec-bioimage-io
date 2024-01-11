@@ -1,7 +1,7 @@
 import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen, MinLen, Predicate
+from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator
 from typing_extensions import Annotated
 
@@ -23,7 +23,7 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext, get_internal_validation_context
+from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")

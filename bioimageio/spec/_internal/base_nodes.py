@@ -204,13 +204,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
             assert len(cls.implemented_format_version_tuple) == 3, cls.implemented_format_version_tuple
 
     @classmethod
-    def _update_context(cls, context: InternalValidationContext, data: BioimageioYamlContent) -> None:
-        # set original format if possible
-        original_format = data.get("format_version")
-        if "original_format" not in context and isinstance(original_format, str) and original_format.count(".") == 2:
-            context["original_format"] = Version(original_format)
-
-    @classmethod
     def model_validate(
         cls,
         obj: Union[Any, Dict[str, Any]],
@@ -236,7 +229,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         """
         __tracebackhide__ = True
 
-        context = get_internal_validation_context(context)
+        context = create_internal_validation_context(context)
         if isinstance(obj, dict):
             assert all(isinstance(k, str) for k in obj), obj
             cls._update_context(context, obj)
