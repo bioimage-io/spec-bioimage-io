@@ -779,8 +779,9 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     """∈📦 A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
-    It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats).
-    And the image dimensionality has to match the number of axes specified in this tensor description.
+    It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)
+    (numpy's `.npy` format is not supported).
+    The image dimensionality has to match the number of axes specified in this tensor description.
     """
 
     @model_validator(mode="after")
