@@ -185,13 +185,33 @@ class ParameterizedSize(Node):
 
 
 class SizeReference(Node):
-    """A tensor axis size defined in relation to another axis.
+    """A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.
 
-    `size = reference.size / reference.scale * axis.scale + offset`
+    `axis.size = reference.size * reference.scale / axis.scale + offset`
 
     note:
     1. The axis and the referenced axis need to have the same unit (or no unit).
     2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
+    3. Batch axes may not be referenced.
+    4. Fractions are rounded down.
+
+    example:
+    An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
+    Let's assume that we want to express the image height h in relation to its width w
+    instead of only accepting input images of exactly 100*49 pixels
+    (for example to express a range of valid image shapes by parametrizing w, see `ParametrizedSize`).
+
+    >>> w = SpaceInputAxis(id=AxisId("w"), size=100, unit="millimeter", scale=2)
+    >>> h = SpaceInputAxis(
+    ...     id=AxisId("h"),
+    ...     size=SizeReference(tensor_id=TensorId("input"), axis_id=AxisId("w"), offset=-1),
+    ...     unit="millimeter",
+    ...     scale=4,
+    ... )
+    >>> print(h.size.compute(h, w))
+    49
+
+    -> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
     """
 
     tensor_id: TensorId
@@ -201,6 +221,36 @@ class SizeReference(Node):
     """axis id of the reference axis"""
 
     offset: int = 0
+
+    def compute(
+        self,
+        axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis],
+        ref_axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis],
+        n: int = 0,
+    ):
+        """helper method to compute concrete size for a given axis and its reference axis.
+        If the reference axis is parametrized, `n` is used to compute the concrete size of it, see `ParametrizedSize`.
+        """
+        assert axis.size == self, "Given `axis.size` is not defined by this `SizeReference`"
+
+        assert ref_axis.id == self.axis_id, f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
+
+        assert (unit := self._get_unit(axis)) == (
+            ref_unit := self._get_unit(ref_axis)
+        ), f"`SizeReference` requires `axis` and `ref_axis` to have the same `unit`, but {unit}!={ref_unit}"
+
+        if isinstance(ref_axis.size, (int, float)):
+            ref_size = ref_axis.size
+        elif isinstance(ref_axis.size, ParameterizedSize):
+            ref_size = ref_axis.size.min + ref_axis.size.step * n
+        elif isinstance(ref_axis.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise ValueError(
+                "Reference axis referenced in `SizeReference` may not be sized by a `SizeReference` itself."
+            )
+        else:
+            assert_never(ref_axis.size)
+
+        return int(ref_size * self._get_scale(ref_axis) / self._get_scale(axis) + self.offset)
 
     def validate_size(
         self,
@@ -223,6 +273,22 @@ class SizeReference(Node):
             raise ValueError(
                 f"axis size {size} invalid for reference {ref_name} of size {ref_size} with offset {self.offset}."
             )
+
+    @staticmethod
+    def _get_scale(
+        axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis]
+    ) -> float:
+        if isinstance(axis, (ChannelAxis, IndexAxis)):
+            return 1.0
+        else:
+            return axis.scale
+
+    @staticmethod
+    def _get_unit(axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis]):
+        if isinstance(axis, (ChannelAxis, IndexAxis)):
+            return 1.0
+        else:
+            return axis.unit
 
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
