@@ -6,10 +6,15 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
-from bioimageio.spec._internal.constants import ALERT, LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal.field_warning import as_warning, warn
+from bioimageio.spec._internal.constants import (
+    ALERT,
+    LICENSES,
+    TAG_CATEGORIES,
+)
+from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
@@ -51,8 +56,10 @@ def _validate_gh_user(username: str, perform_io_checks: bool):
     if not perform_io_checks:
         return
 
-    r = requests.get(f"https://api.github.com/users/{username}")
-    if r.status_code != 200:
+    r = requests.get(f"https://api.github.com/users/{username}", auth=settings.github_auth)
+    if r.status_code == 403 and r.reason == "rate limit exceeded":
+        issue_warning("Could not verify GitHub user '{value}' due to GitHub API rate limit", value=username)
+    elif r.status_code != 200:
         raise ValueError(f"Could not find GitHub user '{username}'")
 
 
