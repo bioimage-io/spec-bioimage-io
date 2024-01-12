@@ -20,7 +20,7 @@ class NestedDummyNode(Node):
     dummy: DummyNode
 
 
-DUMMY_INPUT = {"a": -1, "b": -1}
+DUMMY_INPUT: Dict[str, Any] = {"a": -1, "b": -1}
 NESTED_DICT_DUMMY_INPUT = dict(dummy=DUMMY_INPUT)
 NESTED_NODE_DUMMY_INPUT = dict(dummy=DummyNode(**DUMMY_INPUT))
 

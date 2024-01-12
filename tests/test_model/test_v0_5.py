@@ -5,8 +5,8 @@ import pytest
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.generic.v0_2 import Author, Maintainer
 from bioimageio.spec.model.v0_5 import (
+    Author,
     AxisId,
     BatchAxis,
     ChannelAxis,
@@ -16,6 +16,7 @@ from bioimageio.spec.model.v0_5 import (
     InputAxis,
     InputTensorDescr,
     IntervalOrRatioDataDescr,
+    Maintainer,
     ModelDescr,
     OnnxWeightsDescr,
     OutputTensorDescr,
