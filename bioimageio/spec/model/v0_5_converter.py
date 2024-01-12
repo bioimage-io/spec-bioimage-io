@@ -165,7 +165,7 @@ def _analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any
                 scale = {}
 
             return {
-                i: dict(offset=offset.get(i, 0), scale=scale.get(i, 1), reference=orig_shape["reference_tensor"])
+                i: dict(offset=offset.get(i, 0), scale=1 / scale.get(i, 1), reference=orig_shape["reference_tensor"])
                 for i in range(max(len(offset), len(scale)))
             }
         else:
