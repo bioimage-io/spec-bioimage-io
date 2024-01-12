@@ -3,6 +3,7 @@ from __future__ import annotations
 import collections.abc
 from abc import ABC
 from datetime import datetime
+from itertools import chain
 from pathlib import PurePosixPath
 from typing import (
     Any,
@@ -250,43 +251,12 @@ class SizeReference(Node):
         else:
             assert_never(ref_axis.size)
 
-        return int(ref_size * self._get_scale(ref_axis) / self._get_scale(axis) + self.offset)
-
-    def validate_size(
-        self,
-        size: int,
-        *,
-        default_tensor_id: TensorId,
-        known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]],
-    ):
-        tensor_id = self.tensor_id or default_tensor_id
-
-        if tensor_id not in known_tensor_sizes:
-            raise ValueError(f"size of tensor '{tensor_id}' is unknown.")
-
-        ref_name = f"'{tensor_id}.{self.axis_id}'"
-        ref_size = known_tensor_sizes[tensor_id].get(self.axis_id)
-        if ref_size is None:
-            raise ValueError(f"size of axis {ref_name} is unknown.")
-
-        if size != (ref_size + self.offset):
-            raise ValueError(
-                f"axis size {size} invalid for reference {ref_name} of size {ref_size} with offset {self.offset}."
-            )
-
-    @staticmethod
-    def _get_scale(
-        axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis]
-    ) -> float:
-        if isinstance(axis, (ChannelAxis, IndexAxis)):
-            return 1.0
-        else:
-            return axis.scale
+        return int(ref_size * ref_axis.scale / axis.scale + self.offset)
 
     @staticmethod
     def _get_unit(axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis]):
         if isinstance(axis, (ChannelAxis, IndexAxis)):
-            return 1.0
+            return None
         else:
             return axis.unit
 
@@ -318,6 +288,14 @@ class BatchAxis(AxisBase):
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
 
+    @property
+    def scale(self):
+        return 1.0
+
+    @property
+    def unit(self):
+        return None
+
 
 GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
 
@@ -327,6 +305,14 @@ class ChannelAxis(AxisBase):
     id: NonBatchAxisId = AxisId("channel")
     channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
     size: Union[Annotated[int, Gt(0)], SizeReference] = "#channel_names"  # type: ignore
+
+    @property
+    def scale(self) -> float:
+        return 1.0
+
+    @property
+    def unit(self):
+        return None
 
     @model_validator(mode="before")
     @classmethod
@@ -370,6 +356,14 @@ class IndexTimeSpaceAxisBase(AxisBase):
 class IndexAxis(IndexTimeSpaceAxisBase):
     type: Literal["index"] = "index"
     id: NonBatchAxisId = AxisId("index")
+
+    @property
+    def scale(self) -> float:
+        return 1.0
+
+    @property
+    def unit(self):
+        return None
 
 
 class TimeAxisBase(IndexTimeSpaceAxisBase):
@@ -801,14 +795,18 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         for a in self.axes:
             if isinstance(a, BatchAxis):
                 n_dims_min -= 1
-            elif isinstance(a.size, int) and a.size == 1:
-                n_dims_min -= 1
+            elif isinstance(a.size, int):
+                if a.size == 1:
+                    n_dims_min -= 1
             elif isinstance(a.size, ParameterizedSize):
                 if a.size.min == 1:
                     n_dims_min -= 1
-            elif isinstance(a.size, (SizeReference, str)):
-                # TODO: validate with known other tensor sizes if this axis may be a singleton axis
-                n_dims_min -= 1
+            elif isinstance(a.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+                if a.size.offset < 2:
+                    # size reference may result in singleton axis
+                    n_dims_min -= 1
+            else:
+                assert_never(a.size)
 
         n_dims_min = max(0, n_dims_min)
         if n_dims < n_dims_min or n_dims > n_dims_max:
@@ -879,38 +877,6 @@ class TensorDescrBase(Node, Generic[AxisVar]):
             )
         return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
 
-    def validate_tensor(
-        self,
-        tensor: NDArray[Any],
-        *,
-        other_known_tensor_sizes: Optional[Mapping[TensorId, Mapping[AxisId, int]]] = None,
-    ) -> NDArray[Any]:
-        if tensor.dtype.name != self.dtype:
-            raise ValueError(f"tensor with dtype {tensor.dtype.name} does not match specified dtype {self.dtype}")
-
-        known_tensor_sizes = dict(other_known_tensor_sizes or {})
-        known_tensor_sizes[self.id] = self.get_axis_sizes(tensor)
-
-        shape = list(tensor.shape)
-        if len(shape) != len(self.axes):
-            raise ValueError(f"Dimension mismatch: found {len(shape)}, expected {len(self.axes)}.")
-
-        for i, a in enumerate(self.axes):
-            if a.size is None:
-                continue
-
-            if isinstance(a.size, int):
-                if shape[i] != a.size:
-                    raise ValueError(f"incompatible shape: array.shape[{i}] = {shape[i]} != {a.size}")
-            elif isinstance(a.size, ParameterizedSize):
-                _ = a.size.validate_size(shape[i])
-            elif isinstance(a.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
-                _ = a.size.validate_size(shape[i], default_tensor_id=self.id, known_tensor_sizes=known_tensor_sizes)
-            else:
-                assert_never(a.size)
-
-        return tensor
-
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
@@ -957,6 +923,71 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
 
 
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
+
+
+def validate_tensors(
+    tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
+    tensor_origin: str,  # for more precise error messages, e.g. 'test_tensor'
+):
+    all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
+
+    def e_msg(d: TensorDescr):
+        return f"{'inputs' if isinstance(d, InputTensorDescr) else 'outputs'}[{d.id}]"
+
+    for descr, array in tensors.values():
+        try:
+            axis_sizes = descr.get_axis_sizes(array)
+        except ValueError as e:
+            raise ValueError(f"{e_msg(descr)} {e}")
+        else:
+            all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
+
+    for descr, array in tensors.values():
+        if array.dtype.name != descr.dtype:
+            raise ValueError(
+                f"{e_msg(descr)}.dtype '{array.dtype.name}' does not match described dtype '{descr.dtype}'"
+            )
+
+        for a in descr.axes:
+            actual_size = all_tensor_axes[descr.id][a.id][1]
+            if a.size is None:
+                continue
+
+            if isinstance(a.size, int):
+                if actual_size != a.size:
+                    raise ValueError(
+                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' "
+                        f"has incompatible size {actual_size}, expected {a.size}"
+                    )
+            elif isinstance(a.size, ParameterizedSize):
+                _ = a.size.validate_size(actual_size)
+            elif isinstance(a.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+                ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
+                if ref_tensor_axes is None:
+                    raise ValueError(
+                        f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor reference '{a.size.tensor_id}'"
+                    )
+
+                ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
+                if ref_axis is None or ref_size is None:
+                    raise ValueError(
+                        f"{e_msg(descr)}.axes[{a.id}].size.axis_id: "
+                        f"Unknown tensor axis reference '{a.size.tensor_id}.{a.size.axis_id}"
+                    )
+
+                if a.unit != ref_axis.unit:
+                    raise ValueError(
+                        f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires axis and reference axis to have "
+                        f"the same `unit`, but {a.unit}!={ref_axis.unit}"
+                    )
+
+                if actual_size != (expected_size := (ref_size * ref_axis.scale / a.scale + a.size.offset)):
+                    raise ValueError(
+                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size {actual_size} invalid "
+                        f"for referenced size {ref_size}; expected {expected_size}"
+                    )
+            else:
+                assert_never(a.size)
 
 
 class EnvironmentFileDescr(FileDescr):
@@ -1242,24 +1273,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if not self._internal_validation_context["perform_io_checks"]:
             return self
 
-        ipt_test_arrays = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
-        known_sizes = {ipt.id: ipt.get_axis_sizes(ta) for ipt, ta in zip(self.inputs, ipt_test_arrays)}
-
-        for i, ipt in enumerate(self.inputs):
-            try:
-                _ = ipt.validate_tensor(ipt_test_arrays[i], other_known_tensor_sizes=known_sizes)
-            except ValueError as e:
-                raise ValueError(f"inputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
-
-        out_test_arrays = [load_array(out.test_tensor.download().path) for out in self.outputs]
-        known_sizes.update({out.id: out.get_axis_sizes(ta) for out, ta in zip(self.outputs, out_test_arrays)})
-
-        for i, out in enumerate(self.outputs):
-            try:
-                _ = out.validate_tensor(out_test_arrays[i], other_known_tensor_sizes=known_sizes)
-            except ValueError as e:
-                raise ValueError(f"outputs[{i}].test_tensor: {e}") from e  # TODO: raise error with correct location
-
+        test_arrays = [load_array(descr.test_tensor.download().path) for descr in chain(self.inputs, self.outputs)]
+        tensors = {descr.id: (descr, array) for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)}
+        validate_tensors(tensors, tensor_origin="test_tensor")
         return self
 
     @model_validator(mode="after")
@@ -1311,12 +1327,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     It should be no longer than 64 characters
     and may only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[List[OutputTensorDescr]]
+    outputs: NotEmpty[Sequence[OutputTensorDescr]]
     """Describes the output tensors."""
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_tensor_ids(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
+    def validate_tensor_ids(
+        cls, outputs: Sequence[OutputTensorDescr], info: ValidationInfo
+    ) -> Sequence[OutputTensorDescr]:
         tensor_ids = [t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])]
         duplicate_tensor_ids: List[str] = []
         seen: Set[str] = set()
