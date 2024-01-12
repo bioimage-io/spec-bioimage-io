@@ -17,6 +17,9 @@ def get_param(descr_path: Path) -> ParameterSet:
 def yield_valid_descr_paths() -> Iterable[ParameterSet]:
     assert EXAMPLE_SPECS.exists()
     for p in EXAMPLE_SPECS.glob("**/*bioimageio.yaml"):
+        if p.name.startswith("invalid"):
+            continue
+
         yield get_param(p)
 
 

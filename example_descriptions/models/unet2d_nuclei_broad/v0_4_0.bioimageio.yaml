@@ -60,8 +60,8 @@ dependencies: conda:environment.yaml
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
 
-sample_inputs: [test_input.npy]
-sample_outputs: [test_output.npy]
+sample_inputs: [test_input.png]
+sample_outputs: [test_output.png]
 
 weights:
   pytorch_state_dict:
