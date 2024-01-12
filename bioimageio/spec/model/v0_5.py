@@ -788,7 +788,9 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         if self.sample_tensor is None or not self._internal_validation_context["perform_io_checks"]:
             return self
 
-        down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
+        down = download(
+            self.sample_tensor.source, sha256=self.sample_tensor.sha256, root=self._internal_validation_context["root"]
+        )
 
         local_source = down.path
         tensor: NDArray[Any] = imread(local_source, extension=PurePosixPath(down.original_file_name).suffix)

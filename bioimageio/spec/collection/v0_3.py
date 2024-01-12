@@ -113,7 +113,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     )
                     continue
 
-                external_data = open_bioimageio_yaml(entry.entry_source)
+                external_data = open_bioimageio_yaml(entry.entry_source, root=self._internal_validation_context["root"])
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
 

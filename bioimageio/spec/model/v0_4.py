@@ -944,11 +944,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         convert_from_older_format(data, context)
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(ipt).path) for ipt in self.test_inputs]
+        data = [
+            load_array(download(ipt, root=self._internal_validation_context["root"]).path) for ipt in self.test_inputs
+        ]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(out).path) for out in self.test_outputs]
+        data = [
+            load_array(download(out, root=self._internal_validation_context["root"]).path) for out in self.test_outputs
+        ]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data

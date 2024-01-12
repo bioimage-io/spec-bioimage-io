@@ -5,7 +5,7 @@ from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Uni
 
 import pytest
 from deepdiff import DeepDiff
-from pydantic import HttpUrl, TypeAdapter, ValidationError, create_model
+from pydantic import DirectoryPath, HttpUrl, TypeAdapter, ValidationError, create_model
 from ruamel.yaml import YAML
 
 from bioimageio.spec._description import InvalidDescription, build_description
@@ -89,13 +89,13 @@ def check_bioimageio_yaml(
     source: Union[Path, HttpUrl],
     /,
     *,
-    root: Union[Path, HttpUrl, None] = None,
+    root: Union[DirectoryPath, HttpUrl] = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
 ) -> None:
-    downloaded_source = download(source)
-    root = root or downloaded_source.original_root
+    downloaded_source = download(source, root=root)
+    root = downloaded_source.original_root
     with downloaded_source.path.open(encoding="utf-8") as f:
         data = yaml.load(f)
 

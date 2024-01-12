@@ -142,33 +142,33 @@ def _prepare_resource_package(
     """Prepare to package a resource description; downloads all required files.
 
     Args:
-        rdf_source: A bioimage.io resource description (as file, raw YAML content or description class)
+        source: A bioimage.io resource description (as file, raw YAML content or description class)
         context: validation context
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
     """
     if isinstance(source, ResourceDescriptionBase):
-        rd = source
-        _ctxt = rd._internal_validation_context  # pyright: ignore[reportPrivateUsage]
+        descr = source
+        _ctxt = descr._internal_validation_context  # pyright: ignore[reportPrivateUsage]
         context = ValidationContext(root=_ctxt["root"], file_name=_ctxt["file_name"])
     elif isinstance(source, dict):
         context = ValidationContext()
-        rd = build_description(
+        descr = build_description(
             source,
             context=context,
         )
     else:
-        rdf = open_bioimageio_yaml(source)
-        context = ValidationContext(root=rdf.original_root, file_name=rdf.original_file_name)
-        rd = build_description(
-            rdf.content,
+        descr = open_bioimageio_yaml(source, root=Path())
+        context = ValidationContext(root=descr.original_root, file_name=descr.original_file_name)
+        descr = build_description(
+            descr.content,
             context=context,
         )
 
-    if isinstance(rd, InvalidDescription):
-        raise ValueError(f"{source} is invalid: {rd.validation_summaries[0]}")
+    if isinstance(descr, InvalidDescription):
+        raise ValueError(f"{source} is invalid: {descr.validation_summaries[0]}")
 
-    package_content = get_resource_package_content(rd, weights_priority_order=weights_priority_order)
+    package_content = get_resource_package_content(descr, weights_priority_order=weights_priority_order)
 
     local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
     for k, v in package_content.items():

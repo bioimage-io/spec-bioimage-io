@@ -418,4 +418,4 @@ class FileDescr(Node):
         return self
 
     def download(self):
-        return download(self.source, sha256=self.sha256)
+        return download(self.source, sha256=self.sha256, root=self._internal_validation_context["root"])

@@ -100,7 +100,7 @@ def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
 def download(
     source: PermissiveFileSource,
     /,
-    root: Union[DirectoryPath, HttpUrl] = Path(),  # root to resolve relative file paths
+    root: Union[DirectoryPath, HttpUrl],  # root to resolve relative file paths
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
     strict_source = _interprete_file_source(source, root)
@@ -164,8 +164,10 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
-def open_bioimageio_yaml(source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]) -> OpenedBioimageioYaml:
-    downloaded = download(source, **kwargs)
+def open_bioimageio_yaml(
+    source: PermissiveFileSource, /, root: Union[DirectoryPath, HttpUrl], **kwargs: Unpack[HashKwargs]
+) -> OpenedBioimageioYaml:
+    downloaded = download(source, root=root, **kwargs)
     local_source = downloaded.path
     root = downloaded.original_root
 
@@ -272,9 +274,8 @@ def get_sha256(path: Path) -> Sha256:
     return Sha256(sha)
 
 
-def load_array(source: FileSource) -> NDArray[Any]:
-    local_source = download(source).path
-    return numpy.load(local_source, allow_pickle=False)
+def load_array(path: Path) -> NDArray[Any]:
+    return numpy.load(path, allow_pickle=False)
 
 
 def save_array(path: Path, array: NDArray[Any]) -> None:

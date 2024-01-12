@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal, TextIO, Union, cast
 
 from pydantic import FilePath, NewPath
@@ -21,7 +22,7 @@ def load_description(
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescription]:
-    opened = open_bioimageio_yaml(source)
+    opened = open_bioimageio_yaml(source, root=Path())
 
     return build_description(
         opened.content,
