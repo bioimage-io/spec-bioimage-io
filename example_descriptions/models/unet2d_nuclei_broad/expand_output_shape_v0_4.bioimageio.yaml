@@ -56,10 +56,7 @@ outputs:
       offset: [0.0, 0.0, 0.5, 0.0, 0.0]
 
 test_inputs: [test_input.npy]
-test_outputs: [test_output.npy]
-
-sample_inputs: [test_input.npy]
-sample_outputs: [test_output_expanded.npy]
+test_outputs: [test_output_expanded.npy]
 
 weights:
   pytorch_state_dict:
@@ -70,7 +67,7 @@ weights:
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
     architecture: unet2d_expand_output_shape.py:UNet2d
-    architecture_sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
+    architecture_sha256: c0e06a4a14e72ebb7ce62a89a9a5c132c21d5256b8e3007bca398a211de924f5
     kwargs: { input_channels: 1, output_channels: 1 }
     dependencies: conda:environment.yaml
 

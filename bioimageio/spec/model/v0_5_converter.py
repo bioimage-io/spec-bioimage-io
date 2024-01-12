@@ -2,6 +2,7 @@ import collections.abc
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
+from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray
 from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
@@ -202,11 +203,14 @@ def _get_axis_description_from_letter(
 
     if not isinstance(size, int):
         scale = 1
+        size = dict(size)
         if "scale" in size:
             scale = size.pop("scale")
             if axis["type"] == "channel":
-                if scale != 1.0 and ALERT >= context["warning_level"]:
-                    raise ValueError("Channel axis referenced with scale != 1")
+                if scale != 1.0:
+                    issue_warning(
+                        "Channel axis referenced with scale != 1", value=scale, severity=ALERT, val_context=context
+                    )
             elif scale is not None:
                 axis["scale"] = scale
 
@@ -214,11 +218,14 @@ def _get_axis_description_from_letter(
             if scale is None:  # old way to insert a new axis dimension
                 size = size.get("offset", 0)  # 0 is invalid on purpose
             else:
-                size["reference"] = f"{size['reference']}.{axis.get('name', axis['type'])}"
-                if ALERT >= context["warning_level"]:
-                    raise ValueError(
-                        f"Converting tensor shape: we assume axis '{axis['name']}' of tensor and reference match."
-                    )
+                size["tensor_id"] = size.pop("reference")
+                size["axis_id"] = axis.get("id", axis["type"])
+                issue_warning(
+                    "Converting tensor shape: we assume axis '{value}' of tensor and reference to match.",
+                    value=size["axis_id"],
+                    val_context=context,
+                    severity=ALERT,
+                )
 
         if isinstance(size, dict) and "min" in size and size.get("step") == 0:
             size = size["min"]
