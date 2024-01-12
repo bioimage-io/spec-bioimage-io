@@ -242,15 +242,14 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         *,
         context: ValidationContext,
     ) -> Union[Self, InvalidDescription]:
-        data = deepcopy(data)
         rd, errors, tb, val_warnings = cls._load_impl(
-            data,
+            deepcopy(data),
             create_internal_validation_context(context.model_dump(), warning_level=ERROR),
         )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
 
         assert not val_warnings, f"already got warnings: {val_warnings}"
         _, error2, tb2, val_warnings = cls._load_impl(
-            data, create_internal_validation_context(context.model_dump(), warning_level=INFO)
+            deepcopy(data), create_internal_validation_context(context.model_dump(), warning_level=INFO)
         )
         assert not error2 or isinstance(rd, InvalidDescription), f"decreasing warning level caused errors: {error2}"
         assert not tb2 or isinstance(rd, InvalidDescription), f"decreasing warning level lead to error traceback: {tb2}"

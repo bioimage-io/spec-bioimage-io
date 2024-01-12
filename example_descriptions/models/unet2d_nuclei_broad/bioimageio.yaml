@@ -49,9 +49,10 @@ inputs:
         size: 512
     test_tensor:
       source: test_input.npy
-      sha256: 49b1cc7b02973aa97659e410337193d878f0f20d8b21e8ff86f48b7a6f870bdc
+      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
     sample_tensor:
       source: test_input.png
+      sha256: 8771f558305dd89f4a85fe659e8ef5e116c94d64e668dc23b9282fda3fe9cce8
     preprocessing: # list of preprocessing steps
       - id: zero_mean_unit_variance # name of preprocessing step
         kwargs:
@@ -84,8 +85,10 @@ outputs:
         halo: 32
     test_tensor:
       source: test_output.npy
+      sha256: 39925fb38bc74530902e44bf8e43a8bd0a9e3675aab758d89f47dc66cb9818ed
     sample_tensor:
       source: test_output.png
+      sha256: 7bce8b53bcd0a12487a61f953aafe0f3700652848980d1083964c5bcb9555eec
 
 weights:
   pytorch_state_dict:
@@ -102,6 +105,7 @@ weights:
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies:
       source: environment.yaml
+      sha256: 2c92c4d3c66981651881cdae2a910488d2f395babb59e63701047669ef586de9
     pytorch_version: "1.5.1"
   onnx:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
