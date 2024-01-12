@@ -197,7 +197,7 @@ def model_data():
             InputTensorDescr(
                 id=TensorId("input_1"),
                 description="Input 1",
-                data=IntervalOrRatioDataDescr(type="uint16"),
+                data=IntervalOrRatioDataDescr(type="float32"),
                 axes=[
                     BatchAxis(),
                     ChannelAxis(size=1),

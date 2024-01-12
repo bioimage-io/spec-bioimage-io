@@ -5,7 +5,13 @@ from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Uni
 
 import pytest
 from deepdiff import DeepDiff
-from pydantic import DirectoryPath, HttpUrl, TypeAdapter, ValidationError, create_model
+from pydantic import (
+    DirectoryPath,
+    HttpUrl,
+    TypeAdapter,
+    ValidationError,
+    create_model,  # type: ignore
+)
 from ruamel.yaml import YAML
 
 from bioimageio.spec._description import InvalidDescription, build_description
