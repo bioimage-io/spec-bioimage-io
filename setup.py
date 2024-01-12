@@ -34,6 +34,7 @@ setup(
         "numpy>=1.21",
         "packaging>=17.0",
         "pooch",
+        "pydantic-settings",
         "pydantic[email]>=2.0.1",
         "pyodide-http;platform_system=='Emscripten'",
         "python-dateutil",

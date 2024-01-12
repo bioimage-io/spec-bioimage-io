@@ -1,14 +1,12 @@
-import os
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, DirectoryPath
 from typing_extensions import TypedDict
 
+from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import (
-    BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME,
     ERROR,
-    TRUE_ENV_VAR,
     WARNING_LEVEL_CONTEXT_KEY,
 )
 
@@ -25,7 +23,7 @@ class ValidationContext(BaseModel):
     file_name: str = "bioimageio.yaml"
     """file name of the bioimageio Yaml file"""
 
-    perform_io_checks: bool = os.getenv(BIOIMAGEIO_PERFORM_IO_CHECKS_ENV_NAME, "true").lower() in TRUE_ENV_VAR
+    perform_io_checks: bool = settings.perform_io_checks
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
 
 

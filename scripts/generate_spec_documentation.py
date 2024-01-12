@@ -434,7 +434,7 @@ def export_module_documentations(folder: Path, module: ModuleType):
 if __name__ == "__main__":
     dist = (Path(__file__).parent / "../dist").resolve()
     dist.mkdir(exist_ok=True)
-    os.environ["BIOIMAGEIO_set_undefined_field_descriptions_from_var_docstrings"] = "True"
+    os.environ["bioimageio_set_undefined_field_descriptions_from_var_docstrings"] = "True"
 
     export_module_documentations(dist, application)
     export_module_documentations(dist, collection)

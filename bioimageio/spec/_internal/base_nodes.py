@@ -36,6 +36,7 @@ from pydantic import (
 from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Self
 
+from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION
 from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
@@ -71,10 +72,7 @@ class Node(
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if os.getenv("BIOIMAGEIO_SET_UNDEFINED_FIELD_DESCRIPTIONS_FROM_VAR_DOCSTRINGS", "False").lower() in (
-            "1",
-            "true",
-        ):
+        if settings.set_undefined_field_descriptions_from_var_docstrings:
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
 
