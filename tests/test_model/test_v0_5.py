@@ -188,7 +188,7 @@ def model_data():
             Author(name="Author 2"),
         ],
         maintainers=[
-            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
+            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"),
             Maintainer(github_user="githubuser2"),
         ],
         timestamp=datetime.now(),
@@ -197,11 +197,12 @@ def model_data():
             InputTensorDescr(
                 id=TensorId("input_1"),
                 description="Input 1",
-                data=IntervalOrRatioDataDescr(type="float32"),
+                data=IntervalOrRatioDataDescr(type="uint16"),
                 axes=[
-                    SpaceInputAxis(id=AxisId("x"), size=10),
-                    SpaceInputAxis(id=AxisId("y"), size=20),
-                    ChannelAxis(size=3),
+                    BatchAxis(),
+                    ChannelAxis(size=1),
+                    SpaceInputAxis(id=AxisId("x"), size=512),
+                    SpaceInputAxis(id=AxisId("y"), size=512),
                 ],
                 test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
             ),
@@ -211,9 +212,10 @@ def model_data():
                 id=TensorId("output_1"),
                 description="Output 1",
                 axes=[
-                    SpaceOutputAxis(id=AxisId("x"), size=15),
-                    SpaceOutputAxis(id=AxisId("y"), size=25),
-                    ChannelAxis(size=6),
+                    BatchAxis(),
+                    ChannelAxis(size=1),
+                    SpaceOutputAxis(id=AxisId("x"), size=512),
+                    SpaceOutputAxis(id=AxisId("y"), size=512),
                 ],
                 test_tensor=FileDescr(source=UNET2D_ROOT / "test_output.npy"),
             ),
@@ -283,22 +285,37 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.x"}, "halo": 2}
+    model_data["outputs"][0]["axes"][2] = {
+        "type": "space",
+        "id": "x",
+        "size": {"tensor_id": "input_1", "axis_id": "x"},
+        "halo": 2,
+    }
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
     # input_1.x -> input_1.z
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.z"}, "halo": 2}
+    model_data["outputs"][0]["axes"][2] = {
+        "type": "space",
+        "id": "x",
+        "size": {"tensor_id": "input_1", "axis_id": "z"},
+        "halo": 2,
+    }
     summary = validate_format(model_data)
     assert summary.status == "failed", summary.format()
 
 
 def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["axes"][0] = {"type": "space", "id": "x", "size": {"reference": "input_1.x"}, "halo": 2}
-    summary = validate_format(model_data)
+    model_data["outputs"][0]["axes"][2] = {
+        "type": "space",
+        "id": "x",
+        "size": {"tensor_id": "input_1", "axis_id": "x"},
+        "halo": 2,
+    }
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "passed", summary.format()
 
-    model_data["outputs"][0]["axes"][0]["halo"] = 999
-    summary = validate_format(model_data)
+    model_data["outputs"][0]["axes"][2]["halo"] = 999
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "failed", summary.format()
 
 
@@ -310,13 +327,13 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"] = [
-        {"type": "space", "id": "x", "size": {"reference": "input_1.x"}},
-        {"type": "space", "id": "y", "size": {"reference": "input_1.y"}},
+        {"type": "space", "id": "x", "size": {"tensor_id": "input_1", "axis_id": "x"}},
+        {"type": "space", "id": "y", "size": {"tensor_id": "input_1", "axis_id": "y"}},
         {"type": "space", "id": "z", "size": 7},
-        {"type": "channel", "size": {"reference": "input_1.channel"}},
+        {"type": "channel", "size": {"tensor_id": "input_1", "axis_id": "channel"}},
     ]
 
-    summary = validate_format(model_data)
+    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
     assert summary.status == "passed", summary.format()
 
 

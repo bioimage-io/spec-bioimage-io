@@ -247,8 +247,8 @@ def model_data():
             Author(name="Author 2"),
         ],
         maintainers=[
-            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="githubuser1"),
-            Maintainer(github_user="githubuser2"),
+            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"),
+            Maintainer(github_user="constantinpape"),
         ],
         timestamp=datetime.now(),
         cite=[CiteEntry(text="Paper title", url="https://example.com/")],
