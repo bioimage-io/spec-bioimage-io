@@ -55,6 +55,7 @@ from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -780,11 +781,11 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
     @model_validator(mode="after")
     def validate_sample_tensor(self) -> Self:
-        if self.sample_tensor is None or not self._stored_validation_context.perform_io_checks:
+        if self.sample_tensor is None or not validation_context_var.get().perform_io_checks:
             return self
 
         down = download(
-            self.sample_tensor.source, sha256=self.sample_tensor.sha256, root=self._stored_validation_context.root
+            self.sample_tensor.source, sha256=self.sample_tensor.sha256, root=validation_context_var.get().root
         )
 
         local_source = down.path
@@ -1122,7 +1123,7 @@ class WeightsDescr(Node):
     torchscript: Optional[TorchscriptWeightsDescr] = None
 
     @model_validator(mode="after")
-    def check_entries(self, info: ValidationInfo) -> Self:
+    def check_entries(self) -> Self:
         entries = {wtype for wtype, entry in self if entry is not None}
 
         if not entries:
@@ -1138,7 +1139,6 @@ class WeightsDescr(Node):
                 "Other weight formats are created through conversion of the orignal or already converted weights. "
                 "They have to reference the weights format they were converted from as their `parent`.",
                 value=len(entries_wo_parent),
-                val_context=info.context,
             )
 
         for wtype, entry in self:
@@ -1270,7 +1270,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def validate_test_tensors(self) -> Self:
-        if not self._stored_validation_context.perform_io_checks:
+        if not validation_context_var.get().perform_io_checks:
             return self
 
         test_arrays = [load_array(descr.test_tensor.download().path) for descr in chain(self.inputs, self.outputs)]
@@ -1434,7 +1434,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def add_default_cover(self) -> Self:
-        if not self._stored_validation_context.perform_io_checks or self.covers:
+        if not validation_context_var.get().perform_io_checks or self.covers:
             return self
 
         try:
@@ -1448,7 +1448,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             issue_warning(
                 "Failed to generate cover image(s): {e}",
                 value=self.covers,
-                val_context=self._stored_validation_context,
                 msg_context=dict(e=e),
             )
         else:
@@ -1458,7 +1457,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @classmethod
     def from_other_descr(cls, descr: v0_4.ModelDescr):
-        if isinstance(descr, v0_4.ModelDescr):        # pyright: ignore[reportUnnecessaryIsInstance]
+        if isinstance(descr, v0_4.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
             # TODO: change implementation to be type-safe without dumping
             # using the old convert function on dict data for now
             model_data = descr.model_dump()

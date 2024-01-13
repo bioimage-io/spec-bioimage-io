@@ -9,9 +9,9 @@ from pydantic_core.core_schema import ErrorType
 
 from bioimageio.spec._internal.constants import (
     VERSION,
-    WANRING_NAME_TO_SEVERITY,
     WARNING,
     WARNING_NAME,
+    WARNING_NAME_TO_LEVEL,
     WARNING_SEVERITY_TO_NAME,
 )
 from bioimageio.spec._internal.validation_context import WarningLevel as WarningLevel
@@ -46,7 +46,7 @@ class WarningEntry(ValidationEntry):
                 data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
 
             if "severity" in data and "severity_name" not in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
-                data["severity"] = WANRING_NAME_TO_SEVERITY[data["severity_name"]]
+                data["severity"] = WARNING_NAME_TO_LEVEL[data["severity_name"]]
 
         return data
 

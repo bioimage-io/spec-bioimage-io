@@ -5,9 +5,7 @@ from typing import Literal, Union
 from pydantic import AnyUrl, BaseModel, DirectoryPath, PrivateAttr
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.constants import (
-    ALERT,
-)
+from bioimageio.spec._internal.constants import ERROR
 
 WarningSeverity = Literal[20, 30, 35]
 WarningLevel = Literal[WarningSeverity, 50]
@@ -21,7 +19,7 @@ class ValidationContext(BaseModel, frozen=True):
     root: Union[DirectoryPath, AnyUrl] = Path()
     """url/directory serving as base to resolve any relative file paths"""
 
-    warning_level: WarningLevel = ALERT
+    warning_level: WarningLevel = ERROR
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
     file_name: str = "bioimageio.yaml"

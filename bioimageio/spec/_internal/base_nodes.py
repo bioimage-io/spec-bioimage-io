@@ -35,7 +35,14 @@ from pydantic_core import PydanticUndefined, core_schema
 from typing_extensions import Annotated, LiteralString, Never, Self
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION, WARNING_LEVEL_CONTEXT_KEY
+from bioimageio.spec._internal.constants import (
+    ERROR,
+    IN_PACKAGE_MESSAGE,
+    INFO,
+    VERSION,
+    WARNING_LEVEL_CONTEXT_KEY,
+    WARNING_LEVEL_TO_NAME,
+)
 from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
@@ -60,9 +67,7 @@ class Node(
 ):
     """Subpart of a resource description"""
 
-    _stored_validation_context: ValidationContext = PrivateAttr()
-    """the validation context used to validate the node
-    (reused to validate assignments)"""
+    _stored_validation_context: ValidationContext = PrivateAttr(default_factory=validation_context_var.get)
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -71,11 +76,13 @@ class Node(
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
 
-    def model_post_init(self, __context: "Dict[str, Any]") -> None:
-        # save the final validation context for validation upon assignment
-        # (may also be used for model after validations)
-        self._stored_validation_context = ValidationContext(**__context)
-        super().model_post_init(self._stored_validation_context)
+    @property
+    def validation_context(self):
+        """The validation context of this Node.
+        The validation context is reused, for example,
+        when validating assignments or resolving relative files during packaging.
+        """
+        return self._stored_validation_context
 
     @classmethod
     def model_validate(
@@ -237,26 +244,17 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     def load(
         cls,
         data: BioimageioYamlContent,
-        *,
-        context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescription]:
-        context = context or validation_context_var.get()
+        context = validation_context_var.get()
 
-        # get all warnings with warning level `INFO`
-        all_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: INFO})
-        with all_warnings_context:
+        with context:
             rd, errors, tb, val_warnings = cls._load_impl(deepcopy(data))
 
-        if not errors and val_warnings:
-            # If any warnings are returned due to pydantic's mechanics this fails validation
-            assert isinstance(rd, InvalidDescription)
-
-            # ignore any warnings using warning level 'ERROR'/'CRITICAL' and load again
-            no_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: ERROR})
-            with no_warnings_context:
-                rd, _, _, val_warnings2 = cls._load_impl(deepcopy(data))
-
-            assert not val_warnings2, f"got warnings despite warning_level 'ERROR': {val_warnings}"
+        if context.warning_level > INFO:
+            all_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: INFO})
+            # get validation warnings by reloading
+            with all_warnings_context:
+                _, _, _, val_warnings = cls._load_impl(deepcopy(data))
 
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
@@ -288,6 +286,18 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
                     val_warnings.append(WarningEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"], severity=severity))
                 else:
                     val_errors.append(ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
+
+            if len(val_errors) == 0:
+                val_errors.append(
+                    ErrorEntry(
+                        loc=(),
+                        msg=(
+                            f"Encountered {len(val_warnings)} more severe than warning level "
+                            f"'{WARNING_LEVEL_TO_NAME[validation_context_var.get().warning_level]}'"
+                        ),
+                        type="severe_warnings",
+                    )
+                )
         except Exception as e:
             val_errors.append(ErrorEntry(loc=(), msg=str(e), type=type(e).__name__))
             tb = traceback.format_tb(e.__traceback__)

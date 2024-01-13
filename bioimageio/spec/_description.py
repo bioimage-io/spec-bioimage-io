@@ -4,7 +4,6 @@ from typing import (
     Iterable,
     List,
     Literal,
-    Optional,
     Tuple,
     Type,
     Union,
@@ -20,7 +19,7 @@ from bioimageio.spec._internal.base_nodes import InvalidDescription, ResourceDes
 from bioimageio.spec._internal.constants import DISCOVER, LATEST, VERSION
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath, YamlValue
 from bioimageio.spec._internal.utils import iterate_annotated_union
-from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
 _ResourceDescr_v0_2 = Union[
@@ -85,7 +84,6 @@ def build_description(
     data: BioimageioYamlContent,
     /,
     *,
-    context: Optional[ValidationContext] = None,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescription]:
     discovered_type, discovered_format_version, use_format_version = _check_type_and_format_version(data)
@@ -102,8 +100,8 @@ def build_description(
 
     fv = use_format_version if format_version == DISCOVER else format_version
     rd_class = _get_rd_class(discovered_type, format_version=fv)
-    context = context or ValidationContext()
     if isinstance(rd_class, str):
+        context = validation_context_var.get()
         rd = InvalidDescription()
         rd.validation_summaries.append(
             ValidationSummary(
@@ -116,7 +114,7 @@ def build_description(
             )
         )
     else:
-        rd = rd_class.load(data, context=context)
+        rd = rd_class.load(data)
 
     assert rd.validation_summaries, "missing validation summary"
     if future_patch_warning:
@@ -129,10 +127,9 @@ def validate_format(
     data: BioimageioYamlContent,
     /,
     *,
-    context: Optional[ValidationContext] = None,
     as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
 ) -> ValidationSummary:
-    rd = build_description(data, context=context, format_version=as_format)
+    rd = build_description(data, format_version=as_format)
     return rd.validation_summaries[0]
 
 

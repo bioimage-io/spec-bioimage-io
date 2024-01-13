@@ -6,6 +6,8 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
 from bioimageio.spec._internal.utils import files
+from bioimageio.spec._internal.validation_context import WarningLevel
+from bioimageio.spec.summary import WarningLevelName
 
 if TYPE_CHECKING:
     from bioimageio.spec._internal.types import FormatVersionPlaceholder, LicenseId
@@ -74,7 +76,7 @@ DTYPE_LIMITS = MappingProxyType(
 )
 
 WARNING_LEVEL_CONTEXT_KEY = "warning_level"
-ERROR = 50
+ERROR, ERROR_NAME = 50, "error"
 """A warning of the error level is always raised (equivalent to a validation error)"""
 
 ALERT, ALERT_NAME = 35, "alert"
@@ -89,8 +91,11 @@ INFO, INFO_NAME = 20, "info"
 WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = MappingProxyType(
     {INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME}
 )
-WANRING_NAME_TO_SEVERITY: Mapping[WarningSeverityName, WarningSeverity] = MappingProxyType(
-    {v: k for k, v in WARNING_SEVERITY_TO_NAME.items()}
+WARNING_LEVEL_TO_NAME: Mapping[WarningLevel, WarningLevelName] = MappingProxyType(
+    {**WARNING_SEVERITY_TO_NAME, ERROR: ERROR_NAME}
+)
+WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyType(
+    {v: k for k, v in WARNING_LEVEL_TO_NAME.items()}
 )
 
 LATEST: FormatVersionPlaceholder = "latest"

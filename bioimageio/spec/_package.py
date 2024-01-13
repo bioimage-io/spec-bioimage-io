@@ -20,6 +20,7 @@ from bioimageio.spec._internal.io_utils import (
     write_zip,
 )
 from bioimageio.spec._internal.types import (
+    AbsoluteFilePath,
     BioimageioYamlContent,
     BioimageioYamlSource,
     FileName,
@@ -34,7 +35,7 @@ from bioimageio.spec.summary import Loc
 
 
 def fill_resource_package_content(
-    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]],
+    package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]],
     node: Node,
     node_loc: Loc,
 ):
@@ -53,7 +54,7 @@ def fill_resource_package_content(
 
         elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
             if isinstance(field_value, RelativeFilePath):
-                src = field_value
+                src = field_value.get_absolute(node.validation_context.root)
             elif isinstance(field_value, AnyUrl):
                 src = field_value
             else:
@@ -72,7 +73,7 @@ def get_resource_package_content(
     *,
     bioimageio_yaml_file_name: str = "{name}.{type}.bioimageio.yaml",
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
-) -> Dict[FileName, Union[HttpUrl, RelativeFilePath, BioimageioYamlContent]]:
+) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]]:
     """
     Args:
         rd: resource description
@@ -99,7 +100,7 @@ def get_resource_package_content(
 
         rd = rd.model_copy(update=dict(weights={wf: w}))
 
-    package_content: Dict[Loc, Union[HttpUrl, RelativeFilePath]] = {}
+    package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]] = {}
     fill_resource_package_content(package_content, rd, node_loc=())
     file_names: Dict[Loc, str] = {}
     os_friendly_name = get_os_friendly_file_name(rd.name)
@@ -108,7 +109,7 @@ def get_resource_package_content(
         "rdf.yaml": content,  # legacy name
         f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}": content,
     }
-    file_sources: Dict[str, Union[HttpUrl, RelativeFilePath, BioimageioYamlContent]] = dict(reserved_file_sources)
+    file_sources: Dict[str, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]] = dict(reserved_file_sources)
     for loc, src in package_content.items():
         file_name = extract_file_name(src)
         if file_name in file_sources and file_sources[file_name] != src:
@@ -149,21 +150,12 @@ def _prepare_resource_package(
     """
     if isinstance(source, ResourceDescriptionBase):
         descr = source
-        _ctxt = descr._stored_validation_context  # pyright: ignore[reportPrivateUsage]
-        context = ValidationContext(root=_ctxt["root"], file_name=_ctxt["file_name"])
     elif isinstance(source, dict):
-        context = ValidationContext()
-        descr = build_description(
-            source,
-            context=context,
-        )
+        descr = build_description(source)
     else:
         descr = open_bioimageio_yaml(source, root=Path())
-        context = ValidationContext(root=descr.original_root, file_name=descr.original_file_name)
-        descr = build_description(
-            descr.content,
-            context=context,
-        )
+        with ValidationContext(root=descr.original_root, file_name=descr.original_file_name):
+            descr = build_description(descr.content)
 
     if isinstance(descr, InvalidDescription):
         raise ValueError(f"{source} is invalid: {descr.validation_summaries[0]}")
@@ -173,7 +165,7 @@ def _prepare_resource_package(
     local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
     for k, v in package_content.items():
         if not isinstance(v, collections.abc.Mapping):
-            v = download(v, root=context.root).path
+            v = download(v, root=descr.validation_context.root).path
 
         local_package_content[k] = v
 
