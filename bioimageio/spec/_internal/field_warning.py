@@ -11,8 +11,8 @@ from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import NoInfoValidatorFunction, ValidationInfo, WithInfoValidatorFunction
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal.constants import ERROR, WARNING, WARNING_LEVEL_CONTEXT_KEY
-from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec._internal.constants import WARNING
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.summary import WarningSeverity
 
 if TYPE_CHECKING:
@@ -39,7 +39,8 @@ def warn(
         typ = Annotated[Any, typ]
 
     validator = TypeAdapter(typ)
-    return BeforeWarner(validator.validate_python, severity=severity, msg=msg, context={"typ": typ})
+
+    return AfterWarner(validator.validate_python, severity=severity, msg=msg, context={"typ": typ})
 
 
 def call_validator_func(
@@ -63,11 +64,10 @@ def issue_warning(
     *,
     value: Any,
     severity: WarningSeverity = WARNING,
-    val_context: Optional[InternalValidationContext] = None,
     msg_context: Optional[Dict[str, Any]] = None,
 ):
     msg_context = {**(msg_context or {}), "value": value, "severity": severity}
-    if severity >= (val_context or {}).get(WARNING_LEVEL_CONTEXT_KEY, ERROR):
+    if severity >= validation_context_var.get().warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
     else:
         logger.log(severity, msg.format(**msg_context))
@@ -91,7 +91,6 @@ def as_warning(
                 msg or ",".join(e.args),
                 value=value,
                 severity=severity,
-                val_context=info.context,
                 msg_context=msg_context,
             )
 

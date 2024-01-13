@@ -149,7 +149,7 @@ def _prepare_resource_package(
     """
     if isinstance(source, ResourceDescriptionBase):
         descr = source
-        _ctxt = descr._internal_validation_context  # pyright: ignore[reportPrivateUsage]
+        _ctxt = descr._stored_validation_context  # pyright: ignore[reportPrivateUsage]
         context = ValidationContext(root=_ctxt["root"], file_name=_ctxt["file_name"])
     elif isinstance(source, dict):
         context = ValidationContext()

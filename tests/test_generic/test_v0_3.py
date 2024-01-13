@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 import pytest
 
 from bioimageio.spec._internal.constants import WARNING
-from bioimageio.spec._internal.validation_context import (
-    InternalValidationContext,
-    ValidationContext,
-    create_internal_validation_context,
-)
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.generic.v0_3 import GenericDescr
 from tests.utils import check_node
 
@@ -63,7 +59,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             ),
-            create_internal_validation_context(warning_level=WARNING, perform_io_checks=False),
+            ValidationContext(warning_level=WARNING, perform_io_checks=False),
             id="deprecated license",
         ),
         (
@@ -87,5 +83,5 @@ def test_generic_valid(kwargs: Dict[str, Any]):
         ),
     ],
 )
-def test_generic_invalid(kwargs: Dict[str, Any], context: Union[ValidationContext, InternalValidationContext]):
+def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
     check_node(GenericDescr, kwargs, context=context, is_invalid=True)

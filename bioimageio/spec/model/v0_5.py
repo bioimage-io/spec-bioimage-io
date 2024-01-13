@@ -55,7 +55,6 @@ from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -66,6 +65,7 @@ from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
+from bioimageio.spec.model import v0_4
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
@@ -74,7 +74,7 @@ from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
-from bioimageio.spec.model.v0_5_converter import convert_from_older_format
+from bioimageio.spec.model.v0_5_converter import convert_model_data_from_v0_4_to_0_5_0
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -780,11 +780,11 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
     @model_validator(mode="after")
     def validate_sample_tensor(self) -> Self:
-        if self.sample_tensor is None or not self._internal_validation_context["perform_io_checks"]:
+        if self.sample_tensor is None or not self._stored_validation_context.perform_io_checks:
             return self
 
         down = download(
-            self.sample_tensor.source, sha256=self.sample_tensor.sha256, root=self._internal_validation_context["root"]
+            self.sample_tensor.source, sha256=self.sample_tensor.sha256, root=self._stored_validation_context.root
         )
 
         local_source = down.path
@@ -1270,7 +1270,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def validate_test_tensors(self) -> Self:
-        if not self._internal_validation_context["perform_io_checks"]:
+        if not self._stored_validation_context.perform_io_checks:
             return self
 
         test_arrays = [load_array(descr.test_tensor.download().path) for descr in chain(self.inputs, self.outputs)]
@@ -1434,7 +1434,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def add_default_cover(self) -> Self:
-        if not self._internal_validation_context["perform_io_checks"] or self.covers:
+        if not self._stored_validation_context.perform_io_checks or self.covers:
             return self
 
         try:
@@ -1448,7 +1448,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             issue_warning(
                 "Failed to generate cover image(s): {e}",
                 value=self.covers,
-                val_context=self._internal_validation_context,
+                val_context=self._stored_validation_context,
                 msg_context=dict(e=e),
             )
         else:
@@ -1457,8 +1457,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return self
 
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        convert_from_older_format(data, context)
+    def from_other_descr(cls, descr: v0_4.ModelDescr):
+        if isinstance(descr, v0_4.ModelDescr):        # pyright: ignore[reportUnnecessaryIsInstance]
+            # TODO: change implementation to be type-safe without dumping
+            # using the old convert function on dict data for now
+            model_data = descr.model_dump()
+            convert_model_data_from_v0_4_to_0_5_0(model_data)
+            return cls.model_validate(model_data)
+        else:
+            return super().from_other_descr(descr)
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
         data = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]

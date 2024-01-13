@@ -15,7 +15,6 @@ from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import DatasetId as DatasetId
@@ -97,16 +96,16 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
             if entry.rdf_source is not None:
-                if not self._internal_validation_context["perform_io_checks"]:
+                if not self._stored_validation_context.perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
                         value=entry.rdf_source,
-                        val_context=self._internal_validation_context,
+                        val_context=self._stored_validation_context,
                         msg_context=dict(i=i),
                     )
                     continue
 
-                external_data = open_bioimageio_yaml(entry.rdf_source, root=self._internal_validation_context["root"])
+                external_data = open_bioimageio_yaml(entry.rdf_source, root=self._stored_validation_context.root)
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
 
@@ -141,10 +140,11 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
         return self
 
-    @staticmethod
-    def move_groups_to_collection_field(data: BioimageioYamlContent) -> None:
+    @model_validator(mode="before")
+    @classmethod
+    def move_groups_to_collection_field(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):
-            return
+            return data
 
         if "collection" in data and data["collection"] is not None:
             if not isinstance(data["collection"], collections.abc.Sequence):
@@ -165,7 +165,4 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             if id_ is not None:
                 data["id"] = id_
 
-    @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        cls.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data, context)
+        return data

@@ -1,7 +1,7 @@
 from contextlib import nullcontext
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Protocol, Sequence, Set, Type, Union
+from typing import Any, ContextManager, Dict, Optional, Protocol, Sequence, Set, Type, Union
 
 import pytest
 from deepdiff import DeepDiff
@@ -17,11 +17,7 @@ from ruamel.yaml import YAML
 from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.io_utils import download
-from bioimageio.spec._internal.validation_context import (
-    InternalValidationContext,
-    ValidationContext,
-    create_internal_validation_context,
-)
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
 
 yaml = YAML(typ="safe")
@@ -34,7 +30,7 @@ def check_node(
     node_class: Type[Node],
     kwargs: Union[Dict[str, Any], Node],
     *,
-    context: Union[ValidationContext, InternalValidationContext, None] = None,
+    context: Optional[ValidationContext] = None,
     expected_dump_json: Any = unset,
     expected_dump_python: Any = unset,
     is_invalid: bool = False,
@@ -47,7 +43,7 @@ def check_node(
     with error_context:
         node = node_class.model_validate(
             kwargs,
-            context=dict(create_internal_validation_context(context or ValidationContext(root=Path(__file__).parent))),
+            context=context or ValidationContext(root=Path(__file__).parent),
         )
 
     if expected_dump_json is not unset:

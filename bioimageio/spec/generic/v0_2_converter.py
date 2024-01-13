@@ -2,10 +2,9 @@ import collections.abc
 from typing import Any, Dict, Mapping, Union
 
 from bioimageio.spec._internal.types import BioimageioYamlContent
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 
 
-def convert_from_older_format(data: BioimageioYamlContent, context: InternalValidationContext) -> None:
+def convert_from_older_format(data: BioimageioYamlContent) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
     fv = data.get("format_version", "0.2.0")

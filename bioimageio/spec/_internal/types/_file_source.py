@@ -14,18 +14,16 @@ from pydantic import (
     DirectoryPath,
     FilePath,
     GetCoreSchemaHandler,
-    ValidationInfo,
 )
 from pydantic_core import core_schema
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.validation_context import create_internal_validation_context
+from bioimageio.spec._internal.validation_context import validation_context_var
 
 
-def validate_url_ok(url: pydantic.HttpUrl, info: ValidationInfo):
-    context = create_internal_validation_context(info.context)
-    if not context["perform_io_checks"]:
+def validate_url_ok(url: pydantic.HttpUrl):
+    if not validation_context_var.get().perform_io_checks:
         return url
 
     response = requests.head(str(url))
@@ -33,7 +31,6 @@ def validate_url_ok(url: pydantic.HttpUrl, info: ValidationInfo):
         issue_warning(
             "URL redirected ({status_code}): consider updating {value} with new location: {location}",
             value=url,
-            val_context=context,
             msg_context={"status_code": response.status_code, "location": response.headers.get("location")},
         )
     elif response.status_code != 200:
@@ -79,7 +76,7 @@ class RelativePath:
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
-        return core_schema.with_info_after_validator_function(
+        return core_schema.no_info_after_validator_function(
             cls._validate,
             core_schema.union_schema(
                 [
@@ -114,7 +111,7 @@ class RelativePath:
             raise ValueError(f"{p} does not exist")
 
     @classmethod
-    def _validate(cls, value: Union[pathlib.Path, str], info: ValidationInfo):
+    def _validate(cls, value: Union[pathlib.Path, str]):
         if isinstance(value, str) and (value.startswith("https://") or value.startswith("http://")):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
@@ -122,9 +119,9 @@ class RelativePath:
         if ret.path.is_absolute():
             raise ValueError(f"{value} is an absolute path.")
 
-        context = create_internal_validation_context(info.context)
-        if context["perform_io_checks"]:
-            ret._check_exists(context["root"])
+        context = validation_context_var.get()
+        if context.perform_io_checks:
+            ret._check_exists(context.root)
 
         return ret
 

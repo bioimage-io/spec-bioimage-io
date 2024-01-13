@@ -2,7 +2,7 @@ import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
 from annotated_types import Len, LowerCase, MaxLen, MinLen
-from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator
+from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
@@ -23,7 +23,6 @@ from bioimageio.spec._internal.types import (
     Version,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
@@ -292,9 +291,11 @@ class GenericDescrBase(GenericModelDescrBase):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
+    @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        convert_from_older_format(data, context)
+    def convert_from_older_format(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
+        convert_from_older_format(data)
+        return data
 
     badges: List[BadgeDescr] = Field(default_factory=list)
     """badges associated with this resource"""

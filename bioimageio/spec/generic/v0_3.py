@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 import requests
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal import settings
@@ -29,7 +29,7 @@ from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
-from bioimageio.spec._internal.validation_context import InternalValidationContext, create_internal_validation_context
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
@@ -52,8 +52,8 @@ def _has_no_slash(s: str) -> bool:
     return "/" not in s and "\\" not in s
 
 
-def _validate_gh_user(username: str, perform_io_checks: bool):
-    if not perform_io_checks:
+def _validate_gh_user(username: str):
+    if not validation_context_var.get().perform_io_checks:
         return
 
     r = requests.get(f"https://api.github.com/users/{username}", auth=settings.github_auth)
@@ -68,10 +68,9 @@ class Author(v0_2.Author):
     github_user: Optional[str] = None
 
     @field_validator("github_user", mode="after")
-    def validate_gh_user(cls, value: Optional[str], info: ValidationInfo):
+    def validate_gh_user(cls, value: Optional[str]):
         if value is not None:
-            context = create_internal_validation_context(info.context)
-            _validate_gh_user(value, context["perform_io_checks"])
+            _validate_gh_user(value)
 
         return value
 
@@ -81,9 +80,8 @@ class Maintainer(v0_2.Maintainer):
     github_user: str
 
     @field_validator("github_user", mode="after")
-    def validate_gh_user(cls, value: str, info: ValidationInfo):
-        context = create_internal_validation_context(info.context)
-        _validate_gh_user(value, context["perform_io_checks"])
+    def validate_gh_user(cls, value: str):
+        _validate_gh_user(value)
         return value
 
 
@@ -247,9 +245,11 @@ class GenericDescrBase(GenericModelDescrBase):
     format_version: Literal["0.3.0"] = "0.3.0"
     """The **format** version of this resource specification"""
 
+    @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        convert_from_older_format(data, context)
+    def convert_from_older_format(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
+        convert_from_older_format(data)
+        return data
 
     documentation: Annotated[
         Optional[MarkdownSource],

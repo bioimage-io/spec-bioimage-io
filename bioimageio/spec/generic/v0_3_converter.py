@@ -1,18 +1,17 @@
 import collections.abc
 
 from bioimageio.spec._internal.types import BioimageioYamlContent
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic import v0_2_converter
 
 
-def convert_from_older_format(data: BioimageioYamlContent, context: InternalValidationContext) -> None:
+def convert_from_older_format(data: BioimageioYamlContent) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
     fv = data.get("format_version", "0.2.0")
     if not isinstance(fv, str) or fv.count(".") != 2 or tuple(map(int, fv.split(".")[:2])) > (0, 3):
         return
 
-    v0_2_converter.convert_from_older_format(data, context)
+    v0_2_converter.convert_from_older_format(data)
 
     convert_attachments(data)
 

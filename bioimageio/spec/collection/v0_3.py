@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Literal, Optional, Union
 
 from pydantic import Field, PrivateAttr, TypeAdapter, ValidationError, model_validator
 from pydantic_core import PydanticUndefined
@@ -7,8 +7,8 @@ from typing_extensions import Annotated, Self
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
-from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
-from bioimageio.spec._internal.validation_context import InternalValidationContext
+from bioimageio.spec._internal.types import NotEmpty, YamlValue
+from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.application.v0_3 import ApplicationDescr as ApplicationDescr03
 from bioimageio.spec.collection import v0_2
@@ -104,16 +104,16 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
             if entry.entry_source is not None:
-                if not self._internal_validation_context["perform_io_checks"]:
+                if not self._stored_validation_context.perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
                         value=entry.entry_source,
-                        val_context=self._internal_validation_context,
+                        val_context=self._stored_validation_context,
                         msg_context=dict(i=i),
                     )
                     continue
 
-                external_data = open_bioimageio_yaml(entry.entry_source, root=self._internal_validation_context["root"])
+                external_data = open_bioimageio_yaml(entry.entry_source, root=self._stored_validation_context.root)
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
 
@@ -149,6 +149,23 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         return self
 
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        v0_2.CollectionDescr.move_groups_to_collection_field(data)
-        super().convert_from_older_format(data, context)
+    def from_other_descr(cls, descr: v0_2.CollectionDescr, context: Optional[ValidationContext] = None) -> Self:
+        if isinstance(descr, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
+            # avoid validation on init (missing context), but keep static type checking
+            if TYPE_CHECKING:
+                construct = cls
+            else:
+                construct = dict  # TODO: consider `cls.construct` as alternative to dict
+
+            data = construct(
+                name=descr.name,
+                description=descr.description,
+                authors=[Author(name=a.name) for a in descr.authors],  # TODO: Author.from_other_descr
+                # maintainers=descr.maintainers,
+                cite=descr.cite,
+                license=descr.license,  # type: ignore
+                collection=[],
+            )
+            return cls.model_validate(data, context=context or descr._stored_validation_context)
+        else:
+            return super().from_other_descr(descr)

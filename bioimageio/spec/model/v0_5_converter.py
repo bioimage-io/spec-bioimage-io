@@ -4,30 +4,11 @@ from typing import Any, Dict, Mapping, Optional, Sequence, Union
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
-from bioimageio.spec.model import v0_4_converter
 
 
-def convert_from_older_format(data: BioimageioYamlContent, context: InternalValidationContext):
-    fv = data.get("format_version")
-    if not isinstance(fv, str) or fv.count(".") != 2:
-        return
-
-    v0_4_converter.convert_from_older_format(data, context)
-    fv = data.get("format_version")
-    assert isinstance(fv, str) and fv.count(".") == 2
-    major, minor = map(int, fv.split(".")[:2])
-
-    if (major, minor) > (0, 5):
-        return
-
-    if minor == 4:
-        _convert_model_from_v0_4_to_0_5_0(data, context)
-
-
-def _convert_model_from_v0_4_to_0_5_0(data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-    _convert_axes_string_to_axis_descriptions(data, context=context)
+def convert_model_data_from_v0_4_to_0_5_0(data: BioimageioYamlContent) -> None:
+    _convert_axes_string_to_axis_descriptions(data)
     _convert_architecture(data)
     convert_attachments(data)
     _convert_weights(data)
@@ -40,7 +21,7 @@ def _convert_model_from_v0_4_to_0_5_0(data: BioimageioYamlContent, context: Inte
     data["format_version"] = "0.5.0"
 
 
-def _convert_axes_string_to_axis_descriptions(data: BioimageioYamlContent, *, context: InternalValidationContext):
+def _convert_axes_string_to_axis_descriptions(data: BioimageioYamlContent):
     inputs = data.get("inputs")
     outputs = data.get("outputs")
     sample_inputs = data.pop("sample_inputs", None)
@@ -50,11 +31,11 @@ def _convert_axes_string_to_axis_descriptions(data: BioimageioYamlContent, *, co
 
     if isinstance(inputs, collections.abc.Sequence):
         data["inputs"] = list(inputs)
-        _update_tensor_specs(data["inputs"], test_inputs, sample_inputs, context=context)
+        _update_tensor_specs(data["inputs"], test_inputs, sample_inputs)
 
     if isinstance(outputs, collections.abc.Sequence):
         data["outputs"] = list(outputs)
-        _update_tensor_specs(data["outputs"], test_outputs, sample_outputs, context=context)
+        _update_tensor_specs(data["outputs"], test_outputs, sample_outputs)
 
 
 def _convert_weights(data: BioimageioYamlContent):
@@ -89,8 +70,6 @@ def _update_tensor_specs(
     tensor_data: YamlArray,
     test_tensors: Any,
     sample_tensors: Any,
-    *,
-    context: InternalValidationContext,
 ):
     tts: Sequence[Any] = test_tensors if isinstance(test_tensors, collections.abc.Sequence) else ()
     sts: Sequence[Any] = sample_tensors if isinstance(sample_tensors, collections.abc.Sequence) else ()
@@ -124,7 +103,7 @@ def _update_tensor_specs(
 
         if isinstance(d["axes"], str):
             new_axes = [
-                _get_axis_description_from_letter(a, reordered_shape.get(i), context=context, halo=halo.get(i))
+                _get_axis_description_from_letter(a, reordered_shape.get(i), halo=halo.get(i))
                 for i, a in enumerate(d["axes"])
             ]
             new_d["axes"] = new_axes
@@ -138,7 +117,7 @@ def _update_tensor_specs(
                 if "name" in p_kwargs:
                     p_kwargs["id"] = p_kwargs.pop("name")
 
-                p_axes = [_get_axis_description_from_letter(a, context=context, halo=None) for a in p_kwargs_axes]
+                p_axes = [_get_axis_description_from_letter(a, halo=None) for a in p_kwargs_axes]
                 if p.get("id") == "zero_mean_unit_variance" and p_kwargs.get("mode") == "fixed":
                     p["id"] = "fixed_zero_mean_unit_variance"
                     _ = p_kwargs.pop("axes", None)
@@ -182,7 +161,6 @@ def _get_axis_description_from_letter(
     letter: str,
     size: Union[int, Dict[str, Any], None] = None,
     *,
-    context: InternalValidationContext,
     halo: Optional[Any],
 ):
     AXIS_TYPE_MAP = {
@@ -208,9 +186,7 @@ def _get_axis_description_from_letter(
             scale = size.pop("scale")
             if axis["type"] == "channel":
                 if scale != 1.0:
-                    issue_warning(
-                        "Channel axis referenced with scale != 1", value=scale, severity=ALERT, val_context=context
-                    )
+                    issue_warning("Channel axis referenced with scale != 1", value=scale, severity=ALERT)
             elif scale is not None:
                 axis["scale"] = scale
 
@@ -223,7 +199,6 @@ def _get_axis_description_from_letter(
                 issue_warning(
                     "Converting tensor shape: we assume axis '{value}' of tensor and reference to match.",
                     value=size["axis_id"],
-                    val_context=context,
                     severity=ALERT,
                 )
 

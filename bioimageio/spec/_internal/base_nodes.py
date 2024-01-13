@@ -4,7 +4,7 @@ import ast
 import collections.abc
 import inspect
 import traceback
-from abc import ABC, abstractmethod
+from abc import ABC
 from copy import deepcopy
 from typing import (
     Any,
@@ -29,23 +29,21 @@ from pydantic import (
     PrivateAttr,
     StringConstraints,
     TypeAdapter,
-    ValidationInfo,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, LiteralString, Self
+from typing_extensions import Annotated, LiteralString, Never, Self
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION
+from bioimageio.spec._internal.constants import ERROR, IN_PACKAGE_MESSAGE, INFO, VERSION, WARNING_LEVEL_CONTEXT_KEY
 from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.utils import unindent
 from bioimageio.spec._internal.validation_context import (
-    InternalValidationContext,
     ValidationContext,
-    create_internal_validation_context,
+    validation_context_var,
 )
 from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
 
@@ -62,9 +60,7 @@ class Node(
 ):
     """Subpart of a resource description"""
 
-    _internal_validation_context: InternalValidationContext = PrivateAttr(
-        default_factory=create_internal_validation_context
-    )
+    _stored_validation_context: ValidationContext = PrivateAttr()
     """the validation context used to validate the node
     (reused to validate assignments)"""
 
@@ -75,13 +71,48 @@ class Node(
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
 
-    def model_post_init(
-        self, __context: "ValidationContext | InternalValidationContext | Dict[str, Any] | None"
-    ) -> None:
+    def model_post_init(self, __context: "Dict[str, Any]") -> None:
         # save the final validation context for validation upon assignment
         # (may also be used for model after validations)
-        self._internal_validation_context = create_internal_validation_context(__context)
-        super().model_post_init(self._internal_validation_context)
+        self._stored_validation_context = ValidationContext(**__context)
+        super().model_post_init(self._stored_validation_context)
+
+    @classmethod
+    def model_validate(
+        cls,
+        obj: Union[Any, Dict[str, Any]],
+        *,
+        strict: Optional[bool] = None,
+        from_attributes: Optional[bool] = None,
+        context: Union[ValidationContext, Dict[str, Any], None] = None,
+    ) -> Self:
+        """Validate a pydantic model instance.
+
+        Args:
+            obj: The object to validate.
+            strict: Whether to raise an exception on invalid fields.
+            from_attributes: Whether to extract data from object attributes.
+            context: Additional context to pass to the validator.
+
+        Raises:
+            ValidationError: If the object failed validation.
+
+        Returns:
+            The validated description instance.
+        """
+        __tracebackhide__ = True
+
+        if context is None:
+            context = validation_context_var.get()
+        elif isinstance(context, dict):
+            context = ValidationContext(**context)
+
+        if isinstance(obj, dict):
+            assert all(isinstance(k, str) for k in obj), obj
+
+        with context:
+            # use validation context as context manager for equal behavior of __init__ and model_validate
+            return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
@@ -172,20 +203,22 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
 
     @property
     def root(self) -> Union[AnyUrl, DirectoryPath]:
-        return self._internal_validation_context["root"]
+        return self._stored_validation_context.root
 
     @classmethod
-    @abstractmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        # TODO: this classmethod should accept a preceeding description instance instead of raw yaml content
-        ...
+    def from_other_descr(cls, descr: Never) -> Self:
+        """convert from a different resource description, e.g. different major/minor format_version.
 
-    @model_validator(mode="before")
-    @classmethod
-    def _convert_from_older_format(cls, data: BioimageioYamlContent, info: ValidationInfo):
-        context = create_internal_validation_context(info.context)
-        cls.convert_from_older_format(data, context)
-        return data
+        Args:
+            descr: A bioimageio resource description instance
+            context: validation context for new description instance.
+                If `None` the stored validation context from `descr` is used.
+
+        Raises:
+            NotImplementedError: if conversion from given descr class is not implemented
+            ValidationError: If conversion failed/resulted in an invalid description
+        """
+        raise NotImplementedError(f"converting {descr} to {cls.__name__} is not implemented")
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
@@ -201,57 +234,30 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
             assert len(cls.implemented_format_version_tuple) == 3, cls.implemented_format_version_tuple
 
     @classmethod
-    def model_validate(
-        cls,
-        obj: Union[Any, Dict[str, Any]],
-        *,
-        strict: Optional[bool] = None,
-        from_attributes: Optional[bool] = None,
-        context: Union[InternalValidationContext, Dict[str, Any], None] = None,
-    ) -> Self:
-        """Validate a pydantic model instance.
-
-        Args:
-            obj: The object to validate.
-            strict: Whether to raise an exception on invalid fields.
-            from_attributes: Whether to extract data from object attributes.
-            context: Additional context to pass to the validator.
-
-        Raises:
-            ValueError: If context is not a valid ValidationContext.
-            ValidationError: If the object could not be validated.
-
-        Returns:
-            The validated model instance.
-        """
-        __tracebackhide__ = True
-
-        context = create_internal_validation_context(context)
-        if isinstance(obj, dict):
-            assert all(isinstance(k, str) for k in obj), obj
-
-        return super().model_validate(
-            obj, strict=strict, from_attributes=from_attributes, context=cast(Dict[str, Any], context)
-        )
-
-    @classmethod
     def load(
         cls,
         data: BioimageioYamlContent,
         *,
-        context: ValidationContext,
+        context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescription]:
-        rd, errors, tb, val_warnings = cls._load_impl(
-            deepcopy(data),
-            create_internal_validation_context(context.model_dump(), warning_level=ERROR),
-        )  # ignore any warnings using warning level 'ERROR'/'CRITICAL' on first loading attempt
+        context = context or validation_context_var.get()
 
-        assert not val_warnings, f"already got warnings: {val_warnings}"
-        _, error2, tb2, val_warnings = cls._load_impl(
-            deepcopy(data), create_internal_validation_context(context.model_dump(), warning_level=INFO)
-        )
-        assert not error2 or isinstance(rd, InvalidDescription), f"decreasing warning level caused errors: {error2}"
-        assert not tb2 or isinstance(rd, InvalidDescription), f"decreasing warning level lead to error traceback: {tb2}"
+        # get all warnings with warning level `INFO`
+        all_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: INFO})
+        with all_warnings_context:
+            rd, errors, tb, val_warnings = cls._load_impl(deepcopy(data))
+
+        if not errors and val_warnings:
+            # If any warnings are returned due to pydantic's mechanics this fails validation
+            assert isinstance(rd, InvalidDescription)
+
+            # ignore any warnings using warning level 'ERROR'/'CRITICAL' and load again
+            no_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: ERROR})
+            with no_warnings_context:
+                rd, _, _, val_warnings2 = cls._load_impl(deepcopy(data))
+
+            assert not val_warnings2, f"got warnings despite warning_level 'ERROR': {val_warnings}"
+
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=errors,
@@ -267,7 +273,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
 
     @classmethod
     def _load_impl(
-        cls, data: BioimageioYamlContent, context: InternalValidationContext
+        cls, data: BioimageioYamlContent
     ) -> Tuple[Union[Self, InvalidDescription], List[ErrorEntry], List[str], List[WarningEntry]]:
         rd: Union[Self, InvalidDescription, None] = None
         val_errors: List[ErrorEntry] = []
@@ -275,7 +281,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         tb: List[str] = []
 
         try:
-            rd = cls.model_validate(data, context=dict(context))
+            rd = cls.model_validate(data)
         except pydantic.ValidationError as e:
             for ee in e.errors(include_url=False):
                 if (severity := ee.get("ctx", {}).get("severity", ERROR)) < ERROR:
@@ -301,10 +307,6 @@ class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An inval
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
-
-    @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        pass
 
 
 class StringNode(collections.UserString, ABC):
@@ -348,7 +350,7 @@ class StringNode(collections.UserString, ABC):
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
         assert issubclass(source, StringNode), source
-        return core_schema.with_info_after_validator_function(
+        return core_schema.no_info_after_validator_function(
             cls._validate,
             core_schema.str_schema(pattern=cls._pattern),
             serialization=core_schema.plain_serializer_function_ser_schema(
@@ -363,13 +365,11 @@ class StringNode(collections.UserString, ABC):
         raise NotImplementedError(f"{cls.__name__}._get_data()")
 
     @classmethod
-    def _validate(cls, value: str, info: ValidationInfo) -> Self:
-        valid_string_data = TypeAdapter(Annotated[str, StringConstraints(pattern=cls._pattern)]).validate_python(
-            value, context=info.context
-        )
+    def _validate(cls, value: str) -> Self:
+        valid_string_data = TypeAdapter(Annotated[str, StringConstraints(pattern=cls._pattern)]).validate_python(value)
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)
-        object.__setattr__(self, "_node", self._node_class.model_validate(data, context=info.context))
+        object.__setattr__(self, "_node", self._node_class.model_validate(data))
         return self
 
     def _serialize(self) -> str:
@@ -399,11 +399,11 @@ class FileDescr(Node):
 
     @model_validator(mode="after")
     def validate_sha256(self) -> Self:
-        context = self._internal_validation_context
-        if not context["perform_io_checks"]:
+        context = self._stored_validation_context
+        if not context.perform_io_checks:
             return self
 
-        local_source = download(self.source, sha256=self.sha256, root=context["root"]).path
+        local_source = download(self.source, sha256=self.sha256, root=context.root).path
         actual_sha = get_sha256(local_source)
         if self.sha256 is None:
             self.sha256 = actual_sha
@@ -416,4 +416,4 @@ class FileDescr(Node):
         return self
 
     def download(self):
-        return download(self.source, sha256=self.sha256, root=self._internal_validation_context["root"])
+        return download(self.source, sha256=self.sha256, root=self._stored_validation_context.root)

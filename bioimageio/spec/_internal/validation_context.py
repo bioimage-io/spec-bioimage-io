@@ -1,13 +1,12 @@
+from contextvars import ContextVar
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Union
+from typing import Literal, Union
 
-from pydantic import AnyUrl, BaseModel, DirectoryPath
-from typing_extensions import TypedDict
+from pydantic import AnyUrl, BaseModel, DirectoryPath, PrivateAttr
 
 from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import (
-    ERROR,
-    WARNING_LEVEL_CONTEXT_KEY,
+    ALERT,
 )
 
 WarningSeverity = Literal[20, 30, 35]
@@ -16,9 +15,14 @@ WarningLevel = Literal[WarningSeverity, 50]
 Highest warning level 50/error does not raise any validaiton warnings (only validation errors)."""
 
 
-class ValidationContext(BaseModel):
+class ValidationContext(BaseModel, frozen=True):
+    _context_tokens = PrivateAttr(default_factory=list)
+
     root: Union[DirectoryPath, AnyUrl] = Path()
     """url/directory serving as base to resolve any relative file paths"""
+
+    warning_level: WarningLevel = ALERT
+    """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
     file_name: str = "bioimageio.yaml"
     """file name of the bioimageio Yaml file"""
@@ -26,41 +30,14 @@ class ValidationContext(BaseModel):
     perform_io_checks: bool = settings.perform_io_checks
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
 
+    def __enter__(self):
+        self._context_tokens.append(validation_context_var.set(self))
+        return self
 
-class InternalValidationContext(TypedDict):
-    """internally used validation context"""
-
-    root: Union[DirectoryPath, AnyUrl]
-    """url/path serving as base to any relative file paths"""
-
-    file_name: str
-    """the file name of the RDF used only for reporting"""
-
-    warning_level: WarningLevel
-    """raise warnings of severity s as validation errors if s >= `warning_level`"""
-
-    perform_io_checks: bool
-    """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
+    def __exit__(self, type, value, traceback):  # type: ignore
+        validation_context_var.reset(self._context_tokens.pop(-1))
 
 
-def create_internal_validation_context(
-    given_context: Union[ValidationContext, InternalValidationContext, Dict[str, Any], None] = None,
-    root: Union[DirectoryPath, AnyUrl, None] = None,  # option to overwrite given context
-    file_name: Optional[str] = None,  # option to overwrite given context
-    warning_level: Optional[WarningLevel] = None,  # option to overwrite given context
-    perform_io_checks: Optional[bool] = None,  # option to overwrite given context
-):
-    if given_context is None:
-        given_context = {}
-    elif isinstance(given_context, ValidationContext):
-        given_context = given_context.model_dump(mode="python")
-
-    default = ValidationContext()
-    return InternalValidationContext(
-        root=root or given_context.get("root", default.root),
-        file_name=file_name or given_context.get("file_name", default.file_name),
-        warning_level=warning_level or given_context.get(WARNING_LEVEL_CONTEXT_KEY, ERROR),
-        perform_io_checks=perform_io_checks
-        if perform_io_checks is not None
-        else given_context.get("perform_io_checks", default.perform_io_checks),
-    )
+validation_context_var: ContextVar[ValidationContext] = ContextVar(
+    "validation_context_var", default=ValidationContext()
+)

@@ -49,7 +49,6 @@ from bioimageio.spec._internal.types.field_validation import (
     WithSuffix,
     validate_unique_entries,
 )
-from bioimageio.spec._internal.validation_context import InternalValidationContext
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import LinkedDatasetDescr as LinkedDatasetDescr
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -939,20 +938,18 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
+    @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, context: InternalValidationContext) -> None:
-        convert_from_older_format(data, context)
+    def convert_from_older_format(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
+        convert_from_older_format(data)
+        return data
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [
-            load_array(download(ipt, root=self._internal_validation_context["root"]).path) for ipt in self.test_inputs
-        ]
+        data = [load_array(download(ipt, root=self._stored_validation_context.root).path) for ipt in self.test_inputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [
-            load_array(download(out, root=self._internal_validation_context["root"]).path) for out in self.test_outputs
-        ]
+        data = [load_array(download(out, root=self._stored_validation_context.root).path) for out in self.test_outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
