@@ -15,7 +15,7 @@ WEIGHTS_FORMATS_OVERVIEW_PATH = (
 
 # defaults for transition period
 consumer_defaults = {
-    "ilastik": ["pytorch_state_dict", "onnx", "torchscript"],
+    "ilastik": ["torchscript", "pytorch_state_dict", "onnx"],
     "zero": ["keras_hdf5"],
     "deepimagej": ["torchscript", "tensorflow_saved_model_bundle"],
     "imjoy": ["onnx"],
