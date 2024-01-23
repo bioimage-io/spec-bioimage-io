@@ -197,7 +197,14 @@ class RawNodePackageTransformer(NodeTransformer):
                 resource = self.root / resource
 
         elif isinstance(resource, URI):
-            name_from = pathlib.PurePath(resource.path or "unknown")
+            if (
+                resource.authority == "zenodo.org"
+                and resource.path.startswith("/api/records/")
+                and resource.path.endswith("/content")
+            ):
+                name_from = pathlib.PurePath(resource.path[: -len("/content")].strip("/"))
+            else:
+                name_from = pathlib.PurePath(resource.path or "unknown")
             folder_in_package = ""
         else:
             raise TypeError(f"Unexpected type {type(resource)} for {resource}")
