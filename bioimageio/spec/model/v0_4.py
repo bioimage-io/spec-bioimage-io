@@ -938,9 +938,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 

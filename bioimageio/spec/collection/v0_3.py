@@ -8,7 +8,7 @@ from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import NotEmpty, YamlValue
-from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.application.v0_3 import ApplicationDescr as ApplicationDescr03
 from bioimageio.spec.collection import v0_2
@@ -104,11 +104,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
             if entry.entry_source is not None:
-                if not self._stored_validation_context.perform_io_checks:
+                if not validation_context_var.get().perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
                         value=entry.entry_source,
-                        val_context=self._stored_validation_context,
                         msg_context=dict(i=i),
                     )
                     continue

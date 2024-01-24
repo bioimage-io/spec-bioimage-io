@@ -162,7 +162,10 @@ def build_description(
         conversion_summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=conversion_errors,
-            name=f"bioimageio.spec conversion from {typ} {rd_class.implemented_format_version} to {typ} {as_rd_class.implemented_format_version}.",
+            name=(
+                f"bioimageio.spec conversion from {typ} {rd_class.implemented_format_version} "
+                f"to {typ} {as_rd_class.implemented_format_version}."
+            ),
             source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
             status="failed" if conversion_errors else "passed",
             warnings=conversion_warnings,

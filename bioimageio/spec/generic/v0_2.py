@@ -291,9 +291,9 @@ class GenericDescrBase(GenericModelDescrBase):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
+    def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Tuple, Type, TypeVar, Union, cast, get_args, get_origin
+from typing import Dict, List, Tuple, Type, TypeVar, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl

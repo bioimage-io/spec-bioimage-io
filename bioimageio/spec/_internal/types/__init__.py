@@ -45,14 +45,12 @@ Identifier = NewType("Identifier", IdentifierStr)
 LowerCaseIdentifierStr = Annotated[IdentifierStr, annotated_types.LowerCase]  # allows to init child NewTypes with str
 LowerCaseIdentifier = NewType("LowerCaseIdentifier", LowerCaseIdentifierStr)
 OrcidId = NewType("OrcidId", Annotated[str, AfterValidator(validate_orcid_id)])
-ResourceId = NewType(
-    "ResourceId",
-    Annotated[
-        NotEmpty[str],
-        annotated_types.LowerCase,
-        annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
-    ],
-)
+_ResourceIdAnno = Annotated[
+    NotEmpty[str],
+    annotated_types.LowerCase,
+    annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
+]
+ResourceId = NewType("ResourceId", _ResourceIdAnno)
 Sha256 = NewType(
     "Sha256",
     Annotated[str, StringConstraints(strip_whitespace=True, to_lower=True, min_length=64, max_length=64)],
@@ -78,6 +76,6 @@ YamlMapping = Dict[YamlKey, "YamlValue"]
 YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
 
 # derived types
-DatasetId = NewType("DatasetId", ResourceId)
+DatasetId = NewType("DatasetId", _ResourceIdAnno)
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]

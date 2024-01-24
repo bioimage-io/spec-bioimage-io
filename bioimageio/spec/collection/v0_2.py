@@ -15,6 +15,7 @@ from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import DatasetId as DatasetId
@@ -96,11 +97,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
             if entry.rdf_source is not None:
-                if not self._stored_validation_context.perform_io_checks:
+                if not validation_context_var.get().perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
                         value=entry.rdf_source,
-                        val_context=self._stored_validation_context,
                         msg_context=dict(i=i),
                     )
                     continue
@@ -140,7 +140,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
         return self
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
     def move_groups_to_collection_field(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):

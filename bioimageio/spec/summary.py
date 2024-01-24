@@ -36,7 +36,7 @@ class WarningEntry(ValidationEntry):
     severity: WarningSeverity = WARNING
     severity_name: WarningSeverityName = WARNING_NAME
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
     def sync_severity_with_severity_name(cls, data: Union[Mapping[Any, Any], Any]) -> Any:
         if isinstance(data, dict):

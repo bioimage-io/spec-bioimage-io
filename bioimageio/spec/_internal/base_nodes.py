@@ -7,13 +7,13 @@ import traceback
 from abc import ABC
 from copy import deepcopy
 from typing import (
-    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
     FrozenSet,
     List,
     Optional,
+    Protocol,
     Tuple,
     Type,
     Union,
@@ -185,7 +185,7 @@ class NodeWithExplicitlySetFields(Node):
     """set set these fields explicitly with their default value if they are not set,
     such that they are always included even when dumping with 'exlude_unset'"""
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
     def set_fields_explicitly(cls, data: Union[Any, Dict[str, Any]]) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
@@ -196,7 +196,16 @@ class NodeWithExplicitlySetFields(Node):
         return data
 
 
-class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
+class _ResourceDescriptionBaseAbstractFieldsProtocol(Protocol):
+    """workaround to add abstract fields to ResourceDescriptionBase"""
+
+    # TODO: implement as proper abstract fields of ResourceDescriptionBase
+
+    type: Any  # should be LiteralString
+    format_version: Any  # should be LiteralString
+
+
+class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol):
     """base class for all resource descriptions"""
 
     _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
@@ -204,10 +213,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
-
-    if TYPE_CHECKING:
-        type: LiteralString  # TODO: make abstract fields
-        format_version: LiteralString  # TODO: make abstract fields
 
     @field_validator("format_version", mode="before", check_fields=False)
     @classmethod
@@ -413,7 +418,7 @@ class StringNode(collections.UserString, ABC):
     @classmethod
     def _validate(cls, value: str) -> Self:
         contrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
-        contrained_str_adapter = TypeAdapter(contrained_str_type)
+        contrained_str_adapter = TypeAdapter(cast(str, contrained_str_type))
         valid_string_data = contrained_str_adapter.validate_python(value)
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)

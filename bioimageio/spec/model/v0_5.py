@@ -315,9 +315,9 @@ class ChannelAxis(AxisBase):
     def unit(self):
         return None
 
-    @model_validator(mode="before")
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
-    def set_size_or_channel_names(cls, data: Dict[str, Any]):
+    def set_size_or_channel_names(cls, data: Dict[str, Any], /):
         channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
         size = data.get("size", "#channel_names")
         if size == "#channel_names" and channel_names == "channel{i}":
