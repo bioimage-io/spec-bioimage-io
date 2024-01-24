@@ -7,6 +7,7 @@ import traceback
 from abc import ABC
 from copy import deepcopy
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -196,13 +197,20 @@ class NodeWithExplicitlySetFields(Node):
         return data
 
 
-class _ResourceDescriptionBaseAbstractFieldsProtocol(Protocol):
-    """workaround to add abstract fields to ResourceDescriptionBase"""
+if TYPE_CHECKING:
 
-    # TODO: implement as proper abstract fields of ResourceDescriptionBase
+    class _ResourceDescriptionBaseAbstractFieldsProtocol(Protocol):
+        """workaround to add abstract fields to ResourceDescriptionBase"""
 
-    type: Any  # should be LiteralString
-    format_version: Any  # should be LiteralString
+        # TODO: implement as proper abstract fields of ResourceDescriptionBase
+
+        type: Any  # should be LiteralString
+        format_version: Any  # should be LiteralString
+
+else:
+
+    class _ResourceDescriptionBaseAbstractFieldsProtocol:
+        pass
 
 
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol):
@@ -214,9 +222,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    @field_validator("format_version", mode="before", check_fields=False)
+    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
     @classmethod
-    def ignore_future_patch(cls, value: Any) -> Any:
+    def ignore_future_patch(cls, data: Dict[str, Any], /) -> Dict[str, Any]:
         def maj_min(v: str):
             parts = v.split(".")[:2]
             return tuple(int(p) if p.isdecimal() else p for p in parts)
@@ -226,21 +234,21 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
             return int(p) if p.isdecimal() else -1
 
         if (
-            value != cls.implemented_format_version
-            and isinstance(value, str)
-            and value.count(".") == 2
-            and maj_min(value) == cls.implemented_format_version_tuple[:2]
-            and get_patch(value) > cls.implemented_format_version_tuple[2]
+            (fv := data["format_version"]) != cls.implemented_format_version
+            and isinstance(fv, str)
+            and fv.count(".") == 2
+            and maj_min(fv) == cls.implemented_format_version_tuple[:2]
+            and get_patch(fv) > cls.implemented_format_version_tuple[2]
         ):
             issue_warning(
                 "future format_version '{value}' treated as '{implemented}'",
-                value=value,
+                value=fv,
                 msg_context=dict(implemented=cls.implemented_format_version),
                 severity=ALERT,
             )
-            return cls.implemented_format_version
+            data["format_version"] = cls.implemented_format_version
 
-        return value
+        return data
 
     @property
     def validation_summaries(self) -> List[ValidationSummary]:

@@ -6,12 +6,11 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
 
 from bioimageio.spec._internal.utils import files
-from bioimageio.spec._internal.validation_context import WarningLevel
-from bioimageio.spec.summary import WarningLevelName
 
 if TYPE_CHECKING:
     from bioimageio.spec._internal.types import FormatVersionPlaceholder, LicenseId
-    from bioimageio.spec.summary import WarningSeverity, WarningSeverityName
+    from bioimageio.spec._internal.validation_context import WarningLevel
+    from bioimageio.spec.summary import WarningLevelName, WarningSeverity, WarningSeverityName
 
 
 if sys.version_info < (3, 10):
