@@ -36,25 +36,6 @@ def get_parent_url(url: HttpUrl) -> HttpUrl:
     return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
 
 
-def iterate_annotated_union(typ: type) -> Iterator[Any]:
-    """iterate over all type arguments in a nested combination of Annotation and Union
-
-    >>> U = Union[Annotated[int, "int"], Annotated[str, "str"]]
-    >>> A = Annotated[U, "union"]
-    >>> list(iterate_annotated_union(U))
-    [<class 'int'>, <class 'str'>]
-    >>> list(iterate_annotated_union(A))
-    [<class 'int'>, <class 'str'>]
-    """
-    if get_origin(typ) is Union:
-        for t in get_args(typ):
-            yield from iterate_annotated_union(t)
-    elif isinstance(typ, _annot_type):
-        yield from iterate_annotated_union(get_args(typ)[0])
-    else:
-        yield typ
-
-
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:
     res: NestedDict[K, V] = {}
     for k, v in flat_dict.items():

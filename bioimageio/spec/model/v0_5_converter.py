@@ -3,7 +3,7 @@ from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray
+from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray, YamlKey, YamlMapping, YamlValue
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 
 
@@ -80,7 +80,7 @@ def _update_tensor_specs(
             continue
 
         reordered_shape = _analyze_tensor_shape(d.get("shape"))
-        new_d: Dict[str, Any] = {}
+        new_d: Dict[YamlKey, YamlValue] = {}
         if "name" in d:
             new_d["id"] = d["name"]
 
@@ -102,7 +102,7 @@ def _update_tensor_specs(
             halo = {}
 
         if isinstance(d["axes"], str):
-            new_axes = [
+            new_axes: YamlArray = [
                 _get_axis_description_from_letter(a, reordered_shape.get(i), halo=halo.get(i))
                 for i, a in enumerate(d["axes"])
             ]
@@ -159,7 +159,7 @@ def _analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any
 
 def _get_axis_description_from_letter(
     letter: str,
-    size: Union[int, Dict[str, Any], None] = None,
+    size: Union[int, YamlMapping, None] = None,
     *,
     halo: Optional[Any],
 ):
@@ -172,7 +172,7 @@ def _get_axis_description_from_letter(
         "y": "space",
         "z": "space",
     }
-    axis: Dict[str, Any] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
+    axis: Dict[YamlKey, YamlValue] = dict(type=AXIS_TYPE_MAP.get(letter, letter))
     if axis["type"] == "space":
         axis["id"] = letter
 
@@ -192,7 +192,9 @@ def _get_axis_description_from_letter(
 
         if "reference" in size:
             if scale is None:  # old way to insert a new axis dimension
-                size = size.get("offset", 0)  # 0 is invalid on purpose
+                offset = size.get("offset", 0)  # 0 is invalid on purpose
+                assert isinstance(offset, int)
+                size = offset
             else:
                 size["tensor_id"] = size.pop("reference")
                 size["axis_id"] = axis.get("id", axis["type"])
@@ -203,7 +205,9 @@ def _get_axis_description_from_letter(
                 )
 
         if isinstance(size, dict) and "min" in size and size.get("step") == 0:
-            size = size["min"]
+            min_size = size["min"]
+            assert isinstance(min_size, int)
+            size = min_size
 
     axis["size"] = size
     if halo is not None:

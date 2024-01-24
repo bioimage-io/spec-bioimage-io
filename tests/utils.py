@@ -60,7 +60,12 @@ class DummyNodeBase(Node):
 
 
 def check_type(
-    type_: Type[Any], value: Any, expected: Any = unset, expected_deserialized: Any = unset, *, is_invalid: bool = False
+    type_: Union[Any, Type[Any]],
+    value: Any,
+    expected: Any = unset,
+    expected_deserialized: Any = unset,
+    *,
+    is_invalid: bool = False,
 ):
     type_adapter = TypeAdapter(type_)
     error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
@@ -101,20 +106,11 @@ def check_bioimageio_yaml(
     with downloaded_source.path.open(encoding="utf-8") as f:
         data = yaml.load(f)
 
-    context = ValidationContext(root=root, file_name=downloaded_source.original_file_name)
-    if is_invalid:
-        rd = build_description(data, context=context)
-        assert isinstance(rd, InvalidDescription), "Invalid RDF passed validation"
-
-    exclude_from_comp = {
-        "format_version",
-        "timestamp",
-        *exclude_fields_from_roundtrip,
-    }
-
     format_version = "latest" if as_latest else "discover"
-    expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
-    rd = build_description(data, context=context, format_version=format_version)
+    with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
+        rd = build_description(data, as_format=format_version)
+        assert not is_invalid or (is_invalid and isinstance(rd, InvalidDescription)), "Invalid RDF passed validation"
+
     summary = rd.validation_summaries[0]
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
@@ -127,7 +123,13 @@ def check_bioimageio_yaml(
     if as_latest:
         return
 
+    exclude_from_comp = {
+        "format_version",
+        "timestamp",
+        *exclude_fields_from_roundtrip,
+    }
     deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
+    expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
     assert_dict_equal(deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True)
 
 

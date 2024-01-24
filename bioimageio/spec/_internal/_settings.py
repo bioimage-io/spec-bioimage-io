@@ -1,9 +1,13 @@
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="BIOIMAGEIO_", env_file=".env", env_file_encoding="utf-8", secrets_dir="/var/run"
+    )
+
     github_username: Optional[str] = None
     github_token: Optional[str] = None
     perform_io_checks: bool = True
@@ -17,4 +21,4 @@ class Settings(BaseSettings):
             return (self.github_username, self.github_token)
 
 
-settings = Settings(_env_prefix="BIOIMAGEIO_", _env_file=".env", _env_file_encoding="utf-8", _secrets_dir="/var/run")
+settings = Settings()

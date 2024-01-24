@@ -7,6 +7,7 @@ import traceback
 from abc import ABC
 from copy import deepcopy
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -29,6 +30,7 @@ from pydantic import (
     PrivateAttr,
     StringConstraints,
     TypeAdapter,
+    field_validator,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
@@ -36,6 +38,7 @@ from typing_extensions import Annotated, LiteralString, Never, Self
 
 from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import (
+    ALERT,
     ERROR,
     IN_PACKAGE_MESSAGE,
     INFO,
@@ -43,6 +46,7 @@ from bioimageio.spec._internal.constants import (
     WARNING_LEVEL_CONTEXT_KEY,
     WARNING_LEVEL_TO_NAME,
 )
+from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
@@ -183,7 +187,7 @@ class NodeWithExplicitlySetFields(Node):
 
     @model_validator(mode="before")
     @classmethod
-    def set_fields_explicitly(cls, data: Union[Any, Dict[Any, Any]]) -> Union[Any, Dict[Any, Any]]:
+    def set_fields_explicitly(cls, data: Union[Any, Dict[str, Any]]) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
             for name in cls.fields_to_set_explicitly:
                 if name not in data:
@@ -201,8 +205,37 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    # type: LiteralString  # TODO: make abstract fields
-    # format_version: LiteralString  # TODO: make abstract fields
+    if TYPE_CHECKING:
+        type: LiteralString  # TODO: make abstract fields
+        format_version: LiteralString  # TODO: make abstract fields
+
+    @field_validator("format_version", mode="before", check_fields=False)
+    @classmethod
+    def ignore_future_patch(cls, value: Any) -> Any:
+        def maj_min(v: str):
+            parts = v.split(".")[:2]
+            return tuple(int(p) if p.isdecimal() else p for p in parts)
+
+        def get_patch(v: str):
+            p = v[v.rfind(".") :]
+            return int(p) if p.isdecimal() else -1
+
+        if (
+            value != cls.implemented_format_version
+            and isinstance(value, str)
+            and value.count(".") == 2
+            and maj_min(value) == cls.implemented_format_version_tuple[:2]
+            and get_patch(value) > cls.implemented_format_version_tuple[2]
+        ):
+            issue_warning(
+                "future format_version '{value}' treated as '{implemented}'",
+                value=value,
+                msg_context=dict(implemented=cls.implemented_format_version),
+                severity=ALERT,
+            )
+            return cls.implemented_format_version
+
+        return value
 
     @property
     def validation_summaries(self) -> List[ValidationSummary]:
@@ -242,10 +275,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
 
     @classmethod
     def load(
-        cls,
-        data: BioimageioYamlContent,
+        cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
     ) -> Union[Self, InvalidDescription]:
-        context = validation_context_var.get()
+        context = context or validation_context_var.get()
 
         with context:
             rd, errors, tb, val_warnings = cls._load_impl(deepcopy(data))
@@ -259,7 +291,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC):
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
             errors=errors,
-            name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",  # type: ignore
+            name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",
             source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
             status="failed" if errors else "passed",
             warnings=val_warnings,
@@ -317,6 +349,10 @@ class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An inval
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+
+    @classmethod
+    def from_other_descr(cls, descr: ResourceDescriptionBase) -> Self:
+        return cls(**descr.model_dump())
 
 
 class StringNode(collections.UserString, ABC):
@@ -376,7 +412,9 @@ class StringNode(collections.UserString, ABC):
 
     @classmethod
     def _validate(cls, value: str) -> Self:
-        valid_string_data = TypeAdapter(Annotated[str, StringConstraints(pattern=cls._pattern)]).validate_python(value)
+        contrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
+        contrained_str_adapter = TypeAdapter(contrained_str_type)
+        valid_string_data = contrained_str_adapter.validate_python(value)
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)
         object.__setattr__(self, "_node", self._node_class.model_validate(data))

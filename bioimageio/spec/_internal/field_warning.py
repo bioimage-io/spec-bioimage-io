@@ -66,7 +66,7 @@ def issue_warning(
     severity: WarningSeverity = WARNING,
     msg_context: Optional[Dict[str, Any]] = None,
 ):
-    msg_context = {**(msg_context or {}), "value": value, "severity": severity}
+    msg_context = {"value": value, "severity": severity, **(msg_context or {})}
     if severity >= validation_context_var.get().warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
     else:

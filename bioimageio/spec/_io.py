@@ -27,7 +27,7 @@ def load_description(
     return build_description(
         opened.content,
         context=ValidationContext(root=opened.original_root, file_name=opened.original_file_name),
-        format_version=format_version,
+        as_format=format_version,
     )
 
 
