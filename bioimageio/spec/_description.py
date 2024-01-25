@@ -97,7 +97,7 @@ def _get_rd_class(typ: Any, format_version: Any) -> Type[ResourceDescr]:
             return type_module
 
         assert fv.count(".") == 1
-        v_module_name = f"v{fv[:fv.rfind('.')].replace('.', '_')}"
+        v_module_name = f"v{fv.replace('.', '_')}"
         return getattr(type_module, v_module_name, type_module)
 
     v_module = get_v_module(format_version)

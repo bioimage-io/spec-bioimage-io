@@ -31,7 +31,6 @@ from pydantic import (
     PrivateAttr,
     StringConstraints,
     TypeAdapter,
-    field_validator,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
@@ -234,7 +233,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
             return int(p) if p.isdecimal() else -1
 
         if (
-            (fv := data["format_version"]) != cls.implemented_format_version
+            (fv := data.get("format_version")) != cls.implemented_format_version
             and isinstance(fv, str)
             and fv.count(".") == 2
             and maj_min(fv) == cls.implemented_format_version_tuple[:2]
