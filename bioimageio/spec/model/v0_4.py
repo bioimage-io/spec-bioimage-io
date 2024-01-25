@@ -32,14 +32,12 @@ from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.types import BioimageioYamlContent, LowerCaseIdentifierStr
+from bioimageio.spec._internal.types import BioimageioYamlContent, FileSource, LowerCaseIdentifierStr, RelativeFilePath
 from bioimageio.spec._internal.types import Datetime as Datetime
-from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
@@ -945,11 +943,11 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return data
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(ipt, root=self._stored_validation_context.root).path) for ipt in self.test_inputs]
+        data = [load_array(download(ipt).path) for ipt in self.test_inputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(out, root=self._stored_validation_context.root).path) for out in self.test_outputs]
+        data = [load_array(download(out).path) for out in self.test_outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data

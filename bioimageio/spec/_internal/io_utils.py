@@ -24,7 +24,6 @@ from bioimageio.spec._internal.types import (
     PermissiveFileSource,
     RelativeFilePath,
     Sha256,
-    StrictFileSource,
     YamlValue,
 )
 from bioimageio.spec._internal.types._file_source import extract_file_name
@@ -67,12 +66,11 @@ class OpenedBioimageioYaml:
     original_file_name: str
 
 
-def _interprete_file_source(file_source: PermissiveFileSource, root: Union[DirectoryPath, HttpUrl]) -> StrictFileSource:
-    source = TypeAdapter(FileSource).validate_python(file_source, context={"root": root})
-    if isinstance(source, RelativeFilePath):
-        source = source.get_absolute(root)
-
-    return source
+def _interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
+    if isinstance(file_source, str):
+        return TypeAdapter(FileSource).validate_python(file_source)
+    else:
+        return file_source
 
 
 def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
@@ -100,10 +98,12 @@ def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
 def download(
     source: PermissiveFileSource,
     /,
-    root: Union[DirectoryPath, HttpUrl],  # root to resolve relative file paths
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
-    strict_source = _interprete_file_source(source, root)
+    strict_source = _interprete_file_source(source)
+    if isinstance(strict_source, RelativeFilePath):
+        strict_source = strict_source.absolute
+
     if isinstance(strict_source, AnyUrl):
         if strict_source.scheme not in ("http", "https"):
             raise NotImplementedError(strict_source.scheme)
@@ -164,10 +164,8 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
-def open_bioimageio_yaml(
-    source: PermissiveFileSource, /, root: Union[DirectoryPath, HttpUrl], **kwargs: Unpack[HashKwargs]
-) -> OpenedBioimageioYaml:
-    downloaded = download(source, root=root, **kwargs)
+def open_bioimageio_yaml(source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]) -> OpenedBioimageioYaml:
+    downloaded = download(source, **kwargs)
     local_source = downloaded.path
     root = downloaded.original_root
 

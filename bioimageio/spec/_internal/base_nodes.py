@@ -71,22 +71,12 @@ class Node(
 ):
     """Subpart of a resource description"""
 
-    _stored_validation_context: ValidationContext = PrivateAttr(default_factory=validation_context_var.get)
-
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
         if settings.set_undefined_field_descriptions_from_var_docstrings:
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
-
-    @property
-    def validation_context(self):
-        """The validation context of this Node.
-        The validation context is reused, for example,
-        when validating assignments or resolving relative files during packaging.
-        """
-        return self._stored_validation_context
 
     @classmethod
     def model_validate(
@@ -253,9 +243,11 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     def validation_summaries(self) -> List[ValidationSummary]:
         return self._validation_summaries
 
+    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(validation_context_var.get().root)
+
     @property
     def root(self) -> Union[AnyUrl, DirectoryPath]:
-        return self._stored_validation_context.root
+        return self._root
 
     @classmethod
     def from_other_descr(cls, descr: Never) -> Self:
@@ -290,12 +282,12 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
         cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
     ) -> Union[Self, InvalidDescription]:
         context = context or validation_context_var.get()
-
+        assert isinstance(data, dict)
         with context:
             rd, errors, tb, val_warnings = cls._load_impl(deepcopy(data))
 
         if context.warning_level > INFO:
-            all_warnings_context = context.model_copy(update={WARNING_LEVEL_CONTEXT_KEY: INFO})
+            all_warnings_context = context.copy(warning_level=INFO)
             # get validation warnings by reloading
             with all_warnings_context:
                 _, _, _, val_warnings = cls._load_impl(deepcopy(data))
@@ -459,11 +451,11 @@ class FileDescr(Node):
 
     @model_validator(mode="after")
     def validate_sha256(self) -> Self:
-        context = self._stored_validation_context
+        context = validation_context_var.get()
         if not context.perform_io_checks:
             return self
 
-        local_source = download(self.source, sha256=self.sha256, root=context.root).path
+        local_source = download(self.source, sha256=self.sha256).path
         actual_sha = get_sha256(local_source)
         if self.sha256 is None:
             self.sha256 = actual_sha
@@ -476,4 +468,4 @@ class FileDescr(Node):
         return self
 
     def download(self):
-        return download(self.source, sha256=self.sha256, root=self._stored_validation_context.root)
+        return download(self.source, sha256=self.sha256)

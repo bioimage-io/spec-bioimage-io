@@ -16,7 +16,7 @@ from typing_extensions import LiteralString
 
 from bioimageio.spec._internal.constants import SLOTS
 
-from ._file_source import FileSource, RelativePath
+from ._file_source import FileSource, RelativeFilePath
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
@@ -50,7 +50,11 @@ class WithSuffix:
             raise ValueError("suffix may not be empty")
 
         schema = handler(source)
-        if schema["type"] != str and source != FileSource and not issubclass(source, (AnyUrl, RelativePath, PurePath)):
+        if (
+            schema["type"] != str
+            and source != FileSource
+            and not issubclass(source, (AnyUrl, RelativeFilePath, PurePath))
+        ):
             raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
 
         return no_info_after_validator_function(

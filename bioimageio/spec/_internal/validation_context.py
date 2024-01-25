@@ -1,6 +1,6 @@
 from contextvars import ContextVar
 from pathlib import Path
-from typing import Literal, Union
+from typing import Literal, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, DirectoryPath, PrivateAttr
 
@@ -26,6 +26,16 @@ class ValidationContext(BaseModel, frozen=True):
 
     perform_io_checks: bool = settings.perform_io_checks
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
+
+    def copy(
+        self,
+        root_update: Optional[Union[DirectoryPath, AnyUrl]] = None,
+        warning_level_update: Optional[WarningLevel] = None,
+    ) -> "ValidationContext":
+        return ValidationContext(
+            root=self.root if root_update is None else root_update,
+            warning_level=self.warning_level if warning_level_update is None else warning_level_update,
+        )
 
     def __enter__(self):
         self._context_tokens.append(validation_context_var.set(self))

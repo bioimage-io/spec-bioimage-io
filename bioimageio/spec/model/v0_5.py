@@ -40,17 +40,14 @@ from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFiel
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download, load_array
-from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
-from bioimageio.spec._internal.types import FileSource as FileSource
+from bioimageio.spec._internal.types import FileSource, LowerCaseIdentifierStr, SiUnit
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import LowerCaseIdentifierStr, SiUnit
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
@@ -1438,7 +1435,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return self
 
         try:
-            from bioimageio.spec._internal.cover import generate_covers
+            from bioimageio.spec._internal.cover import generate_covers  # TODO: move import?
 
             generated_covers = generate_covers(
                 [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],

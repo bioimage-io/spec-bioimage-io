@@ -29,7 +29,7 @@ from bioimageio.spec._internal.types import (
 )
 from bioimageio.spec._internal.types._file_source import extract_file_name
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.summary import Loc
 
@@ -153,9 +153,10 @@ def _prepare_resource_package(
     elif isinstance(source, dict):
         descr = build_description(source)
     else:
-        descr = open_bioimageio_yaml(source, root=Path())
-        with ValidationContext(root=descr.original_root, file_name=descr.original_file_name):
-            descr = build_description(descr.content)
+        opened = open_bioimageio_yaml(source)
+        outer_context = validation_context_var.get()
+        with outer_context.copy(root=opened.original_root, file_name=opened.original_file_name):
+            descr = build_description(opened.content)
 
     if isinstance(descr, InvalidDescription):
         raise ValueError(f"{source} is invalid: {descr.validation_summaries[0]}")
@@ -165,7 +166,7 @@ def _prepare_resource_package(
     local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
     for k, v in package_content.items():
         if not isinstance(v, collections.abc.Mapping):
-            v = download(v, root=descr.validation_context.root).path
+            v = download(v).path
 
         local_package_content[k] = v
 

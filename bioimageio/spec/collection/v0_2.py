@@ -1,43 +1,37 @@
 import collections.abc
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
 from pydantic import (
-    Field,
     PrivateAttr,
-    TypeAdapter,
-    ValidationError,
     model_validator,
 )
-from pydantic_core import PydanticUndefined
-from typing_extensions import Annotated, Self
+from typing_extensions import Self
 
-from bioimageio.spec._internal.base_nodes import Node
+from bioimageio import spec
+from bioimageio.spec import application, dataset, generic, model, notebook
+from bioimageio.spec._internal.base_nodes import InvalidDescription, Node
+from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
 from bioimageio.spec._internal.validation_context import validation_context_var
-from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
-from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import DatasetId as DatasetId
-from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import FileSource as FileSource
-from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
-from bioimageio.spec.generic.v0_2 import GenericDescrBase
+from bioimageio.spec.generic.v0_2 import FileSource, GenericDescrBase
 from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
-from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr
-from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
 
 EntryDescr = Union[
-    Annotated[Union[ModelDescr, DatasetDescr, ApplicationDescr02, NotebookDescr02], Field(discriminator="type")],
-    GenericDescr02,
+    application.v0_2.ApplicationDescr,
+    dataset.v0_2.DatasetDescr,
+    generic.v0_2.GenericDescr,
+    model.v0_4.ModelDescr,
+    notebook.v0_2.NotebookDescr,
 ]
 
 
@@ -51,27 +45,27 @@ class CollectionEntry(Node, extra="allow"):
     and the entry's 'sub-'`id`, specified remotely as part of `rdf_source` or superseeded in-place,
     such that the `final_entry_id = <collection_id>/<entry_id>`"""
 
-    entry_adapter: ClassVar[TypeAdapter[EntryDescr]] = TypeAdapter(EntryDescr)
-
-    rdf_source: Union[HttpUrl, RelativeFilePath, None] = None
+    rdf_source: Optional[FileSource] = None
     """resource description file (RDF) source to load entry from"""
 
     id: Optional[ResourceId] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
-    _descr: EntryDescr = PrivateAttr()
+    _descr: Optional[EntryDescr] = PrivateAttr(None)
 
     @property
     def rdf_update(self) -> Dict[str, YamlValue]:
         return self.model_extra or {}
 
     @property
-    def descr(self) -> EntryDescr:
-        if self._descr is PydanticUndefined:
-            raise RuntimeError(
-                "Collection entry description cannot be accessed. Is this entry part of a Collection? "
-                "A collection entry is only valid within a collection resource description."
+    def descr(self) -> Optional[EntryDescr]:
+        if self._descr is None:
+            issue_warning(
+                "Collection entry description not set. Is this entry part of a Collection? "
+                "A collection entry only has its `descr` set if it is part of a valid collection description.",
+                value=None,
+                severity=ALERT,
             )
 
         return self._descr
@@ -89,6 +83,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
     @model_validator(mode="after")
     def finalize_entries(self) -> Self:
+        context = validation_context_var.get()
         common_entry_content = {k: v for k, v in self if k not in ("id", "collection")}
         base_id: Optional[ResourceId] = self.id
 
@@ -97,7 +92,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
             if entry.rdf_source is not None:
-                if not validation_context_var.get().perform_io_checks:
+                if not context.perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
                         value=entry.rdf_source,
@@ -105,7 +100,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     )
                     continue
 
-                external_data = open_bioimageio_yaml(entry.rdf_source, root=self._stored_validation_context.root)
+                external_data = open_bioimageio_yaml(entry.rdf_source)
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
 
@@ -131,12 +126,16 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             if type_ == "collection":
                 raise ValueError(f"collection[{i}] has invalid entry type; collections may not be nested!")
 
-            try:
-                entry_descr = entry.entry_adapter.validate_python(entry_data)
-            except ValidationError as e:
-                raise ValueError(f"Invalid collection entry collection[{i}]") from e
+            entry_descr = spec.build_description(entry_data)
+            if isinstance(entry_descr, InvalidDescription):
+                raise ValueError(f"Invalid collection entry collection[{i}]: {entry_descr.validation_summaries}")
+            elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
+                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage, reportGeneralTypeIssues]
             else:
-                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage]
+                raise ValueError(
+                    f"{entry_descr.type} {entry_descr.format_version} entries "
+                    f"are not allowed in {self.type} {self.format_version}."
+                )
 
         return self
 

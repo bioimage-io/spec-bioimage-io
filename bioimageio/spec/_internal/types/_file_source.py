@@ -16,7 +16,7 @@ from pydantic import (
     GetCoreSchemaHandler,
 )
 from pydantic_core import core_schema
-from typing_extensions import Annotated
+from typing_extensions import Annotated, assert_never
 
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.validation_context import validation_context_var
@@ -40,23 +40,30 @@ def validate_url_ok(url: pydantic.HttpUrl):
 
 
 HttpUrl = Annotated[pydantic.HttpUrl, AfterValidator(validate_url_ok)]
+FileName = str
+AbsoluteDirectory = Annotated[DirectoryPath, Predicate(Path.is_absolute)]
+AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
 
 
 class RelativePath:
     path: PurePosixPath
+    absolute: Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath]
+    """the absolute path (resolved at time of initialization with the root of the ValidationContext)"""
 
     def __init__(self, path: Union[str, Path, RelativePath]) -> None:
         super().__init__()
         if isinstance(path, RelativePath):
             self.path = path.path
+            self.absolute = path.absolute
         else:
             if not isinstance(path, Path):
                 path = Path(path)
 
             if path.is_absolute():
-                raise ValueError(f"{path} is an absolute path.")
+                raise ValueError(f"{path} is an absolute path")
 
             self.path = PurePosixPath(path.as_posix())
+            self.absolute = self.get_absolute(validation_context_var.get().root)
 
     @property
     def __members(self):
@@ -88,7 +95,7 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: Union[DirectoryPath, HttpUrl]) -> Union[FilePath, HttpUrl]:
+    def get_absolute(self, root: Union[DirectoryPath, HttpUrl]) -> Union[AbsoluteFilePath, HttpUrl]:
         if isinstance(root, pathlib.Path):
             return (root / self.path).absolute()
 
@@ -106,9 +113,26 @@ class RelativePath:
 
         return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
 
-    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
-        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.exists():
-            raise ValueError(f"{p} does not exist")
+    def exists(self) -> bool:
+        try:
+            self._exists_impl()
+        except Exception:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def _exists_locally(path: pathlib.Path):
+        if not path.exists():
+            raise ValueError(f"{path} not found")
+
+    def _exists_impl(self) -> None:
+        if isinstance(self.absolute, pathlib.Path):
+            self._exists_locally(self.absolute)
+        elif isinstance(self.absolute, AnyUrl):  # pyright: ignore[reportUnnecessaryIsInstance]
+            _ = validate_url_ok(self.absolute)
+        else:
+            assert_never(self.absolute)
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str]):
@@ -121,28 +145,33 @@ class RelativePath:
 
         context = validation_context_var.get()
         if context.perform_io_checks:
-            ret._check_exists(context.root)
+            ret._exists_impl()
 
         return ret
 
 
 class RelativeFilePath(RelativePath):
-    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
-        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_file():
-            raise ValueError(f"{p} does not point to an existing file")
+    absolute: Union[HttpUrl, AbsoluteFilePath]
+    """the absolute file path (resolved at time of initialization with the root of the ValidationContext)"""
+
+    @staticmethod
+    def _exists_localy(path: pathlib.Path) -> None:
+        if not path.is_file():
+            raise ValueError(f"{path} does not point to an existing file")
 
 
 class RelativeDirectory(RelativePath):
-    def _check_exists(self, root: Union[DirectoryPath, HttpUrl]) -> None:
-        if isinstance((p := self.get_absolute(root)), pathlib.Path) and not p.is_dir():
-            raise ValueError(f"{p} does not point to an existing directory")
+    absolute: Union[HttpUrl, AbsoluteDirectory]
+    """the absolute directory (resolved at time of initialization with the root of the ValidationContext)"""
+
+    @staticmethod
+    def _exists_locally(path: pathlib.Path) -> None:
+        if not path.is_dir():
+            raise ValueError(f"{path} does not point to an existing directory")
 
 
-FileName = str
-AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
 FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
 PermissiveFileSource = Union[FileSource, str]
-StrictFileSource = Union[HttpUrl, AbsoluteFilePath]
 
 
 def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
