@@ -29,7 +29,7 @@ from bioimageio.spec._internal.types import (
 )
 from bioimageio.spec._internal.types._file_source import extract_file_name
 from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.summary import Loc
 
@@ -54,7 +54,7 @@ def fill_resource_package_content(
 
         elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
             if isinstance(field_value, RelativeFilePath):
-                src = field_value.get_absolute(node.validation_context.root)
+                src = field_value.absolute
             elif isinstance(field_value, AnyUrl):
                 src = field_value
             else:

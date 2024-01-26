@@ -43,7 +43,6 @@ from bioimageio.spec._internal.constants import (
     IN_PACKAGE_MESSAGE,
     INFO,
     VERSION,
-    WARNING_LEVEL_CONTEXT_KEY,
     WARNING_LEVEL_TO_NAME,
 )
 from bioimageio.spec._internal.field_warning import issue_warning
@@ -74,6 +73,8 @@ class Node(
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
+        # TODO: use pydantic config's use_attribute_docstrings from future pydantic 2.7 instead
+        # see https://github.com/pydantic/pydantic/issues/5656
         if settings.set_undefined_field_descriptions_from_var_docstrings:
             cls._set_undefined_field_descriptions_from_var_docstrings()
             # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this

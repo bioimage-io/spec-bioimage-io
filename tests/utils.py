@@ -101,7 +101,7 @@ def check_bioimageio_yaml(
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
 ) -> None:
-    downloaded_source = download(source, root=root)
+    downloaded_source = download(source)
     root = downloaded_source.original_root
     with downloaded_source.path.open(encoding="utf-8") as f:
         data = yaml.load(f)

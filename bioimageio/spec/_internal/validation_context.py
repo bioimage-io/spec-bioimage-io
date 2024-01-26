@@ -27,14 +27,18 @@ class ValidationContext(BaseModel, frozen=True):
     perform_io_checks: bool = settings.perform_io_checks
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
 
-    def copy(
+    def copy(  # pyright: ignore[reportIncompatibleMethodOverride]  # note that pydantic.BaseModel.copy is deprecated
         self,
-        root_update: Optional[Union[DirectoryPath, AnyUrl]] = None,
-        warning_level_update: Optional[WarningLevel] = None,
+        root: Optional[Union[DirectoryPath, AnyUrl]] = None,
+        warning_level: Optional[WarningLevel] = None,
+        file_name: Optional[str] = None,
+        perform_io_checks: Optional[bool] = None,
     ) -> "ValidationContext":
         return ValidationContext(
-            root=self.root if root_update is None else root_update,
-            warning_level=self.warning_level if warning_level_update is None else warning_level_update,
+            root=self.root if root is None else root,
+            warning_level=self.warning_level if warning_level is None else warning_level,
+            file_name=self.file_name if file_name is None else file_name,
+            perform_io_checks=self.perform_io_checks if perform_io_checks is None else perform_io_checks,
         )
 
     def __enter__(self):
