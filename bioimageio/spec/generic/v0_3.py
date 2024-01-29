@@ -76,17 +76,17 @@ class Author(v0_2.Author):
         return value
 
     @classmethod
-    def from_other_descr(cls, descr: v0_2.Author):
-        if isinstance(descr, v0_2.Author):  # pyright: ignore[reportUnnecessaryIsInstance]
+    def convert_from(cls, other: v0_2.Author, /):
+        if isinstance(other, v0_2.Author):  # pyright: ignore[reportUnnecessaryIsInstance]
             return assert_all_params_set_explicitly(cls)(
-                name=descr.name,
-                github_user=descr.github_user,
-                affiliation=descr.affiliation,
-                email=descr.email,
-                orcid=descr.orcid,
+                name=other.name,
+                github_user=other.github_user,
+                affiliation=other.affiliation,
+                email=other.email,
+                orcid=other.orcid,
             )
         else:
-            return super().from_other_descr(descr)
+            return super().convert_from(other)
 
 
 class Maintainer(v0_2.Maintainer):
@@ -99,17 +99,17 @@ class Maintainer(v0_2.Maintainer):
         return value
 
     @classmethod
-    def from_other_descr(cls, descr: v0_2.Maintainer):
-        if isinstance(descr, v0_2.Maintainer):  # pyright: ignore[reportUnnecessaryIsInstance]
+    def convert_from(cls, other: v0_2.Maintainer, /):
+        if isinstance(other, v0_2.Maintainer):  # pyright: ignore[reportUnnecessaryIsInstance]
             return assert_all_params_set_explicitly(cls)(
-                name=descr.name,
-                github_user=descr.github_user,
-                affiliation=descr.affiliation,
-                email=descr.email,
-                orcid=descr.orcid,
+                name=other.name,
+                github_user=other.github_user,
+                affiliation=other.affiliation,
+                email=other.email,
+                orcid=other.orcid,
             )
         else:
-            return super().from_other_descr(descr)
+            return super().convert_from(other)
 
 
 class LinkedResourceDescr(Node):

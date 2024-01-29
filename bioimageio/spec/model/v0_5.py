@@ -1451,15 +1451,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return self
 
     @classmethod
-    def from_other_descr(cls, descr: v0_4.ModelDescr):
-        if isinstance(descr, v0_4.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
+    def convert_from(cls, other: v0_4.ModelDescr, /):
+        if isinstance(other, v0_4.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
             # TODO: change implementation to be type-safe without dumping
             # using the old convert function on dict data for now
-            model_data = descr.model_dump(mode="json", exclude_unset=True)
+            model_data = other.model_dump(mode="json", exclude_unset=True)
             convert_model_data_from_v0_4_to_0_5_0(model_data)
             return cls.model_validate(model_data)
         else:
-            return super().from_other_descr(descr)
+            return super().convert_from(other)
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
         data = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]

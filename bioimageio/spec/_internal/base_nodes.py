@@ -117,19 +117,17 @@ class Node(
             return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
 
     @classmethod
-    def from_other_descr(cls, descr: Never) -> Self:
-        """convert from a different description, e.g. different major/minor format_version.
+    def convert_from(cls, other: Never, /) -> Self:
+        """convert from another node, e.g. a description with different major/minor format_version.
 
         Args:
-            descr: A bioimageio description node
-            context: validation context for new description instance.
-                If `None` the stored validation context from `descr` is used.
+            other: A bioimageio description node
 
         Raises:
-            NotImplementedError: if conversion from given descr class is not implemented
-            ValidationError: If conversion failed/resulted in an invalid description
+            NotImplementedError: conversion from `other` object is not implemented
+            ValidationError: conversion failed
         """
-        raise NotImplementedError(f"converting {descr} to {cls.__name__} is not implemented")
+        raise NotImplementedError(f"converting {other.__class__.__name__} to {cls.__name__} is not implemented")
 
     @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
@@ -355,8 +353,8 @@ class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An inval
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
 
     @classmethod
-    def from_other_descr(cls, descr: ResourceDescriptionBase) -> Self:
-        return cls(**descr.model_dump())
+    def convert_from(cls, other: ResourceDescriptionBase, /) -> Self:
+        return cls(**other.model_dump())
 
 
 class StringNode(collections.UserString, ABC):

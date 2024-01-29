@@ -114,7 +114,7 @@ def _convert_descr(
     conversion_errors: List[ErrorEntry] = []
     conversion_warnings: List[WarningEntry] = []
     try:
-        converted = target_class.from_other_descr(descr)  # type: ignore
+        converted = target_class.convert_from(descr)  # type: ignore
     except ValidationError as e:
         for ee in e.errors(include_url=False):
             loc = ee["loc"]

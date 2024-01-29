@@ -161,35 +161,33 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
         return self
 
     @classmethod
-    def from_other_descr(cls, descr: v0_2.CollectionDescr, context: Optional[ValidationContext] = None) -> Self:
-        if isinstance(descr, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
-            with context or validation_context_var.get():
-                return assert_all_params_set_explicitly(cls)(
-                    attachments=[]
-                    if descr.attachments is None
-                    else [FileDescr(source=f) for f in descr.attachments.files],
-                    authors=[Author.from_other_descr(a) for a in descr.authors],
-                    badges=descr.badges,
-                    cite=descr.cite,
-                    collection=[
-                        CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {}))
-                        for entry in descr.collection
-                    ],
-                    config=descr.config,
-                    covers=descr.covers,
-                    description=descr.description,
-                    documentation=descr.documentation,
-                    format_version="0.3.0",
-                    git_repo=cast(Optional[HttpUrl], descr.git_repo),
-                    icon=descr.icon,
-                    id=descr.id,
-                    license=descr.license,  # type: ignore
-                    links=descr.links,
-                    maintainers=[Maintainer.from_other_descr(m) for m in descr.maintainers],
-                    name=descr.name,
-                    tags=descr.tags,
-                    type=descr.type,
-                    version=descr.version,
-                )
+    def convert_from(cls, other: v0_2.CollectionDescr, /) -> Self:
+        if isinstance(other, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
+            return assert_all_params_set_explicitly(cls)(
+                attachments=[] if other.attachments is None else [FileDescr(source=f) for f in other.attachments.files],
+                authors=[Author.convert_from(a) for a in other.authors],
+                badges=other.badges,
+                cite=other.cite,
+                collection=[
+                    CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {}))
+                    for entry in other.collection
+                ],
+                config=other.config,
+                covers=other.covers,
+                description=other.description,
+                documentation=other.documentation,
+                format_version="0.3.0",
+                git_repo=cast(Optional[HttpUrl], other.git_repo),
+                icon=other.icon,
+                id=other.id,
+                license=other.license,  # type: ignore
+                links=other.links,
+                maintainers=[Maintainer.convert_from(m) for m in other.maintainers],
+                name=other.name,
+                tags=other.tags,
+                type=other.type,
+                version=other.version,
+                **(other.model_extra or {}),
+            )
         else:
-            return super().from_other_descr(descr)
+            return super().convert_from(other)
