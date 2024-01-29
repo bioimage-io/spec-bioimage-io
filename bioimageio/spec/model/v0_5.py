@@ -1455,7 +1455,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if isinstance(descr, v0_4.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
             # TODO: change implementation to be type-safe without dumping
             # using the old convert function on dict data for now
-            model_data = descr.model_dump()
+            model_data = descr.model_dump(mode="json", exclude_unset=True)
             convert_model_data_from_v0_4_to_0_5_0(model_data)
             return cls.model_validate(model_data)
         else:

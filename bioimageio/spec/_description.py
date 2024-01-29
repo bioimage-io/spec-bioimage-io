@@ -132,7 +132,7 @@ def _convert_descr(
                 converted, conversion_errors, _ = _convert_descr(descr, target_class)
     except Exception as e:
         conversion_errors.append(
-            ErrorEntry(loc=(), msg=f"failed to convert due to {type(e)}: {e}", type="conversion_error")
+            ErrorEntry(loc=(), msg=f"failed to convert due to {type(e).__name__}: {e}", type="conversion_error")
         )
         converted = InvalidDescription(**dict(descr))
 

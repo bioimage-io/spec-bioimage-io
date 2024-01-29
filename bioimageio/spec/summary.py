@@ -29,7 +29,7 @@ class ValidationEntry(BaseModel):
 
 
 class ErrorEntry(ValidationEntry):
-    pass
+    traceback: List[str] = Field(default_factory=list)
 
 
 class WarningEntry(ValidationEntry):
@@ -51,9 +51,9 @@ class WarningEntry(ValidationEntry):
         return data
 
 
-def format_loc(loc: Loc, root: str = "root") -> str:
+def format_loc(loc: Loc) -> str:
     if not loc:
-        loc = (root,)
+        loc = ("__root__",)
 
     return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
 
@@ -64,18 +64,29 @@ class ValidationSummary(BaseModel):
     status: Literal["passed", "failed"]
     # status_details: Dict[str, str] = Field(default_factory=dict)
     errors: List[ErrorEntry] = Field(default_factory=list)
-    traceback: List[str] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
     bioimageio_spec_version: str = VERSION
 
-    def format(self) -> str:
-        es = "".join(f"\n    {format_loc(e.loc)}: {e.msg}" for e in self.errors)
-        ws = "".join(f"\n    {format_loc(w.loc)}: {w.msg}" for w in self.warnings)
+    def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
+        indent = "      " if root_loc else ""
+        src = "" if hide_source else f"\n{indent}source: {self.source_name}"
+        errs_wrns = self._format_errors_and_warnings(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
+        return f"{indent}{self.name.strip('.')}: {self.status}{src}{errs_wrns}"
 
-        es_msg = f"\nerrors: {es}" if es else ""
-        ws_msg = f"\nwarnings: {ws}" if ws else ""
+    def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
+        indent = "      " if root_loc else ""
+        if hide_tracebacks:
+            tbs = [""] * len(self.errors)
+        else:
+            tbs = [
+                ("\n      Traceback:\n      " if e.traceback else "") + "\n      ".join(e.traceback)
+                for e in self.errors
+            ]
 
-        return f"{self.name.strip('.')}: {self.status}\nsource: {self.source_name}{es_msg}{ws_msg}"
+        es = "".join(f"\n    {format_loc(root_loc + e.loc)}: {e.msg}{tb}" for e, tb in zip(self.errors, tbs))
+        ws = "".join(f"\n    {format_loc(root_loc + w.loc)}: {w.msg}" for w in self.warnings)
+
+        return f"\n{indent}errors: {es}" if es else "" + f"\n{indent}warnings: {ws}" if ws else ""
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()

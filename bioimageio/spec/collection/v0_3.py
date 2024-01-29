@@ -1,3 +1,4 @@
+from inspect import signature
 from typing import Any, Dict, List, Literal, Optional, Union, get_args
 
 from pydantic import PrivateAttr, model_validator
@@ -94,6 +95,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
         for i, entry in enumerate(self.collection):
             entry_data: Dict[str, Any] = dict(common_entry_content)
+            # set entry specific root as it might be adapted in the presence of an external entry source
+            entry_root = context.root
+            entry_file_name = context.file_name
+
             if entry.entry_source is not None:
                 if not context.perform_io_checks:
                     issue_warning(
@@ -106,6 +111,8 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                 external_data = open_bioimageio_yaml(entry.entry_source)
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
+                entry_root = external_data.original_root
+                entry_file_name = external_data.original_file_name
 
             # add/overwrite common+external entry content with in-place entry update
             entry_data.update(entry.entry_update)
@@ -129,9 +136,14 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             if type_ == "collection":
                 raise ValueError(f"collection[{i}] has invalid type; collections may not be nested!")
 
-            entry_descr = spec.build_description(entry_data)
+            entry_descr = spec.build_description(
+                entry_data, context=context.replace(root=entry_root, file_name=entry_file_name)
+            )
             if isinstance(entry_descr, InvalidDescription):
-                raise ValueError(f"Invalid collection entry collection[{i}]: {entry_descr.validation_summaries}")
+                formatted_summaries = "\n".join(
+                    vs.format(hide_source=True, root_loc=("collection", i)) for vs in entry_descr.validation_summaries
+                )
+                raise ValueError(f"Invalid collection entry collection[{i}]:\n{formatted_summaries}")
             elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
                 entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage, reportGeneralTypeIssues]
             else:
@@ -145,14 +157,23 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
     def from_other_descr(cls, descr: v0_2.CollectionDescr, context: Optional[ValidationContext] = None) -> Self:
         if isinstance(descr, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
             with context or validation_context_var.get():
+                n_kwargs = 6
+                if len(signature(cls).parameters) != n_kwargs:
+                    raise NotImplementedError(
+                        f"expected {cls.__name__} to accept {n_kwargs}, but it takes {len(signature(cls).parameters)}"
+                    )
+
                 return cls(
                     name=descr.name,
                     description=descr.description,
                     authors=[Author(name=a.name) for a in descr.authors],  # TODO: Author.from_other_descr
                     # maintainers=descr.maintainers,
                     cite=descr.cite,
-                    license=descr.license,  # type: ignore
-                    collection=[],
+                    license=descr.license,
+                    collection=[
+                        CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **entry.model_extra)
+                        for entry in descr.collection
+                    ],
                 )
         else:
             return super().from_other_descr(descr)

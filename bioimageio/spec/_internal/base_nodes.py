@@ -265,6 +265,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
         """
         raise NotImplementedError(f"converting {descr} to {cls.__name__} is not implemented")
 
+
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
@@ -285,13 +286,13 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
         context = context or validation_context_var.get()
         assert isinstance(data, dict)
         with context:
-            rd, errors, tb, val_warnings = cls._load_impl(deepcopy(data))
+            rd, errors, val_warnings = cls._load_impl(deepcopy(data))
 
         if context.warning_level > INFO:
-            all_warnings_context = context.copy(warning_level=INFO)
+            all_warnings_context = context.replace(warning_level=INFO)
             # get validation warnings by reloading
             with all_warnings_context:
-                _, _, _, val_warnings = cls._load_impl(deepcopy(data))
+                _, _, val_warnings = cls._load_impl(deepcopy(data))
 
         summary = ValidationSummary(
             bioimageio_spec_version=VERSION,
@@ -300,7 +301,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
             source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
             status="failed" if errors else "passed",
             warnings=val_warnings,
-            traceback=tb,
         )
 
         rd._validation_summaries.append(summary)
@@ -309,11 +309,10 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     @classmethod
     def _load_impl(
         cls, data: BioimageioYamlContent
-    ) -> Tuple[Union[Self, InvalidDescription], List[ErrorEntry], List[str], List[WarningEntry]]:
+    ) -> Tuple[Union[Self, InvalidDescription], List[ErrorEntry], List[WarningEntry]]:
         rd: Union[Self, InvalidDescription, None] = None
         val_errors: List[ErrorEntry] = []
         val_warnings: List[WarningEntry] = []
-        tb: List[str] = []
 
         try:
             rd = cls.model_validate(data)
@@ -336,8 +335,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
                     )
                 )
         except Exception as e:
-            val_errors.append(ErrorEntry(loc=(), msg=str(e), type=type(e).__name__))
-            tb = traceback.format_tb(e.__traceback__)
+            val_errors.append(
+                ErrorEntry(loc=(), msg=str(e), type=type(e).__name__, traceback=traceback.format_tb(e.__traceback__))
+            )
 
         if rd is None:
             try:
@@ -347,7 +347,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
                 format_version = cls.implemented_format_version
                 rd = InvalidDescription(type=resource_type, format_version=format_version)
 
-        return rd, val_errors, tb, val_warnings
+        return rd, val_errors, val_warnings
 
 
 class InvalidDescription(ResourceDescriptionBase, extra="allow", title="An invalid resource description"):

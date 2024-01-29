@@ -27,7 +27,7 @@ class ValidationContext(BaseModel, frozen=True):
     perform_io_checks: bool = settings.perform_io_checks
     """wether or not to perfrom validation that requires IO operations like download or reading a file from disk"""
 
-    def copy(  # pyright: ignore[reportIncompatibleMethodOverride]  # note that pydantic.BaseModel.copy is deprecated
+    def replace(
         self,
         root: Optional[Union[DirectoryPath, AnyUrl]] = None,
         warning_level: Optional[WarningLevel] = None,

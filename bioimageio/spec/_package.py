@@ -155,7 +155,7 @@ def _prepare_resource_package(
     else:
         opened = open_bioimageio_yaml(source)
         outer_context = validation_context_var.get()
-        with outer_context.copy(root=opened.original_root, file_name=opened.original_file_name):
+        with outer_context.replace(root=opened.original_root, file_name=opened.original_file_name):
             descr = build_description(opened.content)
 
     if isinstance(descr, InvalidDescription):
