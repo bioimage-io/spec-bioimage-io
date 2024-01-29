@@ -84,7 +84,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
     @model_validator(mode="after")
     def finalize_entries(self) -> Self:
         context = validation_context_var.get()
-        common_entry_content = {k: v for k, v in self if k not in ("id", "collection")}
+        common_entry_content = {
+            k: v for k, v in self.model_dump(mode="json", exclude_unset=True).items() if k not in ("id", "collection")
+        }
+        common_badges = common_entry_content.pop("badges", None)  # `badges` not valid for model entries
         base_id: Optional[ResourceId] = self.id
 
         seen_entry_ids: Dict[str, int] = {}
@@ -131,6 +134,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             type_ = entry_data.get("type")
             if type_ == "collection":
                 raise ValueError(f"collection[{i}] has invalid entry type; collections may not be nested!")
+
+            if type_ != "model" and common_badges is not None and "badges" not in entry_data:
+                # set badges from the collection root for non-model resources if not set for this specific entry
+                entry_data["badges"] = common_badges
 
             entry_descr = spec.build_description(
                 entry_data, context=context.replace(root=entry_root, file_name=entry_file_name)
