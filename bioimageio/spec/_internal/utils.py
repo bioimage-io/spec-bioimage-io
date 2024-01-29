@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import sys
+from functools import wraps
+from inspect import signature
 from pathlib import Path
-from typing import Dict, List, Tuple, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl
-from typing_extensions import Annotated
+from typing_extensions import Annotated, ParamSpec
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -85,3 +87,38 @@ def unindent(text: str, ignore_first_line: bool = False):
 
     indent = min(len(line) - len(line.lstrip(" ")) for line in filled_lines)
     return "\n".join(lines[:first] + [line[indent:] for line in lines[first:]])
+
+
+T = TypeVar("T")
+P = ParamSpec("P")
+
+
+def assert_all_params_set_explicitly(fn: Callable[P, T]) -> Callable[P, T]:
+    @wraps(fn)
+    def wrapper(*args: P.args, **kwargs: P.kwargs):
+        n_args = len(args)
+        missing: Set[str] = set()
+
+        for p in signature(fn).parameters.values():
+            if p.kind == p.POSITIONAL_ONLY:
+                if n_args == 0:
+                    missing.add(p.name)
+                else:
+                    n_args -= 1  # 'use' positional arg
+            elif p.kind == p.POSITIONAL_OR_KEYWORD:
+                if n_args == 0:
+                    if p.name not in kwargs:
+                        missing.add(p.name)
+                else:
+                    n_args -= 1  # 'use' positional arg
+            elif p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
+                pass
+            elif p.kind == p.KEYWORD_ONLY:
+                if p.name not in kwargs:
+                    missing.add(p.name)
+
+        assert not missing, f"parameters {missing} of {fn} are not set explicitly"
+
+        return fn(*args, **kwargs)
+
+    return wrapper
