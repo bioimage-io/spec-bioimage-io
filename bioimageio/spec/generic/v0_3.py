@@ -29,6 +29,7 @@ from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
+from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
@@ -74,6 +75,19 @@ class Author(v0_2.Author):
 
         return value
 
+    @classmethod
+    def from_other_descr(cls, descr: v0_2.Author):
+        if isinstance(descr, v0_2.Author):  # pyright: ignore[reportUnnecessaryIsInstance]
+            return assert_all_params_set_explicitly(cls)(
+                name=descr.name,
+                github_user=descr.github_user,
+                affiliation=descr.affiliation,
+                email=descr.email,
+                orcid=descr.orcid,
+            )
+        else:
+            return super().from_other_descr(descr)
+
 
 class Maintainer(v0_2.Maintainer):
     name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
@@ -83,6 +97,19 @@ class Maintainer(v0_2.Maintainer):
     def validate_gh_user(cls, value: str):
         _validate_gh_user(value)
         return value
+
+    @classmethod
+    def from_other_descr(cls, descr: v0_2.Maintainer):
+        if isinstance(descr, v0_2.Maintainer):  # pyright: ignore[reportUnnecessaryIsInstance]
+            return assert_all_params_set_explicitly(cls)(
+                name=descr.name,
+                github_user=descr.github_user,
+                affiliation=descr.affiliation,
+                email=descr.email,
+                orcid=descr.orcid,
+            )
+        else:
+            return super().from_other_descr(descr)
 
 
 class LinkedResourceDescr(Node):

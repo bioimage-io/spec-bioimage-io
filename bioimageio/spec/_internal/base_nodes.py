@@ -117,6 +117,21 @@ class Node(
             return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
 
     @classmethod
+    def from_other_descr(cls, descr: Never) -> Self:
+        """convert from a different description, e.g. different major/minor format_version.
+
+        Args:
+            descr: A bioimageio description node
+            context: validation context for new description instance.
+                If `None` the stored validation context from `descr` is used.
+
+        Raises:
+            NotImplementedError: if conversion from given descr class is not implemented
+            ValidationError: If conversion failed/resulted in an invalid description
+        """
+        raise NotImplementedError(f"converting {descr} to {cls.__name__} is not implemented")
+
+    @classmethod
     def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
         for klass in inspect.getmro(cls):
             if issubclass(klass, Node):
@@ -249,22 +264,6 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     @property
     def root(self) -> Union[AnyUrl, DirectoryPath]:
         return self._root
-
-    @classmethod
-    def from_other_descr(cls, descr: Never) -> Self:
-        """convert from a different resource description, e.g. different major/minor format_version.
-
-        Args:
-            descr: A bioimageio resource description instance
-            context: validation context for new description instance.
-                If `None` the stored validation context from `descr` is used.
-
-        Raises:
-            NotImplementedError: if conversion from given descr class is not implemented
-            ValidationError: If conversion failed/resulted in an invalid description
-        """
-        raise NotImplementedError(f"converting {descr} to {cls.__name__} is not implemented")
-
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):

@@ -1,5 +1,4 @@
-from inspect import signature
-from typing import Any, Dict, List, Literal, Optional, Union, get_args
+from typing import Any, Dict, List, Literal, Optional, Union, cast, get_args
 
 from pydantic import PrivateAttr, model_validator
 from typing_extensions import Self
@@ -11,6 +10,7 @@ from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import FileSource, NotEmpty, YamlValue
+from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
 from bioimageio.spec.collection import v0_2
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -157,23 +157,32 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
     def from_other_descr(cls, descr: v0_2.CollectionDescr, context: Optional[ValidationContext] = None) -> Self:
         if isinstance(descr, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
             with context or validation_context_var.get():
-                n_kwargs = 6
-                if len(signature(cls).parameters) != n_kwargs:
-                    raise NotImplementedError(
-                        f"expected {cls.__name__} to accept {n_kwargs}, but it takes {len(signature(cls).parameters)}"
-                    )
-
-                return cls(
-                    name=descr.name,
-                    description=descr.description,
-                    authors=[Author(name=a.name) for a in descr.authors],  # TODO: Author.from_other_descr
-                    # maintainers=descr.maintainers,
+                return assert_all_params_set_explicitly(cls)(
+                    attachments=[]
+                    if descr.attachments is None
+                    else [FileDescr(source=f) for f in descr.attachments.files],
+                    authors=[Author.from_other_descr(a) for a in descr.authors],
+                    badges=descr.badges,
                     cite=descr.cite,
-                    license=descr.license,
                     collection=[
-                        CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **entry.model_extra)
+                        CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {}))
                         for entry in descr.collection
                     ],
+                    config=descr.config,
+                    covers=descr.covers,
+                    description=descr.description,
+                    documentation=descr.documentation,
+                    format_version="0.3.0",
+                    git_repo=cast(Optional[HttpUrl], descr.git_repo),
+                    icon=descr.icon,
+                    id=descr.id,
+                    license=descr.license,  # type: ignore
+                    links=descr.links,
+                    maintainers=[Maintainer.from_other_descr(m) for m in descr.maintainers],
+                    name=descr.name,
+                    tags=descr.tags,
+                    type=descr.type,
+                    version=descr.version,
                 )
         else:
             return super().from_other_descr(descr)
