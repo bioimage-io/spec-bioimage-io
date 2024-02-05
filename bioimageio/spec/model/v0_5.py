@@ -5,6 +5,7 @@ from abc import ABC
 from datetime import datetime
 from itertools import chain
 from pathlib import PurePosixPath
+from re import M
 from typing import (
     Any,
     ClassVar,
@@ -21,6 +22,7 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    cast,
 )
 
 import numpy as np
@@ -30,13 +32,14 @@ from numpy.typing import NDArray
 from pydantic import (
     Field,
     StringConstraints,
+    TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.base_nodes import Node, NodeWithExplicitlySetFields
+from bioimageio.spec._internal.base_nodes import Converter, Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download, load_array
@@ -52,6 +55,7 @@ from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
+from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
@@ -72,7 +76,11 @@ from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
-from bioimageio.spec.model.v0_5_converter import convert_model_data_from_v0_4_to_0_5_0
+from bioimageio.spec.model.v0_5_converter import (
+    _analyze_tensor_shape,
+    _get_axis_description_from_letter,
+    convert_model_data_from_v0_4_to_0_5_0,
+)
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -874,6 +882,25 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
 
 
+class V0_4_InputTensorDescrConverter(Converter[v0_4.InputTensorDescr, "InputTensorDescr"]):
+    def _convert(
+        self, src: v0_4.InputTensorDescr, tgt: "type[InputTensorDescr] | type[dict[str, Any]]", lala: bool = False
+    ) -> "InputTensorDescr | dict[str, Any]":
+        return tgt(
+            # axes=axes, id=t.name, test_tensor=other[1], sample_tensor=other[2], data=dict(type=t.data_type)
+        )
+
+    #         @classmethod
+    # def convert_from(cls, other: Tuple[v0_4.InputTensorDescr, FileSource, Optional[FileSource]], /):
+    #     if isinstance(other, tuple) and len(other) == 3 and isinstance(other[0], v0_4.InputTensorDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
+    #         t = other[0]
+    #         reordered_shape = _analyze_tensor_shape(t.shape)
+    #         axes = [
+    #             _get_axis_description_from_letter(a, reordered_shape.get(i), halo=None)
+    #             for i, a in enumerate(t.axes)
+    #         ]
+
+
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
     """Input tensor id.
@@ -1147,6 +1174,36 @@ class WeightsDescr(Node):
                 raise ValueError(f"`weights.{wtype}.parent={entry.parent} not in specified weight formats: {entries}")
 
         return self
+
+
+class V0_4_ModelConverter(Converter[v0_4.ModelDescr, "ModelDescr"]):
+    def _convert(
+        self, src: v0_4.ModelDescr, tgt: "type[ModelDescr] | type[dict[str, Any]]"
+    ) -> "ModelDescr | dict[str, Any]":
+        return tgt(
+            attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
+            authors=[Author.convert_as_dict(a) for a in src.authors],
+            cite=src.cite,
+            config=src.config,
+            covers=src.covers,
+            description=src.description,
+            documentation=src.documentation,
+            format_version="0.5.0",
+            git_repo=cast(Optional[HttpUrl], src.git_repo),
+            icon=src.icon,
+            id=src.id,
+            license=src.license,  # type: ignore
+            links=src.links,
+            maintainers=[Maintainer.convert_as_dict(m) for m in src.maintainers],
+            name=src.name,
+            tags=src.tags,
+            type=src.type,
+            version=src.version,
+            inputs=[
+                InputTensorDescr.convert_as_dict((ipt, tt, st))
+                for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
+            ],
+        )
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
@@ -1449,17 +1506,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             self.covers.extend(generated_covers)
 
         return self
-
-    @classmethod
-    def convert_from(cls, other: v0_4.ModelDescr, /):
-        if isinstance(other, v0_4.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
-            # TODO: change implementation to be type-safe without dumping
-            # using the old convert function on dict data for now
-            model_data = other.model_dump(mode="json", exclude_unset=True)
-            convert_model_data_from_v0_4_to_0_5_0(model_data)
-            return cls.model_validate(model_data)
-        else:
-            return super().convert_from(other)
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
         data = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]

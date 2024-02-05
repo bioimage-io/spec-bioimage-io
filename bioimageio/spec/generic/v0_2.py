@@ -21,6 +21,7 @@ from bioimageio.spec._internal.types import (
     RelativeFilePath,
     ResourceId,
     Version,
+    YamlValue,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
@@ -185,11 +186,11 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """citations"""
 
     config: Annotated[
-        Dict[str, Any],
+        Dict[str, YamlValue],
         Field(
             examples=[
                 dict(
-                    bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    bioimageio={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
                     imagej={"macro_dir": "path/to/macro/file"},
                 )
             ],
@@ -203,7 +204,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     for example:
     ```yaml
     config:
-        bioimage_io:  # here is the domain name
+        bioimageio:  # here is the domain name
             my_custom_key: 3837283
             another_key:
                 nested: value

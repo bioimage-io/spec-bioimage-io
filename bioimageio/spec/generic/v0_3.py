@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from functools import partial
-from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
+from typing import Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 import requests
 from annotated_types import Len, LowerCase, MaxLen
@@ -7,8 +9,8 @@ from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal import settings
+from bioimageio.spec._internal.base_nodes import Converter, Node, NodeWithConverters, ResourceDescriptionBase
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
-from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import (
     ALERT,
     LICENSES,
@@ -24,12 +26,12 @@ from bioimageio.spec._internal.types import (
     NotEmpty,
     RelativeFilePath,
     Version,
+    YamlValue,
 )
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
-from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
@@ -64,7 +66,18 @@ def _validate_gh_user(username: str):
         raise ValueError(f"Could not find GitHub user '{username}'")
 
 
-class Author(v0_2.Author):
+class V0_2_AuthorConverter(Converter[v0_2.Author, "Author"]):
+    def convert(self, source: v0_2.Author, /):
+        return self.tgt(
+            name=source.name,
+            github_user=source.github_user,
+            affiliation=source.affiliation,
+            email=source.email,
+            orcid=source.orcid,
+        )
+
+
+class Author(v0_2.Author, NodeWithConverters[v0_2.Author], converters=((v0_2.Author, V0_2_AuthorConverter),)):
     name: Annotated[str, Predicate(_has_no_slash)]
     github_user: Optional[str] = None
 
@@ -75,21 +88,21 @@ class Author(v0_2.Author):
 
         return value
 
-    @classmethod
-    def convert_from(cls, other: v0_2.Author, /):
-        if isinstance(other, v0_2.Author):  # pyright: ignore[reportUnnecessaryIsInstance]
-            return assert_all_params_set_explicitly(cls)(
-                name=other.name,
-                github_user=other.github_user,
-                affiliation=other.affiliation,
-                email=other.email,
-                orcid=other.orcid,
-            )
-        else:
-            return super().convert_from(other)
+
+class V0_2_MaintainerConverter(Converter[v0_2.Maintainer, "Maintainer"]):
+    def convert(self, source: v0_2.Maintainer, /):
+        return self.tgt(
+            name=source.name,
+            github_user=source.github_user,
+            affiliation=source.affiliation,
+            email=source.email,
+            orcid=source.orcid,
+        )
 
 
-class Maintainer(v0_2.Maintainer):
+class Maintainer(
+    v0_2.Maintainer, NodeWithConverters[v0_2.Maintainer], converters=((v0_2.Maintainer, V0_2_MaintainerConverter))
+):
     name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
     github_user: str
 
@@ -97,19 +110,6 @@ class Maintainer(v0_2.Maintainer):
     def validate_gh_user(cls, value: str):
         _validate_gh_user(value)
         return value
-
-    @classmethod
-    def convert_from(cls, other: v0_2.Maintainer, /):
-        if isinstance(other, v0_2.Maintainer):  # pyright: ignore[reportUnnecessaryIsInstance]
-            return assert_all_params_set_explicitly(cls)(
-                name=other.name,
-                github_user=other.github_user,
-                affiliation=other.affiliation,
-                email=other.email,
-                orcid=other.orcid,
-            )
-        else:
-            return super().convert_from(other)
 
 
 class LinkedResourceDescr(Node):
@@ -155,11 +155,11 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """citations"""
 
     config: Annotated[
-        Dict[str, Any],
+        Dict[str, YamlValue],
         Field(
             examples=[
                 dict(
-                    bioimage_io={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    bioimageio={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
                     imagej={"macro_dir": "path/to/macro/file"},
                 )
             ],
@@ -172,7 +172,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     for example:
     ```yaml
     config:
-        bioimage_io:  # here is the domain name
+        bioimageio:  # here is the domain name
             my_custom_key: 3837283
             another_key:
                 nested: value
