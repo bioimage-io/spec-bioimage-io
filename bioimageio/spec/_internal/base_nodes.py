@@ -20,8 +20,6 @@ from typing import (
     Protocol,
     Tuple,
     Type,
-    TypedDict,
-    TypeVar,
     Union,
     cast,
     get_type_hints,
@@ -39,7 +37,17 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, LiteralString, Never, ParamSpec, ParamSpecKwargs, Self, Unpack
+from typing_extensions import (
+    Annotated,
+    LiteralString,
+    Never,
+    ParamSpec,
+    ParamSpecKwargs,
+    Self,
+    TypedDict,
+    TypeVar,
+    Unpack,
+)
 
 from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import (
@@ -177,72 +185,21 @@ class Node(
 
 
 SRC = TypeVar("SRC", bound=Node)
-
-
-class NodeWithConverters(Node, Generic[SRC]):
-    __slots__ = ("_converters",)
-
-    @classmethod
-    def __init_subclass__(
-        cls, *, converters: Tuple[Tuple[type[SRC], Type[Converter[SRC, Self]]], ...] = (), **kwargs: Any
-    ):
-        cls._converters = tuple(v(k, cls) for k, v in converters)
-        super().__init_subclass__(**kwargs)
-
-    # @classmethod
-    # def __pydantic_init_subclass__(
-    #     cls, *, converters: Tuple[Tuple[type[SRC], Type[Converter[SRC, Self]]], ...] = (), **kwargs: Any
-    # ):
-    #     cls._converters = tuple(v(k, cls) for k, v in converters)
-    #     super().__pydantic_init_subclass__(**kwargs)
-
-    @classmethod
-    def convert(cls, source: SRC, /) -> Self:
-        """convert from a `source` node, e.g. a description with different major/minor format_version.
-
-        Args:
-            source: A bioimageio description node
-
-        Raises:
-            NotImplementedError: conversion from `source` object is not implemented
-            ValidationError: conversion failed
-        """
-        data = cls.convert_as_dict(source)
-        return assert_all_params_set_explicitly(cls)(**data)
-
-    @classmethod
-    def convert_as_dict(cls, source: SRC, /) -> Dict[str, Any]:
-        for converter in cls._converters:
-            if isinstance(source, converter.src):
-                break
-        else:
-
-            def get_v(klass: Any):
-                v = getattr(klass, "implemented_format_version", "")
-                if v:
-                    return f" {v}"
-                else:
-                    return ""
-
-            raise NotImplementedError(
-                f"converting {source.__class__.__name__}{get_v(source)} "
-                f"to {cls.__name__}{get_v(cls)} is not implemented"
-            )
-
-        return converter.convert_as_dict(source)
-
-
 TGT = TypeVar("TGT", bound=Node)
 
 
 class Converter(Generic[SRC, TGT], ABC):
-    def __init__(self, src: Type[SRC], tgt: Type[TGT]):
+    # src: ClassVar[Type[SRC]]
+    # tgt: ClassVar[Type[TGT]]
+    # note: the above is not yet possible, see https://github.com/python/typing/discussions/1424
+    # we therefore use an instance
+    def __init__(self, src: Type[SRC], tgt: Type[TGT], /):
+        super().__init__()
         self.src: Final[Type[SRC]] = src
         self.tgt: Final[Type[TGT]] = tgt
-        super().__init__()
 
     @abstractmethod
-    def _convert(self, src: SRC, tgt: "type[TGT | dict[str, Any]]") -> "TGT | dict[str, Any]":
+    def _convert(self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /) -> "TGT | dict[str, Any]":
         ...
 
     def convert(self, source: SRC, /) -> TGT:
@@ -257,22 +214,35 @@ class Converter(Generic[SRC, TGT], ABC):
         data = self.convert_as_dict(source)
         return assert_all_params_set_explicitly(self.tgt)(**data)
 
-    def convert_as_dict(self, source: SRC, /) -> Dict[str, Any]:
+    def convert_as_dict(self, source: SRC) -> Dict[str, Any]:
         return cast(Dict[str, Any], self._convert(source, dict))
 
 
-# PS = TypeVar("PS", bound=ParamSpecKwargs)
-P = ParamSpec("P")
+class ConverterKwargs(TypedDict):
+    pass
 
 
-class ConverterWithKwargs(Converter[SRC, TGT], Generic[SRC, TGT, P], ABC):
+KW = TypeVar("KW", bound=ConverterKwargs, default=ConverterKwargs)
+
+
+class ConverterWithKwargs(Generic[SRC, TGT, KW], ABC):
+    # src: ClassVar[Type[SRC]]
+    # tgt: ClassVar[Type[TGT]]
+    # note: the above is not yet possible, see https://github.com/python/typing/discussions/1424
+    # we therefore use an instance
+    def __init__(self, src: Type[SRC], tgt: Type[TGT], /):
+        super().__init__()
+        self.src: Final[Type[SRC]] = src
+        self.tgt: Final[Type[TGT]] = tgt
+
     @abstractmethod
-    def _convert(
-        self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: P.args, **kwargs: P.kwargs
-    ) -> "TGT | dict[str, Any]":
+    def _convert(self, src: SRC, tgt: "type[TGT | dict[str, Any]]", kwargs: KW, /) -> "TGT | dict[str, Any]":
         ...
 
-    def convert(self, source: SRC, /, *args: P.args, **kwargs: P.kwargs) -> TGT:
+    # note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399
+    #       we therefore use `kwargs` (and not `**kwargs`)
+    # def convert(self, source: SRC, /, **kwargs: Unpack[KW]) -> TGT:
+    def convert(self, source: SRC, kwargs: KW, /) -> TGT:
         """convert `source` node
 
         Args:
@@ -281,11 +251,11 @@ class ConverterWithKwargs(Converter[SRC, TGT], Generic[SRC, TGT, P], ABC):
         Raises:
             ValidationError: conversion failed
         """
-        data = self.convert_as_dict(source, *args, **kwargs)
+        data = self.convert_as_dict(source, kwargs)
         return assert_all_params_set_explicitly(self.tgt)(**data)
 
-    def convert_as_dict(self, source: SRC, /, *args: P.args, **kwargs: P.kwargs) -> Dict[str, Any]:
-        return cast(Dict[str, Any], self._convert(source, dict, *args, **kwargs))
+    def convert_as_dict(self, source: SRC, kwargs: KW) -> Dict[str, Any]:
+        return cast(Dict[str, Any], self._convert(source, dict, kwargs))
 
 
 class NodeWithExplicitlySetFields(Node):
@@ -293,7 +263,7 @@ class NodeWithExplicitlySetFields(Node):
     """set set these fields explicitly with their default value if they are not set,
     such that they are always included even when dumping with 'exlude_unset'"""
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def set_fields_explicitly(cls, data: Union[Any, Dict[str, Any]]) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
@@ -329,7 +299,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def ignore_future_patch(cls, data: Dict[str, Any], /) -> Dict[str, Any]:
         def maj_min(v: str):
@@ -460,8 +430,6 @@ class ConvertToInvalid(Converter[ResourceDescriptionBase, "InvalidDescription"])
 
 class InvalidDescription(
     ResourceDescriptionBase,
-    NodeWithConverters[ResourceDescriptionBase],
-    converters=((ResourceDescriptionBase, ConvertToInvalid),),
     extra="allow",
     title="An invalid resource description",
 ):

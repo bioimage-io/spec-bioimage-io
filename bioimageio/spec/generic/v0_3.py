@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Dict, List, Literal, Optional, Sequence, TypeVar, Union
+from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 import requests
 from annotated_types import Len, LowerCase, MaxLen
@@ -66,18 +66,7 @@ def _validate_gh_user(username: str):
         raise ValueError(f"Could not find GitHub user '{username}'")
 
 
-class V0_2_AuthorConverter(Converter[v0_2.Author, "Author"]):
-    def convert(self, source: v0_2.Author, /):
-        return self.tgt(
-            name=source.name,
-            github_user=source.github_user,
-            affiliation=source.affiliation,
-            email=source.email,
-            orcid=source.orcid,
-        )
-
-
-class Author(v0_2.Author, NodeWithConverters[v0_2.Author], converters=((v0_2.Author, V0_2_AuthorConverter),)):
+class Author(v0_2.Author):
     name: Annotated[str, Predicate(_has_no_slash)]
     github_user: Optional[str] = None
 
@@ -89,20 +78,21 @@ class Author(v0_2.Author, NodeWithConverters[v0_2.Author], converters=((v0_2.Aut
         return value
 
 
-class V0_2_MaintainerConverter(Converter[v0_2.Maintainer, "Maintainer"]):
-    def convert(self, source: v0_2.Maintainer, /):
-        return self.tgt(
-            name=source.name,
-            github_user=source.github_user,
-            affiliation=source.affiliation,
-            email=source.email,
-            orcid=source.orcid,
+class _AuthorConv(Converter[v0_2.Author, Author]):
+    def _convert(self, src: v0_2.Author, tgt: "type[Author] | type[dict[str, Any]]") -> "Author | dict[str, Any]":
+        return tgt(
+            name=src.name,
+            github_user=src.github_user,
+            affiliation=src.affiliation,
+            email=src.email,
+            orcid=src.orcid,
         )
 
 
-class Maintainer(
-    v0_2.Maintainer, NodeWithConverters[v0_2.Maintainer], converters=((v0_2.Maintainer, V0_2_MaintainerConverter))
-):
+author_conv = _AuthorConv(v0_2.Author, Author)
+
+
+class Maintainer(v0_2.Maintainer):
     name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
     github_user: str
 
@@ -110,6 +100,22 @@ class Maintainer(
     def validate_gh_user(cls, value: str):
         _validate_gh_user(value)
         return value
+
+
+class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
+    def _convert(
+        self, src: v0_2.Maintainer, tgt: "type[Maintainer] | type[dict[str, Any]]"
+    ) -> "Maintainer | dict[str, Any]":
+        return tgt(
+            name=src.name,
+            github_user=src.github_user,
+            affiliation=src.affiliation,
+            email=src.email,
+            orcid=src.orcid,
+        )
+
+
+maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
 
 
 class LinkedResourceDescr(Node):
@@ -272,7 +278,7 @@ class GenericDescrBase(GenericModelDescrBase):
     format_version: Literal["0.3.0"] = "0.3.0"
     """The **format** version of this resource specification"""
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
