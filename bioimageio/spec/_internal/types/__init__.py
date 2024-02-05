@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Literal, NewType, Sequence, Tuple, TypeVar, 
 
 import annotated_types
 from pydantic import StringConstraints
-from typing_extensions import Annotated
+from typing_extensions import Annotated, TypeAliasType
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as AbsoluteFilePath
@@ -70,9 +70,9 @@ YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
 ]
 YamlArray = List["YamlValue"]
 YamlMapping = Dict[YamlKey, "YamlValue"]
-# note: for use in pydantic see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
-#   and don't open another issue a la https://github.com/pydantic/pydantic/issues/8021
-YamlValue = Union[YamlLeafValue, YamlArray, YamlMapping]
+# note: 'TypeAliasType' allows use of recursive type in pydantic:
+#       https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
+YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, YamlArray, YamlMapping])
 
 # derived types
 DatasetId = NewType("DatasetId", _ResourceIdAnno)
