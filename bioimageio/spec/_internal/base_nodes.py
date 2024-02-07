@@ -64,7 +64,7 @@ from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     validation_context_var,
 )
-from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
+from bioimageio.spec.summary import ErrorEntry, ValidationSummary, ValidationSummaryDetail, WarningEntry
 
 
 class Node(
@@ -365,7 +365,7 @@ else:
 class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol):
     """base class for all resource descriptions"""
 
-    _validation_summaries: List[ValidationSummary] = PrivateAttr(default_factory=list)
+    _validation_summary: Optional[ValidationSummary] = PrivateAttr(None)
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
     implemented_format_version: ClassVar[str]
@@ -400,10 +400,10 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
         return data
 
     @property
-    def validation_summaries(self) -> List[ValidationSummary]:
-        return self._validation_summaries
+    def validation_summary(self) -> Optional[ValidationSummary]:
+        return self._validation_summary
 
-    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(validation_context_var.get().root)
+    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(default_factory=lambda: validation_context_var.get().root)
 
     @property
     def root(self) -> Union[AnyUrl, DirectoryPath]:
@@ -437,16 +437,21 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))
 
-        summary = ValidationSummary(
-            bioimageio_spec_version=VERSION,
-            errors=errors,
-            name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",
+        rd._validation_summary = ValidationSummary(
+            name="bioimageio.spec validation",
             source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
             status="failed" if errors else "passed",
-            warnings=val_warnings,
+            details=[
+                ValidationSummaryDetail(
+                    bioimageio_spec_version=VERSION,
+                    errors=errors,
+                    name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",
+                    status="failed" if errors else "passed",
+                    warnings=val_warnings,
+                )
+            ],
         )
 
-        rd._validation_summaries.append(summary)
         return rd
 
     @classmethod

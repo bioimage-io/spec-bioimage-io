@@ -36,7 +36,7 @@ class WarningEntry(ValidationEntry):
     severity: WarningSeverity = WARNING
     severity_name: WarningSeverityName = WARNING_NAME
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def sync_severity_with_severity_name(cls, data: Union[Mapping[Any, Any], Any]) -> Any:
         if isinstance(data, dict):
@@ -58,20 +58,17 @@ def format_loc(loc: Loc) -> str:
     return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
 
 
-class ValidationSummary(BaseModel):
+class ValidationSummaryDetail(BaseModel):
     name: str
-    source_name: str
     status: Literal["passed", "failed"]
-    # status_details: Dict[str, str] = Field(default_factory=dict)
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
     bioimageio_spec_version: str = VERSION
 
-    def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
+    def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
         indent = "      " if root_loc else ""
-        src = "" if hide_source else f"\n{indent}source: {self.source_name}"
         errs_wrns = self._format_errors_and_warnings(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
-        return f"{indent}{self.name.strip('.')}: {self.status}{src}{errs_wrns}"
+        return f"{indent}{self.name.strip('.')}: {self.status}{errs_wrns}"
 
     def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
         indent = "      " if root_loc else ""
@@ -87,6 +84,22 @@ class ValidationSummary(BaseModel):
         ws = "".join(f"\n    {format_loc(root_loc + w.loc)}: {w.msg}" for w in self.warnings)
 
         return f"\n{indent}errors: {es}" if es else "" + f"\n{indent}warnings: {ws}" if ws else ""
+
+    def __str__(self):
+        return f"{self.__class__.__name__}:\n" + self.format()
+
+
+class ValidationSummary(BaseModel):
+    name: str
+    source_name: str
+    status: Literal["passed", "failed"]
+    details: List[ValidationSummaryDetail]
+
+    def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
+        indent = "   " if root_loc else ""
+        src = "" if hide_source else f"\n{indent}source: {self.source_name}"
+        details = f"\n{indent}".join(d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc) for d in self.details)
+        return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()

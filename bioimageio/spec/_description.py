@@ -16,9 +16,9 @@ import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import InvalidDescription
 from bioimageio.spec._internal.constants import DISCOVER, ERROR, VERSION
-from bioimageio.spec._internal.types import BioimageioYamlContent, FormatVersionPlaceholder, RelativeFilePath
+from bioimageio.spec._internal.types import BioimageioYamlContent, FormatVersionPlaceholder
 from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
-from bioimageio.spec.summary import ErrorEntry, ValidationSummary, WarningEntry
+from bioimageio.spec.summary import ErrorEntry, ValidationSummary, ValidationSummaryDetail, WarningEntry
 
 _ResourceDescr_v0_2 = Union[
     Annotated[
@@ -159,18 +159,17 @@ def build_description(
         as_rd_class = _get_rd_class(typ, as_format)
         rd, conversion_errors, conversion_warnings = _convert_descr(rd, as_rd_class)
 
-        conversion_summary = ValidationSummary(
+        conversion_summary = ValidationSummaryDetail(
             bioimageio_spec_version=VERSION,
             errors=conversion_errors,
             name=(
                 f"bioimageio.spec conversion from {typ} {rd_class.implemented_format_version} "
                 f"to {typ} {as_rd_class.implemented_format_version}."
             ),
-            source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
             status="failed" if conversion_errors else "passed",
             warnings=conversion_warnings,
         )
-        rd.validation_summaries.append(conversion_summary)
+        rd.validation_summary.details.append(conversion_summary)
 
     return rd
 
@@ -185,4 +184,4 @@ def validate_format(
     with context or validation_context_var.get():
         rd = build_description(data, as_format=as_format)
 
-    return rd.validation_summaries[0]
+    return rd.validation_summary
