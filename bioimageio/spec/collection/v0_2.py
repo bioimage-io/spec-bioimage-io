@@ -144,7 +144,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             )
             if isinstance(entry_descr, InvalidDescription):
                 formatted_summaries = "\n".join(
-                    vs.format(hide_source=True, root_loc=("collection", i)) for vs in entry_descr.validation_summaries
+                    vs.format(hide_source=True, root_loc=("collection", i)) for vs in entry_descr.validation_summary
                 )
                 raise ValueError(f"Invalid collection entry collection[{i}]:\n{formatted_summaries}")
             elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)

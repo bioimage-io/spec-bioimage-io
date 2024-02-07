@@ -34,11 +34,11 @@ from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
+from bioimageio.spec.generic._v0_3_converter import convert_from_older_format
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
-from bioimageio.spec.generic.v0_3_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -89,7 +89,7 @@ class _AuthorConv(Converter[v0_2.Author, Author]):
         )
 
 
-author_conv = _AuthorConv(v0_2.Author, Author)
+_author_conv = _AuthorConv(v0_2.Author, Author)
 
 
 class Maintainer(v0_2.Maintainer):
@@ -113,7 +113,7 @@ class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
         )
 
 
-maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
+_maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
 
 
 class LinkedResourceDescr(Node):

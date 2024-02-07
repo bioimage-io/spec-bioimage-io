@@ -39,7 +39,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.base_nodes import Converter, Node, NodeWithExplicitlySetFields
+from bioimageio.spec._internal.base_nodes import Converter, InvalidDescription, Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download, load_array
@@ -63,7 +63,7 @@ from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource, author_conv, maintainer_conv
+from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource, _author_conv, _maintainer_conv
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model import v0_4
@@ -312,7 +312,7 @@ class ChannelAxis(AxisBase):
 
     @model_validator(mode="before")
     @classmethod
-    def set_size_or_channel_names(cls, data: Dict[str, Any], /):
+    def _set_size_or_channel_names(cls, data: Dict[str, Any], /):
         channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
         size = data.get("size", "#channel_names")
         if size == "#channel_names" and channel_names == "channel{i}":
@@ -1517,13 +1517,27 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
+    @model_validator(mode="before")
+    @classmethod
+    def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        if (
+            data.get("type") == "model"
+            and isinstance(fv := data.get("format_version"), str)
+            and (fv.startswith("0.3.") or fv.startswith("0.4."))
+        ):
+            m04 = v0_4.ModelDescr.load(data)
+            if not isinstance(m04, InvalidDescription):
+                return _model_conv.convert_as_dict(m04)
+
+        return data
+
 
 class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
     def _convert(
         self, src: v0_4.ModelDescr, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
         def conv_authors(auths: Optional[Sequence[v0_4.Author]]):
-            conv = author_conv.convert if TYPE_CHECKING else author_conv.convert_as_dict
+            conv = _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
             return None if auths is None else [conv(a) for a in auths]
 
         if TYPE_CHECKING:
@@ -1535,7 +1549,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
 
         return tgt(
             attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
-            authors=[author_conv.convert_as_dict(a) for a in src.authors],
+            authors=[_author_conv.convert_as_dict(a) for a in src.authors],
             cite=src.cite,
             config=src.config,
             covers=src.covers,
@@ -1547,7 +1561,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             id=src.id,
             license=src.license,  # type: ignore
             links=src.links,
-            maintainers=[maintainer_conv.convert_as_dict(m) for m in src.maintainers],
+            maintainers=[_maintainer_conv.convert_as_dict(m) for m in src.maintainers],
             name=src.name,
             tags=src.tags,
             type=src.type,
@@ -1556,7 +1570,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                 input_tensor_conv.convert_as_dict(ipt, tt, st)
                 for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
             ],
-            weights=WeightsDescr(
+            weights=(WeightsDescr if TYPE_CHECKING else dict)(
                 keras_hdf5=(w := src.weights.keras_hdf5)
                 and (KerasHdf5WeightsDescr if TYPE_CHECKING else dict)(
                     authors=conv_authors(w.authors),
@@ -1585,8 +1599,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     else arch_lib_conv(w.architecture, w.kwargs),
                     pytorch_version=w.pytorch_version or Version("1.10"),
                     dependencies=(EnvironmentFileDescr if TYPE_CHECKING else dict)(
-                        source=cast(FileSource,
-                            str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :]
+                        source=cast(
+                            FileSource,
+                            str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
                         )
                     ),
                 ),
@@ -1606,10 +1621,11 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     dependencies=None
                     if w.dependencies is None
                     else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
-                        source=cast(FileSource,
+                        source=cast(
+                            FileSource,
                             str(w.dependencies)[len("conda:") :]
                             if str(w.dependencies).startswith("conda:")
-                            else str(w.dependencies)
+                            else str(w.dependencies),
                         )
                     ),
                 ),
@@ -1624,4 +1640,4 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
         )
 
 
-model_conv = _ModelConv(v0_4.ModelDescr, ModelDescr)
+_model_conv = _ModelConv(v0_4.ModelDescr, ModelDescr)

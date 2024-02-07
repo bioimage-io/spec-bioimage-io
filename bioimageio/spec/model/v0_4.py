@@ -40,7 +40,7 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
-from bioimageio.spec._internal.types import Version as Version
+from bioimageio.spec._internal.types import Version as _Version
 from bioimageio.spec._internal.types.field_validation import (
     AfterValidator,
     RestrictCharacters,
@@ -56,7 +56,7 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
-from bioimageio.spec.model.v0_4_converter import convert_from_older_format
+from bioimageio.spec.model._v0_4_converter import convert_from_older_format
 from bioimageio.spec.utils import download, load_array
 
 AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
@@ -203,9 +203,9 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Annotated[
-        Union[Version, None],
+        Union[_Version, None],
         warn(
-            Version,
+            _Version,
             "Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
             ALERT,
         ),
@@ -263,9 +263,9 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Annotated[
-        Union[Version, None],
+        Union[_Version, None],
         warn(
-            Version, msg="Missing PyTorch version. Please specify the PyTorch version these weights were created with."
+            _Version, msg="Missing PyTorch version. Please specify the PyTorch version these weights were created with."
         ),
     ] = None
     """Version of the PyTorch library used.
@@ -277,9 +277,9 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Annotated[
-        Union[Version, None],
+        Union[_Version, None],
         warn(
-            Version, msg="Missing Pytorch version. Please specify the PyTorch version these weights were created with."
+            _Version, msg="Missing Pytorch version. Please specify the PyTorch version these weights were created with."
         ),
     ] = None
     """Version of the PyTorch library used."""
@@ -289,9 +289,9 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Annotated[
-        Union[Version, None],
+        Union[_Version, None],
         warn(
-            Version,
+            _Version,
             msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
         ),
     ] = None
@@ -306,9 +306,9 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Annotated[
-        Union[Version, None],
+        Union[_Version, None],
         warn(
-            Version,
+            _Version,
             msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
         ),
     ] = None
@@ -936,9 +936,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 

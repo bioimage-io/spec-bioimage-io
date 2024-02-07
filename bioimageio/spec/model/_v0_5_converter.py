@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.types import BioimageioYamlContent, YamlKey, YamlValue
-from bioimageio.spec.generic.v0_3_converter import convert_attachments
+from bioimageio.spec.generic._v0_3_converter import convert_attachments
 
 
 def convert_model_data_from_v0_4_to_0_5_0(data: BioimageioYamlContent) -> None:

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Optional, Union, cast, get_args
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast, get_args
 
 from pydantic import PrivateAttr, model_validator
 from typing_extensions import Self
@@ -10,15 +10,18 @@ from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import FileSource, NotEmpty, YamlValue
-from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
-from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
+from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.collection import v0_2
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import GenericDescrBase
+from bioimageio.spec.generic.v0_3 import (
+    GenericDescrBase,
+    _author_conv,  # pyright: ignore[reportPrivateUsage]
+    _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
+)
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
@@ -146,13 +149,13 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             entry_descr = spec.build_description(
                 entry_data, context=context.replace(root=entry_root, file_name=entry_file_name)
             )
+            assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescription):
-                formatted_summaries = "\n".join(
-                    vs.format(hide_source=True, root_loc=("collection", i)) for vs in entry_descr.validation_summaries
+                raise ValueError(
+                    f"Invalid collection entry collection[{i}]:\n{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
                 )
-                raise ValueError(f"Invalid collection entry collection[{i}]:\n{formatted_summaries}")
             elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
-                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage, reportGeneralTypeIssues]
+                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage]
             else:
                 raise ValueError(
                     f"{entry_descr.type} {entry_descr.format_version} entries "
@@ -160,34 +163,48 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                 )
         return self
 
+    @model_validator(mode="before")
     @classmethod
-    def convert_from(cls, other: v0_2.CollectionDescr, /) -> Self:
-        if isinstance(other, v0_2.CollectionDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
-            return assert_all_params_set_explicitly(cls)(
-                attachments=[] if other.attachments is None else [FileDescr(source=f) for f in other.attachments.files],
-                authors=[Author.convert_from(a) for a in other.authors],
-                badges=other.badges,
-                cite=other.cite,
-                collection=[
-                    CollectionEntry(entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {}))
-                    for entry in other.collection
-                ],
-                config=other.config,
-                covers=other.covers,
-                description=other.description,
-                documentation=other.documentation,
-                format_version="0.3.0",
-                git_repo=cast(Optional[HttpUrl], other.git_repo),
-                icon=other.icon,
-                id=other.id,
-                license=other.license,  # type: ignore
-                links=other.links,
-                maintainers=[Maintainer.convert_from(m) for m in other.maintainers],
-                name=other.name,
-                tags=other.tags,
-                type=other.type,
-                version=other.version,
-                **(other.model_extra or {}),
+    def _convert(cls, data: Dict[str, Any], /) -> Dict[str, Any]:
+        if (
+            data.get("type") == "collection"
+            and isinstance(fv := data.get("format_version"), str)
+            and fv.startswith("0.2.")
+        ):
+            old = v0_2.CollectionDescr.load(data)
+            if isinstance(old, InvalidDescription):
+                return data
+
+            return cast(
+                Dict[str, Any],
+                (cls if TYPE_CHECKING else dict)(
+                    attachments=[] if old.attachments is None else [FileDescr(source=f) for f in old.attachments.files],
+                    authors=[_author_conv.convert_as_dict(a) for a in old.authors],  # type: ignore
+                    badges=old.badges,
+                    cite=old.cite,
+                    collection=[
+                        (CollectionEntry if TYPE_CHECKING else dict)(
+                            entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {})
+                        )
+                        for entry in old.collection
+                    ],
+                    config=old.config,
+                    covers=old.covers,
+                    description=old.description,
+                    documentation=old.documentation,
+                    format_version="0.3.0",
+                    git_repo=cast(Optional[HttpUrl], old.git_repo),
+                    icon=old.icon,
+                    id=old.id,
+                    license=old.license,  # type: ignore
+                    links=old.links,
+                    maintainers=[_maintainer_conv.convert_as_dict(m) for m in old.maintainers],  # type: ignore
+                    name=old.name,
+                    tags=old.tags,
+                    type=old.type,
+                    version=old.version,
+                    **(old.model_extra or {}),
+                ),
             )
-        else:
-            return super().convert_from(other)
+
+        return data

@@ -108,37 +108,6 @@ def _get_rd_class(typ: Any, format_version: Any) -> Type[ResourceDescr]:
 RD = TypeVar("RD", bound=ResourceDescr)
 
 
-def _convert_descr(
-    descr: ResourceDescr, target_class: Type[RD]
-) -> Tuple[Union[RD, InvalidDescription], List[ErrorEntry], List[WarningEntry]]:
-    conversion_errors: List[ErrorEntry] = []
-    conversion_warnings: List[WarningEntry] = []
-    try:
-        converted = target_class.convert_from(descr)  # type: ignore
-    except ValidationError as e:
-        for ee in e.errors(include_url=False):
-            loc = ee["loc"]
-            msg = ee["msg"]
-            etype = ee["type"]
-            if (severity := ee.get("ctx", {}).get("severity", ERROR)) < ERROR:
-                conversion_warnings.append(WarningEntry(loc=loc, msg=msg, type=etype, severity=severity))
-            else:
-                conversion_errors.append(ErrorEntry(loc=loc, msg=msg, type=etype))
-
-        if conversion_errors:
-            converted = InvalidDescription(**dict(descr))
-        else:
-            with validation_context_var.get().model_copy(update=dict(warning_level=ERROR)):
-                converted, conversion_errors, _ = _convert_descr(descr, target_class)
-    except Exception as e:
-        conversion_errors.append(
-            ErrorEntry(loc=(), msg=f"failed to convert due to {type(e).__name__}: {e}", type="conversion_error")
-        )
-        converted = InvalidDescription(**dict(descr))
-
-    return converted, conversion_errors, conversion_warnings
-
-
 def build_description(
     content: BioimageioYamlContent,
     /,
@@ -155,21 +124,13 @@ def build_description(
     rd_class = _get_rd_class(typ, content.get("format_version"))
 
     rd = rd_class.load(content, context=context)
+    assert rd.validation_summary is not None
     if as_format != DISCOVER and not isinstance(rd, InvalidDescription):
+        discover_details = rd.validation_summary.details
         as_rd_class = _get_rd_class(typ, as_format)
-        rd, conversion_errors, conversion_warnings = _convert_descr(rd, as_rd_class)
-
-        conversion_summary = ValidationSummaryDetail(
-            bioimageio_spec_version=VERSION,
-            errors=conversion_errors,
-            name=(
-                f"bioimageio.spec conversion from {typ} {rd_class.implemented_format_version} "
-                f"to {typ} {as_rd_class.implemented_format_version}."
-            ),
-            status="failed" if conversion_errors else "passed",
-            warnings=conversion_warnings,
-        )
-        rd.validation_summary.details.append(conversion_summary)
+        rd = as_rd_class.load(content, context=context)
+        assert rd.validation_summary is not None
+        rd.validation_summary.details[:0] = discover_details
 
     return rd
 
@@ -184,4 +145,5 @@ def validate_format(
     with context or validation_context_var.get():
         rd = build_description(data, as_format=as_format)
 
+    assert rd.validation_summary is not None
     return rd.validation_summary

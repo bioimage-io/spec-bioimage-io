@@ -18,7 +18,7 @@ from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.generic.v0_2_converter import DOI_PREFIXES
+from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 
 yaml = YAML(typ="safe")
 
@@ -111,7 +111,8 @@ def check_bioimageio_yaml(
         rd = build_description(data, as_format=format_version)
         assert not is_invalid or (is_invalid and isinstance(rd, InvalidDescription)), "Invalid RDF passed validation"
 
-    summary = rd.validation_summaries[0]
+    summary = rd.validation_summary
+    assert summary is not None
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
         assert isinstance(rd, InvalidDescription)

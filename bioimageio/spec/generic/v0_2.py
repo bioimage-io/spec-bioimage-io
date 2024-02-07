@@ -24,7 +24,7 @@ from bioimageio.spec._internal.types import (
     YamlValue,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec.generic.v0_2_converter import convert_from_older_format
+from bioimageio.spec.generic._v0_2_converter import convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -292,9 +292,9 @@ class GenericDescrBase(GenericModelDescrBase):
     The `format_version` is important for any consumer software to understand how to parse the fields.
     """
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 
