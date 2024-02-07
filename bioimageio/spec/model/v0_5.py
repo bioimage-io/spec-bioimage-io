@@ -6,6 +6,7 @@ from datetime import datetime
 from itertools import chain
 from pathlib import PurePosixPath
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -28,15 +29,15 @@ import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
+from packaging.version import Version as Version
 from pydantic import (
     Field,
     StringConstraints,
-    TypeAdapter,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, TypedDict, Unpack, assert_never
+from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import Converter, Node, NodeWithExplicitlySetFields
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
@@ -52,9 +53,8 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
-from bioimageio.spec._internal.types import Version as Version
+from bioimageio.spec._internal.types import Version as _Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
@@ -63,10 +63,14 @@ from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource, author_conv
+from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource, author_conv, maintainer_conv
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model import v0_4
+from bioimageio.spec.model._v0_5_converter import (
+    analyze_tensor_shape,
+    get_axis_description_from_letter,
+)
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
@@ -75,11 +79,6 @@ from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
-from bioimageio.spec.model.v0_5_converter import (
-    _analyze_tensor_shape,
-    _get_axis_description_from_letter,
-    convert_model_data_from_v0_4_to_0_5_0,
-)
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -141,14 +140,6 @@ AxisType = Literal["batch", "channel", "index", "time", "space"]
 TensorId = NewType("TensorId", LowerCaseIdentifierStr)
 _AxisId = Annotated[LowerCaseIdentifierStr, MaxLen(16)]
 AxisId = NewType("AxisId", _AxisId)
-
-
-# class TensorAxisId(Node):
-#     tensor_id: TensorId
-#     axis_id: AxisId
-
-#     def __str__(self) -> str:
-#         return f"{self.tensor_id}.{self.axis_id}"
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -319,7 +310,7 @@ class ChannelAxis(AxisBase):
     def unit(self):
         return None
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def set_size_or_channel_names(cls, data: Dict[str, Any], /):
         channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
@@ -903,33 +894,26 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
         return self
 
 
-class _InputTensorConvKwargs(TypedDict):
-    test_tensor: FileSource
-    sample_tensor: Optional[FileSource]
-
-
-class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr]):
+class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, FileSource, Optional[FileSource]]):
     def _convert(
         self,
         src: v0_4.InputTensorDescr,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
-        **kwargs: Unpack[_InputTensorConvKwargs],
+        test_tensor: FileSource,
+        sample_tensor: Optional[FileSource],
     ) -> "InputTensorDescr | dict[str, Any]":
-        reordered_shape = _analyze_tensor_shape(src.shape)
-        axes = [_get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
-        tt = kwargs["test_tensor"]
+        reordered_shape = analyze_tensor_shape(src.shape)
+        axes = [get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
         return tgt(
             axes=axes,  # pyright: ignore[reportArgumentType]
             id=TensorId(src.name),
-            test_tensor=FileDescr(source=tt),
-            sample_tensor=None if kwargs["sample_tensor"] is None else FileDescr(source=kwargs["sample_tensor"]),
+            test_tensor=FileDescr(source=test_tensor),
+            sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
             data=dict(type=src.data_type),  # pyright: ignore[reportArgumentType]
         )
 
 
 input_tensor_conv = _InputTensorConv(v0_4.InputTensorDescr, InputTensorDescr)
-
-input_tensor_conv.convert()
 
 
 class OutputTensorDescr(TensorDescrBase[OutputAxis]):
@@ -1053,6 +1037,43 @@ class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
 ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
 
 
+class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, Optional[Sha256], Dict[str, Any]]):
+    def _convert(
+        self,
+        src: v0_4.CallableFromFile,
+        tgt: "type[ArchitectureFromFileDescr | dict[str, Any]]",
+        sha256: Optional[Sha256],
+        kwargs: Dict[str, Any],
+    ) -> "ArchitectureFromFileDescr | dict[str, Any]":
+        if src.startswith("http") and src.count(":") == 2:
+            http, source, callable_ = src.split(":")
+            source = ":".join((http, source))
+        elif not src.startswith("http") and src.count(":") == 1:
+            source, callable_ = src.split(":")
+        else:
+            source = str(src)
+            callable_ = str(src)
+        return tgt(callable=Identifier(callable_), source=cast(FileSource, source), sha256=sha256, kwargs=kwargs)
+
+
+_arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)
+
+
+class _ArchLibConv(Converter[v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr, Dict[str, Any]]):
+    def _convert(
+        self,
+        src: v0_4.CallableFromDepencency,
+        tgt: "type[ArchitectureFromLibraryDescr | dict[str, Any]]",
+        kwargs: Dict[str, Any],
+    ) -> "ArchitectureFromLibraryDescr | dict[str, Any]":
+        *mods, callable_ = src.split(".")
+        import_from = ".".join(mods)
+        return tgt(import_from=import_from, callable=Identifier(callable_), kwargs=kwargs)
+
+
+_arch_lib_conv = _ArchLibConv(v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr)
+
+
 class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
@@ -1086,14 +1107,14 @@ class WeightsEntryDescrBase(FileDescr):
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Version  # todo: dynamic default from tf lib
+    tensorflow_version: _Version
     """TensorFlow version used to create these weights."""
 
 
 class OnnxWeightsDescr(WeightsEntryDescrBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Annotated[int, Ge(7)]  # todo: dynamic default from onnx runtime
+    opset_version: Annotated[int, Ge(7)]
     """ONNX opset version"""
 
 
@@ -1101,7 +1122,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: ArchitectureDescr
-    pytorch_version: Version
+    pytorch_version: _Version
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
     """
@@ -1115,7 +1136,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Version
+    tensorflow_version: _Version
     """Version of the TensorFlow library used."""
 
     source: FileSource
@@ -1126,7 +1147,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Version
+    tensorflow_version: _Version
     """Version of the TensorFlow library used."""
 
     dependencies: Optional[EnvironmentFileDescr] = None
@@ -1141,7 +1162,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: Version
+    pytorch_version: _Version
     """Version of the PyTorch library used."""
 
 
@@ -1221,7 +1242,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @field_validator("inputs", mode="after")
     @classmethod
-    def validate_input_axes(cls, inputs: Sequence[InputTensorDescr]) -> Sequence[InputTensorDescr]:
+    def _validate_input_axes(cls, inputs: Sequence[InputTensorDescr]) -> Sequence[InputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
@@ -1300,7 +1321,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             assert_never(axis.size)
 
     @model_validator(mode="after")
-    def validate_test_tensors(self) -> Self:
+    def _validate_test_tensors(self) -> Self:
         if not validation_context_var.get().perform_io_checks:
             return self
 
@@ -1310,7 +1331,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return self
 
     @model_validator(mode="after")
-    def validate_tensor_references_in_proc_kwargs(self, info: ValidationInfo) -> Self:
+    def _validate_tensor_references_in_proc_kwargs(self, info: ValidationInfo) -> Self:
         ipt_refs = {t.id for t in self.inputs}
         out_refs = {t.id for t in self.outputs}
         for ipt in self.inputs:
@@ -1363,7 +1384,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_tensor_ids(
+    def _validate_tensor_ids(
         cls, outputs: Sequence[OutputTensorDescr], info: ValidationInfo
     ) -> Sequence[OutputTensorDescr]:
         tensor_ids = [t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])]
@@ -1400,7 +1421,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def validate_output_axes(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
+    def _validate_output_axes(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
@@ -1464,7 +1485,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     The available weight formats determine which consumers can use this model."""
 
     @model_validator(mode="after")
-    def add_default_cover(self) -> Self:
+    def _add_default_cover(self) -> Self:
         if not validation_context_var.get().perform_io_checks or self.covers:
             return self
 
@@ -1501,6 +1522,17 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
     def _convert(
         self, src: v0_4.ModelDescr, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
+        def conv_authors(auths: Optional[Sequence[v0_4.Author]]):
+            conv = author_conv.convert if TYPE_CHECKING else author_conv.convert_as_dict
+            return None if auths is None else [conv(a) for a in auths]
+
+        if TYPE_CHECKING:
+            arch_file_conv = _arch_file_conv.convert
+            arch_lib_conv = _arch_lib_conv.convert
+        else:
+            arch_file_conv = _arch_file_conv.convert_as_dict
+            arch_lib_conv = _arch_lib_conv.convert_as_dict
+
         return tgt(
             attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
             authors=[author_conv.convert_as_dict(a) for a in src.authors],
@@ -1515,15 +1547,80 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             id=src.id,
             license=src.license,  # type: ignore
             links=src.links,
-            maintainers=[Maintainer.convert_as_dict(m) for m in src.maintainers],
+            maintainers=[maintainer_conv.convert_as_dict(m) for m in src.maintainers],
             name=src.name,
             tags=src.tags,
             type=src.type,
             version=src.version,
             inputs=[
-                InputTensorDescr.convert_as_dict((ipt, tt, st))
+                input_tensor_conv.convert_as_dict(ipt, tt, st)
                 for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
             ],
+            weights=WeightsDescr(
+                keras_hdf5=(w := src.weights.keras_hdf5)
+                and (KerasHdf5WeightsDescr if TYPE_CHECKING else dict)(
+                    authors=conv_authors(w.authors),
+                    source=w.source,
+                    tensorflow_version=w.tensorflow_version or Version("1.15"),
+                    parent=w.parent,
+                ),
+                onnx=(w := src.weights.onnx)
+                and (OnnxWeightsDescr if TYPE_CHECKING else dict)(
+                    source=w.source,
+                    authors=conv_authors(w.authors),
+                    parent=w.parent,
+                    opset_version=w.opset_version or 15,
+                ),
+                pytorch_state_dict=(w := src.weights.pytorch_state_dict)
+                and (PytorchStateDictWeightsDescr if TYPE_CHECKING else dict)(
+                    source=w.source,
+                    authors=conv_authors(w.authors),
+                    parent=w.parent,
+                    architecture=arch_file_conv(
+                        w.architecture,
+                        w.architecture_sha256,
+                        w.kwargs,
+                    )
+                    if isinstance(w.architecture, v0_4.CallableFromFile)
+                    else arch_lib_conv(w.architecture, w.kwargs),
+                    pytorch_version=w.pytorch_version or Version("1.10"),
+                    dependencies=(EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                        source=cast(FileSource,
+                            str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :]
+                        )
+                    ),
+                ),
+                tensorflow_js=(w := src.weights.tensorflow_js)
+                and (TensorflowJsWeightsDescr if TYPE_CHECKING else dict)(
+                    source=w.source,
+                    authors=conv_authors(w.authors),
+                    parent=w.parent,
+                    tensorflow_version=w.tensorflow_version or Version("1.15"),
+                ),
+                tensorflow_saved_model_bundle=(w := src.weights.tensorflow_saved_model_bundle)
+                and (TensorflowSavedModelBundleWeightsDescr if TYPE_CHECKING else dict)(
+                    authors=conv_authors(w.authors),
+                    parent=w.parent,
+                    source=w.source,
+                    tensorflow_version=w.tensorflow_version or Version("1.15"),
+                    dependencies=None
+                    if w.dependencies is None
+                    else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                        source=cast(FileSource,
+                            str(w.dependencies)[len("conda:") :]
+                            if str(w.dependencies).startswith("conda:")
+                            else str(w.dependencies)
+                        )
+                    ),
+                ),
+                torchscript=(w := src.weights.torchscript)
+                and (TorchscriptWeightsDescr if TYPE_CHECKING else dict)(
+                    source=w.source,
+                    authors=conv_authors(w.authors),
+                    parent=w.parent,
+                    pytorch_version=w.pytorch_version or Version("1.10"),
+                ),
+            ),
         )
 
 

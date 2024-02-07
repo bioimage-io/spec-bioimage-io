@@ -1,8 +1,8 @@
 from typing import Any
 
 
-def test_converter_with_kwargs():
-    from bioimageio.spec._internal.base_nodes import ConverterWithKwargs, Node
+def test_converter_with_arg():
+    from bioimageio.spec._internal.base_nodes import Converter, Node
 
     class A(Node):
         a: int
@@ -10,10 +10,10 @@ def test_converter_with_kwargs():
     class B(Node):
         b: str
 
-    class AtoB(ConverterWithKwargs[A, B, [str]]):
+    class AtoB(Converter[A, B, str]):
         def _convert(self, src: A, tgt: "type[B] | type[dict[str, Any]]", /, prefix: str) -> "B | dict[str, Any]":
             return tgt(b=prefix + str(src.a))
 
     converter = AtoB(A, B)
 
-    converter.convert(A(a=5))
+    _ = converter.convert(A(a=5), "prefix")

@@ -9,7 +9,7 @@ from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.base_nodes import Converter, Node, NodeWithConverters, ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import Converter, Node, ResourceDescriptionBase
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.constants import (
     ALERT,
@@ -103,9 +103,7 @@ class Maintainer(v0_2.Maintainer):
 
 
 class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
-    def _convert(
-        self, src: v0_2.Maintainer, tgt: "type[Maintainer] | type[dict[str, Any]]"
-    ) -> "Maintainer | dict[str, Any]":
+    def _convert(self, src: v0_2.Maintainer, tgt: "type[Maintainer | dict[str, Any]]") -> "Maintainer | dict[str, Any]":
         return tgt(
             name=src.name,
             github_user=src.github_user,

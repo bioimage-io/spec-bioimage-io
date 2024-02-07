@@ -68,11 +68,12 @@ YamlLeafValue = Union[bool, date, datetime, float, int, str, None]
 YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
 ]
-YamlArray = List["YamlValue"]
-YamlMapping = Dict[YamlKey, "YamlValue"]
 # note: 'TypeAliasType' allows use of recursive type in pydantic:
 #       https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
-YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, YamlArray, YamlMapping])
+# YamlArray = TypeAliasType("YamlArray", List[YamlValue])
+# YamlMapping = TypeAliasType("YamlMapping", Dict[YamlKey, YamlValue])
+# YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, YamlArray, YamlMapping])
+YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, List[YamlValue], Dict[YamlKey, YamlValue]])
 
 # derived types
 DatasetId = NewType("DatasetId", _ResourceIdAnno)

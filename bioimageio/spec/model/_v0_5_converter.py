@@ -1,9 +1,9 @@
 import collections.abc
-from typing import Any, Dict, Mapping, Optional, Sequence, Union
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
 
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.types import BioimageioYamlContent, YamlArray, YamlKey, YamlMapping, YamlValue
+from bioimageio.spec._internal.types import BioimageioYamlContent, YamlKey, YamlValue
 from bioimageio.spec.generic.v0_3_converter import convert_attachments
 
 
@@ -67,7 +67,7 @@ def _convert_weights(data: BioimageioYamlContent):
 
 
 def _update_tensor_specs(
-    tensor_data: YamlArray,
+    tensor_data: List[YamlValue],
     test_tensors: Any,
     sample_tensors: Any,
 ):
@@ -79,7 +79,7 @@ def _update_tensor_specs(
         if not isinstance(d, dict):
             continue
 
-        reordered_shape = _analyze_tensor_shape(d.get("shape"))
+        reordered_shape = analyze_tensor_shape(d.get("shape"))
         new_d: Dict[YamlKey, YamlValue] = {}
         if "name" in d:
             new_d["id"] = d["name"]
@@ -102,8 +102,8 @@ def _update_tensor_specs(
             halo = {}
 
         if isinstance(d["axes"], str):
-            new_axes: YamlArray = [
-                _get_axis_description_from_letter(a, reordered_shape.get(i), halo=halo.get(i))
+            new_axes: List[YamlValue] = [
+                get_axis_description_from_letter(a, reordered_shape.get(i), halo=halo.get(i))
                 for i, a in enumerate(d["axes"])
             ]
             new_d["axes"] = new_axes
@@ -117,7 +117,7 @@ def _update_tensor_specs(
                 if "name" in p_kwargs:
                     p_kwargs["id"] = p_kwargs.pop("name")
 
-                p_axes = [_get_axis_description_from_letter(a, halo=None) for a in p_kwargs_axes]
+                p_axes = [get_axis_description_from_letter(a, halo=None) for a in p_kwargs_axes]
                 if p.get("id") == "zero_mean_unit_variance" and p_kwargs.get("mode") == "fixed":
                     p["id"] = "fixed_zero_mean_unit_variance"
                     _ = p_kwargs.pop("axes", None)
@@ -130,7 +130,7 @@ def _update_tensor_specs(
         tensor_data[idx] = new_d
 
 
-def _analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
+def analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any]]) -> Dict[int, Any]:
     if isinstance(orig_shape, collections.abc.Mapping):
         if "reference_tensor" in orig_shape:
             x: Union[Any, Sequence[Any]]
@@ -157,9 +157,9 @@ def _analyze_tensor_shape(orig_shape: Union[Any, Sequence[Any], Mapping[Any, Any
     return {}
 
 
-def _get_axis_description_from_letter(
+def get_axis_description_from_letter(
     letter: str,
-    size: Union[int, YamlMapping, None] = None,
+    size: Union[int, Dict[YamlKey, YamlValue], None] = None,
     *,
     halo: Optional[Any],
 ):
