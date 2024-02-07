@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, Union
 
 import pytest
+from pydantic import AnyUrl
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
@@ -12,7 +13,6 @@ from bioimageio.spec.model.v0_5 import (
     ChannelAxis,
     CiteEntry,
     FileDescr,
-    HttpUrl,
     InputAxis,
     InputTensorDescr,
     IntervalOrRatioDataDescr,
@@ -180,7 +180,7 @@ def model_data():
     data = ModelDescr(
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
-        git_repo=HttpUrl("https://github.com/bioimage-io/python-bioimage-io"),
+        git_repo=AnyUrl("https://github.com/bioimage-io/python-bioimage-io"),
         format_version="0.5.0",
         description="description",
         authors=[
@@ -268,8 +268,8 @@ def test_warn_long_name(model_data: Dict[str, Any]):
     summary = validate_format(model_data)
 
     assert summary.status == "passed", summary.format()
-    assert summary.warnings[0].loc == ("name",), summary.format()
-    assert summary.warnings[0].msg == "Name longer than 64 characters."
+    assert summary.details[0].warnings[0].loc == ("name",), summary.format()
+    assert summary.details[0].warnings[0].msg == "Name longer than 64 characters."
 
 
 def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):

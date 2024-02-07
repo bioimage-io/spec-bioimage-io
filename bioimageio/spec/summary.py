@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import Any, List, Literal, Mapping, Tuple, Union
 
 from pydantic import (
@@ -65,6 +66,9 @@ class ValidationSummaryDetail(BaseModel):
     warnings: List[WarningEntry] = Field(default_factory=list)
     bioimageio_spec_version: str = VERSION
 
+    def __str__(self):
+        return f"{self.__class__.__name__}:\n" + self.format()
+
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
         indent = "      " if root_loc else ""
         errs_wrns = self._format_errors_and_warnings(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
@@ -85,9 +89,6 @@ class ValidationSummaryDetail(BaseModel):
 
         return f"\n{indent}errors: {es}" if es else "" + f"\n{indent}warnings: {ws}" if ws else ""
 
-    def __str__(self):
-        return f"{self.__class__.__name__}:\n" + self.format()
-
 
 class ValidationSummary(BaseModel):
     name: str
@@ -95,11 +96,19 @@ class ValidationSummary(BaseModel):
     status: Literal["passed", "failed"]
     details: List[ValidationSummaryDetail]
 
+    @property
+    def errors(self) -> List[ErrorEntry]:
+        return list(chain.from_iterable(d.errors for d in self.details))
+
+    @property
+    def warnings(self) -> List[WarningEntry]:
+        return list(chain.from_iterable(d.warnings for d in self.details))
+
+    def __str__(self):
+        return f"{self.__class__.__name__}:\n" + self.format()
+
     def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
         indent = "   " if root_loc else ""
         src = "" if hide_source else f"\n{indent}source: {self.source_name}"
         details = f"\n{indent}".join(d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc) for d in self.details)
         return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"
-
-    def __str__(self):
-        return f"{self.__class__.__name__}:\n" + self.format()

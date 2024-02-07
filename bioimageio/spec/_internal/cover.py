@@ -51,12 +51,12 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
         s = data.shape[i]
         assert s > 1
         if isinstance(a, (BatchAxis, IndexAxis)) and ndim > ndim_need:
-            data = data[slices + (slice(s // 2 - 1, s // 2),)]
+            data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
             ndim -= 1
         elif isinstance(a, ChannelAxis):
             if has_c_axis:
                 # second channel axis
-                data = data[slices + (slice(0, 1),)]
+                data = data[slices + (slice(0, 1),)]  # type: ignore
                 ndim -= 1
             else:
                 has_c_axis = True
@@ -64,9 +64,9 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
                     # visualize two channels with cyan and magenta
                     data = np.concatenate(
                         [
-                            data[slices + (slice(1, 2),)],
-                            data[slices + (slice(0, 1),)],
-                            (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])
+                            data[slices + (slice(1, 2),)],  # type: ignore
+                            data[slices + (slice(0, 1),)],  # type: ignore
+                            (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])  # type: ignore
                             / 2,  # TODO: take maximum instead?
                         ],
                         axis=i,
@@ -74,11 +74,12 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
                 elif data.shape[i] == 3:
                     pass  # visualize 3 channels as RGB
                 else:
-                    data = data[slices + (slice(3),)]  # visualize first 3 channels as RGB
+                    # visualize first 3 channels as RGB
+                    data = data[slices + (slice(3),)]  # type: ignore
 
                 assert data.shape[i] == 3
 
-        slices += (slice(None),)
+        slices += (slice(None),)  # type: ignore
 
     data, axes = squeeze(data, axes)
     assert len(axes) == ndim
@@ -156,9 +157,9 @@ def create_diagonal_split_image(im0: NDArray[Any], im1: NDArray[Any]):
     assert C == 3
     out = np.ones((N, M, C), dtype="uint8")
     for c in range(C):
-        outc = np.tril(im0[..., c])
+        outc = np.tril(im0[..., c])  # type: ignore
         mask = outc == 0
-        outc[mask] = np.triu(im1[..., c])[mask]
+        outc[mask] = np.triu(im1[..., c])[mask]  # type: ignore
         out[..., c] = outc
 
     return out

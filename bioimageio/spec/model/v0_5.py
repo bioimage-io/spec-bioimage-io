@@ -63,7 +63,12 @@ from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import GenericModelDescrBase, MarkdownSource, _author_conv, _maintainer_conv
+from bioimageio.spec.generic.v0_3 import (
+    GenericModelDescrBase,
+    MarkdownSource,
+    _author_conv,  # pyright: ignore[reportPrivateUsage]
+    _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
+)
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model import v0_4
@@ -905,11 +910,11 @@ class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, FileSo
         reordered_shape = analyze_tensor_shape(src.shape)
         axes = [get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
         return tgt(
-            axes=axes,  # pyright: ignore[reportArgumentType]
+            axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
             sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
-            data=dict(type=src.data_type),  # pyright: ignore[reportArgumentType]
+            data=dict(type=src.data_type),  # type: ignore
         )
 
 

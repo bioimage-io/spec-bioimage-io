@@ -4,7 +4,7 @@ import sys
 from functools import wraps
 from inspect import signature
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
+from typing import Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl

@@ -142,13 +142,13 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             entry_descr = spec.build_description(
                 entry_data, context=context.replace(root=entry_root, file_name=entry_file_name)
             )
+            assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescription):
-                formatted_summaries = "\n".join(
-                    vs.format(hide_source=True, root_loc=("collection", i)) for vs in entry_descr.validation_summary
+                raise ValueError(
+                    f"Invalid collection entry collection[{i}]:\n{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
                 )
-                raise ValueError(f"Invalid collection entry collection[{i}]:\n{formatted_summaries}")
             elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
-                entry._descr = entry_descr  # pyright: ignore[reportPrivateUsage, reportGeneralTypeIssues]
+                entry._descr = entry_descr  # type: ignore
             else:
                 raise ValueError(
                     f"{entry_descr.type} {entry_descr.format_version} entries "
@@ -157,7 +157,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
         return self
 
-    @model_validator(mode="before")  # type: ignore (https://github.com/microsoft/pyright/issues/6875)
+    @model_validator(mode="before")
     @classmethod
     def move_groups_to_collection_field(cls, data: BioimageioYamlContent) -> BioimageioYamlContent:
         if data.get("format_version") not in ("0.2.0", "0.2.1"):

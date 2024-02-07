@@ -1,4 +1,4 @@
-from pydantic import HttpUrl
+from pydantic import AnyUrl
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.types import BioimageioYamlContent
@@ -11,7 +11,7 @@ def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data["format_version"] = v_future  # assume it is valid in a future format version
 
     summary = validate_format(
-        data, context=ValidationContext(root=HttpUrl("https://example.com/"), perform_io_checks=False)
+        data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
     )
     assert summary.status == "passed", summary.errors
 
@@ -27,7 +27,7 @@ def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
 
     summary = validate_format(
-        data, context=ValidationContext(root=HttpUrl("https://example.com/"), perform_io_checks=False)
+        data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
     )
     assert summary.status == "failed", summary
 

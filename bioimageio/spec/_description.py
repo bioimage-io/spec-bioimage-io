@@ -1,24 +1,22 @@
 from typing import (
     Any,
-    List,
     Literal,
     Optional,
-    Tuple,
     Type,
     TypeVar,
     Union,
 )
 
-from pydantic import Field, ValidationError
+from pydantic import Field
 from typing_extensions import Annotated
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import InvalidDescription
-from bioimageio.spec._internal.constants import DISCOVER, ERROR, VERSION
+from bioimageio.spec._internal.constants import DISCOVER
 from bioimageio.spec._internal.types import BioimageioYamlContent, FormatVersionPlaceholder
 from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
-from bioimageio.spec.summary import ErrorEntry, ValidationSummary, ValidationSummaryDetail, WarningEntry
+from bioimageio.spec.summary import ValidationSummary
 
 _ResourceDescr_v0_2 = Union[
     Annotated[

@@ -278,7 +278,7 @@ class GenericDescrBase(GenericModelDescrBase):
 
     @model_validator(mode="before")
     @classmethod
-    def convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 

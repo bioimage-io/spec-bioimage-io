@@ -1,5 +1,5 @@
 from contextlib import nullcontext
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import pytest
 
@@ -20,7 +20,7 @@ import pytest
         ((), dict(a1=1, a2=1, b1=1, b2=1, c1=1, c2=1), False),
     ],
 )
-def test_assert_all_params_set_explicitly(args: int, kwargs: Dict[str, int], valid: bool):
+def test_assert_all_params_set_explicitly(args: Tuple[int, ...], kwargs: Dict[str, int], valid: bool):
     from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 
     def func(
@@ -30,7 +30,7 @@ def test_assert_all_params_set_explicitly(args: int, kwargs: Dict[str, int], val
 
     func_explicit = assert_all_params_set_explicitly(func)
 
-    func(*args, **kwargs)  # type: ignore
+    func(*args, **kwargs)
 
     if valid:
         ctxt = nullcontext()
