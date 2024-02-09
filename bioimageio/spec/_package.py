@@ -45,8 +45,8 @@ def fill_resource_package_content(
         if isinstance(field_value, Node):
             fill_resource_package_content(package_content, field_value, loc)
 
-        # nested node in tuple
-        elif isinstance(field_value, tuple):
+        # nested node in list/tuple
+        elif isinstance(field_value, (list, tuple)):
             for i, fv in enumerate(field_value):
                 if isinstance(fv, Node):
                     fill_resource_package_content(package_content, fv, loc + (i,))
