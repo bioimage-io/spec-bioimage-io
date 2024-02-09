@@ -1,5 +1,5 @@
 import collections.abc
-from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
+from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union, get_args
 
 from annotated_types import Ge, Len, LowerCase, MaxLen, MinLen
 from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator, model_validator
@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
-from bioimageio.spec._internal.field_warning import as_warning, warn
+from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
 from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
@@ -169,7 +169,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: Annotated[List[Author], warn(MinLen(1), "No author specified.")] = Field(default_factory=list)
+    authors: List[Author] = Field(default_factory=list)
     """The authors are the creators of the RDF and the primary points of contact."""
 
     @field_validator("authors", mode="before")
@@ -179,16 +179,24 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         if isinstance(authors, collections.abc.Sequence):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
 
+        if not authors:
+            issue_warning("No author specified.", value=authors)
+
         return authors
 
     attachments: Optional[AttachmentsDescr] = None
     """file and other attachments"""
 
-    cite: Annotated[
-        List[CiteEntry],
-        warn(MinLen(1), "No cite entry specified."),
-    ] = Field(default_factory=list)
+    cite: List[CiteEntry] = Field(default_factory=list)
     """citations"""
+
+    @field_validator("cite", mode="after")
+    @classmethod
+    def _warn_empty_cite(cls, value: Any):
+        if not value:
+            issue_warning("No cite entry specified.", value=value)
+
+        return value
 
     config: Annotated[
         Dict[str, YamlValue],
@@ -322,7 +330,6 @@ class GenericDescrBase(GenericModelDescrBase):
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
-        warn(LicenseId, "'{value}' is a deprecated or unknown license identifier."),
         Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -330,13 +337,21 @@ class GenericDescrBase(GenericModelDescrBase):
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
     ) to discuss your intentions with the community."""
 
-    @as_warning
     @field_validator("license", mode="after")
     @classmethod
     def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
         license_info = LICENSES[value] if value in LICENSES else {}
         if not license_info.get("isFsfLibre", False):
-            raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")
+            issue_warning(
+                "{value} ({license_name}) is not FSF Free/libre.",
+                value=value,
+                msg_context=dict(license_name=license_info["name"]),
+            )
+
+        if value is None:
+            issue_warning("missing license.", value=value)
+        elif value not in get_args(LicenseId):
+            issue_warning("'{value}' is a deprecated or unknown license identifier.", value=value)
 
         return value
 

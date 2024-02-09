@@ -31,7 +31,7 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
-from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import BioimageioYamlContent, FileSource, LowerCaseIdentifierStr, RelativeFilePath
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
@@ -207,30 +207,38 @@ class WeightsEntryDescrBase(FileDescr):
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Annotated[
-        Union[_Version, None],
-        warn(
-            _Version,
-            "Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
-            ALERT,
-        ),
-    ] = None
+    tensorflow_version: Optional[_Version] = None
     """TensorFlow version used to create these weights"""
+
+    @field_validator("tensorflow_version", mode="after")
+    @classmethod
+    def _tfv(cls, value: Any):
+        if value is None:
+            issue_warning(
+                "Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
 
 class OnnxWeightsDescr(WeightsEntryDescrBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Annotated[
-        Union[Annotated[int, Ge(7)], None],
-        warn(
-            int,
-            "Missing ONNX opset version (aka ONNX opset number). "
-            "Please specify the ONNX opset version these weights were created with.",
-            ALERT,
-        ),
-    ] = None
+    opset_version: Optional[Annotated[int, Ge(7)]] = None
     """ONNX opset version"""
+
+    @field_validator("opset_version", mode="after")
+    @classmethod
+    def _ov(cls, value: Any):
+        if value is None:
+            issue_warning(
+                "Missing ONNX opset version (aka ONNX opset number). "
+                "Please specify the ONNX opset version these weights were created with.",
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
 
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
@@ -267,45 +275,60 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Annotated[
-        Union[_Version, None],
-        warn(
-            _Version,
-            msg="Missing PyTorch version. Please specify the PyTorch version these PyTorch state dict weights were created with.",
-        ),
-    ] = None
+    pytorch_version: Optional[_Version] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
+
+    @field_validator("pytorch_version", mode="after")
+    @classmethod
+    def _ptv(cls, value: Any):
+        if value is None:
+            issue_warning(
+                ("Missing PyTorch version. "
+                "Please specify the PyTorch version these PyTorch state dict weights were created with."),
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
 
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: Annotated[
-        Union[_Version, None],
-        warn(
-            _Version,
-            msg=(
-                "Missing Pytorch version. "
-                "Please specify the PyTorch version these Torchscript weights were created with."
-            ),
-        ),
-    ] = None
+    pytorch_version: Optional[_Version] = None
     """Version of the PyTorch library used."""
+
+    @field_validator("pytorch_version", mode="after")
+    @classmethod
+    def _ptv(cls, value: Any):
+        if value is None:
+            issue_warning(
+                ("Missing PyTorch version. "
+                 "Please specify the PyTorch version these Torchscript weights were created with."),
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
 
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Annotated[
-        Union[_Version, None],
-        warn(
-            _Version,
-            msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
-        ),
-    ] = None
+    tensorflow_version: Optional[_Version]= None
     """Version of the TensorFlow library used."""
+
+    @field_validator("tensorflow_version", mode="after")
+    @classmethod
+    def _tfv(cls, value: Any):
+        if value is None:
+            issue_warning(
+                ("Missing TensorFlow version. "
+                 "Please specify the TensorFlow version these TensorflowJs weights were created with."),
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
     source: Annotated[
         FileSource,
@@ -318,14 +341,20 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Annotated[
-        Union[_Version, None],
-        warn(
-            _Version,
-            msg="Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
-        ),
-    ] = None
+    tensorflow_version: Optional[_Version] = None
     """Version of the TensorFlow library used."""
+
+    @field_validator("tensorflow_version", mode="after")
+    @classmethod
+    def _tfv(cls, value: Any):
+        if value is None:
+            issue_warning(
+                ("Missing TensorFlow version. "
+                 "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with."),
+                value=value,
+                severity=ALERT,
+            )
+        return value
 
 
 class ParametrizedInputShape(Node):
