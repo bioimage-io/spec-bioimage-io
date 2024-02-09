@@ -4,7 +4,7 @@
 
 # Specifications for bioimage.io
 
-This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named `bioimageio.yaml`. Such a bioimageio.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).
+This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named `rdf.yaml`. Such a rdf.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).
 
 bioimage.io-compatible resources must fulfill the following rules:
 
@@ -12,11 +12,11 @@ Note that the Python package PyYAML does not support YAML 1.2 .
 We therefore use and recommend [ruamel.yaml](https://ruamelyaml.readthedocs.io/en/latest/).
 For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
 
-Please also note that the best way to check whether your `bioimageio.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
+Please also note that the best way to check whether your `rdf.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
 The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package also provides the bioimageio command line interface (CLI) with the `validate` command:
 
 ```terminal
-bioimageio validate path/to/your/bioimageio.yaml
+bioimageio validate path/to/your/rdf.yaml
 ```
 
 ## Format version overview
@@ -45,12 +45,12 @@ These are primarily intended for syntax highlighting and form generation.
 
 ## Examples
 
-We provide some [examples for using bioimageio.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
+We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
 
 ## 💁 Recommendations
 
-* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `bioimageio.yaml` file and try to avoid using subdirectories.
-* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `bioimageio.yaml` file.
+* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `rdf.yaml` file and try to avoid using subdirectories.
+* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `rdf.yaml` file.
 * bioimageio.spec keeps evolving. Try to use and upgrade to the most current format version!
 
 ## ⌨ bioimageio command-line interface (CLI)

@@ -11,9 +11,8 @@ from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
 from bioimageio.spec import model
 from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description, dump_description
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
-from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
+from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML, IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.io_utils import (
-    BIOIMAGEIO_YAML,
     download,
     open_bioimageio_yaml,
     write_yaml,
@@ -71,7 +70,7 @@ def get_resource_package_content(
     rd: ResourceDescr,
     /,
     *,
-    bioimageio_yaml_file_name: str = "{name}.{type}.bioimageio.yaml",
+    bioimageio_yaml_file_name: str = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]]:
     """
@@ -82,11 +81,11 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
-    if not bioimageio_yaml_file_name != BIOIMAGEIO_YAML or not bioimageio_yaml_file_name.endswith(
+    if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(
         f".{BIOIMAGEIO_YAML}"
     ):
         raise ValueError(
-            f"Invalid `bioimageio_yaml_file_name`. Must be {BIOIMAGEIO_YAML} or end with '.{BIOIMAGEIO_YAML}'"
+            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
         )
 
     if weights_priority_order is not None and isinstance(rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)):

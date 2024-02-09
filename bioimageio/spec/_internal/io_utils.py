@@ -6,7 +6,7 @@ import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Final, Mapping, Optional, Sequence, TextIO, TypedDict, Union, cast
+from typing import Any, Dict, Mapping, Optional, TextIO, TypedDict, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -16,6 +16,7 @@ from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath, TypeAdap
 from ruamel.yaml import YAML
 from typing_extensions import NotRequired, Unpack
 
+from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML, LEGACY_BIOIMAGEIO_YAML_NAMES
 from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
@@ -37,8 +38,6 @@ if platform.machine() == "wasm32":
 
 yaml = YAML(typ="safe")
 
-BIOIMAGEIO_YAML = "bioimageio.yaml"
-LEGACY_BIOIMAGEIO_YAML_NAMES: Final[Sequence[FileName]] = ("rdf.yaml", "model.yaml")
 
 
 class HashKwargs(TypedDict):
@@ -152,12 +151,12 @@ def get_unique_file_name(url: HttpUrl):
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     if not isinstance(content, dict):
-        raise ValueError(f"Expected bioimageio.yaml content to be a mapping (got {type(content)}).")
+        raise ValueError(f"Expected {BIOIMAGEIO_YAML} content to be a mapping (got {type(content)}).")
 
     for key in content:
         if not isinstance(key, str):
             raise ValueError(
-                "Expected all keys (field names) in a bioimageio.yaml "
+                f"Expected all keys (field names) in a {BIOIMAGEIO_YAML} "
                 f"need to be strings (got '{key}' of type {type(key)})."
             )
 
@@ -203,7 +202,7 @@ def find_description_file_name(path: Path) -> FileName:
 
     if len(candidates) == 0:
         raise ValueError(
-            f"No bioimageio.yaml found in {path}. (Looking for '{BIOIMAGEIO_YAML}', "
+            f"No {BIOIMAGEIO_YAML} found in {path}. (Looking for '{BIOIMAGEIO_YAML}', "
             f"any file with the '.{BIOIMAGEIO_YAML}' extension, or any legacy file: {LEGACY_BIOIMAGEIO_YAML_NAMES})."
         )
 

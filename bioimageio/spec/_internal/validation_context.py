@@ -5,6 +5,7 @@ from typing import Literal, Optional, Union
 from pydantic import AnyUrl, BaseModel, DirectoryPath, PrivateAttr
 
 from bioimageio.spec._internal import settings
+from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
 
 WarningSeverity = Literal[20, 30, 35]
 WarningLevel = Literal[WarningSeverity, 50]
@@ -21,7 +22,7 @@ class ValidationContext(BaseModel, frozen=True):
     warning_level: WarningLevel = 50
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
-    file_name: str = "bioimageio.yaml"
+    file_name: str = BIOIMAGEIO_YAML
     """file name of the bioimageio Yaml file"""
 
     perform_io_checks: bool = settings.perform_io_checks
