@@ -1,6 +1,6 @@
 description: Dummy dataset for testing purposes only.
 documentation: README.md
-format_version: 0.2.3
+format_version: 0.2.4
 name: Dummy Data
 tags: [dummy]
 type: dataset

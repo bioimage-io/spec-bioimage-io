@@ -29,6 +29,14 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
     if data["format_version"] in ("0.4.7", "0.4.8"):
         data["format_version"] = "0.4.9"
 
+    if data["format_version"] == "0.4.9":
+        if isinstance(v:= data.get("version"), str) and v.count(".") == 2:
+            vmaj, vmin, vpatch = v.split(".")
+            if vmaj == "0" and vpatch == "0" and vmin.isdecimal():
+                data["version"] = int(vmin)
+
+        data["format_version"] = "0.4.10"
+
     remove_doi_prefix(data)
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})

@@ -1,7 +1,7 @@
 import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen, MinLen
+from annotated_types import Ge, Len, LowerCase, MaxLen, MinLen
 from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
@@ -20,7 +20,6 @@ from bioimageio.spec._internal.types import (
     OrcidId,
     RelativeFilePath,
     ResourceId,
-    Version,
     YamlValue,
 )
 from bioimageio.spec._internal.types.field_validation import WithSuffix
@@ -162,7 +161,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id: Optional[ResourceId] = None
-    """bioimage.io wide, unique identifier assigned by the [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     authors: Annotated[List[Author], warn(MinLen(1), "No author specified.")] = Field(default_factory=list)
     """The authors are the creators of the RDF and the primary points of contact."""
@@ -274,18 +273,16 @@ class GenericModelDescrBase(ResourceDescriptionBase):
 
         return value
 
-    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
-    """The version number of the resource. Its format must be a string in
-    `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
-    Hyphens and plus signs are not allowed to be compatible with
-    https://packaging.pypa.io/en/stable/version.html.
-    The initial version should be '0.1.0'."""
+    version: Annotated[int, Ge(ge=1), Field(examples=[1, 2, 3])] = 1
+    """The version number of the resource.
+    note: previous versions of this spec accepted a SemVer 2.0 version, e.g. 0.1.0.
+    These are now converted by using the minor part as version nr."""
 
 
 class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
-    format_version: Literal["0.2.3"] = "0.2.3"
+    format_version: Literal["0.2.4"] = "0.2.4"
     """The format version of this resource specification
     (not the `version` of the resource description)
     When creating a new resource always use the latest micro/patch version described here.

@@ -4,7 +4,7 @@ from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 import requests
-from annotated_types import Len, LowerCase, MaxLen
+from annotated_types import Ge, Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
@@ -25,7 +25,6 @@ from bioimageio.spec._internal.types import (
     LicenseId,
     NotEmpty,
     RelativeFilePath,
-    Version,
     YamlValue,
 )
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
@@ -262,12 +261,8 @@ class GenericModelDescrBase(ResourceDescriptionBase):
 
         return value
 
-    version: Annotated[Optional[Version], Field(examples=["0.1.0"])] = None
-    """The version number of the resource. Its format must be a string in
-    `MAJOR.MINOR.PATCH` format following the guidelines in Semantic Versioning 2.0.0 (see https://semver.org/).
-    Hyphens and plus signs are not allowed to be compatible with
-    https://packaging.pypa.io/en/stable/version.html.
-    The initial version should be '0.1.0'."""
+    version: Annotated[int, Ge(ge=1), Field(examples=[1, 2, 3])] = 1
+    """The version number of the resource."""
 
 
 class GenericDescrBase(GenericModelDescrBase):

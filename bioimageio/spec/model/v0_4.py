@@ -265,7 +265,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     pytorch_version: Annotated[
         Union[_Version, None],
         warn(
-            _Version, msg="Missing PyTorch version. Please specify the PyTorch version these weights were created with."
+            _Version, msg="Missing PyTorch version. Please specify the PyTorch version these PyTorch state dict weights were created with."
         ),
     ] = None
     """Version of the PyTorch library used.
@@ -279,7 +279,8 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     pytorch_version: Annotated[
         Union[_Version, None],
         warn(
-            _Version, msg="Missing Pytorch version. Please specify the PyTorch version these weights were created with."
+            _Version, msg=("Missing Pytorch version. "
+            "Please specify the PyTorch version these Torchscript weights were created with.")
         ),
     ] = None
     """Version of the PyTorch library used."""

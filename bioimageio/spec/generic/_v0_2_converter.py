@@ -23,6 +23,14 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
         remove_slashes_from_names(data)
         data["format_version"] = "0.2.3"
 
+    if data.get("format_version") == "0.2.3":
+        if isinstance(v:= data.get("version"), str) and v.count(".") == 2:
+            vmaj, vmin, vpatch = v.split(".")
+            if vmaj == "0" and vpatch == "0" and vmin.isdecimal():
+                data["version"] = int(vmin)
+
+        data["format_version"] = "0.2.4"
+
     remove_doi_prefix(data)
 
 

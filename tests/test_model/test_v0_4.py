@@ -405,7 +405,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
 
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
-    model_data["format_version"] = "0.2.3"
+    model_data["format_version"] = "0.2.4"
     summary = validate_format(
         model_data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
     )
