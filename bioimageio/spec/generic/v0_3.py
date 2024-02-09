@@ -148,6 +148,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """bioimage.io wide, unique identifier assigned by the
     [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
+    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
+    """UTF-8 emoji for display alongside the `id`."""
+
     authors: NotEmpty[List[Author]]
     """The authors are the creators of this resource description and the primary points of contact."""
 
@@ -284,8 +287,10 @@ class GenericDescrBase(GenericModelDescrBase):
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description=("∈📦 URL or relative path to a markdown file with additional documentation. "
-    "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.")
+            description=(
+                "∈📦 URL or relative path to a markdown file with additional documentation. "
+                "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."
+            ),
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

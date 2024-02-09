@@ -79,6 +79,7 @@ class Node(
     # see https://github.com/pydantic/pydantic/issues/5656
 ):
     """Subpart of a resource description"""
+
     @classmethod
     def model_validate(
         cls,
@@ -452,16 +453,6 @@ class InvalidDescription(
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
-
-
-# class _ToInvalidConverter(Converter[ResourceDescriptionBase, InvalidDescription]):
-#     def _convert(
-#         self, src: ResourceDescriptionBase, tgt: "type[InvalidDescription | dict[str, Any]]"
-#     ) -> "InvalidDescription | dict[str, Any]":
-#         return tgt(**dict(src))
-
-
-# to_invalid_conv = _ToInvalidConverter(ResourceDescriptionBase, InvalidDescription)
 
 
 class KwargsNode(Node):

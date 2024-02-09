@@ -55,7 +55,7 @@ class CollectionEntry(Node, extra="allow"):
     """an external source this entry description is based on"""
 
     id: Optional[ResourceId] = None
-    """Collection entry sub id overwriting `rdf_source.id`.
+    """Collection entry sub id overwriting `entry_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
     _descr: Optional[EntryDescr] = PrivateAttr(None)
@@ -184,7 +184,7 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     cite=old.cite,
                     collection=[
                         (CollectionEntry if TYPE_CHECKING else dict)(
-                            entry_source=entry.rdf_source, id=entry.id, **(entry.model_extra or {})
+                            entry_source=entry.entry_source, id=entry.id, **(entry.model_extra or {})
                         )
                         for entry in old.collection
                     ],

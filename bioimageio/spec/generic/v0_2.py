@@ -157,11 +157,17 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
-    ] = Field(default_factory=list, description="∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.")
+    ] = Field(
+        default_factory=list,
+        description="∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.",
+    )
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id: Optional[ResourceId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
+    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
+    """UTF-8 emoji for display alongside the `id`."""
 
     authors: Annotated[List[Author], warn(MinLen(1), "No author specified.")] = Field(default_factory=list)
     """The authors are the creators of the RDF and the primary points of contact."""
@@ -305,8 +311,10 @@ class GenericDescrBase(GenericModelDescrBase):
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description=("∈📦 URL or relative path to a markdown file with additional documentation. "
-            "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.")
+            description=(
+                "∈📦 URL or relative path to a markdown file with additional documentation. "
+                "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."
+            ),
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

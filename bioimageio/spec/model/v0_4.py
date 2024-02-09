@@ -727,7 +727,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.4.9",] = "0.4.9"
+    format_version: Literal["0.4.10",] = "0.4.10"
     """Version of the bioimage.io model description specification used.
     When creating a new model always use the latest micro/patch version described here.
     The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -941,18 +941,26 @@ with details on how to quantitatively validate the model on unseen data.""",
     )
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: Annotated[NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]], Field(description="""∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
+    test_inputs: Annotated[
+        NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]],
+        Field(
+            description="""∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
 This means if your model has more than one input, you should provide one URL/relative path for each input.
 Each test input should be a file with an ndarray in
 [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
-The extension must be '.npy'.""")]
+The extension must be '.npy'."""
+        ),
+    ]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: Annotated[NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]], Field(description="∈📦 Analog to `test_inputs`.")]
+    test_outputs: Annotated[
+        NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]],
+        Field(description="∈📦 Analog to `test_inputs`."),
+    ]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime

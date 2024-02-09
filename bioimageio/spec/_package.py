@@ -7,6 +7,7 @@ from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, cast
 from zipfile import ZIP_DEFLATED
 
 from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
+from typing_extensions import assert_never
 
 from bioimageio.spec import model
 from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description, dump_description
@@ -27,7 +28,6 @@ from bioimageio.spec._internal.types import (
     YamlValue,
 )
 from bioimageio.spec._internal.types._file_source import extract_file_name
-from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
 from bioimageio.spec.summary import Loc
@@ -35,21 +35,22 @@ from bioimageio.spec.summary import Loc
 
 def fill_resource_package_content(
     package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]],
+    fields_to_overwrite: Dict[Loc, Node],
     node: Node,
     node_loc: Loc,
 ):
     field_value: Union[Tuple[Any, ...], Node, Any]
-    for field_name, field_value in node:
+    for field_name, field_value in list(node):
         loc = node_loc + (field_name,)
         # nested node
         if isinstance(field_value, Node):
-            fill_resource_package_content(package_content, field_value, loc)
+            fill_resource_package_content(package_content, fields_to_overwrite, field_value, loc)
 
         # nested node in list/tuple
         elif isinstance(field_value, (list, tuple)):
             for i, fv in enumerate(field_value):
                 if isinstance(fv, Node):
-                    fill_resource_package_content(package_content, fv, loc + (i,))
+                    fill_resource_package_content(package_content, fields_to_overwrite, fv, loc + (i,))
 
         elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
             if isinstance(field_value, RelativeFilePath):
@@ -60,6 +61,7 @@ def fill_resource_package_content(
                 raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
 
             package_content[loc] = src
+            fields_to_overwrite[loc] = node
 
 
 def get_os_friendly_file_name(name: str) -> str:
@@ -81,9 +83,8 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
-    if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(
-        f".{BIOIMAGEIO_YAML}"
-    ):
+    rd = rd.model_copy(deep=True)
+    if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}"):
         raise ValueError(
             f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
         )
@@ -97,11 +98,16 @@ def get_resource_package_content(
         else:
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
 
-        rd = rd.model_copy(update=dict(weights={wf: w}))
+        if isinstance(rd, model.v0_4.ModelDescr):
+            rd.weights = model.v0_4.WeightsDescr(**{wf: w})
+        elif isinstance(rd, model.v0_5.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
+            rd.weights = model.v0_5.WeightsDescr(**{wf: w})
+        else:
+            assert_never(rd)
 
     package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]] = {}
-    fill_resource_package_content(package_content, rd, node_loc=())
-    file_names: Dict[Loc, str] = {}
+    fields_to_overwrite: Dict[Loc, Node] = {}
+    fill_resource_package_content(package_content, fields_to_overwrite, rd, node_loc=())
     os_friendly_name = get_os_friendly_file_name(rd.name)
     content: BioimageioYamlContent = {}  # filled in below
     reserved_file_sources: Dict[str, BioimageioYamlContent] = {
@@ -122,13 +128,13 @@ def get_resource_package_content(
                 raise RuntimeError(f"Too many file name clashes for {file_name}")
 
         file_sources[file_name] = src
-        file_names[loc] = file_name
-
-    # update resource description to point to local files
-    rd = rd.model_copy(update=nest_dict_with_narrow_first_key(file_names, str))
+        field_name = loc[-1]
+        assert isinstance(field_name, str)
+        setattr(fields_to_overwrite[loc], field_name, file_name)
 
     # fill in rdf content from updated resource description
     content.update(dump_description(rd))
+    _ = content.pop("rdf_source", None)
 
     return file_sources
 

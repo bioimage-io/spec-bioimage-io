@@ -1603,6 +1603,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             git_repo=cast(Optional[HttpUrl], src.git_repo),
             icon=src.icon,
             id=src.id,
+            id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,
             maintainers=[_maintainer_conv.convert_as_dict(m) for m in src.maintainers],

@@ -255,6 +255,12 @@ all generic 0.3.0 changes plus:
 * Non-breaking changes:
   * new pre-/postprocessing: `id`='ensure_dtype' with kwarg `dtype`
 
+#### generic 0.2.4 and model 0.4.10
+
+* Breaking changes that are fully auto-convertible
+  * `version` is now a single number. The minor version from the previous SemVer 2.0 is used when converting.
+  * `id_emoji` is a new, optional field
+
 #### model 0.4.9
 
 * Non-breaking changes
