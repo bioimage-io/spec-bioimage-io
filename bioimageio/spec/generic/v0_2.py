@@ -46,7 +46,7 @@ CoverImageSource = Union[
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: List[FileSource] = Field(default_factory=list)
+    files: Annotated[List[FileSource], Field(description="∈📦 File attachments")] = Field(default_factory=list)
     """∈📦 File attachments"""
 
 
@@ -157,7 +157,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
-    ] = Field(default_factory=list)
+    ] = Field(default_factory=list, description="∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.")
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id: Optional[ResourceId] = None
@@ -305,6 +305,8 @@ class GenericDescrBase(GenericModelDescrBase):
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
+            description=("∈📦 URL or relative path to a markdown file with additional documentation. "
+            "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.")
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

@@ -141,7 +141,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
-    ] = Field(default_factory=list)
+    ] = Field(default_factory=list, description="∈📦 Cover images.")
     """∈📦 Cover images."""
 
     id: Optional[ResourceId] = None
@@ -284,6 +284,8 @@ class GenericDescrBase(GenericModelDescrBase):
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
+            description=("∈📦 URL or relative path to a markdown file with additional documentation. "
+    "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.")
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

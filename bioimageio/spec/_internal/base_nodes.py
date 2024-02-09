@@ -46,11 +46,9 @@ from typing_extensions import (
     Unpack,
 )
 
-from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import (
     ALERT,
     ERROR,
-    IN_PACKAGE_MESSAGE,
     INFO,
     VERSION,
     WARNING_LEVEL_TO_NAME,
@@ -481,7 +479,7 @@ class KwargsNode(Node):
 
 
 class FileDescr(Node):
-    source: FileSource
+    source: Annotated[FileSource, Field(description="∈📦 file source")]
     """∈📦 file source"""
 
     sha256: Optional[Sha256] = None

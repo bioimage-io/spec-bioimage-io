@@ -763,14 +763,34 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return axes
 
-    test_tensor: FileDescr
+    test_tensor: Annotated[
+        FileDescr,
+        Field(
+            description="""∈📦 An example tensor to use for testing.
+Using the model with the test input tensors is expected to yield the test output tensors.
+Each test tensor has be a an ndarray in the
+[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
+The file extension must be '.npy'."""
+        ),
+    ]
     """∈📦 An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: Optional[FileDescr] = None
+    sample_tensor: Annotated[
+        Optional[FileDescr],
+        Field(
+            description="""∈📦 A sample tensor to illustrate a possible input/output for the model,
+The sample image primarily serves to inform a human user about an example use case
+and is typically stored as .hdf5, .png or .tiff.
+It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)
+(numpy's `.npy` format is not supported).
+The image dimensionality has to match the number of axes specified in this tensor description.
+"""
+        ),
+    ] = None
     """∈📦 A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -1013,7 +1033,16 @@ def validate_tensors(
 
 class EnvironmentFileDescr(FileDescr):
     source: Annotated[
-        FileSource, WithSuffix((".yaml", ".yml"), case_sensitive=True), Field(examples=["environment.yaml"])
+        FileSource,
+        WithSuffix((".yaml", ".yml"), case_sensitive=True),
+        Field(
+            examples=["environment.yaml"],
+            description="""∈📦 Conda environment file.
+Allows to specify custom dependencies, see conda docs:
+- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
+- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)
+""",
+        ),
     ]
     """∈📦 Conda environment file.
     Allows to specify custom dependencies, see conda docs:
@@ -1083,7 +1112,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: FileSource
+    source: Annotated[FileSource, Field(description="∈📦 The weights file.")]
     """∈📦 The weights file."""
 
     authors: Optional[List[Author]] = None
@@ -1144,7 +1173,10 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     tensorflow_version: _Version
     """Version of the TensorFlow library used."""
 
-    source: FileSource
+    source: Annotated[
+        FileSource,
+        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
+    ]
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -1159,7 +1191,10 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
-    source: FileSource
+    source: Annotated[
+        FileSource,
+        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
+    ]
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -1235,6 +1270,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
+            description="""∈📦 URL or relative path to a markdown file with additional documentation.
+The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
+The documentation should include a '#[#] Validation' (sub)section
+with details on how to quantitatively validate the model on unseen data.""",
         ),
     ]
     """∈📦 URL or relative path to a markdown file with additional documentation.

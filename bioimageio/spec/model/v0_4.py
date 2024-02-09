@@ -93,7 +93,9 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Union[HttpUrl, RelativeFilePath]
+    source_file: Annotated[
+        Union[HttpUrl, RelativeFilePath], Field(description="∈📦 Python module that implements `callable_name`")
+    ]
     """∈📦 Python module that implements `callable_name`"""
     callable_name: Identifier
     """The Python identifier of  """
@@ -112,7 +114,10 @@ class Dependencies(StringNode):
     manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
-    file: Annotated[FileSource, Field(examples=["environment.yaml", "pom.xml", "requirements.txt"])]
+    file: Annotated[
+        FileSource,
+        Field(examples=["environment.yaml", "pom.xml", "requirements.txt"], description="∈📦 Dependency file"),
+    ]
     """∈📦 Dependency file"""
 
     @classmethod
@@ -156,7 +161,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: FileSource
+    source: Annotated[FileSource, Field(description="∈📦 The weights file.")]
     """∈📦 The weights file."""
 
     attachments: Annotated[
@@ -265,7 +270,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     pytorch_version: Annotated[
         Union[_Version, None],
         warn(
-            _Version, msg="Missing PyTorch version. Please specify the PyTorch version these PyTorch state dict weights were created with."
+            _Version,
+            msg="Missing PyTorch version. Please specify the PyTorch version these PyTorch state dict weights were created with.",
         ),
     ] = None
     """Version of the PyTorch library used.
@@ -279,8 +285,11 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     pytorch_version: Annotated[
         Union[_Version, None],
         warn(
-            _Version, msg=("Missing Pytorch version. "
-            "Please specify the PyTorch version these Torchscript weights were created with.")
+            _Version,
+            msg=(
+                "Missing Pytorch version. "
+                "Please specify the PyTorch version these Torchscript weights were created with."
+            ),
         ),
     ] = None
     """Version of the PyTorch library used."""
@@ -298,7 +307,10 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     ] = None
     """Version of the TensorFlow library used."""
 
-    source: FileSource
+    source: Annotated[
+        FileSource,
+        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
+    ]
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -734,6 +746,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
+            description="""∈📦 URL or relative path to a markdown file with additional documentation.
+The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
+The documentation should include a '[#[#]]# Validation' (sub)section
+with details on how to quantitatively validate the model on unseen data.""",
         ),
     ]
     """∈📦 URL or relative path to a markdown file with additional documentation.
@@ -907,22 +923,36 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[FileSource] = Field(default_factory=list)
+    sample_inputs: List[FileSource] = Field(
+        default_factory=list,
+        description=(
+            "∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model, "
+            "for example stored as PNG or TIFF images. "
+            "The sample files primarily serve to inform a human user about an example use case"
+        ),
+    )
     """∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[FileSource] = Field(default_factory=list)
+    sample_outputs: List[FileSource] = Field(
+        default_factory=list,
+        description="∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
+    )
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_inputs: Annotated[NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]], Field(description="""∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
+This means if your model has more than one input, you should provide one URL/relative path for each input.
+Each test input should be a file with an ndarray in
+[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
+The extension must be '.npy'.""")]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_outputs: Annotated[NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]], Field(description="∈📦 Analog to `test_inputs`.")]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime
