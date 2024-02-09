@@ -73,7 +73,7 @@ YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
 # YamlArray = TypeAliasType("YamlArray", List[YamlValue])
 # YamlMapping = TypeAliasType("YamlMapping", Dict[YamlKey, YamlValue])
 # YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, YamlArray, YamlMapping])
-YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, List[YamlValue], Dict[YamlKey, YamlValue]])
+YamlValue = TypeAliasType("YamlValue", Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]])
 
 # derived types
 DatasetId = NewType("DatasetId", _ResourceIdAnno)

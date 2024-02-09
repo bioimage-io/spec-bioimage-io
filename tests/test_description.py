@@ -7,7 +7,7 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 
 def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data = dict(unet2d_data)
-    v_future = "9999.0.0"
+    v_future = "0.9999.0"
     data["format_version"] = v_future  # assume it is valid in a future format version
 
     summary = validate_format(
@@ -24,7 +24,7 @@ def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
 def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data = dict(unet2d_data)
     data["authors"] = 42  # make sure rdf is invalid
-    data["format_version"] = "9999.0.0"  # assume it is valid in a future format version
+    data["format_version"] = "0.9999.0"  # assume it is valid in a future format version
 
     summary = validate_format(
         data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)

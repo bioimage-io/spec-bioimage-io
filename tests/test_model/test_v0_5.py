@@ -339,6 +339,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
 
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
+    model_data["format_version"] = "0.3.0"
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 

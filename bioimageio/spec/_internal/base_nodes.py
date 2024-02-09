@@ -33,6 +33,7 @@ from pydantic import (
     PrivateAttr,
     StringConstraints,
     TypeAdapter,
+    field_validator,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
@@ -371,33 +372,42 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    @model_validator(mode="before")
+    @field_validator("format_version", mode="before", check_fields=False)
     @classmethod
-    def ignore_future_patch(cls, data: Dict[str, Any], /) -> Dict[str, Any]:
-        def maj_min(v: str):
-            parts = v.split(".")[:2]
-            return tuple(int(p) if p.isdecimal() else p for p in parts)
+    def _ignore_future_patch(cls, value: Any, /) -> Any:
+        def get_maj(v: str):
+            parts = v.split(".")
+            if parts and (p := parts[0]).isdecimal():
+                return int(p)
+            else:
+                return 0
 
-        def get_patch(v: str):
-            p = v[v.rfind(".") :]
-            return int(p) if p.isdecimal() else -1
+        def get_min_patch(v: str):
+            parts = v.split(".")
+            if len(parts) == 3:
+                _, m, p = parts
+                if m.isdecimal() and p.isdecimal():
+                    return int(m), int(p)
+
+            return (0, 0)
 
         if (
-            (fv := data.get("format_version")) != cls.implemented_format_version
-            and isinstance(fv, str)
-            and fv.count(".") == 2
-            and maj_min(fv) == cls.implemented_format_version_tuple[:2]
-            and get_patch(fv) > cls.implemented_format_version_tuple[2]
+            cls.implemented_format_version != "unknown"
+            and value != cls.implemented_format_version
+            and isinstance(value, str)
+            and value.count(".") == 2
+            and get_maj(value) == cls.implemented_format_version_tuple[0]
+            and get_min_patch(value) > cls.implemented_format_version_tuple[1:]
         ):
             issue_warning(
                 "future format_version '{value}' treated as '{implemented}'",
-                value=fv,
+                value=value,
                 msg_context=dict(implemented=cls.implemented_format_version),
                 severity=ALERT,
             )
-            data["format_version"] = cls.implemented_format_version
-
-        return data
+            return cls.implemented_format_version
+        else:
+            return value
 
     @property
     def validation_summary(self) -> Optional[ValidationSummary]:
