@@ -6,7 +6,7 @@ import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional, TextIO, TypedDict, Union, cast
+from typing import Any, Dict, Iterable, Mapping, Optional, Sequence, TextIO, TypedDict, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -16,7 +16,7 @@ from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath, TypeAdap
 from ruamel.yaml import YAML
 from typing_extensions import NotRequired, Unpack
 
-from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML, LEGACY_BIOIMAGEIO_YAML_NAMES
+from bioimageio.spec._internal.constants import ALTERNATIVE_BIOIMAGEIO_YAML_NAMES, BIOIMAGEIO_YAML
 from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
@@ -180,34 +180,31 @@ def open_bioimageio_yaml(source: PermissiveFileSource, /, **kwargs: Unpack[HashK
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
+def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
+    file_names = sorted(file_names)
+    for bioimageio_name in  (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES:
+        for fname in file_names:
+            if fname == bioimageio_name or fname.endswith(f".{fname}"):
+                return fname
+
+    raise ValueError(
+        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}' or "
+        f"or any of the alterntive file names: {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},"
+        f"of any file with an extension of those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
+    )
+
+
 def find_description_file_name(path: Path) -> FileName:
     if path.is_file():
         if not is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
-            if BIOIMAGEIO_YAML in f.namelist():
-                return BIOIMAGEIO_YAML
-
-            candidates = [fname for fname in f.namelist() if fname.endswith(".{BIOIMAGEIO_YAML}")] + [
-                legacy for legacy in LEGACY_BIOIMAGEIO_YAML_NAMES if legacy in f.namelist()
-            ]
+            file_names = identify_bioimageio_yaml_file(f.namelist())
     else:
-        if (path / BIOIMAGEIO_YAML).exists():
-            return BIOIMAGEIO_YAML
+        file_names = [p.name for p in path.glob("*")]
 
-        candidates = [p.name for p in path.glob(f"*.{BIOIMAGEIO_YAML}")] + [
-            legacy for legacy in LEGACY_BIOIMAGEIO_YAML_NAMES if (path / legacy).exists()
-        ]
-
-    if len(candidates) == 0:
-        raise ValueError(
-            f"No {BIOIMAGEIO_YAML} found in {path}. (Looking for '{BIOIMAGEIO_YAML}', "
-            f"any file with the '.{BIOIMAGEIO_YAML}' extension, or any legacy file: {LEGACY_BIOIMAGEIO_YAML_NAMES})."
-        )
-
-    candidates.sort()
-    return candidates[0]
+    return identify_bioimageio_yaml_file(file_names)
 
 
 def unzip(zip_file: FilePath, out_path: Optional[DirectoryPath] = None, overwrite: bool = True) -> DirectoryPath:

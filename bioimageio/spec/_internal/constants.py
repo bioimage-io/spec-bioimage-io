@@ -25,7 +25,7 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
     assert isinstance(VERSION, str), VERSION
 
 BIOIMAGEIO_YAML = "rdf.yaml"
-LEGACY_BIOIMAGEIO_YAML_NAMES = ("rdf.yaml", "model.yaml")
+ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
 
 DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 
