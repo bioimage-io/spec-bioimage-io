@@ -420,10 +420,7 @@ def export_module_documentations(folder: Path, module: ModuleType):
             continue
 
         rd_class = getattr(v_module, rd_name)
-        documented_rd_class = type(
-            rd_name, (rd_class,), dict(set_undefined_field_descriptions_from_var_docstrings=True)
-        )
-        latest = export_documentation(folder, documented_rd_class)
+        latest = export_documentation(folder, rd_class)
 
     assert latest is not None
     assert rd_class is not None
@@ -434,7 +431,6 @@ def export_module_documentations(folder: Path, module: ModuleType):
 if __name__ == "__main__":
     dist = (Path(__file__).parent / "../dist").resolve()
     dist.mkdir(exist_ok=True)
-    os.environ["bioimageio_set_undefined_field_descriptions_from_var_docstrings"] = "True"
 
     export_module_documentations(dist, application)
     export_module_documentations(dist, collection)

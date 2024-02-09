@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     github_username: Optional[str] = None
     github_token: Optional[str] = None
     perform_io_checks: bool = True
-    set_undefined_field_descriptions_from_var_docstrings: bool = False
 
     @property
     def github_auth(self):

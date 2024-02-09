@@ -77,18 +77,10 @@ class Node(
     validate_assignment=True,
     validate_default=True,
     validate_return=True,
+    # use_attribute_docstrings=True,  TODO: use this from future pydantic 2.7
+    # see https://github.com/pydantic/pydantic/issues/5656
 ):
     """Subpart of a resource description"""
-
-    @classmethod
-    def __pydantic_init_subclass__(cls, **kwargs: Any):
-        super().__pydantic_init_subclass__(**kwargs)
-        # TODO: use pydantic config's use_attribute_docstrings from future pydantic 2.7 instead
-        # see https://github.com/pydantic/pydantic/issues/5656
-        if settings.set_undefined_field_descriptions_from_var_docstrings:
-            cls._set_undefined_field_descriptions_from_var_docstrings()
-            # cls._set_undefined_field_descriptions_from_field_name()  # todo: decide if we can remove this
-
     @classmethod
     def model_validate(
         cls,
@@ -125,60 +117,6 @@ class Node(
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate
             return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
-
-    @classmethod
-    def _set_undefined_field_descriptions_from_var_docstrings(cls) -> None:
-        for klass in inspect.getmro(cls):
-            if issubclass(klass, Node):
-                cls._set_undefined_field_descriptions_from_var_docstrings_impl(klass)
-
-    @classmethod
-    def _set_undefined_field_descriptions_from_var_docstrings_impl(cls, klass: Type[Any]):
-        try:
-            source = inspect.getsource(klass)
-        except OSError:
-            if klass.__module__ == "pydantic.main":
-                # klass is probably a dynamically created pydantic Model (using pydantic.create_model)
-                return
-            else:
-                raise
-
-        unindented_source = unindent(source)
-        module = ast.parse(unindented_source)
-        assert isinstance(module, ast.Module), module
-        class_def = module.body[0]
-        assert isinstance(class_def, ast.ClassDef), class_def
-        if len(class_def.body) < 2:
-            return
-
-        for last, node in zip(class_def.body, class_def.body[1:]):
-            if not (
-                isinstance(last, ast.AnnAssign) and isinstance(last.target, ast.Name) and isinstance(node, ast.Expr)
-            ):
-                continue
-
-            field_name = last.target.id
-            if field_name not in cls.model_fields:
-                continue
-
-            info = cls.model_fields[field_name]
-            description = info.description or ""
-            if description and description != IN_PACKAGE_MESSAGE:
-                continue
-
-            doc_node = node.value
-            if isinstance(doc_node, ast.Constant):
-                docstring = doc_node.value
-            else:
-                raise NotImplementedError(doc_node)
-
-            info.description = description + docstring
-
-    @classmethod
-    def _set_undefined_field_descriptions_from_field_name(cls):
-        for name, info in cls.model_fields.items():
-            if info.description is None:
-                info.description = name
 
 
 class StringNode(collections.UserString, ABC):
