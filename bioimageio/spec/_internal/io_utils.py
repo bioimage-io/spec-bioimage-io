@@ -6,7 +6,7 @@ import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Optional, Sequence, TextIO, TypedDict, Union, cast
+from typing import Any, Dict, Iterable, Mapping, Optional, TextIO, TypedDict, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -37,7 +37,6 @@ if platform.machine() == "wasm32":
 
 
 yaml = YAML(typ="safe")
-
 
 
 class HashKwargs(TypedDict):
@@ -182,7 +181,7 @@ def open_bioimageio_yaml(source: PermissiveFileSource, /, **kwargs: Unpack[HashK
 
 def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
     file_names = sorted(file_names)
-    for bioimageio_name in  (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES:
+    for bioimageio_name in (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES:
         for fname in file_names:
             if fname == bioimageio_name or fname.endswith(f".{fname}"):
                 return fname

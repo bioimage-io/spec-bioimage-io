@@ -106,10 +106,10 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
         s = data.shape[i]
         assert s > 1
         if isinstance(a, (SpaceInputAxis, SpaceOutputAxis, TimeInputAxis, TimeOutputAxis)):
-            data = data[slices + (slice(s // 2 - 1, s // 2),)]
+            data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
             ndim -= 1
 
-        slices += (slice(None),)
+        slices += (slice(None),)  # type: ignore
 
     del slices
     data, axes = squeeze(data, axes)

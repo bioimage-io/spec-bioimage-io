@@ -240,7 +240,6 @@ def model_data():
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
         git_repo="https://github.com/bioimage-io/python-bioimage-io",
-        format_version="0.4.9",
         description="description",
         authors=[
             Author(name="Author 1", affiliation="Affiliation 1"),

@@ -179,12 +179,12 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                 Dict[str, Any],
                 (cls if TYPE_CHECKING else dict)(
                     attachments=[] if old.attachments is None else [FileDescr(source=f) for f in old.attachments.files],
-                    authors=[_author_conv.convert_as_dict(a) for a in old.authors],  # type: ignore
+                    authors=[_author_conv.convert_as_dict(a) for a in old.authors],
                     badges=old.badges,
                     cite=old.cite,
                     collection=[
                         (CollectionEntry if TYPE_CHECKING else dict)(
-                            entry_source=entry.entry_source, id=entry.id, **(entry.model_extra or {})
+                            entry_source=entry.rdf_source, id=entry.id, **entry.rdf_update  # type: ignore
                         )
                         for entry in old.collection
                     ],
@@ -196,9 +196,9 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     git_repo=cast(Optional[HttpUrl], old.git_repo),
                     icon=old.icon,
                     id=old.id,
-                    license=old.license,  # type: ignore
+                    license=old.license,
                     links=old.links,
-                    maintainers=[_maintainer_conv.convert_as_dict(m) for m in old.maintainers],  # type: ignore
+                    maintainers=[_maintainer_conv.convert_as_dict(m) for m in old.maintainers],
                     name=old.name,
                     tags=old.tags,
                     type=old.type,

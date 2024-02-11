@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import ast
 import collections.abc
-import inspect
 import traceback
 from abc import ABC, abstractmethod
 from copy import deepcopy
@@ -52,7 +50,6 @@ from typing_extensions import (
 from bioimageio.spec._internal.constants import (
     ALERT,
     ALL_BIOIMAGEIO_YAML_NAMES,
-    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     ERROR,
     IN_PACKAGE_MESSAGE,
     INFO,
