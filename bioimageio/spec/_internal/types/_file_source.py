@@ -18,6 +18,7 @@ from pydantic import (
 from pydantic_core import core_schema
 from typing_extensions import Annotated, assert_never
 
+from bioimageio.spec._internal.constants import ALL_BIOIMAGEIO_YAML_NAMES, BIOIMAGEIO_YAML
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.validation_context import validation_context_var
 
@@ -172,6 +173,20 @@ class RelativeDirectory(RelativePath):
 
 FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
 PermissiveFileSource = Union[FileSource, str]
+
+
+def wo_special_file_name(src: FileSource) -> FileSource:
+    file_name = extract_file_name(src)
+    for special in ALL_BIOIMAGEIO_YAML_NAMES:
+        if file_name.endswith(special):
+            raise ValueError(
+                f"'{file_name}' not allowed here as it is reserved to identify '{BIOIMAGEIO_YAML}' (or equivalent) files."
+            )
+
+    return src
+
+
+NonRdfFileSource = Annotated[FileSource, AfterValidator(wo_special_file_name)]
 
 
 def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:

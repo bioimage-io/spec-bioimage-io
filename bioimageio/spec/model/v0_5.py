@@ -46,10 +46,10 @@ from bioimageio.spec._internal.io_utils import download, load_array
 from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
-from bioimageio.spec._internal.types import FileSource, LowerCaseIdentifierStr, SiUnit
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
+from bioimageio.spec._internal.types import LowerCaseIdentifierStr, NonRdfFileSource, SiUnit
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -919,13 +919,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
         return self
 
 
-class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, FileSource, Optional[FileSource]]):
+class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, NonRdfFileSource, Optional[NonRdfFileSource]]):
     def _convert(
         self,
         src: v0_4.InputTensorDescr,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: FileSource,
-        sample_tensor: Optional[FileSource],
+        test_tensor: NonRdfFileSource,
+        sample_tensor: Optional[NonRdfFileSource],
     ) -> "InputTensorDescr | dict[str, Any]":
         reordered_shape = analyze_tensor_shape(src.shape)
         axes = [get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
@@ -1033,7 +1033,7 @@ def validate_tensors(
 
 class EnvironmentFileDescr(FileDescr):
     source: Annotated[
-        FileSource,
+        NonRdfFileSource,
         WithSuffix((".yaml", ".yml"), case_sensitive=True),
         Field(
             examples=["environment.yaml"],
@@ -1087,7 +1087,7 @@ class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, 
         else:
             source = str(src)
             callable_ = str(src)
-        return tgt(callable=Identifier(callable_), source=cast(FileSource, source), sha256=sha256, kwargs=kwargs)
+        return tgt(callable=Identifier(callable_), source=cast(NonRdfFileSource, source), sha256=sha256, kwargs=kwargs)
 
 
 _arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)
@@ -1112,7 +1112,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: Annotated[FileSource, Field(description="∈📦 The weights file.")]
+    source: Annotated[NonRdfFileSource, Field(description="∈📦 The weights file.")]
     """∈📦 The weights file."""
 
     authors: Optional[List[Author]] = None
@@ -1174,7 +1174,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     """Version of the TensorFlow library used."""
 
     source: Annotated[
-        FileSource,
+        NonRdfFileSource,
         Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
     ]
     """∈📦 The multi-file weights.
@@ -1192,7 +1192,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
     source: Annotated[
-        FileSource,
+        NonRdfFileSource,
         Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
     ]
     """∈📦 The multi-file weights.
@@ -1645,7 +1645,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     pytorch_version=w.pytorch_version or Version("1.10"),
                     dependencies=(EnvironmentFileDescr if TYPE_CHECKING else dict)(
                         source=cast(
-                            FileSource,
+                            NonRdfFileSource,
                             str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
                         )
                     ),
@@ -1667,7 +1667,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     if w.dependencies is None
                     else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
                         source=cast(
-                            FileSource,
+                            NonRdfFileSource,
                             str(w.dependencies)[len("conda:") :]
                             if str(w.dependencies).startswith("conda:")
                             else str(w.dependencies),

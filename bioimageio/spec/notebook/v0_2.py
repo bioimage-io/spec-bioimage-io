@@ -8,9 +8,7 @@ from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import FileSource as FileSource
-from bioimageio.spec.generic.v0_2 import GenericDescrBase
-from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
+from bioimageio.spec.generic.v0_2 import GenericDescrBase, HttpUrl
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId

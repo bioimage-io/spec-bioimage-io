@@ -32,7 +32,12 @@ from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.types import BioimageioYamlContent, FileSource, LowerCaseIdentifierStr, RelativeFilePath
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
+    LowerCaseIdentifierStr,
+    NonRdfFileSource,
+    RelativeFilePath,
+)
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
@@ -115,7 +120,7 @@ class Dependencies(StringNode):
     """Dependency manager"""
 
     file: Annotated[
-        FileSource,
+        NonRdfFileSource,
         Field(examples=["environment.yaml", "pom.xml", "requirements.txt"], description="∈📦 Dependency file"),
     ]
     """∈📦 Dependency file"""
@@ -161,7 +166,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: Annotated[FileSource, Field(description="∈📦 The weights file.")]
+    source: Annotated[NonRdfFileSource, Field(description="∈📦 The weights file.")]
     """∈📦 The weights file."""
 
     attachments: Annotated[
@@ -336,7 +341,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
         return value
 
     source: Annotated[
-        FileSource,
+        NonRdfFileSource,
         Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
     ]
     """∈📦 The multi-file weights.
@@ -776,7 +781,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
-        FileSource,
+        NonRdfFileSource,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
@@ -959,7 +964,7 @@ with details on how to quantitatively validate the model on unseen data.""",
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[FileSource] = Field(
+    sample_inputs: List[NonRdfFileSource] = Field(
         default_factory=list,
         description=(
             "∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model, "
@@ -971,14 +976,14 @@ with details on how to quantitatively validate the model on unseen data.""",
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[FileSource] = Field(
+    sample_outputs: List[NonRdfFileSource] = Field(
         default_factory=list,
         description="∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
     )
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: Annotated[
-        NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]],
+        NotEmpty[List[Annotated[NonRdfFileSource, WithSuffix(".npy", case_sensitive=True)]]],
         Field(
             description="""∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
 This means if your model has more than one input, you should provide one URL/relative path for each input.
@@ -994,7 +999,7 @@ The extension must be '.npy'."""
     The extension must be '.npy'."""
 
     test_outputs: Annotated[
-        NotEmpty[List[Annotated[FileSource, WithSuffix(".npy", case_sensitive=True)]]],
+        NotEmpty[List[Annotated[NonRdfFileSource, WithSuffix(".npy", case_sensitive=True)]]],
         Field(description="∈📦 Analog to `test_inputs`."),
     ]
     """∈📦 Analog to `test_inputs`."""

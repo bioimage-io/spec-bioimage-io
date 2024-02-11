@@ -26,6 +26,7 @@ with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as
 
 BIOIMAGEIO_YAML = "rdf.yaml"
 ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
+ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
 
 DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 

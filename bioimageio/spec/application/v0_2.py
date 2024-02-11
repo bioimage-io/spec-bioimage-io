@@ -3,7 +3,7 @@ from typing import Literal, Optional
 from pydantic import Field
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.types import FileSource
+from bioimageio.spec._internal.types import NonRdfFileSource
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
@@ -20,5 +20,7 @@ class ApplicationDescr(GenericDescrBase, title="bioimage.io application specific
 
     type: Literal["application"] = "application"
 
-    source: Annotated[Optional[FileSource], Field(description="URL or path to the source of the application")] = None
+    source: Annotated[
+        Optional[NonRdfFileSource], Field(description="URL or path to the source of the application")
+    ] = None
     """The primary source of the application"""

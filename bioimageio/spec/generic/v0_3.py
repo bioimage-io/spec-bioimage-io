@@ -21,8 +21,8 @@ from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
     DeprecatedLicenseId,
-    FileSource,
     LicenseId,
+    NonRdfFileSource,
     NotEmpty,
     RelativeFilePath,
     YamlValue,
@@ -200,7 +200,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[NonRdfFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """An icon for illustration, e.g. on bioimage.io"""
 
     @as_warning

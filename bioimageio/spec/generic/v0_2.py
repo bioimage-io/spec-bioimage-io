@@ -1,7 +1,7 @@
 import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union, get_args
 
-from annotated_types import Ge, Len, LowerCase, MaxLen, MinLen
+from annotated_types import Ge, Len, LowerCase, MaxLen
 from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
@@ -16,6 +16,7 @@ from bioimageio.spec._internal.types import (
     FileSource,
     HttpUrl,
     LicenseId,
+    NonRdfFileSource,
     NotEmpty,
     OrcidId,
     RelativeFilePath,
@@ -46,7 +47,7 @@ CoverImageSource = Union[
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: Annotated[List[FileSource], Field(description="∈📦 File attachments")] = Field(default_factory=list)
+    files: Annotated[List[NonRdfFileSource], Field(description="∈📦 File attachments")] = Field(default_factory=list)
     """∈📦 File attachments"""
 
 
@@ -242,7 +243,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[FileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[NonRdfFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """An icon for illustration"""
 
     links: Annotated[
@@ -313,7 +314,7 @@ class GenericDescrBase(GenericModelDescrBase):
     """badges associated with this resource"""
 
     documentation: Annotated[
-        Union[FileSource, None],
+        Optional[NonRdfFileSource],
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",

@@ -5,7 +5,6 @@ from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import FileSource as FileSource
 from bioimageio.spec.generic.v0_3 import GenericDescrBase
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
