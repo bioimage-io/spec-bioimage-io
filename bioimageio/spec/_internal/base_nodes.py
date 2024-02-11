@@ -6,9 +6,11 @@ import inspect
 import traceback
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     Final,
@@ -34,6 +36,7 @@ from pydantic import (
     StringConstraints,
     TypeAdapter,
     field_validator,
+    model_serializer,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema
@@ -48,16 +51,21 @@ from typing_extensions import (
 
 from bioimageio.spec._internal.constants import (
     ALERT,
+    ALL_BIOIMAGEIO_YAML_NAMES,
+    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     ERROR,
+    IN_PACKAGE_MESSAGE,
     INFO,
     VERSION,
     WARNING_LEVEL_TO_NAME,
 )
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import download, get_sha256
+from bioimageio.spec._internal.packaging_context import packaging_context_var
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Sha256 as Sha256
+from bioimageio.spec._internal.types._file_source import extract_file_name
 from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import (
     ValidationContext,
@@ -116,6 +124,43 @@ class Node(
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate
             return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
+
+    @model_serializer(mode="wrap")
+    def _package(self, nxt: Callable[[Self], Dict[str, Any]]) -> Dict[str, Any]:
+        ret = nxt(self)
+        if (packaging_context := packaging_context_var.get()) is None:
+            return ret
+
+        fsrcs = packaging_context.file_sources
+        for field_name, field_value in self:
+            if not (self.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
+                continue
+
+            if isinstance(field_value, RelativeFilePath):
+                src = field_value.absolute
+            elif isinstance(field_value, AnyUrl):
+                src = field_value
+            elif isinstance(field_value, Path):
+                src = field_value.resolve()
+            else:
+                raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
+
+            fname = extract_file_name(src)
+            assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), fname
+            if fname in fsrcs and fsrcs[fname] != src:
+                for i in range(2, 20):
+                    fn, *ext = fname.split(".")
+                    alternative_file_name = ".".join([f"{fn}_{i}", *ext])
+                    if alternative_file_name not in fsrcs or fsrcs[alternative_file_name] == src:
+                        fname = alternative_file_name
+                        break
+                else:
+                    raise RuntimeError(f"Too many file name clashes for {fname}")
+
+            fsrcs[fname] = src
+            ret[field_name] = fname
+
+        return ret
 
 
 class StringNode(collections.UserString, ABC):

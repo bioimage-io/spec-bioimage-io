@@ -13,6 +13,7 @@ WarningLevel = Literal[WarningSeverity, 50]
 Highest warning level 50/error does not raise any validaiton warnings (only validation errors)."""
 
 
+# TODO: turn into python dataclass for better performance and simplicity?
 class ValidationContext(BaseModel, frozen=True):
     _context_tokens = PrivateAttr(default_factory=list)
 

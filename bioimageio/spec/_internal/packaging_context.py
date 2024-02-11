@@ -1,0 +1,31 @@
+from contextvars import ContextVar, Token
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Union
+
+from bioimageio.spec._internal.types import AbsoluteFilePath, FileName, HttpUrl
+
+
+@dataclass(frozen=True)
+class PackagingContext:
+    _context_tokens: List[Token[Optional["PackagingContext"]]] = field(init=False, default_factory=list)
+
+    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(default_factory=dict)
+    """File sources to include in the packaged resource"""
+
+    def replace(
+        self,
+        file_sources: Optional[Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]] = None,
+    ) -> "PackagingContext":
+        return PackagingContext(
+            file_sources=self.file_sources if file_sources is None else file_sources,
+        )
+
+    def __enter__(self):
+        self._context_tokens.append(packaging_context_var.set(self))
+        return self
+
+    def __exit__(self, type, value, traceback):  # type: ignore
+        packaging_context_var.reset(self._context_tokens.pop(-1))
+
+
+packaging_context_var: ContextVar[Optional[PackagingContext]] = ContextVar("packaging_context_var", default=None)
