@@ -58,7 +58,7 @@ from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import BioimageioYamlContent, RelativeFilePath
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import Sha256 as Sha256
-from bioimageio.spec._internal.utils import assert_all_params_set_explicitly, unindent
+from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     validation_context_var,
@@ -73,7 +73,7 @@ class Node(
     populate_by_name=True,
     revalidate_instances="always",
     validate_assignment=True,
-    validate_default=True,
+    validate_default=False,
     validate_return=True,
     # use_attribute_docstrings=True,  TODO: use this from future pydantic 2.7
     # see https://github.com/pydantic/pydantic/issues/5656

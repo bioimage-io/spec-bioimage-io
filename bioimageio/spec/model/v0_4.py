@@ -183,7 +183,6 @@ class WeightsEntryDescrBase(FileDescr):
             None,
             "Custom dependencies ({value}) specified. Avoid this whenever possible "
             "to allow execution in a wider range of software environments.",
-            INFO,
         ),
         Field(examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]),
     ] = None
@@ -285,8 +284,10 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                ("Missing PyTorch version. "
-                "Please specify the PyTorch version these PyTorch state dict weights were created with."),
+                (
+                    "Missing PyTorch version. "
+                    "Please specify the PyTorch version these PyTorch state dict weights were created with."
+                ),
                 value=value,
                 severity=ALERT,
             )
@@ -304,8 +305,10 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                ("Missing PyTorch version. "
-                 "Please specify the PyTorch version these Torchscript weights were created with."),
+                (
+                    "Missing PyTorch version. "
+                    "Please specify the PyTorch version these Torchscript weights were created with."
+                ),
                 value=value,
                 severity=ALERT,
             )
@@ -315,7 +318,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Optional[_Version]= None
+    tensorflow_version: Optional[_Version] = None
     """Version of the TensorFlow library used."""
 
     @field_validator("tensorflow_version", mode="after")
@@ -323,8 +326,10 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                ("Missing TensorFlow version. "
-                 "Please specify the TensorFlow version these TensorflowJs weights were created with."),
+                (
+                    "Missing TensorFlow version. "
+                    "Please specify the TensorFlow version these TensorflowJs weights were created with."
+                ),
                 value=value,
                 severity=ALERT,
             )
@@ -349,8 +354,10 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                ("Missing TensorFlow version. "
-                 "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with."),
+                (
+                    "Missing TensorFlow version. "
+                    "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with."
+                ),
                 value=value,
                 severity=ALERT,
             )

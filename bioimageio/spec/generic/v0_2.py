@@ -341,17 +341,16 @@ class GenericDescrBase(GenericModelDescrBase):
     @classmethod
     def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
         license_info = LICENSES[value] if value in LICENSES else {}
-        if not license_info.get("isFsfLibre", False):
-            issue_warning(
-                "{value} ({license_name}) is not FSF Free/libre.",
-                value=value,
-                msg_context=dict(license_name=license_info["name"]),
-            )
-
         if value is None:
             issue_warning("missing license.", value=value)
         elif value not in get_args(LicenseId):
             issue_warning("'{value}' is a deprecated or unknown license identifier.", value=value)
+        elif not license_info.get("isFsfLibre", False):
+            issue_warning(
+                "{value} ({license_name}) is not FSF Free/libre.",
+                value=value,
+                msg_context=dict(license_name=license_info.get("name")),
+            )
 
         return value
 
