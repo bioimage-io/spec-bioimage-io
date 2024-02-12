@@ -43,12 +43,12 @@ def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:
     for k, v in flat_dict.items():
         node: Union[Dict[K, Union[NestedDict[K, V], V]], NestedDict[K, V]] = res
         for kk in k[:-1]:
-            if not isinstance(node, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+            if not isinstance(node, dict):
                 raise ValueError(f"nesting level collision for flat key {k} at {kk}")
             d: NestedDict[K, V] = {}
             node = node.setdefault(kk, d)  # type: ignore
 
-        if not isinstance(node, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+        if not isinstance(node, dict):
             raise ValueError(f"nesting level collision for flat key {k}")
 
         node[k[-1]] = v

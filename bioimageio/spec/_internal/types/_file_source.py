@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import pathlib
+from functools import partial
 from pathlib import Path, PurePath, PurePosixPath
-from typing import Any, Union
+from typing import Any, Callable, Union
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
 import pydantic
@@ -14,12 +15,15 @@ from pydantic import (
     DirectoryPath,
     FilePath,
     GetCoreSchemaHandler,
+    SerializerFunctionWrapHandler,
+    WrapSerializer,
 )
 from pydantic_core import core_schema
 from typing_extensions import Annotated, assert_never
 
 from bioimageio.spec._internal.constants import ALL_BIOIMAGEIO_YAML_NAMES, BIOIMAGEIO_YAML
 from bioimageio.spec._internal.field_warning import issue_warning
+from bioimageio.spec._internal.packaging_context import packaging_context_var
 from bioimageio.spec._internal.validation_context import validation_context_var
 
 
@@ -130,7 +134,7 @@ class RelativePath:
     def _exists_impl(self) -> None:
         if isinstance(self.absolute, pathlib.Path):
             self._exists_locally(self.absolute)
-        elif isinstance(self.absolute, AnyUrl):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(self.absolute, AnyUrl):
             _ = validate_url_ok(self.absolute)
         else:
             assert_never(self.absolute)
@@ -186,7 +190,41 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     return src
 
 
-NonRdfFileSource = Annotated[FileSource, AfterValidator(wo_special_file_name)]
+def _package(value: FileSource, handler: SerializerFunctionWrapHandler) -> Union[FileSource, FileName]:
+    ret = handler(value)
+
+    if (packaging_context := packaging_context_var.get()) is None:
+        return ret
+
+    fsrcs = packaging_context.file_sources
+
+    if isinstance(value, RelativeFilePath):
+        src = value.absolute
+    elif isinstance(value, AnyUrl):
+        src = value
+    elif isinstance(value, Path):
+        src = value.resolve()
+    else:
+        assert_never(value)
+
+    fname = extract_file_name(src)
+    assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), fname
+    if fname in fsrcs and fsrcs[fname] != src:
+        for i in range(2, 20):
+            fn, *ext = fname.split(".")
+            alternative_file_name = ".".join([f"{fn}_{i}", *ext])
+            if alternative_file_name not in fsrcs or fsrcs[alternative_file_name] == src:
+                fname = alternative_file_name
+                break
+        else:
+            raise RuntimeError(f"Too many file name clashes for {fname}")
+
+    fsrcs[fname] = src
+    return fname
+
+
+IncludeInPackage: Callable[[], WrapSerializer] = partial(WrapSerializer, _package, when_used="unless-none")
+ImportantFileSource = Annotated[FileSource, AfterValidator(wo_special_file_name), IncludeInPackage()]
 
 
 def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:

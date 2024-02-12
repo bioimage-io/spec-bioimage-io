@@ -12,7 +12,8 @@ from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as Abs
 from bioimageio.spec._internal.types._file_source import FileName as FileName
 from bioimageio.spec._internal.types._file_source import FileSource as FileSource
 from bioimageio.spec._internal.types._file_source import HttpUrl as HttpUrl
-from bioimageio.spec._internal.types._file_source import NonRdfFileSource as NonRdfFileSource
+from bioimageio.spec._internal.types._file_source import ImportantFileSource as ImportantFileSource
+from bioimageio.spec._internal.types._file_source import IncludeInPackage as IncludeInPackage
 from bioimageio.spec._internal.types._file_source import PermissiveFileSource as PermissiveFileSource
 from bioimageio.spec._internal.types._file_source import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId

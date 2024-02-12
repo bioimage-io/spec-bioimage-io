@@ -3,65 +3,31 @@ import re
 import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
-from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, cast
+from typing import Dict, Literal, Optional, Sequence, Union, cast
 from zipfile import ZIP_DEFLATED
 
 from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
-from typing_extensions import assert_never
 
 from bioimageio.spec import model
-from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description, dump_description
-from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
-from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML, IN_PACKAGE_MESSAGE
+from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description
+from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
 from bioimageio.spec._internal.io_utils import (
     download,
     open_bioimageio_yaml,
     write_yaml,
     write_zip,
 )
+from bioimageio.spec._internal.packaging_context import PackagingContext
 from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
     BioimageioYamlSource,
     FileName,
-    RelativeFilePath,
     YamlValue,
 )
-from bioimageio.spec._internal.types._file_source import extract_file_name
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
-from bioimageio.spec.summary import Loc
-
-
-def fill_resource_package_content(
-    package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]],
-    fields_to_overwrite: Dict[Loc, Node],
-    node: Node,
-    node_loc: Loc,
-):
-    field_value: Union[Tuple[Any, ...], Node, Any]
-    for field_name, field_value in list(node):
-        loc = node_loc + (field_name,)
-        # nested node
-        if isinstance(field_value, Node):
-            fill_resource_package_content(package_content, fields_to_overwrite, field_value, loc)
-
-        # nested node in list/tuple
-        elif isinstance(field_value, (list, tuple)):
-            for i, fv in enumerate(field_value):
-                if isinstance(fv, Node):
-                    fill_resource_package_content(package_content, fields_to_overwrite, fv, loc + (i,))
-
-        elif (node.model_fields[field_name].description or "").startswith(IN_PACKAGE_MESSAGE):
-            if isinstance(field_value, RelativeFilePath):
-                src = field_value.absolute
-            elif isinstance(field_value, AnyUrl):
-                src = field_value
-            else:
-                raise NotImplementedError(f"Package field of type {type(field_value)} not implemented.")
-
-            package_content[loc] = src
-            fields_to_overwrite[loc] = node
 
 
 def get_os_friendly_file_name(name: str) -> str:
@@ -72,7 +38,7 @@ def get_resource_package_content(
     rd: ResourceDescr,
     /,
     *,
-    bioimageio_yaml_file_name: str = BIOIMAGEIO_YAML,
+    bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]]:
     """
@@ -83,60 +49,36 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
-    rd = rd.model_copy(deep=True)
     if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}"):
         raise ValueError(
             f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
         )
 
+    os_friendly_name = get_os_friendly_file_name(rd.name)
+    bioimageio_yaml_file_name = f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}"
+
+    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {
+        # add bioimageio.yaml file already here to avoid file name conflicts
+        bioimageio_yaml_file_name: AnyUrl("http://placeholder.com"),
+    }
+    with PackagingContext(file_sources=content):
+        rdf_content: BioimageioYamlContent = rd.model_dump(mode="json", exclude_unset=True)
+
+    _ = rdf_content.pop("rdf_source", None)
+
     if weights_priority_order is not None and isinstance(rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)):
         # select single weights entry
+        assert isinstance(rdf_content["weights"], dict)
         for wf in weights_priority_order:
-            w = getattr(rd.weights, wf, None)
+            w = rdf_content["weights"].get(wf)
             if w is not None:
                 break
         else:
             raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
 
-        if isinstance(rd, model.v0_4.ModelDescr):
-            rd.weights = model.v0_4.WeightsDescr(**{wf: w})
-        elif isinstance(rd, model.v0_5.ModelDescr):  # pyright: ignore[reportUnnecessaryIsInstance]
-            rd.weights = model.v0_5.WeightsDescr(**{wf: w})
-        else:
-            assert_never(rd)
+        rdf_content["weights"] = {wf: w}
 
-    package_content: Dict[Loc, Union[HttpUrl, AbsoluteFilePath]] = {}
-    fields_to_overwrite: Dict[Loc, Node] = {}
-    fill_resource_package_content(package_content, fields_to_overwrite, rd, node_loc=())
-    os_friendly_name = get_os_friendly_file_name(rd.name)
-    content: BioimageioYamlContent = {}  # filled in below
-    reserved_file_sources: Dict[str, BioimageioYamlContent] = {
-        "rdf.yaml": content,  # legacy name
-        f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}": content,
-    }
-    file_sources: Dict[str, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]] = dict(reserved_file_sources)
-    for loc, src in package_content.items():
-        file_name = extract_file_name(src)
-        if file_name in file_sources and file_sources[file_name] != src:
-            for i in range(2, 10):
-                fn, *ext = file_name.split(".")
-                alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-                if alternative_file_name not in file_sources or file_sources[alternative_file_name] == src:
-                    file_name = alternative_file_name
-                    break
-            else:
-                raise RuntimeError(f"Too many file name clashes for {file_name}")
-
-        file_sources[file_name] = src
-        field_name = loc[-1]
-        assert isinstance(field_name, str)
-        setattr(fields_to_overwrite[loc], field_name, file_name)
-
-    # fill in rdf content from updated resource description
-    content.update(dump_description(rd))
-    _ = content.pop("rdf_source", None)
-
-    return file_sources
+    return {**content, bioimageio_yaml_file_name: rdf_content}
 
 
 def _prepare_resource_package(

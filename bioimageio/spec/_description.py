@@ -114,7 +114,7 @@ def build_description(
     as_format: Union[FormatVersionPlaceholder, str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescription]:
     context = context or validation_context_var.get()
-    if not isinstance(content, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+    if not isinstance(content, dict):
         # "Invalid content of type '{type(content)}'"
         rd_class = bioimageio.spec.GenericDescr
 

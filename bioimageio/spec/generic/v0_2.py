@@ -15,8 +15,9 @@ from bioimageio.spec._internal.types import (
     Doi,
     FileSource,
     HttpUrl,
+    ImportantFileSource,
+    IncludeInPackage,
     LicenseId,
-    NonRdfFileSource,
     NotEmpty,
     OrcidId,
     RelativeFilePath,
@@ -37,17 +38,20 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 )
 
 _WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
-CoverImageSource = Union[
-    Annotated[HttpUrl, _WithImageSuffix],
-    Annotated[AbsoluteFilePath, _WithImageSuffix],
-    Annotated[RelativeFilePath, _WithImageSuffix],
+CoverImageSource = Annotated[
+    Union[
+        Annotated[HttpUrl, _WithImageSuffix],
+        Annotated[AbsoluteFilePath, _WithImageSuffix],
+        Annotated[RelativeFilePath, _WithImageSuffix],
+    ],
+    IncludeInPackage(),
 ]
 
 
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: Annotated[List[NonRdfFileSource], Field(description="∈📦 File attachments")] = Field(default_factory=list)
+    files: List[ImportantFileSource] = Field(default_factory=list)
     """∈📦 File attachments"""
 
 
@@ -160,7 +164,6 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         ),
     ] = Field(
         default_factory=list,
-        description="∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.",
     )
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
@@ -243,7 +246,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[NonRdfFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """An icon for illustration"""
 
     links: Annotated[
@@ -314,16 +317,12 @@ class GenericDescrBase(GenericModelDescrBase):
     """badges associated with this resource"""
 
     documentation: Annotated[
-        Optional[NonRdfFileSource],
+        Optional[ImportantFileSource],
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description=(
-                "∈📦 URL or relative path to a markdown file with additional documentation. "
-                "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."
-            ),
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

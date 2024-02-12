@@ -34,8 +34,9 @@ from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
+    ImportantFileSource,
+    IncludeInPackage,
     LowerCaseIdentifierStr,
-    NonRdfFileSource,
     RelativeFilePath,
 )
 from bioimageio.spec._internal.types import Datetime as Datetime
@@ -98,9 +99,7 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Annotated[
-        Union[HttpUrl, RelativeFilePath], Field(description="∈📦 Python module that implements `callable_name`")
-    ]
+    source_file: Annotated[Union[HttpUrl, RelativeFilePath], IncludeInPackage()]
     """∈📦 Python module that implements `callable_name`"""
     callable_name: Identifier
     """The Python identifier of  """
@@ -120,8 +119,8 @@ class Dependencies(StringNode):
     """Dependency manager"""
 
     file: Annotated[
-        NonRdfFileSource,
-        Field(examples=["environment.yaml", "pom.xml", "requirements.txt"], description="∈📦 Dependency file"),
+        ImportantFileSource,
+        Field(examples=["environment.yaml", "pom.xml", "requirements.txt"]),
     ]
     """∈📦 Dependency file"""
 
@@ -166,7 +165,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: Annotated[NonRdfFileSource, Field(description="∈📦 The weights file.")]
+    source: ImportantFileSource
     """∈📦 The weights file."""
 
     attachments: Annotated[
@@ -340,10 +339,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
             )
         return value
 
-    source: Annotated[
-        NonRdfFileSource,
-        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
-    ]
+    source: ImportantFileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -781,16 +777,12 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
-        NonRdfFileSource,
+        ImportantFileSource,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description="""∈📦 URL or relative path to a markdown file with additional documentation.
-The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
-The documentation should include a '[#[#]]# Validation' (sub)section
-with details on how to quantitatively validate the model on unseen data.""",
         ),
     ]
     """∈📦 URL or relative path to a markdown file with additional documentation.
@@ -891,7 +883,7 @@ with details on how to quantitatively validate the model on unseen data.""",
             return t.shape
         elif isinstance(t.shape, ParametrizedInputShape):
             return t.shape.min
-        elif isinstance(t.shape, ImplicitOutputShape):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(t.shape, ImplicitOutputShape):
             pass
         else:
             assert_never(t.shape)
@@ -964,44 +956,22 @@ with details on how to quantitatively validate the model on unseen data.""",
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[NonRdfFileSource] = Field(
-        default_factory=list,
-        description=(
-            "∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model, "
-            "for example stored as PNG or TIFF images. "
-            "The sample files primarily serve to inform a human user about an example use case"
-        ),
-    )
+    sample_inputs: List[ImportantFileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[NonRdfFileSource] = Field(
-        default_factory=list,
-        description="∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
-    )
+    sample_outputs: List[ImportantFileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: Annotated[
-        NotEmpty[List[Annotated[NonRdfFileSource, WithSuffix(".npy", case_sensitive=True)]]],
-        Field(
-            description="""∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
-This means if your model has more than one input, you should provide one URL/relative path for each input.
-Each test input should be a file with an ndarray in
-[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
-The extension must be '.npy'."""
-        ),
-    ]
+    test_inputs:         NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: Annotated[
-        NotEmpty[List[Annotated[NonRdfFileSource, WithSuffix(".npy", case_sensitive=True)]]],
-        Field(description="∈📦 Analog to `test_inputs`."),
-    ]
+    test_outputs:         NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime

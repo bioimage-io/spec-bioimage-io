@@ -48,8 +48,8 @@ from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
+from bioimageio.spec._internal.types import ImportantFileSource, LowerCaseIdentifierStr, SiUnit
 from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import LowerCaseIdentifierStr, NonRdfFileSource, SiUnit
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -61,14 +61,14 @@ from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDesc
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import Doi as Doi
-from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import (
+    DocumentationSource,
     GenericModelDescrBase,
-    MarkdownSource,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
+from bioimageio.spec.generic.v0_3 import Doi as Doi
+from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model import v0_4
@@ -245,7 +245,7 @@ class SizeReference(Node):
             ref_size = ref_axis.size
         elif isinstance(ref_axis.size, ParameterizedSize):
             ref_size = ref_axis.size.min + ref_axis.size.step * n
-        elif isinstance(ref_axis.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a `SizeReference` itself."
             )
@@ -763,35 +763,15 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         return axes
 
-    test_tensor: Annotated[
-        FileDescr,
-        Field(
-            description="""∈📦 An example tensor to use for testing.
-Using the model with the test input tensors is expected to yield the test output tensors.
-Each test tensor has be a an ndarray in the
-[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
-The file extension must be '.npy'."""
-        ),
-    ]
-    """∈📦 An example tensor to use for testing.
+    test_tensor: FileDescr
+    """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: Annotated[
-        Optional[FileDescr],
-        Field(
-            description="""∈📦 A sample tensor to illustrate a possible input/output for the model,
-The sample image primarily serves to inform a human user about an example use case
-and is typically stored as .hdf5, .png or .tiff.
-It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)
-(numpy's `.npy` format is not supported).
-The image dimensionality has to match the number of axes specified in this tensor description.
-"""
-        ),
-    ] = None
-    """∈📦 A sample tensor to illustrate a possible input/output for the model,
+    sample_tensor:         Optional[FileDescr] = None
+    """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
     It has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)
@@ -820,7 +800,7 @@ The image dimensionality has to match the number of axes specified in this tenso
             elif isinstance(a.size, ParameterizedSize):
                 if a.size.min == 1:
                     n_dims_min -= 1
-            elif isinstance(a.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+            elif isinstance(a.size, SizeReference):
                 if a.size.offset < 2:
                     # size reference may result in singleton axis
                     n_dims_min -= 1
@@ -919,13 +899,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
         return self
 
 
-class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, NonRdfFileSource, Optional[NonRdfFileSource]]):
+class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]):
     def _convert(
         self,
         src: v0_4.InputTensorDescr,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: NonRdfFileSource,
-        sample_tensor: Optional[NonRdfFileSource],
+        test_tensor: ImportantFileSource,
+        sample_tensor: Optional[ImportantFileSource],
     ) -> "InputTensorDescr | dict[str, Any]":
         reordered_shape = analyze_tensor_shape(src.shape)
         axes = [get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
@@ -1002,7 +982,7 @@ def validate_tensors(
                     )
             elif isinstance(a.size, ParameterizedSize):
                 _ = a.size.validate_size(actual_size)
-            elif isinstance(a.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+            elif isinstance(a.size, SizeReference):
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
                     raise ValueError(
@@ -1033,15 +1013,10 @@ def validate_tensors(
 
 class EnvironmentFileDescr(FileDescr):
     source: Annotated[
-        NonRdfFileSource,
+        ImportantFileSource,
         WithSuffix((".yaml", ".yml"), case_sensitive=True),
         Field(
             examples=["environment.yaml"],
-            description="""∈📦 Conda environment file.
-Allows to specify custom dependencies, see conda docs:
-- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
-- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)
-""",
         ),
     ]
     """∈📦 Conda environment file.
@@ -1087,7 +1062,7 @@ class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, 
         else:
             source = str(src)
             callable_ = str(src)
-        return tgt(callable=Identifier(callable_), source=cast(NonRdfFileSource, source), sha256=sha256, kwargs=kwargs)
+        return tgt(callable=Identifier(callable_), source=cast(ImportantFileSource, source), sha256=sha256, kwargs=kwargs)
 
 
 _arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)
@@ -1112,7 +1087,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: Annotated[NonRdfFileSource, Field(description="∈📦 The weights file.")]
+    source: ImportantFileSource
     """∈📦 The weights file."""
 
     authors: Optional[List[Author]] = None
@@ -1173,10 +1148,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     tensorflow_version: _Version
     """Version of the TensorFlow library used."""
 
-    source: Annotated[
-        NonRdfFileSource,
-        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
-    ]
+    source: ImportantFileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -1191,10 +1163,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
 
-    source: Annotated[
-        NonRdfFileSource,
-        Field(description=("∈📦 The multi-file weights. " "All required files/folders should be a zip archive.")),
-    ]
+    source: ImportantFileSource
     """∈📦 The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -1264,16 +1233,12 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
-        MarkdownSource,
+        DocumentationSource,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description="""∈📦 URL or relative path to a markdown file with additional documentation.
-The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
-The documentation should include a '#[#] Validation' (sub)section
-with details on how to quantitatively validate the model on unseen data.""",
         ),
     ]
     """∈📦 URL or relative path to a markdown file with additional documentation.
@@ -1329,7 +1294,7 @@ with details on how to quantitatively validate the model on unseen data.""",
             if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
                 raise ValueError(f"axis {axis.id} with minimum size {axis.size.min} is too small for halo {axis.halo}.")
 
-        elif isinstance(axis.size, SizeReference):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(axis.size, SizeReference):
             ref = (axis.size.tensor_id, axis.size.axis_id)
             if ref not in valid_independent_refs:
                 raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
@@ -1645,7 +1610,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     pytorch_version=w.pytorch_version or Version("1.10"),
                     dependencies=(EnvironmentFileDescr if TYPE_CHECKING else dict)(
                         source=cast(
-                            NonRdfFileSource,
+                            ImportantFileSource,
                             str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
                         )
                     ),
@@ -1667,7 +1632,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     if w.dependencies is None
                     else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
                         source=cast(
-                            NonRdfFileSource,
+                            ImportantFileSource,
                             str(w.dependencies)[len("conda:") :]
                             if str(w.dependencies).startswith("conda:")
                             else str(w.dependencies),

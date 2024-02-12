@@ -21,8 +21,9 @@ from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
     DeprecatedLicenseId,
+    ImportantFileSource,
+    IncludeInPackage,
     LicenseId,
-    NonRdfFileSource,
     NotEmpty,
     RelativeFilePath,
     YamlValue,
@@ -48,6 +49,7 @@ MarkdownSource = Union[
     Annotated[AbsoluteFilePath, _WithMdSuffix],
     Annotated[RelativeFilePath, _WithMdSuffix],
 ]
+DocumentationSource = Annotated[MarkdownSource, IncludeInPackage()]
 
 
 def _has_no_slash(s: str) -> bool:
@@ -141,7 +143,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
-    ] = Field(default_factory=list, description="∈📦 Cover images.")
+    ] = Field(default_factory=list)
     """∈📦 Cover images."""
 
     id: Optional[ResourceId] = None
@@ -200,7 +202,7 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[NonRdfFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
     """An icon for illustration, e.g. on bioimage.io"""
 
     @as_warning
@@ -281,16 +283,12 @@ class GenericDescrBase(GenericModelDescrBase):
         return data
 
     documentation: Annotated[
-        Optional[MarkdownSource],
+        Optional[DocumentationSource],
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
-            description=(
-                "∈📦 URL or relative path to a markdown file with additional documentation. "
-                "The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."
-            ),
         ),
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.

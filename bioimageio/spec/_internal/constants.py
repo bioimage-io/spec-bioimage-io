@@ -31,6 +31,7 @@ ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAM
 DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
 
 IN_PACKAGE_MESSAGE = "∈📦 "
+"""DEPRECATED, use ImportantFileSource to indicate that a file source should be included in a package"""
 
 # license file generated with scripts/update_spdx_licenses.py
 with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open("r", encoding="utf-8") as f:

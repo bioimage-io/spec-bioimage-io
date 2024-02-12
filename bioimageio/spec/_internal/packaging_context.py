@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from bioimageio.spec._internal.types import AbsoluteFilePath, FileName, HttpUrl
+if TYPE_CHECKING:
+    from bioimageio.spec._internal.types import AbsoluteFilePath, FileName, HttpUrl
 
 
 @dataclass(frozen=True)
 class PackagingContext:
-    _context_tokens: List[Token[Optional["PackagingContext"]]] = field(init=False, default_factory=list)
+    _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(init=False, default_factory=list)
 
     file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(default_factory=dict)
     """File sources to include in the packaged resource"""

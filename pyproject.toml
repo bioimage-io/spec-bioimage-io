@@ -13,6 +13,7 @@ reportMissingTypeArgument = true
 reportMissingTypeStubs = "warning"
 reportUninitializedInstanceVariable = "error"
 reportUnknownMemberType = false
+reportUnnecessaryIsInstance = false
 reportUnnecessaryTypeIgnoreComment = "error"
 reportUnusedCallResult = "error"
 reportUnusedVariable = "error"
