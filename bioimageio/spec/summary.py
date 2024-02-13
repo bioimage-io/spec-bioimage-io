@@ -56,7 +56,12 @@ def format_loc(loc: Loc) -> str:
     if not loc:
         loc = ("__root__",)
 
-    return ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+    ret = ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+    #  additional field validation can make the location information quite convoluted, e.g.
+    # weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url['http','https']]: Input should be a valid URL, relative URL without a base
+    # therefore we remove the `.function-after[validate_url_ok(), url['http','https']]` here
+    real_loc, *_ = ret.split(".function-after")  # remove validation func names from loc
+    return real_loc
 
 
 class ValidationSummaryDetail(BaseModel):
@@ -110,5 +115,7 @@ class ValidationSummary(BaseModel):
     def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
         indent = "   " if root_loc else ""
         src = "" if hide_source else f"\n{indent}source: {self.source_name}"
-        details = f"\n{indent}".join(d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc) for d in self.details)
+        details = f"\n{indent}" + f"\n{indent}".join(
+            d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc) for d in self.details
+        )
         return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"

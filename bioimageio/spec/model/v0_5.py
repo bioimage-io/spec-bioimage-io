@@ -902,34 +902,28 @@ def convert_axes(
     tensor_type: Literal["input", "output"],
     halo: Optional[Sequence[int]],
 ):
-    AXIS_TYPE_MAP = {
-        "b": "batch",
-        "t": "time",
-        "i": "index",
-        "c": "channel",
-        "x": "space",
-        "y": "space",
-        "z": "space",
-    }
     ret: List[AnyAxis] = []
     for i, a in enumerate(axes):
-        axis_type = AXIS_TYPE_MAP.get(a, a)
+        axis_type = _AXIS_TYPE_MAP.get(a, a)
         if axis_type == "batch":
             ret.append(BatchAxis())
             continue
 
         scale = 1.0
         if isinstance(shape, v0_4.ParametrizedInputShape):
-            size = ParameterizedSize(min=shape.min[i], step=shape.step[i])
+            if shape.step[i] == 0:
+                size = shape.min[i]
+            else:
+                size = ParameterizedSize(min=shape.min[i], step=shape.step[i])
         elif isinstance(shape, v0_4.ImplicitOutputShape):
             ref_t = shape.reference_tensor
             if ref_t.count(".") == 1:
                 t_id, a_id = ref_t.split(".")
             else:
                 t_id = ref_t
-                a_id = axis_type
+                a_id = _AXIS_ID_MAP.get(a, a)
 
-            if (orig_scale := shape.scale[i]) is None:
+            if not (orig_scale := shape.scale[i]):
                 # old way to insert a new axis dimension
                 size = int(2 * shape.offset[i])
             else:
@@ -954,9 +948,27 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
             else:
-                ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
+                ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
 
     return ret
+
+
+_AXIS_TYPE_MAP = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+    "x": "space",
+    "y": "space",
+    "z": "space",
+}
+
+_AXIS_ID_MAP = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+}
 
 
 def _axes_letters_to_ids(
@@ -964,13 +976,7 @@ def _axes_letters_to_ids(
 ) -> Optional[List[AxisId]]:
     if axes is None:
         return None
-    AXIS_TYPE_MAP = {
-        "b": "batch",
-        "t": "time",
-        "i": "index",
-        "c": "channel",
-    }
-    return [AxisId(AXIS_TYPE_MAP.get(a, a)) for a in axes]
+    return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in axes]
 
 
 def _convert_proc(
@@ -1056,7 +1062,7 @@ class _InputTensorConv(
         )
 
 
-input_tensor_conv = _InputTensorConv(v0_4.InputTensorDescr, InputTensorDescr)
+_input_tensor_conv = _InputTensorConv(v0_4.InputTensorDescr, InputTensorDescr)
 
 
 class OutputTensorDescr(TensorDescrBase[OutputAxis]):
@@ -1102,7 +1108,7 @@ class _OutputTensorConv(
         )
 
 
-output_tensor_conv = _OutputTensorConv(v0_4.OutputTensorDescr, OutputTensorDescr)
+_output_tensor_conv = _OutputTensorConv(v0_4.OutputTensorDescr, OutputTensorDescr)
 
 
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
@@ -1722,7 +1728,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
 
         return tgt(
             attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
-            authors=[_author_conv.convert_as_dict(a) for a in src.authors],
+            authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
             cite=src.cite,
             config=src.config,
             covers=src.covers,
@@ -1735,14 +1741,22 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,
-            maintainers=[_maintainer_conv.convert_as_dict(m) for m in src.maintainers],
+            maintainers=[
+                _maintainer_conv.convert_as_dict(m) for m in src.maintainers
+            ],  # pyright: ignore[reportArgumentType]
             name=src.name,
             tags=src.tags,
             type=src.type,
             version=src.version,
-            inputs=[
-                input_tensor_conv.convert_as_dict(ipt, tt, st)
+            inputs=[  # pyright: ignore[reportArgumentType]
+                _input_tensor_conv.convert_as_dict(ipt, tt, st)
                 for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
+            ],
+            outputs=[  # pyright: ignore[reportArgumentType]
+                _output_tensor_conv.convert_as_dict(out, tt, st)
+                for out, tt, st, in zip(
+                    src.outputs, src.test_outputs, src.sample_outputs or [None] * len(src.test_outputs)
+                )
             ],
             weights=(WeightsDescr if TYPE_CHECKING else dict)(
                 keras_hdf5=(w := src.weights.keras_hdf5)
@@ -1772,7 +1786,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     if isinstance(w.architecture, v0_4.CallableFromFile)
                     else arch_lib_conv(w.architecture, w.kwargs),
                     pytorch_version=w.pytorch_version or Version("1.10"),
-                    dependencies=(EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                    dependencies=None
+                    if w.dependencies is None
+                    else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
                         source=cast(
                             ImportantFileSource,
                             str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],

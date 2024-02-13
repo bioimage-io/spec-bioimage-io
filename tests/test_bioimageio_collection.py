@@ -18,9 +18,10 @@ CACHE_PATH = Path(__file__).parent / "cache" / WEEK
 
 KNOWN_INVALID = {
     "10.5281/zenodo.5749843/5888237/rdf.yaml",
-    "10.5281/zenodo.5910854/6539073/rdf.yaml",
     "10.5281/zenodo.5910163/5942853/rdf.yaml",
+    "10.5281/zenodo.5910854/6539073/rdf.yaml",
     "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.6559929/6559930/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
     "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
@@ -49,9 +50,14 @@ KNOWN_INVALID = {
 }
 KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.5749843/5888237/rdf.yaml",
-    "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.5874841/6630266/rdf.yaml",
     "10.5281/zenodo.5910163/5942853/rdf.yaml",
+    "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.6383429/7774505/rdf.yaml",
+    "10.5281/zenodo.6406803/6406804/rdf.yaml",
+    "10.5281/zenodo.6559474/6559475/rdf.yaml",
     "10.5281/zenodo.6559929/6559930/rdf.yaml",
+    "10.5281/zenodo.6811491/6811492/rdf.yaml",
     "10.5281/zenodo.6865412/6919253/rdf.yaml",
     "10.5281/zenodo.7380171/7405349/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
@@ -170,8 +176,8 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 
 def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
-    cache_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
-    with Path(cache_path).open(encoding="utf-8") as f:
+    collection_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
+    with Path(collection_path).open(encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
 
     collection_registry: Dict[str, None] = {
