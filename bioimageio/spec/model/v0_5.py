@@ -899,7 +899,6 @@ def convert_axes(
     axes: str,
     *,
     shape: Union[Sequence[int], v0_4.ParametrizedInputShape, v0_4.ImplicitOutputShape],
-    tensor_id: TensorId,
     tensor_type: Literal["input", "output"],
     halo: Optional[Sequence[int]],
 ):
@@ -960,6 +959,76 @@ def convert_axes(
     return ret
 
 
+def _axes_letters_to_ids(
+    axes: Optional[str],
+) -> Optional[List[AxisId]]:
+    if axes is None:
+        return None
+    AXIS_TYPE_MAP = {
+        "b": "batch",
+        "t": "time",
+        "i": "index",
+        "c": "channel",
+    }
+    return [AxisId(AXIS_TYPE_MAP.get(a, a)) for a in axes]
+
+
+def _convert_proc(
+    p: Union[v0_4.PreprocessingDescr, v0_4.PostprocessingDescr]
+) -> Union[PreprocessingDescr, PostprocessingDescr]:
+    if isinstance(p, v0_4.BinarizeDescr):
+        return BinarizeDescr(kwargs=BinarizeKwargs(threshold=p.kwargs.threshold))
+    elif isinstance(p, v0_4.ClipDescr):
+        return ClipDescr(kwargs=ClipKwargs(min=p.kwargs.min, max=p.kwargs.max))
+    elif isinstance(p, v0_4.SigmoidDescr):
+        return SigmoidDescr()
+    elif isinstance(p, v0_4.ScaleLinearDescr):
+        axes = _axes_letters_to_ids(p.kwargs.axes)
+        if p.kwargs.axes is not None:
+            raise NotImplementedError("converting sclae linear with `axes` not implemented")
+        return ScaleLinearDescr(kwargs=ScaleLinearKwargs(axis=None, gain=p.kwargs.gain, offset=p.kwargs.offset))
+    elif isinstance(p, v0_4.ScaleMeanVarianceDescr):
+        return ScaleMeanVarianceDescr(
+            kwargs=ScaleMeanVarianceKwargs(
+                axes=_axes_letters_to_ids(p.kwargs.axes),
+                reference_tensor=TensorId(p.kwargs.reference_tensor),
+                eps=p.kwargs.eps,
+            )
+        )
+    elif isinstance(p, v0_4.ZeroMeanUnitVarianceDescr):
+        if p.kwargs.mode == "fixed":
+            mean = p.kwargs.mean
+            assert mean is not None
+            if isinstance(mean, list):
+                mean = tuple(mean)
+
+            std = p.kwargs.std
+            assert std is not None
+            if isinstance(std, list):
+                std = tuple(std)
+
+            return FixedZeroMeanUnitVarianceDescr(kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std))
+        else:
+            axes = _axes_letters_to_ids(p.kwargs.axes) or []
+            if p.kwargs.mode == "per_dataset":
+                axes = [AxisId("batch")] + axes
+            if not axes:
+                axes = None
+            return ZeroMeanUnitVarianceDescr(kwargs=ZeroMeanUnitVarianceKwargs(axes=axes, eps=p.kwargs.eps))
+
+    elif isinstance(p, v0_4.ScaleRangeDescr):
+        return ScaleRangeDescr(
+            kwargs=ScaleRangeKwargs(
+                axes=_axes_letters_to_ids(p.kwargs.axes),
+                min_percentile=p.kwargs.min_percentile,
+                max_percentile=p.kwargs.max_percentile,
+                eps=p.kwargs.eps,
+            )
+        )
+    else:
+        assert_never(p)
+
+
 class _InputTensorConv(
     Converter[v0_4.InputTensorDescr, InputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]
 ):
@@ -970,26 +1039,12 @@ class _InputTensorConv(
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
     ) -> "InputTensorDescr | dict[str, Any]":
-        axes = convert_axes(src.axes, shape=src.shape, tensor_id=TensorId(src.name), tensor_type="input", halo=None)
+        axes = convert_axes(src.axes, shape=src.shape, tensor_type="input", halo=None)
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
-            kwargs = p.kwargs
-            if isinstance(kwargs, (v0_4.ScaleLinearKwargs, v0_4.ZeroMeanUnitVarianceKwargs, v0_4.ScaleRangeKwargs, v0_4.ScaleMeanVarianceKwargs)):
-                kwargs.axes
-            else:
-                kwargs.axes
-
-            p_axes = [convert_axes(a, halo=None) for a in p_kwargs_axes]
-            if p.get("id") == "zero_mean_unit_variance" and p_kwargs.get("mode") == "fixed":
-                p["id"] = "fixed_zero_mean_unit_variance"
-                _ = p_kwargs.pop("axes", None)
-            else:
-                p_kwargs["axes"] = [a.get("id", a["type"]) for a in p_axes]
-
-            if p_kwargs.get("mode") == "per_dataset" and isinstance(p_kwargs["axes"], list):
-                p_kwargs["axes"] = ["batch"] + p_kwargs["axes"]
-
-            prep.append(PreprocessingDescr(id=p.name, kwargs=p.kwargs))
+            cp = _convert_proc(p)
+            assert not isinstance(cp, ScaleMeanVarianceDescr)
+            prep.append(cp)
 
         return tgt(
             axes=axes,  # type: ignore
@@ -1036,15 +1091,14 @@ class _OutputTensorConv(
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
     ) -> "OutputTensorDescr | dict[str, Any]":
-        axes = convert_axes(
-            src.axes, shape=src.shape, tensor_id=TensorId(src.name), tensor_type="output", halo=src.halo
-        )
+        axes = convert_axes(src.axes, shape=src.shape, tensor_type="output", halo=src.halo)
         return tgt(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
             sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
             data=dict(type=src.data_type),  # type: ignore
+            postprocessing=[_convert_proc(p) for p in src.postprocessing],
         )
 
 
