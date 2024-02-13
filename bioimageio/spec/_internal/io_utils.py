@@ -2,6 +2,7 @@ import hashlib
 import io
 import os
 import platform
+import shutil
 import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -214,6 +215,7 @@ def unzip(zip_file: FilePath, out_path: Optional[DirectoryPath] = None, overwrit
         if out_path.exists() and overwrite:
             if overwrite:
                 warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
+                shutil.rmtree(out_path)
             else:
                 warnings.warn(f"Found already unzipped archive at {out_path}.")
                 return out_path

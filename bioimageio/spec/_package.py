@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED
 
 from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
 
-from bioimageio.spec import model
+from bioimageio.spec import load_description, model
 from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
@@ -211,4 +211,7 @@ def save_bioimageio_package(
         output_path = Path(output_path)
 
     write_zip(output_path, package_content, compression=compression, compression_level=compression_level)
+    if isinstance((exported := load_description(output_path)), InvalidDescription):
+        raise ValueError(f"Exported package '{output_path}' is invalid: {exported.validation_summary}")
+
     return output_path
