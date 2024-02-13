@@ -6,5 +6,6 @@ from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioY
 from bioimageio.spec._internal.types import FileName as FileName
 from bioimageio.spec._internal.types import FileSource as FileSource
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import YamlValue as YamlValue

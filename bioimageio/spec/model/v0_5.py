@@ -72,10 +72,6 @@ from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.model import v0_4
-from bioimageio.spec.model._v0_5_converter import (
-    analyze_tensor_shape,
-    get_axis_description_from_letter,
-)
 from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
@@ -770,7 +766,7 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor:         Optional[FileDescr] = None
+    sample_tensor: Optional[FileDescr] = None
     """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -899,7 +895,74 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
         return self
 
 
-class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]):
+def convert_axes(
+    axes: str,
+    *,
+    shape: Union[Sequence[int], v0_4.ParametrizedInputShape, v0_4.ImplicitOutputShape],
+    tensor_id: TensorId,
+    tensor_type: Literal["input", "output"],
+    halo: Optional[Sequence[int]],
+):
+    AXIS_TYPE_MAP = {
+        "b": "batch",
+        "t": "time",
+        "i": "index",
+        "c": "channel",
+        "x": "space",
+        "y": "space",
+        "z": "space",
+    }
+    ret: List[AnyAxis] = []
+    for i, a in enumerate(axes):
+        axis_type = AXIS_TYPE_MAP.get(a, a)
+        if axis_type == "batch":
+            ret.append(BatchAxis())
+            continue
+
+        scale = 1.0
+        if isinstance(shape, v0_4.ParametrizedInputShape):
+            size = ParameterizedSize(min=shape.min[i], step=shape.step[i])
+        elif isinstance(shape, v0_4.ImplicitOutputShape):
+            ref_t = shape.reference_tensor
+            if ref_t.count(".") == 1:
+                t_id, a_id = ref_t.split(".")
+            else:
+                t_id = ref_t
+                a_id = axis_type
+
+            if (orig_scale := shape.scale[i]) is None:
+                # old way to insert a new axis dimension
+                size = int(2 * shape.offset[i])
+            else:
+                scale = 1 / orig_scale  # TODO: check for correctness
+                size = SizeReference(tensor_id=TensorId(t_id), axis_id=AxisId(a_id), offset=int(2 * shape.offset[i]))
+        elif isinstance(shape, collections.abc.Sequence):
+            size = shape[i]
+        else:
+            assert_never(shape)
+
+        if axis_type == "time":
+            if tensor_type == "input":
+                ret.append(TimeInputAxis(size=size, scale=scale))
+            else:
+                ret.append(TimeOutputAxis(size=size, scale=scale, halo=0 if halo is None else halo[i]))
+        elif axis_type == "index":
+            ret.append(IndexAxis(size=size))
+        elif axis_type == "channel":
+            assert not isinstance(size, ParameterizedSize)
+            ret.append(ChannelAxis(size=size))
+        elif axis_type == "space":
+            if tensor_type == "input":
+                ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
+            else:
+                ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
+
+    return ret
+
+
+class _InputTensorConv(
+    Converter[v0_4.InputTensorDescr, InputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]
+):
     def _convert(
         self,
         src: v0_4.InputTensorDescr,
@@ -907,14 +970,34 @@ class _InputTensorConv(Converter[v0_4.InputTensorDescr, InputTensorDescr, Import
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
     ) -> "InputTensorDescr | dict[str, Any]":
-        reordered_shape = analyze_tensor_shape(src.shape)
-        axes = [get_axis_description_from_letter(a, reordered_shape.get(i), halo=None) for i, a in enumerate(src.axes)]
+        axes = convert_axes(src.axes, shape=src.shape, tensor_id=TensorId(src.name), tensor_type="input", halo=None)
+        prep: List[PreprocessingDescr] = []
+        for p in src.preprocessing:
+            kwargs = p.kwargs
+            if isinstance(kwargs, (v0_4.ScaleLinearKwargs, v0_4.ZeroMeanUnitVarianceKwargs, v0_4.ScaleRangeKwargs, v0_4.ScaleMeanVarianceKwargs)):
+                kwargs.axes
+            else:
+                kwargs.axes
+
+            p_axes = [convert_axes(a, halo=None) for a in p_kwargs_axes]
+            if p.get("id") == "zero_mean_unit_variance" and p_kwargs.get("mode") == "fixed":
+                p["id"] = "fixed_zero_mean_unit_variance"
+                _ = p_kwargs.pop("axes", None)
+            else:
+                p_kwargs["axes"] = [a.get("id", a["type"]) for a in p_axes]
+
+            if p_kwargs.get("mode") == "per_dataset" and isinstance(p_kwargs["axes"], list):
+                p_kwargs["axes"] = ["batch"] + p_kwargs["axes"]
+
+            prep.append(PreprocessingDescr(id=p.name, kwargs=p.kwargs))
+
         return tgt(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
             sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
             data=dict(type=src.data_type),  # type: ignore
+            preprocessing=prep,
         )
 
 
@@ -941,6 +1024,31 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
         return self
+
+
+class _OutputTensorConv(
+    Converter[v0_4.OutputTensorDescr, OutputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]
+):
+    def _convert(
+        self,
+        src: v0_4.OutputTensorDescr,
+        tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
+        test_tensor: ImportantFileSource,
+        sample_tensor: Optional[ImportantFileSource],
+    ) -> "OutputTensorDescr | dict[str, Any]":
+        axes = convert_axes(
+            src.axes, shape=src.shape, tensor_id=TensorId(src.name), tensor_type="output", halo=src.halo
+        )
+        return tgt(
+            axes=axes,  # type: ignore
+            id=TensorId(src.name),
+            test_tensor=FileDescr(source=test_tensor),
+            sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
+            data=dict(type=src.data_type),  # type: ignore
+        )
+
+
+output_tensor_conv = _OutputTensorConv(v0_4.OutputTensorDescr, OutputTensorDescr)
 
 
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
@@ -1062,7 +1170,9 @@ class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, 
         else:
             source = str(src)
             callable_ = str(src)
-        return tgt(callable=Identifier(callable_), source=cast(ImportantFileSource, source), sha256=sha256, kwargs=kwargs)
+        return tgt(
+            callable=Identifier(callable_), source=cast(ImportantFileSource, source), sha256=sha256, kwargs=kwargs
+        )
 
 
 _arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)

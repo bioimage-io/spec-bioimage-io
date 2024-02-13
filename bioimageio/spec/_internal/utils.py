@@ -4,11 +4,14 @@ import sys
 from functools import wraps
 from inspect import signature
 from pathlib import Path
-from typing import Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import AnyUrl, HttpUrl
-from typing_extensions import Annotated, ParamSpec
+from typing_extensions import Annotated, ParamSpec, assert_never
+
+if TYPE_CHECKING:
+    from bioimageio.spec._internal.types import FileName
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -36,6 +39,29 @@ def get_parent_url(url: HttpUrl) -> HttpUrl:
         path = path[:-1]
 
     return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+
+
+R = TypeVar("R", HttpUrl, Path)
+
+
+def get_absolute(file_name: FileName, root: R) -> R:
+    if isinstance(root, Path):
+        return root / file_name
+    elif isinstance(root, AnyUrl):
+        parsed = urlsplit(str(root))
+        path = list(parsed.path.split("/"))
+        if (
+            parsed.netloc == "zenodo.org"
+            and parsed.path.startswith("/api/records/")
+            and parsed.path.endswith("/content")
+        ):
+            path.insert(-1, file_name)
+        else:
+            path.append(file_name)
+
+        return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+    else:
+        assert_never(root)
 
 
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:
