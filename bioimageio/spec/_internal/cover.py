@@ -11,6 +11,7 @@ from bioimageio.spec.model.v0_5 import (
     AnyAxis,
     BatchAxis,
     ChannelAxis,
+    Identifier,
     IndexAxis,
     InputTensorDescr,
     OutputTensorDescr,
@@ -121,7 +122,7 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
     if not has_c_axis:
         assert ndim == 2
         data = np.repeat(data[:, :, None], 3, axis=2)
-        axes.append(ChannelAxis(size=3))
+        axes.append(ChannelAxis(channel_names=list(map(Identifier, "RGB"))))
         ndim += 1
 
     assert ndim == 3

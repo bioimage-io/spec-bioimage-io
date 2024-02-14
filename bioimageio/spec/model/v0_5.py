@@ -32,7 +32,6 @@ from numpy.typing import NDArray
 from packaging.version import Version as Version
 from pydantic import (
     Field,
-    StringConstraints,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -189,9 +188,8 @@ class SizeReference(Node):
 
     note:
     1. The axis and the referenced axis need to have the same unit (or no unit).
-    2. A channel axis may only reference another channel axis. Their scales are implicitly set to 1.
-    3. Batch axes may not be referenced.
-    4. Fractions are rounded down.
+    2. Batch axes may not be referenced.
+    3. Fractions are rounded down.
 
     example:
     An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
@@ -294,14 +292,14 @@ class BatchAxis(AxisBase):
         return None
 
 
-GenericChannelName = Annotated[str, StringConstraints(min_length=3, max_length=16, pattern=r"^.*\{i\}.*$")]
-
-
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: NonBatchAxisId = AxisId("channel")
-    channel_names: Union[List[Identifier], Identifier, GenericChannelName] = "channel{i}"
-    size: Union[Annotated[int, Gt(0)], SizeReference] = "#channel_names"  # type: ignore
+    channel_names: List[Identifier]
+
+    @property
+    def size(self) -> int:
+        return len(self.channel_names)
 
     @property
     def scale(self) -> float:
@@ -310,26 +308,6 @@ class ChannelAxis(AxisBase):
     @property
     def unit(self):
         return None
-
-    @model_validator(mode="before")
-    @classmethod
-    def _set_size_or_channel_names(cls, data: Dict[str, Any], /):
-        channel_names: Union[Any, Sequence[Any]] = data.get("channel_names", "channel{i}")
-        size = data.get("size", "#channel_names")
-        if size == "#channel_names" and channel_names == "channel{i}":
-            raise ValueError("Channel dimension has unknown size. Please specify `size` or `channel_names`.")
-
-        if (
-            size == "#channel_names"
-            and not isinstance(channel_names, str)
-            and isinstance(channel_names, collections.abc.Sequence)
-        ):
-            data["size"] = len(channel_names)
-
-        if isinstance(channel_names, str) and "{i}" in channel_names and isinstance(size, int):
-            data["channel_names"] = [channel_names.format(i=i) for i in range(1, size + 1)]
-
-        return data
 
 
 class IndexTimeSpaceAxisBase(AxisBase):
