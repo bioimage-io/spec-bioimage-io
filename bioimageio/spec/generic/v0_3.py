@@ -40,6 +40,7 @@ from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
+from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -229,6 +230,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         ),
     ] = Field(default_factory=list)
     """IDs of other bioimage.io resources"""
+
+    uploader: Optional[Uploader] = None
+    """The person who uploaded the model (e.g. to bioimage.io)"""
 
     maintainers: List[Maintainer] = Field(default_factory=list)
     """Maintainers of this resource.

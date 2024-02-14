@@ -56,6 +56,17 @@ class AttachmentsDescr(Node):
     """∈📦 File attachments"""
 
 
+def _remove_slashes(s: str):
+    return s.replace("/", "").replace("\\", "")
+
+
+class Uploader(Node):
+    email: EmailStr
+    """Email"""
+    name: Optional[Annotated[str, _AfterValidator(_remove_slashes)]] = None
+    """name"""
+
+
 class _Person(Node):
     affiliation: Optional[str] = None
     """Affiliation"""
@@ -69,10 +80,6 @@ class _Person(Node):
     https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
     ) as per ISO 7064 11,2.)
     """
-
-
-def _remove_slashes(s: str):
-    return s.replace("/", "").replace("\\", "")
 
 
 class Author(_Person):
@@ -263,6 +270,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         ),
     ] = Field(default_factory=list)
     """IDs of other bioimage.io resources"""
+
+    uploader: Optional[Uploader] = None
+    """The person who uploaded the model (e.g. to bioimage.io)"""
 
     maintainers: List[Maintainer] = Field(default_factory=list)
     """Maintainers of this resource.

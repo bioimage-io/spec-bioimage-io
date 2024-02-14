@@ -37,7 +37,6 @@ from bioimageio.spec._internal.types import (
     ImportantFileSource,
     IncludeInPackage,
     LowerCaseIdentifierStr,
-    RelativeFilePath,
 )
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
@@ -66,6 +65,7 @@ from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDe
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
+from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 from bioimageio.spec.model._v0_4_converter import convert_from_older_format
 from bioimageio.spec.utils import download, load_array
 

@@ -30,6 +30,7 @@ from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
 from bioimageio.spec.generic.v0_3 import Sha256 as Sha256
+from bioimageio.spec.generic.v0_3 import Uploader as Uploader
 
 EntryDescr = Union[
     application.v0_2.ApplicationDescr,

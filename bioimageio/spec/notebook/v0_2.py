@@ -16,6 +16,7 @@ from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_2 import ResourceId as ResourceId
+from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 
 _WithNotebookSuffix = WithSuffix(".ipynb", case_sensitive=True)
 NotebookSource = Union[

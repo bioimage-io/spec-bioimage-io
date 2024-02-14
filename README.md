@@ -260,6 +260,7 @@ all generic 0.3.0 changes plus:
 * Breaking changes that are fully auto-convertible
   * `version` is now a single number. The minor version from the previous SemVer 2.0 is used when converting.
   * `id_emoji` is a new, optional field
+  * `uploader` is a new, optional field with `email` and an optional `name` subfields
 
 #### model 0.4.9
 
