@@ -1,38 +1,85 @@
-import ast
-import inspect
 from types import ModuleType
-from typing import Any, Dict, Iterator, Tuple
+from typing import Any, Dict
 
 import pytest
 
 import bioimageio.spec
 
+IGNORE_MEMBERS = {
+    "ALERT",
+    "Annotated",
+    "annotations",
+    "Any",
+    "as_warning",
+    "BioimageioYamlContent",
+    "collections",
+    "convert_from_older_format",
+    "Converter",
+    "CoverImageSource",
+    "DeprecatedLicenseId",
+    "Dict",
+    "DocumentationSource",
+    "EmailStr",
+    "field_validator",
+    "Field",
+    "FileSource",
+    "Ge",
+    "get_args",
+    "ImportantFileSource",
+    "IncludeInPackage",
+    "issue_warning",
+    "Len",
+    "LicenseId",
+    "LICENSES",
+    "List",
+    "LowerCase",
+    "Mapping",
+    "MarkdownSource",
+    "MaxLen",
+    "model_validator",
+    "Node",
+    "NotEmpty",
+    "Optional",
+    "partial",
+    "Predicate",
+    "requests",
+    "ResourceDescriptionBase",
+    "ResourceDescrType",
+    "Sequence",
+    "settings",
+    "TAG_CATEGORIES",
+    "TypeVar",
+    "Union",
+    "v0_2",
+    "v0_3",
+    "v0_4",
+    "v0_5",
+    "validation_context_var",
+    "ValidationInfo",
+    "warn",
+    "WithSuffix",
+    "YamlValue",
+}
+
+
+def get_members(m: ModuleType):
+    return {k: getattr(m, k) for k in dir(m) if not k.startswith("_") and k not in IGNORE_MEMBERS}
+
+
 GENERIC_ONLY_MEMBERS = {
-    "FileSourceWithSha256",
     "GenericDescr",
     "GenericDescrBase",
     "GenericModelDescrBase",
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
-    "ResourceDescriptionType",
     "VALID_COVER_IMAGE_EXTENSIONS",
 }
 
-
-def iterate_members(module: ModuleType) -> Iterator[Tuple[str, Any]]:
-    code = inspect.getsource(module)
-    root = ast.parse(code)
-    for node in ast.iter_child_nodes(root):
-        if isinstance(node, ast.ImportFrom):
-            for name in node.names:
-                if name.asname is not None and not name.asname.startswith("_"):
-                    yield name.asname, getattr(module, name.asname)
-        elif isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and not node.name.startswith("_"):
-            yield node.name, getattr(module, node.name)
-
-
-GENERIC_v0_2_MEMBERS = {k: v for k, v in iterate_members(bioimageio.spec.generic.v0_2) if k not in GENERIC_ONLY_MEMBERS}
-
-GENERIC_v0_3_MEMBERS = {k: v for k, v in iterate_members(bioimageio.spec.generic.v0_3) if k not in GENERIC_ONLY_MEMBERS}
+GENERIC_v0_2_MEMBERS = {
+    k: v for k, v in get_members(bioimageio.spec.generic.v0_2).items() if k not in GENERIC_ONLY_MEMBERS
+}
+GENERIC_v0_3_MEMBERS = {
+    k: v for k, v in get_members(bioimageio.spec.generic.v0_3).items() if k not in GENERIC_ONLY_MEMBERS
+}
 
 
 @pytest.mark.parametrize(
@@ -51,7 +98,7 @@ GENERIC_v0_3_MEMBERS = {k: v for k, v in iterate_members(bioimageio.spec.generic
     ],
 )
 def test_specific_module_has_all_generic_symbols(generic_members: Dict[str, Any], specific: ModuleType):
-    members = dict(iterate_members(specific))
+    members = get_members(specific)
     missing = {k for k in generic_members if k not in members}
     assert not missing
     unidentical = {k for k, v in generic_members.items() if v is not members[k]}

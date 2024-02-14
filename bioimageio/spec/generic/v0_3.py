@@ -25,10 +25,10 @@ from bioimageio.spec._internal.types import (
     IncludeInPackage,
     LicenseId,
     NotEmpty,
-    RelativeFilePath,
     YamlValue,
 )
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
@@ -39,6 +39,7 @@ from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImag
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
+from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 

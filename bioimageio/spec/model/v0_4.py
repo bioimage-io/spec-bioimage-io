@@ -55,13 +55,17 @@ from bioimageio.spec._internal.types.field_validation import (
 )
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import LinkedDatasetDescr as LinkedDatasetDescr
+from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
+from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
 from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
+from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
+from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.model._v0_4_converter import convert_from_older_format
 from bioimageio.spec.utils import download, load_array
 
@@ -964,14 +968,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     sample_outputs: List[ImportantFileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs:         NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_inputs: NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs:         NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_outputs: NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime

@@ -16,6 +16,7 @@ from pydantic import (
     FilePath,
     GetCoreSchemaHandler,
     SerializerFunctionWrapHandler,
+    TypeAdapter,
     WrapSerializer,
 )
 from pydantic_core import core_schema
@@ -44,7 +45,11 @@ def validate_url_ok(url: pydantic.HttpUrl):
     return url
 
 
-HttpUrl = Annotated[pydantic.HttpUrl, AfterValidator(validate_url_ok)]
+_http_url_adapter = TypeAdapter(pydantic.HttpUrl)  # pyright: ignore[reportCallIssue]
+
+HttpUrl = Annotated[
+    str, AfterValidator(lambda value: str(_http_url_adapter.validate_python(value))), AfterValidator(validate_url_ok)
+]
 FileName = str
 AbsoluteDirectory = Annotated[DirectoryPath, Predicate(Path.is_absolute)]
 AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]

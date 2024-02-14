@@ -2,30 +2,31 @@ import collections.abc
 from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union, get_args
 
 from annotated_types import Ge, Len, LowerCase, MaxLen
-from pydantic import AfterValidator, EmailStr, Field, ValidationInfo, field_validator, model_validator
+from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
+from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import (
-    AbsoluteFilePath,
     BioimageioYamlContent,
     DeprecatedLicenseId,
-    Doi,
     FileSource,
-    HttpUrl,
     ImportantFileSource,
     IncludeInPackage,
     LicenseId,
     NotEmpty,
-    OrcidId,
-    RelativeFilePath,
-    ResourceId,
     YamlValue,
 )
-from bioimageio.spec._internal.types.field_validation import WithSuffix
-from bioimageio.spec.generic._v0_2_converter import convert_from_older_format
+from bioimageio.spec._internal.types import Doi as Doi
+from bioimageio.spec._internal.types import HttpUrl as HttpUrl
+from bioimageio.spec._internal.types import OrcidId as OrcidId
+from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
+from bioimageio.spec._internal.types import ResourceId as ResourceId
+from bioimageio.spec._internal.types.field_validation import AfterValidator as _AfterValidator
+from bioimageio.spec._internal.types.field_validation import WithSuffix as _WithSuffix
+from bioimageio.spec.generic._v0_2_converter import convert_from_older_format as _convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
 
@@ -37,7 +38,7 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".svg",
 )
 
-_WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
+_WithImageSuffix = _WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
 CoverImageSource = Annotated[
     Union[
         Annotated[HttpUrl, _WithImageSuffix],
@@ -75,12 +76,12 @@ def _remove_slashes(s: str):
 
 
 class Author(_Person):
-    name: Annotated[str, AfterValidator(_remove_slashes)]
+    name: Annotated[str, _AfterValidator(_remove_slashes)]
     github_user: Optional[str] = None  # TODO: validate github_user
 
 
 class Maintainer(_Person):
-    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
+    name: Optional[Annotated[str, _AfterValidator(_remove_slashes)]] = None
     github_user: str
 
 
@@ -310,7 +311,7 @@ class GenericDescrBase(GenericModelDescrBase):
     @model_validator(mode="before")
     @classmethod
     def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
-        convert_from_older_format(data)
+        _convert_from_older_format(data)
         return data
 
     badges: List[BadgeDescr] = Field(default_factory=list)

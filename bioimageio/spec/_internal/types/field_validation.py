@@ -5,14 +5,15 @@ import dataclasses
 from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from typing import Any, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
 
 import annotated_types
+import pydantic
 from dateutil.parser import isoparse
-from pydantic import AnyUrl, GetCoreSchemaHandler, functional_validators
+from pydantic import AnyUrl, GetCoreSchemaHandler, TypeAdapter, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
-from typing_extensions import LiteralString
+from typing_extensions import LiteralString, assert_never
 
 from bioimageio.spec._internal.constants import SLOTS
 
@@ -53,7 +54,7 @@ class WithSuffix:
         if (
             schema["type"] != str
             and source != FileSource
-            and not issubclass(source, (AnyUrl, RelativeFilePath, PurePath))
+            and not issubclass(source, (str, AnyUrl, RelativeFilePath, PurePath))
         ):
             raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
 
@@ -139,23 +140,34 @@ def is_valid_yaml_value(value: Any) -> bool:
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 
+path_or_url_adapter = TypeAdapter(Union[pydantic.AnyUrl, Path])
+# note: Path has to come after Url, as Path also accepts url like strings
+
 
 def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
     """check final suffix"""
     assert len(suffixes) > 0, "no suffix given"
     assert all(suff.startswith(".") for suff in suffixes), "expected suffixes to start with '.'"
+    o_value = value
+    if isinstance(value, str):
+        value = path_or_url_adapter.validate_python(value)
+
+    assert not isinstance(value, str)
     if isinstance(value, AnyUrl):
-        if value.path is None or "." not in value.path:
+        path = str(value.path)
+        if value.path is None or "." not in path:
             suffix = ""
-        elif value.host == "zenodo.org" and value.path.startswith("/api/records/") and value.path.endswith("/content"):
-            suffix = "." + value.path[: -len("/content")].split(".")[-1]
+        elif value.host == "zenodo.org" and path.startswith("/api/records/") and path.endswith("/content"):
+            suffix = "." + path[: -len("/content")].split(".")[-1]
         else:
-            suffix = "." + value.path.split(".")[-1]
+            suffix = "." + path.split(".")[-1]
 
     elif isinstance(value, PurePath):
         suffix = value.suffixes[-1]
+    elif isinstance(value, RelativeFilePath):
+        suffix = value.path.suffixes[-1]  # type: ignore  # TODO: PurePosixPath has no suffixes??
     else:
-        suffix = value.path.suffixes[-1]
+        assert_never(value)
 
     if (
         case_sensitive
@@ -168,7 +180,7 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
         else:
             raise ValueError(f"Expected a suffix from {suffixes}, but got {suffix}")
 
-    return value
+    return o_value
 
 
 def validate_unique_entries(seq: Sequence[Hashable]):
