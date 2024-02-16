@@ -1,4 +1,5 @@
 __pycache__/
+.env
 .vscode/launch.json
 *.egg-info/
 build/
