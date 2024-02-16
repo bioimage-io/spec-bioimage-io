@@ -117,7 +117,7 @@ class RelativePath:
             and parsed.path.startswith("/api/records/")
             and parsed.path.endswith("/content")
         ):
-            path.insert(-2, rel_path)
+            path.insert(-1, rel_path)
         else:
             path.append(rel_path)
 
@@ -189,7 +189,8 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     for special in ALL_BIOIMAGEIO_YAML_NAMES:
         if file_name.endswith(special):
             raise ValueError(
-                f"'{file_name}' not allowed here as it is reserved to identify '{BIOIMAGEIO_YAML}' (or equivalent) files."
+                f"'{file_name}' not allowed here as it is reserved to identify '{BIOIMAGEIO_YAML}' "
+                "(or equivalent) files."
             )
 
     return src
