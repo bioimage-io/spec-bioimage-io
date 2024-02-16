@@ -46,6 +46,7 @@ setup(
         "dev": [
             "black",
             "deepdiff",
+            "jsonschema",
             "lxml",
             "pdoc",
             "pre-commit",

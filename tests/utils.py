@@ -1,8 +1,9 @@
 from contextlib import nullcontext
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Optional, Protocol, Sequence, Set, Type, Union
+from typing import Any, ContextManager, Dict, Mapping, Optional, Protocol, Sequence, Set, Type, Union
 
+import jsonschema
 import pytest
 from deepdiff import DeepDiff
 from pydantic import (
@@ -100,6 +101,7 @@ def check_bioimageio_yaml(
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
+    bioimageio_json_schema: Mapping[Any, Any],
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
@@ -121,9 +123,17 @@ def check_bioimageio_yaml(
     assert summary.status == "passed", summary.format()
     assert rd is not None
 
+    # check compatibility to our latest json schema
+    try:
+        jsonschema.validate(data, bioimageio_json_schema)
+    except jsonschema.ValidationError as e:
+        print(e.validator_value)  # TODO: improve error message/log
+        raise
+
     if as_latest:
         return
 
+    # check rountrip
     exclude_from_comp = {
         "format_version",
         "timestamp",
@@ -131,10 +141,10 @@ def check_bioimageio_yaml(
     }
     deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
-    assert_dict_equal(deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True)
+    assert_rdf_dict_equal(deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True)
 
 
-def assert_dict_equal(
+def assert_rdf_dict_equal(
     actual: Dict[Any, Any], expected: Dict[Any, Any], msg: str = "", *, ignore_known_rdf_diffs: bool = False
 ):
     diff: Any = DeepDiff(expected, actual)

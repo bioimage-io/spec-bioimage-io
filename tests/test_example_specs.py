@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable, Mapping
 
 import pytest
 
@@ -48,15 +48,24 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
 @pytest.mark.parametrize("descr_path,key", list(yield_valid_descr_paths()))
-def test_example_descr_paths(descr_path: Path, key: str, format_version: FormatVersionPlaceholder):
+def test_example_descr_paths(
+    descr_path: Path, key: str, format_version: FormatVersionPlaceholder, bioimageio_json_schema: Mapping[Any, Any]
+):
     check_bioimageio_yaml(
         descr_path,
         root=descr_path.parent,
         as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
+        bioimageio_json_schema=bioimageio_json_schema,
     )
 
 
 @pytest.mark.parametrize("descr_path,key", list(yield_invalid_descr_paths()))
-def test_invalid_example_descr_paths(descr_path: Path, key: str):
-    check_bioimageio_yaml(descr_path, root=descr_path.parent, as_latest=False, is_invalid=True)
+def test_invalid_example_descr_paths(descr_path: Path, key: str, bioimageio_json_schema: Mapping[Any, Any]):
+    check_bioimageio_yaml(
+        descr_path,
+        root=descr_path.parent,
+        as_latest=False,
+        is_invalid=True,
+        bioimageio_json_schema=bioimageio_json_schema,
+    )

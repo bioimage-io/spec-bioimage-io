@@ -1,7 +1,7 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Mapping
 
 import pooch
 import pytest
@@ -192,7 +192,9 @@ def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
 
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
 @pytest.mark.parametrize("descr_url,key", list(yield_bioimageio_yaml_urls()))
-def test_rdf(descr_url: Path, key: str, format_version: FormatVersionPlaceholder):
+def test_rdf(
+    descr_url: Path, key: str, format_version: FormatVersionPlaceholder, bioimageio_json_schema: Mapping[Any, Any]
+):
     if (
         format_version == DISCOVER
         and key in KNOWN_INVALID
@@ -205,4 +207,5 @@ def test_rdf(descr_url: Path, key: str, format_version: FormatVersionPlaceholder
         descr_url,
         as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
+        bioimageio_json_schema=bioimageio_json_schema,
     )
