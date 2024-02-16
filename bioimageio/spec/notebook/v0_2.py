@@ -2,7 +2,6 @@ from typing import Literal, Union
 
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.types import AbsoluteFilePath, RelativeFilePath
 from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr

@@ -11,6 +11,7 @@ repos:
     files: ^.*\.py$
     hooks:
       - id: ruff
+        args: [--fix]
   - repo: local
     hooks:
       - id: pyright
