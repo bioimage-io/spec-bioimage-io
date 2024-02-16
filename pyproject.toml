@@ -1,5 +1,5 @@
 [tool.black]
-line-length = 120
+line-length = 88
 target-version = ["py38", "py39", "py310", "py311"]
 preview = true
 
@@ -26,6 +26,6 @@ addopts = "--capture=no --doctest-modules --failed-first"
 testpaths = ["bioimageio/spec", "tests", "scripts"]
 
 [tool.ruff]
-line-length = 120
+line-length = 88
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 target-version = "py38"

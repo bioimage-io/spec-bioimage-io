@@ -55,7 +55,9 @@ from tests.utils import check_node, check_type
                 {"values": [1, 2, 3]},
                 {"type": "uint8"},
             ],
-            axes=[{"type": "channel", "channel_names": ["animal_code", "animal_count"]}],
+            axes=[
+                {"type": "channel", "channel_names": ["animal_code", "animal_count"]}
+            ],
         ),
         pytest.param(
             dict(
@@ -72,7 +74,9 @@ from tests.utils import check_node, check_type
     ],
 )
 def test_tensor_base(kwargs: Dict[str, Any]):
-    check_node(TensorDescrBase, kwargs, context=ValidationContext(perform_io_checks=False))
+    check_node(
+        TensorDescrBase, kwargs, context=ValidationContext(perform_io_checks=False)
+    )
 
 
 @pytest.mark.parametrize(
@@ -103,7 +107,12 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     ],
 )
 def test_tensor_base_invalid(kwargs: Dict[str, Any]):
-    check_node(TensorDescrBase, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
+    check_node(
+        TensorDescrBase,
+        kwargs,
+        is_invalid=True,
+        context=ValidationContext(perform_io_checks=False),
+    )
 
 
 @pytest.mark.parametrize(
@@ -121,7 +130,11 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             "preprocessing": [
                 {
                     "id": "scale_range",
-                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "axes": ("x", "y")},
+                    "kwargs": {
+                        "max_percentile": 99,
+                        "min_percentile": 5,
+                        "axes": ("x", "y"),
+                    },
                 }
             ],
             "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
@@ -129,7 +142,9 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
-    check_node(InputTensorDescr, kwargs, context=ValidationContext(perform_io_checks=False))
+    check_node(
+        InputTensorDescr, kwargs, context=ValidationContext(perform_io_checks=False)
+    )
 
 
 @pytest.mark.parametrize(
@@ -150,7 +165,12 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     ],
 )
 def test_input_tensor_invalid(kwargs: Dict[str, Any]):
-    check_node(InputTensorDescr, kwargs, is_invalid=True, context=ValidationContext(perform_io_checks=False))
+    check_node(
+        InputTensorDescr,
+        kwargs,
+        is_invalid=True,
+        context=ValidationContext(perform_io_checks=False),
+    )
 
 
 @pytest.mark.parametrize(
@@ -159,7 +179,14 @@ def test_input_tensor_invalid(kwargs: Dict[str, Any]):
 )
 def test_batch_axis(kwargs: Dict[str, Any]):
     check_node(
-        BatchAxis, kwargs, expected_dump_python={"type": "batch", "name": "batch", "description": "", "size": None}
+        BatchAxis,
+        kwargs,
+        expected_dump_python={
+            "type": "batch",
+            "name": "batch",
+            "description": "",
+            "size": None,
+        },
     )
 
 
@@ -188,7 +215,9 @@ def model_data():
             Author(name="Author 2"),
         ],
         maintainers=[
-            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"),
+            Maintainer(
+                name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"
+            ),
             Maintainer(github_user="githubuser2"),
         ],
         timestamp=datetime.now(),
@@ -222,7 +251,9 @@ def model_data():
         ],
         name="Model",
         tags=[],
-        weights=WeightsDescr(onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx", opset_version=15)),
+        weights=WeightsDescr(
+            onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx", opset_version=15)
+        ),
         type="model",
     ).model_dump()
     return data
@@ -233,15 +264,43 @@ def model_data():
     [
         pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
         dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(weights={"torchscript": {"source": UNET2D_ROOT / "weights.onnx", "pytorch_version": 1.15}}),
-        dict(weights={"keras_hdf5": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}}),
-        dict(weights={"tensorflow_js": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}}),
         dict(
             weights={
-                "tensorflow_saved_model_bundle": {"source": UNET2D_ROOT / "weights.onnx", "tensorflow_version": 1.10}
+                "torchscript": {
+                    "source": UNET2D_ROOT / "weights.onnx",
+                    "pytorch_version": 1.15,
+                }
             }
         ),
-        dict(weights={"onnx": {"source": UNET2D_ROOT / "weights.onnx", "opset_version": 15}}),
+        dict(
+            weights={
+                "keras_hdf5": {
+                    "source": UNET2D_ROOT / "weights.onnx",
+                    "tensorflow_version": 1.10,
+                }
+            }
+        ),
+        dict(
+            weights={
+                "tensorflow_js": {
+                    "source": UNET2D_ROOT / "weights.onnx",
+                    "tensorflow_version": 1.10,
+                }
+            }
+        ),
+        dict(
+            weights={
+                "tensorflow_saved_model_bundle": {
+                    "source": UNET2D_ROOT / "weights.onnx",
+                    "tensorflow_version": 1.10,
+                }
+            }
+        ),
+        dict(
+            weights={
+                "onnx": {"source": UNET2D_ROOT / "weights.onnx", "opset_version": 15}
+            }
+        ),
         dict(
             weights={
                 "pytorch_state_dict": {
@@ -259,12 +318,16 @@ def model_data():
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     model_data.update(update)
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
-    model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
+    model_data["name"] = (
+        "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
+    )
     summary = validate_format(model_data)
 
     assert summary.status == "passed", summary.format()
@@ -311,11 +374,15 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
         "size": {"tensor_id": "input_1", "axis_id": "x"},
         "halo": 2,
     }
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
     model_data["outputs"][0]["axes"][2]["halo"] = 999
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "failed", summary.format()
 
 
@@ -333,7 +400,9 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
         {"type": "channel", "channel_names": list("abc")},
     ]
 
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
 

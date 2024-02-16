@@ -52,7 +52,11 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
             return cast(
                 Dict[str, Any],
                 (cls if TYPE_CHECKING else dict)(
-                    attachments=[] if old.attachments is None else [FileDescr(source=f) for f in old.attachments.files],
+                    attachments=(
+                        []
+                        if old.attachments is None
+                        else [FileDescr(source=f) for f in old.attachments.files]
+                    ),
                     authors=[
                         _author_conv.convert_as_dict(a) for a in old.authors
                     ],  # pyright: ignore[reportArgumentType]

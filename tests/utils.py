@@ -1,7 +1,18 @@
 from contextlib import nullcontext
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Mapping, Optional, Protocol, Sequence, Set, Type, Union
+from typing import (
+    Any,
+    ContextManager,
+    Dict,
+    Mapping,
+    Optional,
+    Protocol,
+    Sequence,
+    Set,
+    Type,
+    Union,
+)
 
 import jsonschema
 import pytest
@@ -78,8 +89,13 @@ def check_type(
         assert actual == expected, (actual, expected)
 
     if expected_deserialized is not unset:
-        actual_deserialized = type_adapter.dump_python(actual, mode="json", exclude_unset=True)
-        assert actual_deserialized == expected_deserialized, (actual_deserialized, expected_deserialized)
+        actual_deserialized = type_adapter.dump_python(
+            actual, mode="json", exclude_unset=True
+        )
+        assert actual_deserialized == expected_deserialized, (
+            actual_deserialized,
+            expected_deserialized,
+        )
 
     node = create_model("DummyNode", value=(type_, ...), __base__=DummyNodeBase)
     with error_context:
@@ -90,7 +106,10 @@ def check_type(
 
     if expected_deserialized is not unset:
         node_deserialized = actual_node.model_dump(mode="json", exclude_unset=True)
-        assert node_deserialized["value"] == expected_deserialized, (node_deserialized["value"], expected_deserialized)
+        assert node_deserialized["value"] == expected_deserialized, (
+            node_deserialized["value"],
+            expected_deserialized,
+        )
 
 
 def check_bioimageio_yaml(
@@ -111,7 +130,9 @@ def check_bioimageio_yaml(
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
         rd = build_description(deepcopy(data), as_format=format_version)
-        assert not is_invalid or (is_invalid and isinstance(rd, InvalidDescription)), "Invalid RDF passed validation"
+        assert not is_invalid or (
+            is_invalid and isinstance(rd, InvalidDescription)
+        ), "Invalid RDF passed validation"
 
     summary = rd.validation_summary
     assert summary is not None
@@ -127,13 +148,16 @@ def check_bioimageio_yaml(
     # check compatibility to our latest json schema...
     if (
         bioimageio_json_schema is not None
-        and "v0_" not in downloaded_source.path.name  # ...unless it's a historic example
+        and "v0_"
+        not in downloaded_source.path.name  # ...unless it's a historic example
     ):
         try:
             jsonschema.validate(json_data, bioimageio_json_schema)
         except jsonschema.ValidationError:
             # TODO: improve error message/log
-            raise ValueError(f"jsonschema validation error for {downloaded_source.path}")
+            raise ValueError(
+                f"jsonschema validation error for {downloaded_source.path}"
+            )
 
     if as_latest:
         return
@@ -144,13 +168,21 @@ def check_bioimageio_yaml(
         "timestamp",
         *exclude_fields_from_roundtrip,
     }
-    deserialized = rd.model_dump(mode="json", exclude=exclude_from_comp, exclude_unset=True)
+    deserialized = rd.model_dump(
+        mode="json", exclude=exclude_from_comp, exclude_unset=True
+    )
     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
-    assert_rdf_dict_equal(deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True)
+    assert_rdf_dict_equal(
+        deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True
+    )
 
 
 def assert_rdf_dict_equal(
-    actual: Dict[Any, Any], expected: Dict[Any, Any], msg: str = "", *, ignore_known_rdf_diffs: bool = False
+    actual: Dict[Any, Any],
+    expected: Dict[Any, Any],
+    msg: str = "",
+    *,
+    ignore_known_rdf_diffs: bool = False,
 ):
     diff: Any = DeepDiff(expected, actual)
     if ignore_known_rdf_diffs:

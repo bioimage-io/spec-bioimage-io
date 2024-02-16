@@ -31,7 +31,12 @@ from tests.utils import check_node, check_type, unset
 
 
 def test_linked_model_lala():
-    check_node(LinkedModel, dict(id="lala"), expected_dump_json=dict(id="lala"), expected_dump_python=dict(id="lala"))
+    check_node(
+        LinkedModel,
+        dict(id="lala"),
+        expected_dump_json=dict(id="lala"),
+        expected_dump_python=dict(id="lala"),
+    )
 
 
 @pytest.mark.parametrize(
@@ -52,7 +57,10 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
             dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
             dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
         ),
-        (dict(opset_version=5, source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64), ValidationError),
+        (
+            dict(opset_version=5, source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
+            ValidationError,
+        ),
         (
             dict(source=UNET2D_ROOT / "weights.onnx", sha256="s"),
             ValidationError,
@@ -74,9 +82,20 @@ VALID_PRE_AND_POSTPROCESSING = [
     dict(name="clip", kwargs={"min": 0.2, "max": 0.5}),
     dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "xy"}),
     dict(name="sigmoid"),
-    dict(name="zero_mean_unit_variance", kwargs={"mode": "fixed", "mean": 1.0, "std": 2.0, "axes": "xy"}),
+    dict(
+        name="zero_mean_unit_variance",
+        kwargs={"mode": "fixed", "mean": 1.0, "std": 2.0, "axes": "xy"},
+    ),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
-    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 5, "max_percentile": 50}),
+    dict(
+        name="scale_range",
+        kwargs={
+            "mode": "per_sample",
+            "axes": "xy",
+            "min_percentile": 5,
+            "max_percentile": 50,
+        },
+    ),
 ]
 
 INVALID_PRE_AND_POSTPROCESSING = [
@@ -85,9 +104,20 @@ INVALID_PRE_AND_POSTPROCESSING = [
     dict(name="clip", kwargs={"min": "min", "max": 0.5}),
     dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "b"}),
     dict(name="sigmoid", kwargs={"axes": "x"}),
-    dict(name="zero_mean_unit_variance", kwargs={"mode": "unknown", "mean": 1.0, "std": 2.0, "axes": "xy"}),
+    dict(
+        name="zero_mean_unit_variance",
+        kwargs={"mode": "unknown", "mean": 1.0, "std": 2.0, "axes": "xy"},
+    ),
     dict(name="scale_range", kwargs={"mode": "fixed", "axes": "xy"}),
-    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min_percentile": 50, "max_percentile": 50}),
+    dict(
+        name="scale_range",
+        kwargs={
+            "mode": "per_sample",
+            "axes": "xy",
+            "min_percentile": 50,
+            "max_percentile": 50,
+        },
+    ),
     dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min": 0}),
 ]
 
@@ -98,7 +128,11 @@ INVALID_PRE_AND_POSTPROCESSING = [
     + [
         dict(
             name="scale_range",
-            kwargs={"mode": "per_dataset", "axes": "xy", "reference_tensor": "some_input_tensor_name"},
+            kwargs={
+                "mode": "per_dataset",
+                "axes": "xy",
+                "reference_tensor": "some_input_tensor_name",
+            },
         ),
     ],
 )
@@ -118,10 +152,20 @@ def test_invalid_preprocessing(kwargs: Dict[str, Any]):
         dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         dict(
             name="scale_range",
-            kwargs={"mode": "per_dataset", "axes": "xy", "reference_tensor": "some_input_tensor_name"},
+            kwargs={
+                "mode": "per_dataset",
+                "axes": "xy",
+                "reference_tensor": "some_input_tensor_name",
+            },
         ),
-        dict(name="scale_mean_variance", kwargs={"mode": "per_sample", "reference_tensor": "some_tensor_name"}),
-        dict(name="scale_mean_variance", kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),
+        dict(
+            name="scale_mean_variance",
+            kwargs={"mode": "per_sample", "reference_tensor": "some_tensor_name"},
+        ),
+        dict(
+            name="scale_mean_variance",
+            kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"},
+        ),
     ],
 )
 def test_postprocessing(kwargs: Dict[str, Any]):
@@ -132,12 +176,17 @@ def test_postprocessing(kwargs: Dict[str, Any]):
     "node,expected",
     [
         (
-            ScaleRangeDescr(kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))),
+            ScaleRangeDescr(
+                kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))
+            ),
             dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         ),
         (
             ScaleMeanVarianceDescr(kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),  # type: ignore
-            dict(name="scale_mean_variance", kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),
+            dict(
+                name="scale_mean_variance",
+                kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"},
+            ),
         ),
     ],
 )
@@ -186,7 +235,12 @@ def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
             "preprocessing": [
                 {
                     "name": "scale_range",
-                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                    "kwargs": {
+                        "max_percentile": 99,
+                        "min_percentile": 5,
+                        "mode": "per_sample",
+                        "axes": "xy",
+                    },
                 }
             ],
         },
@@ -197,7 +251,12 @@ def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
             "axes": "xyc",
             "shape": [128, 128, 3],
         },
-        {"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
+        {
+            "name": "tensor_1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+        },
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
@@ -216,7 +275,12 @@ def test_input_tensor(kwargs: Dict[str, Any]):
             "postprocessing": [
                 {
                     "name": "scale_range",
-                    "kwargs": {"max_percentile": 99, "min_percentile": 5, "mode": "per_sample", "axes": "xy"},
+                    "kwargs": {
+                        "max_percentile": 99,
+                        "min_percentile": 5,
+                        "mode": "per_sample",
+                        "axes": "xy",
+                    },
                 }
             ],
         },
@@ -227,7 +291,12 @@ def test_input_tensor(kwargs: Dict[str, Any]):
             "axes": "xyc",
             "shape": [128, 128, 3],
         },
-        {"name": "tensor_1", "data_type": "float32", "axes": "xyc", "shape": [128, 128, 3]},
+        {
+            "name": "tensor_1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+        },
     ],
 )
 def test_output_tensor(kwargs: Dict[str, Any]):
@@ -246,7 +315,9 @@ def model_data():
             Author(name="Author 2"),
         ],
         maintainers=[
-            Maintainer(name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"),
+            Maintainer(
+                name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"
+            ),
             Maintainer(github_user="constantinpape"),
         ],
         timestamp=datetime.now(),
@@ -271,7 +342,9 @@ def model_data():
         ],
         name="Model",
         tags=[],
-        weights=WeightsDescr(onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx")),
+        weights=WeightsDescr(
+            onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx")
+        ),
         test_inputs=[UNET2D_ROOT / "test_input.npy"],
         test_outputs=[UNET2D_ROOT / "test_output.npy"],
         type="model",
@@ -301,13 +374,19 @@ def model_data():
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     model_data.update(update)
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
-    model_data["name"] = "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
-    summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))
+    model_data["name"] = (
+        "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
+    )
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
     assert summary.details[0].warnings[0].loc == ("name",), summary.format()
     assert summary.details[0].warnings[0].msg in "Name longer than 64 characters."
@@ -315,7 +394,10 @@ def test_warn_long_name(model_data: Dict[str, Any]):
 
 def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
     model_data["inputs"][0]["name"] = "invalid/name"
-    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
+    summary = validate_format(
+        model_data,
+        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+    )
     assert summary.status == "failed", summary.format()
 
 
@@ -331,7 +413,10 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
         }
     ]
 
-    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
+    summary = validate_format(
+        model_data,
+        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+    )
     assert summary.status == "failed", summary.format()
 
 
@@ -342,11 +427,18 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
             "description": "Output 1",
             "data_type": "float32",
             "axes": "xyc",
-            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3, 4], "offset": [0, 0, 0, 0]},
+            "shape": {
+                "reference_tensor": "input_1",
+                "scale": [1, 2, 3, 4],
+                "offset": [0, 0, 0, 0],
+            },
         }
     ]
 
-    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
+    summary = validate_format(
+        model_data,
+        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+    )
     assert summary.status == "failed", summary.format()
 
 
@@ -357,18 +449,26 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
             "description": "Output 1",
             "data_type": "float32",
             "axes": "xyc",
-            "shape": {"reference_tensor": "input_1", "scale": [1, 2, 3], "offset": [0, 0, 0]},
+            "shape": {
+                "reference_tensor": "input_1",
+                "scale": [1, 2, 3],
+                "offset": [0, 0, 0],
+            },
             "halo": [256, 128, 0],
         }
     ]
-    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
+    summary = validate_format(
+        model_data,
+        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+    )
     assert summary.status == "failed", summary.format()
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     model_data["parent"] = dict(id="10.5281/zenodo.5764892")
     summary = validate_format(
-        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
+        model_data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
     )
     assert summary.status == "passed", summary.format()
 
@@ -389,7 +489,8 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
     ]
 
     summary = validate_format(
-        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
+        model_data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
     )
     assert summary.status == "passed", summary.format()
 
@@ -398,7 +499,8 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
     model_data["format_version"] = "0.2.4"
     summary = validate_format(
-        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
+        model_data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
     )
     assert summary.status == "passed", summary.format()
 
@@ -406,6 +508,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
     summary = validate_format(
-        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
+        model_data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
     )
     assert summary.status == "failed", summary.format()

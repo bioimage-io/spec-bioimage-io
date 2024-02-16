@@ -11,7 +11,9 @@ def test_converter_with_arg():
         b: str
 
     class AtoB(Converter[A, B, str]):
-        def _convert(self, src: A, tgt: "type[B] | type[dict[str, Any]]", /, prefix: str) -> "B | dict[str, Any]":
+        def _convert(
+            self, src: A, tgt: "type[B] | type[dict[str, Any]]", /, prefix: str
+        ) -> "B | dict[str, Any]":
             return tgt(b=prefix + str(src.a))
 
     converter = AtoB(A, B)

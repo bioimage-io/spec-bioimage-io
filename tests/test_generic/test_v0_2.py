@@ -7,7 +7,13 @@ import pytest
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
 from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.generic.v0_2 import AttachmentsDescr, Author, CiteEntry, GenericDescr, Maintainer
+from bioimageio.spec.generic.v0_2 import (
+    AttachmentsDescr,
+    Author,
+    CiteEntry,
+    GenericDescr,
+    Maintainer,
+)
 from tests.utils import check_node
 
 EXAMPLE_DOT_COM = "https://example.com/"
@@ -36,7 +42,12 @@ EXAMPLE_DOT_COM = "https://example.com/"
         ),
         (
             Author,
-            dict(affiliation="Paradise", email="you@example.com", github_user="ghuser", orcid="0000-0001-2345-6789"),
+            dict(
+                affiliation="Paradise",
+                email="you@example.com",
+                github_user="ghuser",
+                orcid="0000-0001-2345-6789",
+            ),
             False,
         ),
         (

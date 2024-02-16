@@ -42,7 +42,9 @@ def affinities_to_boundaries(aff_channels, accumulator="max"):
     return AccumulateChannels(None, aff_channels, accumulator)
 
 
-def affinities_with_foreground_to_boundaries(aff_channels, fg_channel=(0, 1), accumulator="max"):
+def affinities_with_foreground_to_boundaries(
+    aff_channels, fg_channel=(0, 1), accumulator="max"
+):
     return AccumulateChannels(fg_channel, aff_channels, accumulator)
 
 
@@ -69,9 +71,13 @@ def affinities_to_boundaries_anisotropic():
 POSTPROCESSING = {
     "affinities_to_boundaries_anisotropic": affinities_to_boundaries_anisotropic,
     "affinities_to_boundaries2d": affinities_to_boundaries2d,
-    "affinities_with_foreground_to_boundaries2d": affinities_with_foreground_to_boundaries2d,
+    "affinities_with_foreground_to_boundaries2d": (
+        affinities_with_foreground_to_boundaries2d
+    ),
     "affinities_to_boundaries3d": affinities_to_boundaries3d,
-    "affinities_with_foreground_to_boundaries3d": affinities_with_foreground_to_boundaries3d,
+    "affinities_with_foreground_to_boundaries3d": (
+        affinities_with_foreground_to_boundaries3d
+    ),
 }
 
 
@@ -83,10 +89,21 @@ POSTPROCESSING = {
 class UNetBase(nn.Module):
     """ """
 
-    def __init__(self, encoder, base, decoder, out_conv=None, final_activation=None, postprocessing=None):
+    def __init__(
+        self,
+        encoder,
+        base,
+        decoder,
+        out_conv=None,
+        final_activation=None,
+        postprocessing=None,
+    ):
         super().__init__()
         if len(encoder) != len(decoder):
-            raise ValueError(f"Incompatible depth of encoder (depth={len(encoder)}) and decoder (depth={len(decoder)})")
+            raise ValueError(
+                f"Incompatible depth of encoder (depth={len(encoder)}) and decoder"
+                f" (depth={len(decoder)})"
+            )
 
         self.encoder = encoder
         self.base = base
@@ -97,9 +114,14 @@ class UNetBase(nn.Module):
             self._out_channels = self.decoder.out_channels
         elif isinstance(out_conv, nn.ModuleList):
             if len(out_conv) != len(self.decoder):
-                raise ValueError(f"Invalid length of out_conv, expected {len(decoder)}, got {len(out_conv)}")
+                raise ValueError(
+                    f"Invalid length of out_conv, expected {len(decoder)}, got"
+                    f" {len(out_conv)}"
+                )
             self.return_decoder_outputs = True
-            self._out_channels = [None if conv is None else conv.out_channels for conv in out_conv]
+            self._out_channels = [
+                None if conv is None else conv.out_channels for conv in out_conv
+            ]
         else:
             self.return_decoder_outputs = False
             self._out_channels = out_conv.out_channels
@@ -198,7 +220,9 @@ class UNetBase(nn.Module):
 
 def _update_conv_kwargs(kwargs, scale_factor):
     # if the scale factor is a scalar or all entries are the same we don't need to update the kwargs
-    if isinstance(scale_factor, int) or scale_factor.count(scale_factor[0]) == len(scale_factor):
+    if isinstance(scale_factor, int) or scale_factor.count(scale_factor[0]) == len(
+        scale_factor
+    ):
         return kwargs
     else:  # otherwise set anisotropic kernel
         kernel_size = kwargs.get("kernel_size", 3)
@@ -209,7 +233,9 @@ def _update_conv_kwargs(kwargs, scale_factor):
         if not (isinstance(kernel_size, int) and isinstance(padding, int)):
             return kwargs
 
-        kernel_size = tuple(1 if factor == 1 else kernel_size for factor in scale_factor)
+        kernel_size = tuple(
+            1 if factor == 1 else kernel_size for factor in scale_factor
+        )
         padding = tuple(0 if factor == 1 else padding for factor in scale_factor)
         kwargs.update({"kernel_size": kernel_size, "padding": padding})
         return kwargs
@@ -217,16 +243,26 @@ def _update_conv_kwargs(kwargs, scale_factor):
 
 class Encoder(nn.Module):
     def __init__(
-        self, features, scale_factors, conv_block_impl, pooler_impl, anisotropic_kernel=False, **conv_block_kwargs
+        self,
+        features,
+        scale_factors,
+        conv_block_impl,
+        pooler_impl,
+        anisotropic_kernel=False,
+        **conv_block_kwargs,
     ):
         super().__init__()
         if len(features) != len(scale_factors) + 1:
-            raise ValueError("Incompatible number of features {len(features)} and scale_factors {len(scale_factors)}")
+            raise ValueError(
+                "Incompatible number of features {len(features)} and scale_factors"
+                " {len(scale_factors)}"
+            )
 
         conv_kwargs = [conv_block_kwargs] * len(scale_factors)
         if anisotropic_kernel:
             conv_kwargs = [
-                _update_conv_kwargs(kwargs, scale_factor) for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
+                _update_conv_kwargs(kwargs, scale_factor)
+                for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
             ]
 
         self.blocks = nn.ModuleList(
@@ -259,16 +295,26 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(
-        self, features, scale_factors, conv_block_impl, sampler_impl, anisotropic_kernel=False, **conv_block_kwargs
+        self,
+        features,
+        scale_factors,
+        conv_block_impl,
+        sampler_impl,
+        anisotropic_kernel=False,
+        **conv_block_kwargs,
     ):
         super().__init__()
         if len(features) != len(scale_factors) + 1:
-            raise ValueError("Incompatible number of features {len(features)} and scale_factors {len(scale_factors)}")
+            raise ValueError(
+                "Incompatible number of features {len(features)} and scale_factors"
+                " {len(scale_factors)}"
+            )
 
         conv_kwargs = [conv_block_kwargs] * len(scale_factors)
         if anisotropic_kernel:
             conv_kwargs = [
-                _update_conv_kwargs(kwargs, scale_factor) for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
+                _update_conv_kwargs(kwargs, scale_factor)
+                for kwargs, scale_factor in zip(conv_kwargs, scale_factors)
             ]
 
         self.blocks = nn.ModuleList(
@@ -278,7 +324,10 @@ class Decoder(nn.Module):
             ]
         )
         self.samplers = nn.ModuleList(
-            [sampler_impl(factor, inc, outc) for factor, inc, outc in zip(scale_factors, features[:-1], features[1:])]
+            [
+                sampler_impl(factor, inc, outc)
+                for factor, inc, outc in zip(scale_factors, features[:-1], features[1:])
+            ]
         )
         self.return_outputs = False
 
@@ -304,10 +353,15 @@ class Decoder(nn.Module):
 
     def forward(self, x, encoder_inputs):
         if len(encoder_inputs) != len(self.blocks):
-            raise ValueError(f"Invalid number of encoder_inputs: expect {len(self.blocks)}, got {len(encoder_inputs)}")
+            raise ValueError(
+                f"Invalid number of encoder_inputs: expect {len(self.blocks)}, got"
+                f" {len(encoder_inputs)}"
+            )
 
         decoder_out = []
-        for block, sampler, from_encoder in zip(self.blocks, self.samplers, encoder_inputs):
+        for block, sampler, from_encoder in zip(
+            self.blocks, self.samplers, encoder_inputs
+        ):
             x = sampler(x)
             x = block(self._concat(x, from_encoder))
             decoder_out.append(x)
@@ -328,11 +382,22 @@ def get_norm_layer(norm, dim, channels, n_groups=32):
     elif norm == "BatchNorm":
         return nn.BatchNorm2d(channels) if dim == 2 else nn.BatchNorm3d(channels)
     else:
-        raise ValueError(f"Invalid norm: expect one of 'InstanceNorm', 'BatchNorm' or 'GroupNorm', got {norm}")
+        raise ValueError(
+            "Invalid norm: expect one of 'InstanceNorm', 'BatchNorm' or 'GroupNorm',"
+            f" got {norm}"
+        )
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, dim, kernel_size=3, padding=1, norm="InstanceNorm"):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        dim,
+        kernel_size=3,
+        padding=1,
+        norm="InstanceNorm",
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -341,18 +406,26 @@ class ConvBlock(nn.Module):
 
         if norm is None:
             self.block = nn.Sequential(
-                conv(in_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                conv(
+                    in_channels, out_channels, kernel_size=kernel_size, padding=padding
+                ),
                 nn.ReLU(inplace=True),
-                conv(out_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                conv(
+                    out_channels, out_channels, kernel_size=kernel_size, padding=padding
+                ),
                 nn.ReLU(inplace=True),
             )
         else:
             self.block = nn.Sequential(
                 get_norm_layer(norm, dim, in_channels),
-                conv(in_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                conv(
+                    in_channels, out_channels, kernel_size=kernel_size, padding=padding
+                ),
                 nn.ReLU(inplace=True),
                 get_norm_layer(norm, dim, out_channels),
-                conv(out_channels, out_channels, kernel_size=kernel_size, padding=padding),
+                conv(
+                    out_channels, out_channels, kernel_size=kernel_size, padding=padding
+                ),
                 nn.ReLU(inplace=True),
             )
 
@@ -370,7 +443,9 @@ class Upsampler(nn.Module):
         self.conv = conv(in_channels, out_channels, 1)
 
     def forward(self, x):
-        x = nn.functional.interpolate(x, scale_factor=self.scale_factor, mode=self.mode, align_corners=False)
+        x = nn.functional.interpolate(
+            x, scale_factor=self.scale_factor, mode=self.mode, align_corners=False
+        )
         x = self.conv(x)
         return x
 
@@ -406,8 +481,12 @@ class UNet2d(UNetBase):
         postprocessing=None,
         **conv_block_kwargs,
     ):
-        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
-        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [
+            initial_features * gain**i for i in range(depth)
+        ]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][
+            ::-1
+        ]
         scale_factors = depth * [2]
 
         if return_side_outputs:
@@ -416,10 +495,17 @@ class UNet2d(UNetBase):
             if len(out_channels) != depth:
                 raise ValueError()
             out_conv: Optional[nn.Module] = nn.ModuleList(
-                [nn.Conv2d(feat, outc, 1) for feat, outc in zip(features_decoder[1:], out_channels)]
+                [
+                    nn.Conv2d(feat, outc, 1)
+                    for feat, outc in zip(features_decoder[1:], out_channels)
+                ]
             )
         else:
-            out_conv = None if out_channels is None else nn.Conv2d(features_decoder[-1], out_channels, 1)
+            out_conv = (
+                None
+                if out_channels is None
+                else nn.Conv2d(features_decoder[-1], out_channels, 1)
+            )
 
         super().__init__(
             encoder=Encoder(
@@ -436,7 +522,9 @@ class UNet2d(UNetBase):
                 sampler_impl=sampler_impl,
                 **conv_block_kwargs,
             ),
-            base=conv_block_impl(features_encoder[-1], features_encoder[-1] * gain, **conv_block_kwargs),
+            base=conv_block_impl(
+                features_encoder[-1], features_encoder[-1] * gain, **conv_block_kwargs
+            ),
             out_conv=out_conv,
             final_activation=final_activation,
             postprocessing=postprocessing,
@@ -488,8 +576,12 @@ class AnisotropicUNet(UNetBase):
         **conv_block_kwargs,
     ):
         depth = len(scale_factors)
-        features_encoder = [in_channels] + [initial_features * gain**i for i in range(depth)]
-        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
+        features_encoder = [in_channels] + [
+            initial_features * gain**i for i in range(depth)
+        ]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][
+            ::-1
+        ]
 
         if return_side_outputs:
             if isinstance(out_channels, int) or out_channels is None:
@@ -497,10 +589,17 @@ class AnisotropicUNet(UNetBase):
             if len(out_channels) != depth:
                 raise ValueError()
             out_conv: Optional[nn.Module] = nn.ModuleList(
-                [nn.Conv3d(feat, outc, 1) for feat, outc in zip(features_decoder[1:], out_channels)]
+                [
+                    nn.Conv3d(feat, outc, 1)
+                    for feat, outc in zip(features_decoder[1:], out_channels)
+                ]
             )
         else:
-            out_conv = None if out_channels is None else nn.Conv3d(features_decoder[-1], out_channels, 1)
+            out_conv = (
+                None
+                if out_channels is None
+                else nn.Conv3d(features_decoder[-1], out_channels, 1)
+            )
 
         super().__init__(
             encoder=Encoder(
@@ -519,7 +618,9 @@ class AnisotropicUNet(UNetBase):
                 anisotropic_kernel=anisotropic_kernel,
                 **conv_block_kwargs,
             ),
-            base=conv_block_impl(features_encoder[-1], features_encoder[-1] * gain, **conv_block_kwargs),
+            base=conv_block_impl(
+                features_encoder[-1], features_encoder[-1] * gain, **conv_block_kwargs
+            ),
             out_conv=out_conv,
             final_activation=final_activation,
             postprocessing=postprocessing,

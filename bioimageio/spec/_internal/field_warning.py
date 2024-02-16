@@ -8,7 +8,11 @@ from annotated_types import BaseMetadata, GroupedMetadata
 from pydantic import TypeAdapter
 from pydantic._internal._decorators import inspect_validator
 from pydantic_core import PydanticCustomError
-from pydantic_core.core_schema import NoInfoValidatorFunction, ValidationInfo, WithInfoValidatorFunction
+from pydantic_core.core_schema import (
+    NoInfoValidatorFunction,
+    ValidationInfo,
+    WithInfoValidatorFunction,
+)
 from typing_extensions import Annotated, LiteralString
 
 from bioimageio.spec._internal.constants import WARNING
@@ -40,7 +44,9 @@ def warn(
 
     validator = TypeAdapter(typ)
 
-    return AfterWarner(validator.validate_python, severity=severity, msg=msg, context={"typ": typ})
+    return AfterWarner(
+        validator.validate_python, severity=severity, msg=msg, context={"typ": typ}
+    )
 
 
 def call_validator_func(
@@ -111,7 +117,13 @@ class AfterWarner(pydantic.functional_validators.AfterValidator):
         object.__setattr__(
             self,
             "func",
-            as_warning(self.func, mode="after", severity=self.severity, msg=self.msg, msg_context=self.context),
+            as_warning(
+                self.func,
+                mode="after",
+                severity=self.severity,
+                msg=self.msg,
+                msg_context=self.context,
+            ),
         )
 
 
@@ -127,5 +139,11 @@ class BeforeWarner(pydantic.functional_validators.BeforeValidator):
         object.__setattr__(
             self,
             "func",
-            as_warning(self.func, mode="before", severity=self.severity, msg=self.msg, msg_context=self.context),
+            as_warning(
+                self.func,
+                mode="before",
+                severity=self.severity,
+                msg=self.msg,
+                msg_context=self.context,
+            ),
         )

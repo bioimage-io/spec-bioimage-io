@@ -27,6 +27,7 @@ class ApplicationDescr(GenericDescrBase, title="bioimage.io application specific
     type: Literal["application"] = "application"
 
     source: Annotated[
-        Optional[ImportantFileSource], Field(description="URL or path to the source of the application")
+        Optional[ImportantFileSource],
+        Field(description="URL or path to the source of the application"),
     ] = None
     """The primary source of the application"""

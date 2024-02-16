@@ -41,8 +41,12 @@ def export_json_schemas(dist: Path):
 
 def parse_args():
     p = ArgumentParser(description="script that generates bioimageio json schemas")
-    _ = p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
-    _ = p.add_argument("--dist", nargs="?", default=str((Path(__file__).parent / "../dist").resolve()))
+    _ = p.add_argument(
+        "command", choices=["check", "generate"], nargs="?", default="generate"
+    )
+    _ = p.add_argument(
+        "--dist", nargs="?", default=str((Path(__file__).parent / "../dist").resolve())
+    )
     args = p.parse_args()
     return args
 
@@ -52,14 +56,20 @@ def generate_json_schemas(dist: Path, command: Literal["check", "generate"]):
     if command == "generate":
         export_json_schemas(dist)
     elif command == "check":
-        existing_schemas = {p.name: p for p in Path(dist).glob("bioimageio_schema_*.json")}
+        existing_schemas = {
+            p.name: p for p in Path(dist).glob("bioimageio_schema_*.json")
+        }
         with TemporaryDirectory() as tmp_name:
             dist = Path(tmp_name)
             export_json_schemas(dist)
-            generated_schemas = {p.name: p for p in dist.glob("bioimageio_schema_*.json")}
+            generated_schemas = {
+                p.name: p for p in dist.glob("bioimageio_schema_*.json")
+            }
             missing_generated = set(existing_schemas).difference(set(generated_schemas))
             assert not missing_generated, missing_generated
-            generated_in_addition = set(existing_schemas).difference(set(generated_schemas))
+            generated_in_addition = set(existing_schemas).difference(
+                set(generated_schemas)
+            )
             assert not generated_in_addition, generated_in_addition
             for name, existing_p in existing_schemas.items():
                 with existing_p.open() as f:

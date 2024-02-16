@@ -9,7 +9,11 @@ from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.base_nodes import Converter, Node, ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import (
+    Converter,
+    Node,
+    ResourceDescriptionBase,
+)
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.constants import (
     ALERT,
@@ -42,7 +46,13 @@ from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 
-KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
+KNOWN_SPECIFIC_RESOURCE_TYPES = (
+    "application",
+    "collection",
+    "dataset",
+    "model",
+    "notebook",
+)
 
 
 _WithMdSuffix = WithSuffix(".md", case_sensitive=True)
@@ -80,9 +90,14 @@ def _validate_gh_user(username: str) -> str:
     ):
         return username
 
-    r = requests.get(f"https://api.github.com/users/{username}", auth=settings.github_auth)
+    r = requests.get(
+        f"https://api.github.com/users/{username}", auth=settings.github_auth
+    )
     if r.status_code == 403 and r.reason == "rate limit exceeded":
-        issue_warning("Could not verify GitHub user '{value}' due to GitHub API rate limit", value=username)
+        issue_warning(
+            "Could not verify GitHub user '{value}' due to GitHub API rate limit",
+            value=username,
+        )
     elif r.status_code != 200:
         raise ValueError(f"Could not find GitHub user '{username}'")
 
@@ -102,7 +117,9 @@ class Author(v0_2.Author):
 
 
 class _AuthorConv(Converter[v0_2.Author, Author]):
-    def _convert(self, src: v0_2.Author, tgt: "type[Author] | type[dict[str, Any]]") -> "Author | dict[str, Any]":
+    def _convert(
+        self, src: v0_2.Author, tgt: "type[Author] | type[dict[str, Any]]"
+    ) -> "Author | dict[str, Any]":
         return tgt(
             name=src.name,
             github_user=src.github_user,
@@ -125,7 +142,9 @@ class Maintainer(v0_2.Maintainer):
 
 
 class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
-    def _convert(self, src: v0_2.Maintainer, tgt: "type[Maintainer | dict[str, Any]]") -> "Maintainer | dict[str, Any]":
+    def _convert(
+        self, src: v0_2.Maintainer, tgt: "type[Maintainer | dict[str, Any]]"
+    ) -> "Maintainer | dict[str, Any]":
         return tgt(
             name=src.name,
             github_user=src.github_user,
@@ -151,7 +170,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     name: Annotated[NotEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description"""
 
-    description: Annotated[str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")]
+    description: Annotated[
+        str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")
+    ]
     """A string containing a brief description."""
 
     covers: Annotated[
@@ -159,9 +180,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         Field(
             examples=[],
             description=(
-                "Cover images. "
-                "Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\n"
-                f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
+                "Cover images. Please use an image smaller than 500KB and an aspect"
+                " ratio width to height of 2:1 or 1:1.\nThe supported image formats"
+                f" are: {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
     ] = Field(default_factory=list)
@@ -188,7 +209,10 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         Field(
             examples=[
                 dict(
-                    bioimageio={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    bioimageio={
+                        "my_custom_key": 3837283,
+                        "another_key": {"nested": "value"},
+                    },
                     imagej={"macro_dir": "path/to/macro/file"},
                 )
             ],
@@ -223,7 +247,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[
+        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+    ] = None
     """An icon for illustration, e.g. on bioimage.io"""
 
     @as_warning
@@ -260,25 +286,31 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     @partial(as_warning, severity=ALERT)
     @field_validator("maintainers", mode="after")
     @classmethod
-    def check_maintainers_exist(cls, maintainers: List[Maintainer], info: ValidationInfo) -> List[Maintainer]:
+    def check_maintainers_exist(
+        cls, maintainers: List[Maintainer], info: ValidationInfo
+    ) -> List[Maintainer]:
         if not maintainers and "authors" in info.data:
             authors: List[Author] = info.data["authors"]
             if all(a.github_user is None for a in authors):
                 raise ValueError(
-                    "Missing `maintainers` or any author in `authors` with a specified `github_user` name."
+                    "Missing `maintainers` or any author in `authors` with a specified"
+                    " `github_user` name."
                 )
 
         return maintainers
 
-    tags: Annotated[List[str], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = Field(
-        default_factory=list
-    )
+    tags: Annotated[
+        List[str],
+        Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]),
+    ] = Field(default_factory=list)
     """Associated tags"""
 
     @as_warning
     @field_validator("tags")
     @classmethod
-    def warn_about_tag_categories(cls, value: List[str], info: ValidationInfo) -> List[str]:
+    def warn_about_tag_categories(
+        cls, value: List[str], info: ValidationInfo
+    ) -> List[str]:
         categories = TAG_CATEGORIES.get(info.data["type"], {})
         missing_categories: List[Dict[str, Sequence[str]]] = []
         for cat, entries in categories.items():
@@ -286,7 +318,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 missing_categories.append({cat: entries})
 
         if missing_categories:
-            raise ValueError(f"Missing tags from bioimage.io categories: {missing_categories}")
+            raise ValueError(
+                f"Missing tags from bioimage.io categories: {missing_categories}"
+            )
 
         return value
 
@@ -302,7 +336,9 @@ class GenericDescrBase(GenericModelDescrBase):
 
     @model_validator(mode="before")
     @classmethod
-    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(
+        cls, data: BioimageioYamlContent, /
+    ) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 
@@ -335,7 +371,9 @@ class GenericDescrBase(GenericModelDescrBase):
 ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic specification"):
+class GenericDescr(
+    GenericDescrBase, extra="ignore", title="bioimage.io generic specification"
+):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
@@ -354,7 +392,8 @@ class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic 
     def check_specific_types(cls, value: str) -> str:
         if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
-                f"Use the {value} description instead of this generic description for your '{value}' resource."
+                f"Use the {value} description instead of this generic description for"
+                f" your '{value}' resource."
             )
 
         return value

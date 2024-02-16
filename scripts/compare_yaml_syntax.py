@@ -24,12 +24,16 @@ except ImportError:
 
 def parse_args():
     p = ArgumentParser(
-        description="Check for differences between yaml 1.1 (using PyYAML) and yaml 1.2 syntax (using ruamel.yaml)."
+        description=(
+            "Check for differences between yaml 1.1 (using PyYAML) and yaml 1.2 syntax"
+            " (using ruamel.yaml)."
+        )
     )
     _ = p.add_argument(
         "--resource_description_path",
         type=Path,
-        default=Path(__file__).parent / "../example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        default=Path(__file__).parent
+        / "../example_specs/models/unet2d_nuclei_broad/rdf.yaml",
     )
     args = p.parse_args()
     return args
@@ -43,10 +47,16 @@ def main(resource_description_path: Path):
 
     diff = {key: (value, ruamel[key]) for key, value in pyyaml.items() if value != ruamel[key]}  # type: ignore
     if diff:
-        print(f"Found differences between yaml syntax 1.1/1.2 for {resource_description_path}:")
+        print(
+            "Found differences between yaml syntax 1.1/1.2 for"
+            f" {resource_description_path}:"
+        )
         print(diff)  # type: ignore
     else:
-        print(f"No differences found between yaml syntax 1.1/1.2 for {resource_description_path}:")
+        print(
+            "No differences found between yaml syntax 1.1/1.2 for"
+            f" {resource_description_path}:"
+        )
 
     return len(diff)  # type: ignore
 

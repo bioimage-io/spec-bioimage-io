@@ -27,7 +27,9 @@ def test_case_sensitive_suffix():
 
 
 def test_multiple_suffix():
-    adapter = TypeAdapter(Annotated[FileSource, WithSuffix((".py", ".md"), case_sensitive=True)])
+    adapter = TypeAdapter(
+        Annotated[FileSource, WithSuffix((".py", ".md"), case_sensitive=True)]
+    )
     with ValidationContext(root=Path(__file__).parent):
         _ = adapter.validate_python(Path(__file__).name)
 
@@ -38,4 +40,6 @@ def test_multiple_suffix():
 
 def test_wrong_usage():
     with pytest.raises(TypeError):
-        _ = TypeAdapter(cast(int, Annotated[int, WithSuffix(".py", case_sensitive=True)]))
+        _ = TypeAdapter(
+            cast(int, Annotated[int, WithSuffix(".py", case_sensitive=True)])
+        )

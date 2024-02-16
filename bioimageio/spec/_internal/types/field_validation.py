@@ -6,7 +6,17 @@ from dataclasses import dataclass
 from datetime import datetime
 from keyword import iskeyword
 from pathlib import Path, PurePath
-from typing import Any, Hashable, Mapping, Sequence, Tuple, Type, TypeVar, Union, get_args
+from typing import (
+    Any,
+    Hashable,
+    Mapping,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    get_args,
+)
 
 import annotated_types
 import pydantic
@@ -24,7 +34,9 @@ from ._file_source import FileSource, RelativeFilePath
 class RestrictCharacters:
     alphabet: str
 
-    def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
+    def __get_pydantic_core_schema__(
+        self, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
         if not self.alphabet:
             raise ValueError("Alphabet may not be empty")
         schema = handler(source)  # get the CoreSchema from the type / inner constraints
@@ -46,7 +58,9 @@ class WithSuffix:
     suffix: Union[LiteralString, Tuple[LiteralString, ...]]
     case_sensitive: bool
 
-    def __get_pydantic_core_schema__(self, source: Type[Any], handler: GetCoreSchemaHandler) -> CoreSchema:
+    def __get_pydantic_core_schema__(
+        self, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
         if not self.suffix:
             raise ValueError("suffix may not be empty")
 
@@ -65,9 +79,13 @@ class WithSuffix:
 
     def validate(self, value: FileSource) -> FileSource:
         if isinstance(self.suffix, str):
-            return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
+            return validate_suffix(
+                value, self.suffix, case_sensitive=self.case_sensitive
+            )
         else:
-            return validate_suffix(value, *self.suffix, case_sensitive=self.case_sensitive)
+            return validate_suffix(
+                value, *self.suffix, case_sensitive=self.case_sensitive
+            )
 
 
 def capitalize_first_letter(v: str) -> str:
@@ -86,8 +104,9 @@ def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
 def validate_identifier(s: str) -> str:
     if not s.isidentifier():
         raise ValueError(
-            f"'{s}' is not a valid (Python) identifier, "
-            "see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for details."
+            f"'{s}' is not a valid (Python) identifier, see"
+            " https://docs.python.org/3/reference/lexical_analysis.html#identifiers"
+            " for details."
         )
 
     return s
@@ -109,7 +128,9 @@ def validate_orcid_id(orcid_id: str):
         if check == 1:
             return orcid_id  # valid
 
-    raise ValueError(f"'{orcid_id} is not a valid ORCID iD in hyphenated groups of 4 digits.")
+    raise ValueError(
+        f"'{orcid_id} is not a valid ORCID iD in hyphenated groups of 4 digits."
+    )
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:
@@ -120,7 +141,9 @@ def is_valid_yaml_leaf_value(value: Any) -> bool:
 
 def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
     return (
-        is_valid_yaml_leaf_value(value) or isinstance(value, tuple) and all(is_valid_yaml_leaf_value(v) for v in value)
+        is_valid_yaml_leaf_value(value)
+        or isinstance(value, tuple)
+        and all(is_valid_yaml_leaf_value(v) for v in value)
     )
 
 
@@ -131,11 +154,20 @@ def is_valid_yaml_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
 
 
 def is_valid_yaml_sequence(value: Union[Any, Sequence[Any]]) -> bool:
-    return isinstance(value, collections.abc.Sequence) and all(is_valid_yaml_value(v) for v in value)
+    return isinstance(value, collections.abc.Sequence) and all(
+        is_valid_yaml_value(v) for v in value
+    )
 
 
 def is_valid_yaml_value(value: Any) -> bool:
-    return any(is_valid(value) for is_valid in (is_valid_yaml_key, is_valid_yaml_mapping, is_valid_yaml_sequence))
+    return any(
+        is_valid(value)
+        for is_valid in (
+            is_valid_yaml_key,
+            is_valid_yaml_mapping,
+            is_valid_yaml_sequence,
+        )
+    )
 
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
@@ -147,7 +179,9 @@ path_or_url_adapter = TypeAdapter(Union[pydantic.AnyUrl, Path])
 def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
     """check final suffix"""
     assert len(suffixes) > 0, "no suffix given"
-    assert all(suff.startswith(".") for suff in suffixes), "expected suffixes to start with '.'"
+    assert all(
+        suff.startswith(".") for suff in suffixes
+    ), "expected suffixes to start with '.'"
     o_value = value
     if isinstance(value, str):
         value = path_or_url_adapter.validate_python(value)
@@ -157,7 +191,11 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
         path = str(value.path)
         if value.path is None or "." not in path:
             suffix = ""
-        elif value.host == "zenodo.org" and path.startswith("/api/records/") and path.endswith("/content"):
+        elif (
+            value.host == "zenodo.org"
+            and path.startswith("/api/records/")
+            and path.endswith("/content")
+        ):
             suffix = "." + path[: -len("/content")].split(".")[-1]
         else:
             suffix = "." + path.split(".")[-1]

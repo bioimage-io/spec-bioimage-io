@@ -11,17 +11,33 @@ from typing_extensions import TypeAliasType as _TypeAliasType
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.types import field_validation as _fv
-from bioimageio.spec._internal.types._file_source import AbsoluteDirectory as AbsoluteDirectory
-from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as AbsoluteFilePath
+from bioimageio.spec._internal.types._file_source import (
+    AbsoluteDirectory as AbsoluteDirectory,
+)
+from bioimageio.spec._internal.types._file_source import (
+    AbsoluteFilePath as AbsoluteFilePath,
+)
 from bioimageio.spec._internal.types._file_source import FileName as FileName
 from bioimageio.spec._internal.types._file_source import FileSource as FileSource
 from bioimageio.spec._internal.types._file_source import HttpUrl as HttpUrl
-from bioimageio.spec._internal.types._file_source import ImportantFileSource as ImportantFileSource
-from bioimageio.spec._internal.types._file_source import IncludeInPackage as IncludeInPackage
-from bioimageio.spec._internal.types._file_source import PermissiveFileSource as PermissiveFileSource
-from bioimageio.spec._internal.types._file_source import RelativeFilePath as RelativeFilePath
-from bioimageio.spec._internal.types._generated_spdx_license_type import DeprecatedLicenseId as DeprecatedLicenseId
-from bioimageio.spec._internal.types._generated_spdx_license_type import LicenseId as LicenseId
+from bioimageio.spec._internal.types._file_source import (
+    ImportantFileSource as ImportantFileSource,
+)
+from bioimageio.spec._internal.types._file_source import (
+    IncludeInPackage as IncludeInPackage,
+)
+from bioimageio.spec._internal.types._file_source import (
+    PermissiveFileSource as PermissiveFileSource,
+)
+from bioimageio.spec._internal.types._file_source import (
+    RelativeFilePath as RelativeFilePath,
+)
+from bioimageio.spec._internal.types._generated_spdx_license_type import (
+    DeprecatedLicenseId as DeprecatedLicenseId,
+)
+from bioimageio.spec._internal.types._generated_spdx_license_type import (
+    LicenseId as LicenseId,
+)
 from bioimageio.spec._internal.types._version import Version as Version
 
 S = typing.TypeVar("S", bound=typing.Sequence[typing.Any])
@@ -39,9 +55,13 @@ IdentifierStr = _Annotated[  # allows to init child NewTypes with str
     _fv.AfterValidator(_fv.validate_is_not_keyword),
 ]
 Identifier = typing.NewType("Identifier", IdentifierStr)
-LowerCaseIdentifierStr = _Annotated[IdentifierStr, annotated_types.LowerCase]  # allows to init child NewTypes with str
+LowerCaseIdentifierStr = _Annotated[
+    IdentifierStr, annotated_types.LowerCase
+]  # allows to init child NewTypes with str
 LowerCaseIdentifier = typing.NewType("LowerCaseIdentifier", LowerCaseIdentifierStr)
-OrcidId = typing.NewType("OrcidId", _Annotated[str, _fv.AfterValidator(_fv.validate_orcid_id)])
+OrcidId = typing.NewType(
+    "OrcidId", _Annotated[str, _fv.AfterValidator(_fv.validate_orcid_id)]
+)
 _ResourceIdAnno = _Annotated[
     NotEmpty[str],
     annotated_types.LowerCase,
@@ -50,7 +70,12 @@ _ResourceIdAnno = _Annotated[
 ResourceId = typing.NewType("ResourceId", _ResourceIdAnno)
 Sha256 = typing.NewType(
     "Sha256",
-    _Annotated[str, _StringConstraints(strip_whitespace=True, to_lower=True, min_length=64, max_length=64)],
+    _Annotated[
+        str,
+        _StringConstraints(
+            strip_whitespace=True, to_lower=True, min_length=64, max_length=64
+        ),
+    ],
 )
 SiUnit = typing.NewType(
     "SiUnit",
@@ -58,7 +83,11 @@ SiUnit = typing.NewType(
         str,
         _StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
         _fv.BeforeValidator(
-            lambda s: s.replace("×", "·").replace("*", "·").replace(" ", "·") if isinstance(s, str) else s
+            lambda s: (
+                s.replace("×", "·").replace("*", "·").replace(" ", "·")
+                if isinstance(s, str)
+                else s
+            )
         ),
     ],
 )
@@ -74,7 +103,10 @@ YamlKey = typing.Union[  # YAML Arrays are cast to tuples if used as key in mapp
 # YamlMapping = _TypeAliasType("YamlMapping", typing.Dict[YamlKey, YamlValue])
 # YamlValue = _TypeAliasType("YamlValue", typing.Union[YamlLeafValue, YamlArray, YamlMapping])
 YamlValue = _TypeAliasType(
-    "YamlValue", typing.Union[YamlLeafValue, typing.List["YamlValue"], typing.Dict[YamlKey, "YamlValue"]]
+    "YamlValue",
+    typing.Union[
+        YamlLeafValue, typing.List["YamlValue"], typing.Dict[YamlKey, "YamlValue"]
+    ],
 )
 
 # derived types

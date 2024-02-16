@@ -1,4 +1,14 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast, get_args
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Union,
+    cast,
+    get_args,
+)
 
 from pydantic import PrivateAttr, model_validator
 from typing_extensions import Self
@@ -72,8 +82,9 @@ class CollectionEntry(Node, extra="allow"):
     def descr(self) -> Optional[EntryDescr]:
         if self._descr is None:
             issue_warning(
-                "Collection entry description not set. Is this entry part of a Collection? "
-                "A collection entry only has its `descr` set if it is part of a valid collection description.",
+                "Collection entry description not set. Is this entry part of a"
+                " Collection? A collection entry only has its `descr` set if it is part"
+                " of a valid collection description.",
                 value=None,
                 severity=ALERT,
             )
@@ -81,7 +92,9 @@ class CollectionEntry(Node, extra="allow"):
         return self._descr
 
 
-class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collection specification"):
+class CollectionDescr(
+    GenericDescrBase, extra="allow", title="bioimage.io collection specification"
+):
     """A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io
     resources.
     The resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.
@@ -96,9 +109,13 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
     def finalize_entries(self) -> Self:
         context = validation_context_var.get()
         common_entry_content = {
-            k: v for k, v in self.model_dump(mode="json", exclude_unset=True).items() if k not in ("id", "collection")
+            k: v
+            for k, v in self.model_dump(mode="json", exclude_unset=True).items()
+            if k not in ("id", "collection")
         }
-        common_badges = common_entry_content.pop("badges", None)  # `badges` not valid for model entries
+        common_badges = common_entry_content.pop(
+            "badges", None
+        )  # `badges` not valid for model entries
         base_id: Optional[ResourceId] = self.id
 
         seen_entry_ids: Dict[str, int] = {}
@@ -133,7 +150,10 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
             if "id" in entry_data:
                 if (seen_i := seen_entry_ids.get(entry_data["id"])) is not None:
-                    raise ValueError(f"Dublicate `id` '{entry_data['id']}' in collection[{seen_i}]/collection[{i}]")
+                    raise ValueError(
+                        f"Dublicate `id` '{entry_data['id']}' in"
+                        f" collection[{seen_i}]/collection[{i}]"
+                    )
 
                 seen_entry_ids[entry_data["id"]] = i
             else:
@@ -144,14 +164,22 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
 
             type_ = entry_data.get("type")
             if type_ == "collection":
-                raise ValueError(f"collection[{i}].type may not be 'collection'; collections may not be nested!")
+                raise ValueError(
+                    f"collection[{i}].type may not be 'collection'; collections may not"
+                    " be nested!"
+                )
 
-            if type_ != "model" and common_badges is not None and "badges" not in entry_data:
+            if (
+                type_ != "model"
+                and common_badges is not None
+                and "badges" not in entry_data
+            ):
                 # set badges from the collection root for non-model resources if not set for this specific entry
                 entry_data["badges"] = common_badges
 
             entry_descr = spec.build_description(
-                entry_data, context=context.replace(root=entry_root, file_name=entry_file_name)
+                entry_data,
+                context=context.replace(root=entry_root, file_name=entry_file_name),
             )
             assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescription):
@@ -160,7 +188,9 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     f" collection[{i}]:\n"
                     f"{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
                 )
-            elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
+            elif isinstance(
+                entry_descr, get_args(EntryDescr)
+            ):  # TODO: use EntryDescr as union (py>=3.10)
                 entry._descr = entry_descr  # type: ignore
             else:
                 raise ValueError(
@@ -184,7 +214,11 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             return cast(
                 Dict[str, Any],
                 (cls if TYPE_CHECKING else dict)(
-                    attachments=[] if old.attachments is None else [FileDescr(source=f) for f in old.attachments.files],
+                    attachments=(
+                        []
+                        if old.attachments is None
+                        else [FileDescr(source=f) for f in old.attachments.files]
+                    ),
                     authors=[_author_conv.convert_as_dict(a) for a in old.authors],
                     badges=old.badges,
                     cite=old.cite,
@@ -204,7 +238,9 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
                     id=old.id,
                     license=old.license,
                     links=old.links,
-                    maintainers=[_maintainer_conv.convert_as_dict(m) for m in old.maintainers],
+                    maintainers=[
+                        _maintainer_conv.convert_as_dict(m) for m in old.maintainers
+                    ],
                     name=old.name,
                     tags=old.tags,
                     type=old.type,

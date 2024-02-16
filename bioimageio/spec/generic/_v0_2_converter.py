@@ -32,7 +32,9 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
             if vmaj == "0" and vpatch == "0" and vmin.isdecimal():
                 data["version"] = int(vmin)
 
-        if isinstance(config := data.get("config"), dict) and isinstance(bconfig := config.get("bioimageio"), dict):
+        if isinstance(config := data.get("config"), dict) and isinstance(
+            bconfig := config.get("bioimageio"), dict
+        ):
             if (nickname := bconfig.get("nickname")) is not None:
                 data["id"] = nickname
 
@@ -50,7 +52,9 @@ def remove_slashes_from_names(data: Dict[Any, Any]) -> None:
         data[NAME] = data[NAME].replace("/", "").replace("\\", "")
 
     # update authors and maintainers
-    def rm_slashes_in_person_name(person: Union[Any, Mapping[Union[Any, str], Any]]) -> Any:
+    def rm_slashes_in_person_name(
+        person: Union[Any, Mapping[Union[Any, str], Any]]
+    ) -> Any:
         if not isinstance(person, collections.abc.Mapping):
             return person
 

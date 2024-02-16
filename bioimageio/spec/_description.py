@@ -14,8 +14,14 @@ import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import InvalidDescription
 from bioimageio.spec._internal.constants import DISCOVER
-from bioimageio.spec._internal.types import BioimageioYamlContent, FormatVersionPlaceholder
-from bioimageio.spec._internal.validation_context import ValidationContext, validation_context_var
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
+    FormatVersionPlaceholder,
+)
+from bioimageio.spec._internal.validation_context import (
+    ValidationContext,
+    validation_context_var,
+)
 from bioimageio.spec.summary import ValidationSummary
 
 _ResourceDescr_v0_2 = Union[
@@ -71,7 +77,9 @@ ResourceDescr = Union[
 """Any of the implemented resource descriptions"""
 
 
-def dump_description(rd: ResourceDescr, exclude_unset: bool = True) -> BioimageioYamlContent:
+def dump_description(
+    rd: ResourceDescr, exclude_unset: bool = True
+) -> BioimageioYamlContent:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 

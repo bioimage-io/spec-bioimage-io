@@ -10,9 +10,13 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class PackagingContext:
-    _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(init=False, default_factory=list)
+    _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(
+        init=False, default_factory=list
+    )
 
-    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(default_factory=dict)
+    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(
+        default_factory=dict
+    )
     """File sources to include in the packaged resource"""
 
     def replace(
@@ -31,4 +35,6 @@ class PackagingContext:
         packaging_context_var.reset(self._context_tokens.pop(-1))
 
 
-packaging_context_var: ContextVar[Optional[PackagingContext]] = ContextVar("packaging_context_var", default=None)
+packaging_context_var: ContextVar[Optional[PackagingContext]] = ContextVar(
+    "packaging_context_var", default=None
+)

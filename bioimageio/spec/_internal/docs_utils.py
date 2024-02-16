@@ -5,7 +5,9 @@ from typing import Literal
 from urllib.parse import urlparse
 
 
-def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url: str) -> str:
+def get_ref_url(
+    type_: Literal["class", "function"], name: str, github_file_url: str
+) -> str:
     """get github url with line range fragment to reference implementation from non-raw github file url
 
     example:
@@ -21,16 +23,24 @@ def get_ref_url(type_: Literal["class", "function"], name: str, github_file_url:
     try:
         import requests  # not available in pyodide
     except Exception:
-        warnings.warn(f"Could not reslove {github_file_url} because requests library is not available.")
+        warnings.warn(
+            f"Could not reslove {github_file_url} because requests library is not"
+            " available."
+        )
         return "URL NOT RESOLVED"
 
     assert not urlparse(github_file_url).fragment, "unexpected url fragment"
     look_for = {"class": ast.ClassDef, "function": ast.FunctionDef}[type_]
-    raw_github_file_url = github_file_url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+    raw_github_file_url = github_file_url.replace(
+        "github.com", "raw.githubusercontent.com"
+    ).replace("/blob/", "/")
     try:
         code = requests.get(raw_github_file_url).text
     except requests.RequestException as e:
-        warnings.warn(f"Could not resolve {github_file_url} due to {e}. Please check your internet connection.")
+        warnings.warn(
+            f"Could not resolve {github_file_url} due to {e}. Please check your"
+            " internet connection."
+        )
         return "URL NOT RESOLVED"
     tree = ast.parse(code)
 

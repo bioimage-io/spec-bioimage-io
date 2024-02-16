@@ -9,7 +9,9 @@ class Upsample(nn.Module):
         self.mode = mode
 
     def forward(self, input):
-        return nn.functional.interpolate(input, scale_factor=self.scale_factor, mode=self.mode, align_corners=False)
+        return nn.functional.interpolate(
+            input, scale_factor=self.scale_factor, mode=self.mode, align_corners=False
+        )
 
 
 class UNet2d(nn.Module):
@@ -20,14 +22,22 @@ class UNet2d(nn.Module):
         self.n_levels = 3
 
         self.encoders = nn.ModuleList(
-            [self.conv_layer(self.input_channels, 16), self.conv_layer(16, 32), self.conv_layer(32, 64)]
+            [
+                self.conv_layer(self.input_channels, 16),
+                self.conv_layer(16, 32),
+                self.conv_layer(32, 64),
+            ]
         )
         self.downsamplers = nn.ModuleList([self.downsampler()] * self.n_levels)
 
         self.base = self.conv_layer(64, 128)
 
-        self.decoders = nn.ModuleList([self.conv_layer(128, 64), self.conv_layer(64, 32), self.conv_layer(32, 16)])
-        self.upsamplers = nn.ModuleList([self.upsampler(128, 64), self.upsampler(64, 32), self.upsampler(32, 16)])
+        self.decoders = nn.ModuleList(
+            [self.conv_layer(128, 64), self.conv_layer(64, 32), self.conv_layer(32, 16)]
+        )
+        self.upsamplers = nn.ModuleList(
+            [self.upsampler(128, 64), self.upsampler(64, 32), self.upsampler(32, 16)]
+        )
 
         self.output = nn.Conv2d(16, self.output_channels, 1)
         self.training = training
@@ -58,7 +68,9 @@ class UNet2d(nn.Module):
 
         x = self.base(x)
 
-        for decoder, sampler, enc in zip(self.decoders, self.upsamplers, from_encoder[::-1]):
+        for decoder, sampler, enc in zip(
+            self.decoders, self.upsamplers, from_encoder[::-1]
+        ):
             x = sampler(x)
             x = torch.cat([enc, x], dim=1)
             x = decoder(x)

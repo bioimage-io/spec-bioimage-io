@@ -4,7 +4,18 @@ import sys
 from functools import wraps
 from inspect import signature
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -31,12 +42,18 @@ else:
 def get_parent_url(url: Union["HttpUrl", pydantic.HttpUrl]) -> "HttpUrl":
     parsed = urlsplit(str(url))
     path = list(parsed.path.split("/"))
-    if parsed.netloc == "zenodo.org" and parsed.path.startswith("/api/records/") and parsed.path.endswith("/content"):
+    if (
+        parsed.netloc == "zenodo.org"
+        and parsed.path.startswith("/api/records/")
+        and parsed.path.endswith("/content")
+    ):
         path[-2:-1] = cast(List[str], [])
     else:
         path = path[:-1]
 
-    return urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
+    return urlunsplit(
+        (parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)
+    )
 
 
 R = TypeVar("R", str, Path, pydantic.AnyUrl)
@@ -57,7 +74,15 @@ def get_absolute(file_name: FileName, root: R) -> R:
         else:
             path.append(file_name)
 
-        url = urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
+        url = urlunsplit(
+            (
+                parsed.scheme,
+                parsed.netloc,
+                "/".join(path),
+                parsed.query,
+                parsed.fragment,
+            )
+        )
         if isinstance(root, pydantic.AnyUrl):
             return pydantic.AnyUrl(url)
         else:
@@ -91,7 +116,8 @@ def nest_dict_with_narrow_first_key(
     flat_dict: Dict[Tuple[K, ...], V], first_k: Type[FirstK]
 ) -> Dict[FirstK, "NestedDict[K, V] | V"]:
     """convenience function to annotate a special version of a NestedDict.
-    Root level keys are of a narrower type than the nested keys. If not a ValueError is raisd."""
+    Root level keys are of a narrower type than the nested keys. If not a ValueError is raisd.
+    """
     nested = nest_dict(flat_dict)
     invalid_first_keys = [k for k in nested if not isinstance(k, first_k)]
     if invalid_first_keys:

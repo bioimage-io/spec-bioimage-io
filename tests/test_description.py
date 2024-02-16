@@ -8,7 +8,10 @@ def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
     v_future = "0.9999.0"
     data["format_version"] = v_future  # assume it is valid in a future format version
 
-    summary = validate_format(data, context=ValidationContext(root="https://example.com/", perform_io_checks=False))
+    summary = validate_format(
+        data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+    )
     assert summary.status == "passed", summary.errors
 
     # expect warning about treating future format version as latest
@@ -22,7 +25,10 @@ def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
     data["authors"] = 42  # make sure rdf is invalid
     data["format_version"] = "0.9999.0"  # assume it is valid in a future format version
 
-    summary = validate_format(data, context=ValidationContext(root="https://example.com/", perform_io_checks=False))
+    summary = validate_format(
+        data,
+        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+    )
     assert summary.status == "failed", summary
 
     assert len(summary.errors) == 1, summary.errors

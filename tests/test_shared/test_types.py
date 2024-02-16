@@ -43,10 +43,19 @@ NOW = datetime.now()
 @pytest.mark.parametrize(
     "value,expected",
     [
-        ("2019-12-11T12:22:32+00:00", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
-        ("2019-12-11T12:22:32+00:00", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        (
+            "2019-12-11T12:22:32+00:00",
+            datetime.fromisoformat("2019-12-11T12:22:32+00:00"),
+        ),
+        (
+            "2019-12-11T12:22:32+00:00",
+            datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc),
+        ),
         ("2019-12-11T12:22:32Z", datetime.fromisoformat("2019-12-11T12:22:32+00:00")),
-        ("2019-12-11T12:22:32Z", datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc)),
+        (
+            "2019-12-11T12:22:32Z",
+            datetime(2019, 12, 11, 12, 22, 32, tzinfo=timezone.utc),
+        ),
         (NOW, NOW),
     ],
 )

@@ -20,15 +20,23 @@ try:
         def __str__(self):
             errors: List[str] = []
             for e in self.error.errors(include_url=False):
-                ipt_lines = pformat(e["input"], sort_dicts=False, depth=1, compact=True, width=30).split("\n")
+                ipt_lines = pformat(
+                    e["input"], sort_dicts=False, depth=1, compact=True, width=30
+                ).split("\n")
                 if len(ipt_lines) > 2:
                     ipt_lines[1:-1] = ["..."]
 
                 ipt = " ".join([il.strip() for il in ipt_lines])
 
-                errors.append(f"\n{format_loc(e['loc'])}\n  {e['msg']} [type={e['type']}, input={ipt}]")
+                errors.append(
+                    f"\n{format_loc(e['loc'])}\n  {e['msg']} [type={e['type']},"
+                    f" input={ipt}]"
+                )
 
-            return f"{self.error.error_count()} validation errors for {self.error.title}:{''.join(errors)}"
+            return (
+                f"{self.error.error_count()} validation errors for"
+                f" {self.error.title}:{''.join(errors)}"
+            )
 
     def _custom_exception_handler(
         self: InteractiveShell,
@@ -46,7 +54,11 @@ try:
         if isinstance(stb, list):
             orig_stb = list(stb)
             for line in orig_stb:
-                if isinstance(line, str) and "pydantic" in line and "__tracebackhide__" in line:
+                if (
+                    isinstance(line, str)
+                    and "pydantic" in line
+                    and "__tracebackhide__" in line
+                ):
                     # ignore pydantic internal frame in traceback
                     continue
                 stb.append(line)

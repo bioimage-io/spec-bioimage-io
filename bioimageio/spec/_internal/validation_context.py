@@ -21,7 +21,9 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
 
 @dataclass(frozen=True)
 class ValidationContext:
-    _context_tokens: "List[Token[ValidationContext]]" = field(init=False, default_factory=list)
+    _context_tokens: "List[Token[ValidationContext]]" = field(
+        init=False, default_factory=list
+    )
 
     root: Union[DirectoryPath, "HttpUrl"] = Path()
     """url/directory serving as base to resolve any relative file paths"""
@@ -44,9 +46,15 @@ class ValidationContext:
     ) -> "ValidationContext":
         return ValidationContext(
             root=self.root if root is None else root,
-            warning_level=self.warning_level if warning_level is None else warning_level,
+            warning_level=(
+                self.warning_level if warning_level is None else warning_level
+            ),
             file_name=self.file_name if file_name is None else file_name,
-            perform_io_checks=self.perform_io_checks if perform_io_checks is None else perform_io_checks,
+            perform_io_checks=(
+                self.perform_io_checks
+                if perform_io_checks is None
+                else perform_io_checks
+            ),
         )
 
     def __enter__(self):

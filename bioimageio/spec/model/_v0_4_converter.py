@@ -1,7 +1,10 @@
 import collections.abc
 
 from bioimageio.spec._internal.types import BioimageioYamlContent
-from bioimageio.spec.generic._v0_2_converter import remove_doi_prefix, remove_slashes_from_names
+from bioimageio.spec.generic._v0_2_converter import (
+    remove_doi_prefix,
+    remove_slashes_from_names,
+)
 from bioimageio.spec.model._v0_3_converter import convert_model_from_v0_3_to_0_4_0
 
 
@@ -35,7 +38,9 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
             if vmaj == "0" and vpatch == "0" and vmin.isdecimal():
                 data["version"] = int(vmin)
 
-        if isinstance(config := data.get("config"), dict) and isinstance(bconfig := config.get("bioimageio"), dict):
+        if isinstance(config := data.get("config"), dict) and isinstance(
+            bconfig := config.get("bioimageio"), dict
+        ):
             if (nickname := bconfig.get("nickname")) is not None:
                 data["id"] = nickname
 

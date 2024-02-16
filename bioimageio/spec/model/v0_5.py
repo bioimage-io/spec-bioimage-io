@@ -39,16 +39,27 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.base_nodes import Converter, InvalidDescription, Node, NodeWithExplicitlySetFields
+from bioimageio.spec._internal.base_nodes import (
+    Converter,
+    InvalidDescription,
+    Node,
+    NodeWithExplicitlySetFields,
+)
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io_utils import download, load_array
-from bioimageio.spec._internal.types import BioimageioYamlContent as BioimageioYamlContent
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent as BioimageioYamlContent,
+)
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
-from bioimageio.spec._internal.types import ImportantFileSource, LowerCaseIdentifierStr, SiUnit
+from bioimageio.spec._internal.types import (
+    ImportantFileSource,
+    LowerCaseIdentifierStr,
+    SiUnit,
+)
 from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
@@ -161,7 +172,13 @@ PostprocessingId = Literal[
     "zero_mean_unit_variance",
 ]
 PreprocessingId = Literal[
-    "binarize", "clip", "ensure_dtype", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"
+    "binarize",
+    "clip",
+    "ensure_dtype",
+    "scale_linear",
+    "sigmoid",
+    "zero_mean_unit_variance",
+    "scale_range",
 ]
 
 
@@ -170,7 +187,8 @@ SAME_AS_TYPE = "<same as type>"
 
 class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`.
-    `n` in this equation is the same for all axis parametrized in this manner across the whole model."""
+    `n` in this equation is the same for all axis parametrized in this manner across the whole model.
+    """
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
@@ -180,7 +198,8 @@ class ParameterizedSize(Node):
             raise ValueError(f"size {size} < {self.min}")
         if (size - self.min) % self.step != 0:
             raise ValueError(
-                f"axis of size {size} is not parametrized by `min + n*step` = `{self.min} + n*{self.step}`"
+                f"axis of size {size} is not parametrized by `min + n*step` ="
+                f" `{self.min} + n*{self.step}`"
             )
 
         return size
@@ -225,20 +244,41 @@ class SizeReference(Node):
 
     def compute(
         self,
-        axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis],
-        ref_axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis],
+        axis: Union[
+            ChannelAxis,
+            IndexAxis,
+            TimeInputAxis,
+            SpaceInputAxis,
+            TimeOutputAxis,
+            SpaceOutputAxis,
+        ],
+        ref_axis: Union[
+            ChannelAxis,
+            IndexAxis,
+            TimeInputAxis,
+            SpaceInputAxis,
+            TimeOutputAxis,
+            SpaceOutputAxis,
+        ],
         n: int = 0,
     ):
         """helper method to compute concrete size for a given axis and its reference axis.
         If the reference axis is parametrized, `n` is used to compute the concrete size of it, see `ParametrizedSize`.
         """
-        assert axis.size == self, "Given `axis.size` is not defined by this `SizeReference`"
+        assert (
+            axis.size == self
+        ), "Given `axis.size` is not defined by this `SizeReference`"
 
-        assert ref_axis.id == self.axis_id, f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
+        assert (
+            ref_axis.id == self.axis_id
+        ), f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
 
         assert (unit := self._get_unit(axis)) == (
             ref_unit := self._get_unit(ref_axis)
-        ), f"`SizeReference` requires `axis` and `ref_axis` to have the same `unit`, but {unit}!={ref_unit}"
+        ), (
+            "`SizeReference` requires `axis` and `ref_axis` to have the same `unit`,"
+            f" but {unit}!={ref_unit}"
+        )
 
         if isinstance(ref_axis.size, (int, float)):
             ref_size = ref_axis.size
@@ -246,7 +286,8 @@ class SizeReference(Node):
             ref_size = ref_axis.size.min + ref_axis.size.step * n
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
-                "Reference axis referenced in `SizeReference` may not be sized by a `SizeReference` itself."
+                "Reference axis referenced in `SizeReference` may not be sized by a"
+                " `SizeReference` itself."
             )
         else:
             assert_never(ref_axis.size)
@@ -254,7 +295,16 @@ class SizeReference(Node):
         return int(ref_size * ref_axis.scale / axis.scale + self.offset)
 
     @staticmethod
-    def _get_unit(axis: Union[ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis, TimeOutputAxis, SpaceOutputAxis]):
+    def _get_unit(
+        axis: Union[
+            ChannelAxis,
+            IndexAxis,
+            TimeInputAxis,
+            SpaceInputAxis,
+            TimeOutputAxis,
+            SpaceOutputAxis,
+        ]
+    ):
         if isinstance(axis, (ChannelAxis, IndexAxis)):
             return None
         else:
@@ -322,7 +372,9 @@ class IndexTimeSpaceAxisBase(AxisBase):
             examples=[
                 10,
                 ParameterizedSize(min=32, step=16).model_dump(),
-                SizeReference(tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5).model_dump(),
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(),
             ]
         ),
     ]
@@ -369,7 +421,8 @@ class SpaceInputAxis(SpaceAxisBase):
 
 
 InputAxis = Annotated[
-    Union[BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis], Field(discriminator="type")
+    Union[BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis],
+    Field(discriminator="type"),
 ]
 
 
@@ -382,16 +435,32 @@ class SpaceOutputAxis(SpaceAxisBase, WithHalo):
 
 
 OutputAxis = Annotated[
-    Union[BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis], Field(discriminator="type")
+    Union[BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis],
+    Field(discriminator="type"),
 ]
 
 AnyAxis = Union[InputAxis, OutputAxis]
 
-TVs = Union[NotEmpty[List[int]], NotEmpty[List[float]], NotEmpty[List[bool]], NotEmpty[List[str]]]
+TVs = Union[
+    NotEmpty[List[int]],
+    NotEmpty[List[float]],
+    NotEmpty[List[bool]],
+    NotEmpty[List[str]],
+]
 
 
 NominalOrOrdinalDType = Literal[
-    "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+    "float32",
+    "float64",
+    "uint8",
+    "int8",
+    "uint16",
+    "int16",
+    "uint32",
+    "int32",
+    "uint64",
+    "int64",
+    "bool",
 ]
 
 
@@ -424,7 +493,13 @@ class NominalOrOrdinalDataDescr(Node):
         incompatible: List[Any] = []
         for v in self.values:
             if (
-                (isinstance(v, (int, float)) and (v < DTYPE_LIMITS[self.type].min or v > DTYPE_LIMITS[self.type].max))
+                (
+                    isinstance(v, (int, float))
+                    and (
+                        v < DTYPE_LIMITS[self.type].min
+                        or v > DTYPE_LIMITS[self.type].max
+                    )
+                )
                 or (isinstance(v, bool) and self.type != "bool")
                 or (isinstance(v, str) and "uint" not in self.type)
                 or (isinstance(v, float) and "int" in self.type)
@@ -436,7 +511,9 @@ class NominalOrOrdinalDataDescr(Node):
                 break
 
         if incompatible:
-            raise ValueError(f"data type '{self.type}' incompatible with values {incompatible}")
+            raise ValueError(
+                f"data type '{self.type}' incompatible with values {incompatible}"
+            )
 
         return self
 
@@ -451,7 +528,16 @@ class NominalOrOrdinalDataDescr(Node):
 
 
 IntervalOrRatioDType = Literal[
-    "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64"
+    "float32",
+    "float64",
+    "uint8",
+    "int8",
+    "uint16",
+    "int16",
+    "uint32",
+    "int32",
+    "uint64",
+    "int64",
 ]
 
 
@@ -487,7 +573,8 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
 
 class BinarizeDescr(ProcessingDescrBase):
     """Binarize the tensor with a fixed threshold.
-    Values above the threshold will be set to one, values below the threshold to zero."""
+    Values above the threshold will be set to one, values below the threshold to zero.
+    """
 
     id: Literal["binarize"] = "binarize"
     kwargs: BinarizeKwargs
@@ -510,7 +597,9 @@ class EnsureDtypeDescr(ProcessingDescrBase):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel"])] = None  # todo: validate existence of axis
+    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel"])] = (
+        None  # todo: validate existence of axis
+    )
     """The axis of non-scalar gains/offsets.
     Invalid for scalar gains/offsets.
     """
@@ -523,10 +612,19 @@ class ScaleLinearKwargs(ProcessingKwargs):
 
     @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
-        if (self.gain == 1.0 or isinstance(self.gain, list) and all(g == 1.0 for g in self.gain)) and (
-            self.offset == 0.0 or isinstance(self.offset, list) and all(off == 0.0 for off in self.offset)
+        if (
+            self.gain == 1.0
+            or isinstance(self.gain, list)
+            and all(g == 1.0 for g in self.gain)
+        ) and (
+            self.offset == 0.0
+            or isinstance(self.offset, list)
+            and all(off == 0.0 for off in self.offset)
         ):
-            raise ValueError("Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
+            raise ValueError(
+                "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
+                " != 0.0."
+            )
 
         return self
 
@@ -553,11 +651,16 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """Normalize with fixed, precomputed values for mean and variance.
     See `zero_mean_unit_variance` for data dependent normalization."""
 
-    mean: Annotated[Union[float, NotEmpty[Tuple[float, ...]]], Field(examples=[3.14, (1.1, -2.2, 3.3)])]
+    mean: Annotated[
+        Union[float, NotEmpty[Tuple[float, ...]]],
+        Field(examples=[3.14, (1.1, -2.2, 3.3)]),
+    ]
     """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
 
     std: Annotated[
-        Union[Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]],
+        Union[
+            Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]
+        ],
         Field(examples=[1.05, (0.1, 0.2, 0.3)]),
     ]
     """The standard deviation value(s) to normalize with. Size must match `mean` values."""
@@ -574,7 +677,9 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
         mean_len = 1 if isinstance(self.mean, (float, int)) else len(self.mean)
         std_len = 1 if isinstance(self.std, (float, int)) else len(self.std)
         if mean_len != std_len:
-            raise ValueError("size of `mean` ({mean_len}) and `std` ({std_len}) must match.")
+            raise ValueError(
+                "size of `mean` ({mean_len}) and `std` ({std_len}) must match."
+            )
 
         return self
 
@@ -587,7 +692,9 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
+    axes: Annotated[
+        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
+    ] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -606,7 +713,9 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
-    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
+    axes: Annotated[
+        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
+    ] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -654,7 +763,9 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     reference_tensor: TensorId
     """Name of tensor to match."""
 
-    axes: Annotated[Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])] = None
+    axes: Annotated[
+        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
+    ] = None
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -760,13 +871,18 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
     @model_validator(mode="after")
     def validate_sample_tensor(self) -> Self:
-        if self.sample_tensor is None or not validation_context_var.get().perform_io_checks:
+        if (
+            self.sample_tensor is None
+            or not validation_context_var.get().perform_io_checks
+        ):
             return self
 
         down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
 
         local_source = down.path
-        tensor: NDArray[Any] = imread(local_source, extension=PurePosixPath(down.original_file_name).suffix)
+        tensor: NDArray[Any] = imread(
+            local_source, extension=PurePosixPath(down.original_file_name).suffix
+        )
         n_dims = len(tensor.squeeze().shape)
         n_dims_min = n_dims_max = len(self.axes)
 
@@ -789,13 +905,15 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         n_dims_min = max(0, n_dims_min)
         if n_dims < n_dims_min or n_dims > n_dims_max:
             raise ValueError(
-                f"Expected sample tensor to have {n_dims_min} to {n_dims_max} dimensions, "
-                f"but found {n_dims} (shape: {tensor.shape})."
+                f"Expected sample tensor to have {n_dims_min} to"
+                f" {n_dims_max} dimensions, but found {n_dims} (shape: {tensor.shape})."
             )
 
         return self
 
-    data: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]] = IntervalOrRatioDataDescr()
+    data: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]] = (
+        IntervalOrRatioDataDescr()
+    )
     """Description of the tensor's data values, optionally per channel.
     If specified per channel, the data `type` needs to match across channels."""
 
@@ -803,7 +921,17 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     def dtype(
         self,
     ) -> Literal[
-        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
     ]:
         """dtype as specified under `data.type` or `data[i].type`"""
         if isinstance(self.data, collections.abc.Sequence):
@@ -822,7 +950,8 @@ class TensorDescrBase(Node, Generic[AxisVar]):
         dtypes = {t.type for t in value}
         if len(dtypes) > 1:
             raise ValueError(
-                f"Tensor data descriptions per channel need to agree in their data `type`, but found {dtypes}."
+                "Tensor data descriptions per channel need to agree in their data"
+                f" `type`, but found {dtypes}."
             )
 
         return value
@@ -842,7 +971,8 @@ class TensorDescrBase(Node, Generic[AxisVar]):
 
         if len(self.data) != size:
             raise ValueError(
-                f"Got tensor data descriptions for {len(self.data)} channels, but '{a.id}' axis has size {size}."
+                f"Got tensor data descriptions for {len(self.data)} channels, but"
+                f" '{a.id}' axis has size {size}."
             )
 
         return self
@@ -850,8 +980,8 @@ class TensorDescrBase(Node, Generic[AxisVar]):
     def get_axis_sizes(self, tensor: NDArray[Any]) -> Dict[AxisId, int]:
         if len(tensor.shape) != len(self.axes):
             raise ValueError(
-                f"Dimension mismatch: array shape {tensor.shape} (#{len(tensor.shape)}) "
-                f"incompatible with {len(self.axes)} axes."
+                f"Dimension mismatch: array shape {tensor.shape} (#{len(tensor.shape)})"
+                f" incompatible with {len(self.axes)} axes."
             )
         return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
 
@@ -870,7 +1000,9 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
         for p in self.preprocessing:
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
             if not isinstance(kwargs_axes, collections.abc.Sequence):
-                raise ValueError(f"Expeted `axes` to be a sequence, but got {type(kwargs_axes)}")
+                raise ValueError(
+                    f"Expeted `axes` to be a sequence, but got {type(kwargs_axes)}"
+                )
 
             if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
@@ -915,11 +1047,15 @@ def convert_axes(
                 scale = 1 / orig_scale
                 if axis_type in ("channel", "index"):
                     # these axes no longer have a scale
-                    offset_from_scale = orig_scale * size_refs.get(v0_4.TensorName(t_id), {}).get(orig_a_id, 0)
+                    offset_from_scale = orig_scale * size_refs.get(
+                        v0_4.TensorName(t_id), {}
+                    ).get(orig_a_id, 0)
                 else:
                     offset_from_scale = 0
                 size = SizeReference(
-                    tensor_id=TensorId(t_id), axis_id=AxisId(a_id), offset=int(offset_from_scale + 2 * shape.offset[i])
+                    tensor_id=TensorId(t_id),
+                    axis_id=AxisId(a_id),
+                    offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
         elif isinstance(shape, collections.abc.Sequence):
             size = shape[i]
@@ -930,16 +1066,33 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(TimeInputAxis(size=size, scale=scale))
             else:
-                ret.append(TimeOutputAxis(size=size, scale=scale, halo=0 if halo is None else halo[i]))
+                ret.append(
+                    TimeOutputAxis(
+                        size=size, scale=scale, halo=0 if halo is None else halo[i]
+                    )
+                )
         elif axis_type == "index":
             ret.append(IndexAxis(size=size))
         elif axis_type == "channel":
             assert not isinstance(size, ParameterizedSize)
             if isinstance(size, SizeReference):
-                warnings.warn("Conversion of channel size from an implicit output shape may by wrong")
-                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(size.offset)]))
+                warnings.warn(
+                    "Conversion of channel size from an implicit output shape may by"
+                    " wrong"
+                )
+                ret.append(
+                    ChannelAxis(
+                        channel_names=[
+                            Identifier(f"channel{i}") for i in range(size.offset)
+                        ]
+                    )
+                )
             else:
-                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(size)]))
+                ret.append(
+                    ChannelAxis(
+                        channel_names=[Identifier(f"channel{i}") for i in range(size)]
+                    )
+                )
         elif axis_type == "space":
             if tensor_type == "input":
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
@@ -987,8 +1140,14 @@ def _convert_proc(
     elif isinstance(p, v0_4.ScaleLinearDescr):
         axes = _axes_letters_to_ids(p.kwargs.axes)
         if p.kwargs.axes is not None:
-            raise NotImplementedError("converting sclae linear with `axes` not implemented")
-        return ScaleLinearDescr(kwargs=ScaleLinearKwargs(axis=None, gain=p.kwargs.gain, offset=p.kwargs.offset))
+            raise NotImplementedError(
+                "converting sclae linear with `axes` not implemented"
+            )
+        return ScaleLinearDescr(
+            kwargs=ScaleLinearKwargs(
+                axis=None, gain=p.kwargs.gain, offset=p.kwargs.offset
+            )
+        )
     elif isinstance(p, v0_4.ScaleMeanVarianceDescr):
         return ScaleMeanVarianceDescr(
             kwargs=ScaleMeanVarianceKwargs(
@@ -1009,14 +1168,18 @@ def _convert_proc(
             if isinstance(std, list):
                 std = tuple(std)
 
-            return FixedZeroMeanUnitVarianceDescr(kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std))
+            return FixedZeroMeanUnitVarianceDescr(
+                kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
+            )
         else:
             axes = _axes_letters_to_ids(p.kwargs.axes) or []
             if p.kwargs.mode == "per_dataset":
                 axes = [AxisId("batch")] + axes
             if not axes:
                 axes = None
-            return ZeroMeanUnitVarianceDescr(kwargs=ZeroMeanUnitVarianceKwargs(axes=axes, eps=p.kwargs.eps))
+            return ZeroMeanUnitVarianceDescr(
+                kwargs=ZeroMeanUnitVarianceKwargs(axes=axes, eps=p.kwargs.eps)
+            )
 
     elif isinstance(p, v0_4.ScaleRangeDescr):
         return ScaleRangeDescr(
@@ -1048,7 +1211,13 @@ class _InputTensorConv(
         sample_tensor: Optional[ImportantFileSource],
         size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
-        axes = convert_axes(src.axes, shape=src.shape, tensor_type="input", halo=None, size_refs=size_refs)
+        axes = convert_axes(
+            src.axes,
+            shape=src.shape,
+            tensor_type="input",
+            halo=None,
+            size_refs=size_refs,
+        )
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
             cp = _convert_proc(p)
@@ -1059,7 +1228,9 @@ class _InputTensorConv(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
-            sample_tensor=None if sample_tensor is None else FileDescr(source=sample_tensor),
+            sample_tensor=(
+                None if sample_tensor is None else FileDescr(source=sample_tensor)
+            ),
             data=dict(type=src.data_type),  # type: ignore
             preprocessing=prep,
         )
@@ -1082,7 +1253,9 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
         for p in self.postprocessing:
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
             if not isinstance(kwargs_axes, collections.abc.Sequence):
-                raise ValueError(f"expected `axes` sequence, but got {type(kwargs_axes)}")
+                raise ValueError(
+                    f"expected `axes` sequence, but got {type(kwargs_axes)}"
+                )
 
             if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
@@ -1107,12 +1280,20 @@ class _OutputTensorConv(
         sample_tensor: Optional[ImportantFileSource],
         size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
-        axes = convert_axes(src.axes, shape=src.shape, tensor_type="output", halo=src.halo, size_refs=size_refs)
+        axes = convert_axes(
+            src.axes,
+            shape=src.shape,
+            tensor_type="output",
+            halo=src.halo,
+            size_refs=size_refs,
+        )
         return tgt(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
-            sample_tensor=None if sample_tensor is None else FileDescr(source=sample_tensor),
+            sample_tensor=(
+                None if sample_tensor is None else FileDescr(source=sample_tensor)
+            ),
             data=dict(type=src.data_type),  # type: ignore
             postprocessing=[_convert_proc(p) for p in src.postprocessing],
         )
@@ -1139,12 +1320,15 @@ def validate_tensors(
         except ValueError as e:
             raise ValueError(f"{e_msg(descr)} {e}")
         else:
-            all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
+            all_tensor_axes[descr.id] = {
+                a.id: (a, axis_sizes[a.id]) for a in descr.axes
+            }
 
     for descr, array in tensors.values():
         if array.dtype.name != descr.dtype:
             raise ValueError(
-                f"{e_msg(descr)}.dtype '{array.dtype.name}' does not match described dtype '{descr.dtype}'"
+                f"{e_msg(descr)}.dtype '{array.dtype.name}' does not match described"
+                f" dtype '{descr.dtype}'"
             )
 
         for a in descr.axes:
@@ -1164,26 +1348,33 @@ def validate_tensors(
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor reference '{a.size.tensor_id}'"
+                        f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
+                        f" reference '{a.size.tensor_id}'"
                     )
 
                 ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
                 if ref_axis is None or ref_size is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.axis_id: "
-                        f"Unknown tensor axis reference '{a.size.tensor_id}.{a.size.axis_id}"
+                        f"{e_msg(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
+                        f" reference '{a.size.tensor_id}.{a.size.axis_id}"
                     )
 
                 if a.unit != ref_axis.unit:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires axis and reference axis to have "
-                        f"the same `unit`, but {a.unit}!={ref_axis.unit}"
+                        f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires"
+                        " axis and reference axis to have the same `unit`, but"
+                        f" {a.unit}!={ref_axis.unit}"
                     )
 
-                if actual_size != (expected_size := (ref_size * ref_axis.scale / a.scale + a.size.offset)):
+                if actual_size != (
+                    expected_size := (
+                        ref_size * ref_axis.scale / a.scale + a.size.offset
+                    )
+                ):
                     raise ValueError(
-                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size {actual_size} invalid "
-                        f"for referenced size {ref_size}; expected {expected_size}"
+                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size"
+                        f" {actual_size} invalid for referenced size {ref_size};"
+                        f" expected {expected_size}"
                     )
             else:
                 assert_never(a.size)
@@ -1224,7 +1415,14 @@ class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
 ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
 
 
-class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, Optional[Sha256], Dict[str, Any]]):
+class _ArchFileConv(
+    Converter[
+        v0_4.CallableFromFile,
+        ArchitectureFromFileDescr,
+        Optional[Sha256],
+        Dict[str, Any],
+    ]
+):
     def _convert(
         self,
         src: v0_4.CallableFromFile,
@@ -1241,14 +1439,19 @@ class _ArchFileConv(Converter[v0_4.CallableFromFile, ArchitectureFromFileDescr, 
             source = str(src)
             callable_ = str(src)
         return tgt(
-            callable=Identifier(callable_), source=cast(ImportantFileSource, source), sha256=sha256, kwargs=kwargs
+            callable=Identifier(callable_),
+            source=cast(ImportantFileSource, source),
+            sha256=sha256,
+            kwargs=kwargs,
         )
 
 
 _arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)
 
 
-class _ArchLibConv(Converter[v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr, Dict[str, Any]]):
+class _ArchLibConv(
+    Converter[v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr, Dict[str, Any]]
+):
     def _convert(
         self,
         src: v0_4.CallableFromDepencency,
@@ -1257,7 +1460,9 @@ class _ArchLibConv(Converter[v0_4.CallableFromDepencency, ArchitectureFromLibrar
     ) -> "ArchitectureFromLibraryDescr | dict[str, Any]":
         *mods, callable_ = src.split(".")
         import_from = ".".join(mods)
-        return tgt(import_from=import_from, callable=Identifier(callable_), kwargs=kwargs)
+        return tgt(
+            import_from=import_from, callable=Identifier(callable_), kwargs=kwargs
+        )
 
 
 _arch_lib_conv = _ArchLibConv(v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr)
@@ -1278,7 +1483,9 @@ class WeightsEntryDescrBase(FileDescr):
         (If this is a child weight, i.e. it has a `parent` field)
     """
 
-    parent: Annotated[Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])] = None
+    parent: Annotated[
+        Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])
+    ] = None
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -1360,7 +1567,9 @@ class WeightsDescr(Node):
     onnx: Optional[OnnxWeightsDescr] = None
     pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
     tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
+        None
+    )
     torchscript: Optional[TorchscriptWeightsDescr] = None
 
     @model_validator(mode="after")
@@ -1371,14 +1580,17 @@ class WeightsDescr(Node):
             raise ValueError("Missing weights entry")
 
         entries_wo_parent = {
-            wtype for wtype, entry in self if entry is not None and hasattr(entry, "parent") and entry.parent is None
+            wtype
+            for wtype, entry in self
+            if entry is not None and hasattr(entry, "parent") and entry.parent is None
         }
         if len(entries_wo_parent) != 1:
             issue_warning(
-                "Exactly one weights entry may not specify the `parent` field (got {value})."
-                "That entry is considered the original set of model weights. "
-                "Other weight formats are created through conversion of the orignal or already converted weights. "
-                "They have to reference the weights format they were converted from as their `parent`.",
+                "Exactly one weights entry may not specify the `parent` field (got"
+                " {value}).That entry is considered the original set of model weights."
+                " Other weight formats are created through conversion of the orignal or"
+                " already converted weights. They have to reference the weights format"
+                " they were converted from as their `parent`.",
                 value=len(entries_wo_parent),
             )
 
@@ -1389,8 +1601,13 @@ class WeightsDescr(Node):
             assert hasattr(entry, "type")
             assert hasattr(entry, "parent")
             assert wtype == entry.type
-            if entry.parent is not None and entry.parent not in entries:  # self reference checked for `parent` field
-                raise ValueError(f"`weights.{wtype}.parent={entry.parent} not in specified weight formats: {entries}")
+            if (
+                entry.parent is not None and entry.parent not in entries
+            ):  # self reference checked for `parent` field
+                raise ValueError(
+                    f"`weights.{wtype}.parent={entry.parent} not in specified weight"
+                    f" formats: {entries}"
+                )
 
         return self
 
@@ -1431,17 +1648,21 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @field_validator("inputs", mode="after")
     @classmethod
-    def _validate_input_axes(cls, inputs: Sequence[InputTensorDescr]) -> Sequence[InputTensorDescr]:
+    def _validate_input_axes(
+        cls, inputs: Sequence[InputTensorDescr]
+    ) -> Sequence[InputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
             valid_independent_refs: Dict[
-                Tuple[TensorId, AxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
+                Tuple[TensorId, AxisId],
+                Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
             ] = {
                 **{
                     (ipt.id, a.id): (ipt, a, a.size)
                     for a in ipt.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
+                    if not isinstance(a, BatchAxis)
+                    and isinstance(a.size, (int, ParameterizedSize))
                 },
                 **input_size_refs,
             }
@@ -1464,7 +1685,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         a: int,
         axis: AnyAxis,
         valid_independent_refs: Dict[
-            Tuple[TensorId, AxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
+            Tuple[TensorId, AxisId],
+            Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
         ],
     ):
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
@@ -1472,24 +1694,38 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
         if isinstance(axis.size, ParameterizedSize):
             if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
-                raise ValueError(f"axis {axis.id} with minimum size {axis.size.min} is too small for halo {axis.halo}.")
+                raise ValueError(
+                    f"axis {axis.id} with minimum size {axis.size.min} is too small for"
+                    f" halo {axis.halo}."
+                )
 
         elif isinstance(axis.size, SizeReference):
             ref = (axis.size.tensor_id, axis.size.axis_id)
             if ref not in valid_independent_refs:
-                raise ValueError(f"Invalid tensor axis reference at {field_name}[{i}].axes[{a}].size: {axis.size}.")
+                raise ValueError(
+                    "Invalid tensor axis reference at"
+                    f" {field_name}[{i}].axes[{a}].size: {axis.size}."
+                )
             if ref == (tensor_id, axis.id):
-                raise ValueError(f"Self-referencing not allowed for {field_name}[{i}].axes[{a}].size: {axis.size}")
+                raise ValueError(
+                    "Self-referencing not allowed for"
+                    f" {field_name}[{i}].axes[{a}].size: {axis.size}"
+                )
             if axis.type == "channel":
                 if valid_independent_refs[ref][1].type != "channel":
-                    raise ValueError("A channel axis' size may only reference another fixed size channel axis.")
+                    raise ValueError(
+                        "A channel axis' size may only reference another fixed size"
+                        " channel axis."
+                    )
                 if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
                     ref_size = valid_independent_refs[ref][2]
-                    assert isinstance(
-                        ref_size, int
-                    ), "channel axis ref (another channel axis) has to specify fixed size"
+                    assert isinstance(ref_size, int), (
+                        "channel axis ref (another channel axis) has to specify fixed"
+                        " size"
+                    )
                     generated_channel_names = [
-                        Identifier(axis.channel_names.format(i=i)) for i in range(1, ref_size + 1)
+                        Identifier(axis.channel_names.format(i=i))
+                        for i in range(1, ref_size + 1)
                     ]
                     axis.channel_names = generated_channel_names
 
@@ -1497,14 +1733,18 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 ref_unit := getattr(valid_independent_refs[ref][1], "unit", None)
             ):
                 raise ValueError(
-                    f"The units of an axis and its reference axis need to match, but '{ax_unit}' != '{ref_unit}'."
+                    "The units of an axis and its reference axis need to match, but"
+                    f" '{ax_unit}' != '{ref_unit}'."
                 )
             min_size = valid_independent_refs[ref][2]
             if isinstance(min_size, ParameterizedSize):
                 min_size = min_size.min
 
             if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
-                raise ValueError(f"axis {axis.id} with minimum size {min_size} is too small for halo {axis.halo}.")
+                raise ValueError(
+                    f"axis {axis.id} with minimum size {min_size} is too small for halo"
+                    f" {axis.halo}."
+                )
 
         else:
             assert_never(axis.size)
@@ -1514,8 +1754,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if not validation_context_var.get().perform_io_checks:
             return self
 
-        test_arrays = [load_array(descr.test_tensor.download().path) for descr in chain(self.inputs, self.outputs)]
-        tensors = {descr.id: (descr, array) for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)}
+        test_arrays = [
+            load_array(descr.test_tensor.download().path)
+            for descr in chain(self.inputs, self.outputs)
+        ]
+        tensors = {
+            descr.id: (descr, array)
+            for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
+        }
         validate_tensors(tensors, tensor_origin="test_tensor")
         return self
 
@@ -1530,7 +1776,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     continue
                 if ref not in ipt_refs:
                     raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid input tensor references are: {ipt_refs}."
+                        f"`reference_tensor` '{ref}' not found. Valid input tensor"
+                        f" references are: {ipt_refs}."
                     )
 
         for out in self.outputs:
@@ -1541,7 +1788,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
                 if ref not in ipt_refs and ref not in out_refs:
                     raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid tensor references are: {ipt_refs | out_refs}."
+                        f"`reference_tensor` '{ref}' not found. Valid tensor references"
+                        f" are: {ipt_refs | out_refs}."
                     )
 
         return self
@@ -1551,7 +1799,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId],
-        warn(LicenseId, "{value} is deprecated, see https://spdx.org/licenses/{value}.html"),
+        warn(
+            LicenseId,
+            "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
+        ),
         Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -1576,7 +1827,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def _validate_tensor_ids(
         cls, outputs: Sequence[OutputTensorDescr], info: ValidationInfo
     ) -> Sequence[OutputTensorDescr]:
-        tensor_ids = [t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])]
+        tensor_ids = [
+            t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])
+        ]
         duplicate_tensor_ids: List[str] = []
         seen: Set[str] = set()
         for t in tensor_ids:
@@ -1591,7 +1844,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return outputs
 
     @staticmethod
-    def _get_axes_with_parameterized_size(io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]):
+    def _get_axes_with_parameterized_size(
+        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]
+    ):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
             for t in io
@@ -1600,28 +1855,37 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         }
 
     @staticmethod
-    def _get_axes_with_independent_size(io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]):
+    def _get_axes_with_independent_size(
+        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]
+    ):
         return {
             (t.id, a.id): (t, a, a.size)
             for t in io
             for a in t.axes
-            if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
+            if not isinstance(a, BatchAxis)
+            and isinstance(a.size, (int, ParameterizedSize))
         }
 
     @field_validator("outputs", mode="after")
     @classmethod
-    def _validate_output_axes(cls, outputs: List[OutputTensorDescr], info: ValidationInfo) -> List[OutputTensorDescr]:
-        input_size_refs = cls._get_axes_with_independent_size(info.data.get("inputs", []))
+    def _validate_output_axes(
+        cls, outputs: List[OutputTensorDescr], info: ValidationInfo
+    ) -> List[OutputTensorDescr]:
+        input_size_refs = cls._get_axes_with_independent_size(
+            info.data.get("inputs", [])
+        )
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
             valid_independent_refs: Dict[
-                Tuple[TensorId, AxisId], Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]]
+                Tuple[TensorId, AxisId],
+                Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
             ] = {
                 **{
                     (out.id, a.id): (out, a, a.size)
                     for a in out.axes
-                    if not isinstance(a, BatchAxis) and isinstance(a.size, (int, ParameterizedSize))
+                    if not isinstance(a, BatchAxis)
+                    and isinstance(a.size, (int, ParameterizedSize))
                 },
                 **input_size_refs,
                 **output_size_refs,
@@ -1654,7 +1918,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     #     return self
 
     run_mode: Annotated[
-        Optional[RunMode], warn(None, "Run mode '{value}' has limited support across consumer softwares.")
+        Optional[RunMode],
+        warn(None, "Run mode '{value}' has limited support across consumer softwares."),
     ] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.
@@ -1679,7 +1944,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return self
 
         try:
-            from bioimageio.spec._internal.cover import generate_covers  # TODO: move import?
+            from bioimageio.spec._internal.cover import (
+                generate_covers,
+            )  # TODO: move import?
 
             generated_covers = generate_covers(
                 [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],
@@ -1726,7 +1993,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
         self, src: v0_4.ModelDescr, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
         def conv_authors(auths: Optional[Sequence[v0_4.Author]]):
-            conv = _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
+            conv = (
+                _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
+            )
             return None if auths is None else [conv(a) for a in auths]
 
         if TYPE_CHECKING:
@@ -1740,7 +2009,12 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             ipt.name: {
                 a: s
                 for a, s in zip(
-                    ipt.axes, ipt.shape.min if isinstance(ipt.shape, v0_4.ParametrizedInputShape) else ipt.shape
+                    ipt.axes,
+                    (
+                        ipt.shape.min
+                        if isinstance(ipt.shape, v0_4.ParametrizedInputShape)
+                        else ipt.shape
+                    ),
                 )
             }
             for ipt in src.inputs
@@ -1756,8 +2030,14 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
         }
 
         return tgt(
-            attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
-            authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
+            attachments=(
+                []
+                if src.attachments is None
+                else [FileDescr(source=f) for f in src.attachments.files]
+            ),
+            authors=[
+                _author_conv.convert_as_dict(a) for a in src.authors
+            ],  # pyright: ignore[reportArgumentType]
             cite=src.cite,
             config=src.config,
             covers=src.covers,
@@ -1780,12 +2060,18 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             version=src.version,
             inputs=[  # pyright: ignore[reportArgumentType]
                 _input_tensor_conv.convert_as_dict(ipt, tt, st, input_size_refs)
-                for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
+                for ipt, tt, st, in zip(
+                    src.inputs,
+                    src.test_inputs,
+                    src.sample_inputs or [None] * len(src.test_inputs),
+                )
             ],
             outputs=[  # pyright: ignore[reportArgumentType]
                 _output_tensor_conv.convert_as_dict(out, tt, st, output_size_refs)
                 for out, tt, st, in zip(
-                    src.outputs, src.test_outputs, src.sample_outputs or [None] * len(src.test_outputs)
+                    src.outputs,
+                    src.test_outputs,
+                    src.sample_outputs or [None] * len(src.test_outputs),
                 )
             ],
             weights=(WeightsDescr if TYPE_CHECKING else dict)(
@@ -1824,7 +2110,13 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                         else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
                             source=cast(
                                 ImportantFileSource,
-                                str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
+                                str(deps := w.dependencies)[
+                                    (
+                                        len("conda:")
+                                        if str(deps).startswith("conda:")
+                                        else 0
+                                    ) :
+                                ],
                             )
                         )
                     ),
@@ -1836,7 +2128,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     parent=w.parent,
                     tensorflow_version=w.tensorflow_version or Version("1.15"),
                 ),
-                tensorflow_saved_model_bundle=(w := src.weights.tensorflow_saved_model_bundle)
+                tensorflow_saved_model_bundle=(
+                    w := src.weights.tensorflow_saved_model_bundle
+                )
                 and (TensorflowSavedModelBundleWeightsDescr if TYPE_CHECKING else dict)(
                     authors=conv_authors(w.authors),
                     parent=w.parent,

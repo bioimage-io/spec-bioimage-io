@@ -7,7 +7,17 @@ import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path, PurePath
-from typing import Any, Dict, Iterable, Mapping, Optional, TextIO, TypedDict, Union, cast
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+    TextIO,
+    TypedDict,
+    Union,
+    cast,
+)
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -18,7 +28,10 @@ from pydantic import DirectoryPath, FilePath, NewPath, TypeAdapter
 from ruamel.yaml import YAML
 from typing_extensions import NotRequired, Unpack
 
-from bioimageio.spec._internal.constants import ALTERNATIVE_BIOIMAGEIO_YAML_NAMES, BIOIMAGEIO_YAML
+from bioimageio.spec._internal.constants import (
+    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
+    BIOIMAGEIO_YAML,
+)
 from bioimageio.spec._internal.types import (
     AbsoluteDirectory,
     AbsoluteFilePath,
@@ -132,7 +145,10 @@ def download(
         downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
         fname = get_unique_file_name(strict_source)
         _ls: Any = pooch.retrieve(
-            url=str(strict_source), known_hash=_get_known_hash(kwargs), downloader=downloader, fname=fname
+            url=str(strict_source),
+            known_hash=_get_known_hash(kwargs),
+            downloader=downloader,
+            fname=fname,
         )
         local_source = Path(_ls).absolute()
         root = get_parent_url(strict_source)
@@ -160,7 +176,9 @@ def get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     if not isinstance(content, dict):
-        raise ValueError(f"Expected {BIOIMAGEIO_YAML} content to be a mapping (got {type(content)}).")
+        raise ValueError(
+            f"Expected {BIOIMAGEIO_YAML} content to be a mapping (got {type(content)})."
+        )
 
     for key in content:
         if not isinstance(key, str):
@@ -172,7 +190,9 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
-def open_bioimageio_yaml(source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]) -> OpenedBioimageioYaml:
+def open_bioimageio_yaml(
+    source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]
+) -> OpenedBioimageioYaml:
     downloaded = download(source, **kwargs)
     local_source = downloaded.path
     root = downloaded.original_root
@@ -197,9 +217,10 @@ def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
                 return fname
 
     raise ValueError(
-        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}' or "
-        f"or any of the alterntive file names: {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},"
-        f"of any file with an extension of those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
+        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
+        " or or any of the alterntive file names:"
+        f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},of any file with an extension of those,"
+        f" e.g. 'anything.{BIOIMAGEIO_YAML}')."
     )
 
 
@@ -216,7 +237,9 @@ def find_description_file_name(path: Path) -> FileName:
     return identify_bioimageio_yaml_file(file_names)
 
 
-def unzip(zip_file: FilePath, out_path: Optional[DirectoryPath] = None, overwrite: bool = True) -> DirectoryPath:
+def unzip(
+    zip_file: FilePath, out_path: Optional[DirectoryPath] = None, overwrite: bool = True
+) -> DirectoryPath:
     if out_path is None:
         out_path = zip_file.with_suffix(zip_file.suffix + ".unzip")
 
@@ -251,7 +274,9 @@ def write_zip(
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
 
     """
-    with ZipFile(path, "w", compression=compression, compresslevel=compression_level) as myzip:
+    with ZipFile(
+        path, "w", compression=compression, compresslevel=compression_level
+    ) as myzip:
         for arc_name, file in content.items():
             if isinstance(file, dict):
                 buf = io.StringIO()

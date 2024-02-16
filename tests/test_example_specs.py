@@ -51,7 +51,10 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
 @pytest.mark.parametrize("descr_path,key", list(yield_valid_descr_paths()))
 def test_example_descr_paths(
-    descr_path: Path, key: str, format_version: FormatVersionPlaceholder, bioimageio_json_schema: Mapping[Any, Any]
+    descr_path: Path,
+    key: str,
+    format_version: FormatVersionPlaceholder,
+    bioimageio_json_schema: Mapping[Any, Any],
 ):
     check_bioimageio_yaml(
         descr_path,
@@ -63,7 +66,9 @@ def test_example_descr_paths(
 
 
 @pytest.mark.parametrize("descr_path,key", list(yield_invalid_descr_paths()))
-def test_invalid_example_descr_paths(descr_path: Path, key: str, bioimageio_json_schema: Mapping[Any, Any]):
+def test_invalid_example_descr_paths(
+    descr_path: Path, key: str, bioimageio_json_schema: Mapping[Any, Any]
+):
     check_bioimageio_yaml(
         descr_path,
         root=descr_path.parent,

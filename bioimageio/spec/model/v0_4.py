@@ -29,7 +29,12 @@ from pydantic import (
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
-from bioimageio.spec._internal.base_nodes import KwargsNode, Node, NodeWithExplicitlySetFields, StringNode
+from bioimageio.spec._internal.base_nodes import (
+    KwargsNode,
+    Node,
+    NodeWithExplicitlySetFields,
+    StringNode,
+)
 from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.types import (
@@ -69,13 +74,34 @@ from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 from bioimageio.spec.model._v0_4_converter import convert_from_older_format
 from bioimageio.spec.utils import download, load_array
 
-AxesStr = NewType("AxesStr", Annotated[str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)])
-AxesInCZYX = NewType("AxesInCZYX", Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)])
+AxesStr = NewType(
+    "AxesStr",
+    Annotated[
+        str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
+    ],
+)
+AxesInCZYX = NewType(
+    "AxesInCZYX",
+    Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)],
+)
 
 PostprocessingName = Literal[
-    "binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range", "scale_mean_variance"
+    "binarize",
+    "clip",
+    "scale_linear",
+    "sigmoid",
+    "zero_mean_unit_variance",
+    "scale_range",
+    "scale_mean_variance",
 ]
-PreprocessingName = Literal["binarize", "clip", "scale_linear", "sigmoid", "zero_mean_unit_variance", "scale_range"]
+PreprocessingName = Literal[
+    "binarize",
+    "clip",
+    "scale_linear",
+    "sigmoid",
+    "zero_mean_unit_variance",
+    "scale_range",
+]
 
 TensorName = NewType("TensorName", LowerCaseIdentifierStr)
 
@@ -135,7 +161,12 @@ class Dependencies(StringNode):
 
 
 WeightsFormat = Literal[
-    "keras_hdf5", "onnx", "pytorch_state_dict", "tensorflow_js", "tensorflow_saved_model_bundle", "torchscript"
+    "keras_hdf5",
+    "onnx",
+    "pytorch_state_dict",
+    "tensorflow_js",
+    "tensorflow_saved_model_bundle",
+    "torchscript",
 ]
 
 
@@ -144,7 +175,9 @@ class WeightsDescr(Node):
     onnx: Optional[OnnxWeightsDescr] = None
     pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
     tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
+        None
+    )
     torchscript: Optional[TorchscriptWeightsDescr] = None
 
     @model_validator(mode="after")
@@ -173,7 +206,8 @@ class WeightsEntryDescrBase(FileDescr):
     """∈📦 The weights file."""
 
     attachments: Annotated[
-        Union[AttachmentsDescr, None], warn(None, "Weights entry depends on additional attachments.", ALERT)
+        Union[AttachmentsDescr, None],
+        warn(None, "Weights entry depends on additional attachments.", ALERT),
     ] = None
     """Attachments that are specific to this weights entry."""
 
@@ -192,11 +226,19 @@ class WeightsEntryDescrBase(FileDescr):
             "Custom dependencies ({value}) specified. Avoid this whenever possible "
             "to allow execution in a wider range of software environments.",
         ),
-        Field(examples=["conda:environment.yaml", "maven:./pom.xml", "pip:./requirements.txt"]),
+        Field(
+            examples=[
+                "conda:environment.yaml",
+                "maven:./pom.xml",
+                "pip:./requirements.txt",
+            ]
+        ),
     ] = None
     """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
-    parent: Annotated[Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])] = None
+    parent: Annotated[
+        Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])
+    ] = None
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -222,7 +264,8 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. Please specify the TensorFlow version these weights were created with.",
+                "Missing TensorFlow version. Please specify the TensorFlow version"
+                " these weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -241,7 +284,8 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing ONNX opset version (aka ONNX opset number). "
-                "Please specify the ONNX opset version these weights were created with.",
+                "Please specify the ONNX opset version these weights were created"
+                " with.",
                 value=value,
                 severity=ALERT,
             )
@@ -251,7 +295,9 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
-    architecture: CustomCallable = Field(examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"])
+    architecture: CustomCallable = Field(
+        examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"]
+    )
     """callable returning a torch.nn.Module instance.
     Local implementation: `<relative path to file>:<identifier of implementation within the file>`.
     Implementation in a dependency: `<dependency-package>.<[dependency-module]>.<identifier>`."""
@@ -260,8 +306,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
         Optional[Sha256],
         Field(
             description=(
-                "The SHA256 of the architecture source file, "
-                "if the architecture is not defined in a module listed in `dependencies`\n"
+                "The SHA256 of the architecture source file, if the architecture is not"
+                " defined in a module listed in `dependencies`\n"
             )
             + SHA256_HINT,
         ),
@@ -273,9 +319,15 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     def check_architecture_sha256(self) -> Self:
         if isinstance(self.architecture, CallableFromFile):
             if self.architecture_sha256 is None:
-                raise ValueError("Missing required `architecture_sha256` for `architecture` with source file.")
+                raise ValueError(
+                    "Missing required `architecture_sha256` for `architecture` with"
+                    " source file."
+                )
         elif self.architecture_sha256 is not None:
-            raise ValueError("Got `architecture_sha256` for architecture that does not have a source file.")
+            raise ValueError(
+                "Got `architecture_sha256` for architecture that does not have a source"
+                " file."
+            )
 
         return self
 
@@ -292,8 +344,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing PyTorch version. "
-                "Please specify the PyTorch version these PyTorch state dict weights were created with.",
+                "Missing PyTorch version. Please specify the PyTorch version these"
+                " PyTorch state dict weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -311,8 +363,8 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing PyTorch version. "
-                "Please specify the PyTorch version these Torchscript weights were created with.",
+                "Missing PyTorch version. Please specify the PyTorch version these"
+                " Torchscript weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -330,8 +382,8 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. "
-                "Please specify the TensorFlow version these TensorflowJs weights were created with.",
+                "Missing TensorFlow version. Please specify the TensorFlow version"
+                " these TensorflowJs weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -353,8 +405,8 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. "
-                "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with.",
+                "Missing TensorFlow version. Please specify the TensorFlow version"
+                " these Tensorflow saved model bundle weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -401,7 +453,9 @@ class ImplicitOutputShape(Node):
     @model_validator(mode="after")
     def matching_lengths(self) -> Self:
         if len(self.scale) != len(self.offset):
-            raise ValueError(f"scale {self.scale} has to have same length as offset {self.offset}!")
+            raise ValueError(
+                f"scale {self.scale} has to have same length as offset {self.offset}!"
+            )
         # if we have an expanded dimension, make sure that it's offet is not zero
         for sc, off in zip(self.scale, self.offset):
             if sc is None and not off:
@@ -429,7 +483,9 @@ class TensorDescrBase(Node):
     |  x  |  spatial dimension x |
     """
 
-    data_range: Optional[Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]] = None
+    data_range: Optional[
+        Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]
+    ] = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
@@ -452,7 +508,8 @@ class BinarizeKwargs(ProcessingKwargs):
 
 class BinarizeDescr(ProcessingDescrBase):
     """BinarizeDescr the tensor with a fixed threshold.
-    Values above the threshold will be set to one, values below the threshold to zero."""
+    Values above the threshold will be set to one, values below the threshold to zero.
+    """
 
     name: Literal["binarize"] = "binarize"
     kwargs: BinarizeKwargs
@@ -486,10 +543,19 @@ class ScaleLinearKwargs(ProcessingKwargs):
 
     @model_validator(mode="after")
     def either_gain_or_offset(self) -> Self:
-        if (self.gain == 1.0 or isinstance(self.gain, list) and all(g == 1.0 for g in self.gain)) and (
-            self.offset == 0.0 or isinstance(self.offset, list) and all(off == 0.0 for off in self.offset)
+        if (
+            self.gain == 1.0
+            or isinstance(self.gain, list)
+            and all(g == 1.0 for g in self.gain)
+        ) and (
+            self.offset == 0.0
+            or isinstance(self.offset, list)
+            and all(off == 0.0 for off in self.offset)
         ):
-            raise ValueError("Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` != 0.0.")
+            raise ValueError(
+                "Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` !="
+                " 0.0."
+            )
 
         return self
 
@@ -525,12 +591,16 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """The subset of axes to normalize jointly.
     For example `xy` to normalize the two image axes for 2d data jointly."""
 
-    mean: Annotated[Union[float, NotEmpty[List[float]], None], Field(examples=[(1.1, 2.2, 3.3)])] = None
+    mean: Annotated[
+        Union[float, NotEmpty[List[float]], None], Field(examples=[(1.1, 2.2, 3.3)])
+    ] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
-    std: Annotated[Union[float, NotEmpty[List[float]], None], Field(examples=[(0.1, 0.2, 0.3)])] = None
+    std: Annotated[
+        Union[float, NotEmpty[List[float]], None], Field(examples=[(0.1, 0.2, 0.3)])
+    ] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
     eps: Annotated[float, Interval(gt=0, le=0.1)] = 1e-6
@@ -577,7 +647,10 @@ class ScaleRangeKwargs(ProcessingKwargs):
     @model_validator(mode="after")
     def min_smaller_max(self, info: ValidationInfo) -> Self:
         if self.min_percentile >= self.max_percentile:
-            raise ValueError(f"min_percentile {self.min_percentile} >= max_percentile {self.max_percentile}")
+            raise ValueError(
+                f"min_percentile {self.min_percentile} >= max_percentile"
+                f" {self.max_percentile}"
+            )
 
         return self
 
@@ -629,7 +702,14 @@ class ScaleMeanVarianceDescr(ProcessingDescrBase):
 
 
 PreprocessingDescr = Annotated[
-    Union[BinarizeDescr, ClipDescr, ScaleLinearDescr, SigmoidDescr, ZeroMeanUnitVarianceDescr, ScaleRangeDescr],
+    Union[
+        BinarizeDescr,
+        ClipDescr,
+        ScaleLinearDescr,
+        SigmoidDescr,
+        ZeroMeanUnitVarianceDescr,
+        ScaleRangeDescr,
+    ],
     Field(discriminator="name"),
 ]
 PostprocessingDescr = Annotated[
@@ -654,7 +734,9 @@ class InputTensorDescr(TensorDescrBase):
 
     shape: Annotated[
         Union[Sequence[int], ParametrizedInputShape],
-        Field(examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]),
+        Field(
+            examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
+        ),
     ]
     """Specification of input tensor shape."""
 
@@ -672,9 +754,10 @@ class InputTensorDescr(TensorDescrBase):
             shape = self.shape.min
             if step[bidx] != 0:
                 raise ValueError(
-                    "Input shape step has to be zero in the batch dimension (the batch dimension can always be "
-                    "increased, but `step` should specify how to increase the minimal shape to find the largest "
-                    "single batch shape)"
+                    "Input shape step has to be zero in the batch dimension (the batch"
+                    " dimension can always be increased, but `step` should specify how"
+                    " to increase the minimal shape to find the largest single batch"
+                    " shape)"
                 )
         else:
             shape = self.shape
@@ -689,7 +772,9 @@ class InputTensorDescr(TensorDescrBase):
         for p in self.preprocessing:
             kwargs_axes = p.kwargs.get("axes", "")
             if not isinstance(kwargs_axes, str):
-                raise ValueError(f"Expected an `axes` string, but got {type(kwargs_axes)}")
+                raise ValueError(
+                    f"Expected an `axes` string, but got {type(kwargs_axes)}"
+                )
 
             if any(a not in self.axes for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of `axes`")
@@ -699,7 +784,17 @@ class InputTensorDescr(TensorDescrBase):
 
 class OutputTensorDescr(TensorDescrBase):
     data_type: Literal[
-        "float32", "float64", "uint8", "int8", "uint16", "int16", "uint32", "int32", "uint64", "int64", "bool"
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
     ]
     """Data type.
     The data flow in bioimage.io models is explained
@@ -719,7 +814,9 @@ class OutputTensorDescr(TensorDescrBase):
     @model_validator(mode="after")
     def matching_halo_length(self) -> Self:
         if self.halo and len(self.halo) != len(self.shape):
-            raise ValueError(f"halo {self.halo} has to have same length as shape {self.shape}!")
+            raise ValueError(
+                f"halo {self.halo} has to have same length as shape {self.shape}!"
+            )
 
         return self
 
@@ -740,7 +837,9 @@ KnownRunMode = Literal["deepimagej"]
 
 
 class RunMode(Node):
-    name: Annotated[Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")]
+    name: Annotated[
+        Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")
+    ]
     """Run mode name"""
 
     kwargs: Dict[str, Any] = Field(default_factory=dict)
@@ -839,18 +938,21 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
                 ndim_ref = len(tensors_by_name[out.shape.reference_tensor].shape)
-                ndim_out_ref = len([scale for scale in out.shape.scale if scale is not None])
+                ndim_out_ref = len(
+                    [scale for scale in out.shape.scale if scale is not None]
+                )
                 if ndim_ref != ndim_out_ref:
                     expanded_dim_note = (
-                        f" Note that expanded dimensions (`scale`: null) are not counted for {out.name}'s"
-                        "dimensionality here."
+                        " Note that expanded dimensions (`scale`: null) are not"
+                        f" counted for {out.name}'sdimensionality here."
                         if None in out.shape.scale
                         else ""
                     )
                     raise ValueError(
-                        f"Referenced tensor '{out.shape.reference_tensor}' "
-                        f"with {ndim_ref} dimensions does not match "
-                        f"output tensor '{out.name}' with {ndim_out_ref} dimensions.{expanded_dim_note}"
+                        f"Referenced tensor '{out.shape.reference_tensor}' with"
+                        f" {ndim_ref} dimensions does not match output tensor"
+                        f" '{out.name}' with"
+                        f" {ndim_out_ref} dimensions.{expanded_dim_note}"
                     )
 
             min_out_shape = self._get_min_shape(out, tensors_by_name)
@@ -862,7 +964,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 halo_msg = ""
 
             if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
-                raise ValueError(f"Minimal shape {min_out_shape} of output {out.name} is too small{halo_msg}.")
+                raise ValueError(
+                    f"Minimal shape {min_out_shape} of output {out.name} is too"
+                    f" small{halo_msg}."
+                )
 
         return self
 
@@ -884,7 +989,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         else:
             assert_never(t.shape)
 
-        ref_shape = cls._get_min_shape(tensors_by_name[t.shape.reference_tensor], tensors_by_name)
+        ref_shape = cls._get_min_shape(
+            tensors_by_name[t.shape.reference_tensor], tensors_by_name
+        )
 
         if None not in t.shape.scale:
             scale: Sequence[float, ...] = t.shape.scale  # type: ignore
@@ -911,11 +1018,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     continue
 
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor is not None and ref_tensor not in {t.name for t in self.inputs}:
+                if ref_tensor is not None and ref_tensor not in {
+                    t.name for t in self.inputs
+                }:
                     raise ValueError(f"'{ref_tensor}' not found in inputs")
 
                 if ref_tensor == t.name:
-                    raise ValueError(f"invalid self reference for preprocessing of tensor {t.name}")
+                    raise ValueError(
+                        f"invalid self reference for preprocessing of tensor {t.name}"
+                    )
 
         return self
 
@@ -926,7 +1037,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 if "reference_tensor" not in proc.kwargs:
                     continue
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor is not None and ref_tensor not in {t.name for t in self.inputs}:
+                if ref_tensor is not None and ref_tensor not in {
+                    t.name for t in self.inputs
+                }:
                     raise ValueError(f"{ref_tensor} not found in inputs")
 
         return self
@@ -960,14 +1073,18 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     sample_outputs: List[ImportantFileSource] = Field(default_factory=list)
     """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
-    test_inputs: NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_inputs: NotEmpty[
+        List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
+    ]
     """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The extension must be '.npy'."""
 
-    test_outputs: NotEmpty[List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]]
+    test_outputs: NotEmpty[
+        List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
+    ]
     """∈📦 Analog to `test_inputs`."""
 
     timestamp: Datetime
@@ -984,7 +1101,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="before")
     @classmethod
-    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(
+        cls, data: BioimageioYamlContent, /
+    ) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
 

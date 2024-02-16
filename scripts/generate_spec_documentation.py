@@ -12,7 +12,15 @@ from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
-from bioimageio.spec import ResourceDescr, application, collection, dataset, generic, model, notebook
+from bioimageio.spec import (
+    ResourceDescr,
+    application,
+    collection,
+    dataset,
+    generic,
+    model,
+    notebook,
+)
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import unindent
@@ -38,24 +46,37 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "\n**General notes on this documentation:**\n"
     "| symbol | explanation |\n"
     "| --- | --- |\n"
-    "| `field`<sub>type hint</sub> | A fields's <sub>expected type</sub> may be shortened. "
-    "If so, the abbreviated or full type is displayed below the field's description and can expanded to view "
+    "| `field`<sub>type hint</sub> | A fields's <sub>expected type</sub> may be"
+    " shortened. "
+    "If so, the abbreviated or full type is displayed below the field's description and"
+    " can expanded to view "
     "further (nested) details if available. |\n"
     "| Union[A, B, ...] | indicates that a field value may be of type A or B, etc.|\n"
-    "| Literal[a, b, ...] | indicates that a field value must be the specific value a or b, etc.|\n"
-    "| Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. "
-    "value restriction apply. These are listed in parentheses in the expanded type description. "
-    "They are not always intuitively understandable and merely a hint at more complex validation.|\n"
+    "| Literal[a, b, ...] | indicates that a field value must be the specific value a"
+    " or b, etc.|\n"
+    "| Type* := Type (restrictions) | A field Type* followed by an asterisk indicates"
+    " that annotations, e.g. "
+    "value restriction apply. These are listed in parentheses in the expanded type"
+    " description. "
+    "They are not always intuitively understandable and merely a hint at more complex"
+    " validation.|\n"
     r"| \<type\>.v\<major\>_\<minor\>.\<sub spec\> | "
     "Subparts of a spec might be taken from another spec type or format version. |\n"
-    "| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. "
-    "However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files "
-    "and determine which bioimage.io specification applies. They are optional only when creating a resource "
-    "description in Python code using the appropriate, `type` and `format_version` specific class.|\n"
-    "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |\n"
-    f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with '{IN_PACKAGE_MESSAGE}' "
+    "| `field` ≝ `default` | Default field values are indicated after '≝' and make a"
+    " field optional. "
+    "However, `type` and `format_version` alwyas need to be set for resource"
+    " descriptions written as YAML files "
+    "and determine which bioimage.io specification applies. They are optional only when"
+    " creating a resource "
+    "description in Python code using the appropriate, `type` and `format_version`"
+    " specific class.|\n"
+    "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code"
+    " block below. |\n"
+    f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with"
+    f" '{IN_PACKAGE_MESSAGE}' "
     "are included when packaging the resource to a .zip archive. "
-    "The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |\n"
+    "The resource description YAML file (RDF) is always included well as"
+    " 'rdf.yaml'. |\n"
 )
 
 
@@ -98,7 +119,9 @@ class AnnotationName:
     annotation_map: Dict[str, str]
 
     def __post_init__(self):
-        self.full_maybe_multiline = self.get_name(self.annotation, abbreviate=False, inline=False)
+        self.full_maybe_multiline = self.get_name(
+            self.annotation, abbreviate=False, inline=False
+        )
         self.full_inline = self.get_name(self.annotation, abbreviate=False)
         self.kind = self._get_kind()
         if self.indent_level + len(self.full_inline) > MAX_LINE_WIDTH:
@@ -143,13 +166,17 @@ class AnnotationName:
         else:
             first_part = type_name[:bracket]
 
-        common_name = {"List": "Sequence", "Tuple": "Sequence"}.get(first_part, first_part)
+        common_name = {"List": "Sequence", "Tuple": "Sequence"}.get(
+            first_part, first_part
+        )
         if bracket == -1:
             return common_name
         else:
             return common_name + type_name[bracket:]
 
-    def get_name(self, t: Any, abbreviate: bool, inline: bool = True, multiline_level: int = 0) -> str:
+    def get_name(
+        self, t: Any, abbreviate: bool, inline: bool = True, multiline_level: int = 0
+    ) -> str:
         if isinstance(t, FieldInfo):
             parts = list(t.metadata)
             if t.discriminator:
@@ -164,8 +191,17 @@ class AnnotationName:
                 return f"{self.get_name(args[0], abbreviate, inline, multiline_level)}*"
 
             annotated_type = self.get_name(args[0], abbreviate, inline, multiline_level)
-            annos = f"({'; '.join([self.get_name(tt, abbreviate, inline, multiline_level) for tt in args[1:]])})"
-            if inline or abbreviate or (multiline_level + len(annotated_type) + 1 + len(annos) < MAX_LINE_WIDTH):
+            annos = (
+                f"({'; '.join([self.get_name(tt, abbreviate, inline, multiline_level) for tt in args[1:]])})"
+            )
+            if (
+                inline
+                or abbreviate
+                or (
+                    multiline_level + len(annotated_type) + 1 + len(annos)
+                    < MAX_LINE_WIDTH
+                )
+            ):
                 anno_sep = " "
             else:
                 anno_sep = "\n" + " " * multiline_level * 2
@@ -173,7 +209,9 @@ class AnnotationName:
             return f"{annotated_type}{anno_sep}{annos}"
 
         if s.startswith("Optional["):
-            return f"Optional[{self.get_name(get_args(t)[0], abbreviate, inline, multiline_level)}]"
+            return (
+                f"Optional[{self.get_name(get_args(t)[0], abbreviate, inline, multiline_level)}]"
+            )
 
         for format_like_seq in ["Union", "Tuple", "Literal", "Dict", "List", "Set"]:
             if not s.startswith(format_like_seq):
@@ -188,21 +226,37 @@ class AnnotationName:
             if len(args) > 4 and abbreviate:
                 args = [args[0], "...", args[-1]]
 
-            parts = [self.get_name(tt, abbreviate, inline, multiline_level) for tt in args]
+            parts = [
+                self.get_name(tt, abbreviate, inline, multiline_level) for tt in args
+            ]
             one_line = f"{format_like_seq_name}[{', '.join(parts)}]"
-            if abbreviate or inline or (self.indent_level + len(one_line) < MAX_LINE_WIDTH):
+            if (
+                abbreviate
+                or inline
+                or (self.indent_level + len(one_line) < MAX_LINE_WIDTH)
+            ):
                 return one_line
 
             first_line_descr = f"{format_like_seq_name} of"
             if len(args) == 1:
                 more_maybe_multiline = self.get_name(
-                    args[0], abbreviate=abbreviate, inline=inline, multiline_level=multiline_level
+                    args[0],
+                    abbreviate=abbreviate,
+                    inline=inline,
+                    multiline_level=multiline_level,
                 )
                 return first_line_descr + " " + more_maybe_multiline
 
-            parts = [self.get_name(tt, abbreviate, inline=inline, multiline_level=multiline_level + 1) for tt in args]
+            parts = [
+                self.get_name(
+                    tt, abbreviate, inline=inline, multiline_level=multiline_level + 1
+                )
+                for tt in args
+            ]
             multiline_parts = f"\n{' '* multiline_level * 2}- ".join(parts)
-            return f"{first_line_descr}\n{' '* multiline_level * 2}- {multiline_parts}\n"
+            return (
+                f"{first_line_descr}\n{' '* multiline_level * 2}- {multiline_parts}\n"
+            )
 
         return s
 
@@ -292,7 +346,9 @@ class Field:
         #     d = "<empty string>"
         d_inline = f"`{d}`"
         if self.indent_level + 30 + len(d_inline) > MAX_LINE_WIDTH:
-            return f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
+            return (
+                f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
+            )
         else:
             return f" ≝ {d_inline}"
 
@@ -326,7 +382,10 @@ class Field:
             indent_level=self.indent_level,
             annotation_map=self.annotation_map,
         )
-        first_line = f"{self.indent_with_symbol}{self.name}<sub> {an.kind}</sub>{self.get_default_value()}\n"
+        first_line = (
+            f"{self.indent_with_symbol}{self.name}<sub>"
+            f" {an.kind}</sub>{self.get_default_value()}\n"
+        )
         if (nested or an.abbreviated) and len(self.loc) <= self.STYLE_SWITCH_DEPTH:
             if an.abbreviated is None:
                 expaned_type_anno = ""
@@ -366,13 +425,23 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
         "# "
         + (rd_class.model_config.get("title") or "")
         + "\n"
-        + (unindent(rd_class.__doc__ or "", ignore_first_line=True) + ADDITIONAL_DESCRIPTION_ANY_RESOURCE)
+        + (
+            unindent(rd_class.__doc__ or "", ignore_first_line=True)
+            + ADDITIONAL_DESCRIPTION_ANY_RESOURCE
+        )
     )
-    all_fields = [(fn, info) for fn, info in rd_class.model_fields.items() if fn not in ("type", "format_version")]
+    all_fields = [
+        (fn, info)
+        for fn, info in rd_class.model_fields.items()
+        if fn not in ("type", "format_version")
+    ]
 
     def field_sort_key(fn_info: Tuple[str, FieldInfo]) -> Tuple[bool, str]:
         fn, info = fn_info
-        return (info.get_default(call_default_factory=True) is not PydanticUndefined, fn)
+        return (
+            info.get_default(call_default_factory=True) is not PydanticUndefined,
+            fn,
+        )
 
     all_fields = sorted(all_fields, key=field_sort_key)
 
@@ -381,7 +450,13 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
         info = rd_class.model_fields[field_name]
         md += (
             "\n"
-            + Field((field_name,), info, footnotes=footnotes, rd_class=rd_class, all_examples=all_examples).get_md()
+            + Field(
+                (field_name,),
+                info,
+                footnotes=footnotes,
+                rd_class=rd_class,
+                all_examples=all_examples,
+            ).get_md()
         )
 
     md += "\n"
@@ -423,7 +498,9 @@ def export_module_documentations(folder: Path, module: ModuleType):
 
     assert latest is not None
     assert rd_class is not None
-    shutil.copy(str(latest), folder / get_documentation_file_name(rd_class, latest=True))
+    shutil.copy(
+        str(latest), folder / get_documentation_file_name(rd_class, latest=True)
+    )
     print(f" copied {latest} as latest")
 
 

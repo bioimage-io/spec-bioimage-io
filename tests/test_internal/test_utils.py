@@ -20,11 +20,21 @@ import pytest
         ((), dict(a1=1, a2=1, b1=1, b2=1, c1=1, c2=1), False),
     ],
 )
-def test_assert_all_params_set_explicitly(args: Tuple[int, ...], kwargs: Dict[str, int], valid: bool):
+def test_assert_all_params_set_explicitly(
+    args: Tuple[int, ...], kwargs: Dict[str, int], valid: bool
+):
     from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 
     def func(
-        a1: int = 0, a2: int = 0, /, b1: int = 0, b2: int = 0, *args: Any, c1: int = 0, c2: int = 0, **kwargs: Any
+        a1: int = 0,
+        a2: int = 0,
+        /,
+        b1: int = 0,
+        b2: int = 0,
+        *args: Any,
+        c1: int = 0,
+        c2: int = 0,
+        **kwargs: Any,
     ):
         print(a1, a2, b1, b2, args, c1, c2, kwargs)
 

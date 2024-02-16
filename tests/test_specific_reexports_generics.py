@@ -64,7 +64,11 @@ IGNORE_MEMBERS = {
 
 
 def get_members(m: ModuleType):
-    return {k: getattr(m, k) for k in dir(m) if not k.startswith("_") and k not in IGNORE_MEMBERS}
+    return {
+        k: getattr(m, k)
+        for k in dir(m)
+        if not k.startswith("_") and k not in IGNORE_MEMBERS
+    }
 
 
 GENERIC_ONLY_MEMBERS = {
@@ -76,10 +80,14 @@ GENERIC_ONLY_MEMBERS = {
 }
 
 GENERIC_v0_2_MEMBERS = {
-    k: v for k, v in get_members(bioimageio.spec.generic.v0_2).items() if k not in GENERIC_ONLY_MEMBERS
+    k: v
+    for k, v in get_members(bioimageio.spec.generic.v0_2).items()
+    if k not in GENERIC_ONLY_MEMBERS
 }
 GENERIC_v0_3_MEMBERS = {
-    k: v for k, v in get_members(bioimageio.spec.generic.v0_3).items() if k not in GENERIC_ONLY_MEMBERS
+    k: v
+    for k, v in get_members(bioimageio.spec.generic.v0_3).items()
+    if k not in GENERIC_ONLY_MEMBERS
 }
 
 
@@ -98,7 +106,9 @@ GENERIC_v0_3_MEMBERS = {
         (GENERIC_v0_3_MEMBERS, bioimageio.spec.notebook.v0_3),
     ],
 )
-def test_specific_module_has_all_generic_symbols(generic_members: Dict[str, Any], specific: ModuleType):
+def test_specific_module_has_all_generic_symbols(
+    generic_members: Dict[str, Any], specific: ModuleType
+):
     members = get_members(specific)
     missing = {k for k in generic_members if k not in members}
     assert not missing

@@ -9,7 +9,11 @@ from zipfile import ZIP_DEFLATED
 from pydantic import DirectoryPath, FilePath, NewPath
 
 from bioimageio.spec import load_description, model
-from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description
+from bioimageio.spec._description import (
+    InvalidDescription,
+    ResourceDescr,
+    build_description,
+)
 from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
 from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
 from bioimageio.spec._internal.io_utils import (
@@ -50,25 +54,34 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
-    if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}"):
+    if (
+        bioimageio_yaml_file_name != BIOIMAGEIO_YAML
+        and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}")
+    ):
         raise ValueError(
-            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with"
-            f" '.{BIOIMAGEIO_YAML}'"
+            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be"
+            f" '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
         )
 
     os_friendly_name = get_os_friendly_file_name(rd.name)
-    bioimageio_yaml_file_name = f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}"
+    bioimageio_yaml_file_name = (
+        f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}"
+    )
 
     content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {
         # add bioimageio.yaml file already here to avoid file name conflicts
         bioimageio_yaml_file_name: "http://placeholder.com",
     }
     with PackagingContext(file_sources=content):
-        rdf_content: BioimageioYamlContent = rd.model_dump(mode="json", exclude_unset=True)
+        rdf_content: BioimageioYamlContent = rd.model_dump(
+            mode="json", exclude_unset=True
+        )
 
     _ = rdf_content.pop("rdf_source", None)
 
-    if weights_priority_order is not None and isinstance(rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)):
+    if weights_priority_order is not None and isinstance(
+        rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)
+    ):
         # select single weights entry
         assert isinstance(rdf_content["weights"], dict)
         for wf in weights_priority_order:
@@ -76,7 +89,10 @@ def get_resource_package_content(
             if w is not None:
                 break
         else:
-            raise ValueError("None of the weight formats in `weights_priority_order` is present in the given model.")
+            raise ValueError(
+                "None of the weight formats in `weights_priority_order` is present in"
+                " the given model."
+            )
 
         rdf_content["weights"] = {wf: w}
 
@@ -104,13 +120,17 @@ def _prepare_resource_package(
     else:
         opened = open_bioimageio_yaml(source)
         outer_context = validation_context_var.get()
-        with outer_context.replace(root=opened.original_root, file_name=opened.original_file_name):
+        with outer_context.replace(
+            root=opened.original_root, file_name=opened.original_file_name
+        ):
             descr = build_description(opened.content)
 
     if isinstance(descr, InvalidDescription):
         raise ValueError(f"{source} is invalid: {descr.validation_summary}")
 
-    package_content = get_resource_package_content(descr, weights_priority_order=weights_priority_order)
+    package_content = get_resource_package_content(
+        descr, weights_priority_order=weights_priority_order
+    )
 
     local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
     for k, v in package_content.items():
@@ -208,12 +228,22 @@ def save_bioimageio_package(
         weights_priority_order=weights_priority_order,
     )
     if output_path is None:
-        output_path = Path(NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name)
+        output_path = Path(
+            NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name
+        )
     else:
         output_path = Path(output_path)
 
-    write_zip(output_path, package_content, compression=compression, compression_level=compression_level)
+    write_zip(
+        output_path,
+        package_content,
+        compression=compression,
+        compression_level=compression_level,
+    )
     if isinstance((exported := load_description(output_path)), InvalidDescription):
-        raise ValueError(f"Exported package '{output_path}' is invalid: {exported.validation_summary}")
+        raise ValueError(
+            f"Exported package '{output_path}' is invalid:"
+            f" {exported.validation_summary}"
+        )
 
     return output_path

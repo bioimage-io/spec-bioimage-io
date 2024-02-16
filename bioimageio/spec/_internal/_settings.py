@@ -4,7 +4,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="BIOIMAGEIO_", env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_prefix="BIOIMAGEIO_", env_file=".env", env_file_encoding="utf-8"
+    )
 
     github_username: Optional[str] = None
     github_token: Optional[str] = None

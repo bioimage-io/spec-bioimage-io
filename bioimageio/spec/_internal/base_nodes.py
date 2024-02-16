@@ -52,14 +52,23 @@ from bioimageio.spec._internal.constants import (
 )
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import download, get_sha256
-from bioimageio.spec._internal.types import BioimageioYamlContent, ImportantFileSource, RelativeFilePath
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
+    ImportantFileSource,
+    RelativeFilePath,
+)
 from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     validation_context_var,
 )
-from bioimageio.spec.summary import ErrorEntry, ValidationSummary, ValidationSummaryDetail, WarningEntry
+from bioimageio.spec.summary import (
+    ErrorEntry,
+    ValidationSummary,
+    ValidationSummaryDetail,
+    WarningEntry,
+)
 
 
 class Node(
@@ -111,7 +120,9 @@ class Node(
 
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate
-            return super().model_validate(obj, strict=strict, from_attributes=from_attributes)
+            return super().model_validate(
+                obj, strict=strict, from_attributes=from_attributes
+            )
 
 
 class StringNode(collections.UserString, ABC):
@@ -123,9 +134,15 @@ class StringNode(collections.UserString, ABC):
 
     def __init__(self: Self, seq: object) -> None:
         super().__init__(seq)
-        type_hints = {fn: t for fn, t in get_type_hints(self.__class__).items() if not fn.startswith("_")}
+        type_hints = {
+            fn: t
+            for fn, t in get_type_hints(self.__class__).items()
+            if not fn.startswith("_")
+        }
         defaults = {fn: getattr(self.__class__, fn, Field()) for fn in type_hints}
-        field_definitions: Dict[str, Any] = {fn: (t, defaults[fn]) for fn, t in type_hints.items()}
+        field_definitions: Dict[str, Any] = {
+            fn: (t, defaults[fn]) for fn, t in type_hints.items()
+        }
         self._node_class = pydantic.create_model(
             self.__class__.__name__,
             __base__=Node,
@@ -153,7 +170,9 @@ class StringNode(collections.UserString, ABC):
         raise AttributeError(name)
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: Type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
         assert issubclass(source, StringNode), source
         return core_schema.no_info_after_validator_function(
             cls._validate,
@@ -242,7 +261,9 @@ class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
         self.tgt: Final[Type[TGT]] = tgt
 
     @abstractmethod
-    def _convert(self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: Unpack[CArgs]) -> "TGT | dict[str, Any]":
+    def _convert(
+        self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: Unpack[CArgs]
+    ) -> "TGT | dict[str, Any]":
         ...
 
     # note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399
@@ -271,11 +292,15 @@ class NodeWithExplicitlySetFields(Node):
 
     @model_validator(mode="before")
     @classmethod
-    def set_fields_explicitly(cls, data: Union[Any, Dict[str, Any]]) -> Union[Any, Dict[str, Any]]:
+    def set_fields_explicitly(
+        cls, data: Union[Any, Dict[str, Any]]
+    ) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
             for name in cls.fields_to_set_explicitly:
                 if name not in data:
-                    data[name] = cls.model_fields[name].get_default(call_default_factory=True)
+                    data[name] = cls.model_fields[name].get_default(
+                        call_default_factory=True
+                    )
 
         return data
 
@@ -296,12 +321,16 @@ else:
         pass
 
 
-class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol):
+class ResourceDescriptionBase(
+    NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol
+):
     """base class for all resource descriptions"""
 
     _validation_summary: Optional[ValidationSummary] = PrivateAttr(None)
 
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type", "format_version"})
+    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
+        {"type", "format_version"}
+    )
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
@@ -356,7 +385,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     def validation_summary(self) -> Optional[ValidationSummary]:
         return self._validation_summary
 
-    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(default_factory=lambda: validation_context_var.get().root)
+    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(
+        default_factory=lambda: validation_context_var.get().root
+    )
 
     @property
     def root(self) -> Union[AnyUrl, DirectoryPath]:
@@ -365,15 +396,21 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if "format_version" in cls.model_fields and cls.model_fields["format_version"].default is not PydanticUndefined:
+        if (
+            "format_version" in cls.model_fields
+            and cls.model_fields["format_version"].default is not PydanticUndefined
+        ):
             cls.implemented_format_version = cls.model_fields["format_version"].default
             if "." not in cls.implemented_format_version:
                 cls.implemented_format_version_tuple = (0, 0, 0)
             else:
                 cls.implemented_format_version_tuple = cast(
-                    Tuple[int, int, int], tuple(int(x) for x in cls.implemented_format_version.split("."))
+                    Tuple[int, int, int],
+                    tuple(int(x) for x in cls.implemented_format_version.split(".")),
                 )
-            assert len(cls.implemented_format_version_tuple) == 3, cls.implemented_format_version_tuple
+            assert (
+                len(cls.implemented_format_version_tuple) == 3
+            ), cls.implemented_format_version_tuple
 
     @classmethod
     def load(
@@ -392,13 +429,18 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
 
         rd._validation_summary = ValidationSummary(
             name="bioimageio.spec validation",
-            source_name=str(RelativeFilePath(context.file_name).get_absolute(context.root)),
+            source_name=str(
+                RelativeFilePath(context.file_name).get_absolute(context.root)
+            ),
             status="failed" if errors else "passed",
             details=[
                 ValidationSummaryDetail(
                     bioimageio_spec_version=VERSION,
                     errors=errors,
-                    name=f"bioimageio.spec validation as {rd.type} {cls.implemented_format_version}",
+                    name=(
+                        "bioimageio.spec validation as"
+                        f" {rd.type} {cls.implemented_format_version}"
+                    ),
                     status="failed" if errors else "passed",
                     warnings=val_warnings,
                 )
@@ -420,16 +462,26 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
         except pydantic.ValidationError as e:
             for ee in e.errors(include_url=False):
                 if (severity := ee.get("ctx", {}).get("severity", ERROR)) < ERROR:
-                    val_warnings.append(WarningEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"], severity=severity))
+                    val_warnings.append(
+                        WarningEntry(
+                            loc=ee["loc"],
+                            msg=ee["msg"],
+                            type=ee["type"],
+                            severity=severity,
+                        )
+                    )
                 else:
-                    val_errors.append(ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"]))
+                    val_errors.append(
+                        ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"])
+                    )
 
             if len(val_errors) == 0:
                 val_errors.append(
                     ErrorEntry(
                         loc=(),
                         msg=(
-                            f"Encountered {len(val_warnings)} more severe than warning level "
+                            f"Encountered {len(val_warnings)} more severe than warning"
+                            " level "
                             f"'{WARNING_LEVEL_TO_NAME[validation_context_var.get().warning_level]}'"
                         ),
                         type="severe_warnings",
@@ -437,7 +489,12 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
                 )
         except Exception as e:
             val_errors.append(
-                ErrorEntry(loc=(), msg=str(e), type=type(e).__name__, traceback=traceback.format_tb(e.__traceback__))
+                ErrorEntry(
+                    loc=(),
+                    msg=str(e),
+                    type=type(e).__name__,
+                    traceback=traceback.format_tb(e.__traceback__),
+                )
             )
 
         if rd is None:
@@ -446,7 +503,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
             except Exception:
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
-                rd = InvalidDescription(type=resource_type, format_version=format_version)
+                rd = InvalidDescription(
+                    type=resource_type, format_version=format_version
+                )
 
         return rd, val_errors, val_warnings
 
@@ -494,8 +553,9 @@ class FileDescr(Node):
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
             raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got {actual_sha}. "
-                "Update expected `sha256` or point to the matching file."
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got"
+                f" {actual_sha}. Update expected `sha256` or point to the matching"
+                " file."
             )
 
         return self

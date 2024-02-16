@@ -23,7 +23,9 @@ def bioimageio_json_schema():
 
 @pytest.fixture(scope="session")
 def stardist04_data():
-    with (EXAMPLE_SPECS / "models/stardist_example_model/v0_4.bioimageio.yaml").open() as f:
+    with (
+        EXAMPLE_SPECS / "models/stardist_example_model/v0_4.bioimageio.yaml"
+    ).open() as f:
         return MappingProxyType(yaml.load(f))
 
 

@@ -45,7 +45,9 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
             pytorch_state_dict_weights_entry["architecture"] = architecture
 
         if architecture_sha256 is not None:
-            pytorch_state_dict_weights_entry["architecture_sha256"] = architecture_sha256
+            pytorch_state_dict_weights_entry["architecture_sha256"] = (
+                architecture_sha256
+            )
 
         if kwargs is not None:
             pytorch_state_dict_weights_entry["kwargs"] = kwargs
@@ -86,8 +88,12 @@ def _convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
             if "authors" not in weights_entry:
                 continue
 
-            weights_entry["authors"] = [{"name": name} for name in weights_entry["authors"]]
-            authors_update = future.get("weights", {}).get(weights_format, {}).get("authors")
+            weights_entry["authors"] = [
+                {"name": name} for name in weights_entry["authors"]
+            ]
+            authors_update = (
+                future.get("weights", {}).get(weights_format, {}).get("authors")
+            )
             if authors_update is not None:
                 for a, u in zip(weights_entry["authors"], authors_update):
                     a.update(u)

@@ -22,7 +22,10 @@ from pydantic import (
 from pydantic_core import core_schema
 from typing_extensions import Annotated, assert_never
 
-from bioimageio.spec._internal.constants import ALL_BIOIMAGEIO_YAML_NAMES, BIOIMAGEIO_YAML
+from bioimageio.spec._internal.constants import (
+    ALL_BIOIMAGEIO_YAML_NAMES,
+    BIOIMAGEIO_YAML,
+)
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.packaging_context import packaging_context_var
 from bioimageio.spec._internal.validation_context import validation_context_var
@@ -35,9 +38,13 @@ def validate_url_ok(url: str):
     response = requests.head(str(url))
     if response.status_code in (301, 308):
         issue_warning(
-            "URL redirected ({status_code}): consider updating {value} with new location: {location}",
+            "URL redirected ({status_code}): consider updating {value} with new"
+            " location: {location}",
             value=url,
-            msg_context={"status_code": response.status_code, "location": response.headers.get("location")},
+            msg_context={
+                "status_code": response.status_code,
+                "location": response.headers.get("location"),
+            },
         )
     elif response.status_code != 200:
         raise ValueError(f"{response.status_code}: {response.reason} {url}")
@@ -48,7 +55,9 @@ def validate_url_ok(url: str):
 _http_url_adapter = TypeAdapter(pydantic.HttpUrl)  # pyright: ignore[reportCallIssue]
 
 HttpUrl = Annotated[
-    str, AfterValidator(lambda value: str(_http_url_adapter.validate_python(value))), AfterValidator(validate_url_ok)
+    str,
+    AfterValidator(lambda value: str(_http_url_adapter.validate_python(value))),
+    AfterValidator(validate_url_ok),
 ]
 FileName = str
 AbsoluteDirectory = Annotated[DirectoryPath, Predicate(Path.is_absolute)]
@@ -92,7 +101,9 @@ class RelativePath:
         return f"RelativePath('{self.path.as_posix()}')"
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls, _source_type: Any, _handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
         return core_schema.no_info_after_validator_function(
             cls._validate,
             core_schema.union_schema(
@@ -105,7 +116,9 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: Union[DirectoryPath, HttpUrl, pydantic.HttpUrl]) -> Union[AbsoluteFilePath, HttpUrl]:
+    def get_absolute(
+        self, root: Union[DirectoryPath, HttpUrl, pydantic.HttpUrl]
+    ) -> Union[AbsoluteFilePath, HttpUrl]:
         if isinstance(root, pathlib.Path):
             return (root / self.path).absolute()
 
@@ -121,7 +134,15 @@ class RelativePath:
         else:
             path.append(rel_path)
 
-        return urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
+        return urlunsplit(
+            (
+                parsed.scheme,
+                parsed.netloc,
+                "/".join(path),
+                parsed.query,
+                parsed.fragment,
+            )
+        )
 
     def exists(self) -> bool:
         try:
@@ -146,7 +167,9 @@ class RelativePath:
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str]):
-        if isinstance(value, str) and (value.startswith("https://") or value.startswith("http://")):
+        if isinstance(value, str) and (
+            value.startswith("https://") or value.startswith("http://")
+        ):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
         ret = cls(value)
@@ -189,14 +212,16 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     for special in ALL_BIOIMAGEIO_YAML_NAMES:
         if file_name.endswith(special):
             raise ValueError(
-                f"'{file_name}' not allowed here as it is reserved to identify '{BIOIMAGEIO_YAML}' "
-                "(or equivalent) files."
+                f"'{file_name}' not allowed here as it is reserved to identify"
+                f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
             )
 
     return src
 
 
-def _package(value: FileSource, handler: SerializerFunctionWrapHandler) -> Union[FileSource, FileName]:
+def _package(
+    value: FileSource, handler: SerializerFunctionWrapHandler
+) -> Union[FileSource, FileName]:
     ret = handler(value)
 
     if (packaging_context := packaging_context_var.get()) is None:
@@ -214,12 +239,17 @@ def _package(value: FileSource, handler: SerializerFunctionWrapHandler) -> Union
         assert_never(value)
 
     fname = extract_file_name(src)
-    assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), fname
+    assert not any(
+        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
+    ), fname
     if fname in fsrcs and fsrcs[fname] != src:
         for i in range(2, 20):
             fn, *ext = fname.split(".")
             alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-            if alternative_file_name not in fsrcs or fsrcs[alternative_file_name] == src:
+            if (
+                alternative_file_name not in fsrcs
+                or fsrcs[alternative_file_name] == src
+            ):
                 fname = alternative_file_name
                 break
         else:
@@ -229,11 +259,17 @@ def _package(value: FileSource, handler: SerializerFunctionWrapHandler) -> Union
     return fname
 
 
-IncludeInPackage: Callable[[], WrapSerializer] = partial(WrapSerializer, _package, when_used="unless-none")
-ImportantFileSource = Annotated[FileSource, AfterValidator(wo_special_file_name), IncludeInPackage()]
+IncludeInPackage: Callable[[], WrapSerializer] = partial(
+    WrapSerializer, _package, when_used="unless-none"
+)
+ImportantFileSource = Annotated[
+    FileSource, AfterValidator(wo_special_file_name), IncludeInPackage()
+]
 
 
-def extract_file_name(src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath]) -> str:
+def extract_file_name(
+    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath]
+) -> str:
     if isinstance(src, RelativeFilePath):
         return src.path.name
     elif isinstance(src, PurePath):

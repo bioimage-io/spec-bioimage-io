@@ -10,7 +10,11 @@ from bioimageio.spec._internal.utils import files
 if TYPE_CHECKING:
     from bioimageio.spec._internal.types import FormatVersionPlaceholder, LicenseId
     from bioimageio.spec._internal.validation_context import WarningLevel
-    from bioimageio.spec.summary import WarningLevelName, WarningSeverity, WarningSeverityName
+    from bioimageio.spec.summary import (
+        WarningLevelName,
+        WarningSeverity,
+        WarningSeverityName,
+    )
 
 
 if sys.version_info < (3, 10):
@@ -28,16 +32,22 @@ BIOIMAGEIO_YAML = "rdf.yaml"
 ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
 ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
 
-DOI_REGEX = r"^10\.[0-9]{4}.+$"  # lax DOI regex validating the first 7 DOI characters only
+DOI_REGEX = (  # lax DOI regex validating the first 7 DOI characters only
+    r"^10\.[0-9]{4}.+$"
+)
 
 IN_PACKAGE_MESSAGE = "∈📦 "
 """DEPRECATED, use ImportantFileSource to indicate that a file source should be included in a package"""
 
 # license file generated with scripts/update_spdx_licenses.py
-with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open("r", encoding="utf-8") as f:
+with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open(
+    "r", encoding="utf-8"
+) as f:
     _license_data = json.load(f)
 
-LICENSES: Dict[LicenseId, Dict[str, Any]] = {x["licenseId"]: x for x in _license_data["licenses"]}
+LICENSES: Dict[LicenseId, Dict[str, Any]] = {
+    x["licenseId"]: x for x in _license_data["licenses"]
+}
 LICENSE_DATA_VERSION = _license_data["licenseListVersion"]
 
 SHA256_HINT = """You can drag and drop your file to this
@@ -45,7 +55,9 @@ SHA256_HINT = """You can drag and drop your file to this
 Or you can generate a SHA256 checksum with Python's `hashlib`,
 [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."""
 
-with files("bioimageio.spec").joinpath("static/tag_categories.json").open("r", encoding="utf-8") as f:
+with files("bioimageio.spec").joinpath("static/tag_categories.json").open(
+    "r", encoding="utf-8"
+) as f:
     TAG_CATEGORIES: Mapping[str, Mapping[str, Sequence[str]]] = json.load(f)
 
 # SI unit regex adapted from https://stackoverflow.com/a/3573731
@@ -92,8 +104,8 @@ WARNING, WARNING_NAME = 30, "warning"
 INFO, INFO_NAME = 20, "info"
 """info warnings are about purely cosmetic issues, etc."""
 
-WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = MappingProxyType(
-    {INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME}
+WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = (
+    MappingProxyType({INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME})
 )
 WARNING_LEVEL_TO_NAME: Mapping[WarningLevel, WarningLevelName] = MappingProxyType(
     {**WARNING_SEVERITY_TO_NAME, ERROR: ERROR_NAME}

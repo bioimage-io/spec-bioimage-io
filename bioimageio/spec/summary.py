@@ -16,9 +16,13 @@ from bioimageio.spec._internal.constants import (
     WARNING_SEVERITY_TO_NAME,
 )
 from bioimageio.spec._internal.validation_context import WarningLevel as WarningLevel
-from bioimageio.spec._internal.validation_context import WarningSeverity as WarningSeverity
+from bioimageio.spec._internal.validation_context import (
+    WarningSeverity as WarningSeverity,
+)
 
-Loc = Tuple[Union[int, str], ...]  # location of error/warning in a nested data structure
+Loc = Tuple[
+    Union[int, str], ...
+]  # location of error/warning in a nested data structure
 WarningSeverityName = Literal["info", "warning", "alert"]
 WarningLevelName = Literal[WarningSeverityName, "error"]
 
@@ -39,14 +43,24 @@ class WarningEntry(ValidationEntry):
 
     @model_validator(mode="before")
     @classmethod
-    def sync_severity_with_severity_name(cls, data: Union[Mapping[Any, Any], Any]) -> Any:
+    def sync_severity_with_severity_name(
+        cls, data: Union[Mapping[Any, Any], Any]
+    ) -> Any:
         if isinstance(data, dict):
             data = dict(data)
             assert isinstance(data, dict)
-            if "severity" in data and "severity_name" not in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+            if (
+                "severity" in data
+                and "severity_name" not in data
+                and data["severity"] in WARNING_SEVERITY_TO_NAME
+            ):
                 data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
 
-            if "severity" in data and "severity_name" not in data and data["severity"] in WARNING_SEVERITY_TO_NAME:
+            if (
+                "severity" in data
+                and "severity_name" not in data
+                and data["severity"] in WARNING_SEVERITY_TO_NAME
+            ):
                 data["severity"] = WARNING_NAME_TO_LEVEL[data["severity_name"]]
 
         return data
@@ -76,7 +90,9 @@ class ValidationSummaryDetail(BaseModel):
 
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
         indent = "      " if root_loc else ""
-        errs_wrns = self._format_errors_and_warnings(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
+        errs_wrns = self._format_errors_and_warnings(
+            hide_tracebacks=hide_tracebacks, root_loc=root_loc
+        )
         return f"{indent}{self.name.strip('.')}: {self.status}{errs_wrns}"
 
     def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
@@ -85,14 +101,24 @@ class ValidationSummaryDetail(BaseModel):
             tbs = [""] * len(self.errors)
         else:
             tbs = [
-                ("\n      Traceback:\n      " if e.traceback else "") + "\n      ".join(e.traceback)
+                ("\n      Traceback:\n      " if e.traceback else "")
+                + "\n      ".join(e.traceback)
                 for e in self.errors
             ]
 
-        es = "".join(f"\n    {format_loc(root_loc + e.loc)}: {e.msg}{tb}" for e, tb in zip(self.errors, tbs))
-        ws = "".join(f"\n    {format_loc(root_loc + w.loc)}: {w.msg}" for w in self.warnings)
+        es = "".join(
+            f"\n    {format_loc(root_loc + e.loc)}: {e.msg}{tb}"
+            for e, tb in zip(self.errors, tbs)
+        )
+        ws = "".join(
+            f"\n    {format_loc(root_loc + w.loc)}: {w.msg}" for w in self.warnings
+        )
 
-        return f"\n{indent}errors: {es}" if es else "" + f"\n{indent}warnings: {ws}" if ws else ""
+        return (
+            f"\n{indent}errors: {es}"
+            if es
+            else "" + f"\n{indent}warnings: {ws}" if ws else ""
+        )
 
 
 class ValidationSummary(BaseModel):
@@ -112,10 +138,16 @@ class ValidationSummary(BaseModel):
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
 
-    def format(self, hide_tracebacks: bool = False, hide_source: bool = False, root_loc: Loc = ()) -> str:
+    def format(
+        self,
+        hide_tracebacks: bool = False,
+        hide_source: bool = False,
+        root_loc: Loc = (),
+    ) -> str:
         indent = "   " if root_loc else ""
         src = "" if hide_source else f"\n{indent}source: {self.source_name}"
         details = f"\n{indent}" + f"\n{indent}".join(
-            d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc) for d in self.details
+            d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
+            for d in self.details
         )
         return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"

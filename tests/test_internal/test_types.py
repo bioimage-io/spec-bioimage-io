@@ -39,7 +39,12 @@ IGNORE_TYPES_MEMBERS = {
 
 
 @pytest.mark.parametrize(
-    "name", [name for name in dir(types) if not name.startswith("_") and not name in IGNORE_TYPES_MEMBERS]
+    "name",
+    [
+        name
+        for name in dir(types)
+        if not name.startswith("_") and not name in IGNORE_TYPES_MEMBERS
+    ],
 )
 def test_type_is_usable(name: str):
     """check if a type can be instantiated or is a common Python type (e.g. Union or Literal)"""
@@ -53,4 +58,6 @@ def test_type_is_usable(name: str):
         pass  # ignore string constants
     else:
         origin = typing.get_origin(typ)
-        assert origin in (dict, list, typing.Union, typing.Literal) or type(typ) in (typing.TypeVar,), name
+        assert origin in (dict, list, typing.Union, typing.Literal) or type(typ) in (
+            typing.TypeVar,
+        ), name

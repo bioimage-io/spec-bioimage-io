@@ -22,16 +22,23 @@ from bioimageio.spec.model.v0_5 import (
 )
 
 
-def squeeze(data: NDArray[Any], axes: Sequence[AnyAxis]) -> Tuple[NDArray[Any], List[AnyAxis]]:
+def squeeze(
+    data: NDArray[Any], axes: Sequence[AnyAxis]
+) -> Tuple[NDArray[Any], List[AnyAxis]]:
     """apply numpy.ndarray.squeeze while keeping track of the axis descriptions remaining"""
     if data.ndim != len(axes):
-        raise ValueError(f"tensor shape {data.shape} does not match described axes {[a.id for a in axes]}")
+        raise ValueError(
+            f"tensor shape {data.shape} does not match described axes"
+            f" {[a.id for a in axes]}"
+        )
 
     axes = [deepcopy(a) for a, s in zip(axes, data.shape) if s != 1]
     return data.squeeze(), axes
 
 
-def normalize(data: NDArray[Any], axis: Optional[Tuple[int, ...]], eps: float = 1e-7) -> NDArray[np.float32]:
+def normalize(
+    data: NDArray[Any], axis: Optional[Tuple[int, ...]], eps: float = 1e-7
+) -> NDArray[np.float32]:
     data = data.astype("float32")
     data -= data.min(axis=axis, keepdims=True)
     data /= data.max(axis=axis, keepdims=True) + eps
@@ -106,7 +113,9 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
 
         s = data.shape[i]
         assert s > 1
-        if isinstance(a, (SpaceInputAxis, SpaceOutputAxis, TimeInputAxis, TimeOutputAxis)):
+        if isinstance(
+            a, (SpaceInputAxis, SpaceOutputAxis, TimeInputAxis, TimeOutputAxis)
+        ):
             data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
             ndim -= 1
 
@@ -142,7 +151,9 @@ def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
     # elif h / w < 2:
     # TODO: enforce 2:1 or 1:1 aspect ratio for generated cover images
 
-    norm_along = tuple(i for i, a in enumerate(axes) if a.type in ("space", "time")) or None
+    norm_along = (
+        tuple(i for i, a in enumerate(axes) if a.type in ("space", "time")) or None
+    )
     # normalize the data and map to 8 bit
     data = normalize(data, norm_along)
     data = (data * 255).astype("uint8")
@@ -168,7 +179,8 @@ def create_diagonal_split_image(im0: NDArray[Any], im1: NDArray[Any]):
 
 # create better cover images for 3d data and non-image outputs
 def generate_covers(
-    inputs: Sequence[Tuple[InputTensorDescr, NDArray[Any]]], outputs: Sequence[Tuple[OutputTensorDescr, NDArray[Any]]]
+    inputs: Sequence[Tuple[InputTensorDescr, NDArray[Any]]],
+    outputs: Sequence[Tuple[OutputTensorDescr, NDArray[Any]]],
 ) -> List[Path]:
     ipt_descr, ipt = inputs[0]
     out_descr, out = outputs[0]

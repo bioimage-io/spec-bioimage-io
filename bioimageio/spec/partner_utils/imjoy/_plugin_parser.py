@@ -65,10 +65,14 @@ def parse_imjoy_plugin(source, overwrite_config=None):
     elif plugin_comp.config[0].attrs.lang == "json":
         config = json.loads(plugin_comp.config[0].content)
     else:
-        raise Exception("Unsupported config language: " + plugin_comp.config[0].attrs.lang)
+        raise Exception(
+            "Unsupported config language: " + plugin_comp.config[0].attrs.lang
+        )
 
     overwrite_config = overwrite_config or {}
-    config["tag"] = overwrite_config.get("tag") or (config.get("tags") and config.get("tags")[0])
+    config["tag"] = overwrite_config.get("tag") or (
+        config.get("tags") and config.get("tags")[0]
+    )
     config["hot_reloading"] = overwrite_config.get("hot_reloading")
     config["scripts"] = []
     # try to match the script with current tag
@@ -92,7 +96,9 @@ def parse_imjoy_plugin(source, overwrite_config=None):
     config["origin"] = overwrite_config.get("origin")
     config["namespace"] = overwrite_config.get("namespace")
     config["code"] = source
-    config["id"] = config.get("name").strip().replace(" ", "_") + "_" + str(uuid.uuid4())
+    config["id"] = (
+        config.get("name").strip().replace(" ", "_") + "_" + str(uuid.uuid4())
+    )
     config["runnable"] = config.get("runnable", True)
     config["requirements"] = config.get("requirements") or []
 
@@ -102,7 +108,12 @@ def parse_imjoy_plugin(source, overwrite_config=None):
             if config.get("tag"):
                 config[field] = obj.get(config.get("tag"))
                 if not obj.get(config.get("tag")):
-                    print("WARNING: " + field + " do not contain a tag named: " + config.get("tag"))
+                    print(
+                        "WARNING: "
+                        + field
+                        + " do not contain a tag named: "
+                        + config.get("tag")
+                    )
             else:
                 raise Exception("You must use 'tags' with configurable fields.")
     config["lang"] = config.get("lang") or "javascript"
@@ -179,7 +190,8 @@ def enrich_partial_rdf_with_imjoy_plugin(
     partial_rdf: Dict[str, Any],
     root: Union[HttpUrl, DirectoryPath],
     resolve_rdf_source: Callable[
-        [Union[HttpUrl, FilePath, str]], Tuple[Dict[str, Any], str, Union[HttpUrl, DirectoryPath]]
+        [Union[HttpUrl, FilePath, str]],
+        Tuple[Dict[str, Any], str, Union[HttpUrl, DirectoryPath]],
     ],
 ) -> Dict[str, Any]:
     """
@@ -190,7 +202,9 @@ def enrich_partial_rdf_with_imjoy_plugin(
     enriched_rdf: Dict[str, Any] = {}
     if "rdf_source" in partial_rdf:
         given_rdf_src = partial_rdf["rdf_source"]
-        if isinstance(given_rdf_src, str) and given_rdf_src.split("?")[0].endswith(".imjoy.html"):
+        if isinstance(given_rdf_src, str) and given_rdf_src.split("?")[0].endswith(
+            ".imjoy.html"
+        ):
             # given_rdf_src is an imjoy plugin
             rdf_source = dict(get_plugin_as_rdf(given_rdf_src))
         else:
@@ -203,15 +217,23 @@ def enrich_partial_rdf_with_imjoy_plugin(
                 except Exception as e:
                     try:
                         rdf_source, _, rdf_source_root = resolve_rdf_source(
-                            root / given_rdf_src if isinstance(root, Path) else urljoin(str(root), given_rdf_src)
+                            root / given_rdf_src
+                            if isinstance(root, Path)
+                            else urljoin(str(root), given_rdf_src)
                         )
                     except Exception as ee:
                         rdf_source = {}
-                        warnings.warn(f"Failed to resolve `rdf_source`: 1. {e}\n2. {ee}")
+                        warnings.warn(
+                            f"Failed to resolve `rdf_source`: 1. {e}\n2. {ee}"
+                        )
                     else:
-                        rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
+                        rdf_source["root_path"] = (
+                            rdf_source_root  # enables remote source content to be resolved
+                        )
                 else:
-                    rdf_source["root_path"] = rdf_source_root  # enables remote source content to be resolved
+                    rdf_source["root_path"] = (
+                        rdf_source_root  # enables remote source content to be resolved
+                    )
 
         assert isinstance(rdf_source, dict)
         enriched_rdf.update(rdf_source)
@@ -221,5 +243,7 @@ def enrich_partial_rdf_with_imjoy_plugin(
             rdf_from_source = get_plugin_as_rdf(partial_rdf["source"])
             enriched_rdf.update(rdf_from_source)
 
-    enriched_rdf.update(partial_rdf)  # initial partial rdf overwrites fields from rdf_source or source
+    enriched_rdf.update(
+        partial_rdf
+    )  # initial partial rdf overwrites fields from rdf_source or source
     return enriched_rdf

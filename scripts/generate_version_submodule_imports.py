@@ -34,9 +34,19 @@ VERSION_MODULE_PATTERN = r"v(?P<major>\d+)_(?P<minor>\d+).py"
 
 
 def main(command: Literal["check", "generate"]):
-    for target in ["generic", "model", "dataset", "collection", "notebook", "application"]:
+    for target in [
+        "generic",
+        "model",
+        "dataset",
+        "collection",
+        "notebook",
+        "application",
+    ]:
         process(
-            Info(target=target, all_version_modules=get_ordered_version_submodules(target)),
+            Info(
+                target=target,
+                all_version_modules=get_ordered_version_submodules(target),
+            ),
             check=command == "check",
         )
 
@@ -44,8 +54,15 @@ def main(command: Literal["check", "generate"]):
 
 
 def parse_args():
-    p = ArgumentParser(description="script that generates imports in bioimageio.spec resource description submodules")
-    _ = p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
+    p = ArgumentParser(
+        description=(
+            "script that generates imports in bioimageio.spec resource description"
+            " submodules"
+        )
+    )
+    _ = p.add_argument(
+        "command", choices=["check", "generate"], nargs="?", default="generate"
+    )
     args = p.parse_args()
     return args
 
@@ -61,10 +78,16 @@ class Info:
     package_path: Path = field(init=False)
 
     def __post_init__(self):
-        self.target_node = dict(generic="GenericDescr").get(self.target, self.target.capitalize() + "Descr")
-        self.all_target_nodes_plain = ", ".join([f"{vm}.{self.target_node}" for vm in self.all_version_modules])
+        self.target_node = dict(generic="GenericDescr").get(
+            self.target, self.target.capitalize() + "Descr"
+        )
+        self.all_target_nodes_plain = ", ".join(
+            [f"{vm}.{self.target_node}" for vm in self.all_version_modules]
+        )
         self.latest_version_module = self.all_version_modules[-1]
-        self.all_version_modules_import_as = ", ".join(f"{m} as {m}" for m in self.all_version_modules)
+        self.all_version_modules_import_as = ", ".join(
+            f"{m} as {m}" for m in self.all_version_modules
+        )
         self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
 
 
@@ -77,14 +100,27 @@ def process(info: Info, check: bool):
     flags = re.DOTALL
     if not re.findall(pattern, init_content, flags=flags):
         raise RuntimeError(
-            f"Could not find autogen markers in {package_init}. Expected to find:\n{AUTOGEN_START}...{AUTOGEN_STOP}"
+            f"Could not find autogen markers in {package_init}. Expected to"
+            f" find:\n{AUTOGEN_START}...{AUTOGEN_STOP}"
         )
 
-    autogen_body = AUTOGEN_BODY_SINGLE if len(info.all_version_modules) == 1 else AUTOGEN_BODY_MULTIPLE
-    updated = re.sub(pattern, AUTOGEN_START + autogen_body.format(info=info) + AUTOGEN_STOP, init_content, flags=flags)
+    autogen_body = (
+        AUTOGEN_BODY_SINGLE
+        if len(info.all_version_modules) == 1
+        else AUTOGEN_BODY_MULTIPLE
+    )
+    updated = re.sub(
+        pattern,
+        AUTOGEN_START + autogen_body.format(info=info) + AUTOGEN_STOP,
+        init_content,
+        flags=flags,
+    )
     black_config = black.files.parse_pyproject_toml(str(ROOT_PATH / "pyproject.toml"))
     black_config["target_versions"] = set(
-        (getattr(black.mode.TargetVersion, tv.upper()) for tv in black_config.pop("target_version"))
+        (
+            getattr(black.mode.TargetVersion, tv.upper())
+            for tv in black_config.pop("target_version")
+        )
     )
     updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
 
@@ -94,7 +130,12 @@ def process(info: Info, check: bool):
         else:
             raise RuntimeError(
                 "call with mode 'generate' to update:\n"
-                + "".join(ndiff(init_content.splitlines(keepends=True), updated.splitlines(keepends=True)))
+                + "".join(
+                    ndiff(
+                        init_content.splitlines(keepends=True),
+                        updated.splitlines(keepends=True),
+                    )
+                )
             )
     else:
         _ = package_init.write_text(updated)
@@ -109,7 +150,10 @@ def get_ordered_version_submodules(target: str):
     if not matches:
         raise RuntimeError(f"No version modules found for target '{target}'")
 
-    return [m.string[:-3] for m in sorted(matches, key=lambda m: (int(m["major"]), int(m["minor"])))]
+    return [
+        m.string[:-3]
+        for m in sorted(matches, key=lambda m: (int(m["major"]), int(m["minor"])))
+    ]
 
 
 if __name__ == "__main__":

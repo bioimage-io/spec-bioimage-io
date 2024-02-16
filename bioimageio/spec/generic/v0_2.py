@@ -1,5 +1,16 @@
 import collections.abc
-from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVar, Union, get_args
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Sequence,
+    TypeVar,
+    Union,
+    get_args,
+)
 
 from annotated_types import Ge, Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
@@ -24,11 +35,21 @@ from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import OrcidId as OrcidId
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types.field_validation import AfterValidator as _AfterValidator
+from bioimageio.spec._internal.types.field_validation import (
+    AfterValidator as _AfterValidator,
+)
 from bioimageio.spec._internal.types.field_validation import WithSuffix as _WithSuffix
-from bioimageio.spec.generic._v0_2_converter import convert_from_older_format as _convert_from_older_format
+from bioimageio.spec.generic._v0_2_converter import (
+    convert_from_older_format as _convert_from_older_format,
+)
 
-KNOWN_SPECIFIC_RESOURCE_TYPES = ("application", "collection", "dataset", "model", "notebook")
+KNOWN_SPECIFIC_RESOURCE_TYPES = (
+    "application",
+    "collection",
+    "dataset",
+    "model",
+    "notebook",
+)
 
 VALID_COVER_IMAGE_EXTENSIONS = (
     ".gif",
@@ -99,7 +120,8 @@ class BadgeDescr(Node, title="Custom badge"):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Union[HttpUrl, None], Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"])
+        Union[HttpUrl, None],
+        Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
     """badge icon"""
 
@@ -164,8 +186,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         Field(
             examples=["cover.png"],
             description=(
-                "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\n"
-                f"The supported image formats are: {VALID_COVER_IMAGE_EXTENSIONS}"
+                "Cover images. Please use an image smaller than 500KB and an aspect"
+                " ratio width to height of 2:1.\nThe supported image formats are:"
+                f" {VALID_COVER_IMAGE_EXTENSIONS}"
             ),
         ),
     ] = Field(
@@ -213,7 +236,10 @@ class GenericModelDescrBase(ResourceDescriptionBase):
         Field(
             examples=[
                 dict(
-                    bioimageio={"my_custom_key": 3837283, "another_key": {"nested": "value"}},
+                    bioimageio={
+                        "my_custom_key": 3837283,
+                        "another_key": {"nested": "value"},
+                    },
                     imagej={"macro_dir": "path/to/macro/file"},
                 )
             ],
@@ -252,7 +278,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None] = None
+    icon: Union[
+        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+    ] = None
     """An icon for illustration"""
 
     links: Annotated[
@@ -280,15 +308,18 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.
     Do not set this field in a YAML file."""
 
-    tags: Annotated[List[str], Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")])] = Field(
-        default_factory=list
-    )
+    tags: Annotated[
+        List[str],
+        Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]),
+    ] = Field(default_factory=list)
     """Associated tags"""
 
     @as_warning
     @field_validator("tags")
     @classmethod
-    def warn_about_tag_categories(cls, value: List[str], info: ValidationInfo) -> List[str]:
+    def warn_about_tag_categories(
+        cls, value: List[str], info: ValidationInfo
+    ) -> List[str]:
         categories = TAG_CATEGORIES.get(info.data["type"], {})
         missing_categories: List[Mapping[str, Sequence[str]]] = []
         for cat, entries in categories.items():
@@ -296,7 +327,9 @@ class GenericModelDescrBase(ResourceDescriptionBase):
                 missing_categories.append({cat: entries})
 
         if missing_categories:
-            raise ValueError("Missing tags from bioimage.io categories: {missing_categories}")
+            raise ValueError(
+                "Missing tags from bioimage.io categories: {missing_categories}"
+            )
 
         return value
 
@@ -327,7 +360,9 @@ class GenericDescrBase(GenericModelDescrBase):
 
     @model_validator(mode="before")
     @classmethod
-    def _convert_from_older_format(cls, data: BioimageioYamlContent, /) -> BioimageioYamlContent:
+    def _convert_from_older_format(
+        cls, data: BioimageioYamlContent, /
+    ) -> BioimageioYamlContent:
         _convert_from_older_format(data)
         return data
 
@@ -362,7 +397,9 @@ class GenericDescrBase(GenericModelDescrBase):
         if value is None:
             issue_warning("missing license.", value=value)
         elif value not in get_args(LicenseId):
-            issue_warning("'{value}' is a deprecated or unknown license identifier.", value=value)
+            issue_warning(
+                "'{value}' is a deprecated or unknown license identifier.", value=value
+            )
         elif not license_info.get("isFsfLibre", False):
             issue_warning(
                 "{value} ({license_name}) is not FSF Free/libre.",
@@ -376,7 +413,9 @@ class GenericDescrBase(GenericModelDescrBase):
 ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic specification"):
+class GenericDescr(
+    GenericDescrBase, extra="ignore", title="bioimage.io generic specification"
+):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
@@ -395,7 +434,8 @@ class GenericDescr(GenericDescrBase, extra="ignore", title="bioimage.io generic 
     def check_specific_types(cls, value: str) -> str:
         if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
-                f"Use the {value} description instead of this generic description for your '{value}' resource."
+                f"Use the {value} description instead of this generic description for"
+                f" your '{value}' resource."
             )
 
         return value

@@ -170,8 +170,13 @@ KNOWN_INVALID_AS_LATEST = {
 EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
     "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
-    "10.5281/zenodo.7315440/7315441/rdf.yaml": {"weights", "cite"},  # weights.onnx: missing sh256, cite[0].doi: prefix
-    "10.5281/zenodo.7772662/7781091/rdf.yaml": {"weights"},  # upper to lower case sha256
+    "10.5281/zenodo.7315440/7315441/rdf.yaml": {
+        "weights",
+        "cite",
+    },  # weights.onnx: missing sh256, cite[0].doi: prefix
+    "10.5281/zenodo.7772662/7781091/rdf.yaml": {
+        "weights"
+    },  # upper to lower case sha256
     "10.5281/zenodo.6028097/6028098/rdf.yaml": {
         "authors",  # gh username "Constantin Pape" -> contantinpape
         "maintainers",
@@ -197,7 +202,10 @@ def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
 @pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
 @pytest.mark.parametrize("descr_url,key", list(yield_bioimageio_yaml_urls()))
 def test_rdf(
-    descr_url: Path, key: str, format_version: FormatVersionPlaceholder, bioimageio_json_schema: Mapping[Any, Any]
+    descr_url: Path,
+    key: str,
+    format_version: FormatVersionPlaceholder,
+    bioimageio_json_schema: Mapping[Any, Any],
 ):
     if (
         format_version == DISCOVER
