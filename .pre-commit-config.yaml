@@ -2,11 +2,15 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.0.287
+    pass_filenames: true
+    files: ^.*\.py$
     hooks:
       - id: ruff
         # args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/ambv/black
-    rev: 23.7.0
+    rev: 24.2.0
+    pass_filenames: true
+    files: ^.*\.py$
     hooks:
       - id: black
   - repo: local
@@ -16,7 +20,8 @@ repos:
         entry: pyright
         language: system
         always_run: true
-        pass_filenames: false
+        pass_filenames: true
+        files: ^.*\.py$
       - id: generate passthrough modules
         name: generate passthrough modules
         entry: python scripts/generate_version_submodule_imports.py generate
