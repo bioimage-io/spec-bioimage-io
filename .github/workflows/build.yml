@@ -39,7 +39,7 @@ jobs:
         run: python scripts/generate_version_submodule_imports.py check
       - run: black .
         if: matrix.test-format
-      - run: ruff
+      - run: ruff check .
         if: matrix.test-format
       - run: pyright
       - run: pytest
