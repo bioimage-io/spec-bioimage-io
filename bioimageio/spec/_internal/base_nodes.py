@@ -263,8 +263,7 @@ class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
     @abstractmethod
     def _convert(
         self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: Unpack[CArgs]
-    ) -> "TGT | dict[str, Any]":
-        ...
+    ) -> "TGT | dict[str, Any]": ...
 
     # note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399
     #       we therefore use `kwargs` (and not `**kwargs`)

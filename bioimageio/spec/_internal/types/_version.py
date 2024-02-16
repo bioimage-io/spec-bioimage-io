@@ -15,7 +15,7 @@ class _VersionPydanticAnnotation:
         _handler: GetCoreSchemaHandler,
     ) -> core_schema.CoreSchema:
         def validate_from_str(
-            value: Union[str, int, float]
+            value: Union[str, int, float],
         ) -> packaging.version.Version:
             return packaging.version.Version(str(value))
 

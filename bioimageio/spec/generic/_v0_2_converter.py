@@ -53,7 +53,7 @@ def remove_slashes_from_names(data: Dict[Any, Any]) -> None:
 
     # update authors and maintainers
     def rm_slashes_in_person_name(
-        person: Union[Any, Mapping[Union[Any, str], Any]]
+        person: Union[Any, Mapping[Union[Any, str], Any]],
     ) -> Any:
         if not isinstance(person, collections.abc.Mapping):
             return person

@@ -303,7 +303,7 @@ class SizeReference(Node):
             SpaceInputAxis,
             TimeOutputAxis,
             SpaceOutputAxis,
-        ]
+        ],
     ):
         if isinstance(axis, (ChannelAxis, IndexAxis)):
             return None
@@ -1129,7 +1129,7 @@ def _axes_letters_to_ids(
 
 
 def _convert_proc(
-    p: Union[v0_4.PreprocessingDescr, v0_4.PostprocessingDescr]
+    p: Union[v0_4.PreprocessingDescr, v0_4.PostprocessingDescr],
 ) -> Union[PreprocessingDescr, PostprocessingDescr]:
     if isinstance(p, v0_4.BinarizeDescr):
         return BinarizeDescr(kwargs=BinarizeKwargs(threshold=p.kwargs.threshold))
@@ -1845,7 +1845,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @staticmethod
     def _get_axes_with_parameterized_size(
-        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]
+        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
     ):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
@@ -1856,7 +1856,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @staticmethod
     def _get_axes_with_independent_size(
-        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]]
+        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
     ):
         return {
             (t.id, a.id): (t, a, a.size)

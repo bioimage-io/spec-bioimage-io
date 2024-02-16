@@ -268,7 +268,7 @@ ImportantFileSource = Annotated[
 
 
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath]
+    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath],
 ) -> str:
     if isinstance(src, RelativeFilePath):
         return src.path.name

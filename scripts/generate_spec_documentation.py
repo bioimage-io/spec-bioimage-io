@@ -191,9 +191,7 @@ class AnnotationName:
                 return f"{self.get_name(args[0], abbreviate, inline, multiline_level)}*"
 
             annotated_type = self.get_name(args[0], abbreviate, inline, multiline_level)
-            annos = (
-                f"({'; '.join([self.get_name(tt, abbreviate, inline, multiline_level) for tt in args[1:]])})"
-            )
+            annos = f"({'; '.join([self.get_name(tt, abbreviate, inline, multiline_level) for tt in args[1:]])})"
             if (
                 inline
                 or abbreviate
@@ -209,9 +207,7 @@ class AnnotationName:
             return f"{annotated_type}{anno_sep}{annos}"
 
         if s.startswith("Optional["):
-            return (
-                f"Optional[{self.get_name(get_args(t)[0], abbreviate, inline, multiline_level)}]"
-            )
+            return f"Optional[{self.get_name(get_args(t)[0], abbreviate, inline, multiline_level)}]"
 
         for format_like_seq in ["Union", "Tuple", "Literal", "Dict", "List", "Set"]:
             if not s.startswith(format_like_seq):
@@ -346,9 +342,7 @@ class Field:
         #     d = "<empty string>"
         d_inline = f"`{d}`"
         if self.indent_level + 30 + len(d_inline) > MAX_LINE_WIDTH:
-            return (
-                f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
-            )
+            return f" ≝ 🡇\n```python\n{pformat(d, indent=self.indent_level, width=MAX_LINE_WIDTH)}\n```\n"
         else:
             return f" ≝ {d_inline}"
 

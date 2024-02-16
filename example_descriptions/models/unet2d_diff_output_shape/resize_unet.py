@@ -349,9 +349,7 @@ class ResizeUNet(UNetBase):
         features_encoder = [in_channels] + [
             initial_features * gain**i for i in range(depth)
         ]
-        features_decoder = [initial_features * gain**i for i in range(depth + 1)][
-            ::-1
-        ]
+        features_decoder = [initial_features * gain**i for i in range(depth + 1)][::-1]
         scale_factors = depth * [2]
 
         if return_side_outputs:
