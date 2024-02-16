@@ -51,7 +51,6 @@ setup(
             "pdoc",
             "pre-commit",
             "pyright",
-            "pytest-pyodide",  # TODO: write tests for pyodide
             "pytest",
         ]
     },
