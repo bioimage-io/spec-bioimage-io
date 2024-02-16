@@ -156,7 +156,9 @@ class CollectionDescr(GenericDescrBase, extra="allow", title="bioimage.io collec
             assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescription):
                 raise ValueError(
-                    f"Invalid collection entry collection[{i}]:\n{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
+                    "Invalid collection entry"
+                    f" collection[{i}]:\n"
+                    f"{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
                 )
             elif isinstance(entry_descr, get_args(EntryDescr)):  # TODO: use EntryDescr as union (py>=3.10)
                 entry._descr = entry_descr  # type: ignore

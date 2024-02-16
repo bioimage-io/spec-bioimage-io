@@ -292,10 +292,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                (
-                    "Missing PyTorch version. "
-                    "Please specify the PyTorch version these PyTorch state dict weights were created with."
-                ),
+                "Missing PyTorch version. "
+                "Please specify the PyTorch version these PyTorch state dict weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -313,10 +311,8 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                (
-                    "Missing PyTorch version. "
-                    "Please specify the PyTorch version these Torchscript weights were created with."
-                ),
+                "Missing PyTorch version. "
+                "Please specify the PyTorch version these Torchscript weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -334,10 +330,8 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                (
-                    "Missing TensorFlow version. "
-                    "Please specify the TensorFlow version these TensorflowJs weights were created with."
-                ),
+                "Missing TensorFlow version. "
+                "Please specify the TensorFlow version these TensorflowJs weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -359,10 +353,8 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                (
-                    "Missing TensorFlow version. "
-                    "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with."
-                ),
+                "Missing TensorFlow version. "
+                "Please specify the TensorFlow version these Tensorflow saved model bundle weights were created with.",
                 value=value,
                 severity=ALERT,
             )

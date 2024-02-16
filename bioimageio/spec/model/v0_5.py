@@ -562,9 +562,9 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     ]
     """The standard deviation value(s) to normalize with. Size must match `mean` values."""
 
-    axis: Annotated[
-        Optional[NonBatchAxisId], Field(examples=["channel", "index"])
-    ] = None  # todo: validate existence of axis
+    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel", "index"])] = (
+        None  # todo: validate existence of axis
+    )
     """The axis of the mean/std values to normalize each entry along that dimension separately.
     Invalid for scalar gains/offsets.
     """
@@ -1808,20 +1808,24 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     source=w.source,
                     authors=conv_authors(w.authors),
                     parent=w.parent,
-                    architecture=arch_file_conv(
-                        w.architecture,
-                        w.architecture_sha256,
-                        w.kwargs,
-                    )
-                    if isinstance(w.architecture, v0_4.CallableFromFile)
-                    else arch_lib_conv(w.architecture, w.kwargs),
+                    architecture=(
+                        arch_file_conv(
+                            w.architecture,
+                            w.architecture_sha256,
+                            w.kwargs,
+                        )
+                        if isinstance(w.architecture, v0_4.CallableFromFile)
+                        else arch_lib_conv(w.architecture, w.kwargs)
+                    ),
                     pytorch_version=w.pytorch_version or Version("1.10"),
-                    dependencies=None
-                    if w.dependencies is None
-                    else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
-                        source=cast(
-                            ImportantFileSource,
-                            str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
+                    dependencies=(
+                        None
+                        if w.dependencies is None
+                        else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                            source=cast(
+                                ImportantFileSource,
+                                str(deps := w.dependencies)[len("conda:") if str(deps).startswith("conda:") else 0 :],
+                            )
                         )
                     ),
                 ),
@@ -1838,14 +1842,18 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     parent=w.parent,
                     source=w.source,
                     tensorflow_version=w.tensorflow_version or Version("1.15"),
-                    dependencies=None
-                    if w.dependencies is None
-                    else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
-                        source=cast(
-                            ImportantFileSource,
-                            str(w.dependencies)[len("conda:") :]
-                            if str(w.dependencies).startswith("conda:")
-                            else str(w.dependencies),
+                    dependencies=(
+                        None
+                        if w.dependencies is None
+                        else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                            source=cast(
+                                ImportantFileSource,
+                                (
+                                    str(w.dependencies)[len("conda:") :]
+                                    if str(w.dependencies).startswith("conda:")
+                                    else str(w.dependencies)
+                                ),
+                            )
                         )
                     ),
                 ),

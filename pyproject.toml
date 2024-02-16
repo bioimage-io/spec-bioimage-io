@@ -1,6 +1,7 @@
 [tool.black]
 line-length = 120
 target-version = ["py38", "py39", "py310", "py311"]
+preview = true
 
 [tool.pyright]
 exclude = ["**/node_modules", "**/__pycache__", "tests/old_*", "tests/cache"]

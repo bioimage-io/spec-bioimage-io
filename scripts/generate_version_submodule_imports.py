@@ -44,7 +44,7 @@ def main(command: Literal["check", "generate"]):
 
 
 def parse_args():
-    p = ArgumentParser(description=("script that generates imports in bioimageio.spec resource description submodules"))
+    p = ArgumentParser(description="script that generates imports in bioimageio.spec resource description submodules")
     _ = p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
     args = p.parse_args()
     return args

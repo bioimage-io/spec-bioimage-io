@@ -52,7 +52,7 @@ setup(
             "pre-commit",
             "pyright",
             "pytest",
-            "ruff",  # TODO: consider removing ruff (pyright is sufficient)
+            "ruff",  # check line length in cases black cannot fix it
         ]
     },
     scripts=[],

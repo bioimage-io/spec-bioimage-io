@@ -40,7 +40,7 @@ def export_json_schemas(dist: Path):
 
 
 def parse_args():
-    p = ArgumentParser(description=("script that generates bioimageio json schemas"))
+    p = ArgumentParser(description="script that generates bioimageio json schemas")
     _ = p.add_argument("command", choices=["check", "generate"], nargs="?", default="generate")
     _ = p.add_argument("--dist", nargs="?", default=str((Path(__file__).parent / "../dist").resolve()))
     args = p.parse_args()

@@ -52,7 +52,8 @@ def get_resource_package_content(
     """
     if bioimageio_yaml_file_name != BIOIMAGEIO_YAML and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}"):
         raise ValueError(
-            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
+            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be '{BIOIMAGEIO_YAML}' or end with"
+            f" '.{BIOIMAGEIO_YAML}'"
         )
 
     os_friendly_name = get_os_friendly_file_name(rd.name)
