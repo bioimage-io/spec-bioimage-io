@@ -19,13 +19,13 @@ Any{info.target_node} = {info.target_node}
 """
 AUTOGEN_BODY_MULTIPLE = """from typing import Union
 
-from pydantic import Field
+from pydantic import Discriminator
 from typing_extensions import Annotated
 
 from . import {info.all_version_modules_import_as}
 from .{info.latest_version_module} import {info.target_node} as {info.target_node}
 
-Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Field(discriminator="format_version")]
+Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Discriminator("format_version")]
 """
 
 AUTOGEN_STOP = "# autogen: stop\n"

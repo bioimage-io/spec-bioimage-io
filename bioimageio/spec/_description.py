@@ -7,7 +7,7 @@ from typing import (
     Union,
 )
 
-from pydantic import Field
+from pydantic import Discriminator
 from typing_extensions import Annotated
 
 import bioimageio.spec
@@ -27,7 +27,7 @@ _ResourceDescr_v0_2 = Union[
             model.v0_4.ModelDescr,
             notebook.v0_2.NotebookDescr,
         ],
-        Field(discriminator="type"),
+        Discriminator("type"),
     ],
     generic.v0_2.GenericDescr,
 ]
@@ -42,7 +42,7 @@ _ResourceDescription_v0_3 = Union[
             model.v0_5.ModelDescr,
             notebook.v0_3.NotebookDescr,
         ],
-        Field(discriminator="type"),
+        Discriminator("type"),
     ],
     generic.v0_3.GenericDescr,
 ]
@@ -60,7 +60,7 @@ SpecificResourceDescr = Annotated[
         model.AnyModelDescr,
         notebook.AnyNotebookDescr,
     ],
-    Field(discriminator="type"),
+    Discriminator("type"),
 ]
 """Any of the implemented, non-generic resource descriptions"""
 
