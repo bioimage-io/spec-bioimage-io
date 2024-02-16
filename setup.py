@@ -52,6 +52,7 @@ setup(
             "pre-commit",
             "pyright",
             "pytest",
+            "ruff",  # TODO: consider removing ruff (pyright is sufficient)
         ]
     },
     scripts=[],
