@@ -148,7 +148,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
         tags.append("bioengine")
     rdf["tags"] = tags
 
-    docs = plugin_config.get("docs")
+    # docs = plugin_config.get("docs")
     #     if isinstance(docs, dict):
     #         rdf["documentation"] = docs.get("content")
     #     elif isinstance(docs, str):
