@@ -306,9 +306,19 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
-    @field_validator("format_version", mode="before", check_fields=False)
+    # @field_validator("format_version", mode="before", check_fields=False)
+    # field_validator on "format_version" is not possible, because we want to use
+    #   "format_version" in a descriminated Union higher up
+    # (PydanticUserError: Cannot use a mode='before' validator in the discriminator
+    #   field 'format_version' of Model 'CollectionDescr')
+    @model_validator(mode="before")
     @classmethod
-    def _ignore_future_patch(cls, value: Any, /) -> Any:
+    def _ignore_future_patch(cls, data: Union[Dict[Any, Any], Any], /) -> Any:
+        if not isinstance(data, dict) or "format_version" not in data:
+            return data
+
+        value = data["format_version"]
+
         def get_maj(v: str):
             parts = v.split(".")
             if parts and (p := parts[0]).isdecimal():
@@ -339,9 +349,9 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
                 msg_context=dict(implemented=cls.implemented_format_version),
                 severity=ALERT,
             )
-            return cls.implemented_format_version
-        else:
-            return value
+            data["format_version"] = cls.implemented_format_version
+
+        return data
 
     @property
     def validation_summary(self) -> Optional[ValidationSummary]:
