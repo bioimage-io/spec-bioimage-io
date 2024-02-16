@@ -2,7 +2,7 @@ type: model
 format_version: 0.5.0
 
 name: UNet 2D Nuclei Broad
-version: 0.2.0
+version: 2
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
   - name: "Constantin Pape;@bioimage-io"
@@ -40,7 +40,6 @@ inputs:
       - type: batch
       - type: channel
         channel_names: [raw_intensity]
-        size: 1
       - type: space # todo: scale/unit
         id: y
         size: 512
@@ -70,7 +69,6 @@ outputs:
       - type: batch
       - type: channel
         channel_names: [probability]
-        size: 1
       - type: space
         id: y
         size:
