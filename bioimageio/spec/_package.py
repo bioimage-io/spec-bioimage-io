@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from typing import Dict, Literal, Optional, Sequence, Union, cast
 from zipfile import ZIP_DEFLATED
 
-from pydantic import AnyUrl, DirectoryPath, FilePath, HttpUrl, NewPath
+from pydantic import DirectoryPath, FilePath, NewPath
 
 from bioimageio.spec import load_description, model
 from bioimageio.spec._description import InvalidDescription, ResourceDescr, build_description
@@ -24,6 +24,7 @@ from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
     BioimageioYamlSource,
     FileName,
+    HttpUrl,
     YamlValue,
 )
 from bioimageio.spec._internal.validation_context import validation_context_var
@@ -59,7 +60,7 @@ def get_resource_package_content(
 
     content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {
         # add bioimageio.yaml file already here to avoid file name conflicts
-        bioimageio_yaml_file_name: AnyUrl("http://placeholder.com"),
+        bioimageio_yaml_file_name: "http://placeholder.com",
     }
     with PackagingContext(file_sources=content):
         rdf_content: BioimageioYamlContent = rd.model_dump(mode="json", exclude_unset=True)

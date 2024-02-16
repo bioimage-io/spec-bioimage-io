@@ -11,6 +11,7 @@ from typing_extensions import TypeAliasType as _TypeAliasType
 
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.types import field_validation as _fv
+from bioimageio.spec._internal.types._file_source import AbsoluteDirectory as AbsoluteDirectory
 from bioimageio.spec._internal.types._file_source import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types._file_source import FileName as FileName
 from bioimageio.spec._internal.types._file_source import FileSource as FileSource

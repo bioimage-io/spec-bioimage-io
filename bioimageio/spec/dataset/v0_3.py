@@ -9,13 +9,14 @@ from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import Doi as Doi
-from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import (
+    DocumentationSource,
     GenericDescrBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
+from bioimageio.spec.generic.v0_3 import Doi as Doi
+from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
@@ -60,9 +61,9 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
                     config=old.config,
                     covers=old.covers,
                     description=old.description,
-                    documentation=old.documentation,
+                    documentation=cast(DocumentationSource, old.documentation),
                     format_version="0.3.0",
-                    git_repo=cast(Optional[HttpUrl], old.git_repo),
+                    git_repo=old.git_repo,
                     icon=old.icon,
                     id=old.id,
                     license=old.license,  # type: ignore
@@ -74,6 +75,7 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
                     source=old.source,
                     tags=old.tags,
                     type=old.type,
+                    uploader=old.uploader,
                     version=old.version,
                     **(old.model_extra or {}),
                 ),

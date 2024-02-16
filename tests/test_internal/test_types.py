@@ -7,6 +7,7 @@ from bioimageio.spec._internal import types
 
 TYPE_ARGS = {
     types.AbsoluteFilePath: str(Path(__file__).absolute()),
+    types.AbsoluteDirectory: str(Path(__file__).absolute().parent),
     types.DatasetId: "dataset-id",
     types.Datetime: (2024, 2, 14),
     types.Doi: "10.5281/zenodo.5764892",

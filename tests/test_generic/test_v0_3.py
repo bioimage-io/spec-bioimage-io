@@ -26,7 +26,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             name="my name",
             type="my_type",
             unknown_extra_field="present",
-            version="1.0",
+            version=1,
         ),
         dict(
             attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
@@ -37,7 +37,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             license="BSD-2-Clause-FreeBSD",
             name="your name",
             type="my_type",
-            version="0.1.0",
+            version=2,
         ),
     ],
 )
@@ -55,7 +55,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 description="my description",
                 authors=[{"name": "Me"}],
                 type="my_type",
-                version="1.0",
+                version="0.1.0",
                 license="BSD-2-Clause-FreeBSD",
                 cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
             ),

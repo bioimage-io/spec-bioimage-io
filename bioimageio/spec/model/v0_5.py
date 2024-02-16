@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections.abc
+import warnings
 from abc import ABC
 from datetime import datetime
 from itertools import chain
@@ -925,7 +926,11 @@ def convert_axes(
             ret.append(IndexAxis(size=size))
         elif axis_type == "channel":
             assert not isinstance(size, ParameterizedSize)
-            ret.append(ChannelAxis(size=size))
+            if isinstance(size, SizeReference):
+                warnings.warn("Conversion of channel size from an implicit output shape may by wrong")
+                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(int(2 * size.offset))]))
+            else:
+                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(size)]))
         elif axis_type == "space":
             if tensor_type == "input":
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
@@ -1038,7 +1043,7 @@ class _InputTensorConv(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
-            sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
+            sample_tensor=None if sample_tensor is None else FileDescr(source=sample_tensor),
             data=dict(type=src.data_type),  # type: ignore
             preprocessing=prep,
         )
@@ -1084,7 +1089,7 @@ class _OutputTensorConv(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
             test_tensor=FileDescr(source=test_tensor),
-            sample_tensor=sample_tensor and FileDescr(source=sample_tensor),
+            sample_tensor=None if sample_tensor is None else FileDescr(source=sample_tensor),
             data=dict(type=src.data_type),  # type: ignore
             postprocessing=[_convert_proc(p) for p in src.postprocessing],
         )
@@ -1715,9 +1720,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             config=src.config,
             covers=src.covers,
             description=src.description,
-            documentation=src.documentation,
+            documentation=cast(DocumentationSource, src.documentation),
             format_version="0.5.0",
-            git_repo=cast(Optional[HttpUrl], src.git_repo),
+            git_repo=src.git_repo,
             icon=src.icon,
             id=src.id,
             id_emoji=src.id_emoji,
@@ -1729,6 +1734,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             name=src.name,
             tags=src.tags,
             type=src.type,
+            uploader=src.uploader,
             version=src.version,
             inputs=[  # pyright: ignore[reportArgumentType]
                 _input_tensor_conv.convert_as_dict(ipt, tt, st)

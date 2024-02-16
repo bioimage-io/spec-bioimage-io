@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, TypeVa
 
 from annotated_types import Ge, Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
@@ -136,14 +136,12 @@ class CiteEntry(Node):
     url: Optional[str] = None
     """URL to cite (preferably specify a `doi` instead)"""
 
-    @field_validator("url", mode="after")
-    @classmethod
-    def check_doi_or_url(cls, value: Optional[str], info: ValidationInfo) -> Optional[str]:
-        no_error_for_doi = "doi" in info.data
-        if no_error_for_doi and not info.data["doi"] and not value:
+    @model_validator(mode="after")
+    def _check_doi_or_url(self) -> Self:
+        if not self.doi and not self.url:
             raise ValueError("Either 'doi' or 'url' is required")
 
-        return value
+        return self
 
 
 class LinkedResourceDescr(Node):
@@ -306,6 +304,15 @@ class GenericModelDescrBase(ResourceDescriptionBase):
     """The version number of the resource.
     note: previous versions of this spec accepted a SemVer 2.0 version, e.g. 0.1.0.
     These are now converted by using the minor part as version nr."""
+
+    @field_validator("version", mode="before")
+    @classmethod
+    def _convert_version(cls, value: Any):
+        if isinstance(value, str) and "." in value:
+            _, v, *_ = value.split(".")
+            return v
+
+        return value
 
 
 class GenericDescrBase(GenericModelDescrBase):

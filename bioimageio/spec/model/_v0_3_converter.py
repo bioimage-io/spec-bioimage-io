@@ -5,7 +5,10 @@ from typing import Any, Dict
 def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
     """auto converts model 'data' to newest format"""
 
-    if data.get("format_version", "0.3.0") == "0.3.0":
+    if "format_version" not in data:
+        return
+
+    if data["format_version"] == "0.3.0":
         # no breaking change, bump to 0.3.1
         data["format_version"] = "0.3.1"
 
@@ -17,6 +20,9 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
 
     if data["format_version"] in ("0.3.3", "0.3.4", "0.3.5"):
         data["format_version"] = "0.3.6"
+
+    if data["format_version"] != "0.3.6":
+        return
 
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})

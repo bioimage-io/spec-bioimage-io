@@ -6,7 +6,7 @@ from bioimageio.spec.model._v0_3_converter import convert_model_from_v0_3_to_0_4
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:
-    fv = data.get("format_version", "0.3.0")
+    fv = data.get("format_version")
     if not isinstance(fv, str):
         return
 

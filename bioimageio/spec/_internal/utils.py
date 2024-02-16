@@ -7,11 +7,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Dict, List, Set, Tuple, Type, TypeVar, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 
-from pydantic import AnyUrl, HttpUrl
-from typing_extensions import Annotated, ParamSpec, assert_never
+import pydantic
+from typing_extensions import ParamSpec, assert_never
 
 if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import FileName
+    from bioimageio.spec._internal.types import FileName, HttpUrl
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -27,10 +27,8 @@ if sys.version_info < (3, 9):
 else:
     from importlib.resources import files as files
 
-_annot_type = type(Annotated[int, "int"])
 
-
-def get_parent_url(url: HttpUrl) -> HttpUrl:
+def get_parent_url(url: Union["HttpUrl", pydantic.HttpUrl]) -> "HttpUrl":
     parsed = urlsplit(str(url))
     path = list(parsed.path.split("/"))
     if parsed.netloc == "zenodo.org" and parsed.path.startswith("/api/records/") and parsed.path.endswith("/content"):
@@ -38,16 +36,16 @@ def get_parent_url(url: HttpUrl) -> HttpUrl:
     else:
         path = path[:-1]
 
-    return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+    return urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
 
 
-R = TypeVar("R", HttpUrl, Path)
+R = TypeVar("R", str, Path, pydantic.AnyUrl)
 
 
 def get_absolute(file_name: FileName, root: R) -> R:
     if isinstance(root, Path):
         return root / file_name
-    elif isinstance(root, AnyUrl):
+    elif isinstance(root, (str, pydantic.AnyUrl)):
         parsed = urlsplit(str(root))
         path = list(parsed.path.split("/"))
         if (
@@ -59,7 +57,11 @@ def get_absolute(file_name: FileName, root: R) -> R:
         else:
             path.append(file_name)
 
-        return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+        url = urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
+        if isinstance(root, pydantic.AnyUrl):
+            return pydantic.AnyUrl(url)
+        else:
+            return url
     else:
         assert_never(root)
 

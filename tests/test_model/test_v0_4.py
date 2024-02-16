@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, Union
 
 import pytest
-from pydantic import AnyUrl, ValidationError
+from pydantic import ValidationError
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
@@ -315,9 +315,7 @@ def test_warn_long_name(model_data: Dict[str, Any]):
 
 def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
     model_data["inputs"][0]["name"] = "invalid/name"
-    summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("http://example.com"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
     assert summary.status == "failed", summary.format()
 
 
@@ -333,9 +331,7 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
         }
     ]
 
-    summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("http://example.com"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
     assert summary.status == "failed", summary.format()
 
 
@@ -350,9 +346,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
         }
     ]
 
-    summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("http://example.com"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
     assert summary.status == "failed", summary.format()
 
 
@@ -367,16 +361,14 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
             "halo": [256, 128, 0],
         }
     ]
-    summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("http://example.com"), perform_io_checks=False)
-    )
+    summary = validate_format(model_data, context=ValidationContext(root="http://example.com", perform_io_checks=False))
     assert summary.status == "failed", summary.format()
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     model_data["parent"] = dict(id="10.5281/zenodo.5764892")
     summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
+        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
     )
     assert summary.status == "passed", summary.format()
 
@@ -397,7 +389,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
     ]
 
     summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
+        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
     )
     assert summary.status == "passed", summary.format()
 
@@ -406,7 +398,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
     model_data["format_version"] = "0.2.4"
     summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
+        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
     )
     assert summary.status == "passed", summary.format()
 
@@ -414,6 +406,6 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
     summary = validate_format(
-        model_data, context=ValidationContext(root=AnyUrl("https://example.com/"), perform_io_checks=False)
+        model_data, context=ValidationContext(root="https://example.com/", perform_io_checks=False)
     )
     assert summary.status == "failed", summary.format()

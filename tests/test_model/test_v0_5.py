@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Any, Dict, Union
 
 import pytest
-from pydantic import AnyUrl
 
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.validation_context import ValidationContext
@@ -13,6 +12,7 @@ from bioimageio.spec.model.v0_5 import (
     ChannelAxis,
     CiteEntry,
     FileDescr,
+    Identifier,
     InputAxis,
     InputTensorDescr,
     IntervalOrRatioDataDescr,
@@ -180,7 +180,7 @@ def model_data():
     data = ModelDescr(
         documentation=UNET2D_ROOT / "README.md",
         license="MIT",
-        git_repo=AnyUrl("https://github.com/bioimage-io/python-bioimage-io"),
+        git_repo="https://github.com/bioimage-io/python-bioimage-io",
         format_version="0.5.0",
         description="description",
         authors=[
@@ -200,7 +200,7 @@ def model_data():
                 data=IntervalOrRatioDataDescr(type="float32"),
                 axes=[
                     BatchAxis(),
-                    ChannelAxis(size=1),
+                    ChannelAxis(channel_names=[Identifier("intensity")]),
                     SpaceInputAxis(id=AxisId("x"), size=512),
                     SpaceInputAxis(id=AxisId("y"), size=512),
                 ],
@@ -213,7 +213,7 @@ def model_data():
                 description="Output 1",
                 axes=[
                     BatchAxis(),
-                    ChannelAxis(size=1),
+                    ChannelAxis(channel_names=[Identifier("intensity")]),
                     SpaceOutputAxis(id=AxisId("x"), size=512),
                     SpaceOutputAxis(id=AxisId("y"), size=512),
                 ],
@@ -330,7 +330,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
         {"type": "space", "id": "x", "size": {"tensor_id": "input_1", "axis_id": "x"}},
         {"type": "space", "id": "y", "size": {"tensor_id": "input_1", "axis_id": "y"}},
         {"type": "space", "id": "z", "size": 7},
-        {"type": "channel", "size": {"tensor_id": "input_1", "axis_id": "channel"}},
+        {"type": "channel", "channel_names": list("abc")},
     ]
 
     summary = validate_format(model_data, context=ValidationContext(perform_io_checks=False))

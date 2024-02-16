@@ -7,7 +7,6 @@ import pytest
 from deepdiff import DeepDiff
 from pydantic import (
     DirectoryPath,
-    HttpUrl,
     TypeAdapter,
     ValidationError,
     create_model,  # type: ignore
@@ -17,6 +16,7 @@ from ruamel.yaml import YAML
 from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.io_utils import download
+from bioimageio.spec._internal.types import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 

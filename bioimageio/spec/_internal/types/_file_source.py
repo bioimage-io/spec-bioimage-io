@@ -28,7 +28,7 @@ from bioimageio.spec._internal.packaging_context import packaging_context_var
 from bioimageio.spec._internal.validation_context import validation_context_var
 
 
-def validate_url_ok(url: pydantic.HttpUrl):
+def validate_url_ok(url: str):
     if not validation_context_var.get().perform_io_checks:
         return url
 
@@ -105,7 +105,7 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: Union[DirectoryPath, HttpUrl]) -> Union[AbsoluteFilePath, HttpUrl]:
+    def get_absolute(self, root: Union[DirectoryPath, HttpUrl, pydantic.HttpUrl]) -> Union[AbsoluteFilePath, HttpUrl]:
         if isinstance(root, pathlib.Path):
             return (root / self.path).absolute()
 
@@ -121,7 +121,7 @@ class RelativePath:
         else:
             path.append(rel_path)
 
-        return AnyUrl(urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)))
+        return urlunsplit((parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment))
 
     def exists(self) -> bool:
         try:
@@ -139,7 +139,7 @@ class RelativePath:
     def _exists_impl(self) -> None:
         if isinstance(self.absolute, pathlib.Path):
             self._exists_locally(self.absolute)
-        elif isinstance(self.absolute, AnyUrl):
+        elif isinstance(self.absolute, str):
             _ = validate_url_ok(self.absolute)
         else:
             assert_never(self.absolute)
@@ -180,7 +180,7 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{path} does not point to an existing directory")
 
 
-FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath]
+FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath, pydantic.HttpUrl]
 PermissiveFileSource = Union[FileSource, str]
 
 
@@ -205,8 +205,8 @@ def _package(value: FileSource, handler: SerializerFunctionWrapHandler) -> Union
 
     if isinstance(value, RelativeFilePath):
         src = value.absolute
-    elif isinstance(value, AnyUrl):
-        src = value
+    elif isinstance(value, (str, AnyUrl)):
+        src = str(value)
     elif isinstance(value, Path):
         src = value.resolve()
     else:
@@ -232,7 +232,7 @@ IncludeInPackage: Callable[[], WrapSerializer] = partial(WrapSerializer, _packag
 ImportantFileSource = Annotated[FileSource, AfterValidator(wo_special_file_name), IncludeInPackage()]
 
 
-def extract_file_name(src: Union[HttpUrl, PurePath, RelativeFilePath]) -> str:
+def extract_file_name(src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath]) -> str:
     if isinstance(src, RelativeFilePath):
         return src.path.name
     elif isinstance(src, PurePath):

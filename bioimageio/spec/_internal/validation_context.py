@@ -1,11 +1,17 @@
-from contextvars import ContextVar
-from pathlib import Path
-from typing import Literal, Optional, Union
+from __future__ import annotations
 
-from pydantic import AnyUrl, BaseModel, DirectoryPath, PrivateAttr
+from contextvars import ContextVar, Token
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
+
+from pydantic import DirectoryPath
 
 from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
+
+if TYPE_CHECKING:
+    from bioimageio.spec._internal.types import HttpUrl
 
 WarningSeverity = Literal[20, 30, 35]
 WarningLevel = Literal[WarningSeverity, 50]
@@ -13,11 +19,11 @@ WarningLevel = Literal[WarningSeverity, 50]
 Highest warning level 50/error does not raise any validaiton warnings (only validation errors)."""
 
 
-# TODO: turn into python dataclass for better performance and simplicity?
-class ValidationContext(BaseModel, frozen=True):
-    _context_tokens = PrivateAttr(default_factory=list)
+@dataclass(frozen=True)
+class ValidationContext:
+    _context_tokens: "List[Token[ValidationContext]]" = field(init=False, default_factory=list)
 
-    root: Union[DirectoryPath, AnyUrl] = Path()
+    root: Union[DirectoryPath, "HttpUrl"] = Path()
     """url/directory serving as base to resolve any relative file paths"""
 
     warning_level: WarningLevel = 50
@@ -31,7 +37,7 @@ class ValidationContext(BaseModel, frozen=True):
 
     def replace(
         self,
-        root: Optional[Union[DirectoryPath, AnyUrl]] = None,
+        root: Optional[Union[DirectoryPath, "HttpUrl"]] = None,
         warning_level: Optional[WarningLevel] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,

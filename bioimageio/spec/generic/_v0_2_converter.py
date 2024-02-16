@@ -7,7 +7,10 @@ from bioimageio.spec._internal.types import BioimageioYamlContent
 def convert_from_older_format(data: BioimageioYamlContent) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
-    fv = data.get("format_version", "0.2.0")
+    if "format_version" not in data:
+        return
+
+    fv = data["format_version"]
     if isinstance(fv, str) and tuple(map(int, fv.split(".")[:2])) > (0, 2):
         return
 
