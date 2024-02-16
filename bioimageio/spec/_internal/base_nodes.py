@@ -31,7 +31,6 @@ from pydantic import (
     PrivateAttr,
     StringConstraints,
     TypeAdapter,
-    field_validator,
     model_validator,
 )
 from pydantic_core import PydanticUndefined, core_schema

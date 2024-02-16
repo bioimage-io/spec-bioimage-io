@@ -348,7 +348,7 @@ class GenericDescrBase(GenericModelDescrBase):
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
-        Field(examples=["MIT", "CC-BY-4.0", "BSD-2-Clause"]),
+        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
