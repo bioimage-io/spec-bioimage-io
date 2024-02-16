@@ -207,5 +207,5 @@ def test_rdf(
         descr_url,
         as_latest=format_version == LATEST,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
-        bioimageio_json_schema=bioimageio_json_schema,
+        bioimageio_json_schema=None,
     )

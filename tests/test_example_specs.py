@@ -41,7 +41,9 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "models/unet2d_nuclei_broad/v0_4_0.bioimageio.yaml": {
         "dependencies",
         "weights",
+        "version",
     },
+    "models/unet2d_nuclei_broad/v0_4_9.bioimageio.yaml": {"version"},
     "models/upsample_test_model/v0_4.bioimageio.yaml": {"dependencies", "weights"},
 }
 

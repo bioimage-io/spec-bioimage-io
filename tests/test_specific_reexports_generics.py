@@ -45,6 +45,7 @@ IGNORE_MEMBERS = {
     "requests",
     "ResourceDescriptionBase",
     "ResourceDescrType",
+    "Self",
     "Sequence",
     "settings",
     "TAG_CATEGORIES",

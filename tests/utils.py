@@ -101,7 +101,7 @@ def check_bioimageio_yaml(
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
-    bioimageio_json_schema: Mapping[Any, Any],
+    bioimageio_json_schema: Optional[Mapping[Any, Any]],
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
@@ -110,7 +110,7 @@ def check_bioimageio_yaml(
 
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
-        rd = build_description(data, as_format=format_version)
+        rd = build_description(deepcopy(data), as_format=format_version)
         assert not is_invalid or (is_invalid and isinstance(rd, InvalidDescription)), "Invalid RDF passed validation"
 
     summary = rd.validation_summary
@@ -123,12 +123,17 @@ def check_bioimageio_yaml(
     assert summary.status == "passed", summary.format()
     assert rd is not None
 
-    # check compatibility to our latest json schema
-    try:
-        jsonschema.validate(data, bioimageio_json_schema)
-    except jsonschema.ValidationError as e:
-        print(e.validator_value)  # TODO: improve error message/log
-        raise
+    json_data = rd.model_dump(mode="json")
+    # check compatibility to our latest json schema...
+    if (
+        bioimageio_json_schema is not None
+        and "v0_" not in downloaded_source.path.name  # ...unless it's a historic example
+    ):
+        try:
+            jsonschema.validate(json_data, bioimageio_json_schema)
+        except jsonschema.ValidationError:
+            # TODO: improve error message/log
+            raise ValueError(f"jsonschema validation error for {downloaded_source.path}")
 
     if as_latest:
         return

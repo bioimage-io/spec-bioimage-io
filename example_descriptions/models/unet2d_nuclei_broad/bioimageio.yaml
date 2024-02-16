@@ -95,7 +95,7 @@ weights:
         affiliation: "EMBL Heidelberg"
         orcid: "0000-0001-6562-7187"
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-    source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
+    source: "https://zenodo.org/records/3446812/files/unet2d_weights.torch"
     architecture:
       callable: UNet2d
       source: unet2d.py

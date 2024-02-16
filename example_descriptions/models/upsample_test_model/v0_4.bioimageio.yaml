@@ -7,7 +7,7 @@ cite:
 covers: []
 description: Test model for scaling
 documentation: docs.md
-format_version: 0.4.6
+format_version: 0.4.10
 inputs:
   - axes: bcyx
     data_range: [-.inf, .inf]
@@ -25,13 +25,13 @@ outputs:
     halo: [0, 0, 0, 0]
     name: output
     shape:
-      offset: [0.0, 0.0, 0.0, 0.0]
+      offset: [0.0, 0.5, 0.0, 0.0]
       reference_tensor: input
-      scale: [1.0, 1.0, 4.0, 4.0]
+      scale: [1.0, 0.0, 4.0, 4.0]
 tags: [scaling, test]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
-timestamp: "2022-10-23T00:00"
+timestamp: "2022-10-23T00:00:00Z"
 type: model
 weights:
   pytorch_state_dict:

@@ -18,7 +18,7 @@ def bioimageio_json_schema():
 
     generate_json_schemas(GENERATED_JSON_SCHEMAS, "generate")
     with (GENERATED_JSON_SCHEMAS / "bioimageio_schema_latest.json").open() as f:
-        return MappingProxyType(json.load(f))
+        return json.load(f)
 
 
 @pytest.fixture(scope="session")
