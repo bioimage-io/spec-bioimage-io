@@ -58,15 +58,35 @@ def _has_no_slash(s: str) -> bool:
     return "/" not in s and "\\" not in s
 
 
-def _validate_gh_user(username: str):
-    if not validation_context_var.get().perform_io_checks:
-        return
+def _validate_gh_user(username: str) -> str:
+    if username == "Constantin Pape":
+        # hotpatch common known error in some uploads
+        return "constantinpape"
+
+    if (
+        username.lower()
+        in (  # skip known usernames to reduce hitting the gh api rate limit (mostly relevenat when testing)
+            "bioimageiobot",
+            "carlosuc3m",
+            "cfusterbarcelo",
+            "constantinpape",
+            "ctr26",
+            "esgomezm",
+            "fynnbe",
+            "k-dominik",
+            "oeway",
+        )
+        or not validation_context_var.get().perform_io_checks
+    ):
+        return username
 
     r = requests.get(f"https://api.github.com/users/{username}", auth=settings.github_auth)
     if r.status_code == 403 and r.reason == "rate limit exceeded":
         issue_warning("Could not verify GitHub user '{value}' due to GitHub API rate limit", value=username)
     elif r.status_code != 200:
         raise ValueError(f"Could not find GitHub user '{username}'")
+
+    return username
 
 
 class Author(v0_2.Author):
@@ -75,10 +95,10 @@ class Author(v0_2.Author):
 
     @field_validator("github_user", mode="after")
     def validate_gh_user(cls, value: Optional[str]):
-        if value is not None:
-            _validate_gh_user(value)
-
-        return value
+        if value is None:
+            return None
+        else:
+            return _validate_gh_user(value)
 
 
 class _AuthorConv(Converter[v0_2.Author, Author]):
@@ -101,8 +121,7 @@ class Maintainer(v0_2.Maintainer):
 
     @field_validator("github_user", mode="after")
     def validate_gh_user(cls, value: str):
-        _validate_gh_user(value)
-        return value
+        return _validate_gh_user(value)
 
 
 class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):

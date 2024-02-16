@@ -172,6 +172,10 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
     "10.5281/zenodo.7315440/7315441/rdf.yaml": {"weights", "cite"},  # weights.onnx: missing sh256, cite[0].doi: prefix
     "10.5281/zenodo.7772662/7781091/rdf.yaml": {"weights"},  # upper to lower case sha256
+    "10.5281/zenodo.6028097/6028098/rdf.yaml": {
+        "authors", # gh username "Constantin Pape" -> contantinpape
+        "maintainers",
+    },
 }
 
 

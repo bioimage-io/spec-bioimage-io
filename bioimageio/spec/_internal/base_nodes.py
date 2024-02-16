@@ -398,7 +398,7 @@ class ResourceDescriptionBase(NodeWithExplicitlySetFields, ABC, _ResourceDescrip
                 ValidationSummaryDetail(
                     bioimageio_spec_version=VERSION,
                     errors=errors,
-                    name=f"bioimageio.spec validation as {rd.type} {rd.format_version}",
+                    name=f"bioimageio.spec validation as {rd.type} {cls.implemented_format_version}",
                     status="failed" if errors else "passed",
                     warnings=val_warnings,
                 )

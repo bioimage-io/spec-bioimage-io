@@ -884,6 +884,7 @@ def convert_axes(
     shape: Union[Sequence[int], v0_4.ParametrizedInputShape, v0_4.ImplicitOutputShape],
     tensor_type: Literal["input", "output"],
     halo: Optional[Sequence[int]],
+    size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
 ):
     ret: List[AnyAxis] = []
     for i, a in enumerate(axes):
@@ -901,17 +902,25 @@ def convert_axes(
         elif isinstance(shape, v0_4.ImplicitOutputShape):
             ref_t = shape.reference_tensor
             if ref_t.count(".") == 1:
-                t_id, a_id = ref_t.split(".")
+                t_id, orig_a_id = ref_t.split(".")
             else:
                 t_id = ref_t
-                a_id = _AXIS_ID_MAP.get(a, a)
+                orig_a_id = a
 
+            a_id = _AXIS_ID_MAP.get(orig_a_id, a)
             if not (orig_scale := shape.scale[i]):
                 # old way to insert a new axis dimension
                 size = int(2 * shape.offset[i])
             else:
-                scale = 1 / orig_scale  # TODO: check for correctness
-                size = SizeReference(tensor_id=TensorId(t_id), axis_id=AxisId(a_id), offset=int(2 * shape.offset[i]))
+                scale = 1 / orig_scale
+                if axis_type in ("channel", "index"):
+                    # these axes no longer have a scale
+                    offset_from_scale = orig_scale * size_refs.get(v0_4.TensorName(t_id), {}).get(orig_a_id, 0)
+                else:
+                    offset_from_scale = 0
+                size = SizeReference(
+                    tensor_id=TensorId(t_id), axis_id=AxisId(a_id), offset=int(offset_from_scale + 2 * shape.offset[i])
+                )
         elif isinstance(shape, collections.abc.Sequence):
             size = shape[i]
         else:
@@ -928,7 +937,7 @@ def convert_axes(
             assert not isinstance(size, ParameterizedSize)
             if isinstance(size, SizeReference):
                 warnings.warn("Conversion of channel size from an implicit output shape may by wrong")
-                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(int(2 * size.offset))]))
+                ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(size.offset)]))
             else:
                 ret.append(ChannelAxis(channel_names=[Identifier(f"channel{i}") for i in range(size)]))
         elif axis_type == "space":
@@ -1023,7 +1032,13 @@ def _convert_proc(
 
 
 class _InputTensorConv(
-    Converter[v0_4.InputTensorDescr, InputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]
+    Converter[
+        v0_4.InputTensorDescr,
+        InputTensorDescr,
+        ImportantFileSource,
+        Optional[ImportantFileSource],
+        Mapping[v0_4.TensorName, Mapping[str, int]],
+    ]
 ):
     def _convert(
         self,
@@ -1031,8 +1046,9 @@ class _InputTensorConv(
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
+        size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
-        axes = convert_axes(src.axes, shape=src.shape, tensor_type="input", halo=None)
+        axes = convert_axes(src.axes, shape=src.shape, tensor_type="input", halo=None, size_refs=size_refs)
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
             cp = _convert_proc(p)
@@ -1075,7 +1091,13 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
 
 
 class _OutputTensorConv(
-    Converter[v0_4.OutputTensorDescr, OutputTensorDescr, ImportantFileSource, Optional[ImportantFileSource]]
+    Converter[
+        v0_4.OutputTensorDescr,
+        OutputTensorDescr,
+        ImportantFileSource,
+        Optional[ImportantFileSource],
+        Mapping[v0_4.TensorName, Mapping[str, int]],
+    ]
 ):
     def _convert(
         self,
@@ -1083,8 +1105,9 @@ class _OutputTensorConv(
         tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
+        size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
-        axes = convert_axes(src.axes, shape=src.shape, tensor_type="output", halo=src.halo)
+        axes = convert_axes(src.axes, shape=src.shape, tensor_type="output", halo=src.halo, size_refs=size_refs)
         return tgt(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
@@ -1713,6 +1736,25 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             arch_file_conv = _arch_file_conv.convert_as_dict
             arch_lib_conv = _arch_lib_conv.convert_as_dict
 
+        input_size_refs = {
+            ipt.name: {
+                a: s
+                for a, s in zip(
+                    ipt.axes, ipt.shape.min if isinstance(ipt.shape, v0_4.ParametrizedInputShape) else ipt.shape
+                )
+            }
+            for ipt in src.inputs
+            if ipt.shape
+        }
+        output_size_refs = {
+            **{
+                out.name: {a: s for a, s in zip(out.axes, out.shape)}
+                for out in src.outputs
+                if not isinstance(out.shape, v0_4.ImplicitOutputShape)
+            },
+            **input_size_refs,
+        }
+
         return tgt(
             attachments=[] if src.attachments is None else [FileDescr(source=f) for f in src.attachments.files],
             authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
@@ -1737,11 +1779,11 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             uploader=src.uploader,
             version=src.version,
             inputs=[  # pyright: ignore[reportArgumentType]
-                _input_tensor_conv.convert_as_dict(ipt, tt, st)
+                _input_tensor_conv.convert_as_dict(ipt, tt, st, input_size_refs)
                 for ipt, tt, st, in zip(src.inputs, src.test_inputs, src.sample_inputs or [None] * len(src.test_inputs))
             ],
             outputs=[  # pyright: ignore[reportArgumentType]
-                _output_tensor_conv.convert_as_dict(out, tt, st)
+                _output_tensor_conv.convert_as_dict(out, tt, st, output_size_refs)
                 for out, tt, st, in zip(
                     src.outputs, src.test_outputs, src.sample_outputs or [None] * len(src.test_outputs)
                 )
