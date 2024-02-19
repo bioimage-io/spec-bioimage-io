@@ -47,6 +47,7 @@ setup(
             "black",
             "deepdiff",
             "jsonschema",
+            "jupyter",
             "lxml",
             "pdoc",
             "pre-commit",
