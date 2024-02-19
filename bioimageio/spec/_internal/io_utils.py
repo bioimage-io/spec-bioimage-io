@@ -2,7 +2,6 @@ import hashlib
 import io
 import os
 import platform
-import shutil
 import warnings
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -238,19 +237,49 @@ def find_description_file_name(path: Path) -> FileName:
 
 
 def unzip(
-    zip_file: FilePath, out_path: Optional[DirectoryPath] = None, overwrite: bool = True
+    zip_file: Union[FilePath, ZipFile],
+    out_path: Optional[DirectoryPath] = None,
+    overwrite: bool = False,
 ) -> DirectoryPath:
-    if out_path is None:
-        out_path = zip_file.with_suffix(zip_file.suffix + ".unzip")
+    if isinstance(zip_file, ZipFile):
+        zip_context = nullcontext(zip_file)
+        if out_path is None:
+            raise ValueError("Missing argument: out_path")
+    else:
+        zip_context = ZipFile(zip_file, "r")
+        if out_path is None:
+            out_path = zip_file.with_suffix(zip_file.suffix + ".unzip")
 
-    with ZipFile(zip_file, "r") as f:
+    with zip_context as f:
         if out_path.exists() and overwrite:
             if overwrite:
                 warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
-                shutil.rmtree(out_path)
             else:
-                warnings.warn(f"Found already unzipped archive at {out_path}.")
-                return out_path
+                found_content = {
+                    p.relative_to(out_path).as_posix() for p in out_path.glob("*")
+                }
+                expected_content = {info.filename for info in f.filelist}
+                if expected_content - found_content:
+                    warnings.warn(
+                        f"Unzipped archive at {out_path} is missing expected files."
+                    )
+                    parts = out_path.name.split("_")
+                    nr, *suffixes = parts[-1].split(".")
+                    if nr.isdecimal():
+                        nr = str(int(nr) + 1)
+                    else:
+                        nr = f"1.{nr}"
+
+                    parts[-1] = ".".join([nr, *suffixes])
+                    return unzip(
+                        f, out_path.with_name("_".join(parts)), overwrite=overwrite
+                    )
+                else:
+                    warnings.warn(
+                        "Using already unzipped archive with all expected files at"
+                        f" {out_path}."
+                    )
+                    return out_path
 
         f.extractall(out_path)
 
