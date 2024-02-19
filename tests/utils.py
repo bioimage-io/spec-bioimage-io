@@ -125,8 +125,9 @@ def check_bioimageio_yaml(
     downloaded_source = download(source)
     root = downloaded_source.original_root
     with downloaded_source.path.open(encoding="utf-8") as f:
-        data = yaml.load(f)
+        data: Union[Any, Dict[Any, Any]] = yaml.load(f)
 
+    assert isinstance(data, dict)
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
         rd = build_description(deepcopy(data), as_format=format_version)
