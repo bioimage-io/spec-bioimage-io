@@ -99,7 +99,7 @@ weights:
     architecture:
       callable: UNet2d
       source: unet2d.py
-      sha256: cf42a6d86adeb4eb6e8e37b539a20e5413866b183bed88f4e2e26ad1639761ed
+      sha256: 1a843836db22fa17d99804eb0ee535d8a2f997d6a939af20592214c12c3c18ef
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies:
       source: environment.yaml
