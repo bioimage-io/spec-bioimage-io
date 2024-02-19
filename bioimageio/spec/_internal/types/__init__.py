@@ -92,7 +92,7 @@ SiUnit = typing.NewType(
     ],
 )
 
-# types as loaded from YAML 1.2 (with ruamel.yaml)
+# types as loaded from YAML 1.2 (with ruyaml)
 YamlLeafValue = typing.Union[bool, _date, _datetime, float, int, str, None]
 YamlKey = typing.Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, typing.Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)

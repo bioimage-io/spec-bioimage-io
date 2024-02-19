@@ -3,7 +3,7 @@ from pathlib import Path
 from types import MappingProxyType
 
 import pytest
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 yaml = YAML(typ="safe")
 

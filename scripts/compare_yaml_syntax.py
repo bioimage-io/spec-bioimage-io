@@ -3,11 +3,11 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 try:
-    from ruamel.yaml import YAML
+    from ruyaml import YAML
 
     ruamel_yaml = YAML(typ="safe")
 except ImportError:
-    raise RuntimeError("Cannot compare yaml syntax without the ruamel.yaml package")
+    raise RuntimeError("Cannot compare yaml syntax without the ruyaml package")
 
 try:
     import yaml as _pyyaml_yaml
@@ -26,7 +26,7 @@ def parse_args():
     p = ArgumentParser(
         description=(
             "Check for differences between yaml 1.1 (using PyYAML) and yaml 1.2 syntax"
-            " (using ruamel.yaml)."
+            " (using ruyaml)."
         )
     )
     _ = p.add_argument(

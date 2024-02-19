@@ -38,7 +38,7 @@ setup(
         "pydantic[email]>=2.0.1",
         "pyodide-http;platform_system=='Emscripten'",
         "python-dateutil",
-        "ruamel.yaml",
+        "ruyaml",
         "tqdm",
         "typing-extensions",
     ],

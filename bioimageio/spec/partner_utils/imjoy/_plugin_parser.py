@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 import requests
 from lxml import etree
 from pydantic import DirectoryPath, FilePath, HttpUrl
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 yaml = YAML(typ="safe")
 

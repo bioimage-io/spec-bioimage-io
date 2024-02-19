@@ -9,7 +9,7 @@ This repository contains specifications defined by the bioimage.io community. Th
 bioimage.io-compatible resources must fulfill the following rules:
 
 Note that the Python package PyYAML does not support YAML 1.2 .
-We therefore use and recommend [ruamel.yaml](https://ruamelyaml.readthedocs.io/en/latest/).
+We therefore use and recommend [ruyaml](https://ruyaml.readthedocs.io/en/latest/).
 For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
 
 Please also note that the best way to check whether your `rdf.yaml` file is bioimage.io-compliant is to call `bioimageio.core.validate` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.

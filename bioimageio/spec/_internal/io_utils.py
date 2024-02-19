@@ -25,7 +25,7 @@ import pooch
 import pydantic
 from numpy.typing import NDArray
 from pydantic import DirectoryPath, FilePath, NewPath, TypeAdapter
-from ruamel.yaml import YAML
+from ruyaml import YAML
 from typing_extensions import NotRequired, Unpack
 
 from bioimageio.spec._internal.constants import (
@@ -98,7 +98,7 @@ def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
         cm = nullcontext(file)
 
     with cm as f:
-        content = yaml.load(f)
+        content: YamlValue = yaml.load(f)
 
     return content
 

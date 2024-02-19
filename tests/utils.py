@@ -23,7 +23,7 @@ from pydantic import (
     ValidationError,
     create_model,  # type: ignore
 )
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 from bioimageio.spec._description import InvalidDescription, build_description
 from bioimageio.spec._internal.base_nodes import Node
