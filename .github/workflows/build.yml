@@ -41,8 +41,8 @@ jobs:
         if: matrix.test-format
       - run: ruff check **/*.py # ignore notebooks for now
         if: matrix.test-format
-      - run: pyright
-        if: matrix.python-version == '3.8' # difficult to pass type checks in multiple language versions
+      - run: pyright --version
+      - run: pyright -p pyproject.toml
       - run: pytest
 
   deploy:

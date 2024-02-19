@@ -50,7 +50,7 @@ setup(
             "lxml",
             "pdoc",
             "pre-commit",
-            "pyright",
+            "pyright==1.1.350",
             "pytest",
             "ruff",  # check line length in cases black cannot fix it
         ]
