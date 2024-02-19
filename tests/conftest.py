@@ -30,8 +30,13 @@ def stardist04_data():
 
 
 @pytest.fixture(scope="session")
-def unet2d_data():
-    with (UNET2D_ROOT / "bioimageio.yaml").open() as f:
+def unet2d_path() -> Path:
+    return UNET2D_ROOT / "bioimageio.yaml"
+
+
+@pytest.fixture(scope="session")
+def unet2d_data(unet2d_path: Path):
+    with unet2d_path.open() as f:
         data = yaml.load(f)
 
     return MappingProxyType(data)
