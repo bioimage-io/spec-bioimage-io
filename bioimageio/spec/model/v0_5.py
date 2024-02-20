@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections.abc
+import re
 import warnings
 from abc import ABC
 from datetime import datetime
@@ -1642,6 +1643,21 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '#[#] Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
+
+    @field_validator("documentation", mode="after")
+    @classmethod
+    def _validate_documentation(cls, value: DocumentationSource) -> DocumentationSource:
+        if not validation_context_var.get().perform_io_checks:
+            return value
+
+        doc_path = download(value).path
+        doc_content = doc_path.read_text()
+        if not re.match("#.*[vV]alidation", doc_content):
+            issue_warning(
+                "No '# Validation' (sub)section found in {value}.", value=value
+            )
+
+        return value
 
     inputs: NotEmpty[Sequence[InputTensorDescr]]
     """Describes the input tensors expected by this model."""
