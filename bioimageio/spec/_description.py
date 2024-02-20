@@ -39,7 +39,7 @@ _ResourceDescr_v0_2 = Union[
 ]
 """A resource description following the 0.2.x (model: 0.4.x) specification format"""
 
-_ResourceDescription_v0_3 = Union[
+_ResourceDescr_v0_3 = Union[
     Annotated[
         Union[
             application.v0_3.ApplicationDescr,
@@ -54,7 +54,7 @@ _ResourceDescription_v0_3 = Union[
 ]
 """A resource description following the 0.3.x (model: 0.5.x) specification format"""
 
-LatestResourceDescr = _ResourceDescription_v0_3
+LatestResourceDescr = _ResourceDescr_v0_3
 """A resource description following the latest specification format"""
 
 

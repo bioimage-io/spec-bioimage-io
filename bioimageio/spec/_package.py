@@ -14,7 +14,7 @@ from bioimageio.spec._description import (
     ResourceDescr,
     build_description,
 )
-from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import ResourceDescrBase
 from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
 from bioimageio.spec._internal.io_utils import (
     download,
@@ -119,7 +119,7 @@ def _prepare_resource_package(
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
     """
-    if isinstance(source, ResourceDescriptionBase):
+    if isinstance(source, ResourceDescrBase):
         descr = source
     elif isinstance(source, dict):
         descr = build_description(source)

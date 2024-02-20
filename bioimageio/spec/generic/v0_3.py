@@ -12,7 +12,7 @@ from bioimageio.spec._internal import settings
 from bioimageio.spec._internal.base_nodes import (
     Converter,
     Node,
-    ResourceDescriptionBase,
+    ResourceDescrBase,
 )
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.constants import (
@@ -164,7 +164,7 @@ class LinkedResourceDescr(Node):
     """A valid resource `id` from the official bioimage.io collection."""
 
 
-class GenericModelDescrBase(ResourceDescriptionBase):
+class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], MaxLen(128)]

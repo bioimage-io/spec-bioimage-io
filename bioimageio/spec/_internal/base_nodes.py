@@ -309,22 +309,22 @@ class NodeWithExplicitlySetFields(Node):
 
 if TYPE_CHECKING:
 
-    class _ResourceDescriptionBaseAbstractFieldsProtocol(Protocol):
-        """workaround to add abstract fields to ResourceDescriptionBase"""
+    class _ResourceDescrBaseAbstractFieldsProtocol(Protocol):
+        """workaround to add abstract fields to ResourceDescrBase"""
 
-        # TODO: implement as proper abstract fields of ResourceDescriptionBase
+        # TODO: implement as proper abstract fields of ResourceDescrBase
 
         type: Any  # should be LiteralString
         format_version: Any  # should be LiteralString
 
 else:
 
-    class _ResourceDescriptionBaseAbstractFieldsProtocol:
+    class _ResourceDescrBaseAbstractFieldsProtocol:
         pass
 
 
-class ResourceDescriptionBase(
-    NodeWithExplicitlySetFields, ABC, _ResourceDescriptionBaseAbstractFieldsProtocol
+class ResourceDescrBase(
+    NodeWithExplicitlySetFields, ABC, _ResourceDescrBaseAbstractFieldsProtocol
 ):
     """base class for all resource descriptions"""
 
@@ -521,7 +521,7 @@ class ResourceDescriptionBase(
 
 
 class InvalidDescr(
-    ResourceDescriptionBase,
+    ResourceDescrBase,
     extra="allow",
     title="An invalid resource description",
 ):

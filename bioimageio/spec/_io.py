@@ -8,7 +8,7 @@ from bioimageio.spec._description import (
     build_description,
     dump_description,
 )
-from bioimageio.spec._internal.base_nodes import ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import ResourceDescrBase
 from bioimageio.spec._internal.constants import DISCOVER
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, write_yaml
 from bioimageio.spec._internal.types import (
@@ -42,7 +42,7 @@ def save_bioimageio_yaml_only(
     /,
     file: Union[NewPath, FilePath, TextIO],
 ):
-    if isinstance(rd, ResourceDescriptionBase):
+    if isinstance(rd, ResourceDescrBase):
         content = dump_description(rd)
     else:
         content = rd

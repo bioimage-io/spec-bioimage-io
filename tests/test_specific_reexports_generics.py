@@ -43,7 +43,7 @@ IGNORE_MEMBERS = {
     "partial",
     "Predicate",
     "requests",
-    "ResourceDescriptionBase",
+    "ResourceDescrBase",
     "ResourceDescrType",
     "Self",
     "Sequence",

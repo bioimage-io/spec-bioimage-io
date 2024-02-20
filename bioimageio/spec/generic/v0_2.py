@@ -16,7 +16,7 @@ from annotated_types import Ge, Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal.base_nodes import Node, ResourceDescriptionBase
+from bioimageio.spec._internal.base_nodes import Node, ResourceDescrBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
 from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
@@ -173,7 +173,7 @@ class LinkedResourceDescr(Node):
     """A valid resource `id` from the bioimage.io collection."""
 
 
-class GenericModelDescrBase(ResourceDescriptionBase):
+class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
