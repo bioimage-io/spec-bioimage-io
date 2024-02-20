@@ -88,6 +88,13 @@ def _get_rd_class(typ: Any, format_version: Any) -> Type[ResourceDescr]:
     if not isinstance(typ, str) or not hasattr(bioimageio.spec, typ):
         typ = "generic"
         type_module = bioimageio.spec.generic
+    elif (
+        typ == "model"
+        and isinstance(format_version, str)
+        and format_version.startswith("0.3.")
+    ):
+        # special case: old 0.3 model spec should be read by model 0.4
+        return bioimageio.spec.model.v0_4.ModelDescr
     else:
         type_module = getattr(bioimageio.spec, typ)
 
