@@ -7,7 +7,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import assert_never
+from typing_extensions import TypedDict, assert_never
 
 from bioimageio.spec._internal.constants import (
     VERSION,
@@ -79,12 +79,16 @@ def format_loc(loc: Loc) -> str:
     return real_loc
 
 
+class InstalledPackage(TypedDict):
+    name: str
+    version: str
+
+
 class ValidationDetail(BaseModel, extra="allow"):
     name: str
     status: Literal["passed", "failed"]
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
-    bioimageio_spec_version: str = VERSION
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
@@ -127,6 +131,12 @@ class ValidationSummary(BaseModel, extra="allow"):
     source_name: str
     status: Literal["passed", "failed"]
     details: List[ValidationDetail]
+    env: List[InstalledPackage] = Field(
+        default_factory=lambda: [
+            InstalledPackage(name="bioimageio.spec", version=VERSION)
+        ]
+    )
+    """list of selected, relevant package versions"""
 
     @property
     def errors(self) -> List[ErrorEntry]:
