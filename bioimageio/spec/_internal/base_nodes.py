@@ -47,7 +47,6 @@ from bioimageio.spec._internal.constants import (
     ALERT,
     ERROR,
     INFO,
-    VERSION,
     WARNING_LEVEL_TO_NAME,
 )
 from bioimageio.spec._internal.field_warning import issue_warning
@@ -199,6 +198,10 @@ class StringNode(collections.UserString, ABC):
         return self
 
     def _serialize(self) -> str:
+        # serialize inner node to call _package when needed
+        if self._node is not None:
+            _ = self._node.model_dump()
+
         return self.data
 
 
@@ -445,7 +448,6 @@ class ResourceDescriptionBase(
             status="failed" if errors else "passed",
             details=[
                 ValidationDetail(
-                    bioimageio_spec_version=VERSION,
                     errors=errors,
                     name=(
                         "bioimageio.spec validation as"
