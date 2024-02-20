@@ -9,7 +9,7 @@ from typing_extensions import Self
 
 from bioimageio import spec
 from bioimageio.spec import application, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import InvalidDescription, Node
+from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
@@ -166,7 +166,7 @@ class CollectionDescr(
                 context=context.replace(root=entry_root, file_name=entry_file_name),
             )
             assert entry_descr.validation_summary is not None
-            if isinstance(entry_descr, InvalidDescription):
+            if isinstance(entry_descr, InvalidDescr):
                 raise ValueError(
                     "Invalid collection entry"
                     f" collection[{i}]:\n"

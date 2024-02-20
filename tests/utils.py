@@ -25,7 +25,7 @@ from pydantic import (
 )
 from ruyaml import YAML
 
-from bioimageio.spec._description import InvalidDescription, build_description
+from bioimageio.spec._description import InvalidDescr, build_description
 from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.types import HttpUrl
@@ -130,16 +130,16 @@ def check_bioimageio_yaml(
     assert isinstance(data, dict)
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
-        rd = build_description(deepcopy(data), as_format=format_version)
+        rd = build_description(deepcopy(data), format_version=format_version)
         assert not is_invalid or (
-            is_invalid and isinstance(rd, InvalidDescription)
+            is_invalid and isinstance(rd, InvalidDescr)
         ), "Invalid RDF passed validation"
 
     summary = rd.validation_summary
     assert summary is not None
     if is_invalid:
         assert summary.status == "failed", "passes despite marked as known failure case"
-        assert isinstance(rd, InvalidDescription)
+        assert isinstance(rd, InvalidDescr)
         return
 
     assert summary.status == "passed", summary.format()

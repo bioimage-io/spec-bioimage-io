@@ -78,7 +78,7 @@ def format_loc(loc: Loc) -> str:
     return real_loc
 
 
-class ValidationSummaryDetail(BaseModel):
+class ValidationSummaryDetail(BaseModel, extra="allow"):
     name: str
     status: Literal["passed", "failed"]
     errors: List[ErrorEntry] = Field(default_factory=list)
@@ -121,7 +121,7 @@ class ValidationSummaryDetail(BaseModel):
         )
 
 
-class ValidationSummary(BaseModel):
+class ValidationSummary(BaseModel, extra="allow"):
     name: str
     source_name: str
     status: Literal["passed", "failed"]

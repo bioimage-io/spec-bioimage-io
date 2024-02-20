@@ -4,7 +4,7 @@ from pydantic import FilePath, NewPath
 
 from bioimageio.spec import ResourceDescr
 from bioimageio.spec._description import (
-    InvalidDescription,
+    InvalidDescr,
     build_description,
     dump_description,
 )
@@ -17,6 +17,7 @@ from bioimageio.spec._internal.types import (
     YamlValue,
 )
 from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec.summary import ValidationSummary
 
 
 def load_description(
@@ -24,7 +25,7 @@ def load_description(
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
-) -> Union[ResourceDescr, InvalidDescription]:
+) -> Union[ResourceDescr, InvalidDescr]:
     opened = open_bioimageio_yaml(source)
 
     return build_description(
@@ -32,7 +33,7 @@ def load_description(
         context=ValidationContext(
             root=opened.original_root, file_name=opened.original_file_name
         ),
-        as_format=format_version,
+        format_version=format_version,
     )
 
 
@@ -47,3 +48,14 @@ def save_bioimageio_yaml_only(
         content = rd
 
     write_yaml(cast(YamlValue, content), file)
+
+
+def validate_rdf(
+    source: FileSource,
+    /,
+    *,
+    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+) -> ValidationSummary:
+    rd = load_description(source, format_version=format_version)
+    assert rd.validation_summary is not None
+    return rd.validation_summary

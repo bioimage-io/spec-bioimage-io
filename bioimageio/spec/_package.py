@@ -10,7 +10,7 @@ from pydantic import DirectoryPath, FilePath, NewPath
 
 from bioimageio.spec import load_description, model
 from bioimageio.spec._description import (
-    InvalidDescription,
+    InvalidDescr,
     ResourceDescr,
     build_description,
 )
@@ -125,7 +125,7 @@ def _prepare_resource_package(
         ):
             descr = build_description(opened.content)
 
-    if isinstance(descr, InvalidDescription):
+    if isinstance(descr, InvalidDescr):
         raise ValueError(f"{source} is invalid: {descr.validation_summary}")
 
     package_content = get_resource_package_content(
@@ -240,7 +240,7 @@ def save_bioimageio_package(
         compression=compression,
         compression_level=compression_level,
     )
-    if isinstance((exported := load_description(output_path)), InvalidDescription):
+    if isinstance((exported := load_description(output_path)), InvalidDescr):
         raise ValueError(
             f"Exported package '{output_path}' is invalid:"
             f" {exported.validation_summary}"

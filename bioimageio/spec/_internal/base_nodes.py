@@ -381,8 +381,19 @@ class ResourceDescriptionBase(
         return data
 
     @property
-    def validation_summary(self) -> Optional[ValidationSummary]:
-        return self._validation_summary
+    def validation_summary(self) -> ValidationSummary:
+        if self._validation_summary is None:
+            return ValidationSummary(
+                name=(
+                    "unvalidated (use `load_description` or `build_description` to"
+                    " create a validated description)"
+                ),
+                source_name="unknown",
+                status="failed",
+                details=[],
+            )
+        else:
+            return self._validation_summary
 
     _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
@@ -414,7 +425,7 @@ class ResourceDescriptionBase(
     @classmethod
     def load(
         cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
-    ) -> Union[Self, InvalidDescription]:
+    ) -> Union[Self, InvalidDescr]:
         context = context or validation_context_var.get()
         assert isinstance(data, dict)
         with context:
@@ -451,8 +462,8 @@ class ResourceDescriptionBase(
     @classmethod
     def _load_impl(
         cls, data: BioimageioYamlContent
-    ) -> Tuple[Union[Self, InvalidDescription], List[ErrorEntry], List[WarningEntry]]:
-        rd: Union[Self, InvalidDescription, None] = None
+    ) -> Tuple[Union[Self, InvalidDescr], List[ErrorEntry], List[WarningEntry]]:
+        rd: Union[Self, InvalidDescr, None] = None
         val_errors: List[ErrorEntry] = []
         val_warnings: List[WarningEntry] = []
 
@@ -498,18 +509,16 @@ class ResourceDescriptionBase(
 
         if rd is None:
             try:
-                rd = InvalidDescription.model_validate(data)
+                rd = InvalidDescr.model_validate(data)
             except Exception:
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
-                rd = InvalidDescription(
-                    type=resource_type, format_version=format_version
-                )
+                rd = InvalidDescr(type=resource_type, format_version=format_version)
 
         return rd, val_errors, val_warnings
 
 
-class InvalidDescription(
+class InvalidDescr(
     ResourceDescriptionBase,
     extra="allow",
     title="An invalid resource description",

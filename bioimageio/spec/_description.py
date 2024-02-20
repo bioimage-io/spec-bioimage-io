@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import InvalidDescription
+from bioimageio.spec._internal.base_nodes import InvalidDescr
 from bioimageio.spec._internal.constants import DISCOVER
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
@@ -119,8 +119,8 @@ def build_description(
     /,
     *,
     context: Optional[ValidationContext] = None,
-    as_format: Union[FormatVersionPlaceholder, str] = DISCOVER,
-) -> Union[ResourceDescr, InvalidDescription]:
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+) -> Union[ResourceDescr, InvalidDescr]:
     context = context or validation_context_var.get()
     if not isinstance(content, dict):
         # "Invalid content of type '{type(content)}'"
@@ -131,9 +131,9 @@ def build_description(
 
     rd = rd_class.load(content, context=context)
     assert rd.validation_summary is not None
-    if as_format != DISCOVER and not isinstance(rd, InvalidDescription):
+    if format_version != DISCOVER and not isinstance(rd, InvalidDescr):
         discover_details = rd.validation_summary.details
-        as_rd_class = _get_rd_class(typ, as_format)
+        as_rd_class = _get_rd_class(typ, format_version)
         rd = as_rd_class.load(content, context=context)
         assert rd.validation_summary is not None
         rd.validation_summary.details[:0] = discover_details
@@ -145,11 +145,11 @@ def validate_format(
     data: BioimageioYamlContent,
     /,
     *,
-    as_format: Union[Literal["discover", "latest"], str] = DISCOVER,
+    format_version: Union[Literal["discover", "latest"], str] = DISCOVER,
     context: Optional[ValidationContext] = None,
 ) -> ValidationSummary:
     with context or validation_context_var.get():
-        rd = build_description(data, as_format=as_format)
+        rd = build_description(data, format_version=format_version)
 
     assert rd.validation_summary is not None
     return rd.validation_summary

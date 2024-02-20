@@ -2,7 +2,7 @@ from pydantic import ValidationError as ValidationError
 
 from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.base_nodes import (
-    InvalidDescription as InvalidDescription,
+    InvalidDescr as InvalidDescr,
 )
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent as BioimageioYamlContent,

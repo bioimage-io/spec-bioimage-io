@@ -41,7 +41,7 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.base_nodes import (
     Converter,
-    InvalidDescription,
+    InvalidDescr,
     Node,
     NodeWithExplicitlySetFields,
 )
@@ -1946,7 +1946,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         try:
             from bioimageio.spec._internal.cover import (
                 generate_covers,
-            )  # TODO: move import?
+            )
 
             generated_covers = generate_covers(
                 [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],
@@ -1982,7 +1982,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             and (fv.startswith("0.3.") or fv.startswith("0.4."))
         ):
             m04 = v0_4.ModelDescr.load(data)
-            if not isinstance(m04, InvalidDescription):
+            if not isinstance(m04, InvalidDescr):
                 return _model_conv.convert_as_dict(m04)
 
         return data

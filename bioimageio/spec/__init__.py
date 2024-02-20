@@ -11,7 +11,7 @@ from bioimageio.spec._description import build_description as build_description
 from bioimageio.spec._description import dump_description as dump_description
 from bioimageio.spec._description import validate_format as validate_format
 from bioimageio.spec._internal.base_nodes import (
-    InvalidDescription as InvalidDescription,
+    InvalidDescr as InvalidDescr,
 )
 from bioimageio.spec._internal.constants import VERSION
 from bioimageio.spec._internal.validation_context import (
@@ -19,6 +19,7 @@ from bioimageio.spec._internal.validation_context import (
 )
 from bioimageio.spec._io import load_description as load_description
 from bioimageio.spec._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
+from bioimageio.spec._io import validate_rdf as validate_rdf
 from bioimageio.spec._package import save_bioimageio_package as save_bioimageio_package
 from bioimageio.spec._package import (
     save_bioimageio_package_as_folder as save_bioimageio_package_as_folder,

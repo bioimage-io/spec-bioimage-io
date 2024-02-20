@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, cast
 
 from pydantic import model_validator
 
-from bioimageio.spec._internal.base_nodes import InvalidDescription, Node
+from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.types import DatasetId as DatasetId
 from bioimageio.spec.dataset import v0_2
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
@@ -46,7 +46,7 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
             and fv.startswith("0.2.")
         ):
             old = v0_2.DatasetDescr.load(data)
-            if isinstance(old, InvalidDescription):
+            if isinstance(old, InvalidDescr):
                 return data
 
             return cast(
