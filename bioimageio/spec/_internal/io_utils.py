@@ -36,6 +36,7 @@ from bioimageio.spec._internal.types import (
     AbsoluteFilePath,
     BioimageioYamlContent,
     FileName,
+    FileSource,
     HttpUrl,
     PermissiveFileSource,
     RelativeFilePath,
@@ -332,7 +333,8 @@ def get_sha256(path: Path) -> Sha256:
     return Sha256(sha)
 
 
-def load_array(path: Path) -> NDArray[Any]:
+def load_array(source: FileSource) -> NDArray[Any]:
+    path = download(source).path
     return numpy.load(path, allow_pickle=False)
 
 
