@@ -7,6 +7,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
+from typing_extensions import assert_never
 
 from bioimageio.spec._internal.constants import (
     VERSION,
@@ -78,7 +79,7 @@ def format_loc(loc: Loc) -> str:
     return real_loc
 
 
-class ValidationSummaryDetail(BaseModel, extra="allow"):
+class ValidationDetail(BaseModel, extra="allow"):
     name: str
     status: Literal["passed", "failed"]
     errors: List[ErrorEntry] = Field(default_factory=list)
@@ -125,7 +126,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     name: str
     source_name: str
     status: Literal["passed", "failed"]
-    details: List[ValidationSummaryDetail]
+    details: List[ValidationDetail]
 
     @property
     def errors(self) -> List[ErrorEntry]:
@@ -151,3 +152,11 @@ class ValidationSummary(BaseModel, extra="allow"):
             for d in self.details
         )
         return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"
+
+    def add_detail(self, detail: ValidationDetail):
+        if detail.status == "failed":
+            self.status = "failed"
+        elif detail.status != "passed":
+            assert_never(detail.status)
+
+        self.details.append(detail)

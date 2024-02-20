@@ -39,5 +39,6 @@ from bioimageio.spec.notebook import NotebookDescr as NotebookDescr
 from bioimageio.spec.pretty_validation_errors import (
     enable_pretty_validation_errors_in_ipynb as enable_pretty_validation_errors_in_ipynb,
 )
+from bioimageio.spec.summary import ValidationSummary as ValidationSummary
 
 __version__ = VERSION

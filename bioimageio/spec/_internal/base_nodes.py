@@ -65,8 +65,8 @@ from bioimageio.spec._internal.validation_context import (
 )
 from bioimageio.spec.summary import (
     ErrorEntry,
+    ValidationDetail,
     ValidationSummary,
-    ValidationSummaryDetail,
     WarningEntry,
 )
 
@@ -383,7 +383,7 @@ class ResourceDescriptionBase(
     @property
     def validation_summary(self) -> ValidationSummary:
         if self._validation_summary is None:
-            return ValidationSummary(
+            self._validation_summary = ValidationSummary(
                 name=(
                     "unvalidated (use `load_description` or `build_description` to"
                     " create a validated description)"
@@ -392,8 +392,8 @@ class ResourceDescriptionBase(
                 status="failed",
                 details=[],
             )
-        else:
-            return self._validation_summary
+
+        return self._validation_summary
 
     _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
@@ -444,7 +444,7 @@ class ResourceDescriptionBase(
             ),
             status="failed" if errors else "passed",
             details=[
-                ValidationSummaryDetail(
+                ValidationDetail(
                     bioimageio_spec_version=VERSION,
                     errors=errors,
                     name=(
