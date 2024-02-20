@@ -95,6 +95,12 @@ def get_resource_package_content(
             )
 
         rdf_content["weights"] = {wf: w}
+        rd_slim = build_description(rdf_content)
+        assert not isinstance(rd_slim, InvalidDescr)
+        # repackage without other weights entries
+        return get_resource_package_content(
+            rd_slim, bioimageio_yaml_file_name=bioimageio_yaml_file_name
+        )
 
     return {**content, bioimageio_yaml_file_name: rdf_content}
 
