@@ -78,7 +78,7 @@ ResourceDescr = Union[
 
 
 def dump_description(
-    rd: ResourceDescr, exclude_unset: bool = True
+    rd: Union[ResourceDescr, InvalidDescr], exclude_unset: bool = True
 ) -> BioimageioYamlContent:
     """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)

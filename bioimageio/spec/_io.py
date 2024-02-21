@@ -38,7 +38,7 @@ def load_description(
 
 
 def save_bioimageio_yaml_only(
-    rd: Union[ResourceDescr, BioimageioYamlContent],
+    rd: Union[ResourceDescr, BioimageioYamlContent, InvalidDescr],
     /,
     file: Union[NewPath, FilePath, TextIO],
 ):
