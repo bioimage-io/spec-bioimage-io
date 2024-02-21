@@ -50,7 +50,7 @@ def save_bioimageio_yaml_only(
     write_yaml(cast(YamlValue, content), file)
 
 
-def validate_rdf(
+def load_description_and_validate_format_only(
     source: FileSource,
     /,
     *,
