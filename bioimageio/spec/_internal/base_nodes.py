@@ -24,7 +24,6 @@ from typing import (
 
 import pydantic
 from pydantic import (
-    AnyUrl,
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
@@ -53,6 +52,7 @@ from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
+    HttpUrl,
     ImportantFileSource,
     RelativeFilePath,
 )
@@ -398,12 +398,12 @@ class ResourceDescrBase(
 
         return self._validation_summary
 
-    _root: Union[AnyUrl, DirectoryPath] = PrivateAttr(
+    _root: Union[HttpUrl, DirectoryPath] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
     )
 
     @property
-    def root(self) -> Union[AnyUrl, DirectoryPath]:
+    def root(self) -> Union[HttpUrl, DirectoryPath]:
         return self._root
 
     @classmethod

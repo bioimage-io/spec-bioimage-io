@@ -25,7 +25,7 @@ class ValidationContext:
         init=False, default_factory=list
     )
 
-    root: Union[DirectoryPath, "HttpUrl"] = Path()
+    root: Union["HttpUrl", DirectoryPath] = Path()
     """url/directory serving as base to resolve any relative file paths"""
 
     warning_level: WarningLevel = 50

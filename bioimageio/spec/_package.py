@@ -55,16 +55,16 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
+    os_friendly_name = get_os_friendly_file_name(rd.name)
+    bioimageio_yaml_file_name = bioimageio_yaml_file_name.format(
+        name=os_friendly_name, type=rd.type
+    )
+
     if not is_valid_rdf_name(bioimageio_yaml_file_name):
         raise ValueError(
             f"Invalid file name '{bioimageio_yaml_file_name}'. Must be"
             f" '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
         )
-
-    os_friendly_name = get_os_friendly_file_name(rd.name)
-    bioimageio_yaml_file_name = (
-        f"{bioimageio_yaml_file_name.format(name=os_friendly_name, type=rd.type)}"
-    )
 
     content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {
         # add bioimageio.yaml file already here to avoid file name conflicts
@@ -92,8 +92,19 @@ def get_resource_package_content(
                 " the given model."
             )
 
+        assert isinstance(w, dict), type(w)
+        _ = w.pop("parent", None)
         rdf_content["weights"] = {wf: w}
-        rd_slim = build_description(rdf_content)
+        parent = rdf_content.pop("id", None)
+        parent_version = rdf_content.pop("version", None)
+        if parent is not None:
+            rdf_content["parent"] = {"id": parent, "version": parent_version}
+
+        with validation_context_var.get().replace(
+            root=rd.root, file_name=bioimageio_yaml_file_name
+        ):
+            rd_slim = build_description(rdf_content)
+
         assert not isinstance(
             rd_slim, InvalidDescr
         ), rd_slim.validation_summary.format()
