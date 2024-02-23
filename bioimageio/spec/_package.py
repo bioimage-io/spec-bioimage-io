@@ -31,6 +31,7 @@ from bioimageio.spec._internal.types import (
     HttpUrl,
     YamlValue,
 )
+from bioimageio.spec._internal.types._file_source import is_valid_rdf_name
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
 
@@ -54,10 +55,7 @@ def get_resource_package_content(
         weights_priority_order: If given, only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found a ValueError is raised.
     """
-    if (
-        bioimageio_yaml_file_name != BIOIMAGEIO_YAML
-        and not bioimageio_yaml_file_name.endswith(f".{BIOIMAGEIO_YAML}")
-    ):
+    if not is_valid_rdf_name(bioimageio_yaml_file_name):
         raise ValueError(
             f"Invalid file name '{bioimageio_yaml_file_name}'. Must be"
             f" '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
@@ -83,7 +81,7 @@ def get_resource_package_content(
         rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)
     ):
         # select single weights entry
-        assert isinstance(rdf_content["weights"], dict)
+        assert isinstance(rdf_content["weights"], dict), type(rdf_content["weights"])
         for wf in weights_priority_order:
             w = rdf_content["weights"].get(wf)
             if w is not None:
@@ -96,7 +94,9 @@ def get_resource_package_content(
 
         rdf_content["weights"] = {wf: w}
         rd_slim = build_description(rdf_content)
-        assert not isinstance(rd_slim, InvalidDescr)
+        assert not isinstance(
+            rd_slim, InvalidDescr
+        ), rd_slim.validation_summary.format()
         # repackage without other weights entries
         return get_resource_package_content(
             rd_slim, bioimageio_yaml_file_name=bioimageio_yaml_file_name
@@ -119,24 +119,30 @@ def _prepare_resource_package(
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
     """
+    context = validation_context_var.get()
+    bioimageio_yaml_file_name = context.file_name
     if isinstance(source, ResourceDescrBase):
         descr = source
     elif isinstance(source, dict):
         descr = build_description(source)
     else:
         opened = open_bioimageio_yaml(source)
-        outer_context = validation_context_var.get()
-        with outer_context.replace(
+        bioimageio_yaml_file_name = opened.original_file_name
+        context = context.replace(
             root=opened.original_root, file_name=opened.original_file_name
-        ):
+        )
+        with context:
             descr = build_description(opened.content)
 
     if isinstance(descr, InvalidDescr):
         raise ValueError(f"{source} is invalid: {descr.validation_summary}")
 
-    package_content = get_resource_package_content(
-        descr, weights_priority_order=weights_priority_order
-    )
+    with context:
+        package_content = get_resource_package_content(
+            descr,
+            bioimageio_yaml_file_name=bioimageio_yaml_file_name,
+            weights_priority_order=weights_priority_order,
+        )
 
     local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
     for k, v in package_content.items():
@@ -186,6 +192,7 @@ def save_bioimageio_package_as_folder(
     else:
         output_path = Path(output_path)
 
+    output_path.mkdir(exist_ok=True, parents=True)
     for name, source in package_content.items():
         if isinstance(source, collections.abc.Mapping):
             write_yaml(cast(YamlValue, source), output_path / name)

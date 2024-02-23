@@ -207,14 +207,31 @@ FileSource = Union[HttpUrl, AbsoluteFilePath, RelativeFilePath, pydantic.HttpUrl
 PermissiveFileSource = Union[FileSource, str]
 
 
-def wo_special_file_name(src: FileSource) -> FileSource:
+def is_valid_rdf_name(src: FileSource) -> bool:
     file_name = extract_file_name(src)
     for special in ALL_BIOIMAGEIO_YAML_NAMES:
         if file_name.endswith(special):
-            raise ValueError(
-                f"'{file_name}' not allowed here as it is reserved to identify"
-                f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
-            )
+            return True
+
+    return False
+
+
+def ensure_is_valid_rdf_name(src: FileSource) -> FileSource:
+    if not is_valid_rdf_name(src):
+        raise ValueError(
+            f"'{src}' does not have a valid filename to identify"
+            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+        )
+
+    return src
+
+
+def wo_special_file_name(src: FileSource) -> FileSource:
+    if is_valid_rdf_name(src):
+        raise ValueError(
+            f"'{src}' not allowed here as its filename is reserved to identify"
+            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+        )
 
     return src
 
