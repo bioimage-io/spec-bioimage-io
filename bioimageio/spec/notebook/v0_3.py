@@ -28,6 +28,9 @@ class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"
     id: Optional[NotebookId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
+    parent: Optional[NotebookId] = None
+    """The description from which this one is derived"""
+
     source: NotebookSource
     """The Jupyter notebook"""
 

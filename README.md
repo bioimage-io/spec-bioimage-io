@@ -226,10 +226,12 @@ Made with [contrib.rocks](https://contrib.rocks).
   * dropped `download_url`
   * dropped non-file attachments
   * `attachments.files` moved to `attachments.i.source`
+* Non-breaking changes
+  * added optional `parent` field
 
 #### model 0.5.0
 
-all generic 0.3.0 changes plus:
+all generic 0.3.0 changes (except models already have the `parent` field) plus:
 
 * Breaking changes that are partially auto-convertible
   * `inputs.i.axes` are now defined in more detail (same for `outputs.i.axes`)

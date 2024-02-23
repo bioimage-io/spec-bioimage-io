@@ -112,6 +112,9 @@ class CollectionDescr(
     id: Optional[CollectionId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
+    parent: Optional[CollectionId] = None
+    """The description from which this one is derived"""
+
     collection: NotEmpty[List[CollectionEntry]]
     """Collection entries"""
 

@@ -31,6 +31,9 @@ class ApplicationDescr(GenericDescrBase, title="bioimage.io application specific
     id: Optional[ApplicationId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
+    parent: Optional[ApplicationId] = None
+    """The description from which this one is derived"""
+
     source: Annotated[
         Optional[ImportantFileSource],
         Field(description="URL or path to the source of the application"),

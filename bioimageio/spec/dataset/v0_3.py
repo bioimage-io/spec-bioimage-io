@@ -37,6 +37,9 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
     id: Optional[DatasetId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
+    parent: Optional[DatasetId] = None
+    """The description from which this one is derived"""
+
     source: Optional[HttpUrl] = None
     """"URL to the source of the dataset."""
 

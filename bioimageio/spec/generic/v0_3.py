@@ -386,6 +386,9 @@ class GenericDescr(
     id: Optional[ResourceId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
+    parent: Optional[ResourceId] = None
+    """The description from which this one is derived"""
+
     source: Optional[HttpUrl] = None
     """The primary source of the resource"""
 
