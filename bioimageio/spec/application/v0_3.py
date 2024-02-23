@@ -3,6 +3,8 @@ from typing import Literal, Optional
 from pydantic import Field
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.types import ApplicationId as ApplicationId
 from bioimageio.spec._internal.types import ImportantFileSource
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -12,7 +14,7 @@ from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
 from bioimageio.spec.generic.v0_3 import GenericDescrBase
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
@@ -26,8 +28,21 @@ class ApplicationDescr(GenericDescrBase, title="bioimage.io application specific
 
     type: Literal["application"] = "application"
 
+    id: Optional[ApplicationId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
     source: Annotated[
         Optional[ImportantFileSource],
         Field(description="URL or path to the source of the application"),
     ] = None
     """The primary source of the application"""
+
+
+class LinkedApplication(Node):
+    """Reference to a bioimage.io application."""
+
+    id: ApplicationId
+    """A valid application `id` from the bioimage.io collection."""
+
+    version: int
+    """application version"""

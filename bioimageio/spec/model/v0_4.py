@@ -47,6 +47,7 @@ from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import LicenseId as LicenseId
+from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -58,7 +59,7 @@ from bioimageio.spec._internal.types.field_validation import (
     validate_unique_entries,
 )
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
-from bioimageio.spec.dataset.v0_2 import LinkedDatasetDescr as LinkedDatasetDescr
+from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
 from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
@@ -66,7 +67,7 @@ from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
-from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
@@ -846,11 +847,14 @@ class RunMode(Node):
     """Run mode specific key word arguments"""
 
 
-class LinkedModel(LinkedResourceDescr):
+class LinkedModel(Node):
     """Reference to a bioimage.io model."""
 
-    id: ResourceId
+    id: ModelId
     """A valid model `id` from the bioimage.io collection."""
+
+    version: Optional[int] = None
+    """model version"""
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
@@ -867,6 +871,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
+
+    id: Optional[ModelId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""
@@ -1091,7 +1098,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
-    training_data: Union[LinkedDatasetDescr, DatasetDescr, None] = None
+    training_data: Union[LinkedDataset, DatasetDescr, None] = None
     """The dataset used to train this model"""
 
     weights: WeightsDescr

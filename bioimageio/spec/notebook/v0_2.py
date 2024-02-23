@@ -1,7 +1,9 @@
-from typing import Literal, Union
+from typing import Literal, Optional, Union
 
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.types import NotebookId as NotebookId
 from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -10,7 +12,7 @@ from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import GenericDescrBase, HttpUrl
-from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
@@ -30,5 +32,18 @@ class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"
 
     type: Literal["notebook"] = "notebook"
 
+    id: Optional[NotebookId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
     source: NotebookSource
     """The Jupyter notebook"""
+
+
+class LinkedNotebook(Node):
+    """Reference to a bioimage.io notebook."""
+
+    id: NotebookId
+    """A valid notebook `id` from the bioimage.io collection."""
+
+    version: Optional[int] = None
+    """notebook version"""

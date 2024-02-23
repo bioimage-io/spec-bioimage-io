@@ -166,11 +166,14 @@ class CiteEntry(Node):
         return self
 
 
-class LinkedResourceDescr(Node):
+class LinkedResource(Node):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the bioimage.io collection."""
+
+    version: Optional[int] = None
+    """version of linked resource"""
 
 
 class GenericModelDescrBase(ResourceDescrBase):
@@ -195,9 +198,6 @@ class GenericModelDescrBase(ResourceDescrBase):
         default_factory=list,
     )
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
-
-    id: Optional[ResourceId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
     """UTF-8 emoji for display alongside the `id`."""
@@ -425,6 +425,9 @@ class GenericDescr(
 
     type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
+
+    id: Optional[ResourceId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     source: Optional[HttpUrl] = None
     """The primary source of the resource"""

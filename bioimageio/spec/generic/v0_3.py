@@ -157,11 +157,14 @@ class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
 _maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
 
 
-class LinkedResourceDescr(Node):
+class LinkedResource(Node):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
+
+    version: int
+    """version of linked resource"""
 
 
 class GenericModelDescrBase(ResourceDescrBase):
@@ -187,10 +190,6 @@ class GenericModelDescrBase(ResourceDescrBase):
         ),
     ] = Field(default_factory=list)
     """∈📦 Cover images."""
-
-    id: Optional[ResourceId] = None
-    """bioimage.io wide, unique identifier assigned by the
-    [bioimage.io collection](https://github.com/bioimage-io/collection-bioimage-io)"""
 
     id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
     """UTF-8 emoji for display alongside the `id`."""
@@ -383,6 +382,9 @@ class GenericDescr(
 
     type: Annotated[str, LowerCase] = Field("generic", frozen=True)
     """The resource type assigns a broad category to the resource."""
+
+    id: Optional[ResourceId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     source: Optional[HttpUrl] = None
     """The primary source of the resource"""

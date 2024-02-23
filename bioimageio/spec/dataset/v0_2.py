@@ -10,7 +10,7 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import GenericDescrBase
 from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
@@ -25,12 +25,18 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
 
     type: Literal["dataset"] = "dataset"
 
+    id: Optional[DatasetId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
     source: Optional[HttpUrl] = None
     """"URL to the source of the dataset."""
 
 
-class LinkedDatasetDescr(Node):
+class LinkedDataset(Node):
     """Reference to a bioimage.io dataset."""
 
     id: DatasetId
     """A valid dataset `id` from the bioimage.io collection."""
+
+    version: Optional[int] = None
+    """dataset version"""

@@ -110,6 +110,10 @@ YamlValue = _TypeAliasType(
 )
 
 # derived types
+ApplicationId = typing.NewType("ApplicationId", _ResourceIdAnno)
+CollectionId = typing.NewType("CollectionId", _ResourceIdAnno)
 DatasetId = typing.NewType("DatasetId", _ResourceIdAnno)
+ModelId = typing.NewType("ModelId", _ResourceIdAnno)
+NotebookId = typing.NewType("NotebookId", _ResourceIdAnno)
 BioimageioYamlContent = typing.Dict[str, YamlValue]
 BioimageioYamlSource = typing.Union[PermissiveFileSource, BioimageioYamlContent]

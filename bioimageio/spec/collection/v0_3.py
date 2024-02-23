@@ -19,7 +19,12 @@ from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
+from bioimageio.spec._internal.types import ApplicationId as ApplicationId
+from bioimageio.spec._internal.types import CollectionId as CollectionId
+from bioimageio.spec._internal.types import DatasetId as DatasetId
 from bioimageio.spec._internal.types import FileSource, NotEmpty, YamlValue
+from bioimageio.spec._internal.types import ModelId as ModelId
+from bioimageio.spec._internal.types import NotebookId as NotebookId
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.collection import v0_2
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
@@ -34,7 +39,7 @@ from bioimageio.spec.generic.v0_3 import (
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
 from bioimageio.spec.generic.v0_3 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
@@ -68,8 +73,10 @@ class CollectionEntry(Node, extra="allow"):
     entry_source: Optional[FileSource] = None
     """an external source this entry description is based on"""
 
-    id: Optional[ResourceId] = None
-    """Collection entry sub id overwriting `entry_source.id`.
+    id: Optional[Union[ResourceId, DatasetId, ApplicationId, ModelId, NotebookId]] = (
+        None
+    )
+    """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
     _descr: Optional[EntryDescr] = PrivateAttr(None)
@@ -102,6 +109,9 @@ class CollectionDescr(
 
     type: Literal["collection"] = "collection"
 
+    id: Optional[CollectionId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
     collection: NotEmpty[List[CollectionEntry]]
     """Collection entries"""
 
@@ -116,7 +126,7 @@ class CollectionDescr(
         common_badges = common_entry_content.pop(
             "badges", None
         )  # `badges` not valid for model entries
-        base_id: Optional[ResourceId] = self.id
+        base_id: Optional[CollectionId] = self.id
 
         seen_entry_ids: Dict[str, int] = {}
 
@@ -251,3 +261,13 @@ class CollectionDescr(
             )
 
         return data
+
+
+class LinkedCollection(Node):
+    """Reference to a bioimage.io collection."""
+
+    id: CollectionId
+    """A valid collection `id` from the bioimage.io collection."""
+
+    version: int
+    """collection version"""

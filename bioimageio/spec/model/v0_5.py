@@ -62,6 +62,7 @@ from bioimageio.spec._internal.types import (
     SiUnit,
 )
 from bioimageio.spec._internal.types import LicenseId as LicenseId
+from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
@@ -69,7 +70,7 @@ from bioimageio.spec._internal.types import Version as _Version
 from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
-from bioimageio.spec.dataset.v0_3 import LinkedDatasetDescr as LinkedDatasetDescr
+from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
 from bioimageio.spec.dataset.v0_3 import Uploader as Uploader
 from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Author as Author
@@ -83,7 +84,7 @@ from bioimageio.spec.generic.v0_3 import (
 )
 from bioimageio.spec.generic.v0_3 import Doi as Doi
 from bioimageio.spec.generic.v0_3 import FileDescr as FileDescr
-from bioimageio.spec.generic.v0_3 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
@@ -92,7 +93,6 @@ from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
 from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
 from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
 from bioimageio.spec.model.v0_4 import KnownRunMode as KnownRunMode
-from bioimageio.spec.model.v0_4 import LinkedModel as LinkedModel
 from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
 from bioimageio.spec.model.v0_4 import RunMode as RunMode
 from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
@@ -1613,6 +1613,16 @@ class WeightsDescr(Node):
         return self
 
 
+class LinkedModel(Node):
+    """Reference to a bioimage.io model."""
+
+    id: ModelId
+    """A valid model `id` from the bioimage.io collection."""
+
+    version: int
+    """model version"""
+
+
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -1626,6 +1636,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     type: Literal["model"] = "model"
     """Specialized resource type 'model'"""
+
+    id: Optional[ModelId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""
@@ -1946,7 +1959,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
 
-    training_data: Union[LinkedDatasetDescr, DatasetDescr, None] = None
+    training_data: Union[LinkedDataset, DatasetDescr, None] = None
     """The dataset used to train this model"""
 
     weights: WeightsDescr

@@ -13,9 +13,17 @@ from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
-from bioimageio.spec._internal.types import BioimageioYamlContent, NotEmpty, YamlValue
+from bioimageio.spec._internal.types import ApplicationId as ApplicationId
+from bioimageio.spec._internal.types import (
+    BioimageioYamlContent,
+    NotEmpty,
+    YamlValue,
+)
+from bioimageio.spec._internal.types import CollectionId as CollectionId
+from bioimageio.spec._internal.types import DatasetId as DatasetId
+from bioimageio.spec._internal.types import ModelId as ModelId
+from bioimageio.spec._internal.types import NotebookId as NotebookId
 from bioimageio.spec._internal.validation_context import validation_context_var
-from bioimageio.spec.dataset.v0_2 import DatasetId as DatasetId
 from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
@@ -24,7 +32,7 @@ from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import FileSource, GenericDescrBase
 from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
-from bioimageio.spec.generic.v0_2 import LinkedResourceDescr as LinkedResourceDescr
+from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
@@ -53,7 +61,9 @@ class CollectionEntry(Node, extra="allow"):
     rdf_source: Optional[FileSource] = None
     """resource description file (RDF) source to load entry from"""
 
-    id: Optional[ResourceId] = None
+    id: Optional[Union[ResourceId, DatasetId, ApplicationId, ModelId, NotebookId]] = (
+        None
+    )
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 
@@ -86,6 +96,9 @@ class CollectionDescr(
 
     type: Literal["collection"] = "collection"
 
+    id: Optional[CollectionId] = None
+    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+
     collection: NotEmpty[List[CollectionEntry]]
     """Collection entries"""
 
@@ -100,7 +113,7 @@ class CollectionDescr(
         common_badges = common_entry_content.pop(
             "badges", None
         )  # `badges` not valid for model entries
-        base_id: Optional[ResourceId] = self.id
+        base_id: Optional[CollectionId] = self.id
 
         seen_entry_ids: Dict[str, int] = {}
 
@@ -214,3 +227,13 @@ class CollectionDescr(
                 data["id"] = id_
 
         return data
+
+
+class LinkedCollection(Node):
+    """Reference to a bioimage.io collection."""
+
+    id: CollectionId
+    """A valid collection `id` from the bioimage.io collection."""
+
+    version: Optional[int] = None
+    """collection version"""

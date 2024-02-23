@@ -477,7 +477,7 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
 
 
 def export_module_documentations(folder: Path, module: ModuleType):
-    rd_name = to_pascal(module.__name__.split(".")[-1])
+    rd_name = to_pascal(module.__name__.split(".")[-1]) + "Descr"
 
     rd_class = None
     latest = None
