@@ -6,8 +6,10 @@ import pytest
 from bioimageio.spec._internal import types
 
 TYPE_ARGS = {
-    types.AbsoluteFilePath: str(Path(__file__).absolute()),
     types.AbsoluteDirectory: str(Path(__file__).absolute().parent),
+    types.AbsoluteFilePath: str(Path(__file__).absolute()),
+    types.ApplicationId: "appdev/app",
+    types.CollectionId: "collectionid",
     types.DatasetId: "dataset-id",
     types.Datetime: (2024, 2, 14),
     types.Doi: "10.5281/zenodo.5764892",
@@ -18,12 +20,14 @@ TYPE_ARGS = {
     types.ImportantFileSource: "README.md",
     types.LowerCaseIdentifier: "id",
     types.LowerCaseIdentifierStr: "id",
+    types.ModelId: "modelid",
+    types.NotebookId: "notebookid",
     types.OrcidId: "0000-0001-2345-6789",
+    types.RelativeFilePath: "here.py",
+    types.ResourceId: "resoruce-id",
+    types.Sha256: "0" * 64,
     types.SiUnit: "kg",
     types.Version: "1.0",
-    types.RelativeFilePath: "here.py",
-    types.Sha256: "0" * 64,
-    types.ResourceId: "resoruce-id",
 }
 
 IGNORE_TYPES_MEMBERS = {

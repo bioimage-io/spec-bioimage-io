@@ -387,7 +387,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892")
+    model_data["parent"] = dict(id="10.5281/zenodo.5764892", version=1)
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 

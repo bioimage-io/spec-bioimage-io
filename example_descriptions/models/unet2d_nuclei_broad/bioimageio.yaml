@@ -118,3 +118,4 @@ weights:
 
 training_data:
   id: ilastik/covid_if_training_data # note: not the real training data
+  version: 1
