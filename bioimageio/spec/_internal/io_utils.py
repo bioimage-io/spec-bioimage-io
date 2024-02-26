@@ -27,6 +27,7 @@ from pydantic import DirectoryPath, FilePath, NewPath, TypeAdapter
 from ruyaml import YAML
 from typing_extensions import NotRequired, Unpack
 
+from bioimageio.spec._internal.base_nodes import FileDescr
 from bioimageio.spec._internal.constants import (
     ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
@@ -114,10 +115,13 @@ def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
 
 
 def download(
-    source: PermissiveFileSource,
+    source: Union[PermissiveFileSource, FileDescr],
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
+    if isinstance(source, FileDescr):
+        return source.download()
+
     strict_source = _interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
         if isinstance(strict_source.absolute, PurePath):
@@ -333,8 +337,9 @@ def get_sha256(path: Path) -> Sha256:
     return Sha256(sha)
 
 
-def load_array(source: FileSource) -> NDArray[Any]:
+def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:
     path = download(source).path
+
     return numpy.load(path, allow_pickle=False)
 
 

@@ -49,7 +49,6 @@ from bioimageio.spec._internal.constants import (
     WARNING_LEVEL_TO_NAME,
 )
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.io_utils import download, get_sha256
 from bioimageio.spec._internal.types import (
     BioimageioYamlContent,
     HttpUrl,
@@ -557,6 +556,8 @@ class FileDescr(Node):
         if not context.perform_io_checks:
             return self
 
+        from bioimageio.spec._internal.io_utils import download, get_sha256
+
         local_source = download(self.source, sha256=self.sha256).path
         actual_sha = get_sha256(local_source)
         if self.sha256 is None:
@@ -571,4 +572,6 @@ class FileDescr(Node):
         return self
 
     def download(self):
+        from bioimageio.spec._internal.io_utils import download
+
         return download(self.source, sha256=self.sha256)
