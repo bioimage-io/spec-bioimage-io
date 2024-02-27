@@ -414,7 +414,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
         return value
 
 
-class ParametrizedInputShape(Node):
+class ParameterizedInputShape(Node):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
     min: NotEmpty[List[int]]
@@ -734,7 +734,7 @@ class InputTensorDescr(TensorDescrBase):
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
     shape: Annotated[
-        Union[Sequence[int], ParametrizedInputShape],
+        Union[Sequence[int], ParameterizedInputShape],
         Field(
             examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
         ),
@@ -750,7 +750,7 @@ class InputTensorDescr(TensorDescrBase):
         if bidx == -1:
             return self
 
-        if isinstance(self.shape, ParametrizedInputShape):
+        if isinstance(self.shape, ParameterizedInputShape):
             step = self.shape.step
             shape = self.shape.min
             if step[bidx] != 0:
@@ -989,7 +989,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         """
         if isinstance(t.shape, collections.abc.Sequence):
             return t.shape
-        elif isinstance(t.shape, ParametrizedInputShape):
+        elif isinstance(t.shape, ParameterizedInputShape):
             return t.shape.min
         elif isinstance(t.shape, ImplicitOutputShape):
             pass

@@ -188,7 +188,7 @@ SAME_AS_TYPE = "<same as type>"
 
 class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`.
-    `n` in this equation is the same for all axis parametrized in this manner across the whole model.
+    `n` in this equation is the same for all axis parameterized in this manner across the whole model.
     """
 
     min: Annotated[int, Gt(0)]
@@ -199,7 +199,7 @@ class ParameterizedSize(Node):
             raise ValueError(f"size {size} < {self.min}")
         if (size - self.min) % self.step != 0:
             raise ValueError(
-                f"axis of size {size} is not parametrized by `min + n*step` ="
+                f"axis of size {size} is not parameterized by `min + n*step` ="
                 f" `{self.min} + n*{self.step}`"
             )
 
@@ -220,7 +220,7 @@ class SizeReference(Node):
     An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
     Let's assume that we want to express the image height h in relation to its width w
     instead of only accepting input images of exactly 100*49 pixels
-    (for example to express a range of valid image shapes by parametrizing w, see `ParametrizedSize`).
+    (for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).
 
     >>> w = SpaceInputAxis(id=AxisId("w"), size=100, unit="millimeter", scale=2)
     >>> h = SpaceInputAxis(
@@ -264,7 +264,7 @@ class SizeReference(Node):
         n: int = 0,
     ):
         """helper method to compute concrete size for a given axis and its reference axis.
-        If the reference axis is parametrized, `n` is used to compute the concrete size of it, see `ParametrizedSize`.
+        If the reference axis is parameterized, `n` is used to compute the concrete size of it, see `ParameterizedSize`.
         """
         assert (
             axis.size == self
@@ -381,7 +381,7 @@ class IndexTimeSpaceAxisBase(AxisBase):
     ]
     """The size/length of an axis can be specified as
     - fixed integer
-    - parametrized series of valid sizes (`ParametrizedSize`)
+    - parameterized series of valid sizes (`ParameterizedSize`)
     - reference to another axis with an optional offset (`SizeReference`)
     """
 
@@ -1014,7 +1014,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
 def convert_axes(
     axes: str,
     *,
-    shape: Union[Sequence[int], v0_4.ParametrizedInputShape, v0_4.ImplicitOutputShape],
+    shape: Union[Sequence[int], v0_4.ParameterizedInputShape, v0_4.ImplicitOutputShape],
     tensor_type: Literal["input", "output"],
     halo: Optional[Sequence[int]],
     size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
@@ -1027,7 +1027,7 @@ def convert_axes(
             continue
 
         scale = 1.0
-        if isinstance(shape, v0_4.ParametrizedInputShape):
+        if isinstance(shape, v0_4.ParameterizedInputShape):
             if shape.step[i] == 0:
                 size = shape.min[i]
             else:
@@ -2041,7 +2041,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     ipt.axes,
                     (
                         ipt.shape.min
-                        if isinstance(ipt.shape, v0_4.ParametrizedInputShape)
+                        if isinstance(ipt.shape, v0_4.ParameterizedInputShape)
                         else ipt.shape
                     ),
                 )
