@@ -30,7 +30,13 @@ from bioimageio.spec._internal.base_nodes import Node
 from bioimageio.spec._internal.io_utils import download
 from bioimageio.spec._internal.types import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
+from bioimageio.spec.collection.v0_2 import CollectionDescr as CollectionDescr02
+from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
 from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
+from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
+from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr04
+from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
 
 yaml = YAML(typ="safe")
 
@@ -169,6 +175,20 @@ def check_bioimageio_yaml(
         "timestamp",
         *exclude_fields_from_roundtrip,
     }
+    if isinstance(
+        rd,
+        (
+            ModelDescr04,
+            ApplicationDescr02,
+            CollectionDescr02,
+            DatasetDescr02,
+            GenericDescr02,
+            NotebookDescr02,
+        ),
+    ):
+        # these fields may intentionally be manipulated
+        exclude_from_comp |= {"version", "id_emoji", "id"}
+
     deserialized = rd.model_dump(
         mode="json", exclude=exclude_from_comp, exclude_unset=True
     )

@@ -1132,8 +1132,26 @@ def _axes_letters_to_ids(
     return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in axes]
 
 
+def _get_complement_v04_axis(
+    tensor_axes: Sequence[str], axes: Optional[Sequence[str]]
+) -> Optional[AxisId]:
+    if axes is None:
+        return None
+
+    all_axes = set(tensor_axes) | {"b"}
+    complement_axes = [a for a in axes if a not in all_axes]
+    if len(complement_axes) > 1:
+        raise ValueError(
+            f"Expected none or a single complement axis, but axes '{axes}' "
+            f"for tensor dims '{all_axes}' leave '{complement_axes}'."
+        )
+
+    return None if not complement_axes else AxisId(complement_axes[0])
+
+
 def _convert_proc(
     p: Union[v0_4.PreprocessingDescr, v0_4.PostprocessingDescr],
+    tensor_axes: Sequence[str],
 ) -> Union[PreprocessingDescr, PostprocessingDescr]:
     if isinstance(p, v0_4.BinarizeDescr):
         return BinarizeDescr(kwargs=BinarizeKwargs(threshold=p.kwargs.threshold))
@@ -1143,13 +1161,14 @@ def _convert_proc(
         return SigmoidDescr()
     elif isinstance(p, v0_4.ScaleLinearDescr):
         axes = _axes_letters_to_ids(p.kwargs.axes)
-        if p.kwargs.axes is not None:
-            raise NotImplementedError(
-                "converting sclae linear with `axes` not implemented"
-            )
+        if p.kwargs.axes is None:
+            axis = None
+        else:
+            axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
+
         return ScaleLinearDescr(
             kwargs=ScaleLinearKwargs(
-                axis=None, gain=p.kwargs.gain, offset=p.kwargs.offset
+                axis=axis, gain=p.kwargs.gain, offset=p.kwargs.offset
             )
         )
     elif isinstance(p, v0_4.ScaleMeanVarianceDescr):
@@ -1224,7 +1243,7 @@ class _InputTensorConv(
         )
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
-            cp = _convert_proc(p)
+            cp = _convert_proc(p, src.axes)
             assert not isinstance(cp, ScaleMeanVarianceDescr)
             prep.append(cp)
 
@@ -1303,7 +1322,7 @@ class _OutputTensorConv(
                 None if sample_tensor is None else FileDescr(source=sample_tensor)
             ),
             data=data_descr,  # type: ignore
-            postprocessing=[_convert_proc(p) for p in src.postprocessing],
+            postprocessing=[_convert_proc(p, src.axes) for p in src.postprocessing],
         )
 
 
