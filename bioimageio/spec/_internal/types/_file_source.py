@@ -35,6 +35,13 @@ def validate_url_ok(url: str):
     if not validation_context_var.get().perform_io_checks:
         return url
 
+    if url.startswith("https://colab.research.google.com/github/"):
+        # head request for colab returns "Value error, 405: Method Not Allowed"
+        # therefore we check if the source notebook exists at github instead
+        url = url.replace(
+            "https://colab.research.google.com/github/", "https://github.com/"
+        )
+
     try:
         response = requests.head(str(url))
     except (
@@ -74,6 +81,15 @@ def validate_url_ok(url: str):
                 msg_context={
                     "status_code": response.status_code,
                     "location": response.headers.get("location"),
+                },
+            )
+        elif response.status_code == 405:
+            issue_warning(
+                "{status_code}: {reason} {value}",
+                value=url,
+                msg_context={
+                    "status_code": response.status_code,
+                    "reason": response.reason,
                 },
             )
         elif response.status_code != 200:
