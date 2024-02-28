@@ -7,7 +7,7 @@ from typing import Any, Callable, Union
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
 import pydantic
-import requests
+import requests.exceptions
 from annotated_types import Predicate
 from pydantic import (
     AfterValidator,
@@ -35,19 +35,49 @@ def validate_url_ok(url: str):
     if not validation_context_var.get().perform_io_checks:
         return url
 
-    response = requests.head(str(url))
-    if response.status_code in (301, 308):
-        issue_warning(
-            "URL redirected ({status_code}): consider updating {value} with new"
-            " location: {location}",
-            value=url,
-            msg_context={
-                "status_code": response.status_code,
-                "location": response.headers.get("location"),
-            },
+    try:
+        response = requests.head(str(url))
+    except (
+        requests.exceptions.ChunkedEncodingError,
+        requests.exceptions.ContentDecodingError,
+        requests.exceptions.InvalidHeader,
+        requests.exceptions.InvalidJSONError,
+        requests.exceptions.InvalidSchema,
+        requests.exceptions.InvalidURL,
+        requests.exceptions.MissingSchema,
+        requests.exceptions.StreamConsumedError,
+        requests.exceptions.TooManyRedirects,
+        requests.exceptions.UnrewindableBodyError,
+        requests.exceptions.URLRequired,
+    ) as e:
+        raise ValueError(
+            f"Invalid URL '{url}': {e}\nrequest: {e.request}\nresponse: {e.response}"
         )
-    elif response.status_code != 200:
-        raise ValueError(f"{response.status_code}: {response.reason} {url}")
+    except requests.RequestException as e:
+        issue_warning(
+            "Failed to validate URL '{value}': {error}\nrequest: {request}\nresponse: {response}",
+            value=url,
+            msg_context={"error": str(e), "response": e.response, "request": e.request},
+        )
+    except Exception as e:
+        issue_warning(
+            "Failed to validate URL '{value}': {error}",
+            value=url,
+            msg_context={"error": str(e)},
+        )
+    else:
+        if response.status_code in (301, 308):
+            issue_warning(
+                "URL redirected ({status_code}): consider updating {value} with new"
+                " location: {location}",
+                value=url,
+                msg_context={
+                    "status_code": response.status_code,
+                    "location": response.headers.get("location"),
+                },
+            )
+        elif response.status_code != 200:
+            raise ValueError(f"{response.status_code}: {response.reason} {url}")
 
     return url
 
