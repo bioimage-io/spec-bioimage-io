@@ -93,12 +93,19 @@ class ValidationDetail(BaseModel, extra="allow"):
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
 
+    @property
+    def status_icon(self):
+        if self.status == "passed":
+            return "✔️"
+        else:
+            return "❌"
+
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
         indent = "      " if root_loc else ""
         errs_wrns = self._format_errors_and_warnings(
             hide_tracebacks=hide_tracebacks, root_loc=root_loc
         )
-        return f"{indent}{self.name.strip('.')}: {self.status}{errs_wrns}"
+        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{errs_wrns}"
 
     def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
         indent = "      " if root_loc else ""
@@ -139,6 +146,13 @@ class ValidationSummary(BaseModel, extra="allow"):
     """list of selected, relevant package versions"""
 
     @property
+    def status_icon(self):
+        if self.status == "passed":
+            return "✔️"
+        else:
+            return "❌"
+
+    @property
     def errors(self) -> List[ErrorEntry]:
         return list(chain.from_iterable(d.errors for d in self.details))
 
@@ -161,7 +175,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
             for d in self.details
         )
-        return f"{indent}{self.name.strip('.')}: {self.status}{src}{details}"
+        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{src}{details}"
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":

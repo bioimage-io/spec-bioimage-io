@@ -18,6 +18,7 @@ reportUnnecessaryIsInstance = false
 reportUnnecessaryTypeIgnoreComment = "error"
 reportUnusedCallResult = "error"
 reportUnusedVariable = "error"
+reportUnusedImport = "error"
 typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 

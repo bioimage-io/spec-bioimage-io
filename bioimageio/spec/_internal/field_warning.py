@@ -76,6 +76,7 @@ def issue_warning(
     if severity >= validation_context_var.get().warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
     else:
+        # TODO: log prettier with loguru?
         logger.log(severity, msg.format(**msg_context))
 
 
