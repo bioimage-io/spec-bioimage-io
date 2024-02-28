@@ -1,3 +1,7 @@
+"""
+.. include:: ../../README.md
+"""
+
 from bioimageio.spec import application as application
 from bioimageio.spec import collection as collection
 from bioimageio.spec import dataset as dataset

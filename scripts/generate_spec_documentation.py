@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shutil
+from argparse import ArgumentParser
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -402,10 +403,15 @@ class Field:
         return ret
 
 
-def get_documentation_file_name(rd_class: Type[ResourceDescr], *, latest: bool = False):
+def get_documentation_file_name(
+    rd_class: Type[ResourceDescr], *, latest: bool = False, minor: bool = False
+):
+    assert not (latest and minor)
     typ = to_snake(rd_class.__name__)
     if latest:
         v = "latest"
+    elif minor:
+        v = "v" + "-".join(rd_class.implemented_format_version.split(".")[:2])
     else:
         v = f"v{rd_class.implemented_format_version.replace('.', '-')}"
 
@@ -470,10 +476,14 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
     if footnotes:
         md += "\n"
 
-    file_path = folder / get_documentation_file_name(rd_class)
-    _ = file_path.write_text(md, encoding="utf-8")
-    print(f"written {file_path}")
-    return file_path
+    for file_path in [
+        folder / get_documentation_file_name(rd_class, minor=True),
+        folder / get_documentation_file_name(rd_class),
+    ]:
+        _ = file_path.write_text(md, encoding="utf-8")
+        print(f"written {file_path}")
+
+    return file_path  # type: ignore
 
 
 def export_module_documentations(folder: Path, module: ModuleType):
@@ -498,8 +508,7 @@ def export_module_documentations(folder: Path, module: ModuleType):
     print(f" copied {latest} as latest")
 
 
-if __name__ == "__main__":
-    dist = (Path(__file__).parent / "../dist").resolve()
+def main(dist: Path):
     dist.mkdir(exist_ok=True)
 
     export_module_documentations(dist, application)
@@ -508,3 +517,21 @@ if __name__ == "__main__":
     export_module_documentations(dist, generic)
     export_module_documentations(dist, model)
     export_module_documentations(dist, notebook)
+
+
+def parse_args():
+    p = ArgumentParser(
+        description="script that generates bioimageio user documentation"
+    )
+    _ = p.add_argument(
+        "--dist",
+        nargs="?",
+        default=str((Path(__file__).parent / "../user_docs").resolve()),
+    )
+    args = p.parse_args()
+    return args
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(dist=Path(args.dist))

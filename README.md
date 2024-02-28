@@ -76,7 +76,7 @@ pip install -U bioimageio.core
 ## ♥ Contributors
 
 <a href="https://github.com/bioimage-io/spec-bioimage-io/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=bioimage-io/spec-bioimage-io" />
+  <img alt="bioimageio.spec contributors" src="https://contrib.rocks/image?repo=bioimage-io/spec-bioimage-io" />
 </a>
 
 Made with [contrib.rocks](https://contrib.rocks).
@@ -261,7 +261,8 @@ all generic 0.3.0 changes (except models already have the `parent` field) plus:
 
 * Breaking changes that are fully auto-convertible
   * `version` is now a single number. The minor version from the previous SemVer 2.0 is used when converting.
-  * `id_emoji` is a new, optional field
+  * `id_emoji` is a new, optional field (set from `config.bioimageio.nickname_icon` if available)
+  * `id` overwritten with value from `config.bioimageio.nickname` if available
   * `uploader` is a new, optional field with `email` and an optional `name` subfields
 
 #### model 0.4.9

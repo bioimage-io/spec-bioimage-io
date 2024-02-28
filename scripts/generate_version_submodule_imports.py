@@ -17,7 +17,11 @@ from .{info.latest_version_module} import {info.target_node} as {info.target_nod
 
 Any{info.target_node} = {info.target_node}
 """
-AUTOGEN_BODY_MULTIPLE = """from typing import Union
+AUTOGEN_BODY_MULTIPLE = """\"\"\"
+implementaions of all released minor versions are available in submodules:
+{info.submodule_list}
+\"\"\"
+from typing import Union
 
 from pydantic import Discriminator
 from typing_extensions import Annotated
@@ -26,6 +30,7 @@ from . import {info.all_version_modules_import_as}
 from .{info.latest_version_module} import {info.target_node} as {info.target_node}
 
 Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Discriminator("format_version")]
+\"\"\"Union of any released {info.target} desription\"\"\"
 """
 
 AUTOGEN_STOP = "# autogen: stop\n"
@@ -76,6 +81,7 @@ class Info:
     latest_version_module: str = field(init=False)
     all_version_modules_import_as: str = field(init=False)
     package_path: Path = field(init=False)
+    submodule_list: str = field(init=False)
 
     def __post_init__(self):
         self.target_node = dict(generic="GenericDescr").get(
@@ -89,6 +95,13 @@ class Info:
             f"{m} as {m}" for m in self.all_version_modules
         )
         self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
+        self.submodule_list = "\n".join(
+            [
+                f"- {self.target} {vm}: `bioimageio.spec.{self.target}.{vm}.{self.target_node}` "
+                f"[user documentation](../../../user_docs/{self.target}_descr_{vm.replace('_', '-')}.md)"
+                for vm in self.all_version_modules
+            ]
+        )
 
 
 def process(info: Info, check: bool):
