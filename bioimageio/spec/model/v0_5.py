@@ -493,18 +493,21 @@ class NominalOrOrdinalDataDescr(Node):
     ) -> Self:
         incompatible: List[Any] = []
         for v in self.values:
-            if (
-                (
+            if self.type == "bool":
+                if not isinstance(v, bool):
+                    incompatible.append(v)
+            elif self.type in DTYPE_LIMITS:
+                if (
                     isinstance(v, (int, float))
                     and (
                         v < DTYPE_LIMITS[self.type].min
                         or v > DTYPE_LIMITS[self.type].max
                     )
-                )
-                or (isinstance(v, bool) and self.type != "bool")
-                or (isinstance(v, str) and "uint" not in self.type)
-                or (isinstance(v, float) and "int" in self.type)
-            ):
+                    or (isinstance(v, str) and "uint" not in self.type)
+                    or (isinstance(v, float) and "int" in self.type)
+                ):
+                    incompatible.append(v)
+            else:
                 incompatible.append(v)
 
             if len(incompatible) == 5:
@@ -1288,6 +1291,10 @@ class _OutputTensorConv(
             halo=src.halo,
             size_refs=size_refs,
         )
+        data_descr: Dict[str, Any] = dict(type=src.data_type)
+        if data_descr["type"] == "bool":
+            data_descr["values"] = [False, True]
+
         return tgt(
             axes=axes,  # type: ignore
             id=TensorId(src.name),
@@ -1295,7 +1302,7 @@ class _OutputTensorConv(
             sample_tensor=(
                 None if sample_tensor is None else FileDescr(source=sample_tensor)
             ),
-            data=dict(type=src.data_type),  # type: ignore
+            data=data_descr,  # type: ignore
             postprocessing=[_convert_proc(p) for p in src.postprocessing],
         )
 
