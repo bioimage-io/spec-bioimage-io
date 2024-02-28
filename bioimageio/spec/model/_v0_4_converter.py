@@ -3,6 +3,7 @@ import collections.abc
 from bioimageio.spec._internal.types import BioimageioYamlContent
 from bioimageio.spec.generic._v0_2_converter import (
     remove_doi_prefix,
+    remove_gh_prefix,
     remove_slashes_from_names,
 )
 from bioimageio.spec.model._v0_3_converter import convert_model_from_v0_3_to_0_4_0
@@ -50,6 +51,7 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
         data["format_version"] = "0.4.10"
 
     remove_doi_prefix(data)
+    remove_gh_prefix(data)
     # remove 'future' from config if no other than the used future entries exist
     config = data.get("config", {})
     if isinstance(config, dict) and config.get("future") == {}:

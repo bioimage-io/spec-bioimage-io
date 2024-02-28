@@ -44,6 +44,7 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
         data["format_version"] = "0.2.4"
 
     remove_doi_prefix(data)
+    remove_gh_prefix(data)
 
 
 def remove_slashes_from_names(data: Dict[Any, Any]) -> None:
@@ -99,3 +100,22 @@ def remove_doi_prefix(data: BioimageioYamlContent) -> None:
             new_cite[i] = new_cite_entry
 
         data["cite"] = new_cite
+
+
+def remove_gh_prefix(data: BioimageioYamlContent) -> None:
+    def rm_gh(field_name: str):
+        authors = data.get(field_name)
+        if not isinstance(authors, list):
+            return
+
+        for a in authors:
+            if (
+                isinstance(a, dict)
+                and "github_user" in a
+                and isinstance(a["github_user"], str)
+                and a["github_user"].startswith("https://github.com/")
+            ):
+                a["github_user"] = a["github_user"][len("https://github.com/") :]
+
+    rm_gh("authors")
+    rm_gh("maintainers")
