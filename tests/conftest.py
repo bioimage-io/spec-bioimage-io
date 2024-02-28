@@ -4,22 +4,36 @@ from types import MappingProxyType
 from typing import Any, Dict, Union
 
 import pytest
+from filelock import FileLock
 from ruyaml import YAML
 
 yaml = YAML(typ="safe")
 
 EXAMPLE_SPECS = Path(__file__).parent / "../example_descriptions/"
-GENERATED_JSON_SCHEMAS = Path(__file__).parent / "generated_json_schemas"
 UNET2D_ROOT = EXAMPLE_SPECS / "models/unet2d_nuclei_broad"
 
 
 @pytest.fixture(scope="session")
-def bioimageio_json_schema() -> Dict[Any, Any]:
+def bioimageio_json_schema(
+    tmp_path_factory: pytest.TempPathFactory, worker_id: str
+) -> Dict[Any, Any]:
+    """generates json schema (only run with one worker)
+    see https://pytest-xdist.readthedocs.io/en/latest/how-to.html#making-session-scoped-fixtures-execute-only-once
+    """
     from scripts.generate_json_schemas import generate_json_schemas
 
-    generate_json_schemas(GENERATED_JSON_SCHEMAS, "generate")
-    with (GENERATED_JSON_SCHEMAS / "bioimageio_schema_latest.json").open() as f:
-        schema: Union[Any, Dict[Any, Any]] = json.load(f)
+    root_tmp_dir = tmp_path_factory.getbasetemp().parent
+    path = root_tmp_dir / "bioimageio_schema_latest.json"
+    if worker_id == "master":
+        # no workers
+        generate_json_schemas(root_tmp_dir, "generate")
+        schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
+    else:
+        with FileLock(path.with_suffix(path.suffix + ".lock")):
+            if not path.is_file():
+                generate_json_schemas(root_tmp_dir, "generate")
+
+            schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
 
     assert isinstance(schema, dict)
     return schema

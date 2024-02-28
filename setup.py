@@ -35,7 +35,7 @@ setup(
         "packaging>=17.0",
         "pooch",
         "pydantic-settings",
-        "pydantic[email]>=2.0.1",
+        "pydantic[email]>=2.6.1",
         "pyodide-http;platform_system=='Emscripten'",
         "python-dateutil",
         "ruyaml",
@@ -46,12 +46,14 @@ setup(
         "dev": [
             "black",
             "deepdiff",
+            "filelock",  # for session fixtures due to pytest-xdist
             "jsonschema",
             "jupyter",
             "lxml",
             "pdoc",
             "pre-commit",
             "pyright",
+            "pytest-xdist[psutil]",  # parallel pytest with 'pytest -n auto'
             "pytest",
             "ruff",  # check line length in cases black cannot fix it
         ]
