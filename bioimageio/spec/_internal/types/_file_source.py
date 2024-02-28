@@ -38,12 +38,14 @@ def validate_url_ok(url: str):
     if url.startswith("https://colab.research.google.com/github/"):
         # head request for colab returns "Value error, 405: Method Not Allowed"
         # therefore we check if the source notebook exists at github instead
-        url = url.replace(
+        val_url = url.replace(
             "https://colab.research.google.com/github/", "https://github.com/"
         )
+    else:
+        val_url = url
 
     try:
-        response = requests.head(str(url))
+        response = requests.head(val_url)
     except (
         requests.exceptions.ChunkedEncodingError,
         requests.exceptions.ContentDecodingError,
@@ -73,7 +75,9 @@ def validate_url_ok(url: str):
             msg_context={"error": str(e)},
         )
     else:
-        if response.status_code in (301, 308):
+        if response.status_code == 302:  # found
+            pass
+        elif response.status_code in (301, 308):
             issue_warning(
                 "URL redirected ({status_code}): consider updating {value} with new"
                 " location: {location}",
