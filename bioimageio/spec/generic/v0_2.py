@@ -35,6 +35,9 @@ from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import OrcidId as OrcidId
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
+from bioimageio.spec._internal.types import (
+    Version as Version,
+)
 from bioimageio.spec._internal.types.field_validation import (
     AfterValidator as _AfterValidator,
 )
@@ -336,16 +339,18 @@ class GenericModelDescrBase(ResourceDescrBase):
     version: Annotated[int, Ge(ge=1), Field(examples=[1, 2, 3])] = 1
     """The version number of the resource.
     note: previous versions of this spec accepted a SemVer 2.0 version, e.g. 0.1.0.
-    These are now converted by using the minor part as version nr."""
+    These are now moved to the new `sem_ver` field."""
 
-    @field_validator("version", mode="before")
+    sem_ver: Optional[Version] = None
+    """A SemVer 2.0 version of the resource."""
+
+    @model_validator(mode="before")
     @classmethod
-    def _convert_version(cls, value: Any):
-        if isinstance(value, str) and "." in value:
-            _, v, *_ = value.split(".")
-            return v
+    def _convert_version(cls, data: Union[Any, Dict[Any, Any]]):
+        if isinstance(data, dict) and "." in str(data.get("version")):
+            data["sem_ver"] = data.pop("version")
 
-        return value
+        return data
 
 
 class GenericDescrBase(GenericModelDescrBase):

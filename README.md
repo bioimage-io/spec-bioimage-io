@@ -260,9 +260,11 @@ all generic 0.3.0 changes (except models already have the `parent` field) plus:
 #### generic 0.2.4 and model 0.4.10
 
 * Breaking changes that are fully auto-convertible
-  * `version` is now a single number. The minor version from the previous SemVer 2.0 is used when converting.
-  * `id_emoji` is a new, optional field (set from `config.bioimageio.nickname_icon` if available)
+  * `version` is now a single number. If version is set as a string with a dot (from complying with the previous field definition, holding a SemVer 2.0 version), it is moved to the new `sem_ver` field.
   * `id` overwritten with value from `config.bioimageio.nickname` if available
+* Non-breaking changes
+  * `sem_ver` is a new, opitonal field  (set from `version` if applicable)
+  * `id_emoji` is a new, optional field (set from `config.bioimageio.nickname_icon` if available)
   * `uploader` is a new, optional field with `email` and an optional `name` subfields
 
 #### model 0.4.9

@@ -35,6 +35,7 @@ from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Sha256 as Sha256
+from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
@@ -325,6 +326,9 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     version: Annotated[int, Ge(ge=1), Field(examples=[1, 2, 3])] = 1
     """The version number of the resource."""
+
+    sem_ver: Optional[Version] = None
+    """A SemVer 2.0 version of the resource."""
 
 
 class GenericDescrBase(GenericModelDescrBase):
