@@ -199,7 +199,7 @@ class CollectionDescr(
                 raise ValueError(
                     "Invalid collection entry"
                     f" collection[{i}]:\n"
-                    f"{entry_descr.validation_summary.format(hide_source=True, root_loc=('collection', i))}"
+                    f"{entry_descr.validation_summary.format(hide_source=True, hide_env=True, root_loc=('collection', i))}"
                 )
             elif isinstance(
                 entry_descr, get_args(EntryDescr)

@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Any, List, Literal, Mapping, Tuple, Union
+from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union
 
 from pydantic import (
     BaseModel,
@@ -71,12 +71,13 @@ def format_loc(loc: Loc) -> str:
     if not loc:
         loc = ("__root__",)
 
-    ret = ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
-    #  additional field validation can make the location information quite convoluted, e.g.
-    # weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url['http','https']]: Input should be a valid URL, relative URL without a base
+    loc_str = ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
+
+    # additional field validation can make the location information quite convoluted, e.g.
+    # `weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url['http','https']]` Input should be a valid URL, relative URL without a base
     # therefore we remove the `.function-after[validate_url_ok(), url['http','https']]` here
-    real_loc, *_ = ret.split(".function-after")  # remove validation func names from loc
-    return real_loc
+    brief_loc_str, *_ = loc_str.split(".function-after")
+    return f"`{brief_loc_str}`"
 
 
 class InstalledPackage(TypedDict):
@@ -101,14 +102,14 @@ class ValidationDetail(BaseModel, extra="allow"):
             return "❌"
 
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
-        indent = "      " if root_loc else ""
+        indent = "    " if root_loc else ""
         errs_wrns = self._format_errors_and_warnings(
             hide_tracebacks=hide_tracebacks, root_loc=root_loc
         )
         return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{errs_wrns}"
 
     def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
-        indent = "      " if root_loc else ""
+        indent = "    " if root_loc else ""
         if hide_tracebacks:
             tbs = [""] * len(self.errors)
         else:
@@ -118,18 +119,29 @@ class ValidationDetail(BaseModel, extra="allow"):
                 for e in self.errors
             ]
 
-        es = "".join(
-            f"\n    {format_loc(root_loc + e.loc)}: {e.msg}{tb}"
+        def join_parts(parts: Iterable[Tuple[str, str]]):
+            last_loc = None
+            lines: List[str] = []
+            for loc, msg in parts:
+                if loc == last_loc:
+                    lines.append(f"\n  {loc} {msg}")
+                else:
+                    lines.append(f"\n- {loc} {msg}")
+
+                last_loc = loc
+
+            return "".join(lines)
+
+        es = join_parts(
+            (format_loc(root_loc + e.loc), f"{e.msg}{tb}")
             for e, tb in zip(self.errors, tbs)
         )
-        ws = "".join(
-            f"\n    {format_loc(root_loc + w.loc)}: {w.msg}" for w in self.warnings
-        )
+        ws = join_parts((format_loc(root_loc + w.loc), w.msg) for w in self.warnings)
 
         return (
-            f"\n{indent}errors: {es}"
+            f"\n{indent}errors:\n{es}"
             if es
-            else "" + f"\n{indent}warnings: {ws}" if ws else ""
+            else "" + f"\n{indent}warnings:\n{ws}" if ws else ""
         )
 
 
@@ -163,19 +175,37 @@ class ValidationSummary(BaseModel, extra="allow"):
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
 
+    def _format_env(self):
+        if not self.env:
+            return ""
+
+        package_w = max(len(e["name"]) for e in self.env)
+        version_w = max(len(e["version"]) for e in self.env)
+
+        return (
+            "\n"
+            f"| {'package'.center(package_w)} | {'version'.center(version_w)} |\n"
+            f"| {'---'.center(package_w)} | {'---'.center(version_w)} |\n"
+        ) + "".join(
+            f"| {e['name'].ljust(package_w)} | {e['version'].ljust(version_w)} |\n"
+            for e in self.env
+        )
+
     def format(
         self,
         hide_tracebacks: bool = False,
         hide_source: bool = False,
+        hide_env: bool = False,
         root_loc: Loc = (),
     ) -> str:
         indent = "   " if root_loc else ""
         src = "" if hide_source else f"\n{indent}source: {self.source_name}"
+        env = "" if hide_env else self._format_env()
         details = f"\n{indent}" + f"\n{indent}".join(
             d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
             for d in self.details
         )
-        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{src}{details}"
+        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{src}{env}{details}"
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
