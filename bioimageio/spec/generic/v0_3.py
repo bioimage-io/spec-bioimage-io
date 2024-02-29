@@ -4,7 +4,7 @@ from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
 import requests
-from annotated_types import Ge, Len, LowerCase, MaxLen
+from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
@@ -164,8 +164,8 @@ class LinkedResource(Node):
     id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
 
-    version: int
-    """version of linked resource"""
+    version_nr: int
+    """version number (nth published version, not the semantic version) of linked resource"""
 
 
 class GenericModelDescrBase(ResourceDescrBase):
@@ -324,11 +324,11 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return value
 
-    version: Annotated[int, Ge(ge=1), Field(examples=[1, 2, 3])] = 1
-    """The version number of the resource."""
+    version: Optional[Version] = None
+    """The version of the resource following SemVer 2.0."""
 
-    sem_ver: Optional[Version] = None
-    """A SemVer 2.0 version of the resource."""
+    version_nr: Optional[int] = None
+    """version number (nth published version, not the semantic version)"""
 
 
 class GenericDescrBase(GenericModelDescrBase):

@@ -100,5 +100,5 @@ class LinkedDataset(Node):
     id: DatasetId
     """A valid dataset `id` from the bioimage.io collection."""
 
-    version: int
-    """dataset version"""
+    version_nr: int
+    """version number (nth published version, not the semantic version) of linked dataset"""

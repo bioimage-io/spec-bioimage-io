@@ -47,5 +47,5 @@ class LinkedApplication(Node):
     id: ApplicationId
     """A valid application `id` from the bioimage.io collection."""
 
-    version: int
-    """application version"""
+    version_nr: int
+    """version number (nth published version, not the semantic version) of linked application"""
