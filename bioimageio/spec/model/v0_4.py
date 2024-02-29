@@ -854,7 +854,7 @@ class LinkedModel(Node):
     """A valid model `id` from the bioimage.io collection."""
 
     version_nr: Optional[int] = None
-    """version number (nth published version, not the semantic version) of linked model"""
+    """version number (n-th published version, not the semantic version) of linked model"""
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):

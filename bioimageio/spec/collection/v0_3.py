@@ -273,4 +273,4 @@ class LinkedCollection(Node):
     """A valid collection `id` from the bioimage.io collection."""
 
     version_nr: int
-    """version number (nth published version, not the semantic version) of linked collection"""
+    """version number (n-th published version, not the semantic version) of linked collection"""

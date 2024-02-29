@@ -174,7 +174,7 @@ class LinkedResource(Node):
     """A valid resource `id` from the bioimage.io collection."""
 
     version_nr: Optional[int] = None
-    """version number (nth published version, not the semantic version) of linked resource"""
+    """version number (n-th published version, not the semantic version) of linked resource"""
 
 
 class GenericModelDescrBase(ResourceDescrBase):
@@ -338,7 +338,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """The version of the resource following SemVer 2.0."""
 
     version_nr: Optional[int] = None
-    """version number (nth published version, not the semantic version)"""
+    """version number (n-th published version, not the semantic version)"""
 
 
 class GenericDescrBase(GenericModelDescrBase):

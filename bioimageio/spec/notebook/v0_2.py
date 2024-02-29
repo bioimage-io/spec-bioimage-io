@@ -46,4 +46,4 @@ class LinkedNotebook(Node):
     """A valid notebook `id` from the bioimage.io collection."""
 
     version_nr: Optional[int] = None
-    """version number (nth published version, not the semantic version) of linked notebook"""
+    """version number (n-th published version, not the semantic version) of linked notebook"""
