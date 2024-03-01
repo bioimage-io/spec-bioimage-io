@@ -1,4 +1,5 @@
 from itertools import chain
+from types import MappingProxyType
 from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union
 
 from pydantic import (
@@ -9,23 +10,35 @@ from pydantic import (
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
 
-from bioimageio.spec._internal.constants import (
-    VERSION,
+from bioimageio.spec._internal.constants import VERSION
+from bioimageio.spec._internal.validation_context import (
+    ALERT,
+    ALERT_NAME,
+    ERROR,
+    ERROR_NAME,
+    INFO,
+    INFO_NAME,
     WARNING,
     WARNING_NAME,
-    WARNING_NAME_TO_LEVEL,
-    WARNING_SEVERITY_TO_NAME,
-)
-from bioimageio.spec._internal.validation_context import WarningLevel as WarningLevel
-from bioimageio.spec._internal.validation_context import (
-    WarningSeverity as WarningSeverity,
+    WarningLevel,
+    WarningSeverity,
 )
 
-Loc = Tuple[
-    Union[int, str], ...
-]  # location of error/warning in a nested data structure
+Loc = Tuple[Union[int, str], ...]
+"""location of error/warning in a nested data structure"""
+
 WarningSeverityName = Literal["info", "warning", "alert"]
 WarningLevelName = Literal[WarningSeverityName, "error"]
+
+WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = (
+    MappingProxyType({INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME})
+)
+WARNING_LEVEL_TO_NAME: Mapping[WarningLevel, WarningLevelName] = MappingProxyType(
+    {**WARNING_SEVERITY_TO_NAME, ERROR: ERROR_NAME}
+)
+WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyType(
+    {v: k for k, v in WARNING_LEVEL_TO_NAME.items()}
+)
 
 
 class ValidationEntry(BaseModel):

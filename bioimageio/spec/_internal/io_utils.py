@@ -4,7 +4,6 @@ import os
 import platform
 import warnings
 from contextlib import nullcontext
-from dataclasses import dataclass
 from pathlib import Path, PurePath
 from typing import (
     Any,
@@ -13,7 +12,6 @@ from typing import (
     Mapping,
     Optional,
     TextIO,
-    TypedDict,
     Union,
     cast,
 )
@@ -23,29 +21,32 @@ import numpy
 import pooch
 import pydantic
 from numpy.typing import NDArray
-from pydantic import DirectoryPath, FilePath, NewPath, TypeAdapter
+from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
-from typing_extensions import NotRequired, Unpack
+from typing_extensions import Unpack
 
-from bioimageio.spec._internal.base_nodes import FileDescr
-from bioimageio.spec._internal.constants import (
-    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
+from bioimageio.spec._internal.base_nodes import FileDescr, Sha256
+from bioimageio.spec._internal.io import (
     BIOIMAGEIO_YAML,
+    BioimageioYamlContent,
+    DownloadedFile,
+    HashKwargs,
+    HttpUrl,
+    OpenedBioimageioYaml,
+    YamlValue,
+    extract_file_name,
+    get_parent_url,
+    interprete_file_source,
+)
+from bioimageio.spec._internal.io_basics import (
+    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
+    FileName,
 )
 from bioimageio.spec._internal.types import (
-    AbsoluteDirectory,
-    AbsoluteFilePath,
-    BioimageioYamlContent,
-    FileName,
     FileSource,
-    HttpUrl,
     PermissiveFileSource,
     RelativeFilePath,
-    Sha256,
-    YamlValue,
 )
-from bioimageio.spec._internal.types._file_source import extract_file_name
-from bioimageio.spec._internal.utils import get_parent_url
 
 if platform.machine() == "wasm32":
     import pyodide_http  # type: ignore
@@ -56,40 +57,11 @@ if platform.machine() == "wasm32":
 yaml = YAML(typ="safe")
 
 
-class HashKwargs(TypedDict):
-    sha256: NotRequired[Optional[Sha256]]
-
-
 def _get_known_hash(hash_kwargs: HashKwargs):
     if "sha256" in hash_kwargs and hash_kwargs["sha256"] is not None:
         return f"sha256:{hash_kwargs['sha256']}"
     else:
         return None
-
-
-@dataclass
-class DownloadedFile:
-    path: AbsoluteFilePath
-    original_root: Union[HttpUrl, DirectoryPath]
-    original_file_name: str
-
-
-@dataclass
-class OpenedBioimageioYaml:
-    content: BioimageioYamlContent
-    original_root: Union[HttpUrl, DirectoryPath]
-    original_file_name: str
-
-
-StrictFileSource = Union[pydantic.HttpUrl, AbsoluteFilePath, RelativeFilePath]
-_strict_file_source_adapter = TypeAdapter(StrictFileSource)
-
-
-def _interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
-    if isinstance(file_source, str):
-        return _strict_file_source_adapter.validate_python(file_source)
-    else:
-        return file_source
 
 
 def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
@@ -122,7 +94,7 @@ def download(
     if isinstance(source, FileDescr):
         return source.download()
 
-    strict_source = _interprete_file_source(source)
+    strict_source = interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
         if isinstance(strict_source.absolute, PurePath):
             strict_source = strict_source.absolute
@@ -131,7 +103,7 @@ def download(
 
     if isinstance(strict_source, PurePath):
         local_source = strict_source
-        root: Union[HttpUrl, AbsoluteDirectory] = strict_source.parent
+        root: Union[Url, DirectoryPath] = strict_source.parent
     else:
         if strict_source.scheme not in ("http", "https"):
             raise NotImplementedError(strict_source.scheme)
@@ -164,7 +136,7 @@ def download(
     )
 
 
-def get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
+def get_unique_file_name(url: Union[Url, pydantic.HttpUrl]):
     """
     Create a unique file name based on the given URL;
     adapted from pooch.utils.unique_file_name

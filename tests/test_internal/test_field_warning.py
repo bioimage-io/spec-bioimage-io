@@ -10,11 +10,10 @@ from bioimageio.spec._internal.constants import (
     ERROR,
     INFO,
     WARNING,
-    WARNING_LEVEL_CONTEXT_KEY,
 )
 from bioimageio.spec._internal.field_warning import warn
 from bioimageio.spec._internal.validation_context import ValidationContext
-from tests.utils import check_node
+from tests.utils import WARNING_LEVEL_CONTEXT_KEY, check_node
 
 
 class DummyNode(Node):

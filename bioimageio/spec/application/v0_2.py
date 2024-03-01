@@ -4,9 +4,9 @@ from pydantic import Field
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.types import ApplicationId as ApplicationId
 from bioimageio.spec._internal.types import ImportantFileSource
-from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr

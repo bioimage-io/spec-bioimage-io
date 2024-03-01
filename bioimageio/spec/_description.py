@@ -13,9 +13,8 @@ from typing_extensions import Annotated
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import InvalidDescr
-from bioimageio.spec._internal.constants import DISCOVER
+from bioimageio.spec._internal.io import BioimageioYamlContent
 from bioimageio.spec._internal.types import (
-    BioimageioYamlContent,
     FormatVersionPlaceholder,
 )
 from bioimageio.spec._internal.validation_context import (
@@ -23,6 +22,12 @@ from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
 from bioimageio.spec.summary import ValidationSummary
+
+LATEST: FormatVersionPlaceholder = "latest"
+"""placeholder for the latest available format version"""
+
+DISCOVER: FormatVersionPlaceholder = "discover"
+"""placeholder for whatever format version an RDF specifies"""
 
 _ResourceDescr_v0_2 = Union[
     Annotated[

@@ -5,16 +5,15 @@ from annotated_types import Ge
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.base_nodes import Node
-from bioimageio.spec._internal.constants import (
+from bioimageio.spec._internal.field_warning import warn
+from bioimageio.spec._internal.validation_context import (
     ALERT,
     ERROR,
     INFO,
     WARNING,
-    WARNING_LEVEL_CONTEXT_KEY,
+    ValidationContext,
 )
-from bioimageio.spec._internal.field_warning import warn
-from bioimageio.spec._internal.validation_context import ValidationContext
-from tests.utils import check_node
+from tests.utils import WARNING_LEVEL_CONTEXT_KEY, check_node
 
 
 class DummyNode(Node):

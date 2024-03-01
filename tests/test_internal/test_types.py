@@ -3,17 +3,23 @@ from pathlib import Path
 
 import pytest
 
+import bioimageio.spec._internal.io_basics
+import bioimageio.spec._internal.io_validation
 from bioimageio.spec._internal import types
 
 TYPE_ARGS = {
-    types.AbsoluteDirectory: str(Path(__file__).absolute().parent),
-    types.AbsoluteFilePath: str(Path(__file__).absolute()),
+    bioimageio.spec._internal.io_basics.AbsoluteDirectory: str(
+        Path(__file__).absolute().parent
+    ),
+    bioimageio.spec._internal.io_basics.AbsoluteFilePath: str(
+        Path(__file__).absolute()
+    ),
     types.ApplicationId: "appdev/app",
     types.CollectionId: "collectionid",
     types.DatasetId: "dataset-id",
     types.Datetime: (2024, 2, 14),
     types.Doi: "10.5281/zenodo.5764892",
-    types.FileName: "lala.py",
+    bioimageio.spec._internal.io_basics.FileName: "lala.py",
     types.HttpUrl: "http://example.com",
     types.Identifier: "id",
     types.IdentifierStr: "id",
@@ -25,7 +31,7 @@ TYPE_ARGS = {
     types.OrcidId: "0000-0001-2345-6789",
     types.RelativeFilePath: "here.py",
     types.ResourceId: "resoruce-id",
-    types.Sha256: "0" * 64,
+    bioimageio.spec._internal.io_validation.Sha256: "0" * 64,
     types.SiUnit: "kg",
     types.Version: "1.0",
 }

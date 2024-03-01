@@ -1,36 +1,15 @@
 from __future__ import annotations
 
 import json
-import sys
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Dict, Mapping, NamedTuple, Sequence, Union
+from typing import Mapping, NamedTuple, Sequence, Union
 
 from bioimageio.spec._internal.utils import files
-
-if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import FormatVersionPlaceholder, LicenseId
-    from bioimageio.spec._internal.validation_context import WarningLevel
-    from bioimageio.spec.summary import (
-        WarningLevelName,
-        WarningSeverity,
-        WarningSeverityName,
-    )
-
-
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, bool] = {}
-    KW_ONLY: Dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-    KW_ONLY = {"kw_only": True}
 
 with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
     VERSION: str = json.load(f)["version"]
     assert isinstance(VERSION, str), VERSION
 
-BIOIMAGEIO_YAML = "rdf.yaml"
-ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
-ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
 
 DOI_REGEX = (  # lax DOI regex validating the first 7 DOI characters only
     r"^10\.[0-9]{4}.+$"
@@ -45,10 +24,6 @@ with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open(
 ) as f:
     _license_data = json.load(f)
 
-LICENSES: Dict[LicenseId, Dict[str, Any]] = {
-    x["licenseId"]: x for x in _license_data["licenses"]
-}
-LICENSE_DATA_VERSION = _license_data["licenseListVersion"]
 
 SHA256_HINT = """You can drag and drop your file to this
 [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.
@@ -90,32 +65,3 @@ DTYPE_LIMITS = MappingProxyType(
         "int64": MinMax(-9223372036854775808, 9223372036854775807),
     }
 )
-
-WARNING_LEVEL_CONTEXT_KEY = "warning_level"
-ERROR, ERROR_NAME = 50, "error"
-"""A warning of the error level is always raised (equivalent to a validation error)"""
-
-ALERT, ALERT_NAME = 35, "alert"
-"""no ALERT nor ERROR -> RDF is worriless"""
-
-WARNING, WARNING_NAME = 30, "warning"
-"""no WARNING nor ALERT nor ERROR -> RDF is watertight"""
-
-INFO, INFO_NAME = 20, "info"
-"""info warnings are about purely cosmetic issues, etc."""
-
-WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = (
-    MappingProxyType({INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME})
-)
-WARNING_LEVEL_TO_NAME: Mapping[WarningLevel, WarningLevelName] = MappingProxyType(
-    {**WARNING_SEVERITY_TO_NAME, ERROR: ERROR_NAME}
-)
-WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyType(
-    {v: k for k, v in WARNING_LEVEL_TO_NAME.items()}
-)
-
-LATEST: FormatVersionPlaceholder = "latest"
-"""placeholder for the latest available format version"""
-
-DISCOVER: FormatVersionPlaceholder = "discover"
-"""placeholder for whatever format version an RDF specifies"""

@@ -8,21 +8,18 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     Dict,
-    List,
     Set,
     Tuple,
     Type,
     TypeVar,
     Union,
-    cast,
 )
-from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
-from typing_extensions import ParamSpec, assert_never
+from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import FileName, HttpUrl
+    from bioimageio.spec._internal.types import HttpUrl
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -37,58 +34,6 @@ if sys.version_info < (3, 9):
 
 else:
     from importlib.resources import files as files
-
-
-def get_parent_url(url: Union["HttpUrl", pydantic.HttpUrl]) -> "HttpUrl":
-    parsed = urlsplit(str(url))
-    path = list(parsed.path.split("/"))
-    if (
-        parsed.netloc == "zenodo.org"
-        and parsed.path.startswith("/api/records/")
-        and parsed.path.endswith("/content")
-    ):
-        path[-2:-1] = cast(List[str], [])
-    else:
-        path = path[:-1]
-
-    return urlunsplit(
-        (parsed.scheme, parsed.netloc, "/".join(path), parsed.query, parsed.fragment)
-    )
-
-
-R = TypeVar("R", str, Path, pydantic.AnyUrl)
-
-
-def get_absolute(file_name: FileName, root: R) -> R:
-    if isinstance(root, Path):
-        return root / file_name
-    elif isinstance(root, (str, pydantic.AnyUrl)):
-        parsed = urlsplit(str(root))
-        path = list(parsed.path.split("/"))
-        if (
-            parsed.netloc == "zenodo.org"
-            and parsed.path.startswith("/api/records/")
-            and parsed.path.endswith("/content")
-        ):
-            path.insert(-1, file_name)
-        else:
-            path.append(file_name)
-
-        url = urlunsplit(
-            (
-                parsed.scheme,
-                parsed.netloc,
-                "/".join(path),
-                parsed.query,
-                parsed.fragment,
-            )
-        )
-        if isinstance(root, pydantic.AnyUrl):
-            return pydantic.AnyUrl(url)
-        else:
-            return url
-    else:
-        assert_never(root)
 
 
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:

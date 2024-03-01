@@ -28,6 +28,7 @@ from pydantic import (
     Field,
     GetCoreSchemaHandler,
     PrivateAttr,
+    RootModel,
     StringConstraints,
     TypeAdapter,
     model_validator,
@@ -49,13 +50,12 @@ from bioimageio.spec._internal.constants import (
     WARNING_LEVEL_TO_NAME,
 )
 from bioimageio.spec._internal.field_warning import issue_warning
+from bioimageio.spec._internal.io import BioimageioYamlContent, Sha256
 from bioimageio.spec._internal.types import (
-    BioimageioYamlContent,
     HttpUrl,
     ImportantFileSource,
     RelativeFilePath,
 )
-from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import (
     ValidationContext,
@@ -74,10 +74,10 @@ class Node(
     extra="forbid",
     frozen=False,
     populate_by_name=True,
-    revalidate_instances="always",
+    revalidate_instances="subclass-instances",
     validate_assignment=True,
     validate_default=False,
-    validate_return=True,
+    validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
     # use_attribute_docstrings=True,  TODO: use this from future pydantic 2.7
     # see https://github.com/pydantic/pydantic/issues/5656
 ):
@@ -541,6 +541,24 @@ class KwargsNode(Node):
 
     def __contains__(self, item: str) -> int:
         return item in self.model_fields
+
+
+S = TypeVar("S", bound=str)
+
+
+class ValidatedString(RootModel[S]):
+    def __str__(self) -> str:
+        return str(self.root)
+
+
+Sha256 = ValidatedString[
+    Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True, to_lower=True, min_length=64, max_length=64
+        ),
+    ]
+]
 
 
 class FileDescr(Node):

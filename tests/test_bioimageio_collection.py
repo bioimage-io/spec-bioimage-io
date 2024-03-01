@@ -6,7 +6,7 @@ from typing import Any, Dict, Iterable, Mapping
 import pooch
 import pytest
 
-from bioimageio.spec._internal.constants import DISCOVER, LATEST
+from bioimageio.spec._description import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.utils import ParameterSet, check_bioimageio_yaml
 

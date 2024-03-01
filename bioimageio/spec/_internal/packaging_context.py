@@ -4,8 +4,10 @@ from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
+
 if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import AbsoluteFilePath, FileName, HttpUrl
+    from bioimageio.spec._internal.types import HttpUrl
 
 
 @dataclass(frozen=True)

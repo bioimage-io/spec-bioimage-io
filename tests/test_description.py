@@ -1,5 +1,5 @@
 from bioimageio.spec._description import validate_format
-from bioimageio.spec._internal.types import BioimageioYamlContent
+from bioimageio.spec._internal.io import BioimageioYamlContent
 from bioimageio.spec._internal.validation_context import ValidationContext
 
 

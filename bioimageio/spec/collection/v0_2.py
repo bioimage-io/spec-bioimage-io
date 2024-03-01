@@ -12,19 +12,18 @@ from bioimageio.spec import application, dataset, generic, model, notebook
 from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
+from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.types import ApplicationId as ApplicationId
-from bioimageio.spec._internal.types import (
-    BioimageioYamlContent,
-    NotEmpty,
-    YamlValue,
-)
 from bioimageio.spec._internal.types import CollectionId as CollectionId
 from bioimageio.spec._internal.types import DatasetId as DatasetId
 from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotebookId as NotebookId
+from bioimageio.spec._internal.types import (
+    NotEmpty,
+)
 from bioimageio.spec._internal.validation_context import validation_context_var
-from bioimageio.spec.generic.v0_2 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr

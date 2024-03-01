@@ -231,3 +231,6 @@ def assert_rdf_dict_equal(
 class ParameterSet(Protocol):
     def __init__(self, values: Sequence[Any], marks: Any, id: str) -> None:
         super().__init__()
+
+
+WARNING_LEVEL_CONTEXT_KEY = "warning_level"

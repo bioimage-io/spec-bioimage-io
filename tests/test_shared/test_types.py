@@ -4,8 +4,8 @@ from typing import Any
 
 import pytest
 
+from bioimageio.spec._internal.io import RelativePath
 from bioimageio.spec._internal.types import Datetime, SiUnit
-from bioimageio.spec._internal.types._file_source import RelativePath
 from tests.utils import check_type
 
 

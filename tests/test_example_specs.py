@@ -3,7 +3,7 @@ from typing import Any, Iterable, Mapping
 
 import pytest
 
-from bioimageio.spec._internal.constants import DISCOVER, LATEST
+from bioimageio.spec._description import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.conftest import EXAMPLE_SPECS
 from tests.utils import ParameterSet, check_bioimageio_yaml

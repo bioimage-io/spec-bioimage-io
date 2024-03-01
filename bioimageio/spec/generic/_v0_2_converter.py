@@ -1,7 +1,7 @@
 import collections.abc
 from typing import Any, Dict, Mapping, Union
 
-from bioimageio.spec._internal.types import BioimageioYamlContent
+from bioimageio.spec._internal.io import BioimageioYamlContent
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:

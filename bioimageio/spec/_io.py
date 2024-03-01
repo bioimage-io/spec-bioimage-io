@@ -4,17 +4,16 @@ from pydantic import FilePath, NewPath
 
 from bioimageio.spec import ResourceDescr
 from bioimageio.spec._description import (
+    DISCOVER,
     InvalidDescr,
     build_description,
     dump_description,
 )
 from bioimageio.spec._internal.base_nodes import ResourceDescrBase
-from bioimageio.spec._internal.constants import DISCOVER
+from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, write_yaml
 from bioimageio.spec._internal.types import (
-    BioimageioYamlContent,
     FileSource,
-    YamlValue,
 )
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.summary import ValidationSummary

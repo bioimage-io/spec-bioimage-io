@@ -20,23 +20,23 @@ from bioimageio.spec._internal.constants import (
     LICENSES,
     TAG_CATEGORIES,
 )
+from bioimageio.spec._internal.field_validation import Predicate
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
+from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath
+from bioimageio.spec._internal.io_validation import Sha256 as Sha256
+from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import (
-    AbsoluteFilePath,
-    BioimageioYamlContent,
     DeprecatedLicenseId,
     ImportantFileSource,
     IncludeInPackage,
     LicenseId,
     NotEmpty,
-    YamlValue,
 )
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as Version
-from bioimageio.spec._internal.types.field_validation import Predicate, WithSuffix
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic._v0_3_converter import convert_from_older_format

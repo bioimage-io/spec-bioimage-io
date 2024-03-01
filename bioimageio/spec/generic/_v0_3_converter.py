@@ -1,6 +1,6 @@
 import collections.abc
 
-from bioimageio.spec._internal.types import BioimageioYamlContent
+from bioimageio.spec._internal.io import BioimageioYamlContent
 from bioimageio.spec.generic import _v0_2_converter
 
 

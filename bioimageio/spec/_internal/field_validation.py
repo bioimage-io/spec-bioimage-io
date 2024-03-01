@@ -2,32 +2,31 @@ from __future__ import annotations
 
 import collections.abc
 import dataclasses
+import sys
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from keyword import iskeyword
-from pathlib import Path, PurePath
 from typing import (
     Any,
+    Dict,
     Hashable,
     Mapping,
     Sequence,
-    Tuple,
     Type,
-    TypeVar,
     Union,
-    get_args,
 )
 
 import annotated_types
-import pydantic
 from dateutil.parser import isoparse
-from pydantic import AnyUrl, GetCoreSchemaHandler, TypeAdapter, functional_validators
+from pydantic import GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
-from typing_extensions import LiteralString, assert_never
 
-from bioimageio.spec._internal.constants import SLOTS
-
-from ._file_source import FileSource, RelativeFilePath
+if sys.version_info < (3, 10):
+    SLOTS: Dict[str, bool] = {}
+    KW_ONLY: Dict[str, bool] = {}
+else:
+    SLOTS = {"slots": True}
+    KW_ONLY = {"kw_only": True}
 
 
 @dataclasses.dataclass(frozen=True, **SLOTS)
@@ -51,41 +50,6 @@ class RestrictCharacters:
         if any(c not in self.alphabet for c in value):
             raise ValueError(f"{value!r} is not restricted to {self.alphabet!r}")
         return value
-
-
-@dataclasses.dataclass(frozen=True, **SLOTS)
-class WithSuffix:
-    suffix: Union[LiteralString, Tuple[LiteralString, ...]]
-    case_sensitive: bool
-
-    def __get_pydantic_core_schema__(
-        self, source: Type[Any], handler: GetCoreSchemaHandler
-    ) -> CoreSchema:
-        if not self.suffix:
-            raise ValueError("suffix may not be empty")
-
-        schema = handler(source)
-        if (
-            schema["type"] != str
-            and source != FileSource
-            and not issubclass(source, (str, AnyUrl, RelativeFilePath, PurePath))
-        ):
-            raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
-
-        return no_info_after_validator_function(
-            self.validate,
-            schema,
-        )
-
-    def validate(self, value: FileSource) -> FileSource:
-        if isinstance(self.suffix, str):
-            return validate_suffix(
-                value, self.suffix, case_sensitive=self.case_sensitive
-            )
-        else:
-            return validate_suffix(
-                value, *self.suffix, case_sensitive=self.case_sensitive
-            )
 
 
 def capitalize_first_letter(v: str) -> str:
@@ -134,9 +98,7 @@ def validate_orcid_id(orcid_id: str):
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:
-    from bioimageio.spec._internal.types import YamlLeafValue
-
-    return isinstance(value, get_args(YamlLeafValue))
+    return value is None or isinstance(value, (bool, date, datetime, int, float, str))
 
 
 def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
@@ -170,78 +132,27 @@ def is_valid_yaml_value(value: Any) -> bool:
     )
 
 
-V_suffix = TypeVar("V_suffix", bound=FileSource)
-
-path_or_url_adapter = TypeAdapter(Union[pydantic.AnyUrl, Path])
-# note: Path has to come after Url, as Path also accepts url like strings
-
-
-def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
-    """check final suffix"""
-    assert len(suffixes) > 0, "no suffix given"
-    assert all(
-        suff.startswith(".") for suff in suffixes
-    ), "expected suffixes to start with '.'"
-    o_value = value
-    if isinstance(value, str):
-        value = path_or_url_adapter.validate_python(value)
-
-    assert not isinstance(value, str)
-    if isinstance(value, AnyUrl):
-        path = str(value.path)
-        if value.path is None or "." not in path:
-            suffix = ""
-        elif (
-            value.host == "zenodo.org"
-            and path.startswith("/api/records/")
-            and path.endswith("/content")
-        ):
-            suffix = "." + path[: -len("/content")].split(".")[-1]
-        else:
-            suffix = "." + path.split(".")[-1]
-
-    elif isinstance(value, PurePath):
-        suffix = value.suffixes[-1]
-    elif isinstance(value, RelativeFilePath):
-        suffix = value.path.suffixes[-1]  # type: ignore  # TODO: PurePosixPath has no suffixes??
-    else:
-        assert_never(value)
-
-    if (
-        case_sensitive
-        and suffix not in suffixes
-        or not case_sensitive
-        and suffix.lower() not in [s.lower() for s in suffixes]
-    ):
-        if len(suffixes) == 1:
-            raise ValueError(f"Expected suffix {suffixes[0]}, but got {suffix}")
-        else:
-            raise ValueError(f"Expected a suffix from {suffixes}, but got {suffix}")
-
-    return o_value
-
-
 def validate_unique_entries(seq: Sequence[Hashable]):
     if len(seq) != len(set(seq)):
         raise ValueError("Entries are not unique.")
     return seq
 
 
-# todo: make sure we use this one everywhere and not the vanilla pydantic one
+# TODO: make sure we use this one everywhere and not the vanilla pydantic one
 @dataclass(frozen=True, **SLOTS)
 class AfterValidator(functional_validators.AfterValidator):
     def __str__(self):
         return f"AfterValidator({self.func.__name__})"
 
 
-# todo: make sure we use this one everywhere and not the vanilla pydantic one
+# TODO: make sure we use this one everywhere and not the vanilla pydantic one
 @dataclass(frozen=True, **SLOTS)
 class BeforeValidator(functional_validators.BeforeValidator):
     def __str__(self):
         return f"BeforeValidator({self.func.__name__})"
 
 
-# todo: make sure we use this one everywhere and not the vanilla pydantic one
+# TODO: make sure we use this one everywhere and not the vanilla pydantic one
 @dataclass(frozen=True, **SLOTS)
 class Predicate(annotated_types.Predicate):
     def __str__(self):

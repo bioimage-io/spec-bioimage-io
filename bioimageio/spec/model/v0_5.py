@@ -48,10 +48,13 @@ from bioimageio.spec._internal.base_nodes import (
 )
 from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
 from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io_utils import download, load_array
-from bioimageio.spec._internal.types import (
+from bioimageio.spec._internal.io import (
     BioimageioYamlContent as BioimageioYamlContent,
 )
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from bioimageio.spec._internal.io_utils import download, load_array
+from bioimageio.spec._internal.io_validation import Sha256 as Sha256
+from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
@@ -65,14 +68,11 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Sha256 as Sha256
 from bioimageio.spec._internal.types import Version as _Version
-from bioimageio.spec._internal.types.field_validation import WithSuffix
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
 from bioimageio.spec.dataset.v0_3 import Uploader as Uploader
-from bioimageio.spec.generic.v0_3 import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry

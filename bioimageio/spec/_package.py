@@ -16,6 +16,13 @@ from bioimageio.spec._description import (
 )
 from bioimageio.spec._internal.base_nodes import ResourceDescrBase
 from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
+from bioimageio.spec._internal.io import (
+    BioimageioYamlContent,
+    BioimageioYamlSource,
+    YamlValue,
+    is_valid_rdf_name,
+)
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
 from bioimageio.spec._internal.io_utils import (
     download,
     open_bioimageio_yaml,
@@ -24,14 +31,8 @@ from bioimageio.spec._internal.io_utils import (
 )
 from bioimageio.spec._internal.packaging_context import PackagingContext
 from bioimageio.spec._internal.types import (
-    AbsoluteFilePath,
-    BioimageioYamlContent,
-    BioimageioYamlSource,
-    FileName,
     HttpUrl,
-    YamlValue,
 )
-from bioimageio.spec._internal.types._file_source import is_valid_rdf_name
 from bioimageio.spec._internal.validation_context import validation_context_var
 from bioimageio.spec.model.v0_4 import WeightsFormat
 

@@ -18,17 +18,20 @@ from typing_extensions import Annotated, Self
 
 from bioimageio.spec._internal.base_nodes import Node, ResourceDescrBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
+from bioimageio.spec._internal.field_validation import (
+    AfterValidator as _AfterValidator,
+)
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
-from bioimageio.spec._internal.types import AbsoluteFilePath as AbsoluteFilePath
+from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from bioimageio.spec._internal.io_validation import WithSuffix as _WithSuffix
 from bioimageio.spec._internal.types import (
-    BioimageioYamlContent,
     DeprecatedLicenseId,
     FileSource,
     ImportantFileSource,
     IncludeInPackage,
     LicenseId,
     NotEmpty,
-    YamlValue,
 )
 from bioimageio.spec._internal.types import Doi as Doi
 from bioimageio.spec._internal.types import HttpUrl as HttpUrl
@@ -36,10 +39,6 @@ from bioimageio.spec._internal.types import OrcidId as OrcidId
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Version as Version
-from bioimageio.spec._internal.types.field_validation import (
-    AfterValidator as _AfterValidator,
-)
-from bioimageio.spec._internal.types.field_validation import WithSuffix as _WithSuffix
 from bioimageio.spec.generic._v0_2_converter import (
     convert_from_older_format as _convert_from_older_format,
 )
