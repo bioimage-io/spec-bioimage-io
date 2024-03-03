@@ -4,14 +4,17 @@ import typing
 from datetime import datetime as _datetime
 
 import annotated_types
-from pydantic import RootModel, StringConstraints
+from pydantic import StringConstraints
 from typing_extensions import Annotated as _Annotated
 
 from bioimageio.spec._internal import field_validation as _fv
+from bioimageio.spec._internal._license_type import (
+    DeprecatedLicenseId as DeprecatedLicenseId,
+)
+from bioimageio.spec._internal._license_type import LicenseId as LicenseId
 from bioimageio.spec._internal._version_type import Version as Version
 from bioimageio.spec._internal.constants import DOI_REGEX, SI_UNIT_REGEX
 from bioimageio.spec._internal.io import FileSource as FileSource
-from bioimageio.spec._internal.io import HttpUrl as HttpUrl
 from bioimageio.spec._internal.io import (
     ImportantFileSource as ImportantFileSource,
 )
@@ -31,10 +34,7 @@ from bioimageio.spec._internal.io_basics import (
     AbsoluteFilePath as AbsoluteFilePath,
 )
 from bioimageio.spec._internal.io_basics import FileName as FileName
-from bioimageio.spec._internal.types._license_type import (
-    DeprecatedLicenseId as DeprecatedLicenseId,
-)
-from bioimageio.spec._internal.types._license_type import LicenseId as LicenseId
+from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 
 S = typing.TypeVar("S", bound=typing.Sequence[typing.Any])
 NotEmpty = _Annotated[S, annotated_types.MinLen(1)]

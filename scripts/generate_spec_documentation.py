@@ -22,7 +22,7 @@ from bioimageio.spec import (
     model,
     notebook,
 )
-from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import unindent
 
@@ -32,8 +32,8 @@ ANNOTATION_MAP = {
     "pydantic_core._pydantic_core.Url": "Url",
     "typing.": "",
     "pathlib.": "",
-    "bioimageio.spec._internal.base_nodes.FrozenDictNode": "Dict",
-    "bioimageio.spec._internal.base_nodes.Kwargs": "Dict",
+    "bioimageio.spec._internal.common_nodes.FrozenDictNode": "Dict",
+    "bioimageio.spec._internal.common_nodes.Kwargs": "Dict",
     "bioimageio.spec.types.": "",
     "pydantic.networks.EmailStr": "Email",
     "bioimageio.spec.": "",

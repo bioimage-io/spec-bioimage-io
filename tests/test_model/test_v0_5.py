@@ -4,6 +4,7 @@ from typing import Any, Dict, Union
 import pytest
 
 from bioimageio.spec._description import validate_format
+from bioimageio.spec._internal.io import FileDescr
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_5 import (
     Author,
@@ -11,7 +12,6 @@ from bioimageio.spec.model.v0_5 import (
     BatchAxis,
     ChannelAxis,
     CiteEntry,
-    FileDescr,
     Identifier,
     InputAxis,
     InputTensorDescr,

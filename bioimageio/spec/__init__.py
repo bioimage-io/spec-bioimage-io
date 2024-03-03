@@ -14,7 +14,7 @@ from bioimageio.spec._description import SpecificResourceDescr as SpecificResour
 from bioimageio.spec._description import build_description as build_description
 from bioimageio.spec._description import dump_description as dump_description
 from bioimageio.spec._description import validate_format as validate_format
-from bioimageio.spec._internal.base_nodes import (
+from bioimageio.spec._internal.common_nodes import (
     InvalidDescr as InvalidDescr,
 )
 from bioimageio.spec._internal.constants import VERSION

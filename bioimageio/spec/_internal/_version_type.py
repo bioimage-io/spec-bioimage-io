@@ -1,12 +1,13 @@
 from typing import Any, Union
 
 import packaging.version
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, RootModel
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 from typing_extensions import Annotated
 
 
+# TODO: use Annotated with WrapSerializer for cleaner implementation
 class _VersionPydanticAnnotation:
     @classmethod
     def __get_pydantic_core_schema__(
@@ -54,4 +55,8 @@ class _VersionPydanticAnnotation:
         return handler(core_schema.str_schema())
 
 
-Version = Annotated[packaging.version.Version, _VersionPydanticAnnotation]
+class Version(
+    RootModel[Annotated[packaging.version.Version, _VersionPydanticAnnotation]]
+):
+    def __str__(self):
+        return str(self.root)

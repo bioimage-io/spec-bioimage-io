@@ -9,7 +9,7 @@ from typing_extensions import Self
 
 from bioimageio import spec
 from bioimageio.spec import application, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import InvalidDescr, Node
+from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
@@ -23,14 +23,16 @@ from bioimageio.spec._internal.types import NotebookId as NotebookId
 from bioimageio.spec._internal.types import (
     NotEmpty,
 )
-from bioimageio.spec._internal.validation_context import validation_context_var
+from bioimageio.spec._internal.url import HttpUrl as HttpUrl
+from bioimageio.spec._internal.validation_context import (
+    validation_context_var,
+)
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import FileSource, GenericDescrBase
-from bioimageio.spec.generic.v0_2 import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId

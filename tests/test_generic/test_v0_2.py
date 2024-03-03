@@ -4,7 +4,7 @@ from typing import Any, Dict, Type
 
 import pytest
 
-from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.constants import WARNING
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.generic.v0_2 import (

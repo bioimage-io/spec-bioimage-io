@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import os
 import pathlib
 import sys
 from dataclasses import dataclass
@@ -18,10 +20,10 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    cast,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
+import pooch
 import pydantic
 from pydantic import (
     AfterValidator,
@@ -33,21 +35,30 @@ from pydantic import (
     StringConstraints,
     TypeAdapter,
     WrapSerializer,
+    model_validator,
 )
 from pydantic_core import core_schema
-from typing_extensions import Annotated, LiteralString, NotRequired, assert_never
+from typing_extensions import (
+    Annotated,
+    LiteralString,
+    NotRequired,
+    Self,
+    Unpack,
+    assert_never,
+)
 from typing_extensions import TypeAliasType as _TypeAliasType
 
-from bioimageio.spec._internal.base_nodes import ValidatedString
 from bioimageio.spec._internal.io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
+    BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
     FileName,
 )
-from bioimageio.spec._internal.validation_context import (
-    HttpUrl as HttpUrl,  # defined in `validation_context` due to its dependence on `validation_context_var`
-)
+from bioimageio.spec._internal.node import Node
+from bioimageio.spec._internal.root_url import RootHttpUrl
+from bioimageio.spec._internal.url import HttpUrl
+from bioimageio.spec._internal.validated_string import ValidatedString
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
@@ -58,26 +69,6 @@ else:
     SLOTS = {"slots": True}
 
 
-def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath],
-) -> str:
-    if isinstance(src, RelativeFilePath):
-        return src.path.name
-    elif isinstance(src, PurePath):
-        return src.name
-    else:
-        url = urlparse(str(src))
-        if (
-            url.scheme == "https"
-            and url.hostname == "zenodo.org"
-            and url.path.startswith("/api/records/")
-            and url.path.endswith("/content")
-        ):
-            return url.path.split("/")[-2]
-        else:
-            return url.path.split("/")[-1]
-
-
 Sha256 = ValidatedString[
     Annotated[
         str,
@@ -86,8 +77,6 @@ Sha256 = ValidatedString[
         ),
     ]
 ]
-
-R = TypeVar("R", HttpUrl, AbsoluteDirectory, pydantic.AnyUrl)
 
 
 # TODO: Use RootModel?
@@ -110,7 +99,7 @@ class RelativePath:
 
             self.path = PurePosixPath(path.as_posix())
             root = validation_context_var.get().root
-            if isinstance(root, HttpUrl):
+            if isinstance(root, RootHttpUrl):
                 self.absolute = self.get_absolute(root)
             else:
                 self.absolute = self.get_absolute(root)
@@ -147,7 +136,9 @@ class RelativePath:
             serialization=core_schema.to_string_ser_schema(),
         )
 
-    def get_absolute(self, root: R) -> R:
+    def get_absolute(
+        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl]
+    ) -> Union[HttpUrl, AbsoluteFilePath]:
         if isinstance(root, pathlib.Path):
             return (root / self.path).absolute()
 
@@ -163,19 +154,17 @@ class RelativePath:
         else:
             path.append(rel_path)
 
-        url = urlunsplit(
-            (
-                parsed.scheme,
-                parsed.netloc,
-                "/".join(path),
-                parsed.query,
-                parsed.fragment,
+        return HttpUrl(
+            urlunsplit(
+                (
+                    parsed.scheme,
+                    parsed.netloc,
+                    "/".join(path),
+                    parsed.query,
+                    parsed.fragment,
+                )
             )
         )
-        if isinstance(root, pydantic.AnyUrl):
-            return pydantic.AnyUrl(url)
-        else:
-            return HttpUrl(url)
 
     @classmethod
     def _validate(cls, value: Union[pathlib.Path, str]):
@@ -309,7 +298,9 @@ def _package(
 
     if isinstance(value, RelativeFilePath):
         src = value.absolute
-    elif isinstance(value, (AnyUrl, HttpUrl)):
+    elif isinstance(value, pydantic.AnyUrl):
+        src = HttpUrl(str(value))
+    elif isinstance(value, HttpUrl):
         src = value
     elif isinstance(value, Path):
         src = value.resolve()
@@ -392,19 +383,19 @@ BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 @dataclass
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent
-    original_root: Union[Url, DirectoryPath]
+    original_root: Union[AbsoluteDirectory, RootHttpUrl]
     original_file_name: str
 
 
 @dataclass
 class DownloadedFile:
     path: FilePath
-    original_root: Union[Url, DirectoryPath]
+    original_root: Union[AbsoluteDirectory, RootHttpUrl]
     original_file_name: str
 
 
 class HashKwargs(TypedDict):
-    sha256: NotRequired[Optional[str]]
+    sha256: NotRequired[Optional[Sha256]]
 
 
 StrictFileSource = Union[HttpUrl, FilePath, RelativeFilePath]
@@ -412,32 +403,143 @@ _strict_file_source_adapter = TypeAdapter(StrictFileSource)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
+    if isinstance(file_source, pydantic.AnyUrl):
+        file_source = str(file_source)
+
     if isinstance(file_source, str):
         return _strict_file_source_adapter.validate_python(file_source)
     else:
         return file_source
 
 
-def get_parent_url(url: Union[HttpUrl, pydantic.HttpUrl]) -> HttpUrl:
-    parsed = urlsplit(str(url))
-    path = list(parsed.path.split("/"))
-    if (
-        parsed.netloc == "zenodo.org"
-        and parsed.path.startswith("/api/records/")
-        and parsed.path.endswith("/content")
-    ):
-        path[-2:-1] = cast(List[str], [])
+def _get_known_hash(hash_kwargs: HashKwargs):
+    if "sha256" in hash_kwargs and hash_kwargs["sha256"] is not None:
+        return f"sha256:{hash_kwargs['sha256']}"
     else:
-        path = path[:-1]
+        return None
 
-    return HttpUrl(
-        urlunsplit(
-            (
-                parsed.scheme,
-                parsed.netloc,
-                "/".join(path),
-                parsed.query,
-                parsed.fragment,
-            )
+
+def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
+    """
+    Create a unique file name based on the given URL;
+    adapted from pooch.utils.unique_file_name
+    """
+    md5 = hashlib.md5(str(url).encode()).hexdigest()
+    fname = extract_file_name(url)
+    # Crop the start of the file name to fit 255 characters including the hash
+    # and the :
+    fname = fname[-(255 - len(md5) - 1) :]
+    unique_name = f"{md5}-{fname}"
+    return unique_name
+
+
+def download(
+    source: Union[PermissiveFileSource, FileDescr],
+    /,
+    **kwargs: Unpack[HashKwargs],
+) -> DownloadedFile:
+    if isinstance(source, FileDescr):
+        return source.download()
+
+    strict_source = interprete_file_source(source)
+    if isinstance(strict_source, RelativeFilePath):
+        strict_source = strict_source.absolute
+
+    if isinstance(strict_source, PurePath):
+        local_source = strict_source
+        root: Union[RootHttpUrl, DirectoryPath] = strict_source.parent
+    else:
+        if strict_source.scheme not in ("http", "https"):
+            raise NotImplementedError(strict_source.scheme)
+
+        if os.environ.get("CI", "false").lower() in ("1", "t", "true", "yes", "y"):
+            headers = {"User-Agent": "ci"}
+            progressbar = False
+        else:
+            headers = {}
+            progressbar = True
+
+        if (user_agent := os.environ.get("BIOIMAGEIO_USER_AGENT")) is not None:
+            headers["User-Agent"] = user_agent
+
+        downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
+        fname = _get_unique_file_name(strict_source)
+        _ls: Any = pooch.retrieve(
+            url=str(strict_source),
+            known_hash=_get_known_hash(kwargs),
+            downloader=downloader,
+            fname=fname,
         )
+        local_source = Path(_ls).absolute()
+        root = strict_source.parent
+
+    return DownloadedFile(
+        local_source,
+        root,
+        extract_file_name(strict_source),
     )
+
+
+class FileDescr(Node):
+    source: ImportantFileSource
+    """∈📦 file source"""
+
+    sha256: Optional[Sha256] = None
+    """SHA256 checksum of the source file"""
+
+    @model_validator(mode="after")
+    def validate_sha256(self) -> Self:
+        context = validation_context_var.get()
+        if not context.perform_io_checks:
+            return self
+
+        local_source = download(self.source, sha256=self.sha256).path
+        actual_sha = get_sha256(local_source)
+        if self.sha256 is None:
+            self.sha256 = actual_sha
+        elif self.sha256 != actual_sha:
+            raise ValueError(
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got"
+                f" {actual_sha}. Update expected `sha256` or point to the matching"
+                " file."
+            )
+
+        return self
+
+    def download(self):
+
+        return download(self.source, sha256=self.sha256)
+
+
+def extract_file_name(
+    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath],
+) -> str:
+    if isinstance(src, RelativeFilePath):
+        return src.path.name
+    elif isinstance(src, PurePath):
+        return src.name
+    else:
+        url = urlparse(str(src))
+        if (
+            url.scheme == "https"
+            and url.hostname == "zenodo.org"
+            and url.path.startswith("/api/records/")
+            and url.path.endswith("/content")
+        ):
+            return url.path.split("/")[-2]
+        else:
+            return url.path.split("/")[-1]
+
+
+def get_sha256(path: Path) -> Sha256:
+    """from https://stackoverflow.com/a/44873382"""
+    h = hashlib.sha256()
+    b = bytearray(128 * 1024)
+    mv = memoryview(b)
+    with open(path, "rb", buffering=0) as f:
+        for n in iter(lambda: f.readinto(mv), 0):
+            h.update(mv[:n])
+
+    sha = h.hexdigest()
+    assert len(sha) == 64
+    return Sha256(sha)

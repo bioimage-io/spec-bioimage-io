@@ -9,12 +9,11 @@ from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.base_nodes import (
+from bioimageio.spec._internal.common_nodes import (
     Converter,
     Node,
     ResourceDescrBase,
 )
-from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
 from bioimageio.spec._internal.constants import (
     ALERT,
     LICENSES,
@@ -23,6 +22,7 @@ from bioimageio.spec._internal.constants import (
 from bioimageio.spec._internal.field_validation import Predicate
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
 from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io import FileDescr as FileDescr
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath
 from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.io_validation import WithSuffix
@@ -33,11 +33,13 @@ from bioimageio.spec._internal.types import (
     LicenseId,
     NotEmpty,
 )
-from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Version as Version
-from bioimageio.spec._internal.validation_context import validation_context_var
+from bioimageio.spec._internal.url import HttpUrl as HttpUrl
+from bioimageio.spec._internal.validation_context import (
+    validation_context_var,
+)
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic._v0_3_converter import convert_from_older_format
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource

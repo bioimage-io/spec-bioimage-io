@@ -5,6 +5,7 @@ import pytest
 
 import bioimageio.spec._internal.io_basics
 import bioimageio.spec._internal.io_validation
+import bioimageio.spec._internal.url
 from bioimageio.spec._internal import types
 
 TYPE_ARGS = {
@@ -20,7 +21,7 @@ TYPE_ARGS = {
     types.Datetime: (2024, 2, 14),
     types.Doi: "10.5281/zenodo.5764892",
     bioimageio.spec._internal.io_basics.FileName: "lala.py",
-    types.HttpUrl: "http://example.com",
+    bioimageio.spec._internal.url.HttpUrl: "http://example.com",
     types.Identifier: "id",
     types.IdentifierStr: "id",
     types.ImportantFileSource: "README.md",

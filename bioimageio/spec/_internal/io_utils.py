@@ -1,10 +1,8 @@
-import hashlib
 import io
-import os
 import platform
 import warnings
 from contextlib import nullcontext
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import (
     Any,
     Dict,
@@ -18,25 +16,19 @@ from typing import (
 from zipfile import ZipFile, is_zipfile
 
 import numpy
-import pooch
-import pydantic
 from numpy.typing import NDArray
 from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
 from typing_extensions import Unpack
 
-from bioimageio.spec._internal.base_nodes import FileDescr, Sha256
 from bioimageio.spec._internal.io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
-    DownloadedFile,
+    FileDescr,
     HashKwargs,
-    HttpUrl,
     OpenedBioimageioYaml,
     YamlValue,
-    extract_file_name,
-    get_parent_url,
-    interprete_file_source,
+    download,
 )
 from bioimageio.spec._internal.io_basics import (
     ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
@@ -45,7 +37,6 @@ from bioimageio.spec._internal.io_basics import (
 from bioimageio.spec._internal.types import (
     FileSource,
     PermissiveFileSource,
-    RelativeFilePath,
 )
 
 if platform.machine() == "wasm32":
@@ -55,13 +46,6 @@ if platform.machine() == "wasm32":
 
 
 yaml = YAML(typ="safe")
-
-
-def _get_known_hash(hash_kwargs: HashKwargs):
-    if "sha256" in hash_kwargs and hash_kwargs["sha256"] is not None:
-        return f"sha256:{hash_kwargs['sha256']}"
-    else:
-        return None
 
 
 def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
@@ -84,70 +68,6 @@ def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
 
     with cm as f:
         yaml.dump(content, f)
-
-
-def download(
-    source: Union[PermissiveFileSource, FileDescr],
-    /,
-    **kwargs: Unpack[HashKwargs],
-) -> DownloadedFile:
-    if isinstance(source, FileDescr):
-        return source.download()
-
-    strict_source = interprete_file_source(source)
-    if isinstance(strict_source, RelativeFilePath):
-        if isinstance(strict_source.absolute, PurePath):
-            strict_source = strict_source.absolute
-        else:
-            strict_source = pydantic.AnyUrl(strict_source.absolute)
-
-    if isinstance(strict_source, PurePath):
-        local_source = strict_source
-        root: Union[Url, DirectoryPath] = strict_source.parent
-    else:
-        if strict_source.scheme not in ("http", "https"):
-            raise NotImplementedError(strict_source.scheme)
-
-        if os.environ.get("CI", "false").lower() in ("1", "t", "true", "yes", "y"):
-            headers = {"User-Agent": "ci"}
-            progressbar = False
-        else:
-            headers = {}
-            progressbar = True
-
-        if (user_agent := os.environ.get("BIOIMAGEIO_USER_AGENT")) is not None:
-            headers["User-Agent"] = user_agent
-
-        downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
-        fname = get_unique_file_name(strict_source)
-        _ls: Any = pooch.retrieve(
-            url=str(strict_source),
-            known_hash=_get_known_hash(kwargs),
-            downloader=downloader,
-            fname=fname,
-        )
-        local_source = Path(_ls).absolute()
-        root = get_parent_url(strict_source)
-
-    return DownloadedFile(
-        local_source,
-        root,
-        extract_file_name(strict_source),
-    )
-
-
-def get_unique_file_name(url: Union[Url, pydantic.HttpUrl]):
-    """
-    Create a unique file name based on the given URL;
-    adapted from pooch.utils.unique_file_name
-    """
-    md5 = hashlib.md5(str(url).encode()).hexdigest()
-    fname = extract_file_name(url)
-    # Crop the start of the file name to fit 255 characters including the hash
-    # and the :
-    fname = fname[-(255 - len(md5) - 1) :]
-    unique_name = f"{md5}-{fname}"
-    return unique_name
 
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
@@ -293,20 +213,6 @@ def write_zip(
                 myzip.writestr(arc_name, file.encode("utf-8"))
             else:
                 myzip.write(file, arcname=arc_name)
-
-
-def get_sha256(path: Path) -> Sha256:
-    """from https://stackoverflow.com/a/44873382"""
-    h = hashlib.sha256()
-    b = bytearray(128 * 1024)
-    mv = memoryview(b)
-    with open(path, "rb", buffering=0) as f:
-        for n in iter(lambda: f.readinto(mv), 0):
-            h.update(mv[:n])
-
-    sha = h.hexdigest()
-    assert len(sha) == 64
-    return Sha256(sha)
 
 
 def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:

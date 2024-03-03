@@ -19,7 +19,7 @@ import pydantic
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import HttpUrl
+    from bioimageio.spec._internal.url import HttpUrl
 
 K = TypeVar("K")
 V = TypeVar("V")

@@ -28,8 +28,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.base_nodes import FileDescr as FileDescr
-from bioimageio.spec._internal.base_nodes import (
+from bioimageio.spec._internal.common_nodes import (
     KwargsNode,
     Node,
     NodeWithExplicitlySetFields,
@@ -42,12 +41,12 @@ from bioimageio.spec._internal.field_validation import (
     validate_unique_entries,
 )
 from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent
+from bioimageio.spec._internal.io import BioimageioYamlContent, download
+from bioimageio.spec._internal.io import FileDescr as FileDescr
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import Datetime as Datetime
-from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import (
     ImportantFileSource,
@@ -59,6 +58,7 @@ from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Version as _Version
+from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -73,7 +73,7 @@ from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
 from bioimageio.spec.generic.v0_2 import Uploader as Uploader
 from bioimageio.spec.model._v0_4_converter import convert_from_older_format
-from bioimageio.spec.utils import download, load_array
+from bioimageio.spec.utils import load_array
 
 AxesStr = NewType(
     "AxesStr",

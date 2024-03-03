@@ -1,10 +1,10 @@
 import dataclasses
-import logging
 import sys
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
+from loguru import logger
 from pydantic import TypeAdapter
 from pydantic._internal._decorators import inspect_validator
 from pydantic_core import PydanticCustomError
@@ -15,9 +15,8 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-from bioimageio.spec._internal.constants import WARNING
 from bioimageio.spec._internal.validation_context import validation_context_var
-from bioimageio.spec.summary import WarningSeverity
+from bioimageio.spec._internal.warning_levels import WARNING, WarningSeverity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
@@ -60,24 +59,6 @@ def call_validator_func(
         return func(value, info)  # type: ignore
     else:
         return func(value)  # type: ignore
-
-
-logger = logging.getLogger(__name__)
-
-
-def issue_warning(
-    msg: LiteralString,
-    *,
-    value: Any,
-    severity: WarningSeverity = WARNING,
-    msg_context: Optional[Dict[str, Any]] = None,
-):
-    msg_context = {"value": value, "severity": severity, **(msg_context or {})}
-    if severity >= validation_context_var.get().warning_level:
-        raise PydanticCustomError("warning", msg, msg_context)
-    else:
-        # TODO: log prettier with loguru?
-        logger.log(severity, msg.format(**msg_context))
 
 
 def as_warning(
@@ -148,3 +129,18 @@ class BeforeWarner(pydantic.functional_validators.BeforeValidator):
                 msg_context=self.context,
             ),
         )
+
+
+def issue_warning(
+    msg: LiteralString,
+    *,
+    value: Any,
+    severity: WarningSeverity = WARNING,
+    msg_context: Optional[Dict[str, Any]] = None,
+):
+    msg_context = {"value": value, "severity": severity, **(msg_context or {})}
+    if severity >= validation_context_var.get().warning_level:
+        raise PydanticCustomError("warning", msg, msg_context)
+    else:
+        # TODO: log prettier with loguru?
+        logger.log(severity, msg.format(**msg_context))

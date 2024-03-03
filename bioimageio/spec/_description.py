@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 
 import bioimageio.spec
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.base_nodes import InvalidDescr
+from bioimageio.spec._internal.common_nodes import InvalidDescr
 from bioimageio.spec._internal.io import BioimageioYamlContent
 from bioimageio.spec._internal.types import (
     FormatVersionPlaceholder,

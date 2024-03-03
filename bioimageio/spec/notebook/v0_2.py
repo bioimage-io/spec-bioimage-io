@@ -2,16 +2,17 @@ from typing import Literal, Optional, Union
 
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.base_nodes import Node
+from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import NotebookId as NotebookId
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
 from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
-from bioimageio.spec.generic.v0_2 import GenericDescrBase, HttpUrl
+from bioimageio.spec.generic.v0_2 import GenericDescrBase
 from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
 from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId

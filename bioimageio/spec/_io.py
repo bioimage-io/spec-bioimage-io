@@ -9,7 +9,7 @@ from bioimageio.spec._description import (
     build_description,
     dump_description,
 )
-from bioimageio.spec._internal.base_nodes import ResourceDescrBase
+from bioimageio.spec._internal.common_nodes import ResourceDescrBase
 from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, write_yaml
 from bioimageio.spec._internal.types import (

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
 
 if TYPE_CHECKING:
-    from bioimageio.spec._internal.types import HttpUrl
+    from bioimageio.spec._internal.url import HttpUrl
 
 
 @dataclass(frozen=True)

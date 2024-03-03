@@ -11,7 +11,7 @@ from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
 
 from bioimageio.spec._internal.constants import VERSION
-from bioimageio.spec._internal.validation_context import (
+from bioimageio.spec._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
     ERROR,

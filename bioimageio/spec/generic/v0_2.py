@@ -16,7 +16,7 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, Self
 
-from bioimageio.spec._internal.base_nodes import Node, ResourceDescrBase
+from bioimageio.spec._internal.common_nodes import Node, ResourceDescrBase
 from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
 from bioimageio.spec._internal.field_validation import (
     AfterValidator as _AfterValidator,
@@ -34,11 +34,11 @@ from bioimageio.spec._internal.types import (
     NotEmpty,
 )
 from bioimageio.spec._internal.types import Doi as Doi
-from bioimageio.spec._internal.types import HttpUrl as HttpUrl
 from bioimageio.spec._internal.types import OrcidId as OrcidId
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
 from bioimageio.spec._internal.types import Version as Version
+from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec.generic._v0_2_converter import (
     convert_from_older_format as _convert_from_older_format,
 )

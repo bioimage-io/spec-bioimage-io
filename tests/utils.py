@@ -26,9 +26,9 @@ from pydantic import (
 from ruyaml import YAML
 
 from bioimageio.spec._description import InvalidDescr, build_description
-from bioimageio.spec._internal.base_nodes import Node
-from bioimageio.spec._internal.io_utils import download
-from bioimageio.spec._internal.types import HttpUrl
+from bioimageio.spec._internal.common_nodes import Node
+from bioimageio.spec._internal.io import download
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.collection.v0_2 import CollectionDescr as CollectionDescr02

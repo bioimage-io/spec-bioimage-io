@@ -28,7 +28,6 @@ from pydantic import (
     Field,
     GetCoreSchemaHandler,
     PrivateAttr,
-    RootModel,
     StringConstraints,
     TypeAdapter,
     model_validator,
@@ -43,84 +42,23 @@ from typing_extensions import (
     Unpack,
 )
 
-from bioimageio.spec._internal.constants import (
-    ALERT,
-    ERROR,
-    INFO,
-    WARNING_LEVEL_TO_NAME,
-)
 from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.io import BioimageioYamlContent, Sha256
-from bioimageio.spec._internal.types import (
-    HttpUrl,
-    ImportantFileSource,
-    RelativeFilePath,
-)
+from bioimageio.spec._internal.io import BioimageioYamlContent, RelativeFilePath
+from bioimageio.spec._internal.node import Node as Node
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 from bioimageio.spec._internal.validation_context import (
     ValidationContext,
     validation_context_var,
 )
+from bioimageio.spec._internal.warning_levels import ALERT, ERROR, INFO
 from bioimageio.spec.summary import (
+    WARNING_LEVEL_TO_NAME,
     ErrorEntry,
     ValidationDetail,
     ValidationSummary,
     WarningEntry,
 )
-
-
-class Node(
-    pydantic.BaseModel,
-    extra="forbid",
-    frozen=False,
-    populate_by_name=True,
-    revalidate_instances="subclass-instances",
-    validate_assignment=True,
-    validate_default=False,
-    validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
-    # use_attribute_docstrings=True,  TODO: use this from future pydantic 2.7
-    # see https://github.com/pydantic/pydantic/issues/5656
-):
-    """Subpart of a resource description"""
-
-    @classmethod
-    def model_validate(
-        cls,
-        obj: Union[Any, Dict[str, Any]],
-        *,
-        strict: Optional[bool] = None,
-        from_attributes: Optional[bool] = None,
-        context: Union[ValidationContext, Dict[str, Any], None] = None,
-    ) -> Self:
-        """Validate a pydantic model instance.
-
-        Args:
-            obj: The object to validate.
-            strict: Whether to raise an exception on invalid fields.
-            from_attributes: Whether to extract data from object attributes.
-            context: Additional context to pass to the validator.
-
-        Raises:
-            ValidationError: If the object failed validation.
-
-        Returns:
-            The validated description instance.
-        """
-        __tracebackhide__ = True
-
-        if context is None:
-            context = validation_context_var.get()
-        elif isinstance(context, dict):
-            context = ValidationContext(**context)
-
-        if isinstance(obj, dict):
-            assert all(isinstance(k, str) for k in obj), obj
-
-        with context:
-            # use validation context as context manager for equal behavior of __init__ and model_validate
-            return super().model_validate(
-                obj, strict=strict, from_attributes=from_attributes
-            )
 
 
 class StringNode(collections.UserString, ABC):
@@ -149,7 +87,7 @@ class StringNode(collections.UserString, ABC):
         )
 
         # freeze after initialization
-        def __setattr__(self: Self, __name: str, __value: Any):
+        def __setattr__(self: Self, __name: str, __value: Any):  # type: ignore
             raise AttributeError(f"{self} is immutable.")
 
         self.__setattr__ = __setattr__  # type: ignore
@@ -541,55 +479,3 @@ class KwargsNode(Node):
 
     def __contains__(self, item: str) -> int:
         return item in self.model_fields
-
-
-S = TypeVar("S", bound=str)
-
-
-class ValidatedString(RootModel[S]):
-    def __str__(self) -> str:
-        return str(self.root)
-
-
-Sha256 = ValidatedString[
-    Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, min_length=64, max_length=64
-        ),
-    ]
-]
-
-
-class FileDescr(Node):
-    source: ImportantFileSource
-    """∈📦 file source"""
-
-    sha256: Optional[Sha256] = None
-    """SHA256 checksum of the source file"""
-
-    @model_validator(mode="after")
-    def validate_sha256(self) -> Self:
-        context = validation_context_var.get()
-        if not context.perform_io_checks:
-            return self
-
-        from bioimageio.spec._internal.io_utils import download, get_sha256
-
-        local_source = download(self.source, sha256=self.sha256).path
-        actual_sha = get_sha256(local_source)
-        if self.sha256 is None:
-            self.sha256 = actual_sha
-        elif self.sha256 != actual_sha:
-            raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got"
-                f" {actual_sha}. Update expected `sha256` or point to the matching"
-                " file."
-            )
-
-        return self
-
-    def download(self):
-        from bioimageio.spec._internal.io_utils import download
-
-        return download(self.source, sha256=self.sha256)
