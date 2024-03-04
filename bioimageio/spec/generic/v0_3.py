@@ -206,6 +206,19 @@ class GenericModelDescrBase(ResourceDescrBase):
     cite: NotEmpty[List[CiteEntry]]
     """citations"""
 
+    license: Annotated[
+        Union[LicenseId, DeprecatedLicenseId],
+        warn(
+            LicenseId,
+            "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
+        ),
+        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+    ]
+    """A [SPDX license identifier](https://spdx.org/licenses/).
+    We do not support custom license beyond the SPDX license list, if you need that please
+    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
+    to discuss your intentions with the community."""
+
     config: Annotated[
         Dict[str, YamlValue],
         Field(
@@ -358,16 +371,6 @@ class GenericDescrBase(GenericModelDescrBase):
     ] = None
     """∈📦 URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
-
-    license: Annotated[
-        Union[LicenseId, Annotated[DeprecatedLicenseId, "deprecated"]],
-        warn(LicenseId, "'{value}' is a deprecated or unknown license identifier."),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
-    ]
-    """A [SPDX license identifier](https://spdx.org/licenses/).
-    We do not support custom license beyond the SPDX license list, if you need that please
-    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
-    ) to discuss your intentions with the community."""
 
     badges: List[BadgeDescr] = Field(default_factory=list)
     """badges associated with this resource"""

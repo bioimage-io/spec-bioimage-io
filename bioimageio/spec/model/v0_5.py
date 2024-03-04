@@ -1857,19 +1857,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     # TODO: use validate funcs in validate_test_tensors
     # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
-    license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId],
-        warn(
-            LicenseId,
-            "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
-        ),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
-    ]
-    """A [SPDX license identifier](https://spdx.org/licenses/).
-    We do not support custom license beyond the SPDX license list, if you need that please
-    [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-    to discuss your intentions with the community."""
-
     name: Annotated[
         str,
         MinLen(5),
