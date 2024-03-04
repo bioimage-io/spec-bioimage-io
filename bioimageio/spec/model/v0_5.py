@@ -1650,7 +1650,7 @@ class LinkedModel(Node):
     id: ModelId
     """A valid model `id` from the bioimage.io collection."""
 
-    version_nr: int
+    version_number: int
     """version number (n-th published version, not the semantic version) of linked model"""
 
 

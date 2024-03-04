@@ -262,7 +262,7 @@ all generic 0.3.0 changes (except models already have the `parent` field) plus:
 * Breaking changes that are fully auto-convertible
   * `id` overwritten with value from `config.bioimageio.nickname` if available
 * Non-breaking changes
-  * `version_nr` is a new, optional field indicating that an RDF is the nth published version with a given `id`
+  * `version_number` is a new, optional field indicating that an RDF is the nth published version with a given `id`
   * `id_emoji` is a new, optional field (set from `config.bioimageio.nickname_icon` if available)
   * `uploader` is a new, optional field with `email` and an optional `name` subfields
 
