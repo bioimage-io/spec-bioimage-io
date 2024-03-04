@@ -7,13 +7,10 @@ from typing import List, Optional, Union
 
 from pydantic import DirectoryPath
 
-from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.io_basics import (
-    BIOIMAGEIO_YAML,
-    AbsoluteDirectory,
-)
-from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.warning_levels import WarningLevel
+from ._settings import settings
+from .io_basics import BIOIMAGEIO_YAML, AbsoluteDirectory
+from .root_url import RootHttpUrl
+from .warning_levels import WarningLevel
 
 
 @dataclass(frozen=True)

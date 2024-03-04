@@ -49,19 +49,19 @@ from typing_extensions import (
 )
 from typing_extensions import TypeAliasType as _TypeAliasType
 
-from bioimageio.spec._internal.io_basics import (
+from .._internal.io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
     FileName,
 )
-from bioimageio.spec._internal.node import Node
-from bioimageio.spec._internal.packaging_context import packaging_context_var
-from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.url import HttpUrl
-from bioimageio.spec._internal.validated_string import ValidatedString
-from bioimageio.spec._internal.validation_context import (
+from .._internal.node import Node
+from .._internal.packaging_context import packaging_context_var
+from .._internal.root_url import RootHttpUrl
+from .._internal.url import HttpUrl
+from .._internal.validated_string import ValidatedString
+from .._internal.validation_context import (
     validation_context_var,
 )
 

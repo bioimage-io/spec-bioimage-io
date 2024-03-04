@@ -42,23 +42,23 @@ from typing_extensions import (
     Unpack,
 )
 
-from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.io import BioimageioYamlContent, RelativeFilePath
-from bioimageio.spec._internal.node import Node as Node
-from bioimageio.spec._internal.url import HttpUrl
-from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
-from bioimageio.spec._internal.validation_context import (
-    ValidationContext,
-    validation_context_var,
-)
-from bioimageio.spec._internal.warning_levels import ALERT, ERROR, INFO
-from bioimageio.spec.summary import (
+from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
     ValidationDetail,
     ValidationSummary,
     WarningEntry,
 )
+from .field_warning import issue_warning
+from .io import BioimageioYamlContent, RelativeFilePath
+from .node import Node as Node
+from .url import HttpUrl
+from .utils import assert_all_params_set_explicitly
+from .validation_context import (
+    ValidationContext,
+    validation_context_var,
+)
+from .warning_levels import ALERT, ERROR, INFO
 
 
 class StringNode(collections.UserString, ABC):

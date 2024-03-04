@@ -4,8 +4,8 @@ import packaging.version
 from pydantic import PrivateAttr
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.field_validation import AfterValidator
-from bioimageio.spec._internal.validated_string import ValidatedString
+from .field_validation import AfterValidator
+from .validated_string import ValidatedString
 
 
 def _validate_version_str(

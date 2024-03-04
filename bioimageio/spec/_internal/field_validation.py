@@ -5,7 +5,6 @@ import dataclasses
 import sys
 from dataclasses import dataclass
 from datetime import date, datetime
-from keyword import iskeyword
 from typing import (
     Any,
     Dict,
@@ -17,7 +16,6 @@ from typing import (
 )
 
 import annotated_types
-from dateutil.parser import isoparse
 from pydantic import GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 
@@ -50,51 +48,6 @@ class RestrictCharacters:
         if any(c not in self.alphabet for c in value):
             raise ValueError(f"{value!r} is not restricted to {self.alphabet!r}")
         return value
-
-
-def capitalize_first_letter(v: str) -> str:
-    return v[:1].capitalize() + v[1:]
-
-
-def validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
-    if isinstance(dt, datetime):
-        return dt
-    elif isinstance(dt, str):
-        return isoparse(dt)
-
-    raise ValueError(f"'{dt}' not a string or datetime.")
-
-
-def validate_identifier(s: str) -> str:
-    if not s.isidentifier():
-        raise ValueError(
-            f"'{s}' is not a valid (Python) identifier, see"
-            " https://docs.python.org/3/reference/lexical_analysis.html#identifiers"
-            " for details."
-        )
-
-    return s
-
-
-def validate_is_not_keyword(s: str) -> str:
-    if iskeyword(s):
-        raise ValueError(f"'{s}' is a Python keyword and not allowed here.")
-
-    return s
-
-
-def validate_orcid_id(orcid_id: str):
-    if len(orcid_id) == 19 and all(orcid_id[idx] == "-" for idx in [4, 9, 14]):
-        check = 0
-        for n in orcid_id[:4] + orcid_id[5:9] + orcid_id[10:14] + orcid_id[15:]:
-            # adapted from stdnum.iso7064.mod_11_2.checksum()
-            check = (2 * check + int(10 if n == "X" else n)) % 11
-        if check == 1:
-            return orcid_id  # valid
-
-    raise ValueError(
-        f"'{orcid_id} is not a valid ORCID iD in hyphenated groups of 4 digits."
-    )
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:

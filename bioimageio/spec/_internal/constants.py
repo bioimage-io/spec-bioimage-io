@@ -4,7 +4,7 @@ import json
 from types import MappingProxyType
 from typing import Mapping, NamedTuple, Sequence, Union
 
-from bioimageio.spec._internal.utils import files
+from .utils import files
 
 with files("bioimageio.spec").joinpath("VERSION").open("r", encoding="utf-8") as f:
     VERSION: str = json.load(f)["version"]

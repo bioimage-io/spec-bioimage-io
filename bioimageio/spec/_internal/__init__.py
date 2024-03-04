@@ -1,1 +1,1 @@
-from bioimageio.spec._internal._settings import settings as settings
+from ._settings import settings as settings

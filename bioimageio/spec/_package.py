@@ -8,36 +8,24 @@ from zipfile import ZIP_DEFLATED
 
 from pydantic import DirectoryPath, FilePath, NewPath
 
-from bioimageio.spec import load_description, model
-from bioimageio.spec._description import (
-    InvalidDescr,
-    ResourceDescr,
-    build_description,
-)
-from bioimageio.spec._internal.common_nodes import ResourceDescrBase
-from bioimageio.spec._internal.io import (
+from ._description import InvalidDescr, ResourceDescr, build_description
+from ._internal.common_nodes import ResourceDescrBase
+from ._internal.io import (
     BioimageioYamlContent,
     BioimageioYamlSource,
     YamlValue,
     download,
     ensure_is_valid_rdf_name,
 )
-from bioimageio.spec._internal.io_basics import (
-    BIOIMAGEIO_YAML,
-    AbsoluteFilePath,
-    FileName,
-)
-from bioimageio.spec._internal.io_utils import (
-    open_bioimageio_yaml,
-    write_yaml,
-    write_zip,
-)
-from bioimageio.spec._internal.packaging_context import PackagingContext
-from bioimageio.spec._internal.url import (
-    HttpUrl,
-)
-from bioimageio.spec._internal.validation_context import validation_context_var
-from bioimageio.spec.model.v0_4 import WeightsFormat
+from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
+from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
+from ._internal.packaging_context import PackagingContext
+from ._internal.url import HttpUrl
+from ._internal.validation_context import validation_context_var
+from ._io import load_description
+from .model.v0_4 import ModelDescr as ModelDescr04
+from .model.v0_4 import WeightsFormat
+from .model.v0_5 import ModelDescr as ModelDescr05
 
 
 def get_os_friendly_file_name(name: str) -> str:
@@ -76,7 +64,7 @@ def get_resource_package_content(
     _ = rdf_content.pop("rdf_source", None)
 
     if weights_priority_order is not None and isinstance(
-        rd, (model.v0_4.ModelDescr, model.v0_5.ModelDescr)
+        rd, (ModelDescr04, ModelDescr05)
     ):
         # select single weights entry
         assert isinstance(rdf_content["weights"], dict), type(rdf_content["weights"])

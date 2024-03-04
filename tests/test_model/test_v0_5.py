@@ -14,6 +14,7 @@ from bioimageio.spec.model.v0_5 import (
     BatchAxis,
     ChannelAxis,
     CiteEntry,
+    Datetime,
     Identifier,
     InputAxis,
     InputTensorDescr,
@@ -225,7 +226,7 @@ def model_data():
                 ),
                 Maintainer(github_user="githubuser2"),
             ],
-            timestamp=datetime.now(),
+            timestamp=Datetime(datetime.now()),
             cite=[CiteEntry(text="Paper title", url=HttpUrl("https://example.com/"))],
             inputs=[
                 InputTensorDescr(

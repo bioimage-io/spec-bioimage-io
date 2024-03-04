@@ -9,11 +9,12 @@ from typing import Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from . import v0_2 as v0_2, v0_3 as v0_3
+from .v0_2 import CollectionDescr as CollectionDescr_v0_2
 from .v0_3 import CollectionDescr as CollectionDescr
+from .v0_3 import CollectionDescr as CollectionDescr_v0_3
 
 AnyCollectionDescr = Annotated[
-    Union[v0_2.CollectionDescr, v0_3.CollectionDescr], Discriminator("format_version")
+    Union[CollectionDescr_v0_2, CollectionDescr_v0_3], Discriminator("format_version")
 ]
 """Union of any released collection desription"""
 # autogen: stop

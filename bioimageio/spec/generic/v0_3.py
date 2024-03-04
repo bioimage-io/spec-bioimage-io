@@ -8,43 +8,44 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal import settings
-from bioimageio.spec._internal.common_nodes import (
+from .._internal import settings
+from .._internal.common_nodes import (
     Converter,
     Node,
     ResourceDescrBase,
 )
-from bioimageio.spec._internal.constants import (
+from .._internal.constants import (
     TAG_CATEGORIES,
 )
-from bioimageio.spec._internal.field_validation import Predicate
-from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
-from bioimageio.spec._internal.io import FileDescr as FileDescr
-from bioimageio.spec._internal.io import Sha256 as Sha256
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath
-from bioimageio.spec._internal.license_id import LicenseId
-from bioimageio.spec._internal.types import (
+from .._internal.field_validation import Predicate
+from .._internal.field_warning import as_warning, issue_warning, warn
+from .._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
+from .._internal.io import FileDescr as FileDescr
+from .._internal.io import Sha256 as Sha256
+from .._internal.io_basics import AbsoluteFilePath
+from .._internal.license_id import LicenseId
+from .._internal.types import (
     DeprecatedLicenseId,
     ImportantFileSource,
     IncludeInPackage,
     NotEmpty,
 )
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
-from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec._internal.validation_context import (
+from .._internal.types import RelativeFilePath as RelativeFilePath
+from .._internal.types import ResourceId as ResourceId
+from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validation_context import (
     validation_context_var,
 )
-from bioimageio.spec._internal.version_type import Version as Version
-from bioimageio.spec._internal.warning_levels import ALERT
-from bioimageio.spec.generic import v0_2
-from bioimageio.spec.generic._v0_3_converter import convert_from_older_format
-from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
-from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_2 import Doi as Doi
-from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
-from bioimageio.spec.generic.v0_2 import Uploader as Uploader
+from .._internal.version_type import Version as Version
+from .._internal.warning_levels import ALERT
+from ._v0_3_converter import convert_from_older_format
+from .v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
+from .v0_2 import Author as _Author_v0_2
+from .v0_2 import BadgeDescr as BadgeDescr
+from .v0_2 import Doi as Doi
+from .v0_2 import Maintainer as _Maintainer_v0_2
+from .v0_2 import OrcidId as OrcidId
+from .v0_2 import Uploader as Uploader
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",
@@ -104,7 +105,7 @@ def _validate_gh_user(username: str) -> str:
     return username
 
 
-class Author(v0_2.Author):
+class Author(_Author_v0_2):
     name: Annotated[str, Predicate(_has_no_slash)]
     github_user: Optional[str] = None
 
@@ -116,9 +117,9 @@ class Author(v0_2.Author):
             return _validate_gh_user(value)
 
 
-class _AuthorConv(Converter[v0_2.Author, Author]):
+class _AuthorConv(Converter[_Author_v0_2, Author]):
     def _convert(
-        self, src: v0_2.Author, tgt: "type[Author] | type[dict[str, Any]]"
+        self, src: _Author_v0_2, tgt: "type[Author] | type[dict[str, Any]]"
     ) -> "Author | dict[str, Any]":
         return tgt(
             name=src.name,
@@ -129,10 +130,10 @@ class _AuthorConv(Converter[v0_2.Author, Author]):
         )
 
 
-_author_conv = _AuthorConv(v0_2.Author, Author)
+_author_conv = _AuthorConv(_Author_v0_2, Author)
 
 
-class Maintainer(v0_2.Maintainer):
+class Maintainer(_Maintainer_v0_2):
     name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
     github_user: str
 
@@ -141,9 +142,9 @@ class Maintainer(v0_2.Maintainer):
         return _validate_gh_user(value)
 
 
-class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
+class _MaintainerConv(Converter[_Maintainer_v0_2, Maintainer]):
     def _convert(
-        self, src: v0_2.Maintainer, tgt: "type[Maintainer | dict[str, Any]]"
+        self, src: _Maintainer_v0_2, tgt: "type[Maintainer | dict[str, Any]]"
     ) -> "Maintainer | dict[str, Any]":
         return tgt(
             name=src.name,
@@ -154,7 +155,7 @@ class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
         )
 
 
-_maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
+_maintainer_conv = _MaintainerConv(_Maintainer_v0_2, Maintainer)
 
 
 class CiteEntry(Node):

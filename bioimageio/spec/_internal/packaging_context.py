@@ -4,8 +4,8 @@ from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Union
 
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
-from bioimageio.spec._internal.url import HttpUrl
+from .io_basics import AbsoluteFilePath, FileName
+from .url import HttpUrl
 
 
 @dataclass(frozen=True)

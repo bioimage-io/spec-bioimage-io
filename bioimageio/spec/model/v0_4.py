@@ -8,7 +8,6 @@ from typing import (
     FrozenSet,
     List,
     Literal,
-    NewType,
     Optional,
     Sequence,
     Tuple,
@@ -28,63 +27,63 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.common_nodes import (
+from bioimageio.spec._internal.validated_string import ValidatedString
+
+from .._internal.common_nodes import (
     KwargsNode,
     Node,
     NodeWithExplicitlySetFields,
     StringNode,
 )
-from bioimageio.spec._internal.constants import SHA256_HINT
-from bioimageio.spec._internal.field_validation import (
+from .._internal.constants import SHA256_HINT
+from .._internal.field_validation import (
     AfterValidator,
     RestrictCharacters,
     validate_unique_entries,
 )
-from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, download
-from bioimageio.spec._internal.io import FileDescr as FileDescr
-from bioimageio.spec._internal.io import Sha256 as Sha256
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.types import Datetime as Datetime
-from bioimageio.spec._internal.types import Identifier as Identifier
-from bioimageio.spec._internal.types import (
+from .._internal.field_warning import issue_warning, warn
+from .._internal.io import BioimageioYamlContent, WithSuffix, download
+from .._internal.io import FileDescr as FileDescr
+from .._internal.io import Sha256 as Sha256
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.types import Datetime as Datetime
+from .._internal.types import Identifier as Identifier
+from .._internal.types import (
     ImportantFileSource,
     IncludeInPackage,
-    LowerCaseIdentifierStr,
+    LowerCaseIdentifierAnno,
 )
-from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import ModelId as ModelId
-from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec._internal.version_type import Version as Version
-from bioimageio.spec._internal.warning_levels import ALERT, INFO
-from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
-from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
-from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
-from bioimageio.spec.generic.v0_2 import Author as Author
-from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_2 import Doi as Doi
-from bioimageio.spec.generic.v0_2 import GenericModelDescrBase
-from bioimageio.spec.generic.v0_2 import LinkedResource as LinkedResource
-from bioimageio.spec.generic.v0_2 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
-from bioimageio.spec.generic.v0_2 import RelativeFilePath as RelativeFilePath
-from bioimageio.spec.generic.v0_2 import Uploader as Uploader
-from bioimageio.spec.model._v0_4_converter import convert_from_older_format
-from bioimageio.spec.utils import load_array
+from .._internal.types import LicenseId as LicenseId
+from .._internal.types import ModelId as ModelId
+from .._internal.types import NotEmpty as NotEmpty
+from .._internal.types import ResourceId as ResourceId
+from .._internal.url import HttpUrl as HttpUrl
+from .._internal.version_type import Version as Version
+from .._internal.warning_levels import ALERT, INFO
+from ..dataset.v0_2 import DatasetDescr as DatasetDescr
+from ..dataset.v0_2 import LinkedDataset as LinkedDataset
+from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
+from ..generic.v0_2 import Author as Author
+from ..generic.v0_2 import BadgeDescr as BadgeDescr
+from ..generic.v0_2 import CiteEntry as CiteEntry
+from ..generic.v0_2 import Doi as Doi
+from ..generic.v0_2 import GenericModelDescrBase
+from ..generic.v0_2 import LinkedResource as LinkedResource
+from ..generic.v0_2 import Maintainer as Maintainer
+from ..generic.v0_2 import OrcidId as OrcidId
+from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_2 import Uploader as Uploader
+from ..utils import load_array
+from ._v0_4_converter import convert_from_older_format
 
-AxesStr = NewType(
-    "AxesStr",
+AxesStr = ValidatedString[
     Annotated[
         str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
-    ],
-)
-AxesInCZYX = NewType(
-    "AxesInCZYX",
+    ]
+]
+AxesInCZYX = ValidatedString[
     Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)],
-)
+]
 
 PostprocessingName = Literal[
     "binarize",
@@ -104,7 +103,7 @@ PreprocessingName = Literal[
     "scale_range",
 ]
 
-TensorName = NewType("TensorName", LowerCaseIdentifierStr)
+TensorName = ValidatedString[LowerCaseIdentifierAnno]
 
 
 class CallableFromDepencency(StringNode):

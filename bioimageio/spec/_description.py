@@ -1,84 +1,67 @@
-from typing import (
-    Any,
-    Literal,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-)
+from types import MappingProxyType
+from typing import Any, Literal, Optional, TypeVar, Union
 
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-import bioimageio.spec
-from bioimageio.spec import application, collection, dataset, generic, model, notebook
-from bioimageio.spec._internal.common_nodes import InvalidDescr
-from bioimageio.spec._internal.io import BioimageioYamlContent
-from bioimageio.spec._internal.types import (
-    FormatVersionPlaceholder,
-)
-from bioimageio.spec._internal.validation_context import (
-    ValidationContext,
-    validation_context_var,
-)
-from bioimageio.spec.summary import ValidationSummary
+from ._build_description import DISCOVER, build_description_impl, get_rd_class_impl
+from ._internal.common_nodes import InvalidDescr
+from ._internal.io import BioimageioYamlContent
+from ._internal.types import FormatVersionPlaceholder
+from ._internal.validation_context import ValidationContext, validation_context_var
+from .application import AnyApplicationDescr, ApplicationDescr
+from .application.v0_2 import ApplicationDescr as ApplicationDescr02
+from .application.v0_3 import ApplicationDescr as ApplicationDescr03
+from .collection import AnyCollectionDescr, CollectionDescr
+from .collection.v0_2 import CollectionDescr as CollectionDescr02
+from .collection.v0_3 import CollectionDescr as CollectionDescr03
+from .dataset import AnyDatasetDescr, DatasetDescr
+from .dataset.v0_2 import DatasetDescr as DatasetDescr02
+from .dataset.v0_3 import DatasetDescr as DatasetDescr03
+from .generic import AnyGenericDescr, GenericDescr
+from .generic.v0_2 import GenericDescr as GenericDescr02
+from .generic.v0_3 import GenericDescr as GenericDescr03
+from .model import AnyModelDescr, ModelDescr
+from .model.v0_4 import ModelDescr as ModelDescr04
+from .model.v0_5 import ModelDescr as ModelDescr05
+from .notebook import AnyNotebookDescr, NotebookDescr
+from .notebook.v0_2 import NotebookDescr as NotebookDescr02
+from .notebook.v0_3 import NotebookDescr as NotebookDescr03
+from .summary import ValidationSummary
 
 LATEST: FormatVersionPlaceholder = "latest"
 """placeholder for the latest available format version"""
 
-DISCOVER: FormatVersionPlaceholder = "discover"
-"""placeholder for whatever format version an RDF specifies"""
 
-_ResourceDescr_v0_2 = Union[
+LatestResourceDescr = Union[
     Annotated[
         Union[
-            application.v0_2.ApplicationDescr,
-            collection.v0_2.CollectionDescr,
-            dataset.v0_2.DatasetDescr,
-            model.v0_4.ModelDescr,
-            notebook.v0_2.NotebookDescr,
+            ApplicationDescr,
+            CollectionDescr,
+            DatasetDescr,
+            ModelDescr,
+            NotebookDescr,
         ],
         Discriminator("type"),
     ],
-    generic.v0_2.GenericDescr,
+    GenericDescr,
 ]
-"""A resource description following the 0.2.x (model: 0.4.x) specification format"""
-
-_ResourceDescr_v0_3 = Union[
-    Annotated[
-        Union[
-            application.v0_3.ApplicationDescr,
-            collection.v0_3.CollectionDescr,
-            dataset.v0_3.DatasetDescr,
-            model.v0_5.ModelDescr,
-            notebook.v0_3.NotebookDescr,
-        ],
-        Discriminator("type"),
-    ],
-    generic.v0_3.GenericDescr,
-]
-"""A resource description following the 0.3.x (model: 0.5.x) specification format"""
-
-LatestResourceDescr = _ResourceDescr_v0_3
 """A resource description following the latest specification format"""
 
 
 SpecificResourceDescr = Annotated[
     Union[
-        application.AnyApplicationDescr,
-        collection.AnyCollectionDescr,
-        dataset.AnyDatasetDescr,
-        model.AnyModelDescr,
-        notebook.AnyNotebookDescr,
+        AnyApplicationDescr,
+        AnyCollectionDescr,
+        AnyDatasetDescr,
+        AnyModelDescr,
+        AnyNotebookDescr,
     ],
     Discriminator("type"),
 ]
 """Any of the implemented, non-generic resource descriptions"""
 
-ResourceDescr = Union[
-    SpecificResourceDescr,
-    generic.AnyGenericDescr,
-]
+ResourceDescr = Union[SpecificResourceDescr, AnyGenericDescr]
 """Any of the implemented resource descriptions"""
 
 
@@ -89,44 +72,67 @@ def dump_description(
     return rd.model_dump(mode="json", exclude_unset=exclude_unset)
 
 
-def _get_rd_class(typ: Any, format_version: Any) -> Type[ResourceDescr]:
-    if not isinstance(typ, str) or typ not in (
-        generic.v0_2.KNOWN_SPECIFIC_RESOURCE_TYPES
-        + generic.v0_3.KNOWN_SPECIFIC_RESOURCE_TYPES
-    ):
-        typ = "generic"
-        type_module = generic
-    elif (
-        typ == "model"
-        and isinstance(format_version, str)
-        and format_version.startswith("0.3.")
-    ):
-        # special case: old 0.3 model spec should be read by model 0.4
-        return model.v0_4.ModelDescr
-    else:
-        type_module = getattr(bioimageio.spec, typ)
-
-    def get_v_module(fv: Any):
-        if not isinstance(fv, str):
-            return type_module
-
-        if (ndots := fv.count(".")) == 0:
-            fv = fv + ".0"
-        elif ndots == 2:
-            fv = fv[: fv.rfind(".")]
-        else:
-            return type_module
-
-        assert fv.count(".") == 1
-        v_module_name = f"v{fv.replace('.', '_')}"
-        return getattr(type_module, v_module_name, type_module)
-
-    v_module = get_v_module(format_version)
-    rd_class = getattr(v_module, typ.capitalize() + "Descr")
-    return rd_class
-
-
 RD = TypeVar("RD", bound=ResourceDescr)
+
+
+DESCRIPTIONS_MAP = MappingProxyType(
+    {
+        None: MappingProxyType(
+            {
+                "0.2": GenericDescr02,
+                "0.3": GenericDescr03,
+                None: GenericDescr,
+            }
+        ),
+        "generic": MappingProxyType(
+            {
+                "0.2": GenericDescr02,
+                "0.3": GenericDescr03,
+                None: GenericDescr,
+            }
+        ),
+        "application": MappingProxyType(
+            {
+                "0.2": ApplicationDescr02,
+                "0.3": ApplicationDescr03,
+                None: ApplicationDescr,
+            }
+        ),
+        "collection": MappingProxyType(
+            {
+                "0.2": CollectionDescr02,
+                "0.3": CollectionDescr03,
+                None: CollectionDescr,
+            }
+        ),
+        "dataset": MappingProxyType(
+            {
+                "0.2": DatasetDescr02,
+                "0.3": DatasetDescr03,
+                None: DatasetDescr,
+            }
+        ),
+        "notebook": MappingProxyType(
+            {
+                "0.2": NotebookDescr02,
+                "0.3": NotebookDescr03,
+                None: NotebookDescr,
+            }
+        ),
+        "model": MappingProxyType(
+            {
+                "0.3": ModelDescr04,
+                "0.4": ModelDescr04,
+                "0.5": ModelDescr05,
+                None: ModelDescr,
+            }
+        ),
+    }
+)
+
+
+def _get_rd_class(typ: Any, format_version: Any):
+    return get_rd_class_impl(typ, format_version, DESCRIPTIONS_MAP)
 
 
 def build_description(
@@ -136,24 +142,12 @@ def build_description(
     context: Optional[ValidationContext] = None,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescr]:
-    context = context or validation_context_var.get()
-    if not isinstance(content, dict):
-        # "Invalid content of type '{type(content)}'"
-        rd_class = generic.GenericDescr
-
-    typ = content.get("type")
-    rd_class = _get_rd_class(typ, content.get("format_version"))
-
-    rd = rd_class.load(content, context=context)
-    assert rd.validation_summary is not None
-    if format_version != DISCOVER and not isinstance(rd, InvalidDescr):
-        discover_details = rd.validation_summary.details
-        as_rd_class = _get_rd_class(typ, format_version)
-        rd = as_rd_class.load(content, context=context)
-        assert rd.validation_summary is not None
-        rd.validation_summary.details[:0] = discover_details
-
-    return rd
+    return build_description_impl(
+        content,
+        context=context,
+        format_version=format_version,
+        get_rd_class=_get_rd_class,
+    )
 
 
 def validate_format(

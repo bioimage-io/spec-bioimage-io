@@ -12,6 +12,7 @@ from bioimageio.spec.model.v0_4 import (
     AxesInCZYX,
     AxesStr,
     CiteEntry,
+    Datetime,
     InputTensorDescr,
     LinkedModel,
     Maintainer,
@@ -324,7 +325,7 @@ def model_data():
                 ),
                 Maintainer(github_user="constantinpape"),
             ],
-            timestamp=datetime.now(),
+            timestamp=Datetime(datetime.now()),
             cite=[CiteEntry(text="Paper title", url="https://example.com/")],
             inputs=[
                 InputTensorDescr(

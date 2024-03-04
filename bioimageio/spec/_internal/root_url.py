@@ -7,7 +7,7 @@ import pydantic
 from pydantic import AfterValidator, TypeAdapter
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.validated_string import ValidatedString
+from .validated_string import ValidatedString
 
 _http_url_adapter = TypeAdapter(pydantic.HttpUrl)  # pyright: ignore[reportCallIssue]
 

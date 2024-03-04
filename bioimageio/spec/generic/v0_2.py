@@ -15,15 +15,15 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, Self, assert_never
 
-from bioimageio.spec._internal.common_nodes import Node, ResourceDescrBase
-from bioimageio.spec._internal.constants import TAG_CATEGORIES
-from bioimageio.spec._internal.field_validation import (
+from .._internal.common_nodes import Node, ResourceDescrBase
+from .._internal.constants import TAG_CATEGORIES
+from .._internal.field_validation import (
     AfterValidator as _AfterValidator,
 )
-from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.types import (
+from .._internal.field_warning import as_warning, issue_warning, warn
+from .._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.types import (
     DeprecatedLicenseId,
     FileSource,
     ImportantFileSource,
@@ -31,15 +31,13 @@ from bioimageio.spec._internal.types import (
     LicenseId,
     NotEmpty,
 )
-from bioimageio.spec._internal.types import Doi as Doi
-from bioimageio.spec._internal.types import OrcidId as OrcidId
-from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
-from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec._internal.version_type import Version as Version
-from bioimageio.spec.generic._v0_2_converter import (
-    convert_from_older_format as _convert_from_older_format,
-)
+from .._internal.types import Doi as Doi
+from .._internal.types import OrcidId as OrcidId
+from .._internal.types import RelativeFilePath as RelativeFilePath
+from .._internal.types import ResourceId as ResourceId
+from .._internal.url import HttpUrl as HttpUrl
+from .._internal.version_type import Version as Version
+from ._v0_2_converter import convert_from_older_format as _convert_from_older_format
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",

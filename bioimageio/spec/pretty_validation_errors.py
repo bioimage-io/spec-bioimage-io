@@ -4,7 +4,7 @@ from typing import Any, List, Type, Union
 
 from pydantic import ValidationError
 
-from bioimageio.spec.summary import format_loc
+from .summary import format_loc
 
 try:
     from IPython.core.getipython import get_ipython

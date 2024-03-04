@@ -2,19 +2,19 @@ from typing import Literal, TextIO, Union, cast
 
 from pydantic import FilePath, NewPath
 
-from bioimageio.spec import ResourceDescr
-from bioimageio.spec._description import (
+from ._description import (
     DISCOVER,
     InvalidDescr,
+    ResourceDescr,
     build_description,
     dump_description,
 )
-from bioimageio.spec._internal.common_nodes import ResourceDescrBase
-from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
-from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, write_yaml
-from bioimageio.spec._internal.validation_context import ValidationContext
-from bioimageio.spec.common import PermissiveFileSource
-from bioimageio.spec.summary import ValidationSummary
+from ._internal.common_nodes import ResourceDescrBase
+from ._internal.io import BioimageioYamlContent, YamlValue
+from ._internal.io_utils import open_bioimageio_yaml, write_yaml
+from ._internal.validation_context import ValidationContext
+from .common import PermissiveFileSource
+from .summary import ValidationSummary
 
 
 def load_description(

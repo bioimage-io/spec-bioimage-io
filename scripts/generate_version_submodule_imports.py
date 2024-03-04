@@ -26,10 +26,9 @@ from typing import Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from . import {info.all_version_modules_import_as}
-from .{info.latest_version_module} import {info.target_node} as {info.target_node}
+{info.all_version_modules_imports}
 
-Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain}], Discriminator("format_version")]
+Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain_aliases}], Discriminator("format_version")]
 \"\"\"Union of any released {info.target} desription\"\"\"
 """
 
@@ -78,22 +77,36 @@ class Info:
     all_version_modules: List[str]
     target_node: str = field(init=False)
     all_target_nodes_plain: str = field(init=False)
+    all_target_nodes_plain_aliases: str = field(init=False)
     latest_version_module: str = field(init=False)
     all_version_modules_import_as: str = field(init=False)
+    all_version_modules_imports: str = field(init=False)
     package_path: Path = field(init=False)
     submodule_list: str = field(init=False)
 
     def __post_init__(self):
-        self.target_node = dict(generic="GenericDescr").get(
-            self.target, self.target.capitalize() + "Descr"
-        )
+        self.target_node = self.target.capitalize() + "Descr"
         self.all_target_nodes_plain = ", ".join(
             [f"{vm}.{self.target_node}" for vm in self.all_version_modules]
+        )
+        self.all_target_nodes_plain_aliases = ", ".join(
+            [f"{self.target_node}_{vm}" for vm in self.all_version_modules]
         )
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_import_as = ", ".join(
             f"{m} as {m}" for m in self.all_version_modules
         )
+
+        avmi = [
+            f"from .{m} import {self.target_node} as {self.target_node}_{m}"
+            for m in self.all_version_modules
+        ]
+        avmi.insert(
+            -1,
+            f"from .{self.latest_version_module} import {self.target_node} as {self.target_node}",
+        )
+        self.all_version_modules_imports = "\n".join(avmi)
+
         self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
         self.submodule_list = "\n".join(
             [
@@ -136,7 +149,6 @@ def process(info: Info, check: bool):
         )
     )
     updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
-
     if check:
         if init_content == updated:
             print("all seems fine")

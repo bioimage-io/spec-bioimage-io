@@ -9,11 +9,12 @@ from typing import Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from . import v0_2 as v0_2, v0_3 as v0_3
+from .v0_2 import DatasetDescr as DatasetDescr_v0_2
 from .v0_3 import DatasetDescr as DatasetDescr
+from .v0_3 import DatasetDescr as DatasetDescr_v0_3
 
 AnyDatasetDescr = Annotated[
-    Union[v0_2.DatasetDescr, v0_3.DatasetDescr], Discriminator("format_version")
+    Union[DatasetDescr_v0_2, DatasetDescr_v0_3], Discriminator("format_version")
 ]
 """Union of any released dataset desription"""
 # autogen: stop

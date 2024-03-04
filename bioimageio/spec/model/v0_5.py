@@ -34,77 +34,77 @@ import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
-from packaging.version import Version as Version
-from pydantic import (
-    Field,
-    ValidationInfo,
-    field_validator,
-    model_validator,
-)
+from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.common_nodes import (
+from .._internal.common_nodes import (
     Converter,
     InvalidDescr,
     Node,
     NodeWithExplicitlySetFields,
 )
-from bioimageio.spec._internal.constants import DTYPE_LIMITS
-from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io import (
-    BioimageioYamlContent as BioimageioYamlContent,
-)
-from bioimageio.spec._internal.io import FileDescr as FileDescr
-from bioimageio.spec._internal.io import Sha256 as Sha256
-from bioimageio.spec._internal.io import (
-    WithSuffix,
-    download,
-)
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_utils import load_array
-from bioimageio.spec._internal.types import Datetime as Datetime
-from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
-from bioimageio.spec._internal.types import Identifier as Identifier
-from bioimageio.spec._internal.types import (
-    ImportantFileSource,
-    LowerCaseIdentifierStr,
-    SiUnit,
-)
-from bioimageio.spec._internal.types import LicenseId as LicenseId
-from bioimageio.spec._internal.types import ModelId as ModelId
-from bioimageio.spec._internal.types import NotEmpty as NotEmpty
-from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec._internal.validation_context import (
-    validation_context_var,
-)
-from bioimageio.spec._internal.version_type import Version as Version
-from bioimageio.spec._internal.warning_levels import INFO
-from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
-from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
-from bioimageio.spec.dataset.v0_3 import Uploader as Uploader
-from bioimageio.spec.generic.v0_3 import Author as Author
-from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import (
+from .._internal.constants import DTYPE_LIMITS
+from .._internal.field_warning import issue_warning, warn
+from .._internal.io import BioimageioYamlContent as BioimageioYamlContent
+from .._internal.io import FileDescr as FileDescr
+from .._internal.io import Sha256 as Sha256
+from .._internal.io import WithSuffix, download
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_utils import load_array
+from .._internal.types import Datetime as Datetime
+from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
+from .._internal.types import Identifier as Identifier
+from .._internal.types import ImportantFileSource, LowerCaseIdentifierAnno, SiUnit
+from .._internal.types import LicenseId as LicenseId
+from .._internal.types import ModelId as ModelId
+from .._internal.types import NotEmpty as NotEmpty
+from .._internal.types import ResourceId as ResourceId
+from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validation_context import validation_context_var
+from .._internal.version_type import Version as Version
+from .._internal.warning_levels import INFO
+from ..dataset.v0_3 import DatasetDescr as DatasetDescr
+from ..dataset.v0_3 import LinkedDataset as LinkedDataset
+from ..dataset.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import Author as Author
+from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
-from bioimageio.spec.generic.v0_3 import Doi as Doi
-from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
-from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
-from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
-from bioimageio.spec.model import v0_4
-from bioimageio.spec.model.v0_4 import BinarizeKwargs as BinarizeKwargs
-from bioimageio.spec.model.v0_4 import CallableFromDepencency as CallableFromDepencency
-from bioimageio.spec.model.v0_4 import ClipKwargs as ClipKwargs
-from bioimageio.spec.model.v0_4 import KnownRunMode as KnownRunMode
-from bioimageio.spec.model.v0_4 import ProcessingKwargs as ProcessingKwargs
-from bioimageio.spec.model.v0_4 import RunMode as RunMode
-from bioimageio.spec.model.v0_4 import WeightsFormat as WeightsFormat
+from ..generic.v0_3 import Doi as Doi
+from ..generic.v0_3 import LinkedResource as LinkedResource
+from ..generic.v0_3 import Maintainer as Maintainer
+from ..generic.v0_3 import OrcidId as OrcidId
+from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from .v0_4 import Author as _Author_v0_4
+from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
+from .v0_4 import BinarizeKwargs as BinarizeKwargs
+from .v0_4 import CallableFromDepencency as CallableFromDepencency
+from .v0_4 import CallableFromDepencency as _CallableFromDepencency_v0_4
+from .v0_4 import CallableFromFile as _CallableFromFile_v0_4
+from .v0_4 import ClipDescr as _ClipDescr_v0_4
+from .v0_4 import ClipKwargs as ClipKwargs
+from .v0_4 import ImplicitOutputShape as _ImplicitOutputShape_v0_4
+from .v0_4 import InputTensorDescr as _InputTensorDescr_v0_4
+from .v0_4 import KnownRunMode as KnownRunMode
+from .v0_4 import ModelDescr as _ModelDescr_v0_4
+from .v0_4 import OutputTensorDescr as _OutputTensorDescr_v0_4
+from .v0_4 import ParameterizedInputShape as _ParameterizedInputShape_v0_4
+from .v0_4 import PostprocessingDescr as _PostprocessingDescr_v0_4
+from .v0_4 import PreprocessingDescr as _PreprocessingDescr_v0_4
+from .v0_4 import ProcessingKwargs as ProcessingKwargs
+from .v0_4 import RunMode as RunMode
+from .v0_4 import ScaleLinearDescr as _ScaleLinearDescr_v0_4
+from .v0_4 import ScaleMeanVarianceDescr as _ScaleMeanVarianceDescr_v0_4
+from .v0_4 import ScaleRangeDescr as _ScaleRangeDescr_v0_4
+from .v0_4 import SigmoidDescr as _SigmoidDescr_v0_4
+from .v0_4 import TensorName as _TensorName_v0_4
+from .v0_4 import WeightsFormat as WeightsFormat
+from .v0_4 import ZeroMeanUnitVarianceDescr as _ZeroMeanUnitVarianceDescr_v0_4
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -163,8 +163,8 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = NewType("TensorId", LowerCaseIdentifierStr)
-_AxisId = Annotated[LowerCaseIdentifierStr, MaxLen(16)]
+TensorId = NewType("TensorId", LowerCaseIdentifierAnno)
+_AxisId = Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
 AxisId = NewType("AxisId", _AxisId)
 
 
@@ -1026,10 +1026,12 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
 def convert_axes(
     axes: str,
     *,
-    shape: Union[Sequence[int], v0_4.ParameterizedInputShape, v0_4.ImplicitOutputShape],
+    shape: Union[
+        Sequence[int], _ParameterizedInputShape_v0_4, _ImplicitOutputShape_v0_4
+    ],
     tensor_type: Literal["input", "output"],
     halo: Optional[Sequence[int]],
-    size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
+    size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
 ):
     ret: List[AnyAxis] = []
     for i, a in enumerate(axes):
@@ -1039,12 +1041,12 @@ def convert_axes(
             continue
 
         scale = 1.0
-        if isinstance(shape, v0_4.ParameterizedInputShape):
+        if isinstance(shape, _ParameterizedInputShape_v0_4):
             if shape.step[i] == 0:
                 size = shape.min[i]
             else:
                 size = ParameterizedSize(min=shape.min[i], step=shape.step[i])
-        elif isinstance(shape, v0_4.ImplicitOutputShape):
+        elif isinstance(shape, _ImplicitOutputShape_v0_4):
             ref_t = shape.reference_tensor
             if ref_t.count(".") == 1:
                 t_id, orig_a_id = ref_t.split(".")
@@ -1061,7 +1063,7 @@ def convert_axes(
                 if axis_type in ("channel", "index"):
                     # these axes no longer have a scale
                     offset_from_scale = orig_scale * size_refs.get(
-                        v0_4.TensorName(t_id), {}
+                        _TensorName_v0_4(t_id), {}
                     ).get(orig_a_id, 0)
                 else:
                     offset_from_scale = 0
@@ -1159,16 +1161,16 @@ def _get_complement_v04_axis(
 
 
 def _convert_proc(
-    p: Union[v0_4.PreprocessingDescr, v0_4.PostprocessingDescr],
+    p: Union[_PreprocessingDescr_v0_4, _PostprocessingDescr_v0_4],
     tensor_axes: Sequence[str],
 ) -> Union[PreprocessingDescr, PostprocessingDescr]:
-    if isinstance(p, v0_4.BinarizeDescr):
+    if isinstance(p, _BinarizeDescr_v0_4):
         return BinarizeDescr(kwargs=BinarizeKwargs(threshold=p.kwargs.threshold))
-    elif isinstance(p, v0_4.ClipDescr):
+    elif isinstance(p, _ClipDescr_v0_4):
         return ClipDescr(kwargs=ClipKwargs(min=p.kwargs.min, max=p.kwargs.max))
-    elif isinstance(p, v0_4.SigmoidDescr):
+    elif isinstance(p, _SigmoidDescr_v0_4):
         return SigmoidDescr()
-    elif isinstance(p, v0_4.ScaleLinearDescr):
+    elif isinstance(p, _ScaleLinearDescr_v0_4):
         axes = _axes_letters_to_ids(p.kwargs.axes)
         if p.kwargs.axes is None:
             axis = None
@@ -1180,7 +1182,7 @@ def _convert_proc(
                 axis=axis, gain=p.kwargs.gain, offset=p.kwargs.offset
             )
         )
-    elif isinstance(p, v0_4.ScaleMeanVarianceDescr):
+    elif isinstance(p, _ScaleMeanVarianceDescr_v0_4):
         return ScaleMeanVarianceDescr(
             kwargs=ScaleMeanVarianceKwargs(
                 axes=_axes_letters_to_ids(p.kwargs.axes),
@@ -1188,7 +1190,7 @@ def _convert_proc(
                 eps=p.kwargs.eps,
             )
         )
-    elif isinstance(p, v0_4.ZeroMeanUnitVarianceDescr):
+    elif isinstance(p, _ZeroMeanUnitVarianceDescr_v0_4):
         if p.kwargs.mode == "fixed":
             mean = p.kwargs.mean
             assert mean is not None
@@ -1213,7 +1215,7 @@ def _convert_proc(
                 kwargs=ZeroMeanUnitVarianceKwargs(axes=axes, eps=p.kwargs.eps)
             )
 
-    elif isinstance(p, v0_4.ScaleRangeDescr):
+    elif isinstance(p, _ScaleRangeDescr_v0_4):
         return ScaleRangeDescr(
             kwargs=ScaleRangeKwargs(
                 axes=_axes_letters_to_ids(p.kwargs.axes),
@@ -1228,20 +1230,20 @@ def _convert_proc(
 
 class _InputTensorConv(
     Converter[
-        v0_4.InputTensorDescr,
+        _InputTensorDescr_v0_4,
         InputTensorDescr,
         ImportantFileSource,
         Optional[ImportantFileSource],
-        Mapping[v0_4.TensorName, Mapping[str, int]],
+        Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
     def _convert(
         self,
-        src: v0_4.InputTensorDescr,
+        src: _InputTensorDescr_v0_4,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
-        size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
+        size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
         axes = convert_axes(
             src.axes,
@@ -1268,7 +1270,7 @@ class _InputTensorConv(
         )
 
 
-_input_tensor_conv = _InputTensorConv(v0_4.InputTensorDescr, InputTensorDescr)
+_input_tensor_conv = _InputTensorConv(_InputTensorDescr_v0_4, InputTensorDescr)
 
 
 class OutputTensorDescr(TensorDescrBase[OutputAxis]):
@@ -1297,20 +1299,20 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
 
 class _OutputTensorConv(
     Converter[
-        v0_4.OutputTensorDescr,
+        _OutputTensorDescr_v0_4,
         OutputTensorDescr,
         ImportantFileSource,
         Optional[ImportantFileSource],
-        Mapping[v0_4.TensorName, Mapping[str, int]],
+        Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
     def _convert(
         self,
-        src: v0_4.OutputTensorDescr,
+        src: _OutputTensorDescr_v0_4,
         tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
         test_tensor: ImportantFileSource,
         sample_tensor: Optional[ImportantFileSource],
-        size_refs: Mapping[v0_4.TensorName, Mapping[str, int]],
+        size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
         axes = convert_axes(
             src.axes,
@@ -1335,7 +1337,7 @@ class _OutputTensorConv(
         )
 
 
-_output_tensor_conv = _OutputTensorConv(v0_4.OutputTensorDescr, OutputTensorDescr)
+_output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDescr)
 
 
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
@@ -1453,7 +1455,7 @@ ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDesc
 
 class _ArchFileConv(
     Converter[
-        v0_4.CallableFromFile,
+        _CallableFromFile_v0_4,
         ArchitectureFromFileDescr,
         Optional[Sha256],
         Dict[str, Any],
@@ -1461,7 +1463,7 @@ class _ArchFileConv(
 ):
     def _convert(
         self,
-        src: v0_4.CallableFromFile,
+        src: _CallableFromFile_v0_4,
         tgt: "type[ArchitectureFromFileDescr | dict[str, Any]]",
         sha256: Optional[Sha256],
         kwargs: Dict[str, Any],
@@ -1482,15 +1484,17 @@ class _ArchFileConv(
         )
 
 
-_arch_file_conv = _ArchFileConv(v0_4.CallableFromFile, ArchitectureFromFileDescr)
+_arch_file_conv = _ArchFileConv(_CallableFromFile_v0_4, ArchitectureFromFileDescr)
 
 
 class _ArchLibConv(
-    Converter[v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr, Dict[str, Any]]
+    Converter[
+        _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr, Dict[str, Any]
+    ]
 ):
     def _convert(
         self,
-        src: v0_4.CallableFromDepencency,
+        src: _CallableFromDepencency_v0_4,
         tgt: "type[ArchitectureFromLibraryDescr | dict[str, Any]]",
         kwargs: Dict[str, Any],
     ) -> "ArchitectureFromLibraryDescr | dict[str, Any]":
@@ -1501,7 +1505,9 @@ class _ArchLibConv(
         )
 
 
-_arch_lib_conv = _ArchLibConv(v0_4.CallableFromDepencency, ArchitectureFromLibraryDescr)
+_arch_lib_conv = _ArchLibConv(
+    _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr
+)
 
 
 class WeightsEntryDescrBase(FileDescr):
@@ -1976,7 +1982,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime = datetime.now()
+    timestamp: Datetime = Datetime(datetime.now())
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
@@ -2028,18 +2034,18 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             and isinstance(fv := data.get("format_version"), str)
             and (fv.startswith("0.3.") or fv.startswith("0.4."))
         ):
-            m04 = v0_4.ModelDescr.load(data)
+            m04 = _ModelDescr_v0_4.load(data)
             if not isinstance(m04, InvalidDescr):
                 return _model_conv.convert_as_dict(m04)
 
         return data
 
 
-class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
+class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
-        self, src: v0_4.ModelDescr, tgt: "type[ModelDescr] | type[dict[str, Any]]"
+        self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
-        def conv_authors(auths: Optional[Sequence[v0_4.Author]]):
+        def conv_authors(auths: Optional[Sequence[_Author_v0_4]]):
             conv = (
                 _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
             )
@@ -2059,7 +2065,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                     ipt.axes,
                     (
                         ipt.shape.min
-                        if isinstance(ipt.shape, v0_4.ParameterizedInputShape)
+                        if isinstance(ipt.shape, _ParameterizedInputShape_v0_4)
                         else ipt.shape
                     ),
                 )
@@ -2071,7 +2077,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             **{
                 out.name: {a: s for a, s in zip(out.axes, out.shape)}
                 for out in src.outputs
-                if not isinstance(out.shape, v0_4.ImplicitOutputShape)
+                if not isinstance(out.shape, _ImplicitOutputShape_v0_4)
             },
             **input_size_refs,
         }
@@ -2085,7 +2091,9 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             authors=[
                 _author_conv.convert_as_dict(a) for a in src.authors
             ],  # pyright: ignore[reportArgumentType]
-            cite=[{"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite],  # pyright: ignore[reportArgumentType]
+            cite=[
+                {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
+            ],  # pyright: ignore[reportArgumentType]
             config=src.config,
             covers=src.covers,
             description=src.description,
@@ -2147,7 +2155,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
                             w.architecture_sha256,
                             w.kwargs,
                         )
-                        if isinstance(w.architecture, v0_4.CallableFromFile)
+                        if isinstance(w.architecture, _CallableFromFile_v0_4)
                         else arch_lib_conv(w.architecture, w.kwargs)
                     ),
                     pytorch_version=w.pytorch_version or Version("1.10"),
@@ -2209,7 +2217,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
         )
 
 
-_model_conv = _ModelConv(v0_4.ModelDescr, ModelDescr)
+_model_conv = _ModelConv(_ModelDescr_v0_4, ModelDescr)
 
 
 # create better cover images for 3d data and non-image outputs
@@ -2267,7 +2275,10 @@ def generate_covers(
                             [
                                 data[slices + (slice(1, 2),)],
                                 data[slices + (slice(0, 1),)],
-                                (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])
+                                (
+                                    data[slices + (slice(0, 1),)]
+                                    + data[slices + (slice(1, 2),)]
+                                )
                                 / 2,  # TODO: take maximum instead?
                             ],
                             axis=i,

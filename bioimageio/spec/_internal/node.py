@@ -12,10 +12,7 @@ from typing_extensions import (
     Self,
 )
 
-from bioimageio.spec._internal.validation_context import (
-    ValidationContext,
-    validation_context_var,
-)
+from .validation_context import ValidationContext, validation_context_var
 
 
 class Node(

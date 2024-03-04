@@ -2,11 +2,9 @@ import requests
 import requests.exceptions
 from pydantic import model_validator
 
-from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.validation_context import (
-    validation_context_var,
-)
+from .field_warning import issue_warning
+from .root_url import RootHttpUrl
+from .validation_context import validation_context_var
 
 
 def check_url(url: str) -> None:

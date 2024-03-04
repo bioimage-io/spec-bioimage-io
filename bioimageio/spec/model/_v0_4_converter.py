@@ -1,12 +1,12 @@
 import collections.abc
 
-from bioimageio.spec._internal.io import BioimageioYamlContent
-from bioimageio.spec.generic._v0_2_converter import (
+from .._internal.io import BioimageioYamlContent
+from ..generic._v0_2_converter import (
     remove_doi_prefix,
     remove_gh_prefix,
     remove_slashes_from_names,
 )
-from bioimageio.spec.model._v0_3_converter import convert_model_from_v0_3_to_0_4_0
+from ._v0_3_converter import convert_model_from_v0_3_to_0_4_0
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:

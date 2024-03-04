@@ -1,17 +1,15 @@
 from typing import TypeVar
 
-from bioimageio.spec._internal._generated_spdx_license_literals import (
+from ._generated_spdx_license_literals import (
     DeprecatedLicenseId as DeprecatedLicenseIdLiteral,
 )
-from bioimageio.spec._internal._generated_spdx_license_literals import (
-    LicenseId as LicenseIdLiteral,
-)
-from bioimageio.spec._internal.validated_string import ValidatedString
+from ._generated_spdx_license_literals import LicenseId as LicenseIdLiteral
+from .validated_string import ValidatedString
 
-L = TypeVar("L", LicenseIdLiteral, DeprecatedLicenseIdLiteral)
+LicenceT = TypeVar("LicenceT", LicenseIdLiteral, DeprecatedLicenseIdLiteral)
 
 
-class _LicenseId(ValidatedString[L]):
+class _LicenseId(ValidatedString[LicenceT]):
     def __repr__(self):
         # don't include full literal in class repr
         name, *_ = self.__class__.__name__.split("[")

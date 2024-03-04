@@ -9,11 +9,12 @@ from typing import Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from . import v0_4 as v0_4, v0_5 as v0_5
+from .v0_4 import ModelDescr as ModelDescr_v0_4
 from .v0_5 import ModelDescr as ModelDescr
+from .v0_5 import ModelDescr as ModelDescr_v0_5
 
 AnyModelDescr = Annotated[
-    Union[v0_4.ModelDescr, v0_5.ModelDescr], Discriminator("format_version")
+    Union[ModelDescr_v0_4, ModelDescr_v0_5], Discriminator("format_version")
 ]
 """Union of any released model desription"""
 # autogen: stop

@@ -3,16 +3,7 @@ import platform
 import warnings
 from contextlib import nullcontext
 from pathlib import Path
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    Mapping,
-    Optional,
-    TextIO,
-    Union,
-    cast,
-)
+from typing import Any, Dict, Iterable, Mapping, Optional, TextIO, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -21,7 +12,7 @@ from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
 from typing_extensions import Unpack
 
-from bioimageio.spec._internal.io import (
+from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
@@ -30,14 +21,8 @@ from bioimageio.spec._internal.io import (
     YamlValue,
     download,
 )
-from bioimageio.spec._internal.io_basics import (
-    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
-    FileName,
-)
-from bioimageio.spec._internal.types import (
-    FileSource,
-    PermissiveFileSource,
-)
+from .io_basics import ALTERNATIVE_BIOIMAGEIO_YAML_NAMES, FileName
+from .types import FileSource, PermissiveFileSource
 
 if platform.machine() == "wasm32":
     import pyodide_http  # type: ignore

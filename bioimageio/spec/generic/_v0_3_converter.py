@@ -1,7 +1,7 @@
 import collections.abc
 
-from bioimageio.spec._internal.io import BioimageioYamlContent
-from bioimageio.spec.generic import _v0_2_converter
+from .._internal.io import BioimageioYamlContent
+from ._v0_2_converter import convert_from_older_format as convert_from_older_format_v0_2
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:
@@ -15,7 +15,7 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
     ):
         return
 
-    _v0_2_converter.convert_from_older_format(data)
+    convert_from_older_format_v0_2(data)
 
     convert_attachments(data)
 

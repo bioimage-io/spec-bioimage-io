@@ -1,3 +1,5 @@
+from functools import partial
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -13,55 +15,107 @@ from typing import (
 from pydantic import PrivateAttr, model_validator
 from typing_extensions import Self
 
-from bioimageio import spec
-from bioimageio.spec import application, dataset, generic, model, notebook
-from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
-from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.io import FileDescr as FileDescr
-from bioimageio.spec._internal.io import Sha256 as Sha256
-from bioimageio.spec._internal.io import YamlValue
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
-from bioimageio.spec._internal.types import ApplicationId as ApplicationId
-from bioimageio.spec._internal.types import CollectionId as CollectionId
-from bioimageio.spec._internal.types import DatasetId as DatasetId
-from bioimageio.spec._internal.types import FileSource, NotEmpty
-from bioimageio.spec._internal.types import ModelId as ModelId
-from bioimageio.spec._internal.types import NotebookId as NotebookId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec._internal.validation_context import (
+from .._build_description import build_description_impl, get_rd_class_impl
+from .._internal.common_nodes import InvalidDescr, Node
+from .._internal.field_warning import issue_warning
+from .._internal.io import FileDescr as FileDescr
+from .._internal.io import Sha256 as Sha256
+from .._internal.io import YamlValue
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_utils import open_bioimageio_yaml
+from .._internal.types import ApplicationId as ApplicationId
+from .._internal.types import CollectionId as CollectionId
+from .._internal.types import DatasetId as DatasetId
+from .._internal.types import FileSource, NotEmpty
+from .._internal.types import ModelId as ModelId
+from .._internal.types import NotebookId as NotebookId
+from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validation_context import (
     validation_context_var,
 )
-from bioimageio.spec._internal.warning_levels import ALERT
-from bioimageio.spec.collection import v0_2
-from bioimageio.spec.generic.v0_3 import Author as Author
-from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import Doi as Doi
-from bioimageio.spec.generic.v0_3 import (
+from .._internal.warning_levels import ALERT
+from ..application import ApplicationDescr_v0_2, ApplicationDescr_v0_3
+from ..dataset import DatasetDescr_v0_2, DatasetDescr_v0_3
+from ..generic import GenericDescr_v0_2, GenericDescr_v0_3
+from ..generic.v0_3 import Author as Author
+from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import Doi as Doi
+from ..generic.v0_3 import (
     GenericDescrBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
-from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
-from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
-from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
-from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
-from bioimageio.spec.generic.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import LinkedResource as LinkedResource
+from ..generic.v0_3 import Maintainer as Maintainer
+from ..generic.v0_3 import OrcidId as OrcidId
+from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_3 import ResourceId as ResourceId
+from ..generic.v0_3 import Uploader as Uploader
+from ..model import ModelDescr_v0_4, ModelDescr_v0_5
+from ..notebook import NotebookDescr_v0_2, NotebookDescr_v0_3
+from .v0_2 import CollectionDescr as _CollectionDescr_v0_2
 
 EntryDescr = Union[
-    application.v0_2.ApplicationDescr,
-    application.v0_3.ApplicationDescr,
-    dataset.v0_2.DatasetDescr,
-    dataset.v0_3.DatasetDescr,
-    model.v0_4.ModelDescr,
-    model.v0_5.ModelDescr,
-    notebook.v0_2.NotebookDescr,
-    notebook.v0_3.NotebookDescr,
-    generic.v0_2.GenericDescr,
-    generic.v0_3.GenericDescr,
+    ApplicationDescr_v0_2,
+    ApplicationDescr_v0_3,
+    DatasetDescr_v0_2,
+    DatasetDescr_v0_3,
+    ModelDescr_v0_4,
+    ModelDescr_v0_5,
+    NotebookDescr_v0_2,
+    NotebookDescr_v0_3,
+    GenericDescr_v0_2,
+    GenericDescr_v0_3,
 ]
+
+_ENTRY_DESCR_MAP = MappingProxyType(
+    {
+        None: MappingProxyType(
+            {
+                "0.2": GenericDescr_v0_2,
+                "0.3": GenericDescr_v0_3,
+                None: GenericDescr_v0_3,
+            }
+        ),
+        "generic": MappingProxyType(
+            {
+                "0.2": GenericDescr_v0_2,
+                "0.3": GenericDescr_v0_3,
+                None: GenericDescr_v0_3,
+            }
+        ),
+        "application": MappingProxyType(
+            {
+                "0.2": ApplicationDescr_v0_2,
+                "0.3": ApplicationDescr_v0_3,
+                None: ApplicationDescr_v0_3,
+            }
+        ),
+        "dataset": MappingProxyType(
+            {
+                "0.2": DatasetDescr_v0_2,
+                "0.3": DatasetDescr_v0_3,
+                None: DatasetDescr_v0_3,
+            }
+        ),
+        "notebook": MappingProxyType(
+            {
+                "0.2": NotebookDescr_v0_2,
+                "0.3": NotebookDescr_v0_3,
+                None: NotebookDescr_v0_3,
+            }
+        ),
+        "model": MappingProxyType(
+            {
+                "0.3": ModelDescr_v0_4,
+                "0.4": ModelDescr_v0_4,
+                "0.5": ModelDescr_v0_5,
+                None: ModelDescr_v0_5,
+            }
+        ),
+    }
+)
 
 
 class CollectionEntry(Node, extra="allow"):
@@ -165,13 +219,14 @@ class CollectionDescr(
                 entry_data["id"] = entry.id
 
             if "id" in entry_data:
-                if (seen_i := seen_entry_ids.get(entry_data["id"])) is not None:
+                entry_id = str(entry_data["id"])
+                if (seen_i := seen_entry_ids.get(entry_id)) is not None:
                     raise ValueError(
                         f"Dublicate `id` '{entry_data['id']}' in"
                         f" collection[{seen_i}]/collection[{i}]"
                     )
 
-                seen_entry_ids[entry_data["id"]] = i
+                seen_entry_ids[entry_id] = i
             else:
                 raise ValueError(f"Missing `id` for entry {i}")
 
@@ -193,10 +248,12 @@ class CollectionDescr(
                 # set badges from the collection root for non-model resources if not set for this specific entry
                 entry_data["badges"] = common_badges
 
-            entry_descr = spec.build_description(
+            entry_descr = build_description_impl(
                 entry_data,
                 context=context.replace(root=entry_root, file_name=entry_file_name),
+                get_rd_class=partial(get_rd_class_impl, _ENTRY_DESCR_MAP),
             )
+
             assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescr):
                 raise ValueError(
@@ -223,7 +280,7 @@ class CollectionDescr(
             and isinstance(fv := data.get("format_version"), str)
             and fv.startswith("0.2.")
         ):
-            old = v0_2.CollectionDescr.load(data)
+            old = _CollectionDescr_v0_2.load(data)
             if isinstance(old, InvalidDescr):
                 return data
 

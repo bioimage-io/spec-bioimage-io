@@ -2,29 +2,29 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, cast
 
 from pydantic import model_validator
 
-from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
-from bioimageio.spec._internal.io import FileDescr as FileDescr
-from bioimageio.spec._internal.io import Sha256 as Sha256
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.types import DatasetId as DatasetId
-from bioimageio.spec._internal.url import HttpUrl as HttpUrl
-from bioimageio.spec.dataset import v0_2
-from bioimageio.spec.generic.v0_3 import Author as Author
-from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_3 import CiteEntry as CiteEntry
-from bioimageio.spec.generic.v0_3 import (
+from .._internal.common_nodes import InvalidDescr, Node
+from .._internal.io import FileDescr as FileDescr
+from .._internal.io import Sha256 as Sha256
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.types import DatasetId as DatasetId
+from .._internal.url import HttpUrl as HttpUrl
+from ..generic.v0_3 import Author as Author
+from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import (
     DocumentationSource,
     GenericDescrBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
-from bioimageio.spec.generic.v0_3 import Doi as Doi
-from bioimageio.spec.generic.v0_3 import LinkedResource as LinkedResource
-from bioimageio.spec.generic.v0_3 import Maintainer as Maintainer
-from bioimageio.spec.generic.v0_3 import OrcidId as OrcidId
-from bioimageio.spec.generic.v0_3 import RelativeFilePath as RelativeFilePath
-from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
-from bioimageio.spec.generic.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import Doi as Doi
+from ..generic.v0_3 import LinkedResource as LinkedResource
+from ..generic.v0_3 import Maintainer as Maintainer
+from ..generic.v0_3 import OrcidId as OrcidId
+from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_3 import ResourceId as ResourceId
+from ..generic.v0_3 import Uploader as Uploader
+from .v0_2 import DatasetDescr as DatasetDescr02
 
 
 class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
@@ -51,7 +51,7 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
             and isinstance(fv := data.get("format_version"), str)
             and fv.startswith("0.2.")
         ):
-            old = v0_2.DatasetDescr.load(data)
+            old = DatasetDescr02.load(data)
             if isinstance(old, InvalidDescr):
                 return data
 

@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 import pytest
 
-import bioimageio.spec
+from bioimageio.spec import application, collection, dataset, generic, model, notebook
 
 IGNORE_MEMBERS = {
     "ALERT",
@@ -80,30 +80,26 @@ GENERIC_ONLY_MEMBERS = {
 }
 
 GENERIC_v0_2_MEMBERS = {
-    k: v
-    for k, v in get_members(bioimageio.spec.generic.v0_2).items()
-    if k not in GENERIC_ONLY_MEMBERS
+    k: v for k, v in get_members(generic.v0_2).items() if k not in GENERIC_ONLY_MEMBERS
 }
 GENERIC_v0_3_MEMBERS = {
-    k: v
-    for k, v in get_members(bioimageio.spec.generic.v0_3).items()
-    if k not in GENERIC_ONLY_MEMBERS
+    k: v for k, v in get_members(generic.v0_3).items() if k not in GENERIC_ONLY_MEMBERS
 }
 
 
 @pytest.mark.parametrize(
     "generic_members,specific",
     [
-        (GENERIC_v0_2_MEMBERS, bioimageio.spec.application.v0_2),
-        (GENERIC_v0_2_MEMBERS, bioimageio.spec.collection.v0_2),
-        (GENERIC_v0_2_MEMBERS, bioimageio.spec.dataset.v0_2),
-        (GENERIC_v0_2_MEMBERS, bioimageio.spec.model.v0_4),
-        (GENERIC_v0_2_MEMBERS, bioimageio.spec.notebook.v0_2),
-        (GENERIC_v0_3_MEMBERS, bioimageio.spec.application.v0_3),
-        (GENERIC_v0_3_MEMBERS, bioimageio.spec.collection.v0_3),
-        (GENERIC_v0_3_MEMBERS, bioimageio.spec.dataset.v0_3),
-        (GENERIC_v0_3_MEMBERS, bioimageio.spec.model.v0_5),
-        (GENERIC_v0_3_MEMBERS, bioimageio.spec.notebook.v0_3),
+        (GENERIC_v0_2_MEMBERS, application.v0_2),
+        (GENERIC_v0_2_MEMBERS, collection.v0_2),
+        (GENERIC_v0_2_MEMBERS, dataset.v0_2),
+        (GENERIC_v0_2_MEMBERS, model.v0_4),
+        (GENERIC_v0_2_MEMBERS, notebook.v0_2),
+        (GENERIC_v0_3_MEMBERS, application.v0_3),
+        (GENERIC_v0_3_MEMBERS, collection.v0_3),
+        (GENERIC_v0_3_MEMBERS, dataset.v0_3),
+        (GENERIC_v0_3_MEMBERS, model.v0_5),
+        (GENERIC_v0_3_MEMBERS, notebook.v0_3),
     ],
 )
 def test_specific_module_has_all_generic_symbols(
