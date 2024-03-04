@@ -10,7 +10,6 @@ from typing_extensions import Self
 from bioimageio import spec
 from bioimageio.spec import application, dataset, generic, model, notebook
 from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
-from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
@@ -27,6 +26,7 @@ from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
+from bioimageio.spec._internal.warning_levels import ALERT
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from bioimageio.spec.generic.v0_2 import Author as Author
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr

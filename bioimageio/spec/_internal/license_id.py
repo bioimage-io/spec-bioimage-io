@@ -1,9 +1,9 @@
 from typing import TypeVar
 
-from bioimageio.spec._internal._generated_spdx_license_type import (
+from bioimageio.spec._internal._generated_spdx_license_literals import (
     DeprecatedLicenseId as DeprecatedLicenseIdLiteral,
 )
-from bioimageio.spec._internal._generated_spdx_license_type import (
+from bioimageio.spec._internal._generated_spdx_license_literals import (
     LicenseId as LicenseIdLiteral,
 )
 from bioimageio.spec._internal.validated_string import ValidatedString

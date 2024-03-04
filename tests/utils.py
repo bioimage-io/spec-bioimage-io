@@ -28,6 +28,7 @@ from ruyaml import YAML
 from bioimageio.spec._description import InvalidDescr, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
@@ -122,7 +123,7 @@ def check_bioimageio_yaml(
     source: Union[Path, HttpUrl],
     /,
     *,
-    root: Union[DirectoryPath, HttpUrl] = Path(),
+    root: Union[RootHttpUrl, DirectoryPath] = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,

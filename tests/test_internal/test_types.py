@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
+import bioimageio.spec._internal.io
 import bioimageio.spec._internal.io_basics
-import bioimageio.spec._internal.io_validation
 import bioimageio.spec._internal.url
-from bioimageio.spec._internal import types
+from bioimageio.spec._internal import types, version_type
 
 TYPE_ARGS = {
     bioimageio.spec._internal.io_basics.AbsoluteDirectory: str(
@@ -32,9 +32,9 @@ TYPE_ARGS = {
     types.OrcidId: "0000-0001-2345-6789",
     types.RelativeFilePath: "here.py",
     types.ResourceId: "resoruce-id",
-    bioimageio.spec._internal.io_validation.Sha256: "0" * 64,
+    bioimageio.spec._internal.io.Sha256: "0" * 64,
     types.SiUnit: "kg",
-    types.Version: "1.0",
+    version_type.Version: "1.0",
 }
 
 IGNORE_TYPES_MEMBERS = {

@@ -1,6 +1,9 @@
 from bioimageio.spec._description import validate_format
 from bioimageio.spec._internal.io import BioimageioYamlContent
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
+
+EXAMPLE_COM = RootHttpUrl("https://example.com/")
 
 
 def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
@@ -10,7 +13,7 @@ def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
 
     summary = validate_format(
         data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(root=EXAMPLE_COM, perform_io_checks=False),
     )
     assert summary.status == "passed", summary.errors
 
@@ -27,7 +30,7 @@ def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
 
     summary = validate_format(
         data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(root=EXAMPLE_COM, perform_io_checks=False),
     )
     assert summary.status == "failed", summary
 

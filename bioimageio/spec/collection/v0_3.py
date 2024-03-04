@@ -16,13 +16,12 @@ from typing_extensions import Self
 from bioimageio import spec
 from bioimageio.spec import application, dataset, generic, model, notebook
 from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
-from bioimageio.spec._internal.constants import ALERT
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io import YamlValue
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.types import ApplicationId as ApplicationId
 from bioimageio.spec._internal.types import CollectionId as CollectionId
 from bioimageio.spec._internal.types import DatasetId as DatasetId
@@ -33,6 +32,7 @@ from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
+from bioimageio.spec._internal.warning_levels import ALERT
 from bioimageio.spec.collection import v0_2
 from bioimageio.spec.generic.v0_3 import Author as Author
 from bioimageio.spec.generic.v0_3 import BadgeDescr as BadgeDescr
@@ -237,7 +237,9 @@ class CollectionDescr(
                     ),
                     authors=[_author_conv.convert_as_dict(a) for a in old.authors],
                     badges=old.badges,
-                    cite=old.cite,
+                    cite=[
+                        {"text": c.text, "doi": c.doi, "url": c.url} for c in old.cite
+                    ],
                     collection=[
                         (CollectionEntry if TYPE_CHECKING else dict)(
                             entry_source=entry.rdf_source, id=entry.id, **entry.rdf_update  # type: ignore

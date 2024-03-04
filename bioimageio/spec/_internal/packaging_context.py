@@ -2,12 +2,10 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
-
-if TYPE_CHECKING:
-    from bioimageio.spec._internal.url import HttpUrl
+from bioimageio.spec._internal.url import HttpUrl
 
 
 @dataclass(frozen=True)
@@ -16,6 +14,8 @@ class PackagingContext:
         init=False, default_factory=list
     )
 
+    bioimageio_yaml_file_name: FileName
+
     file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(
         default_factory=dict
     )
@@ -23,10 +23,20 @@ class PackagingContext:
 
     def replace(
         self,
+        *,
+        bioimageio_yaml_file_name: Optional[FileName] = None,
         file_sources: Optional[Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]] = None,
     ) -> "PackagingContext":
+        """return a modiefied copy"""
         return PackagingContext(
-            file_sources=self.file_sources if file_sources is None else file_sources,
+            bioimageio_yaml_file_name=(
+                self.bioimageio_yaml_file_name
+                if bioimageio_yaml_file_name is None
+                else bioimageio_yaml_file_name
+            ),
+            file_sources=(
+                dict(self.file_sources) if file_sources is None else file_sources
+            ),
         )
 
     def __enter__(self):

@@ -15,36 +15,33 @@ from bioimageio.spec._internal.common_nodes import (
     ResourceDescrBase,
 )
 from bioimageio.spec._internal.constants import (
-    ALERT,
-    LICENSES,
     TAG_CATEGORIES,
 )
 from bioimageio.spec._internal.field_validation import Predicate
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
-from bioimageio.spec._internal.io_validation import WithSuffix
+from bioimageio.spec._internal.license_id import LicenseId
 from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     ImportantFileSource,
     IncludeInPackage,
-    LicenseId,
     NotEmpty,
 )
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
+from bioimageio.spec._internal.version_type import Version as Version
+from bioimageio.spec._internal.warning_levels import ALERT
 from bioimageio.spec.generic import v0_2
 from bioimageio.spec.generic._v0_3_converter import convert_from_older_format
 from bioimageio.spec.generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from bioimageio.spec.generic.v0_2 import BadgeDescr as BadgeDescr
-from bioimageio.spec.generic.v0_2 import CiteEntry as CiteEntry
 from bioimageio.spec.generic.v0_2 import Doi as Doi
 from bioimageio.spec.generic.v0_2 import OrcidId as OrcidId
 from bioimageio.spec.generic.v0_2 import Uploader as Uploader
@@ -160,6 +157,25 @@ class _MaintainerConv(Converter[v0_2.Maintainer, Maintainer]):
 _maintainer_conv = _MaintainerConv(v0_2.Maintainer, Maintainer)
 
 
+class CiteEntry(Node):
+    text: str
+    """free text description"""
+
+    doi: Optional[Doi] = None
+    """A digital object identifier (DOI) is the prefered citation reference.
+    See https://www.doi.org/ for details. (alternatively specify `url`)"""
+
+    url: Optional[HttpUrl] = None
+    """URL to cite (preferably specify a `doi` instead)"""
+
+    @model_validator(mode="after")
+    def _check_doi_or_url(self):
+        if not self.doi and not self.url:
+            raise ValueError("Either 'doi' or 'url' is required")
+
+        return self
+
+
 class LinkedResource(Node):
     """Reference to a bioimage.io resource"""
 
@@ -266,16 +282,6 @@ class GenericModelDescrBase(ResourceDescrBase):
         ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
     ] = None
     """An icon for illustration, e.g. on bioimage.io"""
-
-    @as_warning
-    @field_validator("license", mode="after")
-    @classmethod
-    def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
-        license_info = LICENSES[value] if value in LICENSES else {}
-        if not license_info.get("isFsfLibre", False):
-            raise ValueError(f"{value} ({license_info['name']}) is not FSF Free/libre.")
-
-        return value
 
     links: Annotated[
         List[str],

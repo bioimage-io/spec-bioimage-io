@@ -15,15 +15,18 @@ from bioimageio.spec._description import (
     build_description,
 )
 from bioimageio.spec._internal.common_nodes import ResourceDescrBase
-from bioimageio.spec._internal.constants import BIOIMAGEIO_YAML
 from bioimageio.spec._internal.io import (
     BioimageioYamlContent,
     BioimageioYamlSource,
     YamlValue,
     download,
-    is_valid_rdf_name,
+    ensure_is_valid_rdf_name,
 )
-from bioimageio.spec._internal.io_basics import AbsoluteFilePath, FileName
+from bioimageio.spec._internal.io_basics import (
+    BIOIMAGEIO_YAML,
+    AbsoluteFilePath,
+    FileName,
+)
 from bioimageio.spec._internal.io_utils import (
     open_bioimageio_yaml,
     write_yaml,
@@ -61,17 +64,11 @@ def get_resource_package_content(
         name=os_friendly_name, type=rd.type
     )
 
-    if not is_valid_rdf_name(bioimageio_yaml_file_name):
-        raise ValueError(
-            f"Invalid file name '{bioimageio_yaml_file_name}'. Must be"
-            f" '{BIOIMAGEIO_YAML}' or end with '.{BIOIMAGEIO_YAML}'"
-        )
-
-    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {
-        # add bioimageio.yaml file already here to avoid file name conflicts
-        bioimageio_yaml_file_name: "http://placeholder.com",
-    }
-    with PackagingContext(file_sources=content):
+    bioimageio_yaml_file_name = ensure_is_valid_rdf_name(bioimageio_yaml_file_name)
+    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {}
+    with PackagingContext(
+        bioimageio_yaml_file_name=bioimageio_yaml_file_name, file_sources=content
+    ):
         rdf_content: BioimageioYamlContent = rd.model_dump(
             mode="json", exclude_unset=True
         )

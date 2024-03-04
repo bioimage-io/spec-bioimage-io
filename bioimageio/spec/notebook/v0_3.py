@@ -2,8 +2,8 @@ from typing import Literal, Optional
 
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.types import NotebookId as NotebookId
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec.generic.v0_3 import Author as Author

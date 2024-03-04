@@ -74,11 +74,11 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Version as _Version
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
+from bioimageio.spec._internal.version_type import Version as Version
 from bioimageio.spec._internal.warning_levels import INFO
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
@@ -1539,7 +1539,7 @@ class WeightsEntryDescrBase(FileDescr):
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: _Version
+    tensorflow_version: Version
     """TensorFlow version used to create these weights."""
 
 
@@ -1554,7 +1554,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: ArchitectureDescr
-    pytorch_version: _Version
+    pytorch_version: Version
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
     """
@@ -1568,7 +1568,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: _Version
+    tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
     source: ImportantFileSource
@@ -1579,7 +1579,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: _Version
+    tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
     dependencies: Optional[EnvironmentFileDescr] = None
@@ -1594,7 +1594,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: _Version
+    pytorch_version: Version
     """Version of the PyTorch library used."""
 
 
@@ -2085,13 +2085,13 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             authors=[
                 _author_conv.convert_as_dict(a) for a in src.authors
             ],  # pyright: ignore[reportArgumentType]
-            cite=src.cite,
+            cite=[{"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite],  # pyright: ignore[reportArgumentType]
             config=src.config,
             covers=src.covers,
             description=src.description,
             documentation=cast(DocumentationSource, src.documentation),
             format_version="0.5.0",
-            git_repo=src.git_repo, # pyright: ignore[reportArgumentType]
+            git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=src.id,
             id_emoji=src.id_emoji,
@@ -2252,12 +2252,12 @@ def generate_covers(
             s = data.shape[i]
             assert s > 1
             if isinstance(a, (BatchAxis, IndexAxis)) and ndim > ndim_need:
-                data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
+                data = data[slices + (slice(s // 2 - 1, s // 2),)]
                 ndim -= 1
             elif isinstance(a, ChannelAxis):
                 if has_c_axis:
                     # second channel axis
-                    data = data[slices + (slice(0, 1),)]  # type: ignore
+                    data = data[slices + (slice(0, 1),)]
                     ndim -= 1
                 else:
                     has_c_axis = True
@@ -2265,9 +2265,9 @@ def generate_covers(
                         # visualize two channels with cyan and magenta
                         data = np.concatenate(
                             [
-                                data[slices + (slice(1, 2),)],  # type: ignore
-                                data[slices + (slice(0, 1),)],  # type: ignore
-                                (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])  # type: ignore
+                                data[slices + (slice(1, 2),)],
+                                data[slices + (slice(0, 1),)],
+                                (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])
                                 / 2,  # TODO: take maximum instead?
                             ],
                             axis=i,
@@ -2276,7 +2276,7 @@ def generate_covers(
                         pass  # visualize 3 channels as RGB
                     else:
                         # visualize first 3 channels as RGB
-                        data = data[slices + (slice(3),)]  # type: ignore
+                        data = data[slices + (slice(3),)]
 
                     assert data.shape[i] == 3
 
@@ -2309,7 +2309,7 @@ def generate_covers(
             if isinstance(
                 a, (SpaceInputAxis, SpaceOutputAxis, TimeInputAxis, TimeOutputAxis)
             ):
-                data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
+                data = data[slices + (slice(s // 2 - 1, s // 2),)]
                 ndim -= 1
 
             slices += (slice(None),)  # type: ignore
@@ -2363,9 +2363,9 @@ def generate_covers(
         assert C == 3
         out = np.ones((N, M, C), dtype="uint8")
         for c in range(C):
-            outc = np.tril(im0[..., c])  # type: ignore
+            outc = np.tril(im0[..., c])
             mask = outc == 0
-            outc[mask] = np.triu(im1[..., c])[mask]  # type: ignore
+            outc[mask] = np.triu(im1[..., c])[mask]
             out[..., c] = outc
 
         return out

@@ -3,7 +3,8 @@ import re
 
 import pytest
 
-from bioimageio.spec._internal.constants import ALERT, INFO, SI_UNIT_REGEX, WARNING
+from bioimageio.spec._internal.constants import SI_UNIT_REGEX
+from bioimageio.spec._internal.warning_levels import ALERT, INFO, WARNING
 
 
 @pytest.mark.parametrize("unit", ["lx·s", "kg/m^2·s^-2"])

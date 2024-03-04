@@ -9,22 +9,20 @@ from typing import (
     Sequence,
     TypeVar,
     Union,
-    get_args,
 )
 
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
-from typing_extensions import Annotated, Self
+from typing_extensions import Annotated, Self, assert_never
 
 from bioimageio.spec._internal.common_nodes import Node, ResourceDescrBase
-from bioimageio.spec._internal.constants import LICENSES, TAG_CATEGORIES
+from bioimageio.spec._internal.constants import TAG_CATEGORIES
 from bioimageio.spec._internal.field_validation import (
     AfterValidator as _AfterValidator,
 )
 from bioimageio.spec._internal.field_warning import as_warning, issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
+from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import WithSuffix as _WithSuffix
 from bioimageio.spec._internal.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -37,8 +35,8 @@ from bioimageio.spec._internal.types import Doi as Doi
 from bioimageio.spec._internal.types import OrcidId as OrcidId
 from bioimageio.spec._internal.types import RelativeFilePath as RelativeFilePath
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Version as Version
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
+from bioimageio.spec._internal.version_type import Version as Version
 from bioimageio.spec.generic._v0_2_converter import (
     convert_from_older_format as _convert_from_older_format,
 )
@@ -59,7 +57,7 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".svg",
 )
 
-_WithImageSuffix = _WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
+_WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
 CoverImageSource = Annotated[
     Union[
         Annotated[HttpUrl, _WithImageSuffix],
@@ -374,7 +372,7 @@ class GenericDescrBase(GenericModelDescrBase):
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId, str, None],
+        Optional[Union[LicenseId, DeprecatedLicenseId, str]],
         Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -384,20 +382,19 @@ class GenericDescrBase(GenericModelDescrBase):
 
     @field_validator("license", mode="after")
     @classmethod
-    def deprecated_spdx_license(cls, value: Optional[str]) -> Optional[str]:
-        license_info = LICENSES[value] if value in LICENSES else {}
-        if value is None:
+    def deprecated_spdx_license(
+        cls, value: Optional[Union[LicenseId, DeprecatedLicenseId, str]]
+    ):
+        if isinstance(value, LicenseId):
+            pass
+        elif value is None:
             issue_warning("missing license.", value=value)
-        elif value not in get_args(LicenseId):
-            issue_warning(
-                "'{value}' is a deprecated or unknown license identifier.", value=value
-            )
-        elif not license_info.get("isFsfLibre", False):
-            issue_warning(
-                "{value} ({license_name}) is not FSF Free/libre.",
-                value=value,
-                msg_context=dict(license_name=license_info.get("name")),
-            )
+        elif isinstance(value, DeprecatedLicenseId):
+            issue_warning("'{value}' is a deprecated license identifier.", value=value)
+        elif isinstance(value, str):
+            issue_warning("'{value}' is an unknown license identifier.", value=value)
+        else:
+            assert_never(value)
 
         return value
 

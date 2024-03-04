@@ -90,16 +90,19 @@ def dump_description(
 
 
 def _get_rd_class(typ: Any, format_version: Any) -> Type[ResourceDescr]:
-    if not isinstance(typ, str) or not hasattr(bioimageio.spec, typ):
+    if not isinstance(typ, str) or typ not in (
+        generic.v0_2.KNOWN_SPECIFIC_RESOURCE_TYPES
+        + generic.v0_3.KNOWN_SPECIFIC_RESOURCE_TYPES
+    ):
         typ = "generic"
-        type_module = bioimageio.spec.generic
+        type_module = generic
     elif (
         typ == "model"
         and isinstance(format_version, str)
         and format_version.startswith("0.3.")
     ):
         # special case: old 0.3 model spec should be read by model 0.4
-        return bioimageio.spec.model.v0_4.ModelDescr
+        return model.v0_4.ModelDescr
     else:
         type_module = getattr(bioimageio.spec, typ)
 
@@ -136,7 +139,7 @@ def build_description(
     context = context or validation_context_var.get()
     if not isinstance(content, dict):
         # "Invalid content of type '{type(content)}'"
-        rd_class = bioimageio.spec.GenericDescr
+        rd_class = generic.GenericDescr
 
     typ = content.get("type")
     rd_class = _get_rd_class(typ, content.get("format_version"))

@@ -5,13 +5,14 @@ from typing import Any, Dict
 
 import pytest
 
-from bioimageio.spec._internal.constants import WARNING
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec._internal.warning_levels import WARNING
 from bioimageio.spec.generic.v0_3 import GenericDescr
 from tests.utils import check_node
 
-EXAMPLE_DOT_COM = "https://example.com/"
-EXAMPLE_DOT_COM_FILE = "https://example.com/file"
+EXAMPLE_COM = RootHttpUrl("https://example.com/")
+EXAMPLE_COM_FILE = "https://example.com/file"
 
 
 @pytest.mark.parametrize(
@@ -19,7 +20,7 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
     [
         dict(
             authors=[{"name": "Me"}],
-            cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
+            cite=[dict(text="lala", url=EXAMPLE_COM)],
             description="the description",
             format_version=GenericDescr.implemented_format_version,
             license="BSD-2-Clause-FreeBSD",
@@ -29,9 +30,9 @@ EXAMPLE_DOT_COM_FILE = "https://example.com/file"
             version=1,
         ),
         dict(
-            attachments={"files": [EXAMPLE_DOT_COM_FILE], "something": 42},
+            attachments={"files": [EXAMPLE_COM_FILE], "something": 42},
             authors=[{"name": "Me"}],
-            cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
+            cite=[dict(text="lala", url=EXAMPLE_COM)],
             description="my description",
             format_version=GenericDescr.implemented_format_version,
             license="BSD-2-Clause-FreeBSD",
@@ -57,7 +58,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 type="my_type",
                 version="0.1.0",
                 license="BSD-2-Clause-FreeBSD",
-                cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
+                cite=[dict(text="lala", url=EXAMPLE_COM)],
             ),
             ValidationContext(warning_level=WARNING, perform_io_checks=False),
             id="deprecated license",

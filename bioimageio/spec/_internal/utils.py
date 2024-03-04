@@ -5,7 +5,6 @@ from functools import wraps
 from inspect import signature
 from pathlib import Path
 from typing import (
-    TYPE_CHECKING,
     Callable,
     Dict,
     Set,
@@ -15,11 +14,7 @@ from typing import (
     Union,
 )
 
-import pydantic
 from typing_extensions import ParamSpec
-
-if TYPE_CHECKING:
-    from bioimageio.spec._internal.url import HttpUrl
 
 K = TypeVar("K")
 V = TypeVar("V")

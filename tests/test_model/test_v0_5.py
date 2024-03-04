@@ -3,8 +3,10 @@ from typing import Any, Dict, Union
 
 import pytest
 
-from bioimageio.spec._description import validate_format
+from bioimageio.spec import validate_format
 from bioimageio.spec._internal.io import FileDescr
+from bioimageio.spec._internal.license_id import LicenseId
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_5 import (
     Author,
@@ -204,59 +206,64 @@ def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
 
 @pytest.fixture
 def model_data():
-    data = ModelDescr(
-        documentation=UNET2D_ROOT / "README.md",
-        license="MIT",
-        git_repo="https://github.com/bioimage-io/python-bioimage-io",
-        format_version="0.5.0",
-        description="description",
-        authors=[
-            Author(name="Author 1", affiliation="Affiliation 1"),
-            Author(name="Author 2"),
-        ],
-        maintainers=[
-            Maintainer(
-                name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"
+    with ValidationContext(perform_io_checks=False):
+        data = ModelDescr(
+            documentation=UNET2D_ROOT / "README.md",
+            license=LicenseId("MIT"),
+            git_repo=HttpUrl("https://github.com/bioimage-io/python-bioimage-io"),
+            format_version="0.5.0",
+            description="description",
+            authors=[
+                Author(name="Author 1", affiliation="Affiliation 1"),
+                Author(name="Author 2"),
+            ],
+            maintainers=[
+                Maintainer(
+                    name="Maintainer 1",
+                    affiliation="Affiliation 1",
+                    github_user="fynnbe",
+                ),
+                Maintainer(github_user="githubuser2"),
+            ],
+            timestamp=datetime.now(),
+            cite=[CiteEntry(text="Paper title", url=HttpUrl("https://example.com/"))],
+            inputs=[
+                InputTensorDescr(
+                    id=TensorId("input_1"),
+                    description="Input 1",
+                    data=IntervalOrRatioDataDescr(type="float32"),
+                    axes=[
+                        BatchAxis(),
+                        ChannelAxis(channel_names=[Identifier("intensity")]),
+                        SpaceInputAxis(id=AxisId("x"), size=512),
+                        SpaceInputAxis(id=AxisId("y"), size=512),
+                    ],
+                    test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
+                ),
+            ],
+            outputs=[
+                OutputTensorDescr(
+                    id=TensorId("output_1"),
+                    description="Output 1",
+                    axes=[
+                        BatchAxis(),
+                        ChannelAxis(channel_names=[Identifier("intensity")]),
+                        SpaceOutputAxis(id=AxisId("x"), size=512),
+                        SpaceOutputAxis(id=AxisId("y"), size=512),
+                    ],
+                    test_tensor=FileDescr(source=UNET2D_ROOT / "test_output.npy"),
+                ),
+            ],
+            name="Model",
+            tags=[],
+            weights=WeightsDescr(
+                onnx=OnnxWeightsDescr(
+                    source=UNET2D_ROOT / "weights.onnx", opset_version=15
+                )
             ),
-            Maintainer(github_user="githubuser2"),
-        ],
-        timestamp=datetime.now(),
-        cite=[CiteEntry(text="Paper title", url="https://example.com/")],
-        inputs=[
-            InputTensorDescr(
-                id=TensorId("input_1"),
-                description="Input 1",
-                data=IntervalOrRatioDataDescr(type="float32"),
-                axes=[
-                    BatchAxis(),
-                    ChannelAxis(channel_names=[Identifier("intensity")]),
-                    SpaceInputAxis(id=AxisId("x"), size=512),
-                    SpaceInputAxis(id=AxisId("y"), size=512),
-                ],
-                test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
-            ),
-        ],
-        outputs=[
-            OutputTensorDescr(
-                id=TensorId("output_1"),
-                description="Output 1",
-                axes=[
-                    BatchAxis(),
-                    ChannelAxis(channel_names=[Identifier("intensity")]),
-                    SpaceOutputAxis(id=AxisId("x"), size=512),
-                    SpaceOutputAxis(id=AxisId("y"), size=512),
-                ],
-                test_tensor=FileDescr(source=UNET2D_ROOT / "test_output.npy"),
-            ),
-        ],
-        name="Model",
-        tags=[],
-        weights=WeightsDescr(
-            onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx", opset_version=15)
-        ),
-        type="model",
-    ).model_dump()
-    return data
+            type="model",
+        ).model_dump()
+        return data
 
 
 @pytest.mark.parametrize(

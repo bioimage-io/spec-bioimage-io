@@ -4,8 +4,8 @@ from pydantic import model_validator
 
 from bioimageio.spec._internal.common_nodes import InvalidDescr, Node
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.types import DatasetId as DatasetId
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec.dataset import v0_2
@@ -67,13 +67,15 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
                         _author_conv.convert_as_dict(a) for a in old.authors
                     ],  # pyright: ignore[reportArgumentType]
                     badges=old.badges,
-                    cite=old.cite,
+                    cite=[
+                        {"text": c.text, "doi": c.doi, "url": c.url} for c in old.cite
+                    ],  # pyright: ignore[reportArgumentType]
                     config=old.config,
                     covers=old.covers,
                     description=old.description,
                     documentation=cast(DocumentationSource, old.documentation),
                     format_version="0.3.0",
-                    git_repo=old.git_repo,
+                    git_repo=old.git_repo,  # pyright: ignore[reportArgumentType]
                     icon=old.icon,
                     id=old.id,
                     license=old.license,  # type: ignore

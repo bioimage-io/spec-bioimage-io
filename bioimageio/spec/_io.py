@@ -12,15 +12,13 @@ from bioimageio.spec._description import (
 from bioimageio.spec._internal.common_nodes import ResourceDescrBase
 from bioimageio.spec._internal.io import BioimageioYamlContent, YamlValue
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, write_yaml
-from bioimageio.spec._internal.types import (
-    FileSource,
-)
 from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec.common import PermissiveFileSource
 from bioimageio.spec.summary import ValidationSummary
 
 
 def load_description(
-    source: FileSource,
+    source: PermissiveFileSource,
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -50,7 +48,7 @@ def save_bioimageio_yaml_only(
 
 
 def load_description_and_validate_format_only(
-    source: FileSource,
+    source: PermissiveFileSource,
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,

@@ -5,8 +5,9 @@ from typing import Any, Dict, Type
 import pytest
 
 from bioimageio.spec._internal.common_nodes import Node
-from bioimageio.spec._internal.constants import WARNING
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec._internal.warning_levels import WARNING
 from bioimageio.spec.generic.v0_2 import (
     AttachmentsDescr,
     Author,
@@ -16,7 +17,7 @@ from bioimageio.spec.generic.v0_2 import (
 )
 from tests.utils import check_node
 
-EXAMPLE_DOT_COM = "https://example.com/"
+EXAMPLE_COM = RootHttpUrl("https://example.com/")
 
 
 @pytest.mark.parametrize(
@@ -76,7 +77,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
         ),
         (Maintainer, dict(name="without_gh"), False),
         (Maintainer, dict(github_user=5.5), False),
-        (CiteEntry, dict(text="lala", url=EXAMPLE_DOT_COM), True),
+        (CiteEntry, dict(text="lala", url=EXAMPLE_COM), True),
         (CiteEntry, dict(text="lala", doi="10.1234fakedoi"), True),
         (
             CiteEntry,
@@ -88,7 +89,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
             True,
         ),
         (CiteEntry, dict(text="lala"), False),
-        (CiteEntry, dict(url=EXAMPLE_DOT_COM), False),
+        (CiteEntry, dict(url=EXAMPLE_COM), False),
         (
             GenericDescr,
             dict(
@@ -116,7 +117,7 @@ EXAMPLE_DOT_COM = "https://example.com/"
             True,
         ),
         (GenericDescr, dict(text="lala"), False),
-        (GenericDescr, dict(url=EXAMPLE_DOT_COM), False),
+        (GenericDescr, dict(url=EXAMPLE_COM), False),
         (
             GenericDescr,
             dict(
@@ -181,7 +182,7 @@ def test_deprecated_license_in_generic():
             type="my_type",
             version="0.1.0",
             license="BSD-2-Clause-FreeBSD",
-            cite=[dict(text="lala", url=EXAMPLE_DOT_COM)],
+            cite=[dict(text="lala", url=EXAMPLE_COM)],
         ),
         context=ValidationContext(warning_level=WARNING),
         is_invalid=True,

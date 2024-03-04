@@ -5,6 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from bioimageio.spec._description import validate_format
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_4 import (
     Author,
@@ -305,50 +306,53 @@ def test_output_tensor(kwargs: Dict[str, Any]):
 
 @pytest.fixture
 def model_data():
-    return ModelDescr(
-        documentation=UNET2D_ROOT / "README.md",
-        license="MIT",
-        git_repo="https://github.com/bioimage-io/python-bioimage-io",
-        description="description",
-        authors=[
-            Author(name="Author 1", affiliation="Affiliation 1"),
-            Author(name="Author 2"),
-        ],
-        maintainers=[
-            Maintainer(
-                name="Maintainer 1", affiliation="Affiliation 1", github_user="fynnbe"
+    with ValidationContext(perform_io_checks=False):
+        return ModelDescr(
+            documentation=UNET2D_ROOT / "README.md",
+            license="MIT",
+            git_repo="https://github.com/bioimage-io/python-bioimage-io",
+            description="description",
+            authors=[
+                Author(name="Author 1", affiliation="Affiliation 1"),
+                Author(name="Author 2"),
+            ],
+            maintainers=[
+                Maintainer(
+                    name="Maintainer 1",
+                    affiliation="Affiliation 1",
+                    github_user="fynnbe",
+                ),
+                Maintainer(github_user="constantinpape"),
+            ],
+            timestamp=datetime.now(),
+            cite=[CiteEntry(text="Paper title", url="https://example.com/")],
+            inputs=[
+                InputTensorDescr(
+                    name=TensorName("input_1"),
+                    description="Input 1",
+                    data_type="float32",
+                    axes=AxesStr("xyc"),
+                    shape=(128, 128, 3),
+                ),
+            ],
+            outputs=[
+                OutputTensorDescr(
+                    name=TensorName("output_1"),
+                    description="Output 1",
+                    data_type="float32",
+                    axes=AxesStr("xyc"),
+                    shape=(128, 128, 3),
+                ),
+            ],
+            name="Model",
+            tags=[],
+            weights=WeightsDescr(
+                onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx")
             ),
-            Maintainer(github_user="constantinpape"),
-        ],
-        timestamp=datetime.now(),
-        cite=[CiteEntry(text="Paper title", url="https://example.com/")],
-        inputs=[
-            InputTensorDescr(
-                name=TensorName("input_1"),
-                description="Input 1",
-                data_type="float32",
-                axes=AxesStr("xyc"),
-                shape=(128, 128, 3),
-            ),
-        ],
-        outputs=[
-            OutputTensorDescr(
-                name=TensorName("output_1"),
-                description="Output 1",
-                data_type="float32",
-                axes=AxesStr("xyc"),
-                shape=(128, 128, 3),
-            ),
-        ],
-        name="Model",
-        tags=[],
-        weights=WeightsDescr(
-            onnx=OnnxWeightsDescr(source=UNET2D_ROOT / "weights.onnx")
-        ),
-        test_inputs=[UNET2D_ROOT / "test_input.npy"],
-        test_outputs=[UNET2D_ROOT / "test_output.npy"],
-        type="model",
-    ).model_dump()
+            test_inputs=[UNET2D_ROOT / "test_input.npy"],
+            test_outputs=[UNET2D_ROOT / "test_output.npy"],
+            type="model",
+        ).model_dump()
 
 
 @pytest.mark.parametrize(
@@ -396,7 +400,9 @@ def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
     model_data["inputs"][0]["name"] = "invalid/name"
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "failed", summary.format()
 
@@ -415,7 +421,9 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
 
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "failed", summary.format()
 
@@ -437,7 +445,9 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
 
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "failed", summary.format()
 
@@ -459,7 +469,9 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     ]
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="http://example.com", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "failed", summary.format()
 
@@ -468,7 +480,9 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     model_data["parent"] = dict(id="10.5281/zenodo.5764892")
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "passed", summary.format()
 
@@ -490,7 +504,9 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
 
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "passed", summary.format()
 
@@ -500,7 +516,9 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["format_version"] = "0.2.4"
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "passed", summary.format()
 
@@ -509,6 +527,8 @@ def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
     summary = validate_format(
         model_data,
-        context=ValidationContext(root="https://example.com/", perform_io_checks=False),
+        context=ValidationContext(
+            root=RootHttpUrl("http://example.com/"), perform_io_checks=False
+        ),
     )
     assert summary.status == "failed", summary.format()

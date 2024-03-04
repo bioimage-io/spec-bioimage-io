@@ -5,8 +5,8 @@ from typing_extensions import Annotated
 
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
 from bioimageio.spec._internal.types import ApplicationId as ApplicationId
 from bioimageio.spec._internal.types import ImportantFileSource
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl

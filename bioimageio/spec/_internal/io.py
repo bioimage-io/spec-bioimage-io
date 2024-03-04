@@ -45,6 +45,7 @@ from typing_extensions import (
     Self,
     Unpack,
     assert_never,
+    get_args,
 )
 from typing_extensions import TypeAliasType as _TypeAliasType
 
@@ -56,6 +57,7 @@ from bioimageio.spec._internal.io_basics import (
     FileName,
 )
 from bioimageio.spec._internal.node import Node
+from bioimageio.spec._internal.packaging_context import packaging_context_var
 from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validated_string import ValidatedString
@@ -264,9 +266,12 @@ class WithSuffix:
         if (
             schema["type"] != str
             and source != FileSource
-            and not issubclass(source, (str, AnyUrl, RelativeFilePath, PurePath))
+            and not issubclass(source, (HttpUrl, PurePath, RelativeFilePath, AnyUrl))
         ):
-            raise TypeError("WithSuffix can only be applied to strings, URLs and paths")
+            raise TypeError(
+                "WithSuffix can only be applied to strings, "
+                f"`FileSource` or one of {get_args(FileSource)}"
+            )
 
         return core_schema.no_info_after_validator_function(
             self.validate,
@@ -287,14 +292,11 @@ class WithSuffix:
 def _package(
     value: FileSource, handler: SerializerFunctionWrapHandler
 ) -> Union[FileSource, FileName]:
-    from bioimageio.spec._internal.packaging_context import packaging_context_var
 
     ret = handler(value)
 
     if (packaging_context := packaging_context_var.get()) is None:
         return ret
-
-    fsrcs = packaging_context.file_sources
 
     if isinstance(value, RelativeFilePath):
         src = value.absolute
@@ -308,6 +310,13 @@ def _package(
         assert_never(value)
 
     fname = extract_file_name(src)
+    if fname == packaging_context.bioimageio_yaml_file_name:
+        raise ValueError(
+            f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
+            "not allowed for a file to be packaged"
+        )
+
+    fsrcs = packaging_context.file_sources
     assert not any(
         fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
     ), fname
@@ -322,14 +331,14 @@ def _package(
                 fname = alternative_file_name
                 break
         else:
-            raise RuntimeError(f"Too many file name clashes for {fname}")
+            raise ValueError(f"Too many file name clashes for {fname}")
 
     fsrcs[fname] = src
     return fname
 
 
 def wo_special_file_name(src: FileSource) -> FileSource:
-    if is_valid_rdf_name(src):
+    if has_valid_rdf_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
             f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -346,8 +355,11 @@ ImportantFileSource = Annotated[
 ]
 
 
-def is_valid_rdf_name(src: FileSource) -> bool:
-    file_name = extract_file_name(src)
+def has_valid_rdf_name(src: FileSource) -> bool:
+    return is_valid_rdf_name(extract_file_name(src))
+
+
+def is_valid_rdf_name(file_name: FileName) -> bool:
     for special in ALL_BIOIMAGEIO_YAML_NAMES:
         if file_name.endswith(special):
             return True
@@ -355,14 +367,24 @@ def is_valid_rdf_name(src: FileSource) -> bool:
     return False
 
 
-def ensure_is_valid_rdf_name(src: FileSource) -> FileSource:
-    if not is_valid_rdf_name(src):
+def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
+    if not has_valid_rdf_name(src):
         raise ValueError(
             f"'{src}' does not have a valid filename to identify"
             f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
         )
 
     return src
+
+
+def ensure_is_valid_rdf_name(file_name: FileName) -> FileName:
+    if not is_valid_rdf_name(file_name):
+        raise ValueError(
+            f"'{file_name}' is not a valid filename to identify"
+            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+        )
+
+    return file_name
 
 
 # types as loaded from YAML 1.2 (with ruyaml)

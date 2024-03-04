@@ -34,18 +34,17 @@ from bioimageio.spec._internal.common_nodes import (
     NodeWithExplicitlySetFields,
     StringNode,
 )
-from bioimageio.spec._internal.constants import ALERT, INFO, SHA256_HINT
+from bioimageio.spec._internal.constants import SHA256_HINT
 from bioimageio.spec._internal.field_validation import (
     AfterValidator,
     RestrictCharacters,
     validate_unique_entries,
 )
 from bioimageio.spec._internal.field_warning import issue_warning, warn
-from bioimageio.spec._internal.io import BioimageioYamlContent, download
+from bioimageio.spec._internal.io import BioimageioYamlContent, WithSuffix, download
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
-from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import Identifier as Identifier
 from bioimageio.spec._internal.types import (
@@ -57,8 +56,9 @@ from bioimageio.spec._internal.types import LicenseId as LicenseId
 from bioimageio.spec._internal.types import ModelId as ModelId
 from bioimageio.spec._internal.types import NotEmpty as NotEmpty
 from bioimageio.spec._internal.types import ResourceId as ResourceId
-from bioimageio.spec._internal.types import Version as _Version
 from bioimageio.spec._internal.url import HttpUrl as HttpUrl
+from bioimageio.spec._internal.version_type import Version as Version
+from bioimageio.spec._internal.warning_levels import ALERT, INFO
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_2 import LinkedDataset as LinkedDataset
 from bioimageio.spec.generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -257,7 +257,7 @@ class WeightsEntryDescrBase(FileDescr):
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Optional[_Version] = None
+    tensorflow_version: Optional[Version] = None
     """TensorFlow version used to create these weights"""
 
     @field_validator("tensorflow_version", mode="after")
@@ -335,7 +335,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     kwargs: Dict[str, Any] = Field(default_factory=dict)
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Optional[_Version] = None
+    pytorch_version: Optional[Version] = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
@@ -356,7 +356,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: Optional[_Version] = None
+    pytorch_version: Optional[Version] = None
     """Version of the PyTorch library used."""
 
     @field_validator("pytorch_version", mode="after")
@@ -375,7 +375,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Optional[_Version] = None
+    tensorflow_version: Optional[Version] = None
     """Version of the TensorFlow library used."""
 
     @field_validator("tensorflow_version", mode="after")
@@ -398,7 +398,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Optional[_Version] = None
+    tensorflow_version: Optional[Version] = None
     """Version of the TensorFlow library used."""
 
     @field_validator("tensorflow_version", mode="after")
