@@ -4,9 +4,11 @@ import collections.abc
 import re
 import warnings
 from abc import ABC
+from copy import deepcopy
 from datetime import datetime
 from itertools import chain
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
+from tempfile import mkdtemp
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -27,6 +29,7 @@ from typing import (
     cast,
 )
 
+import imageio
 import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
@@ -46,19 +49,19 @@ from bioimageio.spec._internal.common_nodes import (
     Node,
     NodeWithExplicitlySetFields,
 )
-from bioimageio.spec._internal.constants import DTYPE_LIMITS, INFO
+from bioimageio.spec._internal.constants import DTYPE_LIMITS
 from bioimageio.spec._internal.field_warning import issue_warning, warn
 from bioimageio.spec._internal.io import (
     BioimageioYamlContent as BioimageioYamlContent,
 )
 from bioimageio.spec._internal.io import FileDescr as FileDescr
+from bioimageio.spec._internal.io import Sha256 as Sha256
 from bioimageio.spec._internal.io import (
+    WithSuffix,
     download,
 )
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from bioimageio.spec._internal.io_utils import load_array
-from bioimageio.spec._internal.io_validation import Sha256 as Sha256
-from bioimageio.spec._internal.io_validation import WithSuffix
 from bioimageio.spec._internal.types import Datetime as Datetime
 from bioimageio.spec._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from bioimageio.spec._internal.types import Identifier as Identifier
@@ -76,6 +79,7 @@ from bioimageio.spec._internal.url import HttpUrl as HttpUrl
 from bioimageio.spec._internal.validation_context import (
     validation_context_var,
 )
+from bioimageio.spec._internal.warning_levels import INFO
 from bioimageio.spec.dataset.v0_3 import DatasetDescr as DatasetDescr
 from bioimageio.spec.dataset.v0_3 import LinkedDataset as LinkedDataset
 from bioimageio.spec.dataset.v0_3 import Uploader as Uploader
@@ -1991,10 +1995,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return self
 
         try:
-            from bioimageio.spec._internal.cover import (
-                generate_covers,
-            )
-
             generated_covers = generate_covers(
                 [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],
                 [(t, load_array(t.test_tensor.download().path)) for t in self.outputs],
@@ -2091,7 +2091,7 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
             description=src.description,
             documentation=cast(DocumentationSource, src.documentation),
             format_version="0.5.0",
-            git_repo=src.git_repo,
+            git_repo=src.git_repo, # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=src.id,
             id_emoji=src.id_emoji,
@@ -2210,3 +2210,179 @@ class _ModelConv(Converter[v0_4.ModelDescr, ModelDescr]):
 
 
 _model_conv = _ModelConv(v0_4.ModelDescr, ModelDescr)
+
+
+# create better cover images for 3d data and non-image outputs
+def generate_covers(
+    inputs: Sequence[Tuple[InputTensorDescr, NDArray[Any]]],
+    outputs: Sequence[Tuple[OutputTensorDescr, NDArray[Any]]],
+) -> List[Path]:
+    def squeeze(
+        data: NDArray[Any], axes: Sequence[AnyAxis]
+    ) -> Tuple[NDArray[Any], List[AnyAxis]]:
+        """apply numpy.ndarray.squeeze while keeping track of the axis descriptions remaining"""
+        if data.ndim != len(axes):
+            raise ValueError(
+                f"tensor shape {data.shape} does not match described axes"
+                f" {[a.id for a in axes]}"
+            )
+
+        axes = [deepcopy(a) for a, s in zip(axes, data.shape) if s != 1]
+        return data.squeeze(), axes
+
+    def normalize(
+        data: NDArray[Any], axis: Optional[Tuple[int, ...]], eps: float = 1e-7
+    ) -> NDArray[np.float32]:
+        data = data.astype("float32")
+        data -= data.min(axis=axis, keepdims=True)
+        data /= data.max(axis=axis, keepdims=True) + eps
+        return data
+
+    def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
+        original_shape = data.shape
+        data, axes = squeeze(data, axes)
+
+        # take slice fom any batch or index axis if needed
+        # and convert the first channel axis and take a slice from any additional channel axes
+        slices: Tuple[slice, ...] = ()
+        ndim = data.ndim
+        ndim_need = 3 if any(isinstance(a, ChannelAxis) for a in axes) else 2
+        has_c_axis = False
+        for i, a in enumerate(axes):
+            s = data.shape[i]
+            assert s > 1
+            if isinstance(a, (BatchAxis, IndexAxis)) and ndim > ndim_need:
+                data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
+                ndim -= 1
+            elif isinstance(a, ChannelAxis):
+                if has_c_axis:
+                    # second channel axis
+                    data = data[slices + (slice(0, 1),)]  # type: ignore
+                    ndim -= 1
+                else:
+                    has_c_axis = True
+                    if s == 2:
+                        # visualize two channels with cyan and magenta
+                        data = np.concatenate(
+                            [
+                                data[slices + (slice(1, 2),)],  # type: ignore
+                                data[slices + (slice(0, 1),)],  # type: ignore
+                                (data[slices + (slice(0, 1),)] + data[slices + (slice(1, 2),)])  # type: ignore
+                                / 2,  # TODO: take maximum instead?
+                            ],
+                            axis=i,
+                        )
+                    elif data.shape[i] == 3:
+                        pass  # visualize 3 channels as RGB
+                    else:
+                        # visualize first 3 channels as RGB
+                        data = data[slices + (slice(3),)]  # type: ignore
+
+                    assert data.shape[i] == 3
+
+            slices += (slice(None),)  # type: ignore
+
+        data, axes = squeeze(data, axes)
+        assert len(axes) == ndim
+        # take slice from z axis if needed
+        slices = ()
+        if ndim > ndim_need:
+            for i, a in enumerate(axes):
+                s = data.shape[i]
+                if a.id == "z":
+                    data = data[slices + (slice(s // 2 - 1, s // 2),)]
+                    data, axes = squeeze(data, axes)
+                    ndim -= 1
+                    break
+
+            slices += (slice(None),)
+
+        # take slice from any space or time axis
+        slices = ()
+
+        for i, a in enumerate(axes):
+            if ndim <= ndim_need:
+                break
+
+            s = data.shape[i]
+            assert s > 1
+            if isinstance(
+                a, (SpaceInputAxis, SpaceOutputAxis, TimeInputAxis, TimeOutputAxis)
+            ):
+                data = data[slices + (slice(s // 2 - 1, s // 2),)]  # type: ignore
+                ndim -= 1
+
+            slices += (slice(None),)  # type: ignore
+
+        del slices
+        data, axes = squeeze(data, axes)
+        assert len(axes) == ndim
+
+        if (has_c_axis and ndim != 3) or ndim != 2:
+            raise ValueError(
+                f"Failed to construct cover image from shape {original_shape}"
+            )
+
+        if not has_c_axis:
+            assert ndim == 2
+            data = np.repeat(data[:, :, None], 3, axis=2)
+            axes.append(ChannelAxis(channel_names=list(map(Identifier, "RGB"))))
+            ndim += 1
+
+        assert ndim == 3
+
+        # transpose axis order such that longest axis comes first...
+        axis_order = list(np.argsort(list(data.shape)))
+        axis_order.reverse()
+        # ... and channel axis is last
+        c = [i for i in range(3) if isinstance(axes[i], ChannelAxis)][0]
+        axis_order.append(axis_order.pop(c))
+        axes = [axes[ao] for ao in axis_order]
+        data = data.transpose(axis_order)
+
+        # h, w = data.shape[:2]
+        # if h / w  in (1.0 or 2.0):
+        #     pass
+        # elif h / w < 2:
+        # TODO: enforce 2:1 or 1:1 aspect ratio for generated cover images
+
+        norm_along = (
+            tuple(i for i, a in enumerate(axes) if a.type in ("space", "time")) or None
+        )
+        # normalize the data and map to 8 bit
+        data = normalize(data, norm_along)
+        data = (data * 255).astype("uint8")
+
+        return data
+
+    def create_diagonal_split_image(im0: NDArray[Any], im1: NDArray[Any]):
+        assert im0.dtype == im1.dtype == np.uint8
+        assert im0.shape == im1.shape
+        assert im0.ndim == 3
+        N, M, C = im0.shape
+        assert C == 3
+        out = np.ones((N, M, C), dtype="uint8")
+        for c in range(C):
+            outc = np.tril(im0[..., c])  # type: ignore
+            mask = outc == 0
+            outc[mask] = np.triu(im1[..., c])[mask]  # type: ignore
+            out[..., c] = outc
+
+        return out
+
+    ipt_descr, ipt = inputs[0]
+    out_descr, out = outputs[0]
+
+    ipt_img = to_2d_image(ipt, ipt_descr.axes)
+    out_img = to_2d_image(out, out_descr.axes)
+
+    cover_folder = Path(mkdtemp())
+    if ipt_img.shape == out_img.shape:
+        covers = [cover_folder / "cover.png"]
+        imageio.imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
+    else:
+        covers = [cover_folder / "input.png", cover_folder / "output.png"]
+        imageio.imwrite(covers[0], ipt_img)
+        imageio.imwrite(covers[1], out_img)
+
+    return covers
