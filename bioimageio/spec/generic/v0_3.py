@@ -74,6 +74,7 @@ def _validate_gh_user(username: str) -> str:
         # hotpatch common known error in some uploads
         return "constantinpape"
 
+    # TODO: cache/store known gh users in file
     if (
         username.lower()
         in (  # skip known usernames to reduce hitting the gh api rate limit (mostly relevenat when testing)
@@ -86,6 +87,10 @@ def _validate_gh_user(username: str) -> str:
             "fynnbe",
             "k-dominik",
             "oeway",
+            "danifranco",
+            "iarganda",
+            "lenkaback",
+            "AAitorG",
         )
         or not validation_context_var.get().perform_io_checks
     ):
@@ -110,7 +115,7 @@ class Author(_Author_v0_2):
     github_user: Optional[str] = None
 
     @field_validator("github_user", mode="after")
-    def validate_gh_user(cls, value: Optional[str]):
+    def _validate_gh_user(cls, value: Optional[str]):
         if value is None:
             return None
         else:
