@@ -58,9 +58,9 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
 
 _WithMdSuffix = WithSuffix(".md", case_sensitive=True)
 MarkdownSource = Union[
-    Annotated[HttpUrl, _WithMdSuffix],
     Annotated[AbsoluteFilePath, _WithMdSuffix],
     Annotated[RelativeFilePath, _WithMdSuffix],
+    Annotated[HttpUrl, _WithMdSuffix],
 ]
 DocumentationSource = Annotated[MarkdownSource, IncludeInPackage()]
 

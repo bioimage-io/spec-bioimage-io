@@ -4,11 +4,13 @@ from pathlib import Path
 from typing import Any, Dict
 
 import pytest
+from pydantic import TypeAdapter, ValidationError
 
 from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
 from bioimageio.spec.generic.v0_3 import GenericDescr
+from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node
 
 EXAMPLE_COM = RootHttpUrl("https://example.com/")
@@ -86,3 +88,30 @@ def test_generic_valid(kwargs: Dict[str, Any]):
 )
 def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
     check_node(GenericDescr, kwargs, context=context, is_invalid=True)
+
+
+def test_documentation_source_url():
+    from bioimageio.spec.generic.v0_3 import DocumentationSource
+
+    doc_src = "https://example.com/away.md"
+    adapter = TypeAdapter(DocumentationSource)
+    with ValidationContext(perform_io_checks=False):
+        valid = adapter.validate_python(doc_src)
+
+    assert str(valid) == doc_src
+
+
+def test_documentation_source_abs_path():
+    from bioimageio.spec.generic.v0_3 import DocumentationSource
+
+    doc_src = UNET2D_ROOT / "README.md"
+    assert doc_src.exists(), doc_src
+    adapter = TypeAdapter(DocumentationSource)
+
+    valid = adapter.validate_python(doc_src)
+    assert str(valid) == str(doc_src)
+
+    doc_src = UNET2D_ROOT / "does_not_exist.md"
+    assert not doc_src.exists(), doc_src
+    with pytest.raises(ValidationError):
+        _ = adapter.validate_python(doc_src)

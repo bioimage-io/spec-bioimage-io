@@ -29,8 +29,8 @@ class ValidationContext:
     """file name of the bioimageio Yaml file"""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perfrom validation that requires IO operations like downloading
-    or reading a file from disk"""
+    """wether or not to perfrom validation that may require downloading remote files.
+    Existence of some local files is still being checked."""
 
     def replace(
         self,

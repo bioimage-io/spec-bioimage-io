@@ -208,7 +208,7 @@ def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
 @pytest.fixture
 def model_data():
     with ValidationContext(perform_io_checks=False):
-        data = ModelDescr(
+        model = ModelDescr(
             documentation=UNET2D_ROOT / "README.md",
             license=LicenseId("MIT"),
             git_repo=HttpUrl("https://github.com/bioimage-io/python-bioimage-io"),
@@ -263,7 +263,12 @@ def model_data():
                 )
             ),
             type="model",
-        ).model_dump()
+        )
+        data = model.model_dump()
+        assert data["documentation"] == str(UNET2D_ROOT / "README.md"), (
+            data["documentation"],
+            str(UNET2D_ROOT / "README.md"),
+        )
         return data
 
 

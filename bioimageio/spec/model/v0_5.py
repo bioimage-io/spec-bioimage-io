@@ -497,7 +497,7 @@ class NominalOrOrdinalDataDescr(Node):
     ] = "uint8"
 
     @model_validator(mode="after")
-    def validate_values_match_type(
+    def _validate_values_match_type(
         self,
     ) -> Self:
         incompatible: List[Any] = []
@@ -844,7 +844,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
     @field_validator("axes", mode="after", check_fields=False)
     @classmethod
-    def validate_axes(cls, axes: Sequence[AnyAxis]) -> Sequence[AnyAxis]:
+    def _validate_axes(cls, axes: Sequence[AnyAxis]) -> Sequence[AnyAxis]:
         seen_types: Set[str] = set()
         duplicate_axes_types: Set[str] = set()
         for a in axes:
@@ -883,7 +883,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
     """
 
     @model_validator(mode="after")
-    def validate_sample_tensor(self) -> Self:
+    def _validate_sample_tensor(self) -> Self:
         if (
             self.sample_tensor is None
             or not validation_context_var.get().perform_io_checks
@@ -954,7 +954,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
     @field_validator("data", mode="after")
     @classmethod
-    def check_data_type_across_channels(
+    def _check_data_type_across_channels(
         cls, value: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]
     ) -> Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]:
         if not isinstance(value, list):
@@ -970,7 +970,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         return value
 
     @model_validator(mode="after")
-    def check_data_matches_channelaxis(self) -> Self:
+    def _check_data_matches_channelaxis(self) -> Self:
         if not isinstance(self.data, (list, tuple)):
             return self
 
@@ -990,13 +990,20 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return self
 
-    def get_axis_sizes(self, tensor: NDArray[Any]) -> Dict[AxisId, int]:
-        if len(tensor.shape) != len(self.axes):
+    def get_axis_sizes_for_array(self, array: NDArray[Any]) -> Dict[AxisId, int]:
+        if len(array.shape) != len(self.axes):
             raise ValueError(
-                f"Dimension mismatch: array shape {tensor.shape} (#{len(tensor.shape)})"
+                f"Dimension mismatch: array shape {array.shape} (#{len(array.shape)})"
                 f" incompatible with {len(self.axes)} axes."
             )
-        return {a.id: tensor.shape[i] for i, a in enumerate(self.axes)}
+        return {a.id: array.shape[i] for i, a in enumerate(self.axes)}
+
+    def get_axis_sizes(
+        self, n: int, known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]
+    ) -> Dict[AxisId, int]:
+        ret: Dict[AxisId, int] = {}
+        for a in self.axes:
+            pass
 
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
@@ -1008,7 +1015,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
-    def validate_preprocessing_kwargs(self) -> Self:
+    def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
@@ -1283,7 +1290,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
-    def validate_postprocessing_kwargs(self) -> Self:
+    def _validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
@@ -1355,7 +1362,7 @@ def validate_tensors(
 
     for descr, array in tensors.values():
         try:
-            axis_sizes = descr.get_axis_sizes(array)
+            axis_sizes = descr.get_axis_sizes_for_array(array)
         except ValueError as e:
             raise ValueError(f"{e_msg(descr)} {e}")
         else:
@@ -2098,7 +2105,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             config=src.config,
             covers=src.covers,
             description=src.description,
-            documentation=cast(DocumentationSource, src.documentation),
+            documentation=src.documentation,# pyright: ignore[reportArgumentType]
             format_version="0.5.0",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
