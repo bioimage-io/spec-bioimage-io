@@ -430,10 +430,10 @@ class SpaceInputAxis(SpaceAxisBase):
     pass
 
 
-InputAxis = Annotated[
-    Union[BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis],
-    Field(discriminator="type"),
+_InputAxisUnion = Union[
+    BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis
 ]
+InputAxis = Annotated[_InputAxisUnion, Field(discriminator="type")]
 
 
 class TimeOutputAxis(TimeAxisBase, WithHalo):
@@ -444,10 +444,10 @@ class SpaceOutputAxis(SpaceAxisBase, WithHalo):
     pass
 
 
-OutputAxis = Annotated[
-    Union[BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis],
-    Field(discriminator="type"),
+_OutputAxisUnion = Union[
+    BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis
 ]
+OutputAxis = Annotated[_OutputAxisUnion, Field(discriminator="type")]
 
 AnyAxis = Union[InputAxis, OutputAxis]
 
@@ -825,17 +825,17 @@ PostprocessingDescr = Annotated[
     Field(discriminator="id"),
 ]
 
-AxisVar = TypeVar("AxisVar", InputAxis, OutputAxis)
+IO_AxisT = TypeVar("IO_AxisT", InputAxis, OutputAxis)
 
 
-class TensorDescrBase(Node, Generic[AxisVar]):
+class TensorDescrBase(Node, Generic[IO_AxisT]):
     id: TensorId
     """Tensor id. No duplicates are allowed."""
 
     description: Annotated[str, MaxLen(128)] = ""
     """free text description"""
 
-    axes: NotEmpty[Sequence[AxisVar]]
+    axes: NotEmpty[Sequence[IO_AxisT]]
     """tensor axes"""
 
     @property
@@ -1047,7 +1047,7 @@ def convert_axes(
             else:
                 size = ParameterizedSize(min=shape.min[i], step=shape.step[i])
         elif isinstance(shape, _ImplicitOutputShape_v0_4):
-            ref_t = shape.reference_tensor
+            ref_t = str(shape.reference_tensor)
             if ref_t.count(".") == 1:
                 t_id, orig_a_id = ref_t.split(".")
             else:
@@ -1140,7 +1140,7 @@ def _axes_letters_to_ids(
 ) -> Optional[List[AxisId]]:
     if axes is None:
         return None
-    return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in axes]
+    return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in map(str, axes)]
 
 
 def _get_complement_v04_axis(
@@ -1149,8 +1149,9 @@ def _get_complement_v04_axis(
     if axes is None:
         return None
 
-    all_axes = set(tensor_axes) | {"b"}
-    complement_axes = [a for a in axes if a not in all_axes]
+    axes_str = str(axes)
+    all_axes = set(str(tensor_axes)) | {"b"}
+    complement_axes = [a for a in axes_str if a not in all_axes]
     if len(complement_axes) > 1:
         raise ValueError(
             f"Expected none or a single complement axis, but axes '{axes}' "
@@ -1186,7 +1187,7 @@ def _convert_proc(
         return ScaleMeanVarianceDescr(
             kwargs=ScaleMeanVarianceKwargs(
                 axes=_axes_letters_to_ids(p.kwargs.axes),
-                reference_tensor=TensorId(p.kwargs.reference_tensor),
+                reference_tensor=TensorId(str(p.kwargs.reference_tensor)),
                 eps=p.kwargs.eps,
             )
         )
@@ -1245,7 +1246,7 @@ class _InputTensorConv(
         sample_tensor: Optional[ImportantFileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
-        axes = convert_axes(
+        axes: List[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
             tensor_type="input",
@@ -1259,13 +1260,13 @@ class _InputTensorConv(
             prep.append(cp)
 
         return tgt(
-            axes=axes,  # type: ignore
-            id=TensorId(src.name),
+            axes=axes,
+            id=TensorId(str(src.name)),
             test_tensor=FileDescr(source=test_tensor),
             sample_tensor=(
                 None if sample_tensor is None else FileDescr(source=sample_tensor)
             ),
-            data=dict(type=src.data_type),  # type: ignore
+            data=dict(type=src.data_type),  # pyright: ignore[reportArgumentType]
             preprocessing=prep,
         )
 
@@ -1314,7 +1315,7 @@ class _OutputTensorConv(
         sample_tensor: Optional[ImportantFileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
-        axes = convert_axes(
+        axes: List[OutputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
             tensor_type="output",
@@ -1326,13 +1327,13 @@ class _OutputTensorConv(
             data_descr["values"] = [False, True]
 
         return tgt(
-            axes=axes,  # type: ignore
-            id=TensorId(src.name),
+            axes=axes,
+            id=TensorId(str(src.name)),
             test_tensor=FileDescr(source=test_tensor),
             sample_tensor=(
                 None if sample_tensor is None else FileDescr(source=sample_tensor)
             ),
-            data=data_descr,  # type: ignore
+            data=data_descr,  # pyright: ignore[reportArgumentType]
             postprocessing=[_convert_proc(p, src.axes) for p in src.postprocessing],
         )
 

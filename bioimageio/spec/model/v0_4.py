@@ -76,13 +76,11 @@ from ..generic.v0_2 import Uploader as Uploader
 from ..utils import load_array
 from ._v0_4_converter import convert_from_older_format
 
-AxesStr = ValidatedString[
-    Annotated[
-        str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
-    ]
+AxesStr = Annotated[
+    str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
 ]
-AxesInCZYX = ValidatedString[
-    Annotated[str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)],
+AxesInCZYX = Annotated[
+    str, RestrictCharacters("czyx"), AfterValidator(validate_unique_entries)
 ]
 
 PostprocessingName = Literal[
@@ -437,7 +435,7 @@ class ImplicitOutputShape(Node):
     """Output tensor shape depending on an input tensor shape.
     `shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`"""
 
-    reference_tensor: NotEmpty[str]
+    reference_tensor: TensorName
     """Name of the reference tensor."""
 
     scale: NotEmpty[List[Union[float, None]]]
@@ -921,7 +919,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def unique_tensor_descr_names(
         cls, value: Sequence[Union[InputTensorDescr, OutputTensorDescr]]
     ) -> Sequence[Union[InputTensorDescr, OutputTensorDescr]]:
-        unique_names = {v.name for v in value}
+        unique_names = {str(v.name) for v in value}
         if len(unique_names) != len(value):
             raise ValueError("Duplicate tensor descriptor names")
 
@@ -929,7 +927,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def unique_io_names(self) -> Self:
-        unique_names = {ss.name for s in (self.inputs, self.outputs) for ss in s}
+        unique_names = {str(ss.name) for s in (self.inputs, self.outputs) for ss in s}
         if len(unique_names) != (len(self.inputs) + len(self.outputs)):
             raise ValueError("Duplicate tensor descriptor names across inputs/outputs")
 
@@ -937,9 +935,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="after")
     def minimum_shape2valid_output(self) -> Self:
-        tensors_by_name: Dict[str, Union[InputTensorDescr, OutputTensorDescr]] = {
-            t.name: t for t in self.inputs + self.outputs
-        }
+        tensors_by_name: Dict[
+            TensorName, Union[InputTensorDescr, OutputTensorDescr]
+        ] = {t.name: t for t in self.inputs + self.outputs}
 
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
@@ -981,7 +979,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def _get_min_shape(
         cls,
         t: Union[InputTensorDescr, OutputTensorDescr],
-        tensors_by_name: Dict[str, Union[InputTensorDescr, OutputTensorDescr]],
+        tensors_by_name: Dict[TensorName, Union[InputTensorDescr, OutputTensorDescr]],
     ) -> Sequence[int]:
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
@@ -1024,8 +1022,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     continue
 
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor is not None and ref_tensor not in {
-                    t.name for t in self.inputs
+                if ref_tensor is not None and str(ref_tensor) not in {
+                    str(t.name) for t in self.inputs
                 }:
                     raise ValueError(f"'{ref_tensor}' not found in inputs")
 
@@ -1043,8 +1041,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 if "reference_tensor" not in proc.kwargs:
                     continue
                 ref_tensor = proc.kwargs["reference_tensor"]
-                if ref_tensor is not None and ref_tensor not in {
-                    t.name for t in self.inputs
+                if ref_tensor is not None and str(ref_tensor) not in {
+                    str(t.name) for t in self.inputs
                 }:
                     raise ValueError(f"{ref_tensor} not found in inputs")
 

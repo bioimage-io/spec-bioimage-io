@@ -9,8 +9,6 @@ from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_4 import (
     Author,
-    AxesInCZYX,
-    AxesStr,
     CiteEntry,
     Datetime,
     InputTensorDescr,
@@ -178,9 +176,7 @@ def test_postprocessing(kwargs: Dict[str, Any]):
     "node,expected",
     [
         (
-            ScaleRangeDescr(
-                kwargs=ScaleRangeKwargs(mode="per_sample", axes=AxesInCZYX("xy"))
-            ),
+            ScaleRangeDescr(kwargs=ScaleRangeKwargs(mode="per_sample", axes="xy")),
             dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         ),
         (
@@ -332,7 +328,7 @@ def model_data():
                     name=TensorName("input_1"),
                     description="Input 1",
                     data_type="float32",
-                    axes=AxesStr("xyc"),
+                    axes="xyc",
                     shape=(128, 128, 3),
                 ),
             ],
@@ -341,7 +337,7 @@ def model_data():
                     name=TensorName("output_1"),
                     description="Output 1",
                     data_type="float32",
-                    axes=AxesStr("xyc"),
+                    axes="xyc",
                     shape=(128, 128, 3),
                 ),
             ],
