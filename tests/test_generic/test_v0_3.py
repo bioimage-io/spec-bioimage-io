@@ -1,15 +1,26 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Dict
+from functools import partial
+from pathlib import Path, PurePath
+from typing import Any, Dict, Union
 
 import pytest
-from pydantic import TypeAdapter, ValidationError
+from pydantic import AfterValidator, FilePath, TypeAdapter, ValidationError
+from typing_extensions import Annotated
 
+from bioimageio.spec._internal.io import (
+    RelativeFilePath,
+    WithSuffix,
+    include_in_package_serializer,
+    include_in_package_serializer_json,
+    validate_suffix,
+)
+from bioimageio.spec._internal.io_basics import AbsoluteFilePath
 from bioimageio.spec._internal.root_url import RootHttpUrl
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
-from bioimageio.spec.generic.v0_3 import GenericDescr
+from bioimageio.spec.generic.v0_3 import DocumentationSource, GenericDescr
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node
 
@@ -90,7 +101,8 @@ def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
     check_node(GenericDescr, kwargs, context=context, is_invalid=True)
 
 
-def test_documentation_source_url():
+# @pytest.mark.parametrize("src", [UNET2D_ROOT / "README.md", text_md_url])
+def test_documentation_source():
     from bioimageio.spec.generic.v0_3 import DocumentationSource
 
     doc_src = "https://example.com/away.md"
@@ -111,7 +123,90 @@ def test_documentation_source_abs_path():
     valid = adapter.validate_python(doc_src)
     assert str(valid) == str(doc_src)
 
+    data = adapter.dump_python(valid, mode="python")
+    assert str(data) == str(doc_src)
+    data = adapter.dump_python(valid, mode="json")
+    assert str(data) == str(doc_src)
+
     doc_src = UNET2D_ROOT / "does_not_exist.md"
     assert not doc_src.exists(), doc_src
     with pytest.raises(ValidationError):
         _ = adapter.validate_python(doc_src)
+
+
+with ValidationContext(perform_io_checks=False):
+    text_md_url = HttpUrl("https://example.com/text.md")
+
+
+def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]):
+    return validate_suffix(value, ".md", case_sensitive=True)
+
+
+DummyDocumentationSource = Annotated[
+    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    # AfterValidator(partial(validate_suffix, suffix=".md", case_sensitive=True)),
+    AfterValidator(validate_md_suffix),
+    include_in_package_serializer,
+]
+
+
+@pytest.mark.parametrize(
+    "src,adapter",
+    [
+        (UNET2D_ROOT / "README.md", a)
+        for a in [
+            # TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
+            # TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
+            # TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
+            # TypeAdapter(
+            #     Annotated[
+            #         Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
+            #     ]
+            # ),
+            # TypeAdapter(
+            #     Annotated[
+            #         Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+            #         WithSuffix(".md", case_sensitive=True),
+            #     ]
+            # ),
+            TypeAdapter(DummyDocumentationSource),
+            # TypeAdapter(DocumentationSource),
+            # TypeAdapter(
+            #     Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
+            # ),
+        ]
+    ],
+    # + [
+    #     (text_md_url, a)
+    #     for a in [
+    #         TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
+    #         TypeAdapter(
+    #             Annotated[
+    #                 Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
+    #             ]
+    #         ),
+    #         TypeAdapter(
+    #             Annotated[
+    #                 Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    #                 WithSuffix(".md", case_sensitive=True),
+    #             ]
+    #         ),
+    #         TypeAdapter(DummyDocumentationSource),
+    #         TypeAdapter(DocumentationSource),
+    #         TypeAdapter(
+    #             Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
+    #         ),
+    #     ]
+    # ],
+)
+def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
+    with ValidationContext(perform_io_checks=False):
+        valid = adapter.validate_python(src)
+
+    assert isinstance(valid, type(src))
+
+    data = adapter.dump_python(valid, mode="python")
+    assert data == src
+    data = adapter.dump_python(valid, mode="json")
+    expected = src.as_posix() if isinstance(src, Path) else str(src)
+    assert data == expected, (data, expected)

@@ -17,9 +17,15 @@ from .._internal.common_nodes import (
 from .._internal.constants import (
     TAG_CATEGORIES,
 )
-from .._internal.field_validation import Predicate
+from .._internal.field_validation import AfterValidator, Predicate
 from .._internal.field_warning import as_warning, issue_warning, warn
-from .._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
+from .._internal.io import (
+    BioimageioYamlContent,
+    YamlValue,
+    include_in_package_serializer,
+    include_in_package_serializer_json,
+    validate_suffix,
+)
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath
@@ -27,7 +33,6 @@ from .._internal.license_id import LicenseId
 from .._internal.types import (
     DeprecatedLicenseId,
     ImportantFileSource,
-    IncludeInPackage,
     NotEmpty,
 )
 from .._internal.types import RelativeFilePath as RelativeFilePath
@@ -56,13 +61,12 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
 )
 
 
-_WithMdSuffix = WithSuffix(".md", case_sensitive=True)
-MarkdownSource = Union[
-    Annotated[AbsoluteFilePath, _WithMdSuffix],
-    Annotated[RelativeFilePath, _WithMdSuffix],
-    Annotated[HttpUrl, _WithMdSuffix],
+DocumentationSource = Annotated[
+    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    AfterValidator(partial(validate_suffix, suffix=".md", case_sensitive=True)),
+    include_in_package_serializer,
+    include_in_package_serializer_json,
 ]
-DocumentationSource = Annotated[MarkdownSource, IncludeInPackage()]
 
 
 def _has_no_slash(s: str) -> bool:

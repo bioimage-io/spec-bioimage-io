@@ -40,7 +40,6 @@ TYPE_ARGS = {
 IGNORE_TYPES_MEMBERS = {
     "annotated_types",
     "annotations",
-    "IncludeInPackage",
     "NotEmpty",
     "typing",
     "YamlValue",

@@ -42,7 +42,13 @@ from .._internal.field_validation import (
     validate_unique_entries,
 )
 from .._internal.field_warning import issue_warning, warn
-from .._internal.io import BioimageioYamlContent, WithSuffix, download
+from .._internal.io import (
+    BioimageioYamlContent,
+    WithSuffix,
+    download,
+    include_in_package_serializer,
+    include_in_package_serializer_json,
+)
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
@@ -50,7 +56,6 @@ from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import (
     ImportantFileSource,
-    IncludeInPackage,
     LowerCaseIdentifierAnno,
 )
 from .._internal.types import LicenseId as LicenseId
@@ -127,7 +132,11 @@ class CallableFromDepencency(StringNode):
 
 class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
-    source_file: Annotated[Union[HttpUrl, RelativeFilePath], IncludeInPackage()]
+    source_file: Annotated[
+        Union[HttpUrl, RelativeFilePath],
+        include_in_package_serializer,
+        include_in_package_serializer_json,
+    ]
     """∈📦 Python module that implements `callable_name`"""
     callable_name: Identifier
     """The Python identifier of  """

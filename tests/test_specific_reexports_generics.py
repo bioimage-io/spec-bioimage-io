@@ -26,7 +26,6 @@ IGNORE_MEMBERS = {
     "Ge",
     "get_args",
     "ImportantFileSource",
-    "IncludeInPackage",
     "issue_warning",
     "Len",
     "LicenseId",

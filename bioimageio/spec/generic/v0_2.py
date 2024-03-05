@@ -21,13 +21,18 @@ from .._internal.field_validation import (
     AfterValidator as _AfterValidator,
 )
 from .._internal.field_warning import as_warning, issue_warning, warn
-from .._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
+from .._internal.io import (
+    BioimageioYamlContent,
+    WithSuffix,
+    YamlValue,
+    include_in_package_serializer,
+    include_in_package_serializer_json,
+)
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.types import (
     DeprecatedLicenseId,
     FileSource,
     ImportantFileSource,
-    IncludeInPackage,
     LicenseId,
     NotEmpty,
 )
@@ -57,12 +62,10 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 
 _WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
 CoverImageSource = Annotated[
-    Union[
-        Annotated[HttpUrl, _WithImageSuffix],
-        Annotated[AbsoluteFilePath, _WithImageSuffix],
-        Annotated[RelativeFilePath, _WithImageSuffix],
-    ],
-    IncludeInPackage(),
+    Union[HttpUrl, AbsoluteFilePath, RelativeFilePath],
+    _WithImageSuffix,
+    include_in_package_serializer,
+    include_in_package_serializer_json,
 ]
 
 

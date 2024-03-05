@@ -13,7 +13,6 @@ from .constants import DOI_REGEX, SI_UNIT_REGEX
 from .field_validation import AfterValidator, BeforeValidator
 from .io import FileSource as FileSource
 from .io import ImportantFileSource as ImportantFileSource
-from .io import IncludeInPackage as IncludeInPackage
 from .io import PermissiveFileSource as PermissiveFileSource
 from .io import RelativeFilePath as RelativeFilePath
 from .io_basics import AbsoluteDirectory as AbsoluteDirectory

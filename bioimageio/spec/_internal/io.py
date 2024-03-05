@@ -8,13 +8,14 @@ from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import partial
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import (
     Any,
     Callable,
     Dict,
     List,
     Optional,
+    Sequence,
     Tuple,
     Type,
     TypedDict,
@@ -31,6 +32,8 @@ from pydantic import (
     DirectoryPath,
     FilePath,
     GetCoreSchemaHandler,
+    PlainSerializer,
+    SerializationInfo,
     SerializerFunctionWrapHandler,
     StringConstraints,
     TypeAdapter,
@@ -45,7 +48,6 @@ from typing_extensions import (
     Self,
     Unpack,
     assert_never,
-    get_args,
 )
 from typing_extensions import TypeAliasType as _TypeAliasType
 
@@ -209,8 +211,15 @@ V_suffix = TypeVar("V_suffix", bound=FileSource)
 path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
 
 
-def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_suffix:
+def validate_suffix(
+    value: V_suffix, suffix: Union[str, Sequence[str]], case_sensitive: bool
+) -> V_suffix:
     """check final suffix"""
+    if isinstance(suffix, str):
+        suffixes = [suffix]
+    else:
+        suffixes = suffix
+
     assert len(suffixes) > 0, "no suffix given"
     assert all(
         suff.startswith(".") for suff in suffixes
@@ -220,33 +229,35 @@ def validate_suffix(value: V_suffix, *suffixes: str, case_sensitive: bool) -> V_
 
     if isinstance(strict, (HttpUrl, AnyUrl)):
         if strict.path is None or "." not in (path := strict.path):
-            suffix = ""
+            actual_suffix = ""
         elif (
             strict.host == "zenodo.org"
             and path.startswith("/api/records/")
             and path.endswith("/content")
         ):
-            suffix = "." + path[: -len("/content")].split(".")[-1]
+            actual_suffix = "." + path[: -len("/content")].split(".")[-1]
         else:
-            suffix = "." + path.split(".")[-1]
+            actual_suffix = "." + path.split(".")[-1]
 
     elif isinstance(strict, PurePath):
-        suffix = strict.suffixes[-1]
+        actual_suffix = strict.suffixes[-1]
     elif isinstance(strict, RelativeFilePath):
-        suffix = strict.path.suffixes[-1]
+        actual_suffix = strict.path.suffixes[-1]
     else:
         assert_never(strict)
 
     if (
         case_sensitive
-        and suffix not in suffixes
+        and actual_suffix not in suffixes
         or not case_sensitive
-        and suffix.lower() not in [s.lower() for s in suffixes]
+        and actual_suffix.lower() not in [s.lower() for s in suffixes]
     ):
         if len(suffixes) == 1:
-            raise ValueError(f"Expected suffix {suffixes[0]}, but got {suffix}")
+            raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
         else:
-            raise ValueError(f"Expected a suffix from {suffixes}, but got {suffix}")
+            raise ValueError(
+                f"Expected a suffix from {suffixes}, but got {actual_suffix}"
+            )
 
     return o_value
 
@@ -263,40 +274,34 @@ class WithSuffix:
             raise ValueError("suffix may not be empty")
 
         schema = handler(source)
-        if (
-            schema["type"] != str
-            and source != FileSource
-            and not issubclass(source, (HttpUrl, PurePath, RelativeFilePath, AnyUrl))
-        ):
-            raise TypeError(
-                "WithSuffix can only be applied to strings, "
-                f"`FileSource` or one of {get_args(FileSource)}"
-            )
-
         return core_schema.no_info_after_validator_function(
             self.validate,
             schema,
         )
 
     def validate(self, value: FileSource) -> FileSource:
-        if isinstance(self.suffix, str):
-            return validate_suffix(
-                value, self.suffix, case_sensitive=self.case_sensitive
-            )
-        else:
-            return validate_suffix(
-                value, *self.suffix, case_sensitive=self.case_sensitive
-            )
+        return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
-def _package(
-    value: FileSource, handler: SerializerFunctionWrapHandler
-) -> Union[FileSource, FileName]:
+def wo_special_file_name(src: FileSource) -> FileSource:
+    if has_valid_rdf_name(src):
+        raise ValueError(
+            f"'{src}' not allowed here as its filename is reserved to identify"
+            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+        )
 
-    ret = handler(value)
+    return src
 
+
+def _package(value: FileSource, info: SerializationInfo) -> Union[FileSource, FileName]:
     if (packaging_context := packaging_context_var.get()) is None:
-        return ret
+        if info.mode_is_json():
+            if isinstance(value, Path):
+                return value.as_posix()
+            else:
+                return str(value)
+        else:
+            return value
 
     if isinstance(value, RelativeFilePath):
         src = value.absolute
@@ -337,21 +342,19 @@ def _package(
     return fname
 
 
-def wo_special_file_name(src: FileSource) -> FileSource:
-    if has_valid_rdf_name(src):
-        raise ValueError(
-            f"'{src}' not allowed here as its filename is reserved to identify"
-            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
-        )
-
-    return src
+# def _package_json(value: Union[FileSource, FileName]) -> str:
+#     if isinstance(value, FileName):
+#         return value
+#     else:
+#         return str(_package(value))
 
 
-IncludeInPackage: Callable[[], WrapSerializer] = partial(
-    WrapSerializer, _package, when_used="unless-none"
-)
+include_in_package_serializer = PlainSerializer(_package, when_used="unless-none")
+include_in_package_serializer_json = "lala"
 ImportantFileSource = Annotated[
-    FileSource, AfterValidator(wo_special_file_name), IncludeInPackage()
+    FileSource,
+    AfterValidator(wo_special_file_name),
+    include_in_package_serializer,
 ]
 
 
