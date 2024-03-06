@@ -229,7 +229,7 @@ class WeightsEntryDescrBase(FileDescr):
         warn(
             None,
             "Custom dependencies ({value}) specified. Avoid this whenever possible "
-            "to allow execution in a wider range of software environments.",
+            + "to allow execution in a wider range of software environments.",
         ),
         Field(
             examples=[
@@ -270,7 +270,7 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing TensorFlow version. Please specify the TensorFlow version"
-                " these weights were created with.",
+                + " these weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -289,8 +289,8 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing ONNX opset version (aka ONNX opset number). "
-                "Please specify the ONNX opset version these weights were created"
-                " with.",
+                + "Please specify the ONNX opset version these weights were created"
+                + " with.",
                 value=value,
                 severity=ALERT,
             )
@@ -326,12 +326,12 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
             if self.architecture_sha256 is None:
                 raise ValueError(
                     "Missing required `architecture_sha256` for `architecture` with"
-                    " source file."
+                    + " source file."
                 )
         elif self.architecture_sha256 is not None:
             raise ValueError(
                 "Got `architecture_sha256` for architecture that does not have a source"
-                " file."
+                + " file."
             )
 
         return self
@@ -350,7 +350,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing PyTorch version. Please specify the PyTorch version these"
-                " PyTorch state dict weights were created with.",
+                + " PyTorch state dict weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -369,7 +369,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing PyTorch version. Please specify the PyTorch version these"
-                " Torchscript weights were created with.",
+                + " Torchscript weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -388,7 +388,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing TensorFlow version. Please specify the TensorFlow version"
-                " these TensorflowJs weights were created with.",
+                + " these TensorflowJs weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -411,7 +411,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
         if value is None:
             issue_warning(
                 "Missing TensorFlow version. Please specify the TensorFlow version"
-                " these Tensorflow saved model bundle weights were created with.",
+                + " these Tensorflow saved model bundle weights were created with.",
                 value=value,
                 severity=ALERT,
             )
@@ -559,7 +559,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
         ):
             raise ValueError(
                 "Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` !="
-                " 0.0."
+                + " 0.0."
             )
 
         return self
@@ -654,7 +654,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
         if self.min_percentile >= self.max_percentile:
             raise ValueError(
                 f"min_percentile {self.min_percentile} >= max_percentile"
-                f" {self.max_percentile}"
+                + f" {self.max_percentile}"
             )
 
         return self
@@ -760,9 +760,9 @@ class InputTensorDescr(TensorDescrBase):
             if step[bidx] != 0:
                 raise ValueError(
                     "Input shape step has to be zero in the batch dimension (the batch"
-                    " dimension can always be increased, but `step` should specify how"
-                    " to increase the minimal shape to find the largest single batch"
-                    " shape)"
+                    + " dimension can always be increased, but `step` should specify how"
+                    + " to increase the minimal shape to find the largest single batch"
+                    + " shape)"
                 )
         else:
             shape = self.shape
@@ -955,15 +955,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 if ndim_ref != ndim_out_ref:
                     expanded_dim_note = (
                         " Note that expanded dimensions (`scale`: null) are not"
-                        f" counted for {out.name}'sdimensionality here."
+                        + f" counted for {out.name}'sdimensionality here."
                         if None in out.shape.scale
                         else ""
                     )
                     raise ValueError(
                         f"Referenced tensor '{out.shape.reference_tensor}' with"
-                        f" {ndim_ref} dimensions does not match output tensor"
-                        f" '{out.name}' with"
-                        f" {ndim_out_ref} dimensions.{expanded_dim_note}"
+                        + f" {ndim_ref} dimensions does not match output tensor"
+                        + f" '{out.name}' with"
+                        + f" {ndim_out_ref} dimensions.{expanded_dim_note}"
                     )
 
             min_out_shape = self._get_min_shape(out, tensors_by_name)
@@ -977,7 +977,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
                 raise ValueError(
                     f"Minimal shape {min_out_shape} of output {out.name} is too"
-                    f" small{halo_msg}."
+                    + f" small{halo_msg}."
                 )
 
         return self

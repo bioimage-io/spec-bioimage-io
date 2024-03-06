@@ -209,7 +209,7 @@ class ParameterizedSize(Node):
         if (size - self.min) % self.step != 0:
             raise ValueError(
                 f"axis of size {size} is not parameterized by `min + n*step` ="
-                f" `{self.min} + n*{self.step}`"
+                + f" `{self.min} + n*{self.step}`"
             )
 
         return size
@@ -297,7 +297,7 @@ class SizeReference(Node):
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a"
-                " `SizeReference` itself."
+                + " `SizeReference` itself."
             )
         else:
             assert_never(ref_axis.size)
@@ -636,7 +636,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
         ):
             raise ValueError(
                 "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
-                " != 0.0."
+                + " != 0.0."
             )
 
         return self
@@ -919,7 +919,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if n_dims < n_dims_min or n_dims > n_dims_max:
             raise ValueError(
                 f"Expected sample tensor to have {n_dims_min} to"
-                f" {n_dims_max} dimensions, but found {n_dims} (shape: {tensor.shape})."
+                + f" {n_dims_max} dimensions, but found {n_dims} (shape: {tensor.shape})."
             )
 
         return self
@@ -964,7 +964,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if len(dtypes) > 1:
             raise ValueError(
                 "Tensor data descriptions per channel need to agree in their data"
-                f" `type`, but found {dtypes}."
+                + f" `type`, but found {dtypes}."
             )
 
         return value
@@ -985,7 +985,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if len(self.data) != size:
             raise ValueError(
                 f"Got tensor data descriptions for {len(self.data)} channels, but"
-                f" '{a.id}' axis has size {size}."
+                + f" '{a.id}' axis has size {size}."
             )
 
         return self
@@ -994,16 +994,17 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if len(array.shape) != len(self.axes):
             raise ValueError(
                 f"Dimension mismatch: array shape {array.shape} (#{len(array.shape)})"
-                f" incompatible with {len(self.axes)} axes."
+                + f" incompatible with {len(self.axes)} axes."
             )
         return {a.id: array.shape[i] for i, a in enumerate(self.axes)}
 
-    def get_axis_sizes(
-        self, n: int, known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]
-    ) -> Dict[AxisId, int]:
-        ret: Dict[AxisId, int] = {}
-        for a in self.axes:
-            pass
+    # def get_axis_sizes(
+    #     self, n: int, known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]
+    # ) -> Dict[AxisId, int]:
+    #     ret: Dict[AxisId, int] = {}
+    #     for a in self.axes:
+    #         pass
+    #     # TODO: continue implementation here
 
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
@@ -1100,7 +1101,7 @@ def convert_axes(
             if isinstance(size, SizeReference):
                 warnings.warn(
                     "Conversion of channel size from an implicit output shape may by"
-                    " wrong"
+                    + " wrong"
                 )
                 ret.append(
                     ChannelAxis(
@@ -1162,7 +1163,7 @@ def _get_complement_v04_axis(
     if len(complement_axes) > 1:
         raise ValueError(
             f"Expected none or a single complement axis, but axes '{axes}' "
-            f"for tensor dims '{all_axes}' leave '{complement_axes}'."
+            + f"for tensor dims '{all_axes}' leave '{complement_axes}'."
         )
 
     return None if not complement_axes else AxisId(complement_axes[0])
@@ -1374,7 +1375,7 @@ def validate_tensors(
         if array.dtype.name != descr.dtype:
             raise ValueError(
                 f"{e_msg(descr)}.dtype '{array.dtype.name}' does not match described"
-                f" dtype '{descr.dtype}'"
+                + f" dtype '{descr.dtype}'"
             )
 
         for a in descr.axes:
@@ -1386,7 +1387,7 @@ def validate_tensors(
                 if actual_size != a.size:
                     raise ValueError(
                         f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' "
-                        f"has incompatible size {actual_size}, expected {a.size}"
+                        + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
                 _ = a.size.validate_size(actual_size)
@@ -1395,21 +1396,21 @@ def validate_tensors(
                 if ref_tensor_axes is None:
                     raise ValueError(
                         f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
-                        f" reference '{a.size.tensor_id}'"
+                        + f" reference '{a.size.tensor_id}'"
                     )
 
                 ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
                 if ref_axis is None or ref_size is None:
                     raise ValueError(
                         f"{e_msg(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
-                        f" reference '{a.size.tensor_id}.{a.size.axis_id}"
+                        + f" reference '{a.size.tensor_id}.{a.size.axis_id}"
                     )
 
                 if a.unit != ref_axis.unit:
                     raise ValueError(
                         f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires"
-                        " axis and reference axis to have the same `unit`, but"
-                        f" {a.unit}!={ref_axis.unit}"
+                        + " axis and reference axis to have the same `unit`, but"
+                        + f" {a.unit}!={ref_axis.unit}"
                     )
 
                 if actual_size != (
@@ -1419,8 +1420,8 @@ def validate_tensors(
                 ):
                     raise ValueError(
                         f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size"
-                        f" {actual_size} invalid for referenced size {ref_size};"
-                        f" expected {expected_size}"
+                        + f" {actual_size} invalid for referenced size {ref_size};"
+                        + f" expected {expected_size}"
                     )
             else:
                 assert_never(a.size)
@@ -1637,10 +1638,10 @@ class WeightsDescr(Node):
         if len(entries_wo_parent) != 1:
             issue_warning(
                 "Exactly one weights entry may not specify the `parent` field (got"
-                " {value}).That entry is considered the original set of model weights."
-                " Other weight formats are created through conversion of the orignal or"
-                " already converted weights. They have to reference the weights format"
-                " they were converted from as their `parent`.",
+                + " {value}).That entry is considered the original set of model weights."
+                + " Other weight formats are created through conversion of the orignal or"
+                + " already converted weights. They have to reference the weights format"
+                + " they were converted from as their `parent`.",
                 value=len(entries_wo_parent),
             )
 
@@ -1656,7 +1657,7 @@ class WeightsDescr(Node):
             ):  # self reference checked for `parent` field
                 raise ValueError(
                     f"`weights.{wtype}.parent={entry.parent} not in specified weight"
-                    f" formats: {entries}"
+                    + f" formats: {entries}"
                 )
 
         return self
@@ -1774,7 +1775,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {axis.size.min} is too small for"
-                    f" halo {axis.halo}."
+                    + f" halo {axis.halo}."
                 )
 
         elif isinstance(axis.size, SizeReference):
@@ -1782,24 +1783,24 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             if ref not in valid_independent_refs:
                 raise ValueError(
                     "Invalid tensor axis reference at"
-                    f" {field_name}[{i}].axes[{a}].size: {axis.size}."
+                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}."
                 )
             if ref == (tensor_id, axis.id):
                 raise ValueError(
                     "Self-referencing not allowed for"
-                    f" {field_name}[{i}].axes[{a}].size: {axis.size}"
+                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}"
                 )
             if axis.type == "channel":
                 if valid_independent_refs[ref][1].type != "channel":
                     raise ValueError(
                         "A channel axis' size may only reference another fixed size"
-                        " channel axis."
+                        + " channel axis."
                     )
                 if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
                     ref_size = valid_independent_refs[ref][2]
                     assert isinstance(ref_size, int), (
                         "channel axis ref (another channel axis) has to specify fixed"
-                        " size"
+                        + " size"
                     )
                     generated_channel_names = [
                         Identifier(axis.channel_names.format(i=i))
@@ -1812,7 +1813,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             ):
                 raise ValueError(
                     "The units of an axis and its reference axis need to match, but"
-                    f" '{ax_unit}' != '{ref_unit}'."
+                    + f" '{ax_unit}' != '{ref_unit}'."
                 )
             min_size = valid_independent_refs[ref][2]
             if isinstance(min_size, ParameterizedSize):
@@ -1821,7 +1822,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {min_size} is too small for halo"
-                    f" {axis.halo}."
+                    + f" {axis.halo}."
                 )
 
         else:
@@ -1855,7 +1856,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 if ref not in ipt_refs:
                     raise ValueError(
                         f"`reference_tensor` '{ref}' not found. Valid input tensor"
-                        f" references are: {ipt_refs}."
+                        + f" references are: {ipt_refs}."
                     )
 
         for out in self.outputs:
@@ -1867,7 +1868,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 if ref not in ipt_refs and ref not in out_refs:
                     raise ValueError(
                         f"`reference_tensor` '{ref}' not found. Valid tensor references"
-                        f" are: {ipt_refs | out_refs}."
+                        + f" are: {ipt_refs | out_refs}."
                     )
 
         return self
@@ -2240,7 +2241,7 @@ def generate_covers(
         if data.ndim != len(axes):
             raise ValueError(
                 f"tensor shape {data.shape} does not match described axes"
-                f" {[a.id for a in axes]}"
+                + f" {[a.id for a in axes]}"
             )
 
         axes = [deepcopy(a) for a, s in zip(axes, data.shape) if s != 1]
