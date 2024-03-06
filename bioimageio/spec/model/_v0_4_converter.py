@@ -34,11 +34,6 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
         data["format_version"] = "0.4.9"
 
     if data["format_version"] == "0.4.9":
-        if isinstance(v := data.get("version"), str) and v.count(".") == 2:
-            vmaj, vmin, vpatch = v.split(".")
-            if vmaj == "0" and vpatch == "0" and vmin.isdecimal():
-                data["version"] = int(vmin)
-
         if isinstance(config := data.get("config"), dict) and isinstance(
             bconfig := config.get("bioimageio"), dict
         ):
