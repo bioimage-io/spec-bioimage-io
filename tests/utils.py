@@ -201,7 +201,7 @@ def check_bioimageio_yaml(
         ),
     ):
         # these fields may intentionally be manipulated
-        exclude_from_comp |= {"sem_ver", "id_emoji", "id"}
+        exclude_from_comp |= {"version_number", "id_emoji", "id"}
 
     deserialized = rd.model_dump(
         mode="json", exclude=exclude_from_comp, exclude_unset=True

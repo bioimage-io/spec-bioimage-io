@@ -178,6 +178,10 @@ KNOWN_INVALID_AS_LATEST = {
     "zero/WGAN_ZeroCostDL4Mic.ipynb/latest/rdf.yaml",
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
+    "10.5281/zenodo.6348728/6348729/rdf.yaml": {"cite"},  # doi prefixed
+    "10.5281/zenodo.6406803/6406804/rdf.yaml": {"cite"},  # doi prefixed
+    "10.5281/zenodo.6338614/6338615/rdf.yaml": {"cite"},  # doi prefixed
+    "10.5281/zenodo.5914248/8186255/rdf.yaml": {"cite"},  # doi prefixed
     "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
     "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
     "10.5281/zenodo.7315440/7315441/rdf.yaml": {

@@ -50,7 +50,7 @@ def check_url(url: str) -> None:
     else:
         if response.status_code == 302:  # found
             pass
-        elif response.status_code in (301, 308):
+        elif response.status_code in (301, 303, 308):
             issue_warning(
                 "URL redirected ({status_code}): consider updating {value} with new"
                 + " location: {location}",
