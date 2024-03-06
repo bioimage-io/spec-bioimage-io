@@ -8,7 +8,7 @@ from typing import List, Optional, Union
 from pydantic import DirectoryPath
 
 from ._settings import settings
-from .io_basics import BIOIMAGEIO_YAML, AbsoluteDirectory
+from .io_basics import AbsoluteDirectory, FileName
 from .root_url import RootHttpUrl
 from .warning_levels import WarningLevel
 
@@ -25,12 +25,14 @@ class ValidationContext:
     warning_level: WarningLevel = 50
     """raise warnings of severity s as validation errors if s >= `warning_level`"""
 
-    file_name: str = BIOIMAGEIO_YAML
+    file_name: Optional[FileName] = None
     """file name of the bioimageio Yaml file"""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perfrom validation that may require downloading remote files.
-    Existence of some local files is still being checked."""
+    """wether or not to perfrom validation that requires file io,
+    e.g. downloading a remote files.
+
+    Existence of local absolute file paths is still being checked."""
 
     def replace(
         self,

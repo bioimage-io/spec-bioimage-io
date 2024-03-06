@@ -137,7 +137,7 @@ def _prepare_resource_package(
     with context:
         package_content = get_resource_package_content(
             descr,
-            bioimageio_yaml_file_name=bioimageio_yaml_file_name,
+            bioimageio_yaml_file_name=bioimageio_yaml_file_name or BIOIMAGEIO_YAML,
             weights_priority_order=weights_priority_order,
         )
 

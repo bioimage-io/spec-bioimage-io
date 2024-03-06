@@ -87,7 +87,7 @@ AbsolutePathT = TypeVar(
 )
 
 
-class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT]):
+class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True):
     _absolute: AbsolutePathT = PrivateAttr()
 
     @property
@@ -103,7 +103,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT]):
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
 
-        self._absolute = self.get_absolute(validation_context_var.get().root)
+        self._absolute = (  # pyright: ignore[reportAttributeAccessIssue]
+            self.get_absolute(validation_context_var.get().root)
+        )
         super().model_post_init(__context)
 
     # @property
@@ -168,35 +170,49 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT]):
 
 
 class RelativePath(
-    RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]]
+    RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]], frozen=True
 ):
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl"
     ) -> "AbsoluteFilePath | AbsoluteDirectory | HttpUrl":
         absolute = self._get_absolute_impl(root)
-        if isinstance(absolute, Path) and not absolute.exists():
+        if (
+            isinstance(absolute, Path)
+            and validation_context_var.get().perform_io_checks
+            and not absolute.exists()
+        ):
             raise ValueError(f"{absolute} does not exist")
 
         return absolute
 
 
-class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]]):
+class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl"
     ) -> "AbsoluteFilePath | HttpUrl":
         absolute = self._get_absolute_impl(root)
-        if isinstance(absolute, Path) and not absolute.is_file():
+        if (
+            isinstance(absolute, Path)
+            and validation_context_var.get().perform_io_checks
+            and not absolute.is_file()
+        ):
             raise ValueError(f"{absolute} does not point to an existing file")
 
         return absolute
 
 
-class RelativeDirectory(RelativePathBase[Union[AbsoluteDirectory, HttpUrl]]):
+class RelativeDirectory(
+    RelativePathBase[Union[AbsoluteDirectory, HttpUrl]], frozen=True
+):
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl"
     ) -> "AbsoluteDirectory | HttpUrl":
         absolute = self._get_absolute_impl(root)
-        if isinstance(absolute, Path) and not absolute.is_dir():
+        if (
+            isinstance(absolute, Path)
+            and validation_context_var.get().perform_io_checks
+            and not absolute.is_dir()
+        ):
             raise ValueError(f"{absolute} does not point to an existing directory")
 
         return absolute

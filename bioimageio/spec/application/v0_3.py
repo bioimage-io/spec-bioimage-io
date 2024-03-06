@@ -21,6 +21,7 @@ from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_3 import ResourceId as ResourceId
 from ..generic.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import Version as Version
 
 
 class ApplicationDescr(GenericDescrBase, title="bioimage.io application specification"):

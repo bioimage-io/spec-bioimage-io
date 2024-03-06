@@ -19,6 +19,7 @@ import pytest
 from deepdiff import DeepDiff
 from pydantic import (
     DirectoryPath,
+    RootModel,
     TypeAdapter,
     ValidationError,
     create_model,  # type: ignore
@@ -82,6 +83,7 @@ def check_type(
     type_: Union[Any, Type[Any]],
     value: Any,
     expected: Any = unset,
+    expected_root: Any = unset,
     expected_deserialized: Any = unset,
     *,
     is_invalid: bool = False,
@@ -94,6 +96,10 @@ def check_type(
 
     if expected is not unset:
         assert actual == expected, (actual, expected)
+
+    if expected_root is not unset:
+        assert isinstance(actual, RootModel)
+        assert actual.root == expected_root, (actual.root, expected_root)
 
     if expected_deserialized is not unset:
         actual_deserialized = type_adapter.dump_python(
@@ -110,6 +116,13 @@ def check_type(
 
     if expected is not unset:
         assert actual_node.value == expected, (actual_node.value, expected)
+
+    if expected_root is not unset:
+        assert isinstance(actual_node.value, RootModel)
+        assert actual_node.value.root == expected_root, (
+            actual_node.value.root,
+            expected_root,
+        )
 
     if expected_deserialized is not unset:
         node_deserialized = actual_node.model_dump(mode="json", exclude_unset=True)

@@ -376,7 +376,9 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
         "size": {"tensor_id": "input_1", "axis_id": "z"},
         "halo": 2,
     }
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "failed", summary.format()
 
 
@@ -400,7 +402,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892", version=1)
+    model_data["parent"] = dict(id="10.5281/zenodo.5764892", version_number=1)
     summary = validate_format(model_data)
     assert summary.status == "passed", summary.format()
 

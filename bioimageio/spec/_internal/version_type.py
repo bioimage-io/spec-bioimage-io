@@ -1,26 +1,19 @@
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 import packaging.version
-from pydantic import PrivateAttr
-from typing_extensions import Annotated
-
-from .field_validation import AfterValidator
-from .validated_string import ValidatedString
+from pydantic import PrivateAttr, RootModel
 
 
-def _validate_version_str(
-    value: str,
-) -> str:
-    return str(packaging.version.Version(value))
-
-
-class Version(ValidatedString[Annotated[str, AfterValidator(_validate_version_str)]]):
+class Version(RootModel[Union[str, int, float]]):
     """wraps a packaging.version.Version instance for validation in pydantic models"""
 
     _version: packaging.version.Version = PrivateAttr()
 
+    def __str__(self):
+        return str(self._version)
+
     def model_post_init(self, __context: Any) -> None:
-        self._version = packaging.version.Version(self.root)
+        self._version = packaging.version.Version(str(self.root))
         return super().model_post_init(__context)
 
     # the properties below are adopted from and mirror properties of packaging.version.Version

@@ -15,6 +15,7 @@ from .io import FileSource as FileSource
 from .io import ImportantFileSource as ImportantFileSource
 from .io import PermissiveFileSource as PermissiveFileSource
 from .io import RelativeFilePath as RelativeFilePath
+from .io import Sha256 as Sha256
 from .io_basics import AbsoluteDirectory as AbsoluteDirectory
 from .io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .io_basics import FileName as FileName
@@ -22,6 +23,7 @@ from .license_id import DeprecatedLicenseId as DeprecatedLicenseId
 from .license_id import LicenseId as LicenseId
 from .url import HttpUrl as HttpUrl
 from .validated_string import ValidatedString
+from .version_type import Version as Version
 
 S = TypeVar("S", bound=Sequence[Any])
 NotEmpty = Annotated[S, annotated_types.MinLen(1)]

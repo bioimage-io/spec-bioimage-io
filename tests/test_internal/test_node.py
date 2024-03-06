@@ -55,8 +55,16 @@ def test_warn(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
         (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: ALERT}, True),
         (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: WARNING}, False),
         (NESTED_DICT_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
-        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: WARNING}, False),
-        (NESTED_NODE_DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
+        (
+            NESTED_NODE_DUMMY_INPUT,
+            {WARNING_LEVEL_CONTEXT_KEY: WARNING},
+            True,  # no reevaluation of node instance
+        ),
+        (
+            NESTED_NODE_DUMMY_INPUT,
+            {WARNING_LEVEL_CONTEXT_KEY: INFO},
+            True,  # no reevaluation of node instance
+        ),
     ],
 )
 def test_warn_nested(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):

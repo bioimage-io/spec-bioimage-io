@@ -16,6 +16,7 @@ from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
+from ..generic.v0_2 import Version as Version
 
 
 class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):

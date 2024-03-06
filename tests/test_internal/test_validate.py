@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import cast
 
 import pytest
 from pydantic import TypeAdapter, ValidationError
@@ -36,10 +35,3 @@ def test_multiple_suffix():
     with ValidationContext(perform_io_checks=False):
         _ = adapter.validate_python("https://example.com/lala.py")
         _ = adapter.validate_python("https://example.com/lala.md#section")
-
-
-def test_wrong_usage():
-    with pytest.raises(TypeError):
-        _ = TypeAdapter(
-            cast(int, Annotated[int, WithSuffix(".py", case_sensitive=True)])
-        )

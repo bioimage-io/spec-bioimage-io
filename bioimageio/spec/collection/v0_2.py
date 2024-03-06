@@ -39,6 +39,7 @@ from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
+from ..generic.v0_2 import Version as Version
 from ..model import ModelDescr_v0_4, ModelDescr_v0_5
 from ..notebook import NotebookDescr_v0_2, NotebookDescr_v0_3
 
@@ -229,7 +230,9 @@ class CollectionDescr(
             entry_descr = build_description_impl(
                 entry_data,
                 context=context.replace(root=entry_root, file_name=entry_file_name),
-                get_rd_class=partial(get_rd_class_impl, _ENTRY_DESCR_MAP),
+                get_rd_class=partial(
+                    get_rd_class_impl, descriptions_map=_ENTRY_DESCR_MAP
+                ),
             )
             assert entry_descr.validation_summary is not None
             if isinstance(entry_descr, InvalidDescr):

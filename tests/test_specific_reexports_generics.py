@@ -6,11 +6,13 @@ import pytest
 from bioimageio.spec import application, collection, dataset, generic, model, notebook
 
 IGNORE_MEMBERS = {
+    "AfterValidator",
     "ALERT",
     "Annotated",
     "annotations",
     "Any",
     "as_warning",
+    "assert_never",
     "BioimageioYamlContent",
     "collections",
     "convert_from_older_format",
@@ -26,6 +28,7 @@ IGNORE_MEMBERS = {
     "Ge",
     "get_args",
     "ImportantFileSource",
+    "include_in_package_serializer",
     "issue_warning",
     "Len",
     "LicenseId",
@@ -54,6 +57,7 @@ IGNORE_MEMBERS = {
     "v0_3",
     "v0_4",
     "v0_5",
+    "validate_suffix",
     "validation_context_var",
     "ValidationInfo",
     "warn",

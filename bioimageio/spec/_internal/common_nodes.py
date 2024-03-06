@@ -4,6 +4,7 @@ import collections.abc
 import traceback
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -377,11 +378,21 @@ class ResourceDescrBase(
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))
 
+        if context.file_name is None:
+            source_name = "in-memory"
+        else:
+            try:
+                source_path = RelativeFilePath(Path(context.file_name)).get_absolute(
+                    context.root
+                )
+            except ValueError:
+                source_name = context.file_name
+            else:
+                source_name = str(source_path)
+
         rd._validation_summary = ValidationSummary(
             name="bioimageio.spec validation",
-            source_name=str(
-                RelativeFilePath(context.file_name).get_absolute(context.root)
-            ),
+            source_name=source_name,
             status="failed" if errors else "passed",
             details=[
                 ValidationDetail(
