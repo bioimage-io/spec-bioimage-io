@@ -301,7 +301,7 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     if has_valid_rdf_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
-            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+            + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
         )
 
     return src
@@ -337,8 +337,8 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
         else:
             warnings.warn(
                 "dumping with mode='python' is currently not fully supported for "
-                "fields that are included when packaging; returned objects are "
-                "standard python objects"
+                + "fields that are included when packaging; returned objects are "
+                + "standard python objects"
             )
 
         return unpackaged  # return unpackaged file source
@@ -360,7 +360,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
     if fname == packaging_context.bioimageio_yaml_file_name:
         raise ValueError(
             f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
-            "not allowed for a file to be packaged"
+            + "not allowed for a file to be packaged"
         )
 
     fsrcs = packaging_context.file_sources
@@ -408,7 +408,7 @@ def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
     if not has_valid_rdf_name(src):
         raise ValueError(
             f"'{src}' does not have a valid filename to identify"
-            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+            + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
         )
 
     return src
@@ -418,7 +418,7 @@ def ensure_is_valid_rdf_name(file_name: FileName) -> FileName:
     if not is_valid_rdf_name(file_name):
         raise ValueError(
             f"'{file_name}' is not a valid filename to identify"
-            f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
+            + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
         )
 
     return file_name
@@ -558,9 +558,9 @@ class FileDescr(Node):
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
             raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got"
-                f" {actual_sha}. Update expected `sha256` or point to the matching"
-                " file."
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "
+                + f"{actual_sha}. Update expected `sha256` or point to the matching "
+                + "file."
             )
 
         return self

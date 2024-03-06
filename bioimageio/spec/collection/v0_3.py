@@ -148,8 +148,8 @@ class CollectionEntry(Node, extra="allow"):
         if self._descr is None:
             issue_warning(
                 "Collection entry description not set. Is this entry part of a"
-                " Collection? A collection entry only has its `descr` set if it is part"
-                " of a valid collection description.",
+                + " Collection? A collection entry only has its `descr` set if it is part"
+                + " of a valid collection description.",
                 value=None,
                 severity=ALERT,
             )
@@ -224,7 +224,7 @@ class CollectionDescr(
                 if (seen_i := seen_entry_ids.get(entry_id)) is not None:
                     raise ValueError(
                         f"Dublicate `id` '{entry_data['id']}' in"
-                        f" collection[{seen_i}]/collection[{i}]"
+                        + f" collection[{seen_i}]/collection[{i}]"
                     )
 
                 seen_entry_ids[entry_id] = i
@@ -238,7 +238,7 @@ class CollectionDescr(
             if type_ == "collection":
                 raise ValueError(
                     f"collection[{i}].type may not be 'collection'; collections may not"
-                    " be nested!"
+                    + " be nested!"
                 )
 
             if (
@@ -261,8 +261,8 @@ class CollectionDescr(
             if isinstance(entry_descr, InvalidDescr):
                 raise ValueError(
                     "Invalid collection entry"
-                    f" collection[{i}]:\n"
-                    f"{entry_descr.validation_summary.format(hide_source=True, hide_env=True, root_loc=('collection', i))}"
+                    + f" collection[{i}]:\n"
+                    + f"{entry_descr.validation_summary.format(hide_source=True, hide_env=True, root_loc=('collection', i))}"
                 )
             elif isinstance(
                 entry_descr, get_args(EntryDescr)
@@ -271,7 +271,7 @@ class CollectionDescr(
             else:
                 raise ValueError(
                     f"{entry_descr.type} {entry_descr.format_version} entries "
-                    f"are not allowed in {self.type} {self.format_version}."
+                    + f"are not allowed in {self.type} {self.format_version}."
                 )
         return self
 

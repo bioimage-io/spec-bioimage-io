@@ -75,7 +75,7 @@ def get_resource_package_content(
         else:
             raise ValueError(
                 "None of the weight formats in `weights_priority_order` is present in"
-                " the given model."
+                + " the given model."
             )
 
         assert isinstance(w, dict), type(w)
@@ -253,7 +253,7 @@ def save_bioimageio_package(
     if isinstance((exported := load_description(output_path)), InvalidDescr):
         raise ValueError(
             f"Exported package '{output_path}' is invalid:"
-            f" {exported.validation_summary}"
+            + f" {exported.validation_summary}"
         )
 
     return output_path

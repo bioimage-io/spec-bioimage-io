@@ -426,7 +426,7 @@ class GenericDescr(
         if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
                 f"Use the {value} description instead of this generic description for"
-                f" your '{value}' resource."
+                + f" your '{value}' resource."
             )
 
         return value

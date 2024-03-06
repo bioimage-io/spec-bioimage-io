@@ -53,7 +53,7 @@ def check_url(url: str) -> None:
         elif response.status_code in (301, 308):
             issue_warning(
                 "URL redirected ({status_code}): consider updating {value} with new"
-                " location: {location}",
+                + " location: {location}",
                 value=url,
                 msg_context={
                     "status_code": response.status_code,
