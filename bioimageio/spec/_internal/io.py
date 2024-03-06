@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import hashlib
 import os
-import pathlib
 import sys
 import warnings
+from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PurePath
 from typing import (
     Any,
     Dict,
+    Generic,
     List,
     Optional,
     Sequence,
@@ -32,6 +33,8 @@ from pydantic import (
     FilePath,
     GetCoreSchemaHandler,
     PlainSerializer,
+    PrivateAttr,
+    RootModel,
     SerializationInfo,
     StringConstraints,
     TypeAdapter,
@@ -79,73 +82,60 @@ Sha256 = ValidatedString[
     ]
 ]
 
+AbsolutePathT = TypeVar(
+    "AbsolutePathT", bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath]
+)
 
-# TODO: Use RootModel?
-class RelativePath:
-    path: PurePosixPath
-    absolute: Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath]
-    """the absolute path (resolved at time of initialization with the root of the ValidationContext)"""
 
-    def __init__(self, path: Union[str, Path, RelativePath]) -> None:
-        super().__init__()
-        if isinstance(path, RelativePath):
-            self.path = path.path
-            self.absolute = path.absolute
-        else:
-            if not isinstance(path, Path):
-                path = Path(path)
-
-            if path.is_absolute():
-                raise ValueError(f"{path} is an absolute path")
-
-            self.path = PurePosixPath(path.as_posix())
-            root = validation_context_var.get().root
-            if isinstance(root, RootHttpUrl):
-                self.absolute = self.get_absolute(root)
-            else:
-                self.absolute = self.get_absolute(root)
+class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT]):
+    _absolute: AbsolutePathT = PrivateAttr()
 
     @property
-    def __members(self):
-        return (self.path,)
+    def path(self) -> PurePath:
+        return self.root
 
-    def __eq__(self, __value: object) -> bool:
-        return type(__value) is type(self) and self.__members == __value.__members
+    @property
+    def absolute(self) -> AbsolutePathT:
+        """the absolute path/url (resolved at time of initialization with the root of the ValidationContext)"""
+        return self._absolute
 
-    def __hash__(self) -> int:
-        return hash(self.__members)
+    def model_post_init(self, __context: Any) -> None:
+        if self.root.is_absolute():
+            raise ValueError(f"{self.root} is an absolute path.")
+
+        self._absolute = self.get_absolute(validation_context_var.get().root)
+        super().model_post_init(__context)
+
+    # @property
+    # def __members(self):
+    #     return (self.path,)
+
+    # def __eq__(self, __value: object) -> bool:
+    #     return type(__value) is type(self) and self.__members == __value.__members
+
+    # def __hash__(self) -> int:
+    #     return hash(self.__members)
 
     def __str__(self) -> str:
-        return self.path.as_posix()
+        return self.root.as_posix()
 
     def __repr__(self) -> str:
-        return f"RelativePath('{self.path.as_posix()}')"
+        return f"RelativePath('{self}')"
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source_type: Any, _handler: GetCoreSchemaHandler
-    ):
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.union_schema(
-                [
-                    core_schema.is_instance_schema(cls),
-                    core_schema.is_instance_schema(pathlib.Path),
-                    core_schema.str_schema(),
-                ]
-            ),
-            serialization=core_schema.to_string_ser_schema(),
-        )
-
+    @abstractmethod
     def get_absolute(
         self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl]
-    ) -> Union[HttpUrl, AbsoluteFilePath]:
-        if isinstance(root, pathlib.Path):
-            return (root / self.path).absolute()
+    ) -> AbsolutePathT: ...
+
+    def _get_absolute_impl(
+        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl]
+    ) -> Union[Path, HttpUrl]:
+        if isinstance(root, Path):
+            return (root / self.root).absolute()
 
         parsed = urlsplit(str(root))
         path = list(parsed.path.strip("/").split("/"))
-        rel_path = self.path.as_posix().strip("/")
+        rel_path = self.root.as_posix().strip("/")
         if (
             parsed.netloc == "zenodo.org"
             and parsed.path.startswith("/api/records/")
@@ -168,37 +158,48 @@ class RelativePath:
         )
 
     @classmethod
-    def _validate(cls, value: Union[pathlib.Path, str]):
+    def _validate(cls, value: Union[PurePath, str]):
         if isinstance(value, str) and (
             value.startswith("https://") or value.startswith("http://")
         ):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
-        ret = cls(value)
-        if ret.path.is_absolute():
-            raise ValueError(f"{value} is an absolute path.")
-
-        return ret
+        return cls(PurePath(value))
 
 
-class RelativeFilePath(RelativePath):
-    absolute: Union[AbsoluteFilePath, HttpUrl]
-    """the absolute file path (resolved at time of initialization with the root of the ValidationContext)"""
+class RelativePath(
+    RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]]
+):
+    def get_absolute(
+        self, root: "RootHttpUrl | Path | AnyUrl"
+    ) -> "AbsoluteFilePath | AbsoluteDirectory | HttpUrl":
+        absolute = self._get_absolute_impl(root)
+        if isinstance(absolute, Path) and not absolute.exists():
+            raise ValueError(f"{absolute} does not exist")
 
-    @staticmethod
-    def _exists_localy(path: pathlib.Path) -> None:
-        if not path.is_file():
-            raise ValueError(f"{path} does not point to an existing file")
+        return absolute
 
 
-class RelativeDirectory(RelativePath):
-    absolute: Union[AbsoluteDirectory, HttpUrl]
-    """the absolute directory (resolved at time of initialization with the root of the ValidationContext)"""
+class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]]):
+    def get_absolute(
+        self, root: "RootHttpUrl | Path | AnyUrl"
+    ) -> "AbsoluteFilePath | HttpUrl":
+        absolute = self._get_absolute_impl(root)
+        if isinstance(absolute, Path) and not absolute.is_file():
+            raise ValueError(f"{absolute} does not point to an existing file")
 
-    @staticmethod
-    def _exists_locally(path: pathlib.Path) -> None:
-        if not path.is_dir():
-            raise ValueError(f"{path} does not point to an existing directory")
+        return absolute
+
+
+class RelativeDirectory(RelativePathBase[Union[AbsoluteDirectory, HttpUrl]]):
+    def get_absolute(
+        self, root: "RootHttpUrl | Path | AnyUrl"
+    ) -> "AbsoluteDirectory | HttpUrl":
+        absolute = self._get_absolute_impl(root)
+        if isinstance(absolute, Path) and not absolute.is_dir():
+            raise ValueError(f"{absolute} does not point to an existing directory")
+
+        return absolute
 
 
 FileSource = Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl]

@@ -4,27 +4,25 @@ from typing import Any
 
 import pytest
 
-from bioimageio.spec._internal.io import RelativePath
+from bioimageio.spec._internal.io import RelativeFilePath
 from bioimageio.spec._internal.types import Datetime, SiUnit
 from tests.utils import check_type
 
 
-@pytest.mark.parametrize("path", ["a.test", "there/b", "./here/or/there/c"])
-def test_relative_path(path: str):
-    p = RelativePath(path)
-    p2 = RelativePath(Path(path))
-    assert p == p2
-    p3 = RelativePath(Path(path).as_posix())
-    assert p == p3
+@pytest.mark.parametrize("path", [Path(__file__), Path()])
+def test_relative_path(path: Path):
+    with pytest.raises(ValueError):
+        _ = RelativeFilePath(path.absolute())
 
     with pytest.raises(ValueError):
-        _ = RelativePath(Path(path).absolute())
+        _ = RelativeFilePath(
+            str(path.absolute())  # pyright: ignore[reportArgumentType]
+        )
 
     with pytest.raises(ValueError):
-        _ = RelativePath(str(Path(path).absolute()))
-
-    with pytest.raises(ValueError):
-        _ = RelativePath(Path(path).absolute().as_posix())
+        _ = RelativeFilePath(
+            path.absolute().as_posix()  # pyright: ignore[reportArgumentType]
+        )
 
 
 @pytest.mark.parametrize("value", ["lx·s", "kg/m^2·s^-2"])

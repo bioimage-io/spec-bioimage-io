@@ -5,7 +5,6 @@ from typing import Any, Dict, Type
 import pytest
 
 from bioimageio.spec._internal.common_nodes import Node
-from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
 from bioimageio.spec.generic.v0_2 import (
