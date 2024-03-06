@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-from functools import partial
 from pathlib import Path, PurePath
 from typing import Any, Dict, Union
 
 import pytest
-from pydantic import AfterValidator, FilePath, TypeAdapter, ValidationError
-from typing_extensions import Annotated
+from pydantic import (
+    FilePath,
+    TypeAdapter,
+    ValidationError,
+)
+from typing_extensions import Annotated, assert_never
 
 from bioimageio.spec._internal.io import (
     RelativeFilePath,
     WithSuffix,
-    include_in_package_serializer,
-    include_in_package_serializer_json,
     validate_suffix,
 )
 from bioimageio.spec._internal.io_basics import AbsoluteFilePath
-from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
@@ -24,7 +24,7 @@ from bioimageio.spec.generic.v0_3 import DocumentationSource, GenericDescr
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node
 
-EXAMPLE_COM = RootHttpUrl("https://example.com/")
+EXAMPLE_COM = "https://example.com/"
 EXAMPLE_COM_FILE = "https://example.com/file"
 
 
@@ -40,7 +40,7 @@ EXAMPLE_COM_FILE = "https://example.com/file"
             name="my name",
             type="my_type",
             unknown_extra_field="present",
-            version=1,
+            version="1",
         ),
         dict(
             attachments={"files": [EXAMPLE_COM_FILE], "something": 42},
@@ -51,7 +51,7 @@ EXAMPLE_COM_FILE = "https://example.com/file"
             license="BSD-2-Clause-FreeBSD",
             name="your name",
             type="my_type",
-            version=2,
+            version="2",
         ),
     ],
 )
@@ -142,62 +142,60 @@ def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]
     return validate_suffix(value, ".md", case_sensitive=True)
 
 
-DummyDocumentationSource = Annotated[
-    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    # AfterValidator(partial(validate_suffix, suffix=".md", case_sensitive=True)),
-    AfterValidator(validate_md_suffix),
-    include_in_package_serializer,
-]
-
-
 @pytest.mark.parametrize(
     "src,adapter",
     [
         (UNET2D_ROOT / "README.md", a)
         for a in [
-            # TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
-            # TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
-            # TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
-            # TypeAdapter(
-            #     Annotated[
-            #         Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
-            #     ]
-            # ),
-            # TypeAdapter(
-            #     Annotated[
-            #         Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-            #         WithSuffix(".md", case_sensitive=True),
-            #     ]
-            # ),
-            TypeAdapter(DummyDocumentationSource),
-            # TypeAdapter(DocumentationSource),
-            # TypeAdapter(
-            #     Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
-            # ),
+            TypeAdapter(
+                Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]
+            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(
+                Annotated[Path, WithSuffix(".md", case_sensitive=True)]
+            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(
+                Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]
+            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(
+                Annotated[
+                    Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
+                ]
+            ),
+            TypeAdapter(
+                Annotated[
+                    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+                    WithSuffix(".md", case_sensitive=True),
+                ]
+            ),
+            TypeAdapter(DocumentationSource),
+            TypeAdapter(
+                Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
+            ),
+        ]
+    ]
+    + [
+        (text_md_url, a)
+        for a in [
+            TypeAdapter(
+                Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]
+            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(
+                Annotated[
+                    Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
+                ]
+            ),
+            TypeAdapter(
+                Annotated[
+                    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+                    WithSuffix(".md", case_sensitive=True),
+                ]
+            ),
+            TypeAdapter(DocumentationSource),
+            TypeAdapter(
+                Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
+            ),
         ]
     ],
-    # + [
-    #     (text_md_url, a)
-    #     for a in [
-    #         TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
-    #         TypeAdapter(
-    #             Annotated[
-    #                 Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
-    #             ]
-    #         ),
-    #         TypeAdapter(
-    #             Annotated[
-    #                 Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    #                 WithSuffix(".md", case_sensitive=True),
-    #             ]
-    #         ),
-    #         TypeAdapter(DummyDocumentationSource),
-    #         TypeAdapter(DocumentationSource),
-    #         TypeAdapter(
-    #             Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
-    #         ),
-    #     ]
-    # ],
 )
 def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
     with ValidationContext(perform_io_checks=False):
@@ -205,8 +203,20 @@ def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
 
     assert isinstance(valid, type(src))
 
-    data = adapter.dump_python(valid, mode="python")
-    assert data == src
-    data = adapter.dump_python(valid, mode="json")
-    expected = src.as_posix() if isinstance(src, Path) else str(src)
-    assert data == expected, (data, expected)
+    # dump_python(..., mode="python") returns RootModel's as is for some TypeAdapters based on Unions
+    # see https://github.com/pydantic/pydantic/issues/8963
+    # obj = adapter.dump_python(valid, mode="python")
+    # if isinstance(src, Path):
+    #     assert obj == src
+    # elif isinstance(src, HttpUrl):
+    #     assert obj == str(src)
+    # else:
+    #     assert_never(src)
+
+    json_obj = adapter.dump_python(valid, mode="json")
+    if isinstance(src, Path):
+        assert json_obj == str(src)
+    elif isinstance(src, HttpUrl):
+        assert json_obj == str(src)
+    else:
+        assert_never(src)

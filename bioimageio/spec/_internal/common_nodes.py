@@ -137,7 +137,7 @@ class StringNode(collections.UserString, ABC):
     def _serialize(self) -> str:
         # serialize inner node to call _package when needed
         if self._node is not None:
-            _ = self._node.model_dump()
+            _ = self._node.model_dump(mode="json")
 
         return self.data
 

@@ -264,7 +264,7 @@ def model_data():
             ),
             type="model",
         )
-        data = model.model_dump()
+        data = model.model_dump(mode="json")
         assert data["documentation"] == str(UNET2D_ROOT / "README.md"), (
             data["documentation"],
             str(UNET2D_ROOT / "README.md"),

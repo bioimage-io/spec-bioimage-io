@@ -4,14 +4,13 @@ import hashlib
 import os
 import pathlib
 import sys
+import warnings
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
-from functools import partial
-from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
+from pathlib import Path, PurePath, PurePosixPath
 from typing import (
     Any,
-    Callable,
     Dict,
     List,
     Optional,
@@ -34,10 +33,8 @@ from pydantic import (
     GetCoreSchemaHandler,
     PlainSerializer,
     SerializationInfo,
-    SerializerFunctionWrapHandler,
     StringConstraints,
     TypeAdapter,
-    WrapSerializer,
     model_validator,
 )
 from pydantic_core import core_schema
@@ -204,7 +201,7 @@ class RelativeDirectory(RelativePath):
             raise ValueError(f"{path} does not point to an existing directory")
 
 
-FileSource = Union[HttpUrl, FilePath, RelativeFilePath, pydantic.HttpUrl]
+FileSource = Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl]
 PermissiveFileSource = Union[FileSource, str]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
@@ -293,16 +290,44 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     return src
 
 
-def _package(value: FileSource, info: SerializationInfo) -> Union[FileSource, FileName]:
+def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, FileName]:
     if (packaging_context := packaging_context_var.get()) is None:
-        if info.mode_is_json():
-            if isinstance(value, Path):
-                return value.as_posix()
-            else:
-                return str(value)
+        # convert to standard python obj
+        # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
+        #   this function returns one RootModel, paths are "further serialized" by
+        #   returning the 'root' attribute, which is incorrect.
+        #   see https://github.com/pydantic/pydantic/issues/8963
+        #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
+        if isinstance(value, Path):
+            unpackaged = value
+        elif isinstance(value, HttpUrl):
+            unpackaged = value.root
+        elif isinstance(value, RelativeFilePath):
+            unpackaged = Path(value.path)
+        elif isinstance(value, AnyUrl):
+            unpackaged = str(value)
         else:
-            return value
+            assert_never(value)
 
+        if info.mode_is_json():
+            # convert to json value  # TODO: remove and let pydantic do this?
+            if isinstance(unpackaged, Path):
+                unpackaged = str(unpackaged)
+            elif isinstance(unpackaged, str):
+                pass
+            else:
+                assert_never(unpackaged)
+        else:
+            warnings.warn(
+                "dumping with mode='python' is currently not fully supported for "
+                "fields that are included when packaging; returned objects are "
+                "standard python objects"
+            )
+
+        return unpackaged  # return unpackaged file source
+
+    # package the file source:
+    # add it to the current package's file sources and return its collision free file name
     if isinstance(value, RelativeFilePath):
         src = value.absolute
     elif isinstance(value, pydantic.AnyUrl):
@@ -342,15 +367,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[FileSource, Fi
     return fname
 
 
-# def _package_json(value: Union[FileSource, FileName]) -> str:
-#     if isinstance(value, FileName):
-#         return value
-#     else:
-#         return str(_package(value))
-
-
 include_in_package_serializer = PlainSerializer(_package, when_used="unless-none")
-include_in_package_serializer_json = "lala"
 ImportantFileSource = Annotated[
     FileSource,
     AfterValidator(wo_special_file_name),

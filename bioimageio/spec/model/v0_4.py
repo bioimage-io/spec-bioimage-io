@@ -47,7 +47,6 @@ from .._internal.io import (
     WithSuffix,
     download,
     include_in_package_serializer,
-    include_in_package_serializer_json,
 )
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
@@ -135,7 +134,6 @@ class CallableFromFile(StringNode):
     source_file: Annotated[
         Union[HttpUrl, RelativeFilePath],
         include_in_package_serializer,
-        include_in_package_serializer_json,
     ]
     """∈📦 Python module that implements `callable_name`"""
     callable_name: Identifier

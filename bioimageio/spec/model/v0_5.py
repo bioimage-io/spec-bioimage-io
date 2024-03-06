@@ -381,10 +381,10 @@ class IndexTimeSpaceAxisBase(AxisBase):
         Field(
             examples=[
                 10,
-                ParameterizedSize(min=32, step=16).model_dump(),
+                ParameterizedSize(min=32, step=16).model_dump(mode="json"),
                 SizeReference(
                     tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(),
+                ).model_dump(mode="json"),
             ]
         ),
     ]
@@ -2105,7 +2105,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             config=src.config,
             covers=src.covers,
             description=src.description,
-            documentation=src.documentation,# pyright: ignore[reportArgumentType]
+            documentation=src.documentation,  # pyright: ignore[reportArgumentType]
             format_version="0.5.0",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,

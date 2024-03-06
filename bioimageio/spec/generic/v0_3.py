@@ -23,7 +23,6 @@ from .._internal.io import (
     BioimageioYamlContent,
     YamlValue,
     include_in_package_serializer,
-    include_in_package_serializer_json,
     validate_suffix,
 )
 from .._internal.io import FileDescr as FileDescr
@@ -65,7 +64,6 @@ DocumentationSource = Annotated[
     Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
     AfterValidator(partial(validate_suffix, suffix=".md", case_sensitive=True)),
     include_in_package_serializer,
-    include_in_package_serializer_json,
 ]
 
 

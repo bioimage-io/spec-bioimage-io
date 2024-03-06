@@ -17,7 +17,7 @@ from bioimageio.spec.generic.v0_2 import (
 )
 from tests.utils import check_node
 
-EXAMPLE_COM = RootHttpUrl("https://example.com/")
+EXAMPLE_COM = "https://example.com/"
 
 
 @pytest.mark.parametrize(

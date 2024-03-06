@@ -26,7 +26,6 @@ from .._internal.io import (
     WithSuffix,
     YamlValue,
     include_in_package_serializer,
-    include_in_package_serializer_json,
 )
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.types import (
@@ -65,7 +64,6 @@ CoverImageSource = Annotated[
     Union[HttpUrl, AbsoluteFilePath, RelativeFilePath],
     _WithImageSuffix,
     include_in_package_serializer,
-    include_in_package_serializer_json,
 ]
 
 

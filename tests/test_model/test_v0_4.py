@@ -349,7 +349,7 @@ def model_data():
             test_inputs=[UNET2D_ROOT / "test_input.npy"],
             test_outputs=[UNET2D_ROOT / "test_output.npy"],
             type="model",
-        ).model_dump()
+        ).model_dump(mode="json")
 
 
 @pytest.mark.parametrize(
