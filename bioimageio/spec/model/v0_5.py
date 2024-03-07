@@ -1374,8 +1374,8 @@ def validate_tensors(
     for descr, array in tensors.values():
         if array.dtype.name != descr.dtype:
             raise ValueError(
-                f"{e_msg(descr)}.dtype '{array.dtype.name}' does not match described"
-                + f" dtype '{descr.dtype}'"
+                f"{e_msg(descr)}.{tensor_origin}.dtype '{array.dtype.name}' does not"
+                + f" match described dtype '{descr.dtype}'"
             )
 
         for a in descr.axes:

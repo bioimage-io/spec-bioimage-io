@@ -63,6 +63,7 @@ KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.5874841/6630266/rdf.yaml",
     "10.5281/zenodo.5910163/5942853/rdf.yaml",
     "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.5914248/8186255/rdf.yaml",
     "10.5281/zenodo.6383429/7774505/rdf.yaml",
     "10.5281/zenodo.6406803/6406804/rdf.yaml",
     "10.5281/zenodo.6559474/6559475/rdf.yaml",
