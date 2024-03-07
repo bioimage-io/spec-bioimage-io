@@ -18,7 +18,8 @@ class RootHttpUrl(
             str,
             AfterValidator(lambda value: str(_http_url_adapter.validate_python(value))),
         ]
-    ]
+    ],
+    frozen=True,
 ):
     """A 'URL folder', possibly an invalid http URL"""
 

@@ -73,7 +73,7 @@ def check_url(url: str) -> None:
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
 
 
-class HttpUrl(RootHttpUrl):
+class HttpUrl(RootHttpUrl, frozen=True):
     @model_validator(mode="after")
     def _check_url(self):
         if not validation_context_var.get().perform_io_checks:
