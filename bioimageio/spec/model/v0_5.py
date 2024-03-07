@@ -24,6 +24,7 @@ from typing import (
     Sequence,
     Set,
     Tuple,
+    Type,
     TypeVar,
     Union,
     cast,
@@ -200,6 +201,9 @@ class ParameterizedSize(Node):
     `n` in this equation is the same for all axis parameterized in this manner across the whole model.
     """
 
+    N: ClassVar[Type[int]] = int
+    """integer to parameterize all axes with a `ParameterizedSize`"""
+
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
 
@@ -213,6 +217,9 @@ class ParameterizedSize(Node):
             )
 
         return size
+
+    def get_size(self, n: ParameterizedSize.N) -> int:
+        return self.min + self.step * n
 
 
 class SizeReference(Node):
@@ -252,7 +259,7 @@ class SizeReference(Node):
 
     offset: int = 0
 
-    def compute(
+    def get_size(
         self,
         axis: Union[
             ChannelAxis,
@@ -270,7 +277,7 @@ class SizeReference(Node):
             TimeOutputAxis,
             SpaceOutputAxis,
         ],
-        n: int = 0,
+        n: ParameterizedSize.N,
     ):
         """helper method to compute concrete size for a given axis and its reference axis.
         If the reference axis is parameterized, `n` is used to compute the concrete size of it, see `ParameterizedSize`.
@@ -283,17 +290,15 @@ class SizeReference(Node):
             ref_axis.id == self.axis_id
         ), f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
 
-        assert (unit := self._get_unit(axis)) == (
-            ref_unit := self._get_unit(ref_axis)
-        ), (
+        assert axis.unit == ref_axis.unit, (
             "`SizeReference` requires `axis` and `ref_axis` to have the same `unit`,"
-            f" but {unit}!={ref_unit}"
+            f" but {axis.unit}!={ref_axis.unit}"
         )
 
         if isinstance(ref_axis.size, (int, float)):
             ref_size = ref_axis.size
         elif isinstance(ref_axis.size, ParameterizedSize):
-            ref_size = ref_axis.size.min + ref_axis.size.step * n
+            ref_size = ref_axis.size.get_size(n)
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a"
@@ -315,10 +320,7 @@ class SizeReference(Node):
             SpaceOutputAxis,
         ],
     ):
-        if isinstance(axis, (ChannelAxis, IndexAxis)):
-            return None
-        else:
-            return axis.unit
+        return axis.unit
 
 
 # this Axis definition is compatible with the NGFF draft from July 10, 2023
@@ -997,14 +999,6 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
                 + f" incompatible with {len(self.axes)} axes."
             )
         return {a.id: array.shape[i] for i, a in enumerate(self.axes)}
-
-    # def get_axis_sizes(
-    #     self, n: int, known_tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]
-    # ) -> Dict[AxisId, int]:
-    #     ret: Dict[AxisId, int] = {}
-    #     for a in self.axes:
-    #         pass
-    #     # TODO: continue implementation here
 
 
 class InputTensorDescr(TensorDescrBase[InputAxis]):
@@ -2034,6 +2028,36 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         data = [load_array(out.test_tensor.download().path) for out in self.outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
+
+    def get_tensor_sizes(
+        self, n: ParameterizedSize.N, batch_size: int
+    ) -> Dict[TensorId, Dict[AxisId, int]]:
+        all_axes = {
+            t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
+        }
+
+        ret: Dict[TensorId, Dict[AxisId, int]] = {}
+        for t_descr in chain(self.inputs, self.outputs):
+            ret[t_descr.id] = {}
+            for a in t_descr.axes:
+                if a.size is None:
+                    assert isinstance(a, BatchAxis)
+                    s = batch_size
+                elif isinstance(a.size, int):
+                    s = a.size
+                elif isinstance(a.size, ParameterizedSize):
+                    s = a.size.get_size(n)
+                elif isinstance(a.size, SizeReference):
+                    assert not isinstance(a, BatchAxis)
+                    ref_axis = all_axes[a.size.tensor_id][a.size.axis_id]
+                    assert not isinstance(ref_axis, BatchAxis)
+                    s = a.size.get_size(axis=a, ref_axis=ref_axis, n=n)
+                else:
+                    assert_never(a.size)
+
+                ret[t_descr.id][a.id] = s
+
+        return ret
 
     @model_validator(mode="before")
     @classmethod
