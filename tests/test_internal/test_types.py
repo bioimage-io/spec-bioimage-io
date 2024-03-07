@@ -54,6 +54,7 @@ IGNORE_TYPES_MEMBERS = {
     "isoparse",
     "Literal",
     "NotEmpty",
+    "PlainSerializer",
     "RootModel",
     "Sequence",
     "StringConstraints",
@@ -127,11 +128,10 @@ def test_si_unit_invalid(value: str):
             "2019-12-11T12:22:32",
             datetime(2019, 12, 11, 12, 22, 32),
         ),
-        ("2019-12-11T12:22:32Z", isoparse("2019-12-11T12:22:32+00:00")),
-        # (  # TODO follow up on https://github.com/pydantic/pydantic/issues/8964
-        #     "2019-12-11T12:22:32-00:08",
-        #     isoparse("2019-12-11T12:22:32-00:08"),
-        # ),
+        (
+            "2019-12-11T12:22:32-00:08",
+            isoparse("2019-12-11T12:22:32-00:08"),
+        ),
     ],
 )
 def test_datetime(value: str, expected: datetime):
@@ -139,7 +139,7 @@ def test_datetime(value: str, expected: datetime):
         Datetime,
         value,
         expected_root=expected,
-        expected_deserialized=value.replace("+00:00", "Z"),
+        expected_deserialized=value,
     )
 
 
@@ -150,6 +150,7 @@ def test_datetime(value: str, expected: datetime):
         "2024-03-06T14:21:34+00:00",
         "2024-03-06T14:21:34+00:05",
         "2024-03-06T14:21:34-00:08",
+        "2019-12-11T12:22:32Z",
     ],
 )
 def test_datetime_more(value: str):
@@ -174,14 +175,14 @@ def test_datetime_more(value: str):
     assert actual_root.root == expected
     assert root_adapter.dump_python(actual_root, mode="python") == expected
     assert root_adapter.dump_python(actual_root, mode="json") == value.replace(
-        "+00:00", "Z"
+        "Z", "+00:00"
     )
 
     actual_datetime = datetime_adapter.validate_python(value)
     assert actual_datetime == expected
     assert datetime_adapter.dump_python(actual_datetime, mode="python") == expected
     assert datetime_adapter.dump_python(actual_datetime, mode="json") == value.replace(
-        "+00:00", "Z"
+        "Z", "+00:00"
     )
 
 
