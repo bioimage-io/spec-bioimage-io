@@ -21,6 +21,7 @@ from .._internal.field_validation import AfterValidator, Predicate
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
+    V_suffix,
     YamlValue,
     include_in_package_serializer,
     validate_suffix,
@@ -57,9 +58,13 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
 )
 
 
+def _validate_md_suffix(value: V_suffix) -> V_suffix:
+    return validate_suffix(value, suffix=".md", case_sensitive=True)
+
+
 DocumentationSource = Annotated[
     Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    AfterValidator(partial(validate_suffix, suffix=".md", case_sensitive=True)),
+    AfterValidator(_validate_md_suffix),
     include_in_package_serializer,
 ]
 
