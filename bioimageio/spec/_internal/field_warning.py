@@ -131,6 +131,8 @@ class BeforeWarner(pydantic.functional_validators.BeforeValidator):
         )
 
 
+# TODO: add `loc: Loc` to `issue_warning()`
+#   and use a loguru handler to format warnings accordingly
 def issue_warning(
     msg: LiteralString,
     *,

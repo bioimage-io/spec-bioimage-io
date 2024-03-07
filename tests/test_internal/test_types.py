@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 from dateutil.parser import isoparse
-from pydantic import RootModel, TypeAdapter
+from pydantic import PlainSerializer, TypeAdapter
+from typing_extensions import Annotated
 
 from bioimageio.spec._internal import types
 from bioimageio.spec._internal.io import RelativeFilePath
@@ -148,18 +149,25 @@ def test_datetime(value: str, expected: datetime):
         "2024-03-06T14:21:34.384830",
         "2024-03-06T14:21:34+00:00",
         "2024-03-06T14:21:34+00:05",
-        # "2024-03-06T14:21:34-00:08",  # TODO follow up on https://github.com/pydantic/pydantic/issues/8964
+        "2024-03-06T14:21:34-00:08",
     ],
 )
 def test_datetime_more(value: str):
-    DateTime = RootModel[datetime]
-    # DateTime = Datetime
-    root_adapter = TypeAdapter(DateTime)
-    datetime_adapter = TypeAdapter(datetime)
+    from bioimageio.spec._internal.types import (
+        _serialize_datetime_json,  # pyright: ignore[reportPrivateUsage]
+    )
+
+    root_adapter = TypeAdapter(Datetime)
+    datetime_adapter = TypeAdapter(  # pyright: ignore[reportCallIssue]
+        Annotated[
+            datetime,
+            PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
+        ]
+    )
 
     expected = isoparse(value)
 
-    actual_init = DateTime(expected)
+    actual_init = Datetime(expected)
     assert actual_init.root == expected
 
     actual_root = root_adapter.validate_python(value)

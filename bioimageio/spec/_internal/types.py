@@ -6,7 +6,7 @@ from typing import Any, Sequence, TypeVar, Union
 
 import annotated_types
 from dateutil.parser import isoparse
-from pydantic import RootModel, StringConstraints
+from pydantic import PlainSerializer, RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
@@ -70,7 +70,19 @@ def _validate_orcid_id(orcid_id: str):
     )
 
 
-Datetime = RootModel[Annotated[datetime, BeforeValidator(_validate_datetime)]]
+# TODO follow up on https://github.com/pydantic/pydantic/issues/8964
+# to remove _serialize_datetime
+def _serialize_datetime_json(dt: datetime) -> str:
+    return dt.isoformat()
+
+
+Datetime = RootModel[
+    Annotated[
+        datetime,
+        BeforeValidator(_validate_datetime),
+        PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
+    ]
+]
 """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 

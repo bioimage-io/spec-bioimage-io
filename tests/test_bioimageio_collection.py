@@ -23,6 +23,9 @@ KNOWN_INVALID = {
     "10.5281/zenodo.5914248/6514622/rdf.yaml",
     "10.5281/zenodo.6559929/6559930/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
+    "biapy/biapy/latest/rdf.yaml",
+    "biapy/notebook_classification_2d/latest/rdf.yaml",
+    "biapy/Notebook_semantic_segmentation_3d/latest/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
     "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
     "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
@@ -72,6 +75,14 @@ KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.6865412/6919253/rdf.yaml",
     "10.5281/zenodo.7380171/7405349/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
+    "10.5281/zenodo.8401064/8429203/rdf.yaml",
+    "10.5281/zenodo.8421755/8432366/rdf.yaml",
+    "biapy/notebook_classification_3d/latest/rdf.yaml",
+    "biapy/notebook_denoising_2d/latest/rdf.yaml",
+    "biapy/notebook_denoising_3d/latest/rdf.yaml",
+    "biapy/notebook_detection_2d/latest/rdf.yaml",
+    "biapy/notebook_detection_3d/latest/rdf.yaml",
+    "biapy/notebook_instance_segmentation_2d/latest/rdf.yaml",
     "bioimageio/stardist/latest/rdf.yaml",
     "deepimagej/deepimagej-web/latest/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
@@ -184,10 +195,10 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "10.5281/zenodo.6338614/6338615/rdf.yaml": {"cite"},  # doi prefixed
     "10.5281/zenodo.5914248/8186255/rdf.yaml": {"cite"},  # doi prefixed
     "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
-    "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
     "10.5281/zenodo.7315440/7315441/rdf.yaml": {
-        "weights",
         "cite",
+        "maintainers",
+        "weights",
     },  # weights.onnx: missing sh256, cite[0].doi: prefix
     "10.5281/zenodo.7772662/7781091/rdf.yaml": {
         "weights"
@@ -196,6 +207,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
         "authors",  # gh username "Constantin Pape" -> contantinpape
         "maintainers",
     },
+    "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
 }
 
 
