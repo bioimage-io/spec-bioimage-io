@@ -18,7 +18,7 @@ def check_url(url: str) -> None:
         val_url = url
 
     try:
-        response = requests.head(val_url)
+        response = requests.head(val_url, timeout=(3, 3))
     except (
         requests.exceptions.ChunkedEncodingError,
         requests.exceptions.ContentDecodingError,
