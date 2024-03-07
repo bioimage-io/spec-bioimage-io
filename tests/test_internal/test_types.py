@@ -49,6 +49,7 @@ IGNORE_TYPES_MEMBERS = {
     "BeforeValidator",
     "datetime",
     "field_validation",
+    "FormatVersionPlaceholder",  # a literal
     "ImportantFileSource",  # an annoated union
     "iskeyword",
     "isoparse",
