@@ -23,13 +23,16 @@ class ValidationContext:
     """url/directory serving as base to resolve any relative file paths"""
 
     warning_level: WarningLevel = 50
-    """raise warnings of severity s as validation errors if s >= `warning_level`"""
+    """raise warnings of severity `s` as validation errors if `s >= warning_level`"""
+
+    log_warnings: bool = settings.log_warnings
+    """if `True` log warnings that are not raised to the console"""
 
     file_name: Optional[FileName] = None
     """file name of the bioimageio Yaml file"""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perfrom validation that requires file io,
+    """wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
@@ -38,6 +41,7 @@ class ValidationContext:
         self,
         root: Optional[Union[RootHttpUrl, DirectoryPath]] = None,
         warning_level: Optional[WarningLevel] = None,
+        log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
     ) -> "ValidationContext":
@@ -46,6 +50,7 @@ class ValidationContext:
             warning_level=(
                 self.warning_level if warning_level is None else warning_level
             ),
+            log_warnings=self.log_warnings if log_warnings is None else log_warnings,
             file_name=self.file_name if file_name is None else file_name,
             perform_io_checks=(
                 self.perform_io_checks

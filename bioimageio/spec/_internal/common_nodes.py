@@ -369,12 +369,12 @@ class ResourceDescrBase(
     ) -> Union[Self, InvalidDescr]:
         context = context or validation_context_var.get()
         assert isinstance(data, dict)
-        with context:
+        with context.replace(log_warnings=False):  # don't log warnings to console
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(warning_level=INFO)
-            # get validation warnings by reloading
+            # raise all validation warnings by reloading
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))
 
