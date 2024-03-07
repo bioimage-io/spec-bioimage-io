@@ -141,6 +141,7 @@ def check_bioimageio_yaml(
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
     bioimageio_json_schema: Optional[Mapping[Any, Any]],
+    perform_io_checks: bool = True,
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
@@ -149,7 +150,11 @@ def check_bioimageio_yaml(
 
     assert isinstance(data, dict), type(data)
     format_version = "latest" if as_latest else "discover"
-    with ValidationContext(root=root, file_name=downloaded_source.original_file_name):
+    with ValidationContext(
+        root=root,
+        file_name=downloaded_source.original_file_name,
+        perform_io_checks=perform_io_checks,
+    ):
         rd = build_description(deepcopy(data), format_version=format_version)
         assert not is_invalid or (
             is_invalid and isinstance(rd, InvalidDescr)
