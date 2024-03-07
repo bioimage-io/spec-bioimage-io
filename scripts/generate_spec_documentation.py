@@ -509,7 +509,7 @@ def export_module_documentations(folder: Path, module: ModuleType):
 
 
 def main(dist: Path):
-    dist.mkdir(exist_ok=True)
+    dist.mkdir(exist_ok=True, parents=True)
 
     export_module_documentations(dist, application)
     export_module_documentations(dist, collection)

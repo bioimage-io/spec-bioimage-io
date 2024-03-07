@@ -30,7 +30,7 @@ try:
 
                 errors.append(
                     f"\n{format_loc(e['loc'])}\n  {e['msg']} [type={e['type']},"
-                    f" input={ipt}]"
+                    + f" input={ipt}]"
                 )
 
             return (

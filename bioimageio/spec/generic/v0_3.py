@@ -3,12 +3,12 @@ from __future__ import annotations
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
-import requests
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
-from .._internal import settings
+from bioimageio.spec._internal.field_validation import validate_gh_user
+
 from .._internal.common_nodes import (
     Converter,
     Node,
@@ -18,7 +18,7 @@ from .._internal.constants import (
     TAG_CATEGORIES,
 )
 from .._internal.field_validation import AfterValidator, Predicate
-from .._internal.field_warning import as_warning, issue_warning, warn
+from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
     YamlValue,
@@ -37,9 +37,6 @@ from .._internal.types import (
 from .._internal.types import RelativeFilePath as RelativeFilePath
 from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validation_context import (
-    validation_context_var,
-)
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT
 from ._v0_3_converter import convert_from_older_format
@@ -71,47 +68,6 @@ def _has_no_slash(s: str) -> bool:
     return "/" not in s and "\\" not in s
 
 
-def _validate_gh_user(username: str) -> str:
-    if username == "Constantin Pape":
-        # hotpatch common known error in some uploads
-        return "constantinpape"
-
-    # TODO: cache/store known gh users in file
-    if (
-        username.lower()
-        in (  # skip known usernames to reduce hitting the gh api rate limit (mostly relevenat when testing)
-            "bioimageiobot",
-            "carlosuc3m",
-            "cfusterbarcelo",
-            "constantinpape",
-            "ctr26",
-            "esgomezm",
-            "fynnbe",
-            "k-dominik",
-            "oeway",
-            "danifranco",
-            "iarganda",
-            "lenkaback",
-            "AAitorG",
-        )
-        or not validation_context_var.get().perform_io_checks
-    ):
-        return username
-
-    r = requests.get(
-        f"https://api.github.com/users/{username}", auth=settings.github_auth
-    )
-    if r.status_code == 403 and r.reason == "rate limit exceeded":
-        issue_warning(
-            "Could not verify GitHub user '{value}' due to GitHub API rate limit",
-            value=username,
-        )
-    elif r.status_code != 200:
-        raise ValueError(f"Could not find GitHub user '{username}'")
-
-    return username
-
-
 class Author(_Author_v0_2):
     name: Annotated[str, Predicate(_has_no_slash)]
     github_user: Optional[str] = None
@@ -121,7 +77,7 @@ class Author(_Author_v0_2):
         if value is None:
             return None
         else:
-            return _validate_gh_user(value)
+            return validate_gh_user(value)
 
 
 class _AuthorConv(Converter[_Author_v0_2, Author]):
@@ -146,7 +102,7 @@ class Maintainer(_Maintainer_v0_2):
 
     @field_validator("github_user", mode="after")
     def validate_gh_user(cls, value: str):
-        return _validate_gh_user(value)
+        return validate_gh_user(value)
 
 
 class _MaintainerConv(Converter[_Maintainer_v0_2, Maintainer]):

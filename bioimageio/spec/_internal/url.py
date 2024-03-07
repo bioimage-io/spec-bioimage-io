@@ -48,6 +48,7 @@ def check_url(url: str) -> None:
             msg_context={"error": str(e)},
         )
     else:
+        follow_up_with_get = False
         if response.status_code == 302:  # found
             pass
         elif response.status_code in (301, 303, 308):
@@ -58,6 +59,16 @@ def check_url(url: str) -> None:
                 msg_context={
                     "status_code": response.status_code,
                     "location": response.headers.get("location"),
+                },
+            )
+        elif response.status_code == 403:  # forbidden
+            follow_up_with_get = True
+            issue_warning(
+                "{status_code}: {reason} {value}",
+                value=url,
+                msg_context={
+                    "status_code": response.status_code,
+                    "reason": response.reason,
                 },
             )
         elif response.status_code == 405:
@@ -71,6 +82,11 @@ def check_url(url: str) -> None:
             )
         elif response.status_code != 200:
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
+
+        if follow_up_with_get:
+            pass
+            # TODO follow up forbidden head request with get
+            # motivating example: 403: Forbidden https://elifesciences.org/articles/57613
 
 
 class HttpUrl(RootHttpUrl, frozen=True):

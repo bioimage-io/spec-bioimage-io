@@ -1,11 +1,14 @@
 import json
 from pathlib import Path
+from pprint import pprint
 from types import MappingProxyType
 from typing import Any, Dict, Union
 
 import pytest
 from filelock import FileLock
 from ruyaml import YAML
+
+from bioimageio.spec._internal.constants import KNOWN_GH_USERS, N_KNOWN_GH_USERS
 
 yaml = YAML(typ="safe")
 
@@ -59,3 +62,9 @@ def unet2d_data(unet2d_path: Path):
 
     assert isinstance(data, dict)
     return MappingProxyType(data)
+
+
+def pytest_sessionfinish(session: Any, exitstatus: Any):
+    if len(KNOWN_GH_USERS) > N_KNOWN_GH_USERS:
+        print("updated known gh users:")
+        pprint(KNOWN_GH_USERS)

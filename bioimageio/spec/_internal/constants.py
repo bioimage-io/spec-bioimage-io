@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from types import MappingProxyType
-from typing import Mapping, NamedTuple, Sequence, Union
+from typing import Mapping, NamedTuple, Sequence, Set, Union
 
 from .utils import files
 
@@ -65,3 +65,22 @@ DTYPE_LIMITS = MappingProxyType(
         "int64": MinMax(-9223372036854775808, 9223372036854775807),
     }
 )
+
+# TODO: cache/store known gh users in file
+KNOWN_GH_USERS: Set[str] = {
+    "AAitorG",
+    "bioimageiobot",
+    "carlosuc3m",
+    "cfusterbarcelo",
+    "constantinpape",
+    "ctr26",
+    "danifranco",
+    "esgomezm",
+    "fynnbe",
+    "githubuser2",
+    "iarganda",
+    "k-dominik",
+    "lenkaback",
+    "oeway",
+}
+N_KNOWN_GH_USERS = len(KNOWN_GH_USERS)
