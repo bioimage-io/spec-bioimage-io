@@ -68,7 +68,11 @@ DTYPE_LIMITS = MappingProxyType(
 
 # TODO: cache/store known gh users in file
 KNOWN_GH_USERS: Set[str] = {
-    "AAitorG",
+    "clementcaporal",
+    "donglaiw",
+    "jansanrom",
+    "pedgomgal1",
+    "aaitorg",
     "bioimageiobot",
     "carlosuc3m",
     "cfusterbarcelo",
@@ -79,8 +83,12 @@ KNOWN_GH_USERS: Set[str] = {
     "fynnbe",
     "githubuser2",
     "iarganda",
+    "ivanhcenalmor",
+    "jansanrom",
     "k-dominik",
     "lenkaback",
     "oeway",
 }
 N_KNOWN_GH_USERS = len(KNOWN_GH_USERS)
+KNOWN_INVALID_GH_USERS: Set[str] = {"arratemunoz", "lmescu"}
+N_KNOWN_INVALID_GH_USERS = len(KNOWN_INVALID_GH_USERS)

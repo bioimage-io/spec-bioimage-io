@@ -8,7 +8,12 @@ import pytest
 from filelock import FileLock
 from ruyaml import YAML
 
-from bioimageio.spec._internal.constants import KNOWN_GH_USERS, N_KNOWN_GH_USERS
+from bioimageio.spec._internal.constants import (
+    KNOWN_GH_USERS,
+    KNOWN_INVALID_GH_USERS,
+    N_KNOWN_GH_USERS,
+    N_KNOWN_INVALID_GH_USERS,
+)
 
 yaml = YAML(typ="safe")
 
@@ -68,3 +73,7 @@ def pytest_sessionfinish(session: Any, exitstatus: Any):
     if len(KNOWN_GH_USERS) > N_KNOWN_GH_USERS:
         print("updated known gh users:")
         pprint(KNOWN_GH_USERS)
+
+    if len(KNOWN_INVALID_GH_USERS) > N_KNOWN_INVALID_GH_USERS:
+        print("updated known invalid gh users:")
+        pprint(KNOWN_INVALID_GH_USERS)

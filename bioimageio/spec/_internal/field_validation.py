@@ -21,7 +21,7 @@ from pydantic import GetCoreSchemaHandler, functional_validators
 from pydantic_core.core_schema import CoreSchema, no_info_after_validator_function
 
 from bioimageio.spec._internal._settings import settings
-from bioimageio.spec._internal.constants import KNOWN_GH_USERS
+from bioimageio.spec._internal.constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
 from bioimageio.spec._internal.field_warning import issue_warning
 from bioimageio.spec._internal.validation_context import validation_context_var
 
@@ -129,6 +129,9 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
     ):
         return username
 
+    if username.lower() in KNOWN_INVALID_GH_USERS:
+        raise ValueError(f"Known invalid GitHub user '{username}'")
+
     r = requests.get(
         f"https://api.github.com/users/{username}", auth=settings.github_auth
     )
@@ -138,7 +141,8 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
             value=username,
         )
     elif r.status_code != 200:
+        KNOWN_INVALID_GH_USERS.add(username.lower())
         raise ValueError(f"Could not find GitHub user '{username}'")
 
-    KNOWN_GH_USERS.add(username)
+    KNOWN_GH_USERS.add(username.lower())
     return username
