@@ -1,6 +1,8 @@
 from typing import Optional
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing_extensions import Annotated
 
 
 class Settings(BaseSettings, extra="ignore"):
@@ -24,6 +26,12 @@ class Settings(BaseSettings, extra="ignore"):
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
+
+    CI: Annotated[bool, Field(alias="CI")] = False
+    """wether or not the execution happens in a continuous integration (CI) environment"""
+
+    user_agent: Optional[str] = None
+    """user agent for http requests"""
 
     @property
     def github_auth(self):

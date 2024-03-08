@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 import sys
 import warnings
 from abc import abstractmethod
@@ -51,6 +50,7 @@ from typing_extensions import (
 )
 from typing_extensions import TypeAliasType as _TypeAliasType
 
+from .._internal._settings import settings
 from .._internal.io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
@@ -511,15 +511,15 @@ def download(
         if strict_source.scheme not in ("http", "https"):
             raise NotImplementedError(strict_source.scheme)
 
-        if os.environ.get("CI", "false").lower() in ("1", "t", "true", "yes", "y"):
+        if settings.CI:
             headers = {"User-Agent": "ci"}
             progressbar = False
         else:
             headers = {}
             progressbar = True
 
-        if (user_agent := os.environ.get("BIOIMAGEIO_USER_AGENT")) is not None:
-            headers["User-Agent"] = user_agent
+        if settings.user_agent is not None:
+            headers["User-Agent"] = settings.user_agent
 
         downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
         fname = _get_unique_file_name(strict_source)
