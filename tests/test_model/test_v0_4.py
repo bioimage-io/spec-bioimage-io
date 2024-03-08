@@ -389,8 +389,8 @@ def test_warn_long_name(model_data: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
     assert summary.status == "passed", summary.format()
-    assert summary.details[0].warnings[0].loc == ("name",), summary.format()
-    assert summary.details[0].warnings[0].msg in "Name longer than 64 characters."
+    assert summary.details[1].warnings[0].loc == ("name",), summary.format()
+    assert summary.details[1].warnings[0].msg == "Name longer than 64 characters."
 
 
 def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
