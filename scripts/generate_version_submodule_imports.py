@@ -103,15 +103,17 @@ class Info:
         ]
         avmi.insert(
             -1,
-            f"from .{self.latest_version_module} import {self.target_node} as {self.target_node}",
+            f"from .{self.latest_version_module} import {self.target_node} as "
+            + f"{self.target_node}",
         )
         self.all_version_modules_imports = "\n".join(avmi)
 
         self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
         self.submodule_list = "\n".join(
             [
-                f"- {self.target} {vm}: `bioimageio.spec.{self.target}.{vm}.{self.target_node}` "
-                f"[user documentation](../../../user_docs/{self.target}_descr_{vm.replace('_', '-')}.md)"
+                f"- {self.target} {vm}: `bioimageio.spec.{self.target}.{vm}."
+                + f"{self.target_node}` [user documentation](../../../user_docs/"
+                + f"{self.target}_descr_{vm.replace('_', '-')}.md)"
                 for vm in self.all_version_modules
             ]
         )
@@ -127,7 +129,7 @@ def process(info: Info, check: bool):
     if not re.findall(pattern, init_content, flags=flags):
         raise RuntimeError(
             f"Could not find autogen markers in {package_init}. Expected to"
-            f" find:\n{AUTOGEN_START}...{AUTOGEN_STOP}"
+            + f" find:\n{AUTOGEN_START}...{AUTOGEN_STOP}"
         )
 
     autogen_body = (

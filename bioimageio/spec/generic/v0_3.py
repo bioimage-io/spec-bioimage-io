@@ -284,7 +284,7 @@ class GenericModelDescrBase(ResourceDescrBase):
             if all(a.github_user is None for a in authors):
                 raise ValueError(
                     "Missing `maintainers` or any author in `authors` with a specified"
-                    " `github_user` name."
+                    + " `github_user` name."
                 )
 
         return maintainers
@@ -382,7 +382,7 @@ class GenericDescr(
         if value in KNOWN_SPECIFIC_RESOURCE_TYPES:
             raise ValueError(
                 f"Use the {value} description instead of this generic description for"
-                f" your '{value}' resource."
+                + f" your '{value}' resource."
             )
 
         return value

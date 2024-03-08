@@ -26,7 +26,7 @@ def parse_args():
     p = ArgumentParser(
         description=(
             "Check for differences between yaml 1.1 (using PyYAML) and yaml 1.2 syntax"
-            " (using ruyaml)."
+            + " (using ruyaml)."
         )
     )
     _ = p.add_argument(
@@ -49,13 +49,13 @@ def main(resource_description_path: Path):
     if diff:
         print(
             "Found differences between yaml syntax 1.1/1.2 for"
-            f" {resource_description_path}:"
+            + f" {resource_description_path}:"
         )
         print(diff)  # type: ignore
     else:
         print(
             "No differences found between yaml syntax 1.1/1.2 for"
-            f" {resource_description_path}:"
+            + f" {resource_description_path}:"
         )
 
     return len(diff)  # type: ignore

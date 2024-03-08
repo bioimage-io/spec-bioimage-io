@@ -25,7 +25,7 @@ def get_ref_url(
     except Exception:
         warnings.warn(
             f"Could not reslove {github_file_url} because requests library is not"
-            " available."
+            + " available."
         )
         return "URL NOT RESOLVED"
 
@@ -39,7 +39,7 @@ def get_ref_url(
     except requests.RequestException as e:
         warnings.warn(
             f"Could not resolve {github_file_url} due to {e}. Please check your"
-            " internet connection."
+            + " internet connection."
         )
         return "URL NOT RESOLVED"
     tree = ast.parse(code)

@@ -65,7 +65,7 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
         if not isinstance(key, str):
             raise ValueError(
                 f"Expected all keys (field names) in a {BIOIMAGEIO_YAML} "
-                f"need to be strings (got '{key}' of type {type(key)})."
+                + f"need to be strings (got '{key}' of type {type(key)})."
             )
 
     return cast(BioimageioYamlContent, content)
@@ -99,9 +99,9 @@ def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
 
     raise ValueError(
         f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
-        " or or any of the alterntive file names:"
-        f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},of any file with an extension of those,"
-        f" e.g. 'anything.{BIOIMAGEIO_YAML}')."
+        + " or or any of the alterntive file names:"
+        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},of any file with an extension of"
+        + f"  those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
     )
 
 
@@ -159,7 +159,7 @@ def unzip(
                 else:
                     warnings.warn(
                         "Using already unzipped archive with all expected files at"
-                        f" {out_path}."
+                        + f" {out_path}."
                     )
                     return out_path
 
