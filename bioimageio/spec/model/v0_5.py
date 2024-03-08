@@ -1075,7 +1075,8 @@ def convert_axes(
                     offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
         elif isinstance(shape, collections.abc.Sequence):
-            size = shape[i]
+            size: Any = shape[i]
+            assert isinstance(size, int)
         else:
             assert_never(shape)
 
