@@ -4,6 +4,7 @@ from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional, Union
+from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import DirectoryPath
 
@@ -65,6 +66,31 @@ class ValidationContext:
 
     def __exit__(self, type, value, traceback):  # type: ignore
         validation_context_var.reset(self._context_tokens.pop(-1))
+
+    @property
+    def source_name(self) -> str:
+        if self.file_name is None:
+            return "in-memory"
+        else:
+            try:
+                if isinstance(self.root, Path):
+                    source = (self.root / self.file_name).absolute()
+                else:
+                    parsed = urlsplit(str(self.root))
+                    path = list(parsed.path.strip("/").split("/")) + [self.file_name]
+                    source = urlunsplit(
+                        (
+                            parsed.scheme,
+                            parsed.netloc,
+                            "/".join(path),
+                            parsed.query,
+                            parsed.fragment,
+                        )
+                    )
+            except ValueError:
+                return self.file_name
+            else:
+                return str(source)
 
 
 validation_context_var: ContextVar[ValidationContext] = ContextVar(

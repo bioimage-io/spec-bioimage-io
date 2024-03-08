@@ -4,7 +4,6 @@ import collections.abc
 import traceback
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -51,7 +50,7 @@ from ..summary import (
     WarningEntry,
 )
 from .field_warning import issue_warning
-from .io import BioimageioYamlContent, RelativeFilePath
+from .io import BioimageioYamlContent
 from .node import Node as Node
 from .url import HttpUrl
 from .utils import assert_all_params_set_explicitly
@@ -266,7 +265,7 @@ class ResourceDescrBase(
 ):
     """base class for all resource descriptions"""
 
-    _validation_summary: Optional[ValidationSummary] = PrivateAttr(None)
+    _validation_summary: Optional[ValidationSummary] = None
 
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
         {"type", "format_version"}
@@ -321,19 +320,25 @@ class ResourceDescrBase(
 
         return data
 
+    @model_validator(mode="after")
+    def _set_init_validation_summary(self):
+        context = validation_context_var.get()
+        self._validation_summary = ValidationSummary(
+            name="bioimageio validation",
+            source_name=context.source_name,
+            status="passed",
+            details=[
+                ValidationDetail(
+                    name=f"initialized {self.type} {self.implemented_format_version}",
+                    status="passed",
+                )
+            ],
+        )
+        return self
+
     @property
     def validation_summary(self) -> ValidationSummary:
-        if self._validation_summary is None:
-            self._validation_summary = ValidationSummary(
-                name=(
-                    "unvalidated (use `load_description` or `build_description` to"
-                    " create a validated description)"
-                ),
-                source_name="unknown",
-                status="failed",
-                details=[],
-            )
-
+        assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
     _root: Union[HttpUrl, DirectoryPath] = PrivateAttr(
@@ -378,33 +383,16 @@ class ResourceDescrBase(
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))
 
-        if context.file_name is None:
-            source_name = "in-memory"
-        else:
-            try:
-                source_path = RelativeFilePath(Path(context.file_name)).get_absolute(
-                    context.root
-                )
-            except ValueError:
-                source_name = context.file_name
-            else:
-                source_name = str(source_path)
-
-        rd._validation_summary = ValidationSummary(
-            name="bioimageio.spec validation",
-            source_name=source_name,
-            status="failed" if errors else "passed",
-            details=[
-                ValidationDetail(
-                    errors=errors,
-                    name=(
-                        "bioimageio.spec validation as"
-                        f" {rd.type} {cls.implemented_format_version}"
-                    ),
-                    status="failed" if errors else "passed",
-                    warnings=val_warnings,
-                )
-            ],
+        rd.validation_summary.add_detail(
+            ValidationDetail(
+                errors=errors,
+                name=(
+                    "bioimageio.spec format validation"
+                    f" {rd.type} {cls.implemented_format_version}"
+                ),
+                status="failed" if errors else "passed",
+                warnings=val_warnings,
+            )
         )
 
         return rd

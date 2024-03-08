@@ -192,8 +192,8 @@ class ValidationSummary(BaseModel, extra="allow"):
         if not self.env:
             return ""
 
-        package_w = max(len(e["name"]) for e in self.env)
-        version_w = max(len(e["version"]) for e in self.env)
+        package_w = max(len(p) for p in [e["name"] for e in self.env] + ["package"])
+        version_w = max(len(v) for v in [e["version"] for e in self.env] + ["version"])
 
         return (
             "\n"
