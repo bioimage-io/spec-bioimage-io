@@ -28,7 +28,7 @@ test:
     - bioimageio.spec
   source_files:
     - tests
-    - example_specs
+    - example_descriptions
   requires:
     {% for dep in setup_py_data['extras_require']['dev'] %}
     - {{ dep.replace('torch', 'pytorch').lower() }}
