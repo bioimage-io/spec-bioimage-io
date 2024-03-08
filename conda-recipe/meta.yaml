@@ -35,6 +35,7 @@ test:
     {% for dep in setup_py_data['extras_require']['dev'] %}
     - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
+    - pytest-xdist[psutil]  # somehow not installed from setup_py_data
   commands:
     - pytest -n auto --capture=no
 
