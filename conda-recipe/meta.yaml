@@ -34,7 +34,7 @@ test:
     - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
   commands:
-    - pytest
+    - pytest -n auto --capture=no
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io
