@@ -19,7 +19,6 @@ from typing import (
     List,
     Literal,
     Mapping,
-    NewType,
     Optional,
     Sequence,
     Set,
@@ -37,6 +36,8 @@ from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, LiteralString, Self, assert_never
+
+from bioimageio.spec._internal.validated_string import ValidatedString
 
 from .._internal.common_nodes import (
     Converter,
@@ -164,9 +165,8 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = NewType("TensorId", LowerCaseIdentifierAnno)
-_AxisId = Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
-AxisId = NewType("AxisId", _AxisId)
+TensorId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
+AxisId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -858,8 +858,8 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if duplicate_axes_types:
             raise ValueError(f"Duplicate axis types: {duplicate_axes_types}")
 
-        seen_ids: Set[str] = set()
-        duplicate_axes_ids: Set[str] = set()
+        seen_ids: Set[AxisId] = set()
+        duplicate_axes_ids: Set[AxisId] = set()
         for a in axes:
             (duplicate_axes_ids if a.id in seen_ids else seen_ids).add(a.id)
 
@@ -1318,6 +1318,7 @@ class _OutputTensorConv(
         sample_tensor: Optional[ImportantFileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
+        # TODO: split convert_axes into convert_output_axes and convert_input_axes
         axes: List[OutputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
@@ -1755,7 +1756,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def _validate_axis(
         field_name: str,
         i: int,
-        tensor_id: str,
+        tensor_id: TensorId,
         a: int,
         axis: AnyAxis,
         valid_independent_refs: Dict[
@@ -2334,7 +2335,7 @@ def generate_covers(
         if ndim > ndim_need:
             for i, a in enumerate(axes):
                 s = data.shape[i]
-                if a.id == "z":
+                if a.id.root == "z":
                     data = data[slices + (slice(s // 2 - 1, s // 2),)]
                     data, axes = squeeze(data, axes)
                     ndim -= 1

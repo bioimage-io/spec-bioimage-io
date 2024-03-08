@@ -33,8 +33,8 @@ def _validate_identifier(s: str) -> str:
     if not s.isidentifier():
         raise ValueError(
             f"'{s}' is not a valid (Python) identifier, see"
-            " https://docs.python.org/3/reference/lexical_analysis.html#identifiers"
-            " for details."
+            + " https://docs.python.org/3/reference/lexical_analysis.html#identifiers"
+            + " for details."
         )
 
     return s
