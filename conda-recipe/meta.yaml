@@ -9,12 +9,12 @@ source:
 
 requirements:
   build:
-    - python >=3.8,<3.12
+    - python >=3.8,<3.13
     - pip
   run:
-    - python >=3.8,<3.12
+    - python >=3.8,<3.13
     {% for dep in setup_py_data['install_requires'] %}
-    - {{ dep.replace(";platform_system!='Emscripten'", "").lower() }}
+    - {{ dep.lower() }}
     {% endfor %}
 
 
@@ -34,7 +34,7 @@ test:
     - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
   commands:
-    - python -m unittest discover
+    - pytest
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io

@@ -25,6 +25,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
@@ -37,7 +38,6 @@ setup(
         "pooch",
         "pydantic-settings",
         "pydantic[email]>=2.6.3",
-        "pyodide-http;platform_system=='Emscripten'",
         "python-dateutil",
         "ruyaml",
         "tqdm",
