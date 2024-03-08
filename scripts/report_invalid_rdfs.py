@@ -13,6 +13,7 @@ from bioimageio.spec import load_description_and_validate_format_only
 # )
 RDF_BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/rdfs/"
 
+
 KNOWN_INVALID = {
     "10.5281/zenodo.5749843/5888237/rdf.yaml",
     "10.5281/zenodo.5910163/5942853/rdf.yaml",
@@ -20,6 +21,9 @@ KNOWN_INVALID = {
     "10.5281/zenodo.5914248/6514622/rdf.yaml",
     "10.5281/zenodo.6559929/6559930/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
+    "biapy/biapy/latest/rdf.yaml",
+    "biapy/notebook_classification_2d/latest/rdf.yaml",
+    "biapy/Notebook_semantic_segmentation_3d/latest/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
     "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
     "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
@@ -60,6 +64,7 @@ KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.5874841/6630266/rdf.yaml",
     "10.5281/zenodo.5910163/5942853/rdf.yaml",
     "10.5281/zenodo.5914248/6514622/rdf.yaml",
+    "10.5281/zenodo.5914248/8186255/rdf.yaml",
     "10.5281/zenodo.6383429/7774505/rdf.yaml",
     "10.5281/zenodo.6406803/6406804/rdf.yaml",
     "10.5281/zenodo.6559474/6559475/rdf.yaml",
@@ -68,6 +73,23 @@ KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.6865412/6919253/rdf.yaml",
     "10.5281/zenodo.7380171/7405349/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
+    "10.5281/zenodo.8401064/8429203/rdf.yaml",
+    "10.5281/zenodo.8421755/8432366/rdf.yaml",
+    "biapy/biapy/latest/rdf.yaml",
+    "biapy/notebook_classification_2d/latest/rdf.yaml",
+    "biapy/notebook_classification_3d/latest/rdf.yaml",
+    "biapy/notebook_denoising_2d/latest/rdf.yaml",
+    "biapy/notebook_denoising_3d/latest/rdf.yaml",
+    "biapy/notebook_detection_2d/latest/rdf.yaml",
+    "biapy/notebook_detection_3d/latest/rdf.yaml",
+    "biapy/notebook_instance_segmentation_2d/latest/rdf.yaml",
+    "biapy/notebook_instance_segmentation_3d/latest/rdf.yaml",
+    "biapy/notebook_self_supervision_2d/latest/rdf.yaml",
+    "biapy/notebook_self_supervision_3d/latest/rdf.yaml",
+    "biapy/notebook_semantic_segmentation_2d/latest/rdf.yaml",
+    "biapy/Notebook_semantic_segmentation_3d/latest/rdf.yaml",
+    "biapy/notebook_super_resolution_2d/latest/rdf.yaml",
+    "biapy/notebook_super_resolution_3d/latest/rdf.yaml",
     "bioimageio/stardist/latest/rdf.yaml",
     "deepimagej/deepimagej-web/latest/rdf.yaml",
     "deepimagej/deepimagej/latest/rdf.yaml",
@@ -87,6 +109,9 @@ KNOWN_INVALID_AS_LATEST = {
     "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",
     "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
     "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
+    "dl4miceverywhere/DL4MicEverywhere/latest/rdf.yaml",
+    "dl4miceverywhere/Notebook_bioimageio_pytorch/latest/rdf.yaml",
+    "dl4miceverywhere/Notebook_bioimageio_tensorflow/latest/rdf.yaml",
     "fiji/Fiji/latest/rdf.yaml",
     "hpa/HPA-Classification/latest/rdf.yaml",
     "hpa/hpa-kaggle-2021-dataset/latest/rdf.yaml",
@@ -105,6 +130,7 @@ KNOWN_INVALID_AS_LATEST = {
     "imjoy/LuCa-7color/latest/rdf.yaml",
     "imjoy/vizarr/latest/rdf.yaml",
     "qupath/QuPath/latest/rdf.yaml",
+    "stardist/stardist/latest/rdf.yaml",
     "zero/Dataset_CARE_2D_coli_DeepBacs/latest/rdf.yaml",
     "zero/Dataset_CARE_2D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Dataset_CARE_3D_ZeroCostDL4Mic/latest/rdf.yaml",
@@ -157,6 +183,8 @@ KNOWN_INVALID_AS_LATEST = {
     "zero/Notebook_Noise2Void_3D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_pix2pix_2D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_pix2pix_2D_ZeroCostDL4Mic/latest/rdf.yaml",
+    "zero/notebook_preview/latest/rdf.yaml-latest",
+    "zero/notebook_preview/latest/rdf.yaml",
     "zero/Notebook_Quality_Control_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_RCAN_3D_ZeroCostDL4Mic/latest/rdf.yaml",
     "zero/Notebook_RetinaNet_ZeroCostDL4Mic/latest/rdf.yaml",
@@ -204,8 +232,7 @@ def main(output: Path, limit: int, version: Literal["discover", "latest"]):
     invalid = [RDF_BASE_URL + k for k in sorted(invalid)[:limit]]
 
     summaries = [load_description_and_validate_format_only(rdf) for rdf in invalid]
-    strip = "❌ bioimageio.spec validation: failed"
-    formatted = [s.format().strip(strip) for s in summaries]
+    formatted = [s.format() for s in summaries]
     out = "\n\n".join(formatted)
     _ = output.write_text(out, encoding="utf-8")
     print(out)
