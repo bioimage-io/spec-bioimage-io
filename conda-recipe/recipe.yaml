@@ -6,13 +6,12 @@ source:
   path: ..
 
 requirements:
-  build:
-    # {BUILD_DEPENDENCIES}
-    - python >=3.8,<3.13
-    - pip
   host:
     # {HOST_DEPENDENCIES}
+    - pip
     - python >=3.8,<3.13
+    - setuptool
+    - wheel
   run:
     # {RUN_DEPENDENCIES}
     - "annotated-types>=0.5.0"

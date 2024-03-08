@@ -76,25 +76,11 @@ jobs:
           folder: dist
 
   conda-build:
+    name: Build package
     runs-on: ubuntu-latest
-    needs: test
     steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          cache-downloads: true
-          cache-environment: true
-          environment-name: build-env
-          condarc: |
-            channels:
-            - conda-forge
-          create-args: >-
-            boa
-      - name: linux conda build
-        run: |
-          conda mambabuild -c conda-forge conda-recipe
-        shell: bash -l {0}
+    - uses: actions/checkout@v4
+    - name: Build conda package
+      uses: prefix-dev/rattler-build-action@v0.2.2
+      with:
+        recipe-path: conda-recipe/recipe.yaml

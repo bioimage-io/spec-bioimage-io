@@ -1,3 +1,5 @@
+# possibly superseded by recipe.yaml
+# TODO: decide for package builder and clean up
 {% set setup_py_data = load_setup_py_data() %}
 
 package:
