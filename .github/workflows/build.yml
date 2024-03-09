@@ -99,12 +99,12 @@ jobs:
           conda mambabuild -c conda-forge conda-recipe
         shell: bash -l {0}
 
-  rattler-build:
-    name: Build package
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build conda package
-      uses: prefix-dev/rattler-build-action@v0.2.2
-      with:
-        recipe-path: conda-recipe/recipe.yaml
+#  rattler-build:
+#    name: Build package
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Build conda package
+#      uses: prefix-dev/rattler-build-action@v0.2.2
+#      with:
+#        recipe-path: conda-recipe/recipe.yaml
