@@ -1,0 +1,57 @@
+authors:
+  - { name: Constantin Pape, github_user: constantinpape }
+maintainers:
+  - { name: Constantin Pape, github_user: constantinpape }
+  - { name: Fynn Beuttenmueller, github_user: fynnbe }
+cite:
+  - text: training library
+    doi: "10.5281/zenodo.5108853"
+  - text: architecture
+    doi: "10.1007/978-3-319-24574-4_28"
+covers: ["cover.jpg"]
+description: Fixed shape
+documentation: documentation.md
+format_version: 0.4.9
+git_repo: https://github.com/constantinpape/torch-em.git
+inputs:
+  - axes: &axes bcyx
+    data_range: [-.inf, .inf]
+    data_type: float32
+    name: input
+    preprocessing:
+      - kwargs: { axes: cyx, mode: per_sample }
+        name: zero_mean_unit_variance
+    shape: &shape [1, 1, 256, 256]
+license: CC-BY-4.0
+links: [ilastik/ilastik]
+name: Fixed-shape
+outputs:
+  - axes: *axes
+    data_range: [-.inf, .inf]
+    data_type: float32
+    halo: [0, 0, 8, 8]
+    name: output
+    shape: *shape
+tags: [segmentation]
+test_inputs: ["test_input.npy"]
+test_outputs: ["test_output.npy"]
+timestamp: "2021-09-12T14:04:52.211533Z"
+type: model
+weights:
+  pytorch_state_dict:
+    architecture: unet.py:UNet2d
+    architecture_sha256: 7f5b15948e8e2c91f78dcff34fbf30af517073e91ba487f3edb982b948d099b3
+    dependencies: conda:environment.yaml
+    kwargs:
+      {
+        depth: 3,
+        final_activation: null,
+        gain: 2,
+        in_channels: 1,
+        initial_features: 16,
+        out_channels: 1,
+        postprocessing: null,
+        return_side_outputs: false,
+      }
+    sha256: bcf26f08c26f5ef8f891c08dba2c8812bec7991643fb7c0f7b5d3e7dc321092f
+    source: weights.pt

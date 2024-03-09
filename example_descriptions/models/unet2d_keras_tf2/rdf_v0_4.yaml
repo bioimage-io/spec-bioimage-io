@@ -1,0 +1,116 @@
+attachments:
+  files:
+    - per_sample_scale_range.ijm
+    - Contours2InstanceSegmentation.ijm
+    - training_evaluation.csv
+authors:
+  - name: Estibaliz Gomez de Mariscal
+    affiliation: Instituto Gulbenkian de Ciencia
+cite:
+  - doi: "10.1038/s41592-018-0261-2"
+    text: Falk et al. Nature Methods
+      2019
+  - doi: "10.1007/978-3-319-24574-4_28"
+    text: Ronneberger et al. arXiv in 2015
+  - doi: "10.1101/2020.03.20.000133"
+    text: Lucas von Chamier et al. biorXiv 2020
+  - doi: "10.1038/s42003-022-03634-z"
+    text: Christoph Spahn et al.
+      Communications Biology 2022
+config:
+  _id: 10.5281/zenodo.7261974/7261975
+  bioimageio:
+    created: "2022-10-28 17:06:39.509102"
+    doi: 10.5281/zenodo.7261975
+    nickname: placid-llama
+    nickname_icon: "\U0001F999"
+    owners: [147356]
+    status: accepted
+    version_id: "7261975"
+    version_name: version 1
+  deepimagej:
+    allow_tiling: true
+    model_keys: null
+    prediction:
+      postprocess:
+        - { spec: null }
+      preprocess:
+        - { kwargs: per_sample_scale_range.ijm, spec: "ij.IJ::runMacroFile" }
+    pyramidal_model: false
+    test_information:
+      inputs:
+        - name: test_input.npy
+          pixel_size: { x: 0.065, y: 0.065, z: 1 }
+          size: 256 x 256 x 1 x 1
+      memory_peak: null
+      outputs:
+        - { name: test_output.npy, size: 256 x 256 x 1 x 3, type: image }
+      runtime: null
+covers: [cover_1.png, cover.png]
+description:
+  This trained 2D U-Net model segments the contour, foreground and background
+  of Bacillus Subtilis bacteria imaged with Widefield microscopy images. The current
+  segmentation enables running further watershed segmentation to obtain a unique label
+  for each individual bacteria detected in the image.
+documentation: README.md
+format_version: 0.4.8
+inputs:
+  - axes: bxyc
+    data_range: [-.inf, .inf]
+    data_type: float32
+    name: input
+    preprocessing:
+      - kwargs:
+          {
+            axes: xyc,
+            max_percentile: 99.8,
+            min_percentile: 1.0,
+            mode: per_sample,
+          }
+        name: scale_range
+    shape: [1, 256, 256, 1]
+license: MIT
+links: [deepimagej/deepimagej, imjoy/BioImageIO-Packager, ilastik/ilastik]
+maintainers:
+  - { github_user: esgomezm }
+name: "B. Sutilist bacteria segmentation - Widefield microscopy - 2D UNet"
+outputs:
+  - axes: bxyc
+    data_range: [-.inf, .inf]
+    data_type: float32
+    name: output
+    shape:
+      offset: [0.0, 0.0, 0.0, 0.0]
+      reference_tensor: input
+      scale: [1.0, 1.0, 1.0, 3.0]
+rdf_source: https://bioimage-io.github.io/collection-bioimage-io/rdfs/10.5281/zenodo.7261974/7261975/rdf.yaml
+sample_inputs: [sample_input_0.tif]
+sample_outputs: [sample_output_0.tif]
+tags:
+  [
+    zerocostdl4mic,
+    segmentation,
+    2d,
+    unet,
+    bacillus-subtilis,
+    fluorescence-light-microscopy,
+    cells,
+    semantic-segmentation,
+    bacteria,
+    microbiology,
+  ]
+test_inputs: [test_input.npy]
+test_outputs: [test_output.npy]
+timestamp: "2022-10-28T16:20:17.690336Z"
+type: model
+version: 0.1.0
+weights:
+  keras_hdf5:
+    sha256: 8f64a31164843648f1fc2e4c57c08299b9bae4b18dbeecb9f823585ca971e90b
+    source: keras_weights.hdf5
+    tensorflow_version: 2.9.2
+  tensorflow_saved_model_bundle:
+    sha256: 40333b1333594edff9b0cc4243da5304addcacf2e77a5b12f062f102f6005c56
+    source: tf-weights.zip
+    tensorflow_version: 2.6.2
+    parent: keras_hdf5

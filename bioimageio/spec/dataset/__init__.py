@@ -1,14 +1,20 @@
-from . import v0_2
-
 # autogen: start
-from . import converters, raw_nodes, schema, utils
-from .raw_nodes import FormatVersion
+"""
+implementaions of all released minor versions are available in submodules:
+- dataset v0_2: `bioimageio.spec.dataset.v0_2.DatasetDescr` [user documentation](../../../user_docs/dataset_descr_v0-2.md)
+- dataset v0_3: `bioimageio.spec.dataset.v0_3.DatasetDescr` [user documentation](../../../user_docs/dataset_descr_v0-3.md)
+"""
+from typing import Union
 
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args  # type: ignore
+from pydantic import Discriminator
+from typing_extensions import Annotated
 
-format_version = get_args(FormatVersion)[-1]
+from .v0_2 import DatasetDescr as DatasetDescr_v0_2
+from .v0_3 import DatasetDescr as DatasetDescr
+from .v0_3 import DatasetDescr as DatasetDescr_v0_3
 
+AnyDatasetDescr = Annotated[
+    Union[DatasetDescr_v0_2, DatasetDescr_v0_3], Discriminator("format_version")
+]
+"""Union of any released dataset desription"""
 # autogen: stop

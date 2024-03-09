@@ -1,0 +1,19 @@
+{
+    "window.title": "bioimageio.spec",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "yaml.schemas": {
+        "dist/bioimageio_schema_latest.json": [
+            "rdf.yaml",
+            "bioimageio.yaml",
+            "*.bioimageio.yaml"
+        ],
+    }
+}

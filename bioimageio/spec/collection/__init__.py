@@ -1,14 +1,20 @@
-from . import v0_2
-
 # autogen: start
-from . import converters, raw_nodes, schema, utils
-from .raw_nodes import FormatVersion
+"""
+implementaions of all released minor versions are available in submodules:
+- collection v0_2: `bioimageio.spec.collection.v0_2.CollectionDescr` [user documentation](../../../user_docs/collection_descr_v0-2.md)
+- collection v0_3: `bioimageio.spec.collection.v0_3.CollectionDescr` [user documentation](../../../user_docs/collection_descr_v0-3.md)
+"""
+from typing import Union
 
-try:
-    from typing import get_args
-except ImportError:
-    from typing_extensions import get_args  # type: ignore
+from pydantic import Discriminator
+from typing_extensions import Annotated
 
-format_version = get_args(FormatVersion)[-1]
+from .v0_2 import CollectionDescr as CollectionDescr_v0_2
+from .v0_3 import CollectionDescr as CollectionDescr
+from .v0_3 import CollectionDescr as CollectionDescr_v0_3
 
+AnyCollectionDescr = Annotated[
+    Union[CollectionDescr_v0_2, CollectionDescr_v0_3], Discriminator("format_version")
+]
+"""Union of any released collection desription"""
 # autogen: stop

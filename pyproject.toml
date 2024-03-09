@@ -1,3 +1,45 @@
 [tool.black]
-line-length = 120
-target-version = ['py38']
+line-length = 88
+target-version = ["py38", "py39", "py310", "py311"]
+preview = true
+
+[tool.pyright]
+exclude = ["**/node_modules", "**/__pycache__", "tests/old_*", "tests/cache"]
+include = ["bioimageio", "scripts", "tests"]
+pythonPlatform = "All"
+pythonVersion = "3.8"
+reportDuplicateImport = "error"
+reportImplicitStringConcatenation = "error"
+reportImportCycles = true
+reportIncompatibleMethodOverride = true
+reportMatchNotExhaustive = "error"
+reportMissingSuperCall = "error"
+reportMissingTypeArgument = true
+reportMissingTypeStubs = "warning"
+reportPropertyTypeMismatch = true
+reportUninitializedInstanceVariable = "error"
+reportUnknownMemberType = false
+reportUnnecessaryIsInstance = false
+reportUnnecessaryTypeIgnoreComment = "error"
+reportUnsupportedDunderAll = "error"
+reportUnusedCallResult = "error"
+reportUnusedClass = "error"
+reportUnusedExpression = "error"
+reportUnusedFunction = "error"
+reportUnusedImport = "error"
+reportUnusedVariable = "error"
+reportWildcardImportFromLibrary = "error"
+strictDictionaryInference = true
+strictListInference = true
+strictSetInference = true
+typeCheckingMode = "strict"
+useLibraryCodeForTypes = true
+
+[tool.pytest.ini_options]
+addopts = "-n auto --capture=no --failed-first"     # --doctest-modules
+testpaths = ["bioimageio/spec", "tests", "scripts"]
+
+[tool.ruff]
+line-length = 88
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+target-version = "py38"

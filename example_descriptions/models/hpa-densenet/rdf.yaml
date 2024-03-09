@@ -1,0 +1,70 @@
+attachments:
+  files:
+    - hpa_labels.txt
+authors:
+  - name: Shubin Dai
+maintainers:
+  - github_user: oeway
+    name: Wei Ouyang
+cite:
+  - doi: 10.1038/s41592-019-0658-6
+    text: >-
+      Ouyang, W., Winsnes, C.F., Hjelmare, M. et al. Analysis of the Human
+      Protein Atlas Image Classification competition. Nat Methods 16, 1254–1261
+      (2019).
+covers:
+  - bestfitting-densenet-diagram.png
+description: The winning model of HPA image classification 2019 by Bestfitting
+documentation: README.md
+format_version: 0.4.0
+inputs:
+  - axes: bcyx
+    data_range: [-.inf, .inf]
+    data_type: float32
+    description: HPA image (jpeg or png)
+    name: image
+    preprocessing:
+      - kwargs:
+          axes: xy
+          gain: [0.003921568627, 0.003921568627, 0.003921568627, 0.003921568627]
+          offset: [0.0, 0.0, 0.0, 0.0]
+        name: scale_linear
+    shape: [1, 4, 1024, 1024]
+license: MIT
+name: HPA Bestfitting Densenet
+outputs:
+  - axes: bc
+    data_range: [0, .inf]
+    data_type: float32
+    description: protein localization pattern classes
+    name: classes
+    shape: [1, 28]
+  - axes: bc
+    data_range: [-.inf, .inf]
+    data_type: float32
+    description: features of last fully connected layer
+    name: features
+    shape: [1, 1024]
+tags:
+  - classification
+  - densenet-121
+  - hpa
+  - onnx
+  - cells
+  - protein-localization
+test_inputs:
+  - test_input.npy
+test_outputs:
+  - test_output_classes.npy
+  - test_output_features.npy
+timestamp: "2021-09-21T12:00:12.000Z"
+type: model
+version: 0.1.1
+weights:
+  onnx:
+    authors:
+      - name: Wei OUYANG
+    sha256: 0ef125632b0058b2f04448de56dc23339fcbfe4f628601e836e17cef6f344e3f
+    source: densenet_model.onnx
+links:
+  - imjoy/BioImageIO-Packager

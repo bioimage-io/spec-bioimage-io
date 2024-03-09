@@ -1,0 +1,64 @@
+{
+    "model": {
+        "modality": [
+            "electron-microscopy",
+            "cryo-electron-microscopy",
+            "fluorescence-light-microscopy",
+            "transmission-light-microscopy",
+            "super-resolution-microscopy",
+            "x-ray-microscopy",
+            "force-microscopy",
+            "high-content-imaging",
+            "whole-slide-imaging",
+            "other"
+        ],
+        "dims": [
+            "2d",
+            "3d",
+            "2d-t",
+            "3d-t"
+        ],
+        "content": [
+            "cells",
+            "nuclei",
+            "extracellular-vesicles",
+            "tissue",
+            "plant",
+            "mitochondria",
+            "vasculature",
+            "cell-membrane",
+            "brain",
+            "whole-organism"
+        ],
+        "framework": [
+            "tensorflow",
+            "pytorch",
+            "tensorflow.js"
+        ],
+        "software": [
+            "ilastik",
+            "imagej",
+            "fiji",
+            "imjoy",
+            "deepimagej",
+            "n2v"
+        ],
+        "network": [
+            "unet",
+            "densenet",
+            "resnet",
+            "inception",
+            "shufflenet"
+        ],
+        "task": [
+            "semantic-segmentation",
+            "instance-segmentation",
+            "object-detection",
+            "image-classification",
+            "denoising",
+            "image-restoration",
+            "image-reconstruction",
+            "in-silico-labeling"
+        ]
+    }
+}

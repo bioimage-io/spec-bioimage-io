@@ -1,0 +1,60 @@
+package:
+  name: bioimageio.spec
+  version: "0.5.0"
+
+source:
+  path: ..
+
+requirements:
+  host:
+    # {HOST_DEPENDENCIES}
+    - pip
+    - python >=3.8,<3.13
+    - setuptool
+    - wheel
+  run:
+    # {RUN_DEPENDENCIES}
+    - "annotated-types>=0.5.0"
+    - "email_validator"
+    - "imageio"
+    - "loguru"
+    - "numpy>=1.21"
+    - "packaging>=17.0"
+    - "pooch"
+    - "pydantic-settings"
+    - "pydantic>=2.6.3"
+    - email-validator
+    - "python-dateutil"
+    - "ruyaml"
+    - "tqdm"
+    - "typing-extensions"
+
+build:
+  noarch: python
+  script: python -m pip install --no-deps --ignore-installed .
+
+tests:
+  - script:
+      - pytest -n auto --capture=no
+    requirements:
+      run:
+        # {TEST_DEPENDENCIES}
+        - deepdiff
+        - filelock
+        - jsonschema
+        - pytest
+        - pytest-xdist
+        - psutil
+    files:
+      source:
+        - tests
+        - example_descriptions
+  - python:
+      imports:
+        - bioimageio.spec
+
+about:
+  repository: https://github.com/bioimage-io/spec-bioimage-io
+  summary: bioimage.io specifications package
+  license: MIT
+  license_file: LICENSE

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 from setuptools import find_namespace_packages, setup
 
 # Get the long description from the README file
@@ -12,41 +13,55 @@ VERSION = json.loads(VERSION_FILE.read_text(encoding="utf-8"))["version"]
 setup(
     name="bioimageio.spec",
     version=VERSION,
-    description="Parser and validator library for BioImage.IO specifications",
+    description="Parser and validator library for bioimage.io specifications",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bioimage-io/spec-bioimage-io",
-    author="Bioimage Team",
-    classifiers=[  # Optional
+    author="bioimage.io Team",
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "marshmallow-jsonschema",
-        "marshmallow-union",
-        "marshmallow>=3.6.0,<4.0",
-        "numpy",
+        "annotated-types>=0.5.0",
+        "email_validator",
+        "imageio",
+        "loguru",
+        "numpy>=1.21",
         "packaging>=17.0",
-        "requests;platform_system!='Emscripten'",
-        "ruamel.yaml;platform_system!='Emscripten'",
-        "tqdm;platform_system!='Emscripten'",
-        "typer",
+        "pooch",
+        "pydantic-settings",
+        "pydantic[email]>=2.6.3",
+        "python-dateutil",
+        "ruyaml",
+        "tqdm",
         "typing-extensions",
     ],
-    entry_points={"console_scripts": ["bioimageio = bioimageio.spec.__main__:app"]},
-    extras_require={"test": ["black", "mypy", "pytest"], "dev": ["pre-commit"]},
-    scripts=[
-        "scripts/generate_json_specs.py",
-        "scripts/generate_processing_docs.py",
-        "scripts/generate_rdf_docs.py",
-        "scripts/generate_weight_formats_docs.py",
-    ],
+    extras_require={
+        "dev": [
+            "black",
+            "deepdiff",
+            "filelock",  # for session fixtures due to pytest-xdist
+            "jsonschema",
+            "jupyter",
+            "lxml",
+            "pdoc",
+            "pre-commit",
+            "pyright",
+            "pytest-xdist[psutil]",  # parallel pytest with 'pytest -n auto'
+            "pytest",
+            "ruff",  # check line length in cases black cannot fix it
+        ]
+    },
+    scripts=[],
     include_package_data=True,
-    project_urls={  # Optional
+    project_urls={
         "Bug Reports": "https://github.com/bioimage-io/spec-bioimage-io/issues",
         "Source": "https://github.com/bioimage-io/spec-bioimage-io",
     },

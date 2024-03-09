@@ -1,0 +1,40 @@
+authors:
+  - name: William Patton
+  - name: Fynn Beuttenmüller
+    github_user: fynnbe
+cite:
+  - { url: "https://example.com", text: Test }
+covers: []
+description: Test model for scaling
+documentation: docs.md
+format_version: 0.4.10
+inputs:
+  - axes: bcyx
+    data_range: [-.inf, .inf]
+    data_type: float32
+    name: input
+    shape:
+      min: [1, 1, 5, 5]
+      step: [0, 0, 5, 5]
+license: CC-BY-4.0
+name: Test_scaling
+outputs:
+  - axes: bcyx
+    data_range: [-.inf, .inf]
+    data_type: float32
+    halo: [0, 0, 0, 0]
+    name: output
+    shape:
+      offset: [0.0, 0.5, 0.0, 0.0]
+      reference_tensor: input
+      scale: [1.0, 0.0, 4.0, 4.0]
+tags: [scaling, test]
+test_inputs: [test_input.npy]
+test_outputs: [test_output.npy]
+timestamp: "2022-10-23T00:00:00Z"
+type: model
+weights:
+  pytorch_state_dict:
+    architecture: upsample_model.py:Upscaler
+    architecture_sha256: 944f960311e1eedc42072fe264cb6b4e544f53cda3da9e6525621e5e3d4ba69b
+    source: weights.pt

@@ -1,113 +1,79 @@
-import pathlib
+import json
+from pathlib import Path
+from pprint import pprint
+from types import MappingProxyType
+from typing import Any, Dict, Union
 
 import pytest
+from filelock import FileLock
+from ruyaml import YAML
+
+from bioimageio.spec._internal.constants import (
+    KNOWN_GH_USERS,
+    KNOWN_INVALID_GH_USERS,
+    N_KNOWN_GH_USERS,
+    N_KNOWN_INVALID_GH_USERS,
+)
+
+yaml = YAML(typ="safe")
+
+EXAMPLE_SPECS = Path(__file__).parent / "../example_descriptions/"
+UNET2D_ROOT = EXAMPLE_SPECS / "models/unet2d_nuclei_broad"
 
 
-@pytest.fixture
-def unet2d_nuclei_broad_base_path():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_nuclei_broad"
+@pytest.fixture(scope="session")
+def bioimageio_json_schema(
+    tmp_path_factory: pytest.TempPathFactory, worker_id: str
+) -> Dict[Any, Any]:
+    """generates json schema (only run with one worker)
+    see https://pytest-xdist.readthedocs.io/en/latest/how-to.html#making-session-scoped-fixtures-execute-only-once
+    """
+    from scripts.generate_json_schemas import generate_json_schemas
 
-
-def get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request) -> dict:
-    if request.param == "v0_4_9":
-        v = ""
+    root_tmp_dir = tmp_path_factory.getbasetemp().parent
+    path = root_tmp_dir / "bioimageio_schema_latest.json"
+    if worker_id == "master":
+        # no workers
+        generate_json_schemas(root_tmp_dir, "generate")
+        schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
     else:
-        v = f"_{request.param}"
+        with FileLock(path.with_suffix(path.suffix + ".lock")):
+            if not path.is_file():
+                generate_json_schemas(root_tmp_dir, "generate")
 
-    f_name = f"rdf{v}.yaml"
-    return unet2d_nuclei_broad_base_path / f_name
+            schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
 
-
-@pytest.fixture(params=["v0_3_0", "v0_3_1", "v0_3_2", "v0_3_3", "v0_3_6", "v0_4_0", "v0_4_9"])
-def unet2d_nuclei_broad_any(unet2d_nuclei_broad_base_path, request):
-    yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
-
-
-@pytest.fixture(params=["v0_3_0", "v0_3_1", "v0_3_2", "v0_3_3", "v0_3_6", "v0_4_0"])
-def unet2d_nuclei_broad_before_latest(unet2d_nuclei_broad_base_path, request):
-    yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
+    assert isinstance(schema, dict)
+    return schema
 
 
-@pytest.fixture(params=["v0_4_9"])
-def unet2d_nuclei_broad_latest(unet2d_nuclei_broad_base_path, request):
-    yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
+@pytest.fixture(scope="session")
+def stardist04_data():
+    with (
+        EXAMPLE_SPECS / "models/stardist_example_model/v0_4.bioimageio.yaml"
+    ).open() as f:
+        return MappingProxyType(yaml.load(f))
 
 
-@pytest.fixture(params=["v0_3_6", "v0_4_9"])
-def unet2d_nuclei_broad_any_minor(unet2d_nuclei_broad_base_path, request):
-    yield get_unet2d_nuclei_broad(unet2d_nuclei_broad_base_path, request)
+@pytest.fixture(scope="session")
+def unet2d_path() -> Path:
+    return UNET2D_ROOT / "bioimageio.yaml"
 
 
-@pytest.fixture
-def invalid_rdf_v0_4_0_duplicate_tensor_names(unet2d_nuclei_broad_base_path):
-    return unet2d_nuclei_broad_base_path / "invalid_rdf_v0_4_0_duplicate_tensor_names.yaml"
+@pytest.fixture(scope="session")
+def unet2d_data(unet2d_path: Path):
+    with unet2d_path.open() as f:
+        data: Union[Any, Dict[Any, Any]] = yaml.load(f)
+
+    assert isinstance(data, dict)
+    return MappingProxyType(data)
 
 
-@pytest.fixture
-def unet2d_nuclei_broad_collection():
-    return pathlib.Path(__file__).parent / "../example_specs/collections/unet2d_nuclei_broad_coll/rdf.yaml"
+def pytest_sessionfinish(session: Any, exitstatus: Any):
+    if len(KNOWN_GH_USERS) > N_KNOWN_GH_USERS:
+        print("updated known gh users:")
+        pprint(KNOWN_GH_USERS)
 
-
-@pytest.fixture
-def partner_collection():
-    return pathlib.Path(__file__).parent / "../example_specs/collections/partner_collection/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_nuclei_broad_url():
-    return "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml"
-
-
-@pytest.fixture
-def FruNet_model_url():
-    return "https://raw.githubusercontent.com/deepimagej/models/master/fru-net_sev_segmentation/model.yaml"
-
-
-@pytest.fixture
-def unet2d_diff_output_shape():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_diff_output_shape/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_fixed_shape():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_fixed_shape/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_multi_tensor():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_multi_tensor/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_expanded_output_shape():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_nuclei_broad/rdf_expand_output_shape.yaml"
-
-
-@pytest.fixture
-def hpa_model():
-    return pathlib.Path(__file__).parent / "../example_specs/models/hpa-densenet/rdf.yaml"
-
-
-@pytest.fixture
-def stardist_model():
-    return pathlib.Path(__file__).parent / "../example_specs/models/stardist_example_model/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_keras_tf():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_keras_tf/rdf.yaml"
-
-
-@pytest.fixture
-def unet2d_keras_tf2():
-    return pathlib.Path(__file__).parent / "../example_specs/models/unet2d_keras_tf2/rdf.yaml"
-
-
-@pytest.fixture
-def dataset_rdf():
-    return pathlib.Path(__file__).parent / "../example_specs/datasets/covid_if_training_data/rdf.yaml"
-
-
-@pytest.fixture
-def upsamle_model_rdf():
-    return pathlib.Path(__file__).parent / "../example_specs/models/upsample_test_model/rdf.yaml"
+    if len(KNOWN_INVALID_GH_USERS) > N_KNOWN_INVALID_GH_USERS:
+        print("updated known invalid gh users:")
+        pprint(KNOWN_INVALID_GH_USERS)

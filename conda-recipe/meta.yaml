@@ -1,3 +1,5 @@
+# possibly superseded by recipe.yaml
+# TODO: decide for package builder and clean up
 {% set setup_py_data = load_setup_py_data() %}
 
 package:
@@ -9,21 +11,17 @@ source:
 
 requirements:
   build:
-    - python >=3.7,<3.10
+    - python >=3.8,<3.13
     - pip
   run:
-    - python >=3.7,<3.10
+    - python >=3.8,<3.13
     {% for dep in setup_py_data['install_requires'] %}
-    - {{ dep.replace(";platform_system!='Emscripten'", "").lower() }}
+    - {{ dep.lower() }}
     {% endfor %}
 
 
 build:
   noarch: python
-  entry_points:
-    {% for ep in setup_py_data['entry_points']['console_scripts'] %}
-    - {{ ep }}
-    {% endfor %}
   script:
         - python -m pip install --no-deps --ignore-installed .
 
@@ -32,16 +30,17 @@ test:
     - bioimageio.spec
   source_files:
     - tests
-    - example_specs
+    - example_descriptions
   requires:
-    {% for dep in setup_py_data['extras_require']['test'] %}
+    {% for dep in setup_py_data['extras_require']['dev'] %}
     - {{ dep.replace('torch', 'pytorch').lower() }}
     {% endfor %}
+    - pytest-xdist[psutil]  # somehow not installed from setup_py_data
   commands:
-    - pytest .
+    - pytest -n auto --capture=no
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io
-  summary: BioImage.IO Spec Validator and specifications package
+  summary: bioimage.io specifications package
   license: MIT
   license_file: LICENSE
