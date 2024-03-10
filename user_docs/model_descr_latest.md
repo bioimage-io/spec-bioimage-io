@@ -96,14 +96,14 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 
 ## `documentation`<sub> Union</sub>
 
-[*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md', '…']
+[*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 <details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]
 
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -851,7 +851,7 @@ Sequence of Union of
 </summary>
 
 Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7fc1ed0a3f60>))]
+(Predicate(func=<function <lambda> at 0x7fe1488dbd80>))]
 
 </details>
 
@@ -914,7 +914,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 </summary>
 
 Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7fc1ed0a3f60>))]
+(Predicate(func=<function <lambda> at 0x7fe1488dbd80>))]
 
 </details>
 
@@ -1777,7 +1777,7 @@ Sequence of Union of
 </summary>
 
 Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7fc1ed0a3f60>))]
+(Predicate(func=<function <lambda> at 0x7fe1488dbd80>))]
 
 </details>
 
@@ -1840,7 +1840,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 </summary>
 
 Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7fc1ed0a3f60>))]
+(Predicate(func=<function <lambda> at 0x7fe1488dbd80>))]
 
 </details>
 
@@ -2673,16 +2673,16 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
 ## `git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
-[*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad'
+[*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
 
 
@@ -2700,7 +2700,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7fc1f97aeac0>); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7fe15501eac0>); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2851,7 +2851,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 
-## `timestamp`<sub> pydantic.root_model.RootModel</sub> ≝ `root=datetime.datetime(2024, 3, 10, 13, 5, 16, 116501)`
+## `timestamp`<sub> pydantic.root_model.RootModel</sub> ≝ `root=datetime.datetime(2024, 3, 10, 13, 15, 15, 582461)`
 
 
 
@@ -2898,10 +2898,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3024,7 +3024,7 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 
 ### `training_data.git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
-[*Example:*](#training_datagit_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad'
+[*Example:*](#training_datagit_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
 
 
@@ -3042,7 +3042,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7fc1f97aeac0>); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7fe15501eac0>); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -3140,18 +3140,18 @@ Optional[_internal.version_type.Version]
 
 ### `training_data.documentation`<sub> Optional</sub> ≝ `None`
 
-[*Examples:*](#training_datadocumentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md', '…']
+[*Examples:*](#training_datadocumentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 <details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]*]
 
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3245,7 +3245,7 @@ Optional[_internal.version_type.Version]
 ### `authors.i.orcid`
 0000-0001-2345-6789
 ### `documentation`
-- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md
+- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md
 - README.md
 
 ### `inputs.axes.size`
@@ -3422,7 +3422,7 @@ pytorch_state_dict
 ### `config`
 {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
 ### `git_repo`
-https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 ### `maintainers.i.orcid`
@@ -3441,7 +3441,7 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/u
 ### `training_data.config`
 {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
 ### `training_data.git_repo`
-https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `training_data.links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 ### `training_data.maintainers.i.orcid`
@@ -3449,7 +3449,7 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/u
 ### `training_data.tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 ### `training_data.documentation`
-- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md
+- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md
 - README.md
 
 ### `training_data.badges.i.label`

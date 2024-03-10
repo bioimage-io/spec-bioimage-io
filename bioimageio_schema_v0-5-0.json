@@ -233,7 +233,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c2070b6a0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be3d87740__"
                         }
                     ],
                     "default": "batch"
@@ -285,7 +285,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "channel"
@@ -564,7 +564,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         },
                         {
                             "type": "null"
@@ -641,7 +641,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "index"
@@ -1576,7 +1576,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "x",
@@ -1689,7 +1689,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "x",
@@ -1796,7 +1796,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "time"
@@ -1901,7 +1901,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         }
                     ],
                     "default": "time"
@@ -2035,13 +2035,13 @@
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c2070b6a0__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be3d87740__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
@@ -2251,7 +2251,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
                     "title": "Git Repo"
                 },
@@ -2417,7 +2417,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -2614,7 +2614,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ]
                 },
                 "icon": {
@@ -2741,7 +2741,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -2933,7 +2933,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
                     "title": "Git Repo"
                 },
@@ -3099,7 +3099,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -3323,7 +3323,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ]
                 },
                 "icon": {
@@ -3450,7 +3450,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -3669,7 +3669,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
                     "title": "Git Repo"
                 },
@@ -3835,7 +3835,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -4043,7 +4043,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ]
                 },
                 "icon": {
@@ -4170,7 +4170,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -4753,7 +4753,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
                     "title": "Git Repo"
                 },
@@ -4924,7 +4924,7 @@
                         }
                     ],
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -6721,7 +6721,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ]
                 },
                 "icon": {
@@ -6860,7 +6860,7 @@
                         }
                     ],
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -6916,7 +6916,7 @@
                             "$ref": "#/$defs/RootModel_Annotated_datetime__BeforeValidator__PlainSerializer__"
                         }
                     ],
-                    "default": "2024-03-10T13:05:17.930708"
+                    "default": "2024-03-10T13:15:17.285462"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7326,7 +7326,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f3c20bef9c0__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f9be4073b00__"
                         },
                         {
                             "type": "null"
@@ -8035,7 +8035,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
                     "title": "Git Repo"
                 },
@@ -8201,7 +8201,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"
@@ -8388,7 +8388,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ]
                 },
                 "icon": {
@@ -8515,7 +8515,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
                     ],
                     "title": "Documentation"

@@ -42,7 +42,7 @@ Bioimage.io description of a Jupyter Notebook.
 Union of
 - _internal.url.HttpUrl (WithSuffix(suffix='.ipynb', case_sensitive=True))
 - Path
-  (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>); WithSuffix(suffix='.ipynb', case_sensitive=True))
+  (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>); WithSuffix(suffix='.ipynb', case_sensitive=True))
 - _internal.io.RelativeFilePath (WithSuffix(suffix='.ipynb', case_sensitive=True))
 
 
@@ -70,7 +70,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7fc1f97aeac0>); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7fe15501eac0>); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -187,16 +187,16 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fc1fca418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fe1583458a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
 
-[*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md', '…']
+[*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 <details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*]
 
@@ -208,7 +208,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7fc1f97aeac0>); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(func=<function wo_special_file_name at 0x7fe15501eac0>); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -219,7 +219,7 @@ Optional[Union of
 
 ## `git_repo`<sub> Optional[str]</sub> ≝ `None`
 
-[*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad'
+[*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
 
 
@@ -237,7 +237,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7fc1f97aeac0>); PlainSerializer(func=<function _package at 0x7fc1fbea2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7fe15501eac0>); PlainSerializer(func=<function _package at 0x7fe1573cae80>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -378,11 +378,11 @@ https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master
 ### `covers`
 cover.png
 ### `documentation`
-- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md
+- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md
 - README.md
 
 ### `git_repo`
-https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `license`
 - CC-BY-4.0
 - MIT
