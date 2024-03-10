@@ -64,7 +64,7 @@ weights:
   onnx:
     authors:
       - name: Wei OUYANG
-    sha256: 0ef125632b0058b2f04448de56dc23339fcbfe4f628601e836e17cef6f344e3f
+    sha256: 0cb72ff5e414630de95674a7d523da0de19850b1cada4712201699fdd960c1b0
     source: densenet_model.onnx
 links:
   - imjoy/BioImageIO-Packager
