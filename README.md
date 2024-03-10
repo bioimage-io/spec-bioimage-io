@@ -45,7 +45,7 @@ These are primarily intended for syntax highlighting and form generation.
 
 ## Examples
 
-We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_specs/examples.md).
+We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md).
 
 ## 💁 Recommendations
 

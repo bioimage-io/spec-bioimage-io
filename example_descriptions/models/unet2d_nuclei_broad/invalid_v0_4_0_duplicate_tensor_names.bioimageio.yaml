@@ -18,7 +18,7 @@ cite:
   - text: "2018 Data Science Bowl"
     url: https://www.kaggle.com/c/data-science-bowl-2018
 
-git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
 license: MIT
 

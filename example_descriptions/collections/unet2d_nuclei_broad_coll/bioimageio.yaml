@@ -21,7 +21,7 @@ cite:
   - text: "2018 Data Science Bowl"
     url: https://www.kaggle.com/c/data-science-bowl-2018
 
-git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 # tags: [unet2d, pytorch, nucleus, segmentation, dsb2018] # tags is optional for collection
 license: MIT
 
@@ -64,7 +64,7 @@ version: 1
 
 collection:
   #  - id: with_rdf_source_url
-  #    rdf_source: https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/rdf.yaml
+  #    rdf_source: https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/rdf.yaml
   #    name: UNet 2D Nuclei Broad (latest)
   - id: in_place_0.4.10
     format_version: 0.4.10
