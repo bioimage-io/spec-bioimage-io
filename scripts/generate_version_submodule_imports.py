@@ -61,7 +61,7 @@ def parse_args():
     p = ArgumentParser(
         description=(
             "script that generates imports in bioimageio.spec resource description"
-            " submodules"
+            + " submodules"
         )
     )
     _ = p.add_argument(

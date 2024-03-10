@@ -27,13 +27,13 @@ jobs:
           pip install -e .[dev]
       - name: Test with pytest
         run: pytest
-      - name: Check passthrough models
-        run: python scripts/generate_passthrough_modules.py check
+      - name: Check version submodule imports
+        run: python scripts/generate_version_submodule_imports.py check
 
       - name: Check if there is a parent commit
         id: check-parent-commit
         run: |
-          echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
+          echo "name=sha::$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
 
       - name: Detect new version
         id: check-version
@@ -47,7 +47,7 @@ jobs:
       - name: Push tag
         id: tag-version
         if: steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
-        uses: mathieudutour/github-tag-action@v5.5
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ steps.check-version.outputs.current-version }}
@@ -58,14 +58,14 @@ jobs:
 
       - name: Publish package on PyPI
         if: steps.tag-version.outputs.new_tag
-        uses: pypa/gh-action-pypi-publish@v1.4.2
+        uses: pypa/gh-action-pypi-publish@v1.8.14
         with:
           user: __token__
           password: "${{ secrets.PYPI_TOKEN }}"
-          packages_dir: dist/
+          packages-dir: dist/
 
       - name: Publish the release notes
-        uses: release-drafter/release-drafter@v5.15.0
+        uses: release-drafter/release-drafter@v6.0.0
         with:
           publish: "${{ steps.tag-version.outputs.new_tag != '' }}"
           tag: "${{ steps.tag-version.outputs.new_tag }}"
