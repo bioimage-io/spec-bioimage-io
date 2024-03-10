@@ -886,7 +886,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         ImportantFileSource,
         Field(
             examples=[
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
         ),

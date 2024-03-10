@@ -5,18 +5,18 @@ import pytest
 
 from bioimageio.spec._description import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
-from tests.conftest import EXAMPLE_SPECS
+from tests.conftest import EXAMPLE_DESCRIPTIONS
 from tests.utils import ParameterSet, check_bioimageio_yaml
 
 
 def get_param(descr_path: Path) -> ParameterSet:
-    key = descr_path.relative_to(EXAMPLE_SPECS).as_posix()
+    key = descr_path.relative_to(EXAMPLE_DESCRIPTIONS).as_posix()
     return pytest.param(descr_path, key, id=key)
 
 
 def yield_valid_descr_paths() -> Iterable[ParameterSet]:
-    assert EXAMPLE_SPECS.exists()
-    for p in EXAMPLE_SPECS.glob("**/*bioimageio.yaml"):
+    assert EXAMPLE_DESCRIPTIONS.exists()
+    for p in EXAMPLE_DESCRIPTIONS.glob("**/*bioimageio.yaml"):
         if p.name.startswith("invalid"):
             continue
 
@@ -24,8 +24,8 @@ def yield_valid_descr_paths() -> Iterable[ParameterSet]:
 
 
 def yield_invalid_descr_paths() -> Iterable[ParameterSet]:
-    assert EXAMPLE_SPECS.exists()
-    for p in EXAMPLE_SPECS.glob("**/invalid*bioimageio.yaml"):
+    assert EXAMPLE_DESCRIPTIONS.exists()
+    for p in EXAMPLE_DESCRIPTIONS.glob("**/invalid*bioimageio.yaml"):
         yield get_param(p)
 
 

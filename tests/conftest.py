@@ -17,8 +17,8 @@ from bioimageio.spec._internal.constants import (
 
 yaml = YAML(typ="safe")
 
-EXAMPLE_SPECS = Path(__file__).parent / "../example_descriptions/"
-UNET2D_ROOT = EXAMPLE_SPECS / "models/unet2d_nuclei_broad"
+EXAMPLE_DESCRIPTIONS = Path(__file__).parent / "../example_descriptions/"
+UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
 
 
 @pytest.fixture(scope="session")
@@ -50,7 +50,7 @@ def bioimageio_json_schema(
 @pytest.fixture(scope="session")
 def stardist04_data():
     with (
-        EXAMPLE_SPECS / "models/stardist_example_model/v0_4.bioimageio.yaml"
+        EXAMPLE_DESCRIPTIONS / "models/stardist_example_model/v0_4.bioimageio.yaml"
     ).open() as f:
         return MappingProxyType(yaml.load(f))
 

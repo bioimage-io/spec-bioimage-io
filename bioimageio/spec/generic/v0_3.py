@@ -241,7 +241,7 @@ class GenericModelDescrBase(ResourceDescrBase):
         Optional[HttpUrl],
         Field(
             examples=[
-                "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_specs/models/unet2d_nuclei_broad"
+                "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
             ],
         ),
     ] = None
@@ -339,7 +339,7 @@ class GenericDescrBase(GenericModelDescrBase):
         Optional[DocumentationSource],
         Field(
             examples=[
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/unet2d_nuclei_broad/README.md",
+                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                 "README.md",
             ],
         ),

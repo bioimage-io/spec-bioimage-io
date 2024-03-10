@@ -33,7 +33,7 @@ def parse_args():
         "--resource_description_path",
         type=Path,
         default=Path(__file__).parent
-        / "../example_specs/models/unet2d_nuclei_broad/rdf.yaml",
+        / "../example_descriptions/models/unet2d_nuclei_broad/rdf.yaml",
     )
     args = p.parse_args()
     return args
