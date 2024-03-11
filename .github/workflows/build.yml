@@ -63,6 +63,7 @@ jobs:
         run: python scripts/generate_json_schemas.py
       - name: Generate developer docs
         run: pdoc -o ./dist bioimageio.spec
+      - run: cp README.md ./dist/README.md
       - name: Get branch name to deploy to
         id: get_branch
         shell: bash
