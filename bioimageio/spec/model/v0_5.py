@@ -333,8 +333,6 @@ class AxisBase(NodeWithExplicitlySetFields):
 
     description: Annotated[str, MaxLen(128)] = ""
 
-    __hash__ = NodeWithExplicitlySetFields.__hash__
-
 
 class WithHalo(Node):
     halo: Annotated[int, Ge(0)] = 0
