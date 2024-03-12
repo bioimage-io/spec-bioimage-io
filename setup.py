@@ -37,7 +37,7 @@ setup(
         "packaging>=17.0",
         "pooch",
         "pydantic-settings",
-        "pydantic[email]>=2.6.3",
+        "pydantic>=2.6.3",
         "python-dateutil",
         "ruyaml",
         "tqdm",
@@ -53,8 +53,9 @@ setup(
             "lxml",
             "pdoc",
             "pre-commit",
+            "psutil",  # parallel pytest with '-n auto'
             "pyright",
-            "pytest-xdist[psutil]",  # parallel pytest with 'pytest -n auto'
+            "pytest-xdist",  # parallel pytest
             "pytest",
             "ruff",  # check line length in cases black cannot fix it
         ]
