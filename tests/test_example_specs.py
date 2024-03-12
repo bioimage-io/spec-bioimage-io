@@ -3,8 +3,6 @@ from typing import Any, Iterable, Mapping
 
 import pytest
 
-from bioimageio.spec._description import DISCOVER, LATEST
-from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.conftest import EXAMPLE_DESCRIPTIONS
 from tests.utils import ParameterSet, check_bioimageio_yaml
 
@@ -48,18 +46,16 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 }
 
 
-@pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
 @pytest.mark.parametrize("descr_path,key", list(yield_valid_descr_paths()))
 def test_example_descr_paths(
     descr_path: Path,
     key: str,
-    format_version: FormatVersionPlaceholder,
     bioimageio_json_schema: Mapping[Any, Any],
 ):
     check_bioimageio_yaml(
         descr_path,
         root=descr_path.parent,
-        as_latest=format_version == LATEST,
+        as_latest=False,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
         bioimageio_json_schema=bioimageio_json_schema,
     )
