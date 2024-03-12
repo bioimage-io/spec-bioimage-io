@@ -13,6 +13,7 @@ from ruyaml import YAML
 from typing_extensions import Unpack
 
 from .io import (
+    ALL_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
@@ -92,15 +93,15 @@ def open_bioimageio_yaml(
 
 def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
     file_names = sorted(file_names)
-    for bioimageio_name in (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES:
+    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
         for fname in file_names:
-            if fname == bioimageio_name or fname.endswith(f".{fname}"):
+            if fname == bioimageio_name or fname.endswith(f".{bioimageio_name}"):
                 return fname
 
     raise ValueError(
         f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
         + " or or any of the alterntive file names:"
-        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES},of any file with an extension of"
+        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES}, or any file with an extension of"
         + f"  those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
     )
 
