@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Optional, Tuple, Union
 
 import packaging.version
@@ -15,6 +17,12 @@ class Version(RootModel[Union[str, int, float]]):
     def model_post_init(self, __context: Any) -> None:
         self._version = packaging.version.Version(str(self.root))
         return super().model_post_init(__context)
+
+    def __lt__(self, other: Version):
+        return self._version < other._version
+
+    def __eq__(self, other: Version):
+        return self._version == other._version
 
     # the properties below are adopted from and mirror properties of packaging.version.Version
     @property

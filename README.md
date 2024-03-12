@@ -85,6 +85,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.0post2
+
+* don't fail if CI env var is a string
+
 #### bioimageio.spec 0.5.0post1
 
 * fix `_internal.io_utils.identify_bioimageio_yaml_file()`

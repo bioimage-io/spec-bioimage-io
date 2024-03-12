@@ -76,15 +76,19 @@ def _serialize_datetime_json(dt: datetime) -> str:
     return dt.isoformat()
 
 
-Datetime = RootModel[
-    Annotated[
-        datetime,
-        BeforeValidator(_validate_datetime),
-        PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
+class Datetime(
+    RootModel[
+        Annotated[
+            datetime,
+            BeforeValidator(_validate_datetime),
+            PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
+        ]
     ]
-]
-"""Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
-with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
+):
+    """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
+    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
+    """
+
 
 Doi = ValidatedString[Annotated[str, StringConstraints(pattern=DOI_REGEX)]]
 FormatVersionPlaceholder = Literal["latest", "discover"]
