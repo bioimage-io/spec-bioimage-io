@@ -27,7 +27,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -233,7 +233,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc227740__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e291fa60__"
                         }
                     ],
                     "default": "batch"
@@ -285,7 +285,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "channel"
@@ -333,6 +333,12 @@
             ],
             "title": "ClipKwargs",
             "type": "object"
+        },
+        "Datetime": {
+            "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).",
+            "format": "date-time",
+            "title": "Datetime",
+            "type": "string"
         },
         "DeprecatedLicenseId": {
             "enum": [
@@ -433,7 +439,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -475,7 +481,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -564,7 +570,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         },
                         {
                             "type": "null"
@@ -641,7 +647,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "index"
@@ -1517,11 +1523,6 @@
             "title": "RelativeFilePath",
             "type": "string"
         },
-        "RootModel_Annotated_datetime__BeforeValidator__PlainSerializer__": {
-            "format": "date-time",
-            "title": "RootModel[Annotated[datetime, BeforeValidator, PlainSerializer]]",
-            "type": "string"
-        },
         "RunMode": {
             "additionalProperties": false,
             "properties": {
@@ -1546,6 +1547,13 @@
             ],
             "title": "RunMode",
             "type": "object"
+        },
+        "Sha256": {
+            "description": "SHA-256 hash value",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Sha256",
+            "type": "string"
         },
         "SizeReference": {
             "additionalProperties": false,
@@ -1576,7 +1584,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "x",
@@ -1689,7 +1697,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "x",
@@ -1796,7 +1804,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "time"
@@ -1901,7 +1909,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         }
                     ],
                     "default": "time"
@@ -2035,13 +2043,13 @@
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc227740__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e291fa60__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
@@ -2050,6 +2058,11 @@
         "ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__": {
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]",
+            "type": "string"
+        },
+        "ValidatedString_Annotated_str__StringConstraints__": {
+            "pattern": "^10\\.[0-9]{4}.+$",
+            "title": "ValidatedString[Annotated[str, StringConstraints]]",
             "type": "string"
         },
         "ValidatedString_Annotated_str__StringConstraints__BeforeValidator__": {
@@ -2122,17 +2135,6 @@
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
-            "type": "string"
-        },
-        "bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1": {
-            "maxLength": 64,
-            "minLength": 64,
-            "title": "ValidatedString[Annotated[str, StringConstraints]]",
-            "type": "string"
-        },
-        "bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____2": {
-            "pattern": "^10\\.[0-9]{4}.+$",
-            "title": "ValidatedString[Annotated[str, StringConstraints]]",
             "type": "string"
         },
         "bioimageio__spec__application__v0_2__ApplicationDescr": {
@@ -4260,7 +4262,7 @@
                 "doi": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____2"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__"
                         },
                         {
                             "type": "null"
@@ -4297,7 +4299,7 @@
                 "doi": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____2"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__"
                         },
                         {
                             "type": "null"
@@ -4517,7 +4519,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -5089,7 +5091,7 @@
                     "type": "array"
                 },
                 "timestamp": {
-                    "$ref": "#/$defs/RootModel_Annotated_datetime__BeforeValidator__PlainSerializer__"
+                    "$ref": "#/$defs/Datetime"
                 },
                 "training_data": {
                     "anyOf": [
@@ -5153,7 +5155,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -5409,7 +5411,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -5504,7 +5506,7 @@
                 "architecture_sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -5798,7 +5800,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -5918,7 +5920,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -6038,7 +6040,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -6527,7 +6529,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -6913,10 +6915,10 @@
                 "timestamp": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/RootModel_Annotated_datetime__BeforeValidator__PlainSerializer__"
+                            "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-12T09:47:00.110538"
+                    "default": "2024-03-12T17:22:10.661654"
                 },
                 "training_data": {
                     "anyOf": [
@@ -6978,7 +6980,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -7221,7 +7223,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -7326,7 +7328,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f78cc70fb00__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe8e2c23a60__"
                         },
                         {
                             "type": "null"
@@ -7555,7 +7557,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -7639,7 +7641,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"
@@ -7734,7 +7736,7 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__StringConstraints____1"
+                            "$ref": "#/$defs/Sha256"
                         },
                         {
                             "type": "null"

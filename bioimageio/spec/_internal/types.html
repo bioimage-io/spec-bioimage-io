@@ -34,7 +34,10 @@
                     <a class="variable" href="#NotEmpty">NotEmpty</a>
             </li>
             <li>
-                    <a class="variable" href="#Datetime">Datetime</a>
+                    <a class="class" href="#Datetime">Datetime</a>
+                            <ul class="memberlist">
+                </ul>
+
             </li>
             <li>
                     <a class="variable" href="#Doi">Doi</a>
@@ -177,52 +180,56 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="n">Datetime</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="n">datetime</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="n">BeforeValidator</span><span class="p">(</span><span class="n">_validate_datetime</span><span class="p">),</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="n">PlainSerializer</span><span class="p">(</span><span class="n">_serialize_datetime_json</span><span class="p">,</span> <span class="n">when_used</span><span class="o">=</span><span class="s2">&quot;json-unless-none&quot;</span><span class="p">),</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="p">]</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="p">]</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">&quot;&quot;&quot;Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).&quot;&quot;&quot;</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="n">Doi</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]]</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="n">FormatVersionPlaceholder</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="s2">&quot;discover&quot;</span><span class="p">]</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="n">IdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_identifier</span><span class="p">),</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_is_not_keyword</span><span class="p">),</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="p">]</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="n">Identifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">]</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="n">LowerCaseIdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">,</span> <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">]</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="n">LowerCaseIdentifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">LowerCaseIdentifierAnno</span><span class="p">]</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="n">OrcidId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_orcid_id</span><span class="p">)]]</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="n">SiUnit</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="n">StringConstraints</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">SI_UNIT_REGEX</span><span class="p">),</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="n">BeforeValidator</span><span class="p">(</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>                <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;×&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>                <span class="k">else</span> <span class="n">s</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="p">)</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="p">),</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="p">]</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="p">]</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="n">_ResourceIdAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">,</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="p">]</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="n">ResourceId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="n">ApplicationId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="n">CollectionId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="n">DatasetId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="n">ModelId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="n">NotebookId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="k">class</span> <span class="nc">Datetime</span><span class="p">(</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="n">datetime</span><span class="p">,</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="n">BeforeValidator</span><span class="p">(</span><span class="n">_validate_datetime</span><span class="p">),</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>            <span class="n">PlainSerializer</span><span class="p">(</span><span class="n">_serialize_datetime_json</span><span class="p">,</span> <span class="n">when_used</span><span class="o">=</span><span class="s2">&quot;json-unless-none&quot;</span><span class="p">),</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="p">]</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="p">]</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="p">):</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="n">Doi</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]]</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="n">FormatVersionPlaceholder</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="s2">&quot;discover&quot;</span><span class="p">]</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="n">IdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_identifier</span><span class="p">),</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_is_not_keyword</span><span class="p">),</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="p">]</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="n">Identifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">]</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="n">LowerCaseIdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">,</span> <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">]</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="n">LowerCaseIdentifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">LowerCaseIdentifierAnno</span><span class="p">]</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="n">OrcidId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_orcid_id</span><span class="p">)]]</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="n">SiUnit</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">StringConstraints</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">SI_UNIT_REGEX</span><span class="p">),</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">BeforeValidator</span><span class="p">(</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>                <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;×&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>                <span class="k">else</span> <span class="n">s</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="p">)</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="p">),</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="p">]</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="p">]</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="n">_ResourceIdAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">,</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="p">]</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="n">ResourceId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="n">ApplicationId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="n">CollectionId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="n">DatasetId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="n">ModelId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="n">NotebookId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -240,19 +247,77 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
                 </section>
                 <section id="Datetime">
-                    <div class="attr variable">
-            <span class="name">Datetime</span>        =
-<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[datetime, BeforeValidator, PlainSerializer]]&#39;&gt;</span>
+                            <input id="Datetime-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Datetime</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
 
-        
+                <label class="view-source-button" for="Datetime-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#Datetime"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Datetime-80"><a href="#Datetime-80"><span class="linenos">80</span></a><span class="k">class</span> <span class="nc">Datetime</span><span class="p">(</span>
+</span><span id="Datetime-81"><a href="#Datetime-81"><span class="linenos">81</span></a>    <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="Datetime-82"><a href="#Datetime-82"><span class="linenos">82</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="Datetime-83"><a href="#Datetime-83"><span class="linenos">83</span></a>            <span class="n">datetime</span><span class="p">,</span>
+</span><span id="Datetime-84"><a href="#Datetime-84"><span class="linenos">84</span></a>            <span class="n">BeforeValidator</span><span class="p">(</span><span class="n">_validate_datetime</span><span class="p">),</span>
+</span><span id="Datetime-85"><a href="#Datetime-85"><span class="linenos">85</span></a>            <span class="n">PlainSerializer</span><span class="p">(</span><span class="n">_serialize_datetime_json</span><span class="p">,</span> <span class="n">when_used</span><span class="o">=</span><span class="s2">&quot;json-unless-none&quot;</span><span class="p">),</span>
+</span><span id="Datetime-86"><a href="#Datetime-86"><span class="linenos">86</span></a>        <span class="p">]</span>
+</span><span id="Datetime-87"><a href="#Datetime-87"><span class="linenos">87</span></a>    <span class="p">]</span>
+</span><span id="Datetime-88"><a href="#Datetime-88"><span class="linenos">88</span></a><span class="p">):</span>
+</span><span id="Datetime-89"><a href="#Datetime-89"><span class="linenos">89</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format</span>
+</span><span id="Datetime-90"><a href="#Datetime-90"><span class="linenos">90</span></a><span class="sd">    with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).</span>
+</span><span id="Datetime-91"><a href="#Datetime-91"><span class="linenos">91</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>Timestamp in <a href="#https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format
 with a few restrictions listed <a href="https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat">here</a>.</p>
 </div>
 
 
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>pydantic.main.BaseModel</dt>
+                                <dd id="Datetime.__init__" class="function">BaseModel</dd>
+                <dd id="Datetime.model_config" class="variable">model_config</dd>
+                <dd id="Datetime.model_extra" class="variable">model_extra</dd>
+                <dd id="Datetime.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="Datetime.model_construct" class="function">model_construct</dd>
+                <dd id="Datetime.model_copy" class="function">model_copy</dd>
+                <dd id="Datetime.model_dump" class="function">model_dump</dd>
+                <dd id="Datetime.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="Datetime.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="Datetime.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="Datetime.model_post_init" class="function">model_post_init</dd>
+                <dd id="Datetime.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="Datetime.model_validate" class="function">model_validate</dd>
+                <dd id="Datetime.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="Datetime.model_validate_strings" class="function">model_validate_strings</dd>
+                <dd id="Datetime.dict" class="function">dict</dd>
+                <dd id="Datetime.json" class="function">json</dd>
+                <dd id="Datetime.parse_obj" class="function">parse_obj</dd>
+                <dd id="Datetime.parse_raw" class="function">parse_raw</dd>
+                <dd id="Datetime.parse_file" class="function">parse_file</dd>
+                <dd id="Datetime.from_orm" class="function">from_orm</dd>
+                <dd id="Datetime.construct" class="function">construct</dd>
+                <dd id="Datetime.copy" class="function">copy</dd>
+                <dd id="Datetime.schema" class="function">schema</dd>
+                <dd id="Datetime.schema_json" class="function">schema_json</dd>
+                <dd id="Datetime.validate" class="function">validate</dd>
+                <dd id="Datetime.update_forward_refs" class="function">update_forward_refs</dd>
+                <dd id="Datetime.model_fields" class="variable">model_fields</dd>
+                <dd id="Datetime.model_computed_fields" class="variable">model_computed_fields</dd>
+
+            </div>
+            <div><dt>pydantic.root_model.RootModel</dt>
+                                <dd id="Datetime.root" class="variable">root</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="Doi">
                     <div class="attr variable">

@@ -716,7 +716,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -733,15 +733,14 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
-## `timestamp`<sub> pydantic.root_model.RootModel</sub>
+## `timestamp`<sub> _internal.types.Datetime</sub>
 
 
 
-pydantic.root_model.RootModel[Annotated[datetime, BeforeValidator, PlainSerializer]]
 
 ## `weights`<sub> WeightsDescr</sub>
 
@@ -777,11 +776,10 @@ Union of
 
 </details>
 
-#### `weights.keras_hdf5.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.keras_hdf5.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.keras_hdf5.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -805,7 +803,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -895,11 +893,10 @@ Union of
 
 </details>
 
-#### `weights.onnx.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.onnx.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.onnx.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -923,7 +920,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1012,11 +1009,10 @@ Union of
 
 </details>
 
-#### `weights.pytorch_state_dict.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.pytorch_state_dict.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.pytorch_state_dict.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -1040,7 +1036,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1104,7 +1100,7 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 
 Union[CallableFromFile, CallableFromDepencency]
 
-#### `weights.pytorch_state_dict.architecture_sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.pytorch_state_dict.architecture_sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 The SHA256 of the architecture source file, if the architecture is not defined in a module listed in `dependencies`
 You can drag and drop your file to this
 [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.
@@ -1112,7 +1108,6 @@ Or you can generate a SHA256 checksum with Python's `hashlib`,
 [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.pytorch_state_dict.kwargs`<sub> Dict[str, Any]</sub> ≝ `{}`
 
@@ -1152,11 +1147,10 @@ Union of
 
 </details>
 
-#### `weights.tensorflow_js.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_js.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.tensorflow_js.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -1180,7 +1174,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1270,11 +1264,10 @@ Union of
 
 </details>
 
-#### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.tensorflow_saved_model_bundle.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -1298,7 +1291,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1388,11 +1381,10 @@ Union of
 
 </details>
 
-#### `weights.torchscript.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.torchscript.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `weights.torchscript.attachments`<sub> Optional</sub> ≝ `None`
 
@@ -1416,7 +1408,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1505,7 +1497,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1555,10 +1547,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7faa96841940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7ffaa5e41940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1587,7 +1579,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -1762,7 +1754,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1779,7 +1771,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1831,10 +1823,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7faa96841940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7ffaa5e41940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1904,7 +1896,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1968,7 +1960,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2124,7 +2116,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7faa9355eac0>); PlainSerializer(func=<function _package at 0x7faa95c4ee80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(func=<function wo_special_file_name at 0x7ffaa2bbb240>); PlainSerializer(func=<function _package at 0x7ffaa2bf0540>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
