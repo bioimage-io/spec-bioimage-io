@@ -172,11 +172,7 @@ def check_bioimageio_yaml(
 
     json_data = rd.model_dump(mode="json")
     # check compatibility to our latest json schema...
-    if (
-        bioimageio_json_schema is not None
-        and "v0_"
-        not in downloaded_source.path.name  # ...unless it's a historic example
-    ):
+    if bioimageio_json_schema is not None:
         try:
             jsonschema.validate(json_data, bioimageio_json_schema)
         except jsonschema.ValidationError:
