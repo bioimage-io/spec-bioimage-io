@@ -73,14 +73,19 @@ else:
     SLOTS = {"slots": True}
 
 
-Sha256 = ValidatedString[
-    Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True, to_lower=True, min_length=64, max_length=64
-        ),
-    ]
-]
+class Sha256(
+    ValidatedString[
+        Annotated[
+            str,
+            StringConstraints(
+                strip_whitespace=True, to_lower=True, min_length=64, max_length=64
+            ),
+        ]
+    ],
+    frozen=True,
+):
+    """SHA-256 hash value"""
+
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT", bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath]
