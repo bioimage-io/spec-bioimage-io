@@ -85,6 +85,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.0post1
+
+* fix `_internal.io_utils.identify_bioimageio_yaml_file()`
+
 #### bioimageio.spec 0.5.0
 
 * new description formats: [generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3](generic-030--application-030--collection-030--dataset-030--notebook-030) and [model 0.5](model-050).
