@@ -1877,7 +1877,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
-    and may only contain letter, number, underscore, minus or space characters."""
+    and may only contain letter, number, underscore, minus or space characters.
+    We recommend to chose a name that refers to the model's task and image modality.
+    """
 
     outputs: NotEmpty[Sequence[OutputTensorDescr]]
     """Describes the output tensors."""
