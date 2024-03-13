@@ -34,7 +34,17 @@ import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
-from pydantic import Field, ValidationInfo, field_validator, model_validator
+from pydantic import (
+    Field,
+    GetCoreSchemaHandler,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
+from pydantic_core.core_schema import (
+    CoreSchema,
+    no_info_after_validator_function,
+)
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.validated_string import ValidatedString
@@ -166,7 +176,21 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 TensorId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
-AxisId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+
+
+class AxisId(str):
+    root_model = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
+        return no_info_after_validator_function(cls, handler(str))
+
+    @classmethod
+    def _validate(cls, value: str):
+        valid = cls.root_model.model_validate(value)
+        return cls(valid.root)
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -2335,7 +2359,7 @@ def generate_covers(
         if ndim > ndim_need:
             for i, a in enumerate(axes):
                 s = data.shape[i]
-                if a.id.root == "z":
+                if a.id == AxisId("z"):
                     data = data[slices + (slice(s // 2 - 1, s // 2),)]
                     data, axes = squeeze(data, axes)
                     ndim -= 1
