@@ -233,7 +233,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4ae7a60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608a7ba60__"
                         }
                     ],
                     "default": "batch"
@@ -285,7 +285,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "channel"
@@ -570,7 +570,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         },
                         {
                             "type": "null"
@@ -647,7 +647,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "index"
@@ -1584,7 +1584,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "x",
@@ -1697,7 +1697,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "x",
@@ -1804,7 +1804,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "time"
@@ -1909,7 +1909,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         }
                     ],
                     "default": "time"
@@ -2043,13 +2043,13 @@
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4ae7a60__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608a7ba60__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__": {
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__": {
             "maxLength": 16,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
@@ -6918,7 +6918,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-13T10:45:29.620423"
+                    "default": "2024-03-13T14:32:41.745321"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7328,7 +7328,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7f1ac4deba60__"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
                         },
                         {
                             "type": "null"

@@ -25,12 +25,12 @@ All bioimage.io description formats are defined as [Pydantic models](https://doc
 
 | type | format version | documentation |
 | --- | --- | --- |
-| model | 0.5 </br> 0.4 | [model_spec_v0-5.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_v0-5.md) </br> [model_spec_v0-4.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/model_spec_v0-4.md) |
-| dataset | 0.3 </br> 0.2 | [dataset_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_v0-3.md) </br> [dataset_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/dataset_spec_v0-2.md) |
-| notebook | 0.3 </br> 0.2 | [notebook_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/notebook_spec_v0-3.md) </br> [notebook_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/notebook_spec_v0-2.md) |
-| application | 0.3 </br> 0.2 | [application_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/application_spec_v0-3.md) </br> [application_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/application_spec_v0-2.md) |
-| collection | 0.3 </br> 0.2 | [collection_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_v0-3.md) </br> [collection_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/collection_spec_v0-2.md) |
-| generic | 0.3 </br> 0.2 | [generic_spec_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_v0-3.md) </br> [generic_spec_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/generic_spec_v0-2.md) |
+| model | 0.5 </br> 0.4 | [model_descr_v0-5.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-5.md) </br> [model_descr_v0-4.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-4.md) |
+| dataset | 0.3 </br> 0.2 | [dataset_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-3.md) </br> [dataset_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-2.md) |
+| notebook | 0.3 </br> 0.2 | [notebook_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-3.md) </br> [notebook_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-2.md) |
+| application | 0.3 </br> 0.2 | [application_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-3.md) </br> [application_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-2.md) |
+| collection | 0.3 </br> 0.2 | [collection_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-3.md) </br> [collection_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-2.md) |
+| generic | 0.3 </br> 0.2 | [generic_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-3.md) </br> [generic_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-2.md) |
 
 ## JSON schema
 

@@ -56,7 +56,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7f95d28b3240>); PlainSerializer(func=<function _package at 0x7f95d2c28540>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(func=<function wo_special_file_name at 0x7f303d66f240>); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -173,10 +173,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f95d5b41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f3040941940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f95d2c28540>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -194,7 +194,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(func=<function wo_special_file_name at 0x7f95d28b3240>); PlainSerializer(func=<function _package at 0x7f95d2c28540>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(func=<function wo_special_file_name at 0x7f303d66f240>); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -223,7 +223,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7f95d28b3240>); PlainSerializer(func=<function _package at 0x7f95d2c28540>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(func=<function wo_special_file_name at 0x7f303d66f240>); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
