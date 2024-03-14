@@ -1496,7 +1496,7 @@
         },
         "ParameterizedSize": {
             "additionalProperties": false,
-            "description": "Describes a range of valid tensor axis sizes as `size = min + n*step`.\n`n` in this equation is the same for all axis parameterized in this manner across the whole model.",
+            "description": "Describes a range of valid tensor axis sizes as `size = min + n*step`.",
             "properties": {
                 "min": {
                     "exclusiveMinimum": 0,
@@ -6892,7 +6892,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-14T15:51:22.348494"
+                    "default": "2024-03-14T15:52:17.259960"
                 },
                 "training_data": {
                     "anyOf": [
