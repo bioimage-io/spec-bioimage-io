@@ -231,12 +231,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608a7ba60__"
-                        }
-                    ],
-                    "default": "batch"
+                    "default": "batch",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -283,12 +280,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
-                    "default": "channel"
+                    "default": "channel",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -570,7 +564,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -580,7 +574,8 @@
                     "examples": [
                         "channel",
                         "index"
-                    ]
+                    ],
+                    "title": "Axis"
                 }
             },
             "required": [
@@ -645,12 +640,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
-                    "default": "index"
+                    "default": "index",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -1560,10 +1552,11 @@
             "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
             "properties": {
                 "tensor_id": {
-                    "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1"
+                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
                 },
                 "axis_id": {
-                    "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____2"
+                    "title": "Axis Id",
+                    "type": "string"
                 },
                 "offset": {
                     "default": 0,
@@ -1582,17 +1575,14 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
                     "default": "x",
                     "examples": [
                         "x",
                         "y",
                         "z"
-                    ]
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -1695,17 +1685,14 @@
                     "type": "integer"
                 },
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
                     "default": "x",
                     "examples": [
                         "x",
                         "y",
                         "z"
-                    ]
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -1802,12 +1789,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
-                    "default": "time"
+                    "default": "time",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -1907,12 +1891,9 @@
                     "type": "integer"
                 },
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
-                        }
-                    ],
-                    "default": "time"
+                    "default": "time",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -2043,14 +2024,8 @@
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]",
             "type": "string"
         },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608a7ba60__": {
-            "maxLength": 16,
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__": {
-            "maxLength": 16,
+        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__": {
+            "maxLength": 32,
             "minLength": 1,
             "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
             "type": "string"
@@ -2124,18 +2099,6 @@
                     "type": "null"
                 }
             ]
-        },
-        "bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1": {
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
-            "type": "string"
-        },
-        "bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____2": {
-            "maxLength": 16,
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
-            "type": "string"
         },
         "bioimageio__spec__application__v0_2__ApplicationDescr": {
             "additionalProperties": false,
@@ -6355,7 +6318,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
                         }
                     ],
                     "default": "input"
@@ -6918,7 +6881,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-13T14:32:41.745321"
+                    "default": "2024-03-14T14:46:39.928277"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7045,7 +7008,7 @@
                 "id": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
                         }
                     ],
                     "default": "output"
@@ -7328,7 +7291,7 @@
                 "axis": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen___Predicate_func__function__lambda__at_0x7fe608d8ba60__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -7337,7 +7300,8 @@
                     "default": null,
                     "examples": [
                         "channel"
-                    ]
+                    ],
+                    "title": "Axis"
                 },
                 "gain": {
                     "anyOf": [
@@ -7399,13 +7363,13 @@
             "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
             "properties": {
                 "reference_tensor": {
-                    "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1"
+                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
                 },
                 "axes": {
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____2"
+                                "type": "string"
                             },
                             "type": "array"
                         },
@@ -7463,7 +7427,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____2"
+                                "type": "string"
                             },
                             "type": "array"
                         },
@@ -7505,7 +7469,7 @@
                 "reference_tensor": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____1"
+                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
                         },
                         {
                             "type": "null"
@@ -7892,7 +7856,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/bioimageio__spec___internal__validated_string__ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen____2"
+                                "type": "string"
                             },
                             "type": "array"
                         },

@@ -21,6 +21,22 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#specifications-for-bioimageio">Specifications for bioimage.io</a>
+  <ul>
+    <li><a href="#format-version-overview">Format version overview</a></li>
+    <li><a href="#json-schema">JSON schema</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#recommendations">💁 Recommendations</a></li>
+    <li><a href="#bioimageio-command-line-interface-cli">⌨ bioimageio command-line interface (CLI)</a></li>
+    <li><a href="#installation">🖥 Installation</a></li>
+    <li><a href="#how-to-contribute">🤝 How to contribute</a></li>
+    <li><a href="#contributors">♥ Contributors</a></li>
+    <li><a href="#changelog">Δ Changelog</a></li>
+  </ul></li>
+</ul>
+
 
             <h2>Submodules</h2>
             <ul>
@@ -55,14 +71,642 @@
                     <h1 class="modulename">
 bioimageio<wbr>.spec    </h1>
 
-                
+                        <div class="docstring"><p><img src="https://img.shields.io/github/license/bioimage-io/spec-bioimage-io.svg" alt="License" />
+<img src="https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout" alt="PyPI" />
+<img src="https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg" alt="conda-version" /></p>
+
+<h1 id="specifications-for-bioimageio">Specifications for bioimage.io</h1>
+
+<p>This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named <code>rdf.yaml</code>. Such a rdf.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the <a href="https://bioimage.io">bioimage.io website</a> and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).</p>
+
+<p>bioimage.io-compatible resources must fulfill the following rules:</p>
+
+<p>Note that the Python package PyYAML does not support YAML 1.2 .
+We therefore use and recommend <a href="https://ruyaml.readthedocs.io/en/latest/">ruyaml</a>.
+For differences see <a href="https://ruamelyaml.readthedocs.io/en/latest/pyyaml">https://ruamelyaml.readthedocs.io/en/latest/pyyaml</a>.</p>
+
+<p>Please also note that the best way to check whether your <code>rdf.yaml</code> file is bioimage.io-compliant is to call <code>bioimageio.core.validate</code> from the <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a> Python package.
+The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a> Python package also provides the bioimageio command line interface (CLI) with the <code>validate</code> command:</p>
+
+<pre><code>bioimageio validate path/to/your/rdf.yaml
+</code></pre>
+
+<h2 id="format-version-overview">Format version overview</h2>
+
+<p>All bioimage.io description formats are defined as <a href="https://docs.pydantic.dev/latest/">Pydantic models</a>.</p>
+
+<table>
+<thead>
+<tr>
+  <th>type</th>
+  <th>format version</th>
+  <th>documentation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>model</td>
+  <td>0.5 </br> 0.4</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-5.md">model_descr_v0-5.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-4.md">model_descr_v0-4.md</a></td>
+</tr>
+<tr>
+  <td>dataset</td>
+  <td>0.3 </br> 0.2</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-3.md">dataset_descr_v0-3.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-2.md">dataset_descr_v0-2.md</a></td>
+</tr>
+<tr>
+  <td>notebook</td>
+  <td>0.3 </br> 0.2</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-3.md">notebook_descr_v0-3.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-2.md">notebook_descr_v0-2.md</a></td>
+</tr>
+<tr>
+  <td>application</td>
+  <td>0.3 </br> 0.2</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-3.md">application_descr_v0-3.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-2.md">application_descr_v0-2.md</a></td>
+</tr>
+<tr>
+  <td>collection</td>
+  <td>0.3 </br> 0.2</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-3.md">collection_descr_v0-3.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-2.md">collection_descr_v0-2.md</a></td>
+</tr>
+<tr>
+  <td>generic</td>
+  <td>0.3 </br> 0.2</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-3.md">generic_descr_v0-3.md</a> </br> <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-2.md">generic_descr_v0-2.md</a></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="json-schema">JSON schema</h2>
+
+<p>Simplified descriptions are available as <a href="https://json-schema.org/">JSON schema</a>:</p>
+
+<table>
+<thead>
+<tr>
+  <th><a href="">bioimageio.spec</a> version</th>
+  <th>JSON schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>latest</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json">bioimageio_schema_latest.json</a></td>
+</tr>
+<tr>
+  <td>0.5</td>
+  <td><a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json">bioimageio_schema_v0-5.json</a></td>
+</tr>
+</tbody>
+</table>
+
+<p>These are primarily intended for syntax highlighting and form generation.</p>
+
+<h2 id="examples">Examples</h2>
+
+<p>We provide some <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md">examples for using rdf.yaml files to describe models, applications, notebooks and datasets</a>.</p>
+
+<h2 id="recommendations">💁 Recommendations</h2>
+
+<ul>
+<li>Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the <code>rdf.yaml</code> file and try to avoid using subdirectories.</li>
+<li>Use the <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core Python package</a> to validate your <code>rdf.yaml</code> file.</li>
+<li><a href="">bioimageio.spec</a> keeps evolving. Try to use and upgrade to the most current format version!</li>
+</ul>
+
+<h2 id="bioimageio-command-line-interface-cli">⌨ bioimageio command-line interface (CLI)</h2>
+
+<p>The bioimageio CLI has moved entirely to <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a>.</p>
+
+<h2 id="installation">🖥 Installation</h2>
+
+<p><a href="">bioimageio.spec</a> can be installed with either <code>conda</code> or <code>pip</code>, we recommend to install <code>bioimageio.core</code> instead:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="go">conda install -c conda-forge bioimageio.core</span>
+</code></pre>
+</div>
+
+<p>or</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="go">pip install -U bioimageio.core</span>
+</code></pre>
+</div>
+
+<h2 id="how-to-contribute">🤝 How to contribute</h2>
+
+<h2 id="contributors">♥ Contributors</h2>
+
+<p><a href="https://github.com/bioimage-io/spec-bioimage-io/graphs/contributors">
+  <img alt="<a href="">bioimageio.spec</a> contributors" src="https://contrib.rocks/image?repo=bioimage-io/spec-bioimage-io" />
+</a></p>
+
+<p>Made with <a href="https://contrib.rocks">contrib.rocks</a>.</p>
+
+<h2 id="changelog">Δ Changelog</h2>
+
+<h3 id="bioimageiospec-python-package"><a href="">bioimageio.spec</a> Python package</h3>
+
+<h4 id="bioimageiospec-050post2"><a href="">bioimageio.spec</a> 0.5.0post2</h4>
+
+<ul>
+<li>don't fail if CI env var is a string</li>
+</ul>
+
+<h4 id="bioimageiospec-050post1"><a href="">bioimageio.spec</a> 0.5.0post1</h4>
+
+<ul>
+<li>fix <code>_internal.io_utils.identify_bioimageio_yaml_file()</code></li>
+</ul>
+
+<h4 id="bioimageiospec-050"><a href="">bioimageio.spec</a> 0.5.0</h4>
+
+<ul>
+<li>new description formats: <a href="generic-030--application-030--collection-030--dataset-030--notebook-030">generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3</a> and <a href="model-050">model 0.5</a>.</li>
+<li>various API changes, most important functions:
+<ul>
+<li><code>bioimageio.spec.load_description</code> (replaces <code>load_raw_resource_description</code>, interface changed)</li>
+<li><code>bioimageio.spec.validate_format</code> (new)</li>
+<li><code>bioimageio.spec.dump_description</code> (replaces <code>serialize_raw_resource_description_to_dict</code>, interface changed)</li>
+<li><code>bioimageio.spec.update_format</code> (interface changed)</li>
+</ul></li>
+<li>switch from Marshmallow to Pydantic
+<ul>
+<li>extended validation</li>
+<li>one joint, more precise JSON schema</li>
+</ul></li>
+</ul>
+
+<h4 id="bioimageiospec-049"><a href="">bioimageio.spec</a> 0.4.9</h4>
+
+<ul>
+<li>small bugixes</li>
+<li>better type hints</li>
+<li>improved tests</li>
+</ul>
+
+<h4 id="bioimageiospec-048post1"><a href="">bioimageio.spec</a> 0.4.8post1</h4>
+
+<ul>
+<li>add <code>axes</code> and <code>eps</code> to <code>scale_mean_var</code></li>
+</ul>
+
+<h4 id="bioimageiospec-047post1"><a href="">bioimageio.spec</a> 0.4.7post1</h4>
+
+<ul>
+<li>add simple forward compatibility by treating future format versions as latest known (for the respective resource type)</li>
+</ul>
+
+<h4 id="bioimageiospec-046post3"><a href="">bioimageio.spec</a> 0.4.6post3</h4>
+
+<ul>
+<li><p>Make CLI output more readable</p></li>
+<li><p>find redirected URLs when checking for URL availability</p></li>
+</ul>
+
+<h4 id="bioimageiospec-046post2"><a href="">bioimageio.spec</a> 0.4.6post2</h4>
+
+<ul>
+<li><p>Improve error message for non-existing RDF file path given as string</p></li>
+<li><p>Improve documentation for model description's <code>documentation</code> field</p></li>
+</ul>
+
+<h4 id="bioimageiospec-046post1"><a href="">bioimageio.spec</a> 0.4.6post1</h4>
+
+<ul>
+<li>fix enrich_partial_rdf_with_imjoy_plugin (see <a href="https://github.com/bioimage-io/spec-bioimage-io/pull/452">https://github.com/bioimage-io/spec-bioimage-io/pull/452</a>)</li>
+</ul>
+
+<h4 id="bioimageiospec-045post16"><a href="">bioimageio.spec</a> 0.4.5post16</h4>
+
+<ul>
+<li>fix rdf_update of entries in <code>resolve_collection_entries()</code></li>
+</ul>
+
+<h4 id="bioimageiospec-045post15"><a href="">bioimageio.spec</a> 0.4.5post15</h4>
+
+<ul>
+<li>pass root to <code>enrich_partial_rdf</code> arg of <code>resolve_collection_entries()</code></li>
+</ul>
+
+<h4 id="bioimageiospec-045post14"><a href="">bioimageio.spec</a> 0.4.5post14</h4>
+
+<ul>
+<li>keep <code>ResourceDescrption.root_path</code> as URI for remote resources. This fixes the collection description as the collection entries are resolved after the collection description has been loaded.</li>
+</ul>
+
+<h4 id="bioimageiospec-045post13"><a href="">bioimageio.spec</a> 0.4.5post13</h4>
+
+<ul>
+<li>new bioimageio.spec.partner module adding validate-partner-collection command if optional 'lxml' dependency is available</li>
+</ul>
+
+<h4 id="bioimageiospec-045post12"><a href="">bioimageio.spec</a> 0.4.5post12</h4>
+
+<ul>
+<li><p>new env var <code>BIOIMAGEIO_CACHE_WARNINGS_LIMIT</code> (default: 3) to avoid spam from cache hit warnings</p></li>
+<li><p>more robust conversion of ImportableSourceFile for absolute paths to relative paths (don't fail on non-path source file)</p></li>
+</ul>
+
+<h4 id="bioimageiospec-045post11"><a href="">bioimageio.spec</a> 0.4.5post11</h4>
+
+<ul>
+<li>resolve symlinks when transforming absolute to relative paths during serialization; see <a href="https://github.com/bioimage-io/spec-bioimage-io/pull/438">#438</a></li>
+</ul>
+
+<h4 id="bioimageiospec-045post10"><a href="">bioimageio.spec</a> 0.4.5post10</h4>
+
+<ul>
+<li>fix loading of collection description with id (id used to be ignored)</li>
+</ul>
+
+<h4 id="bioimageiospec-045post9"><a href="">bioimageio.spec</a> 0.4.5post9</h4>
+
+<ul>
+<li>support loading bioimageio resources by their animal nickname (currently only models have nicknames).</li>
+</ul>
+
+<h4 id="bioimageiospec-045post8"><a href="">bioimageio.spec</a> 0.4.5post8</h4>
+
+<ul>
+<li><p>any field previously expecting a local relative path is now also accepting an absolute path</p></li>
+<li><p>load_raw_resource_description returns a raw resource description which has no relative paths (any relative paths are converted to absolute paths).</p></li>
+</ul>
+
+<h4 id="bioimageiospec-044post7"><a href="">bioimageio.spec</a> 0.4.4post7</h4>
+
+<ul>
+<li>add command <code>commands.update_rdf()</code>/<code>update-rdf</code>(cli)</li>
+</ul>
+
+<h4 id="bioimageiospec-044post2"><a href="">bioimageio.spec</a> 0.4.4post2</h4>
+
+<ul>
+<li>fix unresolved ImportableSourceFile</li>
+</ul>
+
+<h4 id="bioimageiospec-044post1"><a href="">bioimageio.spec</a> 0.4.4post1</h4>
+
+<ul>
+<li>fix collection description conversion for type field</li>
+</ul>
+
+<h4 id="bioimageiospec-043post1"><a href="">bioimageio.spec</a> 0.4.3post1</h4>
+
+<ul>
+<li><p>fix to shape validation for model description 0.4: output shape now needs to be bigger than halo</p></li>
+<li><p>moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared[.node_transformer]</p></li>
+<li>additional keys to validation summary: bioimageio_spec_version, status</li>
+</ul>
+
+<h4 id="bioimageiospec-042post4"><a href="">bioimageio.spec</a> 0.4.2post4</h4>
+
+<ul>
+<li>fixes to generic description:
+<ul>
+<li>ignore value of field <code>root_path</code> if present in yaml. This field is used internally and always present in RDF nodes.</li>
+</ul></li>
+</ul>
+
+<h4 id="bioimageiospec-041post5"><a href="">bioimageio.spec</a> 0.4.1.post5</h4>
+
+<ul>
+<li>fixes to collection description:
+<ul>
+<li>RDFs specified directly in collection description are validated correctly even if their source field does not point to an RDF.</li>
+<li>nesting of collection description allowed</li>
+</ul></li>
+</ul>
+
+<h4 id="bioimageiospec-041post4"><a href="">bioimageio.spec</a> 0.4.1.post4</h4>
+
+<ul>
+<li><p>fixed missing field <code>icon</code> in generic description's raw node</p></li>
+<li><p>fixes to collection description:</p>
+
+<ul>
+<li>RDFs specified directly in collection description are validated correctly</li>
+<li>no nesting of collection description allowed for now</li>
+<li><code>links</code> is no longer an explicit collection entry field ("moved" to unknown)</li>
+</ul></li>
+</ul>
+
+<h4 id="bioimageiospec-041post0"><a href="">bioimageio.spec</a> 0.4.1.post0</h4>
+
+<ul>
+<li>new model spec 0.3.5 and 0.4.1</li>
+</ul>
+
+<h4 id="bioimageiospec-040post3"><a href="">bioimageio.spec</a> 0.4.0.post3</h4>
+
+<ul>
+<li><code>load_raw_resource_description</code> no longer accepts <code>update_to_current_format</code> kwarg (use <code>update_to_format</code> instead)</li>
+</ul>
+
+<h4 id="bioimageiospec-040post2"><a href="">bioimageio.spec</a> 0.4.0.post2</h4>
+
+<ul>
+<li><code>load_raw_resource_description</code> accepts <code>update_to_format</code> kwarg</li>
+</ul>
+
+<h3 id="resource-description-format-versions">Resource Description Format Versions</h3>
+
+<h4 id="generic-030-application-030-collection-030-dataset-030-notebook-030">generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0</h4>
+
+<ul>
+<li>Breaking canges that are fully auto-convertible
+<ul>
+<li>dropped <code>download_url</code></li>
+<li>dropped non-file attachments</li>
+<li><code>attachments.files</code> moved to <code>attachments.i.source</code></li>
+</ul></li>
+<li>Non-breaking changes
+<ul>
+<li>added optional <code>parent</code> field</li>
+</ul></li>
+</ul>
+
+<h4 id="model-050">model 0.5.0</h4>
+
+<p>all generic 0.3.0 changes (except models already have the <code>parent</code> field) plus:</p>
+
+<ul>
+<li>Breaking changes that are partially auto-convertible
+<ul>
+<li><code>inputs.i.axes</code> are now defined in more detail (same for <code>outputs.i.axes</code>)</li>
+<li><code>inputs.i.shape</code> moved per axes to <code>inputs.i.axes.size</code> (same for <code>outputs.i.shape</code>)</li>
+<li>new pre-/postprocessing 'fixed_zero_mean_unit_variance' separated from 'zero_mean_unit_variance', where <code>mode=fixed</code> is no longer valid.
+(for scalar values this is auto-convertible.)</li>
+</ul></li>
+<li>Breaking changes that are fully auto-convertible
+<ul>
+<li>changes in <code>weights.pytorch_state_dict.architecture</code>
+<ul>
+<li>renamed <code>weights.pytorch_state_dict.architecture.source_file</code> to <code>...architecture.source</code></li>
+</ul></li>
+<li>changes in <code>weights.pytorch_state_dict.dependencies</code>
+<ul>
+<li>only conda environment allowed and specified by <code>weights.pytorch_state_dict.dependencies.source</code></li>
+<li>new optional field <code>weights.pytorch_state_dict.dependencies.sha256</code></li>
+</ul></li>
+<li>changes in <code>weights.tensorflow_model_bundle.dependencies</code>
+<ul>
+<li>same as changes in <code>weights.pytorch_state_dict.dependencies</code></li>
+</ul></li>
+<li>moved <code>test_inputs</code> to <code>inputs.i.test_tensor</code></li>
+<li>moved <code>test_outputs</code> to <code>outputs.i.test_tensor</code></li>
+<li>moved <code>sample_inputs</code> to <code>inputs.i.sample_tensor</code></li>
+<li>moved <code>sample_outputs</code> to <code>outputs.i.sample_tensor</code></li>
+<li>renamed <code>inputs.i.name</code> to <code>inputs.i.id</code></li>
+<li>renamed <code>outputs.i.name</code> to <code>outputs.i.id</code></li>
+<li>renamed <code>inputs.i.preprocessing.name</code> to <code>inputs.i.preprocessing.id</code></li>
+<li>renamed <code>outputs.i.postprocessing.name</code> to <code>outputs.i.postprocessing.id</code></li>
+</ul></li>
+<li>Non-breaking changes:
+<ul>
+<li>new pre-/postprocessing: <code>id</code>='ensure_dtype' with kwarg <code>dtype</code></li>
+</ul></li>
+</ul>
+
+<h4 id="generic-024-and-model-0410">generic 0.2.4 and model 0.4.10</h4>
+
+<ul>
+<li>Breaking changes that are fully auto-convertible
+<ul>
+<li><code>id</code> overwritten with value from <code>config.bioimageio.nickname</code> if available</li>
+</ul></li>
+<li>Non-breaking changes
+<ul>
+<li><code>version_number</code> is a new, optional field indicating that an RDF is the nth published version with a given <code>id</code></li>
+<li><code>id_emoji</code> is a new, optional field (set from <code>config.bioimageio.nickname_icon</code> if available)</li>
+<li><code>uploader</code> is a new, optional field with <code>email</code> and an optional <code>name</code> subfields</li>
+</ul></li>
+</ul>
+
+<h4 id="model-049">model 0.4.9</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>make pre-/postprocessing kwargs <code>mode</code> and <code>axes</code> always optional for model description 0.3 and 0.4</li>
+</ul></li>
+</ul>
+
+<h4 id="model-048">model 0.4.8</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li><code>cite</code> field is now optional</li>
+</ul></li>
+</ul>
+
+<h4 id="generic-022-and-model-047">generic 0.2.2 and model 0.4.7</h4>
+
+<ul>
+<li>Breaking changes that are fully auto-convertible
+<ul>
+<li>name field may not include '/' or '\' (conversion removes these)</li>
+</ul></li>
+</ul>
+
+<h4 id="model-046">model 0.4.6</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>Implicit output shape can be expanded by inserting <code>null</code> into <code>shape:scale</code> and indicating length of new dimension D in the <code>offset</code> field. Keep in mind that <code>D=2*'offset'</code>.</li>
+</ul></li>
+</ul>
+
+<h4 id="model-045">model 0.4.5</h4>
+
+<ul>
+<li>Breaking changes that are fully auto-convertible
+<ul>
+<li><code>parent</code> field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields <code>uri</code> and <code>sha256</code>)</li>
+</ul></li>
+</ul>
+
+<h4 id="model-044">model 0.4.4</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>new optional field <code>training_data</code></li>
+</ul></li>
+</ul>
+
+<h4 id="dataset-022">dataset 0.2.2</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>explicitly define and document dataset description (for now, clone of generic description with type="dataset")</li>
+</ul></li>
+</ul>
+
+<h4 id="model-043">model 0.4.3</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>add optional field <code>download_url</code></li>
+<li>add optional field <code>dependencies</code> to all weight formats (not only pytorch_state_dict)</li>
+<li>add optional <code>pytorch_version</code> to the pytorch_state_dict and torchscript weight formats</li>
+</ul></li>
+</ul>
+
+<h4 id="model-042">model 0.4.2</h4>
+
+<ul>
+<li>Bug fixes:
+<ul>
+<li>in a <code>pytorch_state_dict</code> weight entry <code>architecture</code> is no longer optional.</li>
+</ul></li>
+</ul>
+
+<h4 id="collection-022">collection 0.2.2</h4>
+
+<ul>
+<li><p>Non-breaking changes</p>
+
+<ul>
+<li>make <code>authors</code>, <code>cite</code>, <code>documentation</code> and <code>tags</code> optional</li>
+</ul></li>
+<li><p>Breaking changes that are fully auto-convertible</p>
+
+<ul>
+<li>Simplifies collection description 0.2.1 by merging resource type fields together to a <code>collection</code> field,
+holindg a list of all resources in the specified collection.</li>
+</ul></li>
+</ul>
+
+<h4 id="generic-022-model-036-model-042">generic 0.2.2 / model 0.3.6 / model 0.4.2</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li><code>rdf_source</code> new optional field</li>
+<li><code>id</code> new optional field</li>
+</ul></li>
+</ul>
+
+<h4 id="collection-021">collection 0.2.1</h4>
+
+<ul>
+<li>First official release, extends generic description with fields <code>application</code>, <code>model</code>, <code>dataset</code>, <code>notebook</code> and (nested)
+<code>collection</code>, which hold lists linking to respective resources.</li>
+</ul>
+
+<h4 id="generic-021">generic 0.2.1</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>add optional <code>email</code> and <code>github_user</code> fields to entries in <code>authors</code></li>
+<li>add optional <code>maintainers</code> field (entries like in <code>authors</code> but  <code>github_user</code> is required (and <code>name</code> is not))</li>
+</ul></li>
+</ul>
+
+<h4 id="model-041">model 0.4.1</h4>
+
+<ul>
+<li><p>Breaking changes that are fully auto-convertible</p>
+
+<ul>
+<li>moved field <code>dependencies</code> to <code>weights:pytorch_state_dict:dependencies</code></li>
+</ul></li>
+<li><p>Non-breaking changes</p>
+
+<ul>
+<li><code>documentation</code> field accepts URLs as well</li>
+</ul></li>
+</ul>
+
+<h4 id="model-035">model 0.3.5</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li><code>documentation</code> field accepts URLs as well</li>
+</ul></li>
+</ul>
+
+<h4 id="model-040">model 0.4.0</h4>
+
+<ul>
+<li><p>Breaking changes</p>
+
+<ul>
+<li>model inputs and outputs may not use duplicated names.</li>
+<li>model field <code>sha256</code> is required if <code>pytorch_state_dict</code> weights are defined.
+and is now moved to the <code>pytroch_state_dict</code> entry as <code>architecture_sha256</code>.</li>
+</ul></li>
+<li><p>Breaking changes that are fully auto-convertible</p>
+
+<ul>
+<li>model fields language and framework are removed.</li>
+<li>model field <code>source</code> is renamed <code>architecture</code> and is moved together with <code>kwargs</code> to the <code>pytorch_state_dict</code>
+weights entry (if it exists, otherwise they are removed).</li>
+<li>the weight format <code>pytorch_script</code> was renamed to <code>torchscript</code>.</li>
+</ul></li>
+<li>Other changes
+<ul>
+<li>model inputs (like outputs) may be defined by <code>scale</code>ing and <code>offset</code>ing a <code>reference_tensor</code></li>
+<li>a <code>maintainers</code> field was added to the model description.</li>
+<li>the entries in the <code>authors</code> field may now additionally contain <code>email</code> or <code>github_user</code>.</li>
+<li>the summary returned by the <code>validate</code> command now also contains a list of warnings.</li>
+<li>an <code>update_format</code> command was added to aid with updating older RDFs by applying auto-conversion.</li>
+</ul></li>
+</ul>
+
+<h4 id="model-034">model 0.3.4</h4>
+
+<ul>
+<li>Non-breaking changes
+<ul>
+<li>Add optional parameter <code>eps</code> to <code>scale_range</code> postprocessing.</li>
+</ul></li>
+</ul>
+
+<h4 id="model-033">model 0.3.3</h4>
+
+<ul>
+<li>Breaking changes that are fully auto-convertible
+<ul>
+<li><code>reference_input</code> for implicit output tensor shape was renamed to <code>reference_tensor</code></li>
+</ul></li>
+</ul>
+
+<h4 id="model-032">model 0.3.2</h4>
+
+<ul>
+<li><p>Breaking changes</p>
+
+<ul>
+<li>The RDF file name in a package should be <code>rdf.yaml</code> for all the RDF (not <code>model.yaml</code>);</li>
+<li>Change <code>authors</code> and <code>packaged_by</code> fields from List[str] to List[Author] with Author consisting of a dictionary <code>{name: '&lt;Full name&gt;', affiliation: '&lt;Affiliation&gt;', orcid: 'optional orcid id'}</code>;</li>
+<li>Add a mandatory <code>type</code> field to comply with the generic description. Only valid value is 'model' for model description;</li>
+<li>Only allow <code>license</code> identifier from the <a href="https://spdx.org/licenses/">SPDX license list</a>;</li>
+</ul></li>
+<li><p>Non-breaking changes</p>
+
+<ul>
+<li>Add optional <code>version</code> field (default 0.1.0) to keep track of model changes;</li>
+<li>Allow the values in the <code>attachments</code> list to be any values besides URI;</li>
+</ul></li>
+</ul>
+</div>
+
                         <input id="mod-spec-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-spec-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># &quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="c1"># .. include:: ../../README.md</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="c1"># &quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">.. include:: ../../README.md</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">application</span> <span class="k">as</span> <span class="n">application</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">collection</span> <span class="k">as</span> <span class="n">collection</span>

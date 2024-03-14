@@ -31,21 +31,6 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#RestrictCharacters">RestrictCharacters</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#RestrictCharacters.__init__">RestrictCharacters</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#RestrictCharacters.alphabet">alphabet</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#RestrictCharacters.validate">validate</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="function" href="#is_valid_yaml_leaf_value">is_valid_yaml_leaf_value</a>
             </li>
             <li>
@@ -62,33 +47,6 @@
             </li>
             <li>
                     <a class="function" href="#validate_unique_entries">validate_unique_entries</a>
-            </li>
-            <li>
-                    <a class="class" href="#AfterValidator">AfterValidator</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#AfterValidator.__init__">AfterValidator</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#BeforeValidator">BeforeValidator</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#BeforeValidator.__init__">BeforeValidator</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#Predicate">Predicate</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#Predicate.__init__">Predicate</a>
-                        </li>
-                </ul>
-
             </li>
             <li>
                     <a class="function" href="#validate_gh_user">validate_gh_user</a>
@@ -114,241 +72,99 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
                         <label class="view-source-button" for="mod-field_validation-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">collections.abc</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span> <span class="nn">dataclasses</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">sys</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>    <span class="n">Any</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">Dict</span><span class="p">,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>    <span class="n">Hashable</span><span class="p">,</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">Mapping</span><span class="p">,</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">Sequence</span><span class="p">,</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">Type</span><span class="p">,</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">Union</span><span class="p">,</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="p">)</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">import</span> <span class="nn">annotated_types</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">import</span> <span class="nn">requests</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span> <span class="n">functional_validators</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">pydantic_core.core_schema</span> <span class="kn">import</span> <span class="n">CoreSchema</span><span class="p">,</span> <span class="n">no_info_after_validator_function</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal._settings</span> <span class="kn">import</span> <span class="n">settings</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.constants</span> <span class="kn">import</span> <span class="n">KNOWN_GH_USERS</span><span class="p">,</span> <span class="n">KNOWN_INVALID_GH_USERS</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.field_warning</span> <span class="kn">import</span> <span class="n">issue_warning</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.validation_context</span> <span class="kn">import</span> <span class="n">validation_context_var</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">SLOTS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">KW_ONLY</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="k">else</span><span class="p">:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">SLOTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slots&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">KW_ONLY</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kw_only&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="k">class</span> <span class="nc">RestrictCharacters</span><span class="p">:</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">alphabet</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Alphabet may not be empty&quot;</span><span class="p">)</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="n">schema</span> <span class="o">=</span> <span class="n">handler</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>  <span class="c1"># get the CoreSchema from the type / inner constraints</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="k">if</span> <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;RestrictCharacters can only be applied to strings&quot;</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="k">return</span> <span class="n">no_info_after_validator_function</span><span class="p">(</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">,</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>            <span class="n">schema</span><span class="p">,</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>        <span class="p">)</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> is not restricted to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="k">return</span> <span class="n">value</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_key</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="k">return</span> <span class="p">(</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>        <span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="p">)</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_mapping</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="n">is_valid_yaml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="p">)</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_sequence</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="p">)</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">for</span> <span class="n">is_valid</span> <span class="ow">in</span> <span class="p">(</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="n">is_valid_yaml_key</span><span class="p">,</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>            <span class="n">is_valid_yaml_mapping</span><span class="p">,</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>            <span class="n">is_valid_yaml_sequence</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="p">)</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="p">)</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">validate_unique_entries</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]):</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)):</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Entries are not unique.&quot;</span><span class="p">)</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="k">return</span> <span class="n">seq</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="c1"># TODO: make sure we use this one everywhere and not the vanilla pydantic one</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="k">class</span> <span class="nc">AfterValidator</span><span class="p">(</span><span class="n">functional_validators</span><span class="o">.</span><span class="n">AfterValidator</span><span class="p">):</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AfterValidator(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="c1"># TODO: make sure we use this one everywhere and not the vanilla pydantic one</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">class</span> <span class="nc">BeforeValidator</span><span class="p">(</span><span class="n">functional_validators</span><span class="o">.</span><span class="n">BeforeValidator</span><span class="p">):</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;BeforeValidator(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="c1"># TODO: make sure we use this one everywhere and not the vanilla pydantic one</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="k">class</span> <span class="nc">Predicate</span><span class="p">(</span><span class="n">annotated_types</span><span class="o">.</span><span class="n">Predicate</span><span class="p">):</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Predicate(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="p">):</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="n">username</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="p">)</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="p">)</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="k">return</span> <span class="n">username</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">import</span> <span class="nn">collections.abc</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="n">Any</span><span class="p">,</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="n">Hashable</span><span class="p">,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="n">Mapping</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="n">Sequence</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="n">Union</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="p">)</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">import</span> <span class="nn">requests</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal._settings</span> <span class="kn">import</span> <span class="n">settings</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.constants</span> <span class="kn">import</span> <span class="n">KNOWN_GH_USERS</span><span class="p">,</span> <span class="n">KNOWN_INVALID_GH_USERS</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.field_warning</span> <span class="kn">import</span> <span class="n">issue_warning</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.validation_context</span> <span class="kn">import</span> <span class="n">validation_context_var</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_key</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="p">(</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="p">)</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_mapping</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="n">is_valid_yaml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="p">)</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_sequence</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="n">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="k">for</span> <span class="n">is_valid</span> <span class="ow">in</span> <span class="p">(</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="n">is_valid_yaml_key</span><span class="p">,</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>            <span class="n">is_valid_yaml_mapping</span><span class="p">,</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="n">is_valid_yaml_sequence</span><span class="p">,</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="p">)</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="k">def</span> <span class="nf">validate_unique_entries</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)):</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Entries are not unique.&quot;</span><span class="p">)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">return</span> <span class="n">seq</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">if</span> <span class="p">(</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">username</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>    <span class="k">return</span> <span class="n">username</span>
 </span></pre></div>
 
 
             </section>
-                <section id="RestrictCharacters">
-                            <input id="RestrictCharacters-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-                    <div class="decorator">@dataclasses.dataclass(frozen=True, **SLOTS)</div>
-
-    <span class="def">class</span>
-    <span class="name">RestrictCharacters</span>:
-
-                <label class="view-source-button" for="RestrictCharacters-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#RestrictCharacters"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RestrictCharacters-37"><a href="#RestrictCharacters-37"><span class="linenos">37</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="RestrictCharacters-38"><a href="#RestrictCharacters-38"><span class="linenos">38</span></a><span class="k">class</span> <span class="nc">RestrictCharacters</span><span class="p">:</span>
-</span><span id="RestrictCharacters-39"><a href="#RestrictCharacters-39"><span class="linenos">39</span></a>    <span class="n">alphabet</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RestrictCharacters-40"><a href="#RestrictCharacters-40"><span class="linenos">40</span></a>
-</span><span id="RestrictCharacters-41"><a href="#RestrictCharacters-41"><span class="linenos">41</span></a>    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
-</span><span id="RestrictCharacters-42"><a href="#RestrictCharacters-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span>
-</span><span id="RestrictCharacters-43"><a href="#RestrictCharacters-43"><span class="linenos">43</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
-</span><span id="RestrictCharacters-44"><a href="#RestrictCharacters-44"><span class="linenos">44</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">:</span>
-</span><span id="RestrictCharacters-45"><a href="#RestrictCharacters-45"><span class="linenos">45</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Alphabet may not be empty&quot;</span><span class="p">)</span>
-</span><span id="RestrictCharacters-46"><a href="#RestrictCharacters-46"><span class="linenos">46</span></a>        <span class="n">schema</span> <span class="o">=</span> <span class="n">handler</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>  <span class="c1"># get the CoreSchema from the type / inner constraints</span>
-</span><span id="RestrictCharacters-47"><a href="#RestrictCharacters-47"><span class="linenos">47</span></a>        <span class="k">if</span> <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
-</span><span id="RestrictCharacters-48"><a href="#RestrictCharacters-48"><span class="linenos">48</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;RestrictCharacters can only be applied to strings&quot;</span><span class="p">)</span>
-</span><span id="RestrictCharacters-49"><a href="#RestrictCharacters-49"><span class="linenos">49</span></a>        <span class="k">return</span> <span class="n">no_info_after_validator_function</span><span class="p">(</span>
-</span><span id="RestrictCharacters-50"><a href="#RestrictCharacters-50"><span class="linenos">50</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">,</span>
-</span><span id="RestrictCharacters-51"><a href="#RestrictCharacters-51"><span class="linenos">51</span></a>            <span class="n">schema</span><span class="p">,</span>
-</span><span id="RestrictCharacters-52"><a href="#RestrictCharacters-52"><span class="linenos">52</span></a>        <span class="p">)</span>
-</span><span id="RestrictCharacters-53"><a href="#RestrictCharacters-53"><span class="linenos">53</span></a>
-</span><span id="RestrictCharacters-54"><a href="#RestrictCharacters-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="RestrictCharacters-55"><a href="#RestrictCharacters-55"><span class="linenos">55</span></a>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="RestrictCharacters-56"><a href="#RestrictCharacters-56"><span class="linenos">56</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> is not restricted to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="RestrictCharacters-57"><a href="#RestrictCharacters-57"><span class="linenos">57</span></a>        <span class="k">return</span> <span class="n">value</span>
-</span></pre></div>
-
-
-    
-
-                            <div id="RestrictCharacters.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">RestrictCharacters</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">alphabet</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#RestrictCharacters.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="RestrictCharacters.alphabet" class="classattr">
-                                <div class="attr variable">
-            <span class="name">alphabet</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#RestrictCharacters.alphabet"></a>
-    
-    
-
-                            </div>
-                            <div id="RestrictCharacters.validate" class="classattr">
-                                        <input id="RestrictCharacters.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">value</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
-
-                <label class="view-source-button" for="RestrictCharacters.validate-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#RestrictCharacters.validate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RestrictCharacters.validate-54"><a href="#RestrictCharacters.validate-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="RestrictCharacters.validate-55"><a href="#RestrictCharacters.validate-55"><span class="linenos">55</span></a>        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
-</span><span id="RestrictCharacters.validate-56"><a href="#RestrictCharacters.validate-56"><span class="linenos">56</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> is not restricted to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="RestrictCharacters.validate-57"><a href="#RestrictCharacters.validate-57"><span class="linenos">57</span></a>        <span class="k">return</span> <span class="n">value</span>
-</span></pre></div>
-
-
-    
-
-                            </div>
-                </section>
                 <section id="is_valid_yaml_leaf_value">
                             <input id="is_valid_yaml_leaf_value-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -360,8 +176,8 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#is_valid_yaml_leaf_value"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_leaf_value-60"><a href="#is_valid_yaml_leaf_value-60"><span class="linenos">60</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_valid_yaml_leaf_value-61"><a href="#is_valid_yaml_leaf_value-61"><span class="linenos">61</span></a>    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_leaf_value-22"><a href="#is_valid_yaml_leaf_value-22"><span class="linenos">22</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="is_valid_yaml_leaf_value-23"><a href="#is_valid_yaml_leaf_value-23"><span class="linenos">23</span></a>    <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -379,12 +195,12 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#is_valid_yaml_key"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_key-64"><a href="#is_valid_yaml_key-64"><span class="linenos">64</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_key</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_valid_yaml_key-65"><a href="#is_valid_yaml_key-65"><span class="linenos">65</span></a>    <span class="k">return</span> <span class="p">(</span>
-</span><span id="is_valid_yaml_key-66"><a href="#is_valid_yaml_key-66"><span class="linenos">66</span></a>        <span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="is_valid_yaml_key-67"><a href="#is_valid_yaml_key-67"><span class="linenos">67</span></a>        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-</span><span id="is_valid_yaml_key-68"><a href="#is_valid_yaml_key-68"><span class="linenos">68</span></a>        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="is_valid_yaml_key-69"><a href="#is_valid_yaml_key-69"><span class="linenos">69</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_key-26"><a href="#is_valid_yaml_key-26"><span class="linenos">26</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_key</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="is_valid_yaml_key-27"><a href="#is_valid_yaml_key-27"><span class="linenos">27</span></a>    <span class="k">return</span> <span class="p">(</span>
+</span><span id="is_valid_yaml_key-28"><a href="#is_valid_yaml_key-28"><span class="linenos">28</span></a>        <span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="is_valid_yaml_key-29"><a href="#is_valid_yaml_key-29"><span class="linenos">29</span></a>        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+</span><span id="is_valid_yaml_key-30"><a href="#is_valid_yaml_key-30"><span class="linenos">30</span></a>        <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="is_valid_yaml_key-31"><a href="#is_valid_yaml_key-31"><span class="linenos">31</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -402,10 +218,10 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#is_valid_yaml_mapping"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_mapping-72"><a href="#is_valid_yaml_mapping-72"><span class="linenos">72</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_mapping</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_valid_yaml_mapping-73"><a href="#is_valid_yaml_mapping-73"><span class="linenos">73</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="is_valid_yaml_mapping-74"><a href="#is_valid_yaml_mapping-74"><span class="linenos">74</span></a>        <span class="n">is_valid_yaml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="is_valid_yaml_mapping-75"><a href="#is_valid_yaml_mapping-75"><span class="linenos">75</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_mapping-34"><a href="#is_valid_yaml_mapping-34"><span class="linenos">34</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_mapping</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="is_valid_yaml_mapping-35"><a href="#is_valid_yaml_mapping-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+</span><span id="is_valid_yaml_mapping-36"><a href="#is_valid_yaml_mapping-36"><span class="linenos">36</span></a>        <span class="n">is_valid_yaml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="is_valid_yaml_mapping-37"><a href="#is_valid_yaml_mapping-37"><span class="linenos">37</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -423,10 +239,10 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#is_valid_yaml_sequence"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_sequence-78"><a href="#is_valid_yaml_sequence-78"><span class="linenos">78</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_sequence</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_valid_yaml_sequence-79"><a href="#is_valid_yaml_sequence-79"><span class="linenos">79</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="is_valid_yaml_sequence-80"><a href="#is_valid_yaml_sequence-80"><span class="linenos">80</span></a>        <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span>
-</span><span id="is_valid_yaml_sequence-81"><a href="#is_valid_yaml_sequence-81"><span class="linenos">81</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_sequence-40"><a href="#is_valid_yaml_sequence-40"><span class="linenos">40</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_sequence</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="is_valid_yaml_sequence-41"><a href="#is_valid_yaml_sequence-41"><span class="linenos">41</span></a>    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+</span><span id="is_valid_yaml_sequence-42"><a href="#is_valid_yaml_sequence-42"><span class="linenos">42</span></a>        <span class="n">is_valid_yaml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span>
+</span><span id="is_valid_yaml_sequence-43"><a href="#is_valid_yaml_sequence-43"><span class="linenos">43</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -444,15 +260,15 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#is_valid_yaml_value"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_value-84"><a href="#is_valid_yaml_value-84"><span class="linenos">84</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_valid_yaml_value-85"><a href="#is_valid_yaml_value-85"><span class="linenos">85</span></a>    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
-</span><span id="is_valid_yaml_value-86"><a href="#is_valid_yaml_value-86"><span class="linenos">86</span></a>        <span class="n">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="is_valid_yaml_value-87"><a href="#is_valid_yaml_value-87"><span class="linenos">87</span></a>        <span class="k">for</span> <span class="n">is_valid</span> <span class="ow">in</span> <span class="p">(</span>
-</span><span id="is_valid_yaml_value-88"><a href="#is_valid_yaml_value-88"><span class="linenos">88</span></a>            <span class="n">is_valid_yaml_key</span><span class="p">,</span>
-</span><span id="is_valid_yaml_value-89"><a href="#is_valid_yaml_value-89"><span class="linenos">89</span></a>            <span class="n">is_valid_yaml_mapping</span><span class="p">,</span>
-</span><span id="is_valid_yaml_value-90"><a href="#is_valid_yaml_value-90"><span class="linenos">90</span></a>            <span class="n">is_valid_yaml_sequence</span><span class="p">,</span>
-</span><span id="is_valid_yaml_value-91"><a href="#is_valid_yaml_value-91"><span class="linenos">91</span></a>        <span class="p">)</span>
-</span><span id="is_valid_yaml_value-92"><a href="#is_valid_yaml_value-92"><span class="linenos">92</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="is_valid_yaml_value-46"><a href="#is_valid_yaml_value-46"><span class="linenos">46</span></a><span class="k">def</span> <span class="nf">is_valid_yaml_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="is_valid_yaml_value-47"><a href="#is_valid_yaml_value-47"><span class="linenos">47</span></a>    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+</span><span id="is_valid_yaml_value-48"><a href="#is_valid_yaml_value-48"><span class="linenos">48</span></a>        <span class="n">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="is_valid_yaml_value-49"><a href="#is_valid_yaml_value-49"><span class="linenos">49</span></a>        <span class="k">for</span> <span class="n">is_valid</span> <span class="ow">in</span> <span class="p">(</span>
+</span><span id="is_valid_yaml_value-50"><a href="#is_valid_yaml_value-50"><span class="linenos">50</span></a>            <span class="n">is_valid_yaml_key</span><span class="p">,</span>
+</span><span id="is_valid_yaml_value-51"><a href="#is_valid_yaml_value-51"><span class="linenos">51</span></a>            <span class="n">is_valid_yaml_mapping</span><span class="p">,</span>
+</span><span id="is_valid_yaml_value-52"><a href="#is_valid_yaml_value-52"><span class="linenos">52</span></a>            <span class="n">is_valid_yaml_sequence</span><span class="p">,</span>
+</span><span id="is_valid_yaml_value-53"><a href="#is_valid_yaml_value-53"><span class="linenos">53</span></a>        <span class="p">)</span>
+</span><span id="is_valid_yaml_value-54"><a href="#is_valid_yaml_value-54"><span class="linenos">54</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -470,144 +286,15 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#validate_unique_entries"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_unique_entries-95"><a href="#validate_unique_entries-95"><span class="linenos">95</span></a><span class="k">def</span> <span class="nf">validate_unique_entries</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]):</span>
-</span><span id="validate_unique_entries-96"><a href="#validate_unique_entries-96"><span class="linenos">96</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)):</span>
-</span><span id="validate_unique_entries-97"><a href="#validate_unique_entries-97"><span class="linenos">97</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Entries are not unique.&quot;</span><span class="p">)</span>
-</span><span id="validate_unique_entries-98"><a href="#validate_unique_entries-98"><span class="linenos">98</span></a>    <span class="k">return</span> <span class="n">seq</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_unique_entries-57"><a href="#validate_unique_entries-57"><span class="linenos">57</span></a><span class="k">def</span> <span class="nf">validate_unique_entries</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]):</span>
+</span><span id="validate_unique_entries-58"><a href="#validate_unique_entries-58"><span class="linenos">58</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)):</span>
+</span><span id="validate_unique_entries-59"><a href="#validate_unique_entries-59"><span class="linenos">59</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Entries are not unique.&quot;</span><span class="p">)</span>
+</span><span id="validate_unique_entries-60"><a href="#validate_unique_entries-60"><span class="linenos">60</span></a>    <span class="k">return</span> <span class="n">seq</span>
 </span></pre></div>
 
 
     
 
-                </section>
-                <section id="AfterValidator">
-                            <input id="AfterValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-                    <div class="decorator">@dataclass(frozen=True, **SLOTS)</div>
-
-    <span class="def">class</span>
-    <span class="name">AfterValidator</span><wbr>(<span class="base">pydantic.functional_validators.AfterValidator</span>):
-
-                <label class="view-source-button" for="AfterValidator-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#AfterValidator"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AfterValidator-102"><a href="#AfterValidator-102"><span class="linenos">102</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="AfterValidator-103"><a href="#AfterValidator-103"><span class="linenos">103</span></a><span class="k">class</span> <span class="nc">AfterValidator</span><span class="p">(</span><span class="n">functional_validators</span><span class="o">.</span><span class="n">AfterValidator</span><span class="p">):</span>
-</span><span id="AfterValidator-104"><a href="#AfterValidator-104"><span class="linenos">104</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="AfterValidator-105"><a href="#AfterValidator-105"><span class="linenos">105</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AfterValidator(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span></pre></div>
-
-
-    
-
-                            <div id="AfterValidator.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">AfterValidator</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="s1">&#39;core_schema.NoInfoValidatorFunction | core_schema.WithInfoValidatorFunction&#39;</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AfterValidator.__init__"></a>
-    
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.functional_validators.AfterValidator</dt>
-                                <dd id="AfterValidator.func" class="variable">func</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="BeforeValidator">
-                            <input id="BeforeValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-                    <div class="decorator">@dataclass(frozen=True, **SLOTS)</div>
-
-    <span class="def">class</span>
-    <span class="name">BeforeValidator</span><wbr>(<span class="base">pydantic.functional_validators.BeforeValidator</span>):
-
-                <label class="view-source-button" for="BeforeValidator-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#BeforeValidator"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BeforeValidator-109"><a href="#BeforeValidator-109"><span class="linenos">109</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="BeforeValidator-110"><a href="#BeforeValidator-110"><span class="linenos">110</span></a><span class="k">class</span> <span class="nc">BeforeValidator</span><span class="p">(</span><span class="n">functional_validators</span><span class="o">.</span><span class="n">BeforeValidator</span><span class="p">):</span>
-</span><span id="BeforeValidator-111"><a href="#BeforeValidator-111"><span class="linenos">111</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BeforeValidator-112"><a href="#BeforeValidator-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;BeforeValidator(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span></pre></div>
-
-
-    
-
-                            <div id="BeforeValidator.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">BeforeValidator</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="s1">&#39;core_schema.NoInfoValidatorFunction | core_schema.WithInfoValidatorFunction&#39;</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BeforeValidator.__init__"></a>
-    
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.functional_validators.BeforeValidator</dt>
-                                <dd id="BeforeValidator.func" class="variable">func</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="Predicate">
-                            <input id="Predicate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-                    <div class="decorator">@dataclass(frozen=True, **SLOTS)</div>
-
-    <span class="def">class</span>
-    <span class="name">Predicate</span><wbr>(<span class="base">annotated_types.Predicate</span>):
-
-                <label class="view-source-button" for="Predicate-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#Predicate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Predicate-116"><a href="#Predicate-116"><span class="linenos">116</span></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">SLOTS</span><span class="p">)</span>
-</span><span id="Predicate-117"><a href="#Predicate-117"><span class="linenos">117</span></a><span class="k">class</span> <span class="nc">Predicate</span><span class="p">(</span><span class="n">annotated_types</span><span class="o">.</span><span class="n">Predicate</span><span class="p">):</span>
-</span><span id="Predicate-118"><a href="#Predicate-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Predicate-119"><a href="#Predicate-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Predicate(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span></pre></div>
-
-
-    
-
-                            <div id="Predicate.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">Predicate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Predicate.__init__"></a>
-    
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>annotated_types.Predicate</dt>
-                                <dd id="Predicate.func" class="variable">func</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
                 <section id="validate_gh_user">
                             <input id="validate_gh_user-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -620,34 +307,34 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#validate_gh_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_gh_user-122"><a href="#validate_gh_user-122"><span class="linenos">122</span></a><span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="validate_gh_user-123"><a href="#validate_gh_user-123"><span class="linenos">123</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
-</span><span id="validate_gh_user-124"><a href="#validate_gh_user-124"><span class="linenos">124</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
-</span><span id="validate_gh_user-125"><a href="#validate_gh_user-125"><span class="linenos">125</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
-</span><span id="validate_gh_user-126"><a href="#validate_gh_user-126"><span class="linenos">126</span></a>
-</span><span id="validate_gh_user-127"><a href="#validate_gh_user-127"><span class="linenos">127</span></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="validate_gh_user-128"><a href="#validate_gh_user-128"><span class="linenos">128</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="validate_gh_user-129"><a href="#validate_gh_user-129"><span class="linenos">129</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
-</span><span id="validate_gh_user-130"><a href="#validate_gh_user-130"><span class="linenos">130</span></a>    <span class="p">):</span>
-</span><span id="validate_gh_user-131"><a href="#validate_gh_user-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="n">username</span>
-</span><span id="validate_gh_user-132"><a href="#validate_gh_user-132"><span class="linenos">132</span></a>
-</span><span id="validate_gh_user-133"><a href="#validate_gh_user-133"><span class="linenos">133</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
-</span><span id="validate_gh_user-134"><a href="#validate_gh_user-134"><span class="linenos">134</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="validate_gh_user-135"><a href="#validate_gh_user-135"><span class="linenos">135</span></a>
-</span><span id="validate_gh_user-136"><a href="#validate_gh_user-136"><span class="linenos">136</span></a>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-</span><span id="validate_gh_user-137"><a href="#validate_gh_user-137"><span class="linenos">137</span></a>        <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span>
-</span><span id="validate_gh_user-138"><a href="#validate_gh_user-138"><span class="linenos">138</span></a>    <span class="p">)</span>
-</span><span id="validate_gh_user-139"><a href="#validate_gh_user-139"><span class="linenos">139</span></a>    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
-</span><span id="validate_gh_user-140"><a href="#validate_gh_user-140"><span class="linenos">140</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="validate_gh_user-141"><a href="#validate_gh_user-141"><span class="linenos">141</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
-</span><span id="validate_gh_user-142"><a href="#validate_gh_user-142"><span class="linenos">142</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="validate_gh_user-143"><a href="#validate_gh_user-143"><span class="linenos">143</span></a>        <span class="p">)</span>
-</span><span id="validate_gh_user-144"><a href="#validate_gh_user-144"><span class="linenos">144</span></a>    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-</span><span id="validate_gh_user-145"><a href="#validate_gh_user-145"><span class="linenos">145</span></a>        <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="validate_gh_user-146"><a href="#validate_gh_user-146"><span class="linenos">146</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="validate_gh_user-147"><a href="#validate_gh_user-147"><span class="linenos">147</span></a>
-</span><span id="validate_gh_user-148"><a href="#validate_gh_user-148"><span class="linenos">148</span></a>    <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="validate_gh_user-149"><a href="#validate_gh_user-149"><span class="linenos">149</span></a>    <span class="k">return</span> <span class="n">username</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_gh_user-63"><a href="#validate_gh_user-63"><span class="linenos">63</span></a><span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="validate_gh_user-64"><a href="#validate_gh_user-64"><span class="linenos">64</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
+</span><span id="validate_gh_user-65"><a href="#validate_gh_user-65"><span class="linenos">65</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
+</span><span id="validate_gh_user-66"><a href="#validate_gh_user-66"><span class="linenos">66</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
+</span><span id="validate_gh_user-67"><a href="#validate_gh_user-67"><span class="linenos">67</span></a>
+</span><span id="validate_gh_user-68"><a href="#validate_gh_user-68"><span class="linenos">68</span></a>    <span class="k">if</span> <span class="p">(</span>
+</span><span id="validate_gh_user-69"><a href="#validate_gh_user-69"><span class="linenos">69</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
+</span><span id="validate_gh_user-70"><a href="#validate_gh_user-70"><span class="linenos">70</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="validate_gh_user-71"><a href="#validate_gh_user-71"><span class="linenos">71</span></a>    <span class="p">):</span>
+</span><span id="validate_gh_user-72"><a href="#validate_gh_user-72"><span class="linenos">72</span></a>        <span class="k">return</span> <span class="n">username</span>
+</span><span id="validate_gh_user-73"><a href="#validate_gh_user-73"><span class="linenos">73</span></a>
+</span><span id="validate_gh_user-74"><a href="#validate_gh_user-74"><span class="linenos">74</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
+</span><span id="validate_gh_user-75"><a href="#validate_gh_user-75"><span class="linenos">75</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="validate_gh_user-76"><a href="#validate_gh_user-76"><span class="linenos">76</span></a>
+</span><span id="validate_gh_user-77"><a href="#validate_gh_user-77"><span class="linenos">77</span></a>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="validate_gh_user-78"><a href="#validate_gh_user-78"><span class="linenos">78</span></a>        <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span>
+</span><span id="validate_gh_user-79"><a href="#validate_gh_user-79"><span class="linenos">79</span></a>    <span class="p">)</span>
+</span><span id="validate_gh_user-80"><a href="#validate_gh_user-80"><span class="linenos">80</span></a>    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
+</span><span id="validate_gh_user-81"><a href="#validate_gh_user-81"><span class="linenos">81</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="validate_gh_user-82"><a href="#validate_gh_user-82"><span class="linenos">82</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
+</span><span id="validate_gh_user-83"><a href="#validate_gh_user-83"><span class="linenos">83</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="validate_gh_user-84"><a href="#validate_gh_user-84"><span class="linenos">84</span></a>        <span class="p">)</span>
+</span><span id="validate_gh_user-85"><a href="#validate_gh_user-85"><span class="linenos">85</span></a>    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+</span><span id="validate_gh_user-86"><a href="#validate_gh_user-86"><span class="linenos">86</span></a>        <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="validate_gh_user-87"><a href="#validate_gh_user-87"><span class="linenos">87</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="validate_gh_user-88"><a href="#validate_gh_user-88"><span class="linenos">88</span></a>
+</span><span id="validate_gh_user-89"><a href="#validate_gh_user-89"><span class="linenos">89</span></a>    <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="validate_gh_user-90"><a href="#validate_gh_user-90"><span class="linenos">90</span></a>    <span class="k">return</span> <span class="n">username</span>
 </span></pre></div>
 
 

@@ -103,7 +103,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f3040941940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -145,16 +145,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 **BatchAxis:**
-#### `inputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `batch`
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `batch`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `inputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -172,16 +166,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **ChannelAxis:**
-#### `inputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `channel`
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `channel`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `inputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -200,16 +188,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
 
 **IndexAxis:**
-#### `inputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `index`
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `index`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `inputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -248,16 +230,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `inputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -272,16 +248,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **TimeInputAxis:**
-#### `inputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `time`
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `time`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `inputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -320,16 +290,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `inputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -384,17 +348,11 @@ Optional[Literal of
 
 
 **SpaceInputAxis:**
-#### `inputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `x`
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `x`
 
 [*Examples:*](#inputsaxesid) ['x', 'y', 'z']
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `inputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -433,16 +391,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `inputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -844,14 +796,8 @@ Sequence of Union of
 
 [*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]*]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7f3030c36160>))]
-
-</details>
+Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
 
 ##### `inputs.preprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -907,14 +853,8 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 
 [*Examples:*](#inputspreprocessingikwargsaxis) ['channel', 'index']
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]*]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7f3030c36160>))]
-
-</details>
+Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
 
 </details>
 
@@ -937,13 +877,8 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 [*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
 
-<details><summary>Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
 
-</summary>
-
-Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
-
-</details>
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 ##### `inputs.preprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 
@@ -971,13 +906,8 @@ Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Ann
 
 [*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
 
-<details><summary>Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
 
-</summary>
-
-Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
-
-</details>
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 ##### `inputs.preprocessing.i.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 
@@ -1058,16 +988,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 **BatchAxis:**
-#### `outputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `batch`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `outputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -1085,16 +1009,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **ChannelAxis:**
-#### `outputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `channel`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `channel`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `outputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -1113,16 +1031,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
 
 **IndexAxis:**
-#### `outputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `index`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `index`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `outputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -1161,16 +1073,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `outputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -1190,16 +1096,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 
-#### `outputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `time`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `time`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `outputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -1238,16 +1138,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `outputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -1307,17 +1201,11 @@ Optional[Literal of
 
 
 
-#### `outputs.axes.id`<sub> _internal.validated_string.Valid</sub> ≝ `x`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `x`
 
 [*Examples:*](#outputsaxesid) ['x', 'y', 'z']
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 #### `outputs.axes.description`<sub> str</sub> ≝ ``
 
@@ -1356,16 +1244,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-##### `outputs.axes.size.axis_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
 
@@ -1768,14 +1650,8 @@ Sequence of Union of
 
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]*]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7f3030c36160>))]
-
-</details>
+Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
 
 ##### `outputs.postprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -1831,14 +1707,8 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 
 [*Examples:*](#outputspostprocessingikwargsaxis) ['channel', 'index']
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]*]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-(Predicate(func=<function <lambda> at 0x7f3030c36160>))]
-
-</details>
+Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
 
 </details>
 
@@ -1861,13 +1731,8 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 [*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
 
-<details><summary>Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
 
-</summary>
-
-Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
-
-</details>
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 ##### `outputs.postprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 
@@ -1895,13 +1760,8 @@ Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Ann
 
 [*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
 
-<details><summary>Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
 
-</summary>
-
-Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
-
-</details>
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 ##### `outputs.postprocessing.i.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 
@@ -1961,13 +1821,8 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 [*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
 
-<details><summary>Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
 
-</summary>
-
-Optional[Sequence[bioimageio.spec._internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]]
-
-</details>
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 ##### `outputs.postprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 
@@ -2659,10 +2514,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f3040941940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2686,7 +2541,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7f303d66f240>); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2837,7 +2692,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 13, 14, 32, 39, 909186)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 14, 14, 46, 38, 123308)`
 
 
 
@@ -2883,10 +2738,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f3040941940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3026,7 +2881,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(func=<function wo_special_file_name at 0x7f303d66f240>); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -3131,11 +2986,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f3040941940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f303d6a4540>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
