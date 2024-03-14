@@ -246,6 +246,9 @@ class ParameterizedSize(Node):
         return self.min + self.step * n
 
 
+ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
+
+
 class SizeReference(Node):
     """A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.
 
