@@ -4,10 +4,11 @@ from typing import Optional
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
-from pydantic import AfterValidator, TypeAdapter
+from pydantic import TypeAdapter
 from typing_extensions import Annotated
 
 from .validated_string import ValidatedString
+from .validator_annotations import AfterValidator
 
 _http_url_adapter = TypeAdapter(pydantic.HttpUrl)  # pyright: ignore[reportCallIssue]
 

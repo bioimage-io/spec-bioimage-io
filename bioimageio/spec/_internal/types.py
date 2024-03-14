@@ -10,7 +10,6 @@ from pydantic import PlainSerializer, RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
-from .field_validation import AfterValidator, BeforeValidator
 from .io import FileSource as FileSource
 from .io import ImportantFileSource as ImportantFileSource
 from .io import PermissiveFileSource as PermissiveFileSource
@@ -23,6 +22,7 @@ from .license_id import DeprecatedLicenseId as DeprecatedLicenseId
 from .license_id import LicenseId as LicenseId
 from .url import HttpUrl as HttpUrl
 from .validated_string import ValidatedString
+from .validator_annotations import AfterValidator, BeforeValidator
 from .version_type import Version as Version
 
 S = TypeVar("S", bound=Sequence[Any])

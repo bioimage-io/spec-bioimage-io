@@ -26,7 +26,6 @@ from urllib.parse import urlparse, urlsplit, urlunsplit
 import pooch
 import pydantic
 from pydantic import (
-    AfterValidator,
     AnyUrl,
     DirectoryPath,
     FilePath,
@@ -66,6 +65,7 @@ from .._internal.validated_string import ValidatedString
 from .._internal.validation_context import (
     validation_context_var,
 )
+from .validator_annotations import AfterValidator
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, bool] = {}

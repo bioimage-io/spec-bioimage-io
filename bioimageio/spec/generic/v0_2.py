@@ -17,9 +17,6 @@ from typing_extensions import Annotated, Self, assert_never
 
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
-from .._internal.field_validation import (
-    AfterValidator as _AfterValidator,
-)
 from .._internal.field_warning import as_warning, issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -40,6 +37,7 @@ from .._internal.types import OrcidId as OrcidId
 from .._internal.types import RelativeFilePath as RelativeFilePath
 from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validator_annotations import AfterValidator
 from .._internal.version_type import Version as Version
 from ._v0_2_converter import convert_from_older_format as _convert_from_older_format
 
@@ -81,7 +79,7 @@ def _remove_slashes(s: str):
 class Uploader(Node):
     email: EmailStr
     """Email"""
-    name: Optional[Annotated[str, _AfterValidator(_remove_slashes)]] = None
+    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
     """name"""
 
 
@@ -101,12 +99,12 @@ class _Person(Node):
 
 
 class Author(_Person):
-    name: Annotated[str, _AfterValidator(_remove_slashes)]
+    name: Annotated[str, AfterValidator(_remove_slashes)]
     github_user: Optional[str] = None  # TODO: validate github_user
 
 
 class Maintainer(_Person):
-    name: Optional[Annotated[str, _AfterValidator(_remove_slashes)]] = None
+    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
     github_user: str
 
 
