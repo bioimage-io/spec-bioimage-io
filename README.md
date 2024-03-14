@@ -228,6 +228,11 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### Resource Description Format Versions
 
+#### model 0.5.1 (planned)
+
+* Non-breaking changes
+  * added optional `inputs.i.optional` field to indicate that a tensor may be `None`
+
 #### generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0
 
 * Breaking canges that are fully auto-convertible

@@ -103,7 +103,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x74e7aa741940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -687,6 +687,11 @@ Union of
 
 </details>
 
+### `inputs.optional`<sub> bool</sub> ≝ `False`
+
+
+
+
 ### `inputs.preprocessing`<sub> Sequence</sub> ≝ `[]`
 
 
@@ -797,7 +802,7 @@ Sequence of Union of
 [*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x74e79aad1120>))]
 
 ##### `inputs.preprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -854,7 +859,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 [*Examples:*](#inputspreprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x74e79aad1120>))]
 
 </details>
 
@@ -1651,7 +1656,7 @@ Sequence of Union of
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x74e79aad1120>))]
 
 ##### `outputs.postprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -1708,7 +1713,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 [*Examples:*](#outputspostprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb25d470ea0>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x74e79aad1120>))]
 
 </details>
 
@@ -2120,7 +2125,7 @@ Union of
 
 _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]
 
-##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, Any]</sub> ≝ `{}`
+##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
 
 
 
@@ -2133,7 +2138,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]
 
-##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, Any]</sub> ≝ `{}`
+##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
 
 
 
@@ -2514,10 +2519,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x74e7aa741940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x74e7a74719e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2541,7 +2546,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x74e7a74719e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2692,7 +2697,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 14, 14, 46, 38, 123308)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 14, 15, 21, 55, 499745)`
 
 
 
@@ -2738,10 +2743,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x74e7aa741940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x74e7a74719e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2881,7 +2886,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x74e7a74719e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2986,11 +2991,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb26d041940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x74e7aa741940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7bb269d919e0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x74e7a74719e0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 

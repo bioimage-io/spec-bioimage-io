@@ -47,6 +47,9 @@
                     ]
                 },
                 "kwargs": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/YamlValue"
+                    },
                     "title": "Kwargs",
                     "type": "object"
                 }
@@ -73,6 +76,9 @@
                     ]
                 },
                 "kwargs": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/YamlValue"
+                    },
                     "title": "Kwargs",
                     "type": "object"
                 },
@@ -6412,6 +6418,11 @@
                     },
                     "title": "Data"
                 },
+                "optional": {
+                    "default": false,
+                    "title": "Optional",
+                    "type": "boolean"
+                },
                 "preprocessing": {
                     "items": {
                         "discriminator": {
@@ -6881,7 +6892,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-14T14:46:39.928277"
+                    "default": "2024-03-14T15:21:57.222073"
                 },
                 "training_data": {
                     "anyOf": [
