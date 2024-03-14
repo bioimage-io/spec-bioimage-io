@@ -60,7 +60,7 @@ from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent as BioimageioYamlContent
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
-from .._internal.io import WithSuffix, download
+from .._internal.io import WithSuffix, YamlValue, download
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
@@ -1467,7 +1467,7 @@ class _ArchitectureCallableDescr(Node):
     callable: Annotated[Identifier, Field(examples=["MyNetworkClass", "get_my_model"])]
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
-    kwargs: Dict[str, Any] = Field(default_factory=dict)
+    kwargs: Dict[str, YamlValue] = Field(default_factory=dict)
     """key word arguments for the `callable`"""
 
 
