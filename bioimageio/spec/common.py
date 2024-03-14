@@ -7,6 +7,9 @@ from ._internal.io import FileDescr as FileDescr
 from ._internal.io import Sha256 as Sha256
 from ._internal.io import YamlValue as YamlValue
 from ._internal.io_basics import FileName as FileName
+from ._internal.io_utils import (
+    identify_bioimageio_yaml_file_name as identify_bioimageio_yaml_file_name,
+)
 from ._internal.root_url import RootHttpUrl as RootHttpUrl
 from ._internal.types import FileSource as FileSource
 from ._internal.types import PermissiveFileSource as PermissiveFileSource

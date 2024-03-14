@@ -36,11 +36,7 @@ from .._internal.common_nodes import (
     StringNode,
 )
 from .._internal.constants import SHA256_HINT
-from .._internal.field_validation import (
-    AfterValidator,
-    RestrictCharacters,
-    validate_unique_entries,
-)
+from .._internal.field_validation import validate_unique_entries
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -62,6 +58,7 @@ from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
 from ..dataset.v0_2 import DatasetDescr as DatasetDescr

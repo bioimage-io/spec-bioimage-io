@@ -17,7 +17,6 @@ from .._internal.common_nodes import (
 from .._internal.constants import (
     TAG_CATEGORIES,
 )
-from .._internal.field_validation import AfterValidator, Predicate
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -38,6 +37,7 @@ from .._internal.types import (
 from .._internal.types import RelativeFilePath as RelativeFilePath
 from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validator_annotations import AfterValidator, Predicate
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT
 from ._v0_3_converter import convert_from_older_format

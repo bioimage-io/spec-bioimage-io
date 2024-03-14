@@ -1,6 +1,6 @@
-# """
-# .. include:: ../../README.md
-# """
+"""
+.. include:: ../../README.md
+"""
 
 from . import application as application
 from . import collection as collection

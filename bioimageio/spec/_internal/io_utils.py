@@ -84,14 +84,14 @@ def open_bioimageio_yaml(
 
     if local_source.is_dir():
         root = local_source
-        local_source = local_source / find_description_file_name(local_source)
+        local_source = local_source / find_bioimageio_yaml_file_name(local_source)
 
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
 
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
-def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
+def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileName:
     file_names = sorted(file_names)
     for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
         for fname in file_names:
@@ -106,17 +106,17 @@ def identify_bioimageio_yaml_file(file_names: Iterable[FileName]) -> FileName:
     )
 
 
-def find_description_file_name(path: Path) -> FileName:
+def find_bioimageio_yaml_file_name(path: Path) -> FileName:
     if path.is_file():
         if not is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
-            file_names = identify_bioimageio_yaml_file(f.namelist())
+            file_names = identify_bioimageio_yaml_file_name(f.namelist())
     else:
         file_names = [p.name for p in path.glob("*")]
 
-    return identify_bioimageio_yaml_file(file_names)
+    return identify_bioimageio_yaml_file_name(file_names)
 
 
 def unzip(
