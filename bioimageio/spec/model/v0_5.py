@@ -1031,6 +1031,9 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
+    optional: bool = False
+    """indicates that this tensor may be `None`"""
+
     preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
     """Description of how this input should be preprocessed."""
 
