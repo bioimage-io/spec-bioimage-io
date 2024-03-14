@@ -1,3 +1,4 @@
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal, Optional, TypeVar, Union
 
@@ -6,7 +7,7 @@ from typing_extensions import Annotated
 
 from ._build_description import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
-from ._internal.io import BioimageioYamlContent
+from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, validation_context_var
 from .application import AnyApplicationDescr, ApplicationDescr
@@ -157,8 +158,19 @@ def validate_format(
     format_version: Union[Literal["discover", "latest"], str] = DISCOVER,
     context: Optional[ValidationContext] = None,
 ) -> ValidationSummary:
+    """validate a bioimageio.yaml file (RDF)"""
     with context or validation_context_var.get():
         rd = build_description(data, format_version=format_version)
 
     assert rd.validation_summary is not None
     return rd.validation_summary
+
+
+def update_format(
+    source: BioimageioYamlSource,
+    *,
+    output_path: Optional[Path] = None,
+    target_format_version: Union[Literal["latest"], str] = LATEST,
+) -> BioimageioYamlContent:
+    """update a bioimageio.yaml file without validating it"""
+    raise NotImplementedError("Oh no! This feature is not yet implemented")
