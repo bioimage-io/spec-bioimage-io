@@ -221,12 +221,10 @@ SAME_AS_TYPE = "<same as type>"
 
 
 class ParameterizedSize(Node):
-    """Describes a range of valid tensor axis sizes as `size = min + n*step`.
-    `n` in this equation is the same for all axis parameterized in this manner across the whole model.
-    """
+    """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
 
     N: ClassVar[Type[int]] = int
-    """integer to parameterize all axes with a `ParameterizedSize`"""
+    """integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
