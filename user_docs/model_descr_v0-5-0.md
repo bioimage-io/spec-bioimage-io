@@ -103,7 +103,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb1da441940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x79af49c41940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -138,11 +138,11 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 ### `inputs.axes`<sub> Sequence</sub>
 
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexInputAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexInputAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 **BatchAxis:**
 #### `inputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -187,7 +187,51 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
 
-**IndexAxis:**
+**IndexInputAxis:**
+#### `inputs.axes.size`<sub> Union</sub>
+
+[*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+
+<details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
+
+</summary>
+
+
+**ParameterizedSize:**
+##### `inputs.axes.size.min`<sub> int</sub>
+
+
+
+
+##### `inputs.axes.size.step`<sub> int</sub>
+
+
+
+
+**SizeReference:**
+##### `inputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+
+
+<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
+
+</summary>
+
+_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
+
+</details>
+
+##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
+
+
+
+
+##### `inputs.axes.size.offset`<sub> int</sub> ≝ `0`
+
+
+
+
+</details>
+
 #### `inputs.axes.id`<sub> AxisId</sub> ≝ `index`
 
 
@@ -198,6 +242,12 @@ Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 
 
+#### `inputs.axes.type`<sub> Literal[index]</sub> ≝ `index`
+
+
+
+
+**TimeInputAxis:**
 #### `inputs.axes.size`<sub> Union</sub>
 
 [*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
@@ -242,12 +292,6 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
-#### `inputs.axes.type`<sub> Literal[index]</sub> ≝ `index`
-
-
-
-
-**TimeInputAxis:**
 #### `inputs.axes.id`<sub> AxisId</sub> ≝ `time`
 
 
@@ -257,50 +301,6 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 
-
-#### `inputs.axes.size`<sub> Union</sub>
-
-[*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
-
-<details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
-
-</summary>
-
-
-**ParameterizedSize:**
-##### `inputs.axes.size.min`<sub> int</sub>
-
-
-
-
-##### `inputs.axes.size.step`<sub> int</sub>
-
-
-
-
-**SizeReference:**
-##### `inputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
-
-
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
-
-##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
-
-
-
-
-##### `inputs.axes.size.offset`<sub> int</sub> ≝ `0`
-
-
-
-
-</details>
 
 #### `inputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
 
@@ -348,17 +348,6 @@ Optional[Literal of
 
 
 **SpaceInputAxis:**
-#### `inputs.axes.id`<sub> AxisId</sub> ≝ `x`
-
-[*Examples:*](#inputsaxesid) ['x', 'y', 'z']
-
-
-
-#### `inputs.axes.description`<sub> str</sub> ≝ ``
-
-
-
-
 #### `inputs.axes.size`<sub> Union</sub>
 
 [*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
@@ -402,6 +391,17 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 </details>
+
+#### `inputs.axes.id`<sub> AxisId</sub> ≝ `x`
+
+[*Examples:*](#inputsaxesid) ['x', 'y', 'z']
+
+
+
+#### `inputs.axes.description`<sub> str</sub> ≝ ``
+
+
+
 
 #### `inputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
 
@@ -802,7 +802,7 @@ Sequence of Union of
 [*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb1ca8d5120>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x79af3a0ad120>))]
 
 ##### `inputs.preprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -859,7 +859,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 [*Examples:*](#inputspreprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb1ca8d5120>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x79af3a0ad120>))]
 
 </details>
 
@@ -986,11 +986,11 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 ### `outputs.axes`<sub> Sequence</sub>
 
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1035,35 +1035,14 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
 
-**IndexAxis:**
-#### `outputs.axes.id`<sub> AxisId</sub> ≝ `index`
-
-
-
-
-#### `outputs.axes.description`<sub> str</sub> ≝ ``
-
-
-
-
+**IndexOutputAxis:**
 #### `outputs.axes.size`<sub> Union</sub>
 
-[*Examples:*](#outputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
-<details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
+<details><summary>Union[int (Gt(gt=0)), SizeReference]
 
 </summary>
-
-
-**ParameterizedSize:**
-##### `outputs.axes.size.min`<sub> int</sub>
-
-
-
-
-##### `outputs.axes.size.step`<sub> int</sub>
-
-
 
 
 **SizeReference:**
@@ -1090,12 +1069,55 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 </details>
 
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `index`
+
+
+
+
+#### `outputs.axes.description`<sub> str</sub> ≝ ``
+
+
+
+
 #### `outputs.axes.type`<sub> Literal[index]</sub> ≝ `index`
 
 
 
 
 **TimeOutputAxis:**
+#### `outputs.axes.size`<sub> Union</sub>
+
+[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+
+<details><summary>Union[int (Gt(gt=0)), SizeReference]
+
+</summary>
+
+
+**SizeReference:**
+##### `outputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+
+
+<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
+
+</summary>
+
+_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
+
+</details>
+
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
+
+
+
+
+##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
+
+
+
+
+</details>
+
 #### `outputs.axes.halo`<sub> int</sub> ≝ `0`
 
 
@@ -1110,50 +1132,6 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 
-
-#### `outputs.axes.size`<sub> Union</sub>
-
-[*Examples:*](#outputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
-
-<details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
-
-</summary>
-
-
-**ParameterizedSize:**
-##### `outputs.axes.size.min`<sub> int</sub>
-
-
-
-
-##### `outputs.axes.size.step`<sub> int</sub>
-
-
-
-
-**SizeReference:**
-##### `outputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
-
-
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
-
-##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
-
-
-
-
-##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
-
-
-
-
-</details>
 
 #### `outputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
 
@@ -1201,40 +1179,13 @@ Optional[Literal of
 
 
 **SpaceOutputAxis:**
-#### `outputs.axes.halo`<sub> int</sub> ≝ `0`
-
-
-
-
-#### `outputs.axes.id`<sub> AxisId</sub> ≝ `x`
-
-[*Examples:*](#outputsaxesid) ['x', 'y', 'z']
-
-
-
-#### `outputs.axes.description`<sub> str</sub> ≝ ``
-
-
-
-
 #### `outputs.axes.size`<sub> Union</sub>
 
-[*Examples:*](#outputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
-<details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
+<details><summary>Union[int (Gt(gt=0)), SizeReference]
 
 </summary>
-
-
-**ParameterizedSize:**
-##### `outputs.axes.size.min`<sub> int</sub>
-
-
-
-
-##### `outputs.axes.size.step`<sub> int</sub>
-
-
 
 
 **SizeReference:**
@@ -1260,6 +1211,22 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 </details>
+
+#### `outputs.axes.halo`<sub> int</sub> ≝ `0`
+
+
+
+
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `x`
+
+[*Examples:*](#outputsaxesid) ['x', 'y', 'z']
+
+
+
+#### `outputs.axes.description`<sub> str</sub> ≝ ``
+
+
+
 
 #### `outputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
 
@@ -1656,7 +1623,7 @@ Sequence of Union of
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb1ca8d5120>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x79af3a0ad120>))]
 
 ##### `outputs.postprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -1713,7 +1680,7 @@ Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1)
 [*Examples:*](#outputspostprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7bb1ca8d5120>))]
+Optional[AxisId (Predicate(func=<function <lambda> at 0x79af3a0ad120>))]
 
 </details>
 
@@ -2519,10 +2486,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb1da441940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x79af49c41940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb1d72419e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x79af46a799e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2546,7 +2513,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb1d72419e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x79af46a799e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2697,7 +2664,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 14, 15, 52, 15, 494816)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 15, 9, 36, 37, 676437)`
 
 
 
@@ -2743,10 +2710,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb1da441940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x79af49c41940>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7bb1d72419e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x79af46a799e0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2886,7 +2853,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7bb1d72419e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x79af46a799e0>, return_type=PydanticUndefined, when_used='unless-none'))
 - str (Len(min_length=1, max_length=2))
 - None
 
@@ -2991,11 +2958,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7bb1da441940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x79af49c41940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7bb1d72419e0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x79af46a799e0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3102,15 +3069,15 @@ Optional[_internal.version_type.Version]
 - {'min': 32, 'step': 16}
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
-### `inputs.axes.id`
-- x
-- y
-- z
-
 ### `inputs.axes.size`
 - 10
 - {'min': 32, 'step': 16}
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
+
+### `inputs.axes.id`
+- x
+- y
+- z
 
 ### `inputs.data.type`
 - float32
@@ -3163,23 +3130,20 @@ channel
 
 ### `outputs.axes.size`
 - 10
-- {'min': 32, 'step': 16}
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 ### `outputs.axes.size`
 - 10
-- {'min': 32, 'step': 16}
+- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
+
+### `outputs.axes.size`
+- 10
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 ### `outputs.axes.id`
 - x
 - y
 - z
-
-### `outputs.axes.size`
-- 10
-- {'min': 32, 'step': 16}
-- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 ### `outputs.data.type`
 - float32

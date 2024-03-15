@@ -642,20 +642,9 @@
             "title": "ImplicitOutputShape",
             "type": "object"
         },
-        "IndexAxis": {
+        "IndexInputAxis": {
             "additionalProperties": false,
             "properties": {
-                "id": {
-                    "default": "index",
-                    "title": "Id",
-                    "type": "string"
-                },
-                "description": {
-                    "default": "",
-                    "maxLength": 128,
-                    "title": "Description",
-                    "type": "string"
-                },
                 "size": {
                     "anyOf": [
                         {
@@ -683,6 +672,17 @@
                     ],
                     "title": "Size"
                 },
+                "id": {
+                    "default": "index",
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
+                },
                 "type": {
                     "const": "index",
                     "default": "index",
@@ -692,7 +692,53 @@
             "required": [
                 "size"
             ],
-            "title": "IndexAxis",
+            "title": "IndexInputAxis",
+            "type": "object"
+        },
+        "IndexOutputAxis": {
+            "additionalProperties": false,
+            "properties": {
+                "size": {
+                    "anyOf": [
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ],
+                    "title": "Size"
+                },
+                "id": {
+                    "default": "index",
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "index",
+                    "default": "index",
+                    "title": "Type"
+                }
+            },
+            "required": [
+                "size"
+            ],
+            "title": "IndexOutputAxis",
             "type": "object"
         },
         "IntervalOrRatioDataDescr": {
@@ -1580,22 +1626,6 @@
         "SpaceInputAxis": {
             "additionalProperties": false,
             "properties": {
-                "id": {
-                    "default": "x",
-                    "examples": [
-                        "x",
-                        "y",
-                        "z"
-                    ],
-                    "title": "Id",
-                    "type": "string"
-                },
-                "description": {
-                    "default": "",
-                    "maxLength": 128,
-                    "title": "Description",
-                    "type": "string"
-                },
                 "size": {
                     "anyOf": [
                         {
@@ -1622,6 +1652,22 @@
                         }
                     ],
                     "title": "Size"
+                },
+                "id": {
+                    "default": "x",
+                    "examples": [
+                        "x",
+                        "y",
+                        "z"
+                    ],
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
                 },
                 "type": {
                     "const": "space",
@@ -1684,6 +1730,26 @@
         "SpaceOutputAxis": {
             "additionalProperties": false,
             "properties": {
+                "size": {
+                    "anyOf": [
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ],
+                    "title": "Size"
+                },
                 "halo": {
                     "default": 0,
                     "minimum": 0,
@@ -1705,33 +1771,6 @@
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "exclusiveMinimum": 0,
-                            "type": "integer"
-                        },
-                        {
-                            "$ref": "#/$defs/ParameterizedSize"
-                        },
-                        {
-                            "$ref": "#/$defs/SizeReference"
-                        }
-                    ],
-                    "examples": [
-                        10,
-                        {
-                            "min": 32,
-                            "step": 16
-                        },
-                        {
-                            "axis_id": "a",
-                            "offset": 5,
-                            "tensor_id": "t"
-                        }
-                    ],
-                    "title": "Size"
                 },
                 "type": {
                     "const": "space",
@@ -1794,17 +1833,6 @@
         "TimeInputAxis": {
             "additionalProperties": false,
             "properties": {
-                "id": {
-                    "default": "time",
-                    "title": "Id",
-                    "type": "string"
-                },
-                "description": {
-                    "default": "",
-                    "maxLength": 128,
-                    "title": "Description",
-                    "type": "string"
-                },
                 "size": {
                     "anyOf": [
                         {
@@ -1831,6 +1859,17 @@
                         }
                     ],
                     "title": "Size"
+                },
+                "id": {
+                    "default": "time",
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
                 },
                 "type": {
                     "const": "time",
@@ -1890,6 +1929,26 @@
         "TimeOutputAxis": {
             "additionalProperties": false,
             "properties": {
+                "size": {
+                    "anyOf": [
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ],
+                    "title": "Size"
+                },
                 "halo": {
                     "default": 0,
                     "minimum": 0,
@@ -1906,33 +1965,6 @@
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "exclusiveMinimum": 0,
-                            "type": "integer"
-                        },
-                        {
-                            "$ref": "#/$defs/ParameterizedSize"
-                        },
-                        {
-                            "$ref": "#/$defs/SizeReference"
-                        }
-                    ],
-                    "examples": [
-                        10,
-                        {
-                            "min": 32,
-                            "step": 16
-                        },
-                        {
-                            "axis_id": "a",
-                            "offset": 5,
-                            "tensor_id": "t"
-                        }
-                    ],
-                    "title": "Size"
                 },
                 "type": {
                     "const": "time",
@@ -6341,7 +6373,7 @@
                             "mapping": {
                                 "batch": "#/$defs/BatchAxis",
                                 "channel": "#/$defs/ChannelAxis",
-                                "index": "#/$defs/IndexAxis",
+                                "index": "#/$defs/IndexInputAxis",
                                 "space": "#/$defs/SpaceInputAxis",
                                 "time": "#/$defs/TimeInputAxis"
                             },
@@ -6355,7 +6387,7 @@
                                 "$ref": "#/$defs/ChannelAxis"
                             },
                             {
-                                "$ref": "#/$defs/IndexAxis"
+                                "$ref": "#/$defs/IndexInputAxis"
                             },
                             {
                                 "$ref": "#/$defs/TimeInputAxis"
@@ -6892,7 +6924,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-14T15:52:17.259960"
+                    "default": "2024-03-15T09:36:39.413691"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7036,7 +7068,7 @@
                             "mapping": {
                                 "batch": "#/$defs/BatchAxis",
                                 "channel": "#/$defs/ChannelAxis",
-                                "index": "#/$defs/IndexAxis",
+                                "index": "#/$defs/IndexOutputAxis",
                                 "space": "#/$defs/SpaceOutputAxis",
                                 "time": "#/$defs/TimeOutputAxis"
                             },
@@ -7050,7 +7082,7 @@
                                 "$ref": "#/$defs/ChannelAxis"
                             },
                             {
-                                "$ref": "#/$defs/IndexAxis"
+                                "$ref": "#/$defs/IndexOutputAxis"
                             },
                             {
                                 "$ref": "#/$defs/TimeOutputAxis"
