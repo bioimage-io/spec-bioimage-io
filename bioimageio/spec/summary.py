@@ -1,12 +1,8 @@
 from itertools import chain
 from types import MappingProxyType
-from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union
+from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
 
-from pydantic import (
-    BaseModel,
-    Field,
-    model_validator,
-)
+from pydantic import BaseModel, Field, model_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
 
@@ -188,21 +184,29 @@ class ValidationSummary(BaseModel, extra="allow"):
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
 
+    @staticmethod
+    def _format_md_table(rows: List[List[str]]) -> str:
+        """format `rows` as markdown table"""
+        n_cols = len(rows[0])
+        assert all(len(row) == n_cols for row in rows)
+        col_widths = [max(len(row[i]) for row in rows) for i in range(n_cols)]
+
+        lines = [" | ".join(rows[0][i].center(col_widths[i]) for i in range(n_cols))]
+        lines.append(" | ".join("---".center(col_widths[i]) for i in range(n_cols)))
+        lines.extend(
+            [
+                " | ".join(row[i].ljust(col_widths[i]) for i in range(n_cols))
+                for row in rows[1:]
+            ]
+        )
+        return "\n |" + " |\n| ".join(lines) + " |\n"
+
     def _format_env(self):
         if not self.env:
             return ""
 
-        package_w = max(len(p) for p in [e["name"] for e in self.env] + ["package"])
-        version_w = max(len(v) for v in [e["version"] for e in self.env] + ["version"])
-
-        return (
-            "\n"
-            f"| {'package'.center(package_w)} | {'version'.center(version_w)} |\n"
-            f"| {'---'.center(package_w)} | {'---'.center(version_w)} |\n"
-        ) + "".join(
-            f"| {e['name'].ljust(package_w)} | {e['version'].ljust(version_w)} |\n"
-            for e in self.env
-        )
+        rows = [["package", "version"]] + [[e["name"], e["version"]] for e in self.env]
+        return self._format_md_table(rows)
 
     def format(
         self,
@@ -214,11 +218,40 @@ class ValidationSummary(BaseModel, extra="allow"):
         indent = "   " if root_loc else ""
         src = "" if hide_source else f"\n{indent}source: {self.source_name}"
         env = "" if hide_env else self._format_env()
-        details = f"\n{indent}" + f"\n{indent}".join(
-            d.format(hide_tracebacks=hide_tracebacks, root_loc=root_loc)
-            for d in self.details
-        )
-        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{src}{env}{details}"
+        details = [["❓", "location", "detail"]]
+
+        def format_loc(loc: Loc):
+            return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
+
+        for d in self.details:
+            details.append([d.status_icon, "", d.name])
+            if d.errors:
+                details.extend(
+                    [["❌", format_loc(entry.loc), entry.msg] for entry in d.errors]
+                )
+                details.append(["", "", ""])
+
+            if d.warnings:
+                details.extend(
+                    [["⚠", format_loc(entry.loc), entry.msg] for entry in d.warnings]
+                )
+                details.append(["", "", ""])
+
+        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n{src}{env}\n{self._format_md_table(details)}"
+
+    @no_type_check
+    def display(self) -> None:
+        formatted = self.format()
+        try:
+            from IPython.core.getipython import get_ipython
+            from IPython.display import Markdown, display
+        except ImportError:
+            print(formatted)
+        else:
+            if get_ipython() is None:
+                print(formatted)
+            else:
+                _ = display(Markdown(formatted))
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
