@@ -246,6 +246,31 @@ class ParameterizedSize(Node):
 
 ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
+class DataDependentSize(Node):
+    min: Annotated[int, Gt(0)]
+    step: Annotated[int, Gt(0)]
+    max: Annotated[int, Gt(1)]
+
+    @model_validator(mode="after")
+    def _validate_max_gt_min(self):
+        if self.min >= self.max:
+            raise ValueError(f"expected `min` <= `max`, but got {self.min}, {self.max}")
+
+        return self
+
+    def validate_size(self, size: int) -> int:
+        if size < self.min:
+            raise ValueError(f"size {size} < {self.min}")
+        if (size - self.min) % self.step != 0:
+            raise ValueError(
+                f"axis of size {size} is not parameterized by `min + n*step` ="
+                + f" `{self.min} + n*{self.step}`"
+            )
+
+        if size > self.min:
+            raise ValueError(f"size {size} > {self.max}")
+
+        return size
 
 class SizeReference(Node):
     """A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.
@@ -326,6 +351,8 @@ class SizeReference(Node):
             ref_size = ref_axis.size
         elif isinstance(ref_axis.size, ParameterizedSize):
             ref_size = ref_axis.size.get_size(n)
+        elif isinstance(ref_axis.size, DataDependentSize):
+            raise ValueError("Reference axis referenced in `SizeReference` may not be a `DataDependentSize`.")
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a"
@@ -451,16 +478,30 @@ class _WithOutputAxisSize(Node):
     """The size/length of this axis can be specified as
     - fixed integer
     - reference to another axis with an optional offset (`SizeReference`)
-    # TODO: add `DataDependentSize(min, max, step)`
     """
-
 
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     pass
 
 
-class IndexOutputAxis(IndexAxisBase, _WithOutputAxisSize):
-    pass
+class IndexOutputAxis(IndexAxisBase):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], SizeReference, DataDependentSize],
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - reference to another axis with an optional offset (`SizeReference`)
+    - data dependent size using `DataDependentSize` (size is only known after model inference)
+    """
+
 
 
 class TimeAxisBase(AxisBase):
@@ -960,7 +1001,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
             elif isinstance(a.size, int):
                 if a.size == 1:
                     n_dims_min -= 1
-            elif isinstance(a.size, ParameterizedSize):
+            elif isinstance(a.size, (ParameterizedSize, DataDependentSize)):
                 if a.size.min == 1:
                     n_dims_min -= 1
             elif isinstance(a.size, SizeReference):
@@ -1445,6 +1486,8 @@ def validate_tensors(
                         + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
+                _ = a.size.validate_size(actual_size)
+            elif isinstance(a.size, DataDependentSize):
                 _ = a.size.validate_size(actual_size)
             elif isinstance(a.size, SizeReference):
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
