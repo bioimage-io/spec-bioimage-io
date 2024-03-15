@@ -1869,7 +1869,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
 
-        if isinstance(axis.size, ParameterizedSize):
+        if isinstance(axis.size, (ParameterizedSize, DataDependentSize)):
             if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {axis.size.min} is too small for"
