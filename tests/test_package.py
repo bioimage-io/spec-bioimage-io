@@ -1,3 +1,4 @@
+import io
 import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,6 +11,22 @@ def test_save_bioimageio_package(unet2d_path: Path):
 
     package_path = save_bioimageio_package(unet2d_path)
     assert package_path.exists()
+
+
+def test_save_bioimageio_package_to_stream(unet2d_path: Path):
+    from bioimageio.spec import save_bioimageio_package_to_stream
+
+    output_stream = io.BytesIO()
+    stream = save_bioimageio_package_to_stream(unet2d_path, output_stream=output_stream)
+    assert isinstance(stream, io.BytesIO)
+    assert stream == output_stream
+
+
+def test_save_bioimageio_package_to_stream_default(unet2d_path: Path):
+    from bioimageio.spec import save_bioimageio_package_to_stream
+
+    stream = save_bioimageio_package_to_stream(unet2d_path)
+    assert isinstance(stream, io.BytesIO)
 
 
 def test_save_bioimageio_package_as_folder(unet2d_path: Path):
