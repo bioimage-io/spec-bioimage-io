@@ -288,7 +288,8 @@ class SizeReference(Node):
         self,
         axis: Union[
             ChannelAxis,
-            IndexAxis,
+            IndexInputAxis,
+            IndexOutputAxis,
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
@@ -296,7 +297,8 @@ class SizeReference(Node):
         ],
         ref_axis: Union[
             ChannelAxis,
-            IndexAxis,
+            IndexInputAxis,
+            IndexOutputAxis,
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
@@ -338,7 +340,8 @@ class SizeReference(Node):
     def _get_unit(
         axis: Union[
             ChannelAxis,
-            IndexAxis,
+            IndexInputAxis,
+            IndexOutputAxis,
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
@@ -400,27 +403,7 @@ class ChannelAxis(AxisBase):
         return None
 
 
-class IndexTimeSpaceAxisBase(AxisBase):
-    size: Annotated[
-        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
-        Field(
-            examples=[
-                10,
-                ParameterizedSize(min=32, step=16).model_dump(mode="json"),
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
-    ]
-    """The size/length of an axis can be specified as
-    - fixed integer
-    - parameterized series of valid sizes (`ParameterizedSize`)
-    - reference to another axis with an optional offset (`SizeReference`)
-    """
-
-
-class IndexAxis(IndexTimeSpaceAxisBase):
+class IndexAxisBase(AxisBase):
     type: Literal["index"] = "index"
     id: NonBatchAxisId = AxisId("index")
 
@@ -433,44 +416,91 @@ class IndexAxis(IndexTimeSpaceAxisBase):
         return None
 
 
-class TimeAxisBase(IndexTimeSpaceAxisBase):
+class _WithInputAxisSize(Node):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
+        Field(
+            examples=[
+                10,
+                ParameterizedSize(min=32, step=16).model_dump(mode="json"),
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - parameterized series of valid sizes (`ParameterizedSize`)
+    - reference to another axis with an optional offset (`SizeReference`)
+    """
+
+
+class _WithOutputAxisSize(Node):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], SizeReference],
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - reference to another axis with an optional offset (`SizeReference`)
+    # TODO: add `DataDependentSize(min, max, step)`
+    """
+
+
+class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
+    pass
+
+
+class IndexOutputAxis(IndexAxisBase, _WithOutputAxisSize):
+    pass
+
+
+class TimeAxisBase(AxisBase):
     type: Literal["time"] = "time"
     id: NonBatchAxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-class TimeInputAxis(TimeAxisBase):
+class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
     pass
 
 
-class SpaceAxisBase(IndexTimeSpaceAxisBase):
+class SpaceAxisBase(AxisBase):
     type: Literal["space"] = "space"
     id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
-class SpaceInputAxis(SpaceAxisBase):
+class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     pass
 
 
 _InputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexAxis, TimeInputAxis, SpaceInputAxis
+    BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
 ]
 InputAxis = Annotated[_InputAxisUnion, Field(discriminator="type")]
 
 
-class TimeOutputAxis(TimeAxisBase, WithHalo):
+class TimeOutputAxis(TimeAxisBase, WithHalo, _WithOutputAxisSize):
     pass
 
 
-class SpaceOutputAxis(SpaceAxisBase, WithHalo):
+class SpaceOutputAxis(SpaceAxisBase, WithHalo, _WithOutputAxisSize):
     pass
 
 
 _OutputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexAxis, TimeOutputAxis, SpaceOutputAxis
+    BatchAxis, ChannelAxis, IndexOutputAxis, TimeOutputAxis, SpaceOutputAxis
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Field(discriminator="type")]
 
@@ -1116,7 +1146,10 @@ def convert_axes(
                     )
                 )
         elif axis_type == "index":
-            ret.append(IndexAxis(size=size))
+            if tensor_type == "input":
+                ret.append(IndexInputAxis(size=size))
+            else:
+                ret.append(IndexOutputAxis(size=size))
         elif axis_type == "channel":
             assert not isinstance(size, ParameterizedSize)
             if isinstance(size, SizeReference):
@@ -2322,7 +2355,10 @@ def generate_covers(
         for i, a in enumerate(axes):
             s = data.shape[i]
             assert s > 1
-            if isinstance(a, (BatchAxis, IndexAxis)) and ndim > ndim_need:
+            if (
+                isinstance(a, (BatchAxis, IndexInputAxis, IndexOutputAxis))
+                and ndim > ndim_need
+            ):
                 data = data[slices + (slice(s // 2 - 1, s // 2),)]
                 ndim -= 1
             elif isinstance(a, ChannelAxis):
