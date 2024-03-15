@@ -360,6 +360,31 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.format()
 
 
+def test_get_tensor_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
+    with ValidationContext(perform_io_checks=False):
+        model = ModelDescr(**model_data)
+
+    output_tensor_id = model.inputs[0].id
+    output_axis_id = AxisId("y")
+
+    with pytest.raises(ValueError):
+        model.get_tensor_sizes(ns={(output_tensor_id, output_axis_id): 1}, batch_size=1)
+
+
+def test_get_tensor_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
+    model_data["outputs"][0]["axes"][2] = {
+        "type": "space",
+        "id": "x",
+        "size": {"tensor_id": "input_1", "axis_id": "x"},
+        "halo": 0,
+    }
+
+    with ValidationContext(perform_io_checks=False):
+        model = ModelDescr(**model_data)
+    with pytest.raises(ValueError):
+        model.get_tensor_sizes(ns={}, batch_size=1)
+
+
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
