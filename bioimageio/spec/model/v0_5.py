@@ -2136,7 +2136,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return data
 
     def get_tensor_sizes(
-        self, n: ParameterizedSize.N, batch_size: int
+        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
     ) -> Dict[TensorId, Dict[AxisId, int]]:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
@@ -2148,16 +2148,34 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             for a in t_descr.axes:
                 if a.size is None:
                     assert isinstance(a, BatchAxis)
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for batch axis of tensor {t_descr.id} expected."
+                        )
                     s = batch_size
                 elif isinstance(a.size, int):
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for fixed size axis {a.id} of tensor {t_descr.id} expected."
+                        )
                     s = a.size
                 elif isinstance(a.size, ParameterizedSize):
-                    s = a.size.get_size(n)
+                    if (t_descr.id, a.id) not in ns:
+                        raise ValueError(
+                            f"Size increment factor (n) not given for axis {a.id} of tensor {t_descr.id}."
+                        )
+                    s = a.size.get_size(ns[(t_descr.id, a.id)])
                 elif isinstance(a.size, SizeReference):
                     assert not isinstance(a, BatchAxis)
                     ref_axis = all_axes[a.size.tensor_id][a.size.axis_id]
                     assert not isinstance(ref_axis, BatchAxis)
-                    s = a.size.get_size(axis=a, ref_axis=ref_axis, n=n)
+                    if (a.size.tensor_id, a.size.axis_id) not in ns:
+                        raise ValueError(
+                            f"No increment (n) provided for axis {a.id} of tensor {t_descr.id}. Expected reference from tensor {a.size.tensor_id} and axis {a.size.axis_id}."
+                        )
+                    s = a.size.get_size(
+                        axis=a, ref_axis=ref_axis, n=ns[(t_descr.id, a.id)]
+                    )
                 else:
                     assert_never(a.size)
 
