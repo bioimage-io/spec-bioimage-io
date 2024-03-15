@@ -3,7 +3,7 @@ import platform
 import warnings
 from contextlib import nullcontext
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Optional, TextIO, Union, cast
+from typing import IO, Any, Dict, Iterable, Mapping, Optional, TextIO, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -170,7 +170,7 @@ def unzip(
 
 
 def write_zip(
-    path: FilePath,
+    path: Union[FilePath, IO[bytes]],
     content: Mapping[FileName, Union[str, FilePath, Dict[Any, Any]]],
     *,
     compression: int,

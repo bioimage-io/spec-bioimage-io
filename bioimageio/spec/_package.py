@@ -1,9 +1,10 @@
 import collections.abc
+from io import BytesIO
 import re
 import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
-from typing import Dict, Literal, Optional, Sequence, Union, cast
+from typing import IO, Dict, Literal, Optional, Sequence, Union, cast
 from zipfile import ZIP_DEFLATED
 
 from pydantic import DirectoryPath, FilePath, NewPath
@@ -257,3 +258,57 @@ def save_bioimageio_package(
         )
 
     return output_path
+
+
+def save_bioimageio_package_to_stream(
+    source: Union[BioimageioYamlSource, ResourceDescr],
+    /,
+    *,
+    compression: int = ZIP_DEFLATED,
+    compression_level: int = 1,
+    output_stream: Union[IO[bytes], None] = None,
+    weights_priority_order: Optional[  # model only
+        Sequence[
+            Literal[
+                "keras_hdf5",
+                "onnx",
+                "pytorch_state_dict",
+                "tensorflow_js",
+                "tensorflow_saved_model_bundle",
+                "torchscript",
+            ]
+        ]
+    ] = None,
+) -> IO[bytes]:
+    """Package a bioimageio resource into a stream.
+
+    Args:
+        rd: bioimageio resource description
+        compression: The numeric constant of compression method.
+        compression_level: Compression level to use when writing files to the archive.
+                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
+        output_stream: stream to write package to
+        weights_priority_order: If given only the first weights format present in the model is included.
+                                If none of the prioritized weights formats is found all are included.
+
+    Note: this function bypasses safety checks and does not load/validate the model after writing.
+
+    Returns:
+        stream of zipped bioimageio package
+    """
+    if output_stream is None:
+        output_stream = BytesIO()
+
+    package_content = _prepare_resource_package(
+        source,
+        weights_priority_order=weights_priority_order,
+    )
+
+    write_zip(
+        output_stream,
+        package_content,
+        compression=compression,
+        compression_level=compression_level,
+    )
+
+    return output_stream

@@ -25,6 +25,9 @@ from ._package import save_bioimageio_package as save_bioimageio_package
 from ._package import (
     save_bioimageio_package_as_folder as save_bioimageio_package_as_folder,
 )
+from ._package import (
+    save_bioimageio_package_to_stream as save_bioimageio_package_to_stream,
+)
 from .application import AnyApplicationDescr as AnyApplicationDescr
 from .application import ApplicationDescr as ApplicationDescr
 from .collection import AnyCollectionDescr as AnyCollectionDescr
