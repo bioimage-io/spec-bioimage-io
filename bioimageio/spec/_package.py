@@ -294,7 +294,7 @@ def save_bioimageio_package_to_stream(
     Note: this function bypasses safety checks and does not load/validate the model after writing.
 
     Returns:
-        path to zipped bioimageio package
+        stream of zipped bioimageio package
     """
     if output_stream is None:
         output_stream = BytesIO()
