@@ -199,7 +199,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                 for row in rows[1:]
             ]
         )
-        return "\n |" + " |\n| ".join(lines) + " |\n"
+        return "\n | " + " |\n| ".join(lines) + " |\n"
 
     def _format_env(self):
         if not self.env:
@@ -225,16 +225,17 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         for d in self.details:
             details.append([d.status_icon, "", d.name])
+            for entry in d.errors:
+                details.append(["❌", format_loc(entry.loc), entry.msg])
+                if not hide_tracebacks:
+                    details.extend([["", "", tb] for tb in entry.traceback])
+
             if d.errors:
-                details.extend(
-                    [["❌", format_loc(entry.loc), entry.msg] for entry in d.errors]
-                )
                 details.append(["", "", ""])
 
+            for entry in d.warnings:
+                details.append(["⚠", format_loc(entry.loc), entry.msg])
             if d.warnings:
-                details.extend(
-                    [["⚠", format_loc(entry.loc), entry.msg] for entry in d.warnings]
-                )
                 details.append(["", "", ""])
 
         return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n{src}{env}\n{self._format_md_table(details)}"
