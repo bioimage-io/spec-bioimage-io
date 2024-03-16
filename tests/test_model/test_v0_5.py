@@ -368,7 +368,9 @@ def test_get_tensor_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
     output_axis_id = AxisId("y")
 
     with pytest.raises(ValueError):
-        model.get_tensor_sizes(ns={(output_tensor_id, output_axis_id): 1}, batch_size=1)
+        _ = model.get_tensor_sizes(
+            ns={(output_tensor_id, output_axis_id): 1}, batch_size=1
+        )
 
 
 def test_get_tensor_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
@@ -382,7 +384,7 @@ def test_get_tensor_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
     with ValidationContext(perform_io_checks=False):
         model = ModelDescr(**model_data)
     with pytest.raises(ValueError):
-        model.get_tensor_sizes(ns={}, batch_size=1)
+        _ = model.get_tensor_sizes(ns={}, batch_size=1)
 
 
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
