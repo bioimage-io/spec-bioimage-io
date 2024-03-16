@@ -64,6 +64,8 @@ jobs:
       - name: Generate developer docs
         run: pdoc -o ./dist bioimageio.spec
       - run: cp README.md ./dist/README.md
+      - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
+        run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
         id: get_branch
         shell: bash

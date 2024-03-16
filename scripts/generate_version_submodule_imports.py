@@ -165,7 +165,8 @@ def process(info: Info, check: bool):
                 )
             )
     else:
-        _ = package_init.write_text(updated)
+        with package_init.open("w", newline="\n") as f:
+            _ = f.write(updated)
 
 
 def get_ordered_version_submodules(target: str):
