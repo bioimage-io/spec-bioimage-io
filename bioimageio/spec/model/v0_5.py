@@ -246,6 +246,7 @@ class ParameterizedSize(Node):
 
 ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
+
 class DataDependentSize(Node):
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
@@ -271,6 +272,7 @@ class DataDependentSize(Node):
             raise ValueError(f"size {size} > {self.max}")
 
         return size
+
 
 class SizeReference(Node):
     """A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.
@@ -352,7 +354,9 @@ class SizeReference(Node):
         elif isinstance(ref_axis.size, ParameterizedSize):
             ref_size = ref_axis.size.get_size(n)
         elif isinstance(ref_axis.size, DataDependentSize):
-            raise ValueError("Reference axis referenced in `SizeReference` may not be a `DataDependentSize`.")
+            raise ValueError(
+                "Reference axis referenced in `SizeReference` may not be a `DataDependentSize`."
+            )
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a"
@@ -480,6 +484,7 @@ class _WithOutputAxisSize(Node):
     - reference to another axis with an optional offset (`SizeReference`)
     """
 
+
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     pass
 
@@ -501,7 +506,6 @@ class IndexOutputAxis(IndexAxisBase):
     - reference to another axis with an optional offset (`SizeReference`)
     - data dependent size using `DataDependentSize` (size is only known after model inference)
     """
-
 
 
 class TimeAxisBase(AxisBase):
@@ -2146,8 +2150,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         for t_descr in chain(self.inputs, self.outputs):
             ret[t_descr.id] = {}
             for a in t_descr.axes:
-                if a.size is None:
-                    assert isinstance(a, BatchAxis)
+                if isinstance(a, BatchAxis):
                     if (t_descr.id, a.id) in ns:
                         raise ValueError(
                             f"No size increment factor (n) for batch axis of tensor {t_descr.id} expected."
