@@ -19,6 +19,7 @@ from typing import (
     List,
     Literal,
     Mapping,
+    NamedTuple,
     Optional,
     Sequence,
     Set,
@@ -1775,6 +1776,18 @@ class LinkedModel(Node):
     """version number (n-th published version, not the semantic version) of linked model"""
 
 
+class _MinMax(NamedTuple):
+    min: int
+    max: int
+
+
+class _TensorSizes(NamedTuple):
+    predetermined: Dict[TensorId, Dict[AxisId, int]]
+    """size of axis (given `n` for `ParameterizedSize`)"""
+    data_dependent: Dict[TensorId, Dict[AxisId, _MinMax]]
+    """min,max size of data dependent axis"""
+
+
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -2141,14 +2154,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     def get_tensor_sizes(
         self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
-    ) -> Dict[TensorId, Dict[AxisId, int]]:
+    ) -> _TensorSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        ret: Dict[TensorId, Dict[AxisId, int]] = {}
+        predetermined: Dict[TensorId, Dict[AxisId, int]] = {}
+        data_dependent: Dict[TensorId, Dict[AxisId, _MinMax]] = {}
         for t_descr in chain(self.inputs, self.outputs):
-            ret[t_descr.id] = {}
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
                     if (t_descr.id, a.id) in ns:
@@ -2179,12 +2192,21 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     s = a.size.get_size(
                         axis=a, ref_axis=ref_axis, n=ns[(t_descr.id, a.id)]
                     )
+                elif isinstance(a.size, DataDependentSize):
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
+                        )
+                    data_dependent.setdefault(t_descr.id, {})[a.id] = _MinMax(
+                        a.size.min, a.size.max
+                    )
+                    continue
                 else:
                     assert_never(a.size)
 
-                ret[t_descr.id][a.id] = s
+                predetermined.setdefault(t_descr.id, {})[a.id] = s
 
-        return ret
+        return _TensorSizes(predetermined, data_dependent)
 
     @model_validator(mode="before")
     @classmethod
