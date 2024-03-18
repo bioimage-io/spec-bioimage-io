@@ -19,6 +19,7 @@ from typing import (
     List,
     Literal,
     Mapping,
+    NamedTuple,
     Optional,
     Sequence,
     Set,
@@ -185,7 +186,7 @@ class AxisId(str):
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> CoreSchema:
-        return no_info_after_validator_function(cls, handler(str))
+        return no_info_after_validator_function(cls._validate, handler(str))
 
     @classmethod
     def _validate(cls, value: str):
@@ -245,6 +246,27 @@ class ParameterizedSize(Node):
 
 
 ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
+
+
+class DataDependentSize(Node):
+    min: Annotated[int, Gt(0)] = 1
+    max: Annotated[Optional[int], Gt(1)] = None
+
+    @model_validator(mode="after")
+    def _validate_max_gt_min(self):
+        if self.max is None or self.min >= self.max:
+            raise ValueError(f"expected `min` <= `max`, but got {self.min}, {self.max}")
+
+        return self
+
+    def validate_size(self, size: int) -> int:
+        if size < self.min:
+            raise ValueError(f"size {size} < {self.min}")
+
+        if self.max is not None and size > self.max:
+            raise ValueError(f"size {size} > {self.max}")
+
+        return size
 
 
 class SizeReference(Node):
@@ -326,6 +348,10 @@ class SizeReference(Node):
             ref_size = ref_axis.size
         elif isinstance(ref_axis.size, ParameterizedSize):
             ref_size = ref_axis.size.get_size(n)
+        elif isinstance(ref_axis.size, DataDependentSize):
+            raise ValueError(
+                "Reference axis referenced in `SizeReference` may not be a `DataDependentSize`."
+            )
         elif isinstance(ref_axis.size, SizeReference):
             raise ValueError(
                 "Reference axis referenced in `SizeReference` may not be sized by a"
@@ -451,7 +477,6 @@ class _WithOutputAxisSize(Node):
     """The size/length of this axis can be specified as
     - fixed integer
     - reference to another axis with an optional offset (`SizeReference`)
-    # TODO: add `DataDependentSize(min, max, step)`
     """
 
 
@@ -459,8 +484,23 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     pass
 
 
-class IndexOutputAxis(IndexAxisBase, _WithOutputAxisSize):
-    pass
+class IndexOutputAxis(IndexAxisBase):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], SizeReference, DataDependentSize],
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - reference to another axis with an optional offset (`SizeReference`)
+    - data dependent size using `DataDependentSize` (size is only known after model inference)
+    """
 
 
 class TimeAxisBase(AxisBase):
@@ -972,7 +1012,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
             elif isinstance(a.size, int):
                 if a.size == 1:
                     n_dims_min -= 1
-            elif isinstance(a.size, ParameterizedSize):
+            elif isinstance(a.size, (ParameterizedSize, DataDependentSize)):
                 if a.size.min == 1:
                     n_dims_min -= 1
             elif isinstance(a.size, SizeReference):
@@ -1502,6 +1542,8 @@ def validate_tensors(
                     )
             elif isinstance(a.size, ParameterizedSize):
                 _ = a.size.validate_size(actual_size)
+            elif isinstance(a.size, DataDependentSize):
+                _ = a.size.validate_size(actual_size)
             elif isinstance(a.size, SizeReference):
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
@@ -1784,6 +1826,18 @@ class LinkedModel(Node):
     """version number (n-th published version, not the semantic version) of linked model"""
 
 
+class _DataDepSize(NamedTuple):
+    min: int
+    max: Optional[int]
+
+
+class _TensorSizes(NamedTuple):
+    predetermined: Dict[Tuple[TensorId, AxisId], int]
+    """size of axis (given `n` for `ParameterizedSize`)"""
+    data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize]
+    """min,max size of data dependent axis"""
+
+
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -1882,7 +1936,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
             return
 
-        if isinstance(axis.size, ParameterizedSize):
+        if isinstance(axis.size, (ParameterizedSize, DataDependentSize)):
             if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {axis.size.min} is too small for"
@@ -2149,34 +2203,60 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return data
 
     def get_tensor_sizes(
-        self, n: ParameterizedSize.N, batch_size: int
-    ) -> Dict[TensorId, Dict[AxisId, int]]:
+        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+    ) -> _TensorSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        ret: Dict[TensorId, Dict[AxisId, int]] = {}
+        predetermined: Dict[Tuple[TensorId, AxisId], int] = {}
+        data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize] = {}
         for t_descr in chain(self.inputs, self.outputs):
-            ret[t_descr.id] = {}
             for a in t_descr.axes:
-                if a.size is None:
-                    assert isinstance(a, BatchAxis)
+                if isinstance(a, BatchAxis):
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for batch axis of tensor {t_descr.id} expected."
+                        )
                     s = batch_size
                 elif isinstance(a.size, int):
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for fixed size axis {a.id} of tensor {t_descr.id} expected."
+                        )
                     s = a.size
                 elif isinstance(a.size, ParameterizedSize):
-                    s = a.size.get_size(n)
+                    if (t_descr.id, a.id) not in ns:
+                        raise ValueError(
+                            f"Size increment factor (n) not given for parametrized axis {a.id} of tensor {t_descr.id}."
+                        )
+                    s = a.size.get_size(ns[(t_descr.id, a.id)])
                 elif isinstance(a.size, SizeReference):
                     assert not isinstance(a, BatchAxis)
                     ref_axis = all_axes[a.size.tensor_id][a.size.axis_id]
                     assert not isinstance(ref_axis, BatchAxis)
-                    s = a.size.get_size(axis=a, ref_axis=ref_axis, n=n)
+                    if (a.size.tensor_id, a.size.axis_id) not in ns:
+                        raise ValueError(
+                            f"No increment (n) provided for axis {a.id} of tensor {t_descr.id}. Expected reference from tensor {a.size.tensor_id} and axis {a.size.axis_id}."
+                        )
+                    s = a.size.get_size(
+                        axis=a, ref_axis=ref_axis, n=ns[(t_descr.id, a.id)]
+                    )
+                elif isinstance(a.size, DataDependentSize):
+                    if (t_descr.id, a.id) in ns:
+                        raise ValueError(
+                            f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
+                        )
+                    data_dependent[t_descr.id, a.id] = _DataDepSize(
+                        a.size.min, a.size.max
+                    )
+                    continue
                 else:
                     assert_never(a.size)
 
-                ret[t_descr.id][a.id] = s
+                predetermined[t_descr.id, a.id] = s
 
-        return ret
+        return _TensorSizes(predetermined, data_dependent)
 
     @model_validator(mode="before")
     @classmethod

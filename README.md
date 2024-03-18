@@ -235,6 +235,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 #### model 0.5.1
 
 * Non-breaking changes
+  * added `DataDependentSize` for `outputs.i.size` to specify an output shape that is not known before inference is run.
   * added optional `inputs.i.optional` field to indicate that a tensor may be `None`
   * made data type assumptions in `preprocessing` and `postprocessing` explicit by adding `'ensure_dtype'` operations per default.
 
