@@ -85,6 +85,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.1
+
+* new patch version model 0.5.1
+
 #### bioimageio.spec 0.5.0post2
 
 * don't fail if CI env var is a string
@@ -228,10 +232,11 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### Resource Description Format Versions
 
-#### model 0.5.1 (planned)
+#### model 0.5.1
 
 * Non-breaking changes
   * added optional `inputs.i.optional` field to indicate that a tensor may be `None`
+  * made data type assumptions in `preprocessing` and `postprocessing` explicit by adding `'ensure_dtype'` operations per default.
 
 #### generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0
 
