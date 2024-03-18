@@ -165,7 +165,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
         ],
         MinLen(5),
         MaxLen(128),
@@ -173,7 +173,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     ]
     name: Annotated[NotEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description.
-    May only contains letters, digits, underscore, minus and space characters."""
+    May only contains letters, digits, underscore, minus, parentheses and spaces."""
 
     description: Annotated[
         str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")
