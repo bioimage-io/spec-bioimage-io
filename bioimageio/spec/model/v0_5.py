@@ -249,13 +249,12 @@ ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
 
 class DataDependentSize(Node):
-    min: Annotated[int, Gt(0)]
-    step: Annotated[int, Gt(0)]
-    max: Annotated[int, Gt(1)]
+    min: Annotated[int, Gt(0)] = 1
+    max: Annotated[Optional[int], Gt(1)] = None
 
     @model_validator(mode="after")
     def _validate_max_gt_min(self):
-        if self.min >= self.max:
+        if self.max is None or self.min >= self.max:
             raise ValueError(f"expected `min` <= `max`, but got {self.min}, {self.max}")
 
         return self
@@ -263,13 +262,8 @@ class DataDependentSize(Node):
     def validate_size(self, size: int) -> int:
         if size < self.min:
             raise ValueError(f"size {size} < {self.min}")
-        if (size - self.min) % self.step != 0:
-            raise ValueError(
-                f"axis of size {size} is not parameterized by `min + n*step` ="
-                + f" `{self.min} + n*{self.step}`"
-            )
 
-        if size > self.min:
+        if self.max is not None and size > self.max:
             raise ValueError(f"size {size} > {self.max}")
 
         return size
@@ -1776,15 +1770,15 @@ class LinkedModel(Node):
     """version number (n-th published version, not the semantic version) of linked model"""
 
 
-class _MinMax(NamedTuple):
+class _DataDepSize(NamedTuple):
     min: int
-    max: int
+    max: Optional[int]
 
 
 class _TensorSizes(NamedTuple):
     predetermined: Dict[Tuple[TensorId, AxisId], int]
     """size of axis (given `n` for `ParameterizedSize`)"""
-    data_dependent: Dict[Tuple[TensorId, AxisId], _MinMax]
+    data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize]
     """min,max size of data dependent axis"""
 
 
@@ -2160,7 +2154,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         }
 
         predetermined: Dict[Tuple[TensorId, AxisId], int] = {}
-        data_dependent: Dict[Tuple[TensorId, AxisId], _MinMax] = {}
+        data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize] = {}
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
@@ -2197,7 +2191,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         raise ValueError(
                             f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
                         )
-                    data_dependent[t_descr.id, a.id] = _MinMax(a.size.min, a.size.max)
+                    data_dependent[t_descr.id, a.id] = _DataDepSize(
+                        a.size.min, a.size.max
+                    )
                     continue
                 else:
                     assert_never(a.size)
