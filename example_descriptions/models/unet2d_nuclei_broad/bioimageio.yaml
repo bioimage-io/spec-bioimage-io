@@ -52,9 +52,15 @@ inputs:
       source: test_input.png
       sha256: 8771f558305dd89f4a85fe659e8ef5e116c94d64e668dc23b9282fda3fe9cce8
     preprocessing: # list of preprocessing steps
+      - id: ensure_dtype # this would be added by default as well
+        kwargs:
+          dtype: float32
       - id: zero_mean_unit_variance # name of preprocessing step
         kwargs:
           axes: [x, y]
+      - id: ensure_dtype # this would be added by default as well
+        kwargs:
+          dtype: float32
 
 outputs:
   - id: probability
