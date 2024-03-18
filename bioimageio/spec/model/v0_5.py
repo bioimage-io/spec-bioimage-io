@@ -185,7 +185,7 @@ class AxisId(str):
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> CoreSchema:
-        return no_info_after_validator_function(cls, handler(str))
+        return no_info_after_validator_function(cls._validate, handler(str))
 
     @classmethod
     def _validate(cls, value: str):
