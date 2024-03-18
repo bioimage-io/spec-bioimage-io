@@ -1782,9 +1782,9 @@ class _MinMax(NamedTuple):
 
 
 class _TensorSizes(NamedTuple):
-    predetermined: Dict[TensorId, Dict[AxisId, int]]
+    predetermined: Dict[Tuple[TensorId, AxisId], int]
     """size of axis (given `n` for `ParameterizedSize`)"""
-    data_dependent: Dict[TensorId, Dict[AxisId, _MinMax]]
+    data_dependent: Dict[Tuple[TensorId, AxisId], _MinMax]
     """min,max size of data dependent axis"""
 
 
@@ -2159,8 +2159,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        predetermined: Dict[TensorId, Dict[AxisId, int]] = {}
-        data_dependent: Dict[TensorId, Dict[AxisId, _MinMax]] = {}
+        predetermined: Dict[Tuple[TensorId, AxisId], int] = {}
+        data_dependent: Dict[Tuple[TensorId, AxisId], _MinMax] = {}
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
@@ -2197,14 +2197,12 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         raise ValueError(
                             f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
                         )
-                    data_dependent.setdefault(t_descr.id, {})[a.id] = _MinMax(
-                        a.size.min, a.size.max
-                    )
+                    data_dependent[t_descr.id, a.id] = _MinMax(a.size.min, a.size.max)
                     continue
                 else:
                     assert_never(a.size)
 
-                predetermined.setdefault(t_descr.id, {})[a.id] = s
+                predetermined[t_descr.id, a.id] = s
 
         return _TensorSizes(predetermined, data_dependent)
 
