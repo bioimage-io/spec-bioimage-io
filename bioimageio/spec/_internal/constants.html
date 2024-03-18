@@ -43,21 +43,6 @@
                     <a class="variable" href="#SI_UNIT_REGEX">SI_UNIT_REGEX</a>
             </li>
             <li>
-                    <a class="class" href="#MinMax">MinMax</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#MinMax.__init__">MinMax</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MinMax.min">min</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#MinMax.max">max</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="variable" href="#DTYPE_LIMITS">DTYPE_LIMITS</a>
             </li>
             <li>
@@ -146,7 +131,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="n">SI_UNIT_REGEX</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">((·</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">)|(/</span><span class="si">{</span><span class="n">_unit_pp</span><span class="si">}</span><span class="s2">))*$&quot;</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="k">class</span> <span class="nc">MinMax</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="k">class</span> <span class="nc">_DtypeLimit</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="nb">min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="nb">max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
@@ -154,16 +139,16 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="c1"># numpy.dtype limits; see scripts/generate_dtype_limits.py</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="n">DTYPE_LIMITS</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="p">{</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="s2">&quot;float32&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mf">3.4028235e38</span><span class="p">,</span> <span class="mf">3.4028235e38</span><span class="p">),</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mf">1.7976931348623157e308</span><span class="p">,</span> <span class="mf">1.7976931348623157e308</span><span class="p">),</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="s2">&quot;uint8&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="s2">&quot;int8&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="s2">&quot;uint16&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">),</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="s2">&quot;int16&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">),</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="s2">&quot;uint32&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">),</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="s2">&quot;int32&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mi">2147483648</span><span class="p">,</span> <span class="mi">2147483647</span><span class="p">),</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="s2">&quot;uint64&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18446744073709551615</span><span class="p">),</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="n">MinMax</span><span class="p">(</span><span class="o">-</span><span class="mi">9223372036854775808</span><span class="p">,</span> <span class="mi">9223372036854775807</span><span class="p">),</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="s2">&quot;float32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">3.4028235e38</span><span class="p">,</span> <span class="mf">3.4028235e38</span><span class="p">),</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">1.7976931348623157e308</span><span class="p">,</span> <span class="mf">1.7976931348623157e308</span><span class="p">),</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="s2">&quot;uint8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="s2">&quot;int8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="s2">&quot;uint16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">),</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="s2">&quot;int16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">),</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="s2">&quot;uint32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">),</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="s2">&quot;int32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">2147483648</span><span class="p">,</span> <span class="mi">2147483647</span><span class="p">),</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="s2">&quot;uint64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18446744073709551615</span><span class="p">),</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">9223372036854775808</span><span class="p">,</span> <span class="mi">9223372036854775807</span><span class="p">),</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="p">}</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="p">)</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
@@ -249,83 +234,11 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     
 
                 </section>
-                <section id="MinMax">
-                            <input id="MinMax-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">MinMax</span><wbr>(<span class="base">typing.NamedTuple</span>):
-
-                <label class="view-source-button" for="MinMax-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#MinMax"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MinMax-49"><a href="#MinMax-49"><span class="linenos">49</span></a><span class="k">class</span> <span class="nc">MinMax</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-</span><span id="MinMax-50"><a href="#MinMax-50"><span class="linenos">50</span></a>    <span class="nb">min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-</span><span id="MinMax-51"><a href="#MinMax-51"><span class="linenos">51</span></a>    <span class="nb">max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>MinMax(min, max)</p>
-</div>
-
-
-                            <div id="MinMax.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">MinMax</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="nb">min</span><span class="p">:</span> <span class="n">ForwardRef</span><span class="p">(</span><span class="s1">&#39;Union[int, float]&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="nb">max</span><span class="p">:</span> <span class="n">ForwardRef</span><span class="p">(</span><span class="s1">&#39;Union[int, float]&#39;</span><span class="p">)</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MinMax.__init__"></a>
-    
-            <div class="docstring"><p>Create new instance of MinMax(min, max)</p>
-</div>
-
-
-                            </div>
-                            <div id="MinMax.min" class="classattr">
-                                <div class="attr variable">
-            <span class="name">min</span><span class="annotation">: Union[int, float]</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MinMax.min"></a>
-    
-            <div class="docstring"><p>Alias for field number 0</p>
-</div>
-
-
-                            </div>
-                            <div id="MinMax.max" class="classattr">
-                                <div class="attr variable">
-            <span class="name">max</span><span class="annotation">: Union[int, float]</span>
-
-        
-    </div>
-    <a class="headerlink" href="#MinMax.max"></a>
-    
-            <div class="docstring"><p>Alias for field number 1</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>builtins.tuple</dt>
-                                <dd id="MinMax.index" class="function">index</dd>
-                <dd id="MinMax.count" class="function">count</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
                 <section id="DTYPE_LIMITS">
                     <div class="attr variable">
             <span class="name">DTYPE_LIMITS</span>        =
 <input id="DTYPE_LIMITS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="DTYPE_LIMITS-view-value"></label><span class="default_value">mappingproxy({&#39;float32&#39;: MinMax(min=-3.4028235e+38, max=3.4028235e+38), &#39;float64&#39;: MinMax(min=-1.7976931348623157e+308, max=1.7976931348623157e+308), &#39;uint8&#39;: MinMax(min=0, max=255), &#39;int8&#39;: MinMax(min=-128, max=127), &#39;uint16&#39;: MinMax(min=0, max=65535), &#39;int16&#39;: MinMax(min=-32768, max=32767), &#39;uint32&#39;: MinMax(min=0, max=4294967295), &#39;int32&#39;: MinMax(min=-2147483648, max=2147483647), &#39;uint64&#39;: MinMax(min=0, max=18446744073709551615), &#39;int64&#39;: MinMax(min=-9223372036854775808, max=9223372036854775807)})</span>
+            <label class="view-value-button pdoc-button" for="DTYPE_LIMITS-view-value"></label><span class="default_value">mappingproxy({&#39;float32&#39;: _DtypeLimit(min=-3.4028235e+38, max=3.4028235e+38), &#39;float64&#39;: _DtypeLimit(min=-1.7976931348623157e+308, max=1.7976931348623157e+308), &#39;uint8&#39;: _DtypeLimit(min=0, max=255), &#39;int8&#39;: _DtypeLimit(min=-128, max=127), &#39;uint16&#39;: _DtypeLimit(min=0, max=65535), &#39;int16&#39;: _DtypeLimit(min=-32768, max=32767), &#39;uint32&#39;: _DtypeLimit(min=0, max=4294967295), &#39;int32&#39;: _DtypeLimit(min=-2147483648, max=2147483647), &#39;uint64&#39;: _DtypeLimit(min=0, max=18446744073709551615), &#39;int64&#39;: _DtypeLimit(min=-9223372036854775808, max=9223372036854775807)})</span>
 
         
     </div>
@@ -338,7 +251,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                     <div class="attr variable">
             <span class="name">KNOWN_GH_USERS</span><span class="annotation">: Set[str]</span>        =
 <input id="KNOWN_GH_USERS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="KNOWN_GH_USERS-view-value"></label><span class="default_value">{&#39;ivanhcenalmor&#39;, &#39;ctr26&#39;, &#39;danifranco&#39;, &#39;fynnbe&#39;, &#39;oeway&#39;, &#39;aaitorg&#39;, &#39;clementcaporal&#39;, &#39;bioimageiobot&#39;, &#39;jansanrom&#39;, &#39;lenkaback&#39;, &#39;k-dominik&#39;, &#39;esgomezm&#39;, &#39;githubuser2&#39;, &#39;donglaiw&#39;, &#39;iarganda&#39;, &#39;cfusterbarcelo&#39;, &#39;constantinpape&#39;, &#39;pedgomgal1&#39;, &#39;carlosuc3m&#39;}</span>
+            <label class="view-value-button pdoc-button" for="KNOWN_GH_USERS-view-value"></label><span class="default_value">{&#39;ivanhcenalmor&#39;, &#39;lenkaback&#39;, &#39;bioimageiobot&#39;, &#39;githubuser2&#39;, &#39;constantinpape&#39;, &#39;carlosuc3m&#39;, &#39;k-dominik&#39;, &#39;danifranco&#39;, &#39;jansanrom&#39;, &#39;iarganda&#39;, &#39;fynnbe&#39;, &#39;donglaiw&#39;, &#39;pedgomgal1&#39;, &#39;esgomezm&#39;, &#39;clementcaporal&#39;, &#39;oeway&#39;, &#39;aaitorg&#39;, &#39;ctr26&#39;, &#39;cfusterbarcelo&#39;}</span>
 
         
     </div>

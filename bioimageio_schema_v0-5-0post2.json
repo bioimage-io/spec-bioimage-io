@@ -334,6 +334,32 @@
             "title": "ClipKwargs",
             "type": "object"
         },
+        "DataDependentSize": {
+            "additionalProperties": false,
+            "properties": {
+                "min": {
+                    "default": 1,
+                    "exclusiveMinimum": 0,
+                    "title": "Min",
+                    "type": "integer"
+                },
+                "max": {
+                    "anyOf": [
+                        {
+                            "exclusiveMinimum": 1,
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Max"
+                }
+            },
+            "title": "DataDependentSize",
+            "type": "object"
+        },
         "Datetime": {
             "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).",
             "format": "date-time",
@@ -698,26 +724,6 @@
         "IndexOutputAxis": {
             "additionalProperties": false,
             "properties": {
-                "size": {
-                    "anyOf": [
-                        {
-                            "exclusiveMinimum": 0,
-                            "type": "integer"
-                        },
-                        {
-                            "$ref": "#/$defs/SizeReference"
-                        }
-                    ],
-                    "examples": [
-                        10,
-                        {
-                            "axis_id": "a",
-                            "offset": 5,
-                            "tensor_id": "t"
-                        }
-                    ],
-                    "title": "Size"
-                },
                 "id": {
                     "default": "index",
                     "title": "Id",
@@ -733,6 +739,29 @@
                     "const": "index",
                     "default": "index",
                     "title": "Type"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        },
+                        {
+                            "$ref": "#/$defs/DataDependentSize"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ],
+                    "title": "Size"
                 }
             },
             "required": [
@@ -6924,7 +6953,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-18T11:32:10.695356"
+                    "default": "2024-03-18T11:55:29.916204"
                 },
                 "training_data": {
                     "anyOf": [
