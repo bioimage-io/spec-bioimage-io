@@ -1831,6 +1831,11 @@ class _DataDepSize(NamedTuple):
     max: Optional[int]
 
 
+class _AxisSizes(NamedTuple):
+    inputs: Dict[Tuple[TensorId, AxisId], int]
+    outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]
+
+
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -2197,12 +2202,15 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     def get_axis_sizes(
         self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
-    ) -> Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]:
+    ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        ret: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
+        inputs: Dict[Tuple[TensorId, AxisId], int] = {}
+        outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
+        input_ids = {d.id for d in self.inputs}
+        output_ids = {d.id for d in self.outputs}
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
@@ -2239,14 +2247,19 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         raise ValueError(
                             f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
                         )
-                    ret[t_descr.id, a.id] = _DataDepSize(a.size.min, a.size.max)
+                    assert t_descr.id in output_ids
+                    outputs[t_descr.id, a.id] = _DataDepSize(a.size.min, a.size.max)
                     continue
                 else:
                     assert_never(a.size)
 
-                ret[t_descr.id, a.id] = s
+                if t_descr.id in input_ids:
+                    inputs[t_descr.id, a.id] = s
+                else:
+                    assert t_descr.id in output_ids
+                    outputs[t_descr.id, a.id] = s
 
-        return ret
+        return _AxisSizes(inputs=inputs, outputs=outputs)
 
     @model_validator(mode="before")
     @classmethod
