@@ -1831,13 +1831,6 @@ class _DataDepSize(NamedTuple):
     max: Optional[int]
 
 
-class _TensorSizes(NamedTuple):
-    predetermined: Dict[Tuple[TensorId, AxisId], int]
-    """size of axis (given `n` for `ParameterizedSize`)"""
-    data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize]
-    """min,max size of data dependent axis"""
-
-
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -2202,15 +2195,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
-    def get_tensor_sizes(
+    def get_axis_sizes(
         self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
-    ) -> _TensorSizes:
+    ) -> Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        predetermined: Dict[Tuple[TensorId, AxisId], int] = {}
-        data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize] = {}
+        ret: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
@@ -2247,16 +2239,14 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         raise ValueError(
                             f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
                         )
-                    data_dependent[t_descr.id, a.id] = _DataDepSize(
-                        a.size.min, a.size.max
-                    )
+                    ret[t_descr.id, a.id] = _DataDepSize(a.size.min, a.size.max)
                     continue
                 else:
                     assert_never(a.size)
 
-                predetermined[t_descr.id, a.id] = s
+                ret[t_descr.id, a.id] = s
 
-        return _TensorSizes(predetermined, data_dependent)
+        return ret
 
     @model_validator(mode="before")
     @classmethod
