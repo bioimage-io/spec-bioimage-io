@@ -1,4 +1,5 @@
 import collections.abc
+import string
 
 from .._internal.io import BioimageioYamlContent
 from ._v0_2_converter import convert_from_older_format as convert_from_older_format_v0_2
@@ -21,6 +22,12 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
 
     _ = data.pop("download_url", None)
     _ = data.pop("rdf_source", None)
+
+    if "name" in data and isinstance(data["name"], str):
+        data["name"] = "".join(
+            c if c in string.ascii_letters + string.digits + "_- " else " "
+            for c in data["name"]
+        )[:128]
 
     data["format_version"] = "0.3.0"
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 import re
+import string
 import warnings
 from abc import ABC
 from copy import deepcopy
@@ -49,6 +50,7 @@ from pydantic_core.core_schema import (
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.validated_string import ValidatedString
+from bioimageio.spec._internal.validator_annotations import RestrictCharacters
 
 from .._internal.common_nodes import (
     Converter,
@@ -1986,7 +1988,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
-        str,
+        Annotated[
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ")
+        ],
         MinLen(5),
         warn(MaxLen(64), "Name longer than 64 characters.", INFO),
     ]
