@@ -656,7 +656,19 @@ class ClipDescr(ProcessingDescrBase):
 
 
 class EnsureDtypeKwargs(ProcessingKwargs):
-    dtype: str
+    dtype: Literal[
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
+    ]
 
 
 class EnsureDtypeDescr(ProcessingDescrBase):
@@ -1063,7 +1075,14 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """indicates that this tensor may be `None`"""
 
     preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
-    """Description of how this input should be preprocessed."""
+    """Description of how this input should be preprocessed.
+
+    notes:
+    - If preprocessing does not start with an 'ensure_dtype' entry, it is added
+      to ensure a tensor's input data type matches the tensor's data description.
+    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, it is added
+      to ensure preprocessing steps are not unintentionally chaning the data type.
+    """
 
     @model_validator(mode="after")
     def _validate_preprocessing_kwargs(self) -> Self:
@@ -1072,11 +1091,32 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
-                    f"Expeted `axes` to be a sequence, but got {type(kwargs_axes)}"
+                    f"Expeted `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
                 )
 
             if any(a not in axes_ids for a in kwargs_axes):
-                raise ValueError("`kwargs.axes` needs to be subset of axes ids")
+                raise ValueError(
+                    "`preprocessing.i.kwargs.axes` needs to be subset of axes ids"
+                )
+
+        if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
+            dtype = self.data.type
+        else:
+            dtype = self.data[0].type
+
+        # ensure `preprocessing` begins with `EnsureDtypeDescr`
+        if not self.preprocessing or not isinstance(
+            self.preprocessing[0], EnsureDtypeDescr
+        ):
+            self.preprocessing.insert(
+                0, EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
+
+        # ensure `preprocessing` ends with `EnsureDtypeDescr` or `BinarizeDescr`
+        if not isinstance(self.preprocessing[-1], (EnsureDtypeDescr, BinarizeDescr)):
+            self.preprocessing.append(
+                EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
 
         return self
 
@@ -1342,7 +1382,11 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     No duplicates are allowed across all inputs and outputs."""
 
     postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
-    """Description of how this output should be postprocessed."""
+    """Description of how this output should be postprocessed.
+
+    note: `postprocessing` always ends with an 'ensure_dtype' operation.
+          If not given this is added to cast to this tensor's `data.type`.
+    """
 
     @model_validator(mode="after")
     def _validate_postprocessing_kwargs(self) -> Self:
@@ -1357,6 +1401,18 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
             if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
+        if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
+            dtype = self.data.type
+        else:
+            dtype = self.data[0].type
+
+        # ensure `postprocessing` ends with `EnsureDtypeDescr` or `BinarizeDescr`
+        if not self.postprocessing or not isinstance(
+            self.postprocessing[-1], (EnsureDtypeDescr, BinarizeDescr)
+        ):
+            self.postprocessing.append(
+                EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
         return self
 
 
