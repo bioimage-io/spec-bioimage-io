@@ -1,4 +1,5 @@
 from itertools import chain
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
 
@@ -199,7 +200,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                 for row in rows[1:]
             ]
         )
-        return "\n | " + " |\n| ".join(lines) + " |\n"
+        return "\n| " + " |\n| ".join(lines) + " |\n"
 
     def _format_env(self):
         if not self.env:
@@ -227,8 +228,36 @@ class ValidationSummary(BaseModel, extra="allow"):
             details.append([d.status_icon, "", d.name])
             for entry in d.errors:
                 details.append(["❌", format_loc(entry.loc), entry.msg])
-                if not hide_tracebacks:
-                    details.extend([["", "", tb] for tb in entry.traceback])
+                if hide_tracebacks:
+                    continue
+
+                for tb in entry.traceback:
+                    if not (tb_stripped := tb.strip()):
+                        continue
+
+                    first_tb_line, *tb_lines = tb_stripped.split("\n")
+                    if (
+                        first_tb_line.startswith('File "')
+                        and '", line' in first_tb_line
+                    ):
+                        path, where = first_tb_line[len('File "') :].split('", line')
+                        try:
+                            p = Path(path)
+                        except Exception:
+                            file_name = path
+                        else:
+                            path = p.as_posix()
+                            file_name = p.name
+
+                        where = ", line" + where
+                        first_tb_line = f'[{file_name}]({file_name} "{path}"){where}'
+
+                    if tb_lines:
+                        tb_rest = "<br>`" + "`<br>`".join(tb_lines) + "`"
+                    else:
+                        tb_rest = ""
+
+                    details.append(["", "", first_tb_line + tb_rest])
 
             if d.errors:
                 details.append(["", "", ""])
