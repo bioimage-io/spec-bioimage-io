@@ -267,7 +267,10 @@ class ValidationSummary(BaseModel, extra="allow"):
             if d.warnings:
                 details.append(["", "", ""])
 
-        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n{src}{env}\n{self._format_md_table(details)}"
+        return (
+            f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n"
+            + f"{src}{env}\n{self._format_md_table(details)}"
+        )
 
     @no_type_check
     def display(self) -> None:
