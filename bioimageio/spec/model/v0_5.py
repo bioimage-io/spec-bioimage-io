@@ -2178,7 +2178,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 elif isinstance(a.size, ParameterizedSize):
                     if (t_descr.id, a.id) not in ns:
                         raise ValueError(
-                            f"Size increment factor (n) not given for axis {a.id} of tensor {t_descr.id}."
+                            f"Size increment factor (n) not given for parametrized axis {a.id} of tensor {t_descr.id}."
                         )
                     s = a.size.get_size(ns[(t_descr.id, a.id)])
                 elif isinstance(a.size, SizeReference):
