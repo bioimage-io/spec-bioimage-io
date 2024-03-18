@@ -1,5 +1,4 @@
 import io
-import platform
 import warnings
 from contextlib import nullcontext
 from pathlib import Path
@@ -24,12 +23,6 @@ from .io import (
 )
 from .io_basics import ALTERNATIVE_BIOIMAGEIO_YAML_NAMES, FileName
 from .types import FileSource, PermissiveFileSource
-
-if platform.machine() == "wasm32":
-    import pyodide_http  # type: ignore
-
-    pyodide_http.patch_all()
-
 
 yaml = YAML(typ="safe")
 
