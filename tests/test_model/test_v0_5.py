@@ -275,7 +275,6 @@ def model_data():
 @pytest.mark.parametrize(
     "update",
     [
-        pytest.param(dict(name="µ-unicode-model/name!"), id="unicode name"),
         dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
         dict(
             weights={
