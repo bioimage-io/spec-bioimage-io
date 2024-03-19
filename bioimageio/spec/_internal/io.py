@@ -502,6 +502,7 @@ def download(
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
+    """download `source` URL (or pass local file path)"""
     if isinstance(source, FileDescr):
         return source.download()
 
