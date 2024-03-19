@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import string
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
-from annotated_types import Len, LowerCase, MaxLen
+from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
@@ -37,9 +38,13 @@ from .._internal.types import (
 from .._internal.types import RelativeFilePath as RelativeFilePath
 from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validator_annotations import AfterValidator, Predicate
+from .._internal.validator_annotations import (
+    AfterValidator,
+    Predicate,
+    RestrictCharacters,
+)
 from .._internal.version_type import Version as Version
-from .._internal.warning_levels import ALERT
+from .._internal.warning_levels import ALERT, INFO
 from ._v0_3_converter import convert_from_older_format
 from .v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from .v0_2 import Author as _Author_v0_2
@@ -158,8 +163,17 @@ class LinkedResource(Node):
 class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
 
+    name: Annotated[
+        Annotated[
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+        ],
+        MinLen(5),
+        MaxLen(128),
+        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
+    ]
     name: Annotated[NotEmpty[str], MaxLen(128)]
-    """A human-friendly name of the resource description"""
+    """A human-friendly name of the resource description.
+    May only contains letters, digits, underscore, minus, parentheses and spaces."""
 
     description: Annotated[
         str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")

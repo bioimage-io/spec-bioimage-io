@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections.abc
 import re
+import string
 import warnings
 from abc import ABC
 from copy import deepcopy
@@ -49,6 +50,7 @@ from pydantic_core.core_schema import (
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.validated_string import ValidatedString
+from bioimageio.spec._internal.validator_annotations import RestrictCharacters
 
 from .._internal.common_nodes import (
     Converter,
@@ -2041,13 +2043,16 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
-        str,
+        Annotated[
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+        ],
         MinLen(5),
+        MaxLen(128),
         warn(MaxLen(64), "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
-    and may only contain letter, number, underscore, minus or space characters.
+    and may only contain letter, number, underscore, minus, parentheses and spaces.
     We recommend to chose a name that refers to the model's task and image modality.
     """
 
@@ -2281,6 +2286,11 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
         self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
+        name = "".join(
+            c if c in string.ascii_letters + string.digits + "_- ()" else " "
+            for c in src.name
+        )
+
         def conv_authors(auths: Optional[Sequence[_Author_v0_4]]):
             conv = (
                 _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
@@ -2344,7 +2354,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             maintainers=[
                 _maintainer_conv.convert_as_dict(m) for m in src.maintainers
             ],  # pyright: ignore[reportArgumentType]
-            name=src.name,
+            name=name,
             tags=src.tags,
             type=src.type,
             uploader=src.uploader,
