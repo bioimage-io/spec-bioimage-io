@@ -8,6 +8,7 @@ from bioimageio.spec import application, collection, dataset, generic, model, no
 IGNORE_MEMBERS = {
     "AfterValidator",
     "ALERT",
+    "annotated_types",
     "Annotated",
     "annotations",
     "Any",
@@ -47,8 +48,6 @@ IGNORE_MEMBERS = {
     "partial",
     "Predicate",
     "requests",
-    "ResourceDescrBase",
-    "ResourceDescrType",
     "RestrictCharacters",
     "Self",
     "Sequence",
@@ -85,6 +84,9 @@ GENERIC_ONLY_MEMBERS = {
     "GenericDescrBase",
     "GenericModelDescrBase",
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
+    "ResourceDescrBase",
+    "ResourceDescrType",
+    "ResourceId",
     "VALID_COVER_IMAGE_EXTENSIONS",
 }
 
