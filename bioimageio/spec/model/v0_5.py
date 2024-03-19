@@ -97,7 +97,6 @@ from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
-from .v0_4 import BinarizeKwargs as BinarizeKwargs
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
 from .v0_4 import CallableFromDepencency as _CallableFromDepencency_v0_4
 from .v0_4 import CallableFromFile as _CallableFromFile_v0_4
@@ -681,13 +680,26 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
+class BinarizeKwargs(ProcessingKwargs):
+    threshold: float
+    """The fixed threshold"""
+
+
+class BinarizeAlongAxisKwargs(ProcessingKwargs):
+    threshold: NotEmpty[List[float]]
+    """The fixed threshold values along `axis`"""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
+    """The `threshold` axis"""
+
+
 class BinarizeDescr(ProcessingDescrBase):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero.
     """
 
     id: Literal["binarize"] = "binarize"
-    kwargs: BinarizeKwargs
+    kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 
 class ClipDescr(ProcessingDescrBase):
@@ -1122,8 +1134,8 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     notes:
     - If preprocessing does not start with an 'ensure_dtype' entry, it is added
       to ensure an input tensor's data type matches the input tensor's data description.
-    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an 
-      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally 
+    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an
+      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally
       changing the data type.
     """
 
