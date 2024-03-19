@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import string
 from datetime import datetime
 from keyword import iskeyword
 from typing import Any, Sequence, TypeVar, Union
@@ -22,7 +23,7 @@ from .license_id import DeprecatedLicenseId as DeprecatedLicenseId
 from .license_id import LicenseId as LicenseId
 from .url import HttpUrl as HttpUrl
 from .validated_string import ValidatedString
-from .validator_annotations import AfterValidator, BeforeValidator
+from .validator_annotations import AfterValidator, BeforeValidator, RestrictCharacters
 from .version_type import Version as Version
 
 S = TypeVar("S", bound=Sequence[Any])
@@ -117,8 +118,8 @@ SiUnit = ValidatedString[
 
 _ResourceIdAnno = Annotated[
     NotEmpty[str],
-    annotated_types.LowerCase,
-    annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
+    RestrictCharacters(string.ascii_lowercase + string.digits + "-/"),
+    annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
 ]
 ResourceId = ValidatedString[_ResourceIdAnno]
 ApplicationId = ValidatedString[_ResourceIdAnno]
