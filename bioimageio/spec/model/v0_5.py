@@ -731,12 +731,26 @@ class EnsureDtypeDescr(ProcessingDescrBase):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel"])] = (
-        None  # todo: validate existence of axis
-    )
-    """The axis of non-scalar gains/offsets.
-    Invalid for scalar gains/offsets.
-    """
+    gain: float = 1.0
+    """multiplicative factor"""
+
+    offset: float = 0.0
+    """additive term"""
+
+    @model_validator(mode="after")
+    def _validate(self) -> Self:
+        if self.gain == 1.0 and self.offset == 0.0:
+            raise ValueError(
+                "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
+                + " != 0.0."
+            )
+
+        return self
+
+
+class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
+    """The axis of of gains/offsets values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
@@ -745,16 +759,24 @@ class ScaleLinearKwargs(ProcessingKwargs):
     """additive term"""
 
     @model_validator(mode="after")
-    def either_gain_or_offset(self) -> Self:
-        if (
-            self.gain == 1.0
-            or isinstance(self.gain, list)
-            and all(g == 1.0 for g in self.gain)
-        ) and (
-            self.offset == 0.0
-            or isinstance(self.offset, list)
-            and all(off == 0.0 for off in self.offset)
-        ):
+    def _validate(self) -> Self:
+
+        if isinstance(self.gain, list):
+            if isinstance(self.offset, list):
+                if len(self.gain) != len(self.offset):
+                    raise ValueError(
+                        f"Size of `gain` ({len(self.gain)}) and `offset` ({len(self.offset)}) must match."
+                    )
+            else:
+                self.offset = [float(self.offset)] * len(self.gain)
+        elif isinstance(self.offset, list):
+            self.gain = [float(self.gain)] * len(self.offset)
+        else:
+            raise ValueError(
+                "Do not specify an `axis` for scalar gain and offset values."
+            )
+
+        if all(g == 1.0 for g in self.gain) and all(off == 0.0 for off in self.offset):
             raise ValueError(
                 "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
                 + " != 0.0."
@@ -767,7 +789,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
     id: Literal["scale_linear"] = "scale_linear"
-    kwargs: ScaleLinearKwargs
+    kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
 class SigmoidDescr(ProcessingDescrBase):
@@ -785,34 +807,34 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """Normalize with fixed, precomputed values for mean and variance.
     See `zero_mean_unit_variance` for data dependent normalization."""
 
-    mean: Annotated[
-        Union[float, NotEmpty[Tuple[float, ...]]],
-        Field(examples=[3.14, (1.1, -2.2, 3.3)]),
-    ]
-    """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
+    mean: float
+    """The mean value to normalize with."""
 
-    std: Annotated[
-        Union[
-            Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]
-        ],
-        Field(examples=[1.05, (0.1, 0.2, 0.3)]),
-    ]
-    """The standard deviation value(s) to normalize with. Size must match `mean` values."""
+    std: Annotated[float, Ge(1e-6)]
+    """The standard deviation value to normalize with."""
 
-    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel", "index"])] = (
-        None  # todo: validate existence of axis
-    )
-    """The axis of the mean/std values to normalize each entry along that dimension separately.
-    Invalid for scalar gains/offsets.
-    """
+
+class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
+    """Normalize with fixed, precomputed values for mean and variance.
+    See `zero_mean_unit_variance` for data dependent normalization."""
+
+    mean: NotEmpty[List[float]]
+    """The mean value(s) to normalize with."""
+
+    std: NotEmpty[List[Annotated[float, Ge(1e-6)]]]
+    """The standard deviation value(s) to normalize with.
+    Size must match `mean` values."""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel", "index"])]
+    """The axis of the mean/std values to normalize each entry along that dimension
+    separately."""
 
     @model_validator(mode="after")
-    def mean_and_std_match(self) -> Self:
-        mean_len = 1 if isinstance(self.mean, (float, int)) else len(self.mean)
-        std_len = 1 if isinstance(self.std, (float, int)) else len(self.std)
-        if mean_len != std_len:
+    def _mean_and_std_match(self) -> Self:
+        if len(self.mean) != len(self.std):
             raise ValueError(
-                "size of `mean` ({mean_len}) and `std` ({std_len}) must match."
+                f"Size of `mean` ({len(self.mean)}) and `std` ({len(self.std)})"
+                + " must match."
             )
 
         return self
@@ -822,7 +844,9 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract a given mean and divide by a given variance."""
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
-    kwargs: FixedZeroMeanUnitVarianceKwargs
+    kwargs: Union[
+        FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs
+    ]
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
@@ -1335,11 +1359,15 @@ def _convert_proc(
         else:
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
-        return ScaleLinearDescr(
-            kwargs=ScaleLinearKwargs(
+        if axis is None:
+            assert not isinstance(p.kwargs.gain, list)
+            assert not isinstance(p.kwargs.offset, list)
+            kwargs = ScaleLinearKwargs(gain=p.kwargs.gain, offset=p.kwargs.offset)
+        else:
+            kwargs = ScaleLinearAlongAxisKwargs(
                 axis=axis, gain=p.kwargs.gain, offset=p.kwargs.offset
             )
-        )
+        return ScaleLinearDescr(kwargs=kwargs)
     elif isinstance(p, _ScaleMeanVarianceDescr_v0_4):
         return ScaleMeanVarianceDescr(
             kwargs=ScaleMeanVarianceKwargs(
@@ -1352,13 +1380,11 @@ def _convert_proc(
         if p.kwargs.mode == "fixed":
             mean = p.kwargs.mean
             assert mean is not None
-            if isinstance(mean, list):
-                mean = tuple(mean)
+            assert not isinstance(mean, list)
 
             std = p.kwargs.std
             assert std is not None
-            if isinstance(std, list):
-                std = tuple(std)
+            assert not isinstance(std, list)
 
             return FixedZeroMeanUnitVarianceDescr(
                 kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
