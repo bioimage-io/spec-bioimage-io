@@ -206,7 +206,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     """citations"""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId],
+        Annotated[
+            Union[LicenseId, DeprecatedLicenseId], Field(union_mode="left_to_right")
+        ],
         warn(
             LicenseId,
             "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
