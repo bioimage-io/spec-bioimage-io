@@ -46,7 +46,7 @@ from ._v0_2_converter import convert_from_older_format as _convert_from_older_fo
 ResourceId_v0_2_Anno = Annotated[
     NotEmpty[str],
     AfterValidator(lambda s: s.lower()),  # convert upper case on the fly
-    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/"),
+    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
     annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
 ]
 ResourceId = ValidatedString[ResourceId_v0_2_Anno]

@@ -65,7 +65,7 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
 
 ResourceIdAnno = Annotated[
     NotEmpty[str],
-    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/"),
+    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
     annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
 ]
 
