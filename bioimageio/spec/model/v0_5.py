@@ -256,8 +256,8 @@ class DataDependentSize(Node):
 
     @model_validator(mode="after")
     def _validate_max_gt_min(self):
-        if self.max is None or self.min >= self.max:
-            raise ValueError(f"expected `min` <= `max`, but got {self.min}, {self.max}")
+        if self.max is not None and self.min >= self.max:
+            raise ValueError(f"expected `min` < `max`, but got {self.min}, {self.max}")
 
         return self
 
