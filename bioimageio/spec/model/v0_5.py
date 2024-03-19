@@ -1119,9 +1119,10 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
 
     notes:
     - If preprocessing does not start with an 'ensure_dtype' entry, it is added
-      to ensure a tensor's input data type matches the tensor's data description.
-    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, it is added
-      to ensure preprocessing steps are not unintentionally chaning the data type.
+      to ensure an input tensor's data type matches the input tensor's data description.
+    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an 
+      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally 
+      changing the data type.
     """
 
     @model_validator(mode="after")
