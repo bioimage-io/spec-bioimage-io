@@ -1385,10 +1385,10 @@ def _convert_proc(
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
             if axis is None:
-                assert not isinstance(mean, list)
-                assert not isinstance(std, list)
                 return FixedZeroMeanUnitVarianceDescr(
-                    kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
+                    kwargs=FixedZeroMeanUnitVarianceKwargs(
+                        mean=mean, std=std  # pyright: ignore[reportArgumentType]
+                    )
                 )
             else:
                 if not isinstance(mean, list):
