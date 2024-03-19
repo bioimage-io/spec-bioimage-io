@@ -1330,13 +1330,12 @@ def _get_complement_v04_axis(
     if axes is None:
         return None
 
-    axes_str = str(axes)
-    all_axes = set(str(tensor_axes)) | {"b"}
-    complement_axes = [a for a in axes_str if a not in all_axes]
+    non_complement_axes = set(axes) | {"b"}
+    complement_axes = [a for a in tensor_axes if a not in non_complement_axes]
     if len(complement_axes) > 1:
         raise ValueError(
             f"Expected none or a single complement axis, but axes '{axes}' "
-            + f"for tensor dims '{all_axes}' leave '{complement_axes}'."
+            + f"for tensor dims '{tensor_axes}' leave '{complement_axes}'."
         )
 
     return None if not complement_axes else AxisId(complement_axes[0])
@@ -1383,7 +1382,6 @@ def _convert_proc(
             assert mean is not None
             assert std is not None
 
-            axes = _axes_letters_to_ids(p.kwargs.axes)
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
             if axis is None:
