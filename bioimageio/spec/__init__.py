@@ -13,6 +13,7 @@ from ._description import SpecificResourceDescr as SpecificResourceDescr
 from ._description import build_description as build_description
 from ._description import dump_description as dump_description
 from ._description import validate_format as validate_format
+from ._internal import settings as settings
 from ._internal.common_nodes import InvalidDescr as InvalidDescr
 from ._internal.constants import VERSION
 from ._internal.validation_context import ValidationContext as ValidationContext
