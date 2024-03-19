@@ -1379,16 +1379,31 @@ def _convert_proc(
     elif isinstance(p, _ZeroMeanUnitVarianceDescr_v0_4):
         if p.kwargs.mode == "fixed":
             mean = p.kwargs.mean
-            assert mean is not None
-            assert not isinstance(mean, list)
-
             std = p.kwargs.std
+            assert mean is not None
             assert std is not None
-            assert not isinstance(std, list)
 
-            return FixedZeroMeanUnitVarianceDescr(
-                kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
-            )
+            axes = _axes_letters_to_ids(p.kwargs.axes)
+            axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
+
+            if axis is None:
+                assert not isinstance(mean, list)
+                assert not isinstance(std, list)
+                return FixedZeroMeanUnitVarianceDescr(
+                    kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
+                )
+            else:
+                if not isinstance(mean, list):
+                    mean = [float(mean)]
+                if not isinstance(std, list):
+                    std = [float(std)]
+
+                return FixedZeroMeanUnitVarianceDescr(
+                    kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(
+                        axis=axis, mean=mean, std=std
+                    )
+                )
+
         else:
             axes = _axes_letters_to_ids(p.kwargs.axes) or []
             if p.kwargs.mode == "per_dataset":
