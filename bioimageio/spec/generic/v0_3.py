@@ -4,11 +4,13 @@ import string
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
 
+import annotated_types
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
 from bioimageio.spec._internal.field_validation import validate_gh_user
+from bioimageio.spec._internal.validated_string import ValidatedString
 
 from .._internal.common_nodes import (
     Converter,
@@ -36,7 +38,6 @@ from .._internal.types import (
     NotEmpty,
 )
 from .._internal.types import RelativeFilePath as RelativeFilePath
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validator_annotations import (
     AfterValidator,
@@ -61,6 +62,14 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "model",
     "notebook",
 )
+
+ResourceIdAnno = Annotated[
+    NotEmpty[str],
+    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/"),
+    annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
+]
+
+ResourceId = ValidatedString[ResourceIdAnno]
 
 
 def _validate_md_suffix(value: V_suffix) -> V_suffix:

@@ -13,9 +13,6 @@ from bioimageio.spec._internal.types import Datetime, SiUnit
 from tests.utils import check_type
 
 TYPE_ARGS = {
-    types.ApplicationId: "appdev/app",
-    types.CollectionId: "collectionid",
-    types.DatasetId: "dataset-id",
     types.Datetime: (2024, 2, 14),
     types.Datetime: datetime.now().isoformat(),
     types.DeprecatedLicenseId: "AGPL-1.0",
@@ -26,11 +23,8 @@ TYPE_ARGS = {
     types.LicenseId: "MIT",
     types.LowerCaseIdentifier: "id",
     types.LowerCaseIdentifierAnno: "id",
-    types.ModelId: "modelid",
-    types.NotebookId: "notebookid",
     types.OrcidId: "0000-0001-2345-6789",
     types.RelativeFilePath: Path(__file__).relative_to(Path().absolute()),
-    types.ResourceId: "resoruce-id",
     types.SiUnit: "kg",
     types.AbsoluteDirectory: str(Path(__file__).absolute().parent),
     types.AbsoluteFilePath: str(Path(__file__).absolute()),

@@ -23,13 +23,9 @@ from .._internal.io import Sha256 as Sha256
 from .._internal.io import YamlValue
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_utils import open_bioimageio_yaml
-from .._internal.types import ApplicationId as ApplicationId
-from .._internal.types import CollectionId as CollectionId
-from .._internal.types import DatasetId as DatasetId
 from .._internal.types import FileSource, NotEmpty
-from .._internal.types import ModelId as ModelId
-from .._internal.types import NotebookId as NotebookId
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validated_string import ValidatedString
 from .._internal.validation_context import (
     validation_context_var,
 )
@@ -43,6 +39,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
     GenericDescrBase,
+    ResourceIdAnno,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -50,12 +47,13 @@ from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
-from ..generic.v0_3 import ResourceId as ResourceId
 from ..generic.v0_3 import Uploader as Uploader
 from ..generic.v0_3 import Version as Version
 from ..model import ModelDescr_v0_4, ModelDescr_v0_5
 from ..notebook import NotebookDescr_v0_2, NotebookDescr_v0_3
 from .v0_2 import CollectionDescr as _CollectionDescr_v0_2
+
+CollectionId = ValidatedString[ResourceIdAnno]
 
 EntryDescr = Union[
     ApplicationDescr_v0_2,
@@ -131,9 +129,7 @@ class CollectionEntry(Node, extra="allow"):
     entry_source: Optional[FileSource] = None
     """an external source this entry description is based on"""
 
-    id: Optional[Union[ResourceId, DatasetId, ApplicationId, ModelId, NotebookId]] = (
-        None
-    )
+    id: Optional[ResourceIdAnno] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 

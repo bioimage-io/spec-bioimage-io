@@ -54,9 +54,7 @@ from .._internal.types import (
     LowerCaseIdentifierAnno,
 )
 from .._internal.types import LicenseId as LicenseId
-from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
@@ -68,14 +66,17 @@ from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr
 from ..generic.v0_2 import CiteEntry as CiteEntry
 from ..generic.v0_2 import Doi as Doi
-from ..generic.v0_2 import GenericModelDescrBase
+from ..generic.v0_2 import GenericModelDescrBase, ResourceId_v0_2_Anno
 from ..generic.v0_2 import LinkedResource as LinkedResource
 from ..generic.v0_2 import Maintainer as Maintainer
 from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_2 import Uploader as Uploader
+from ..generic.v0_3 import ResourceId as ResourceId
 from ..utils import load_array
 from ._v0_4_converter import convert_from_older_format
+
+ModelId = ValidatedString[ResourceId_v0_2_Anno]
 
 AxesStr = Annotated[
     str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)

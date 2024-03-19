@@ -51,6 +51,7 @@ from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from bioimageio.spec._internal.validated_string import ValidatedString
 from bioimageio.spec._internal.validator_annotations import RestrictCharacters
+from bioimageio.spec.generic.v0_3 import ResourceIdAnno
 
 from .._internal.common_nodes import (
     Converter,
@@ -71,9 +72,7 @@ from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
 from .._internal.types import ImportantFileSource, LowerCaseIdentifierAnno, SiUnit
 from .._internal.types import LicenseId as LicenseId
-from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
 from .._internal.version_type import Version as Version
@@ -1122,8 +1121,8 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     notes:
     - If preprocessing does not start with an 'ensure_dtype' entry, it is added
       to ensure an input tensor's data type matches the input tensor's data description.
-    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an 
-      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally 
+    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an
+      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally
       changing the data type.
     """
 
@@ -1817,6 +1816,9 @@ class WeightsDescr(Node):
                 )
 
         return self
+
+
+ModelId = ValidatedString[ResourceIdAnno]
 
 
 class LinkedModel(Node):

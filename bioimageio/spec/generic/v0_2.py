@@ -1,4 +1,5 @@
 import collections.abc
+import string
 from typing import (
     Any,
     Dict,
@@ -11,6 +12,7 @@ from typing import (
     Union,
 )
 
+import annotated_types
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated, Self, assert_never
@@ -35,11 +37,19 @@ from .._internal.types import (
 from .._internal.types import Doi as Doi
 from .._internal.types import OrcidId as OrcidId
 from .._internal.types import RelativeFilePath as RelativeFilePath
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validator_annotations import AfterValidator
+from .._internal.validated_string import ValidatedString
+from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from ._v0_2_converter import convert_from_older_format as _convert_from_older_format
+
+ResourceId_v0_2_Anno = Annotated[
+    NotEmpty[str],
+    AfterValidator(lambda s: s.lower()),  # convert upper case on the fly
+    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/"),
+    annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
+]
+ResourceId = ValidatedString[ResourceId_v0_2_Anno]
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",
