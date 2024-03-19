@@ -27,8 +27,6 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.validated_string import ValidatedString
-
 from .._internal.common_nodes import (
     KwargsNode,
     Node,
@@ -49,10 +47,7 @@ from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
-from .._internal.types import (
-    ImportantFileSource,
-    LowerCaseIdentifierAnno,
-)
+from .._internal.types import ImportantFileSource, LowerCaseIdentifier
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
@@ -66,17 +61,20 @@ from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr
 from ..generic.v0_2 import CiteEntry as CiteEntry
 from ..generic.v0_2 import Doi as Doi
-from ..generic.v0_2 import GenericModelDescrBase, ResourceId_v0_2_Anno
+from ..generic.v0_2 import GenericModelDescrBase
 from ..generic.v0_2 import LinkedResource as LinkedResource
 from ..generic.v0_2 import Maintainer as Maintainer
 from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
-from ..generic.v0_3 import ResourceId as ResourceId
 from ..utils import load_array
 from ._v0_4_converter import convert_from_older_format
 
-ModelId = ValidatedString[ResourceId_v0_2_Anno]
+
+class ModelId(ResourceId):
+    pass
+
 
 AxesStr = Annotated[
     str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
@@ -103,7 +101,9 @@ PreprocessingName = Literal[
     "scale_range",
 ]
 
-TensorName = ValidatedString[LowerCaseIdentifierAnno]
+
+class TensorName(LowerCaseIdentifier):
+    pass
 
 
 class CallableFromDepencency(StringNode):

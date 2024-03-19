@@ -73,18 +73,17 @@ else:
     SLOTS = {"slots": True}
 
 
-class Sha256(
-    ValidatedString[
+class Sha256(ValidatedString):
+    """SHA-256 hash value"""
+
+    root_model = RootModel[
         Annotated[
             str,
             StringConstraints(
                 strip_whitespace=True, to_lower=True, min_length=64, max_length=64
             ),
         ]
-    ],
-    frozen=True,
-):
-    """SHA-256 hash value"""
+    ]
 
 
 AbsolutePathT = TypeVar(
@@ -323,7 +322,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
         if isinstance(value, Path):
             unpackaged = value
         elif isinstance(value, HttpUrl):
-            unpackaged = value.root
+            unpackaged = value
         elif isinstance(value, RelativeFilePath):
             unpackaged = Path(value.path)
         elif isinstance(value, AnyUrl):

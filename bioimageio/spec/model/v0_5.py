@@ -38,20 +38,15 @@ from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Field,
-    GetCoreSchemaHandler,
+    RootModel,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from pydantic_core.core_schema import (
-    CoreSchema,
-    no_info_after_validator_function,
-)
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.validated_string import ValidatedString
 from bioimageio.spec._internal.validator_annotations import RestrictCharacters
-from bioimageio.spec.generic.v0_3 import ResourceIdAnno
+from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
 
 from .._internal.common_nodes import (
     Converter,
@@ -70,7 +65,12 @@ from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
 from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
-from .._internal.types import ImportantFileSource, LowerCaseIdentifierAnno, SiUnit
+from .._internal.types import (
+    ImportantFileSource,
+    LowerCaseIdentifier,
+    LowerCaseIdentifierAnno,
+    SiUnit,
+)
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
@@ -177,22 +177,14 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
 
 
-class AxisId(str):
-    root_model = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+class TensorId(LowerCaseIdentifier):
+    root_model = RootModel[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
-    ) -> CoreSchema:
-        return no_info_after_validator_function(cls._validate, handler(str))
 
-    @classmethod
-    def _validate(cls, value: str):
-        valid = cls.root_model.model_validate(value)
-        return cls(valid.root)
+class AxisId(LowerCaseIdentifier):
+    root_model = RootModel[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -1818,7 +1810,8 @@ class WeightsDescr(Node):
         return self
 
 
-ModelId = ValidatedString[ResourceIdAnno]
+class ModelId(ResourceId):
+    pass
 
 
 class LinkedModel(Node):
@@ -2349,7 +2342,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             format_version="0.5.0",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
-            id=src.id,
+            id=None if src.id is None else ModelId(src.id),
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,

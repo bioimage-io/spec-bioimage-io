@@ -8,7 +8,7 @@ def test_license_id():
     _ = LicenseId("MIT")
 
     with pytest.raises(ValidationError):
-        _ = LicenseId("not_a_valid_license_id")  # pyright: ignore[reportArgumentType]
+        _ = LicenseId("not_a_valid_license_id")
 
 
 def test_deprecated_license_id():
@@ -17,6 +17,4 @@ def test_deprecated_license_id():
     _ = DeprecatedLicenseId("AGPL-1.0")
 
     with pytest.raises(ValidationError):
-        _ = DeprecatedLicenseId(
-            "not_a_valid_license_id"  # pyright: ignore[reportArgumentType]
-        )
+        _ = DeprecatedLicenseId("not_a_valid_license_id")

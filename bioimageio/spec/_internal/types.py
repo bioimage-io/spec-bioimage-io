@@ -90,27 +90,48 @@ class Datetime(
     """
 
 
-Doi = ValidatedString[Annotated[str, StringConstraints(pattern=DOI_REGEX)]]
+class Doi(ValidatedString):
+    root_model = RootModel[Annotated[str, StringConstraints(pattern=DOI_REGEX)]]
+
+
 FormatVersionPlaceholder = Literal["latest", "discover"]
 IdentifierAnno = Annotated[
     NotEmpty[str],
     AfterValidator(_validate_identifier),
     AfterValidator(_validate_is_not_keyword),
 ]
-Identifier = ValidatedString[IdentifierAnno]
+
+
+class Identifier(ValidatedString):
+    root_model = RootModel[IdentifierAnno]
+
+
 LowerCaseIdentifierAnno = Annotated[IdentifierAnno, annotated_types.LowerCase]
-LowerCaseIdentifier = ValidatedString[LowerCaseIdentifierAnno]
-OrcidId = ValidatedString[Annotated[str, AfterValidator(_validate_orcid_id)]]
-SiUnit = ValidatedString[
-    Annotated[
-        str,
-        StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
-        BeforeValidator(
-            lambda s: (
-                s.replace("×", "·").replace("*", "·").replace(" ", "·")
-                if isinstance(s, str)
-                else s
-            )
-        ),
+
+
+class LowerCaseIdentifier(ValidatedString):
+    root_model = RootModel[LowerCaseIdentifierAnno]
+
+
+class OrcidId(ValidatedString):
+    """an ORCID identifier"""
+
+    root_model = RootModel[Annotated[str, AfterValidator(_validate_orcid_id)]]
+
+
+class SiUnit(ValidatedString):
+    """Si unit"""
+
+    root_model = RootModel[
+        Annotated[
+            str,
+            StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
+            BeforeValidator(
+                lambda s: (
+                    s.replace("×", "·").replace("*", "·").replace(" ", "·")
+                    if isinstance(s, str)
+                    else s
+                )
+            ),
+        ]
     ]
-]

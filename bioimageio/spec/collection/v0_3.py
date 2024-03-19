@@ -25,7 +25,6 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_utils import open_bioimageio_yaml
 from .._internal.types import FileSource, NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validated_string import ValidatedString
 from .._internal.validation_context import (
     validation_context_var,
 )
@@ -39,7 +38,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
     GenericDescrBase,
-    ResourceIdAnno,
+    ResourceId,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -53,7 +52,10 @@ from ..model import ModelDescr_v0_4, ModelDescr_v0_5
 from ..notebook import NotebookDescr_v0_2, NotebookDescr_v0_3
 from .v0_2 import CollectionDescr as _CollectionDescr_v0_2
 
-CollectionId = ValidatedString[ResourceIdAnno]
+
+class CollectionId(ResourceId):
+    pass
+
 
 EntryDescr = Union[
     ApplicationDescr_v0_2,
@@ -129,7 +131,7 @@ class CollectionEntry(Node, extra="allow"):
     entry_source: Optional[FileSource] = None
     """an external source this entry description is based on"""
 
-    id: Optional[ResourceIdAnno] = None
+    id: Optional[ResourceId] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 

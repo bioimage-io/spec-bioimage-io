@@ -49,6 +49,7 @@ IGNORE_MEMBERS = {
     "Predicate",
     "requests",
     "RestrictCharacters",
+    "RootModel",
     "Self",
     "Sequence",
     "settings",
@@ -63,6 +64,7 @@ IGNORE_MEMBERS = {
     "v0_5",
     "validate_gh_user",
     "validate_suffix",
+    "ValidatedString",
     "validation_context_var",
     "ValidationInfo",
     "warn",
@@ -86,7 +88,6 @@ GENERIC_ONLY_MEMBERS = {
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "ResourceDescrBase",
     "ResourceDescrType",
-    "ResourceId",
     "VALID_COVER_IMAGE_EXTENSIONS",
 }
 

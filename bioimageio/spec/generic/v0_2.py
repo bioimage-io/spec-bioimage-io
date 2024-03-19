@@ -14,7 +14,14 @@ from typing import (
 
 import annotated_types
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
+from pydantic import (
+    EmailStr,
+    Field,
+    RootModel,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Annotated, Self, assert_never
 
 from .._internal.common_nodes import Node, ResourceDescrBase
@@ -43,13 +50,19 @@ from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from ._v0_2_converter import convert_from_older_format as _convert_from_older_format
 
-ResourceId_v0_2_Anno = Annotated[
-    NotEmpty[str],
-    AfterValidator(lambda s: s.lower()),  # convert upper case on the fly
-    RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
-    annotated_types.Predicate(lambda s: not (s.startswith("/") or s.endswith("/"))),
-]
-ResourceId = ValidatedString[ResourceId_v0_2_Anno]
+
+class ResourceId(ValidatedString):
+    root_model = RootModel[
+        Annotated[
+            NotEmpty[str],
+            AfterValidator(str.lower),  # convert upper case on the fly
+            RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
+            annotated_types.Predicate(
+                lambda s: not (s.startswith("/") or s.endswith("/"))
+            ),
+        ]
+    ]
+
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",

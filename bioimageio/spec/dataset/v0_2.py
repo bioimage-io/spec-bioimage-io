@@ -3,22 +3,22 @@ from typing import Literal, Optional
 from .._internal.common_nodes import Node
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validated_string import ValidatedString
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr
 from ..generic.v0_2 import CiteEntry as CiteEntry
 from ..generic.v0_2 import Doi as Doi
-from ..generic.v0_2 import GenericDescrBase, ResourceId_v0_2_Anno
+from ..generic.v0_2 import GenericDescrBase, ResourceId
 from ..generic.v0_2 import LinkedResource as LinkedResource
 from ..generic.v0_2 import Maintainer as Maintainer
 from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
-from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
 from ..generic.v0_2 import Version as Version
 
-DatasetId = ValidatedString[ResourceId_v0_2_Anno]
+
+class DatasetId(ResourceId):
+    pass
 
 
 class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):

@@ -4,41 +4,28 @@ from typing import Optional
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
-from pydantic import TypeAdapter
-from typing_extensions import Annotated
+from pydantic import RootModel
 
 from .validated_string import ValidatedString
-from .validator_annotations import AfterValidator
-
-_http_url_adapter = TypeAdapter(pydantic.HttpUrl)  # pyright: ignore[reportCallIssue]
 
 
-class RootHttpUrl(
-    ValidatedString[
-        Annotated[
-            str,
-            AfterValidator(lambda value: str(_http_url_adapter.validate_python(value))),
-        ]
-    ],
-    frozen=True,
-):
+class RootHttpUrl(ValidatedString):
     """A 'URL folder', possibly an invalid http URL"""
 
-    @property
-    def _url(self):
-        return pydantic.AnyUrl(str(self))
+    root_model = RootModel[pydantic.HttpUrl]
+    _validated: pydantic.HttpUrl
 
     @property
     def scheme(self) -> str:
-        return self._url.scheme
+        return self._validated.scheme
 
     @property
     def host(self) -> Optional[str]:
-        return self._url.host
+        return self._validated.host
 
     @property
     def path(self) -> Optional[str]:
-        return self._url.path
+        return self._validated.path
 
     @property
     def parent(self) -> RootHttpUrl:
