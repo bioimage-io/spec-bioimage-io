@@ -6645,6 +6645,7 @@
             "description": "Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.\nThese fields are typically stored in a YAML file which we call a model resource description file (model RDF).",
             "properties": {
                 "name": {
+                    "maxLength": 128,
                     "minLength": 5,
                     "title": "Name",
                     "type": "string"
@@ -6953,7 +6954,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-18T14:45:11.965726"
+                    "default": "2024-03-19T07:55:07.118726"
                 },
                 "training_data": {
                     "anyOf": [
