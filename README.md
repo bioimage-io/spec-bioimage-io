@@ -71,6 +71,10 @@ or
 pip install -U bioimageio.core
 ```
 
+## 🏞 Environment variables
+
+TODO: link to settings in dev docs
+
 ## 🤝 How to contribute
 
 ## ♥ Contributors
