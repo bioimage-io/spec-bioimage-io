@@ -1,5 +1,6 @@
 from typing import Literal, TextIO, Union, cast
 
+from loguru import logger
 from pydantic import FilePath, NewPath
 
 from ._description import (
@@ -23,6 +24,11 @@ def load_description(
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescr]:
+    if isinstance(source, ResourceDescrBase):
+        name = getattr(source, "name", f"{str(source)[:10]}...")
+        logger.warning("returning already loaded description '{}' as is", name)
+        return source  # pyright: ignore[reportReturnType]
+
     opened = open_bioimageio_yaml(source)
 
     return build_description(
