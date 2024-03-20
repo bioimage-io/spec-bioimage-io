@@ -942,16 +942,11 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
     @field_validator("axes", mode="after", check_fields=False)
     @classmethod
     def _validate_axes(cls, axes: Sequence[AnyAxis]) -> Sequence[AnyAxis]:
-        seen_types: Set[str] = set()
-        duplicate_axes_types: Set[str] = set()
-        for a in axes:
-            if a.type in ("time", "space"):
-                continue  # duplicates allowed
-
-            (duplicate_axes_types if a.type in seen_types else seen_types).add(a.type)
-
-        if duplicate_axes_types:
-            raise ValueError(f"Duplicate axis types: {duplicate_axes_types}")
+        batch_axes = [a for a in axes if a.type == "batch"]
+        if len(batch_axes) > 1:
+            raise ValueError(
+                f"Only one batch axis (per tensor) allowed, but got {batch_axes}"
+            )
 
         seen_ids: Set[AxisId] = set()
         duplicate_axes_ids: Set[AxisId] = set()
