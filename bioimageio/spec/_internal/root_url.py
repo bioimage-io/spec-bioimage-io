@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, ClassVar, Optional, Type
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -12,7 +12,7 @@ from .validated_string import ValidatedString
 class RootHttpUrl(ValidatedString):
     """A 'URL folder', possibly an invalid http URL"""
 
-    root_model = RootModel[pydantic.HttpUrl]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _validated: pydantic.HttpUrl
 
     @property

@@ -2,12 +2,14 @@ import collections.abc
 import string
 from typing import (
     Any,
+    ClassVar,
     Dict,
     List,
     Literal,
     Mapping,
     Optional,
     Sequence,
+    Type,
     TypeVar,
     Union,
 )
@@ -52,7 +54,7 @@ from ._v0_2_converter import convert_from_older_format as _convert_from_older_fo
 
 
 class ResourceId(ValidatedString):
-    root_model = RootModel[
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
             NotEmpty[str],
             AfterValidator(str.lower),  # convert upper case on the fly

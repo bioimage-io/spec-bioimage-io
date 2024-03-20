@@ -180,11 +180,15 @@ AxisType = Literal["batch", "channel", "index", "time", "space"]
 
 
 class TensorId(LowerCaseIdentifier):
-    root_model = RootModel[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(32)]
+    ]
 
 
 class AxisId(LowerCaseIdentifier):
-    root_model = RootModel[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+    ]
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]

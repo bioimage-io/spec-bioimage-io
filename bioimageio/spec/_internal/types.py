@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from keyword import iskeyword
-from typing import Any, Sequence, TypeVar, Union
+from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
 
 import annotated_types
 from dateutil.parser import isoparse
@@ -91,7 +91,9 @@ class Datetime(
 
 
 class Doi(ValidatedString):
-    root_model = RootModel[Annotated[str, StringConstraints(pattern=DOI_REGEX)]]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[str, StringConstraints(pattern=DOI_REGEX)]
+    ]
 
 
 FormatVersionPlaceholder = Literal["latest", "discover"]
@@ -103,26 +105,28 @@ IdentifierAnno = Annotated[
 
 
 class Identifier(ValidatedString):
-    root_model = RootModel[IdentifierAnno]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[IdentifierAnno]
 
 
 LowerCaseIdentifierAnno = Annotated[IdentifierAnno, annotated_types.LowerCase]
 
 
 class LowerCaseIdentifier(ValidatedString):
-    root_model = RootModel[LowerCaseIdentifierAnno]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[LowerCaseIdentifierAnno]
 
 
 class OrcidId(ValidatedString):
     """an ORCID identifier"""
 
-    root_model = RootModel[Annotated[str, AfterValidator(_validate_orcid_id)]]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[str, AfterValidator(_validate_orcid_id)]
+    ]
 
 
 class SiUnit(ValidatedString):
     """Si unit"""
 
-    root_model = RootModel[
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),

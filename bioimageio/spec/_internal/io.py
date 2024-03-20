@@ -10,6 +10,7 @@ from datetime import datetime as _datetime
 from pathlib import Path, PurePath
 from typing import (
     Any,
+    ClassVar,
     Dict,
     Generic,
     List,
@@ -76,7 +77,7 @@ else:
 class Sha256(ValidatedString):
     """SHA-256 hash value"""
 
-    root_model = RootModel[
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(

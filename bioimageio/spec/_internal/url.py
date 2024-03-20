@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, ClassVar, Type, Union
 
 import pydantic
 import requests
@@ -100,4 +100,6 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
 
 
 class HttpUrl(RootHttpUrl):
-    root_model = RootModel[Annotated[pydantic.HttpUrl, AfterValidator(_validate_url)]]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[pydantic.HttpUrl, AfterValidator(_validate_url)]
+    ]

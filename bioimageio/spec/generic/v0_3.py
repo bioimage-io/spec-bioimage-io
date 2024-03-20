@@ -2,7 +2,18 @@ from __future__ import annotations
 
 import string
 from functools import partial
-from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
+from typing import (
+    Any,
+    ClassVar,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import annotated_types
 from annotated_types import Len, LowerCase, MaxLen, MinLen
@@ -65,7 +76,7 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
 
 
 class ResourceId(ValidatedString):
-    root_model = RootModel[
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
             NotEmpty[str],
             RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
