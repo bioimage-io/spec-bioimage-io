@@ -16,7 +16,7 @@ class ValidatedString(str):
 
     def __new__(cls, object: object):
         self = super().__new__(cls, object)
-        self._validated = cls.root_model.model_validate(self)
+        self._validated = cls.root_model.model_validate(str(self)).root
         return self
 
     @classmethod
