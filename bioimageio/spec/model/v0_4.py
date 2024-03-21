@@ -27,8 +27,6 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.validated_string import ValidatedString
-
 from .._internal.common_nodes import (
     KwargsNode,
     Node,
@@ -49,18 +47,14 @@ from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
-from .._internal.types import (
-    ImportantFileSource,
-    LowerCaseIdentifierAnno,
-)
+from .._internal.types import ImportantFileSource, LowerCaseIdentifier
 from .._internal.types import LicenseId as LicenseId
-from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
+from ..dataset.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..dataset.v0_2 import DatasetDescr as DatasetDescr
 from ..dataset.v0_2 import LinkedDataset as LinkedDataset
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -73,9 +67,15 @@ from ..generic.v0_2 import LinkedResource as LinkedResource
 from ..generic.v0_2 import Maintainer as Maintainer
 from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
 from ..utils import load_array
 from ._v0_4_converter import convert_from_older_format
+
+
+class ModelId(ResourceId):
+    pass
+
 
 AxesStr = Annotated[
     str, RestrictCharacters("bitczyx"), AfterValidator(validate_unique_entries)
@@ -102,7 +102,9 @@ PreprocessingName = Literal[
     "scale_range",
 ]
 
-TensorName = ValidatedString[LowerCaseIdentifierAnno]
+
+class TensorName(LowerCaseIdentifier):
+    pass
 
 
 class CallableFromDepencency(StringNode):
@@ -899,7 +901,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     license: Annotated[
         Union[LicenseId, str],
         warn(LicenseId, "Unknown license id '{value}'."),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please

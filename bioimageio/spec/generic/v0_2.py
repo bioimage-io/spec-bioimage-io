@@ -1,18 +1,29 @@
 import collections.abc
+import string
 from typing import (
     Any,
+    ClassVar,
     Dict,
     List,
     Literal,
     Mapping,
     Optional,
     Sequence,
+    Type,
     TypeVar,
     Union,
 )
 
+import annotated_types
 from annotated_types import Len, LowerCase, MaxLen
-from pydantic import EmailStr, Field, ValidationInfo, field_validator, model_validator
+from pydantic import (
+    EmailStr,
+    Field,
+    RootModel,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Annotated, Self, assert_never
 
 from .._internal.common_nodes import Node, ResourceDescrBase
@@ -20,6 +31,7 @@ from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_warning import as_warning, issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
+    InPackageIfLocalFileSource,
     WithSuffix,
     YamlValue,
     include_in_package_serializer,
@@ -35,11 +47,25 @@ from .._internal.types import (
 from .._internal.types import Doi as Doi
 from .._internal.types import OrcidId as OrcidId
 from .._internal.types import RelativeFilePath as RelativeFilePath
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validator_annotations import AfterValidator
+from .._internal.validated_string import ValidatedString
+from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from ._v0_2_converter import convert_from_older_format as _convert_from_older_format
+
+
+class ResourceId(ValidatedString):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            NotEmpty[str],
+            AfterValidator(str.lower),  # convert upper case on the fly
+            RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
+            annotated_types.Predicate(
+                lambda s: not (s.startswith("/") or s.endswith("/"))
+            ),
+        ]
+    ]
+
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",
@@ -115,7 +141,7 @@ class BadgeDescr(Node, title="Custom badge"):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Union[HttpUrl, None],
+        Optional[InPackageIfLocalFileSource],
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
     """badge icon"""
@@ -274,7 +300,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[
-        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
     ] = None
     """An icon for illustration"""
 
@@ -369,8 +395,10 @@ class GenericDescrBase(GenericModelDescrBase):
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[
-        Optional[Union[LicenseId, DeprecatedLicenseId, str]],
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+        Union[LicenseId, DeprecatedLicenseId, str, None],
+        Field(
+            union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]
+        ),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please

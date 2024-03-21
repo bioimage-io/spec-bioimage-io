@@ -45,9 +45,13 @@ class RestrictCharacters:
     ) -> CoreSchema:
         if not self.alphabet:
             raise ValueError("Alphabet may not be empty")
+
         schema = handler(source)  # get the CoreSchema from the type / inner constraints
-        if schema["type"] != "str":
+        if schema["type"] != "str" and not (
+            schema["type"] == "function-after" and schema["schema"]["type"] == "str"
+        ):
             raise TypeError("RestrictCharacters can only be applied to strings")
+
         return no_info_after_validator_function(
             self.validate,
             schema,

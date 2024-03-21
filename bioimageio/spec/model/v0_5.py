@@ -38,19 +38,12 @@ from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Field,
-    GetCoreSchemaHandler,
+    RootModel,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from pydantic_core.core_schema import (
-    CoreSchema,
-    no_info_after_validator_function,
-)
 from typing_extensions import Annotated, LiteralString, Self, assert_never
-
-from bioimageio.spec._internal.validated_string import ValidatedString
-from bioimageio.spec._internal.validator_annotations import RestrictCharacters
 
 from .._internal.common_nodes import (
     Converter,
@@ -69,18 +62,25 @@ from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
 from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
-from .._internal.types import ImportantFileSource, LowerCaseIdentifierAnno, SiUnit
+from .._internal.types import (
+    ImportantFileSource,
+    LowerCaseIdentifier,
+    LowerCaseIdentifierAnno,
+    SiUnit,
+)
 from .._internal.types import LicenseId as LicenseId
-from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
+from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import INFO
 from ..dataset.v0_3 import DatasetDescr as DatasetDescr
 from ..dataset.v0_3 import LinkedDataset as LinkedDataset
 from ..dataset.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import (
+    VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS,
+)
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
@@ -95,9 +95,9 @@ from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_3 import ResourceId as ResourceId
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
-from .v0_4 import BinarizeKwargs as BinarizeKwargs
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
 from .v0_4 import CallableFromDepencency as _CallableFromDepencency_v0_4
 from .v0_4 import CallableFromFile as _CallableFromFile_v0_4
@@ -178,22 +178,18 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
 
 
-class AxisId(str):
-    root_model = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+class TensorId(LowerCaseIdentifier):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(32)]
+    ]
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
-    ) -> CoreSchema:
-        return no_info_after_validator_function(cls._validate, handler(str))
 
-    @classmethod
-    def _validate(cls, value: str):
-        valid = cls.root_model.model_validate(value)
-        return cls(valid.root)
+class AxisId(LowerCaseIdentifier):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+    ]
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -681,13 +677,26 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
+class BinarizeKwargs(ProcessingKwargs):
+    threshold: float
+    """The fixed threshold"""
+
+
+class BinarizeAlongAxisKwargs(ProcessingKwargs):
+    threshold: NotEmpty[List[float]]
+    """The fixed threshold values along `axis`"""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
+    """The `threshold` axis"""
+
+
 class BinarizeDescr(ProcessingDescrBase):
     """Binarize the tensor with a fixed threshold.
     Values above the threshold will be set to one, values below the threshold to zero.
     """
 
     id: Literal["binarize"] = "binarize"
-    kwargs: BinarizeKwargs
+    kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 
 class ClipDescr(ProcessingDescrBase):
@@ -698,7 +707,19 @@ class ClipDescr(ProcessingDescrBase):
 
 
 class EnsureDtypeKwargs(ProcessingKwargs):
-    dtype: str
+    dtype: Literal[
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
+    ]
 
 
 class EnsureDtypeDescr(ProcessingDescrBase):
@@ -707,12 +728,26 @@ class EnsureDtypeDescr(ProcessingDescrBase):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel"])] = (
-        None  # todo: validate existence of axis
-    )
-    """The axis of non-scalar gains/offsets.
-    Invalid for scalar gains/offsets.
-    """
+    gain: float = 1.0
+    """multiplicative factor"""
+
+    offset: float = 0.0
+    """additive term"""
+
+    @model_validator(mode="after")
+    def _validate(self) -> Self:
+        if self.gain == 1.0 and self.offset == 0.0:
+            raise ValueError(
+                "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
+                + " != 0.0."
+            )
+
+        return self
+
+
+class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
+    """The axis of of gains/offsets values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
@@ -721,16 +756,24 @@ class ScaleLinearKwargs(ProcessingKwargs):
     """additive term"""
 
     @model_validator(mode="after")
-    def either_gain_or_offset(self) -> Self:
-        if (
-            self.gain == 1.0
-            or isinstance(self.gain, list)
-            and all(g == 1.0 for g in self.gain)
-        ) and (
-            self.offset == 0.0
-            or isinstance(self.offset, list)
-            and all(off == 0.0 for off in self.offset)
-        ):
+    def _validate(self) -> Self:
+
+        if isinstance(self.gain, list):
+            if isinstance(self.offset, list):
+                if len(self.gain) != len(self.offset):
+                    raise ValueError(
+                        f"Size of `gain` ({len(self.gain)}) and `offset` ({len(self.offset)}) must match."
+                    )
+            else:
+                self.offset = [float(self.offset)] * len(self.gain)
+        elif isinstance(self.offset, list):
+            self.gain = [float(self.gain)] * len(self.offset)
+        else:
+            raise ValueError(
+                "Do not specify an `axis` for scalar gain and offset values."
+            )
+
+        if all(g == 1.0 for g in self.gain) and all(off == 0.0 for off in self.offset):
             raise ValueError(
                 "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
                 + " != 0.0."
@@ -743,7 +786,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
     id: Literal["scale_linear"] = "scale_linear"
-    kwargs: ScaleLinearKwargs
+    kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
 class SigmoidDescr(ProcessingDescrBase):
@@ -761,34 +804,34 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """Normalize with fixed, precomputed values for mean and variance.
     See `zero_mean_unit_variance` for data dependent normalization."""
 
-    mean: Annotated[
-        Union[float, NotEmpty[Tuple[float, ...]]],
-        Field(examples=[3.14, (1.1, -2.2, 3.3)]),
-    ]
-    """The mean value(s) to normalize with. Specify `axis` for a sequence of `mean` values"""
+    mean: float
+    """The mean value to normalize with."""
 
-    std: Annotated[
-        Union[
-            Annotated[float, Ge(1e-6)], NotEmpty[Tuple[Annotated[float, Ge(1e-6)], ...]]
-        ],
-        Field(examples=[1.05, (0.1, 0.2, 0.3)]),
-    ]
-    """The standard deviation value(s) to normalize with. Size must match `mean` values."""
+    std: Annotated[float, Ge(1e-6)]
+    """The standard deviation value to normalize with."""
 
-    axis: Annotated[Optional[NonBatchAxisId], Field(examples=["channel", "index"])] = (
-        None  # todo: validate existence of axis
-    )
-    """The axis of the mean/std values to normalize each entry along that dimension separately.
-    Invalid for scalar gains/offsets.
-    """
+
+class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
+    """Normalize with fixed, precomputed values for mean and variance.
+    See `zero_mean_unit_variance` for data dependent normalization."""
+
+    mean: NotEmpty[List[float]]
+    """The mean value(s) to normalize with."""
+
+    std: NotEmpty[List[Annotated[float, Ge(1e-6)]]]
+    """The standard deviation value(s) to normalize with.
+    Size must match `mean` values."""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel", "index"])]
+    """The axis of the mean/std values to normalize each entry along that dimension
+    separately."""
 
     @model_validator(mode="after")
-    def mean_and_std_match(self) -> Self:
-        mean_len = 1 if isinstance(self.mean, (float, int)) else len(self.mean)
-        std_len = 1 if isinstance(self.std, (float, int)) else len(self.std)
-        if mean_len != std_len:
+    def _mean_and_std_match(self) -> Self:
+        if len(self.mean) != len(self.std):
             raise ValueError(
-                "size of `mean` ({mean_len}) and `std` ({std_len}) must match."
+                f"Size of `mean` ({len(self.mean)}) and `std` ({len(self.std)})"
+                + " must match."
             )
 
         return self
@@ -798,7 +841,9 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract a given mean and divide by a given variance."""
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
-    kwargs: FixedZeroMeanUnitVarianceKwargs
+    kwargs: Union[
+        FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs
+    ]
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
@@ -1100,7 +1145,15 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """indicates that this tensor may be `None`"""
 
     preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
-    """Description of how this input should be preprocessed."""
+    """Description of how this input should be preprocessed.
+
+    notes:
+    - If preprocessing does not start with an 'ensure_dtype' entry, it is added
+      to ensure an input tensor's data type matches the input tensor's data description.
+    - If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an
+      'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally
+      changing the data type.
+    """
 
     @model_validator(mode="after")
     def _validate_preprocessing_kwargs(self) -> Self:
@@ -1109,11 +1162,32 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
             kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
-                    f"Expeted `axes` to be a sequence, but got {type(kwargs_axes)}"
+                    f"Expeted `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
                 )
 
             if any(a not in axes_ids for a in kwargs_axes):
-                raise ValueError("`kwargs.axes` needs to be subset of axes ids")
+                raise ValueError(
+                    "`preprocessing.i.kwargs.axes` needs to be subset of axes ids"
+                )
+
+        if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
+            dtype = self.data.type
+        else:
+            dtype = self.data[0].type
+
+        # ensure `preprocessing` begins with `EnsureDtypeDescr`
+        if not self.preprocessing or not isinstance(
+            self.preprocessing[0], EnsureDtypeDescr
+        ):
+            self.preprocessing.insert(
+                0, EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
+
+        # ensure `preprocessing` ends with `EnsureDtypeDescr` or `BinarizeDescr`
+        if not isinstance(self.preprocessing[-1], (EnsureDtypeDescr, BinarizeDescr)):
+            self.preprocessing.append(
+                EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
 
         return self
 
@@ -1248,13 +1322,12 @@ def _get_complement_v04_axis(
     if axes is None:
         return None
 
-    axes_str = str(axes)
-    all_axes = set(str(tensor_axes)) | {"b"}
-    complement_axes = [a for a in axes_str if a not in all_axes]
+    non_complement_axes = set(axes) | {"b"}
+    complement_axes = [a for a in tensor_axes if a not in non_complement_axes]
     if len(complement_axes) > 1:
         raise ValueError(
             f"Expected none or a single complement axis, but axes '{axes}' "
-            + f"for tensor dims '{all_axes}' leave '{complement_axes}'."
+            + f"for tensor dims '{tensor_axes}' leave '{complement_axes}'."
         )
 
     return None if not complement_axes else AxisId(complement_axes[0])
@@ -1277,11 +1350,15 @@ def _convert_proc(
         else:
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
-        return ScaleLinearDescr(
-            kwargs=ScaleLinearKwargs(
+        if axis is None:
+            assert not isinstance(p.kwargs.gain, list)
+            assert not isinstance(p.kwargs.offset, list)
+            kwargs = ScaleLinearKwargs(gain=p.kwargs.gain, offset=p.kwargs.offset)
+        else:
+            kwargs = ScaleLinearAlongAxisKwargs(
                 axis=axis, gain=p.kwargs.gain, offset=p.kwargs.offset
             )
-        )
+        return ScaleLinearDescr(kwargs=kwargs)
     elif isinstance(p, _ScaleMeanVarianceDescr_v0_4):
         return ScaleMeanVarianceDescr(
             kwargs=ScaleMeanVarianceKwargs(
@@ -1293,18 +1370,30 @@ def _convert_proc(
     elif isinstance(p, _ZeroMeanUnitVarianceDescr_v0_4):
         if p.kwargs.mode == "fixed":
             mean = p.kwargs.mean
-            assert mean is not None
-            if isinstance(mean, list):
-                mean = tuple(mean)
-
             std = p.kwargs.std
+            assert mean is not None
             assert std is not None
-            if isinstance(std, list):
-                std = tuple(std)
 
-            return FixedZeroMeanUnitVarianceDescr(
-                kwargs=FixedZeroMeanUnitVarianceKwargs(mean=mean, std=std)
-            )
+            axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
+
+            if axis is None:
+                return FixedZeroMeanUnitVarianceDescr(
+                    kwargs=FixedZeroMeanUnitVarianceKwargs(
+                        mean=mean, std=std  # pyright: ignore[reportArgumentType]
+                    )
+                )
+            else:
+                if not isinstance(mean, list):
+                    mean = [float(mean)]
+                if not isinstance(std, list):
+                    std = [float(std)]
+
+                return FixedZeroMeanUnitVarianceDescr(
+                    kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(
+                        axis=axis, mean=mean, std=std
+                    )
+                )
+
         else:
             axes = _axes_letters_to_ids(p.kwargs.axes) or []
             if p.kwargs.mode == "per_dataset":
@@ -1379,7 +1468,11 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     No duplicates are allowed across all inputs and outputs."""
 
     postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
-    """Description of how this output should be postprocessed."""
+    """Description of how this output should be postprocessed.
+
+    note: `postprocessing` always ends with an 'ensure_dtype' operation.
+          If not given this is added to cast to this tensor's `data.type`.
+    """
 
     @model_validator(mode="after")
     def _validate_postprocessing_kwargs(self) -> Self:
@@ -1394,6 +1487,18 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
             if any(a not in axes_ids for a in kwargs_axes):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
+        if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
+            dtype = self.data.type
+        else:
+            dtype = self.data[0].type
+
+        # ensure `postprocessing` ends with `EnsureDtypeDescr` or `BinarizeDescr`
+        if not self.postprocessing or not isinstance(
+            self.postprocessing[-1], (EnsureDtypeDescr, BinarizeDescr)
+        ):
+            self.postprocessing.append(
+                EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=dtype))
+            )
         return self
 
 
@@ -1757,6 +1862,10 @@ class WeightsDescr(Node):
         return self
 
 
+class ModelId(ResourceId):
+    pass
+
+
 class LinkedModel(Node):
     """Reference to a bioimage.io model."""
 
@@ -1772,11 +1881,9 @@ class _DataDepSize(NamedTuple):
     max: Optional[int]
 
 
-class _TensorSizes(NamedTuple):
-    predetermined: Dict[Tuple[TensorId, AxisId], int]
-    """size of axis (given `n` for `ParameterizedSize`)"""
-    data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize]
-    """min,max size of data dependent axis"""
+class _AxisSizes(NamedTuple):
+    inputs: Dict[Tuple[TensorId, AxisId], int]
+    outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
@@ -2146,15 +2253,17 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
-    def get_tensor_sizes(
+    def get_axis_sizes(
         self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
-    ) -> _TensorSizes:
+    ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        predetermined: Dict[Tuple[TensorId, AxisId], int] = {}
-        data_dependent: Dict[Tuple[TensorId, AxisId], _DataDepSize] = {}
+        inputs: Dict[Tuple[TensorId, AxisId], int] = {}
+        outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
+        input_ids = {d.id for d in self.inputs}
+        output_ids = {d.id for d in self.outputs}
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 if isinstance(a, BatchAxis):
@@ -2191,16 +2300,19 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         raise ValueError(
                             f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
                         )
-                    data_dependent[t_descr.id, a.id] = _DataDepSize(
-                        a.size.min, a.size.max
-                    )
+                    assert t_descr.id in output_ids
+                    outputs[t_descr.id, a.id] = _DataDepSize(a.size.min, a.size.max)
                     continue
                 else:
                     assert_never(a.size)
 
-                predetermined[t_descr.id, a.id] = s
+                if t_descr.id in input_ids:
+                    inputs[t_descr.id, a.id] = s
+                else:
+                    assert t_descr.id in output_ids
+                    outputs[t_descr.id, a.id] = s
 
-        return _TensorSizes(predetermined, data_dependent)
+        return _AxisSizes(inputs=inputs, outputs=outputs)
 
     @model_validator(mode="before")
     @classmethod
@@ -2282,7 +2394,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             format_version="0.5.0",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
-            id=src.id,
+            id=None if src.id is None else ModelId(src.id),
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,

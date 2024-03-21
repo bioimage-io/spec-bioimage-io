@@ -15,11 +15,6 @@ from .._internal.field_warning import issue_warning
 from .._internal.io import BioimageioYamlContent, YamlValue
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_utils import open_bioimageio_yaml
-from .._internal.types import ApplicationId as ApplicationId
-from .._internal.types import CollectionId as CollectionId
-from .._internal.types import DatasetId as DatasetId
-from .._internal.types import ModelId as ModelId
-from .._internal.types import NotebookId as NotebookId
 from .._internal.types import NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -27,6 +22,7 @@ from .._internal.warning_levels import ALERT
 from ..application import ApplicationDescr_v0_2, ApplicationDescr_v0_3
 from ..dataset import DatasetDescr_v0_2, DatasetDescr_v0_3
 from ..generic import GenericDescr_v0_2, GenericDescr_v0_3
+from ..generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr
@@ -42,6 +38,11 @@ from ..generic.v0_2 import Uploader as Uploader
 from ..generic.v0_2 import Version as Version
 from ..model import ModelDescr_v0_4, ModelDescr_v0_5
 from ..notebook import NotebookDescr_v0_2, NotebookDescr_v0_3
+
+
+class CollectionId(ResourceId):
+    pass
+
 
 EntryDescr = Union[
     ApplicationDescr_v0_2,
@@ -113,9 +114,7 @@ class CollectionEntry(Node, extra="allow"):
     rdf_source: Optional[FileSource] = None
     """resource description file (RDF) source to load entry from"""
 
-    id: Optional[Union[ResourceId, DatasetId, ApplicationId, ModelId, NotebookId]] = (
-        None
-    )
+    id: Optional[ResourceId] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
 

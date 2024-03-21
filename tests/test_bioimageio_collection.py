@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, Mapping
 import pooch
 import pytest
 
+from bioimageio.spec import settings
 from bioimageio.spec._description import DISCOVER, LATEST
 from bioimageio.spec._internal.types import FormatVersionPlaceholder
 from tests.utils import ParameterSet, check_bioimageio_yaml
@@ -73,6 +74,7 @@ KNOWN_INVALID_AS_LATEST = {
     "10.5281/zenodo.6559929/6559930/rdf.yaml",
     "10.5281/zenodo.6811491/6811492/rdf.yaml",
     "10.5281/zenodo.6865412/6919253/rdf.yaml",
+    "10.5281/zenodo.7274275/8123818/rdf.yaml",
     "10.5281/zenodo.7380171/7405349/rdf.yaml",
     "10.5281/zenodo.7614645/7642674/rdf.yaml",
     "10.5281/zenodo.8401064/8429203/rdf.yaml",
@@ -227,7 +229,9 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
 
 
 def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
-    collection_path: Any = pooch.retrieve(BASE_URL + "collection.json", None)
+    collection_path: Any = pooch.retrieve(
+        BASE_URL + "collection.json", None, path=settings.cache_path
+    )
     with Path(collection_path).open(encoding="utf-8") as f:
         collection_data = json.load(f)["collection"]
 

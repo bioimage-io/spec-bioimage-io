@@ -1,9 +1,8 @@
 import io
-import platform
 import warnings
 from contextlib import nullcontext
 from pathlib import Path
-from typing import IO, Any, Dict, Iterable, Mapping, Optional, TextIO, Union, cast
+from typing import IO, Any, Dict, Mapping, Optional, TextIO, Union, cast
 from zipfile import ZipFile, is_zipfile
 
 import numpy
@@ -13,7 +12,6 @@ from ruyaml import YAML
 from typing_extensions import Unpack
 
 from .io import (
-    ALL_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
@@ -21,15 +19,10 @@ from .io import (
     OpenedBioimageioYaml,
     YamlValue,
     download,
+    find_bioimageio_yaml_file_name,
 )
-from .io_basics import ALTERNATIVE_BIOIMAGEIO_YAML_NAMES, FileName
+from .io_basics import FileName
 from .types import FileSource, PermissiveFileSource
-
-if platform.machine() == "wasm32":
-    import pyodide_http  # type: ignore
-
-    pyodide_http.patch_all()
-
 
 yaml = YAML(typ="safe")
 
@@ -89,34 +82,6 @@ def open_bioimageio_yaml(
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
 
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
-
-
-def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileName:
-    file_names = sorted(file_names)
-    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
-        for fname in file_names:
-            if fname == bioimageio_name or fname.endswith(f".{bioimageio_name}"):
-                return fname
-
-    raise ValueError(
-        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
-        + " or or any of the alterntive file names:"
-        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES}, or any file with an extension of"
-        + f"  those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
-    )
-
-
-def find_bioimageio_yaml_file_name(path: Path) -> FileName:
-    if path.is_file():
-        if not is_zipfile(path):
-            return path.name
-
-        with ZipFile(path, "r") as f:
-            file_names = identify_bioimageio_yaml_file_name(f.namelist())
-    else:
-        file_names = [p.name for p in path.glob("*")]
-
-    return identify_bioimageio_yaml_file_name(file_names)
 
 
 def unzip(

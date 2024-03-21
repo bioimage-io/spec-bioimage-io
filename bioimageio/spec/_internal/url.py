@@ -1,13 +1,21 @@
+from typing import Any, ClassVar, Type, Union
+
+import pydantic
 import requests
 import requests.exceptions
-from pydantic import model_validator
+from pydantic import AfterValidator, RootModel
+from typing_extensions import Annotated
 
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
 from .validation_context import validation_context_var
 
 
-def check_url(url: str) -> None:
+def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
+    url = str(url)
+    if not validation_context_var.get().perform_io_checks:
+        return pydantic.AnyUrl(url)
+
     if url.startswith("https://colab.research.google.com/github/"):
         # head request for colab returns "Value error, 405: Method Not Allowed"
         # therefore we check if the source notebook exists at github instead
@@ -88,12 +96,10 @@ def check_url(url: str) -> None:
             # TODO follow up forbidden head request with get
             # motivating example: 403: Forbidden https://elifesciences.org/articles/57613
 
+    return pydantic.AnyUrl(url)
 
-class HttpUrl(RootHttpUrl, frozen=True):
-    @model_validator(mode="after")
-    def _check_url(self):
-        if not validation_context_var.get().perform_io_checks:
-            return self
 
-        check_url(str(self))
-        return self
+class HttpUrl(RootHttpUrl):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[pydantic.HttpUrl, AfterValidator(_validate_url)]
+    ]

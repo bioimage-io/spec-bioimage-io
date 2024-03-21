@@ -2,13 +2,23 @@ from __future__ import annotations
 
 import string
 from functools import partial
-from typing import Any, Dict, List, Literal, Optional, Sequence, TypeVar, Union
+from typing import (
+    Any,
+    ClassVar,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+)
 
+import annotated_types
 from annotated_types import Len, LowerCase, MaxLen, MinLen
-from pydantic import Field, ValidationInfo, field_validator, model_validator
+from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
-
-from bioimageio.spec._internal.field_validation import validate_gh_user
 
 from .._internal.common_nodes import (
     Converter,
@@ -18,6 +28,7 @@ from .._internal.common_nodes import (
 from .._internal.constants import (
     TAG_CATEGORIES,
 )
+from .._internal.field_validation import validate_gh_user
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -36,8 +47,8 @@ from .._internal.types import (
     NotEmpty,
 )
 from .._internal.types import RelativeFilePath as RelativeFilePath
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validated_string import ValidatedString
 from .._internal.validator_annotations import (
     AfterValidator,
     Predicate,
@@ -61,6 +72,18 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "model",
     "notebook",
 )
+
+
+class ResourceId(ValidatedString):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            NotEmpty[str],
+            RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
+            annotated_types.Predicate(
+                lambda s: not (s.startswith("/") or s.endswith("/"))
+            ),
+        ]
+    ]
 
 
 def _validate_md_suffix(value: V_suffix) -> V_suffix:
@@ -206,12 +229,14 @@ class GenericModelDescrBase(ResourceDescrBase):
     """citations"""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId],
+        Annotated[
+            Union[LicenseId, DeprecatedLicenseId], Field(union_mode="left_to_right")
+        ],
         warn(
             LicenseId,
             "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
         ),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
@@ -262,7 +287,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[
-        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
     ] = None
     """An icon for illustration, e.g. on bioimage.io"""
 

@@ -10,8 +10,10 @@ from datetime import datetime as _datetime
 from pathlib import Path, PurePath
 from typing import (
     Any,
+    ClassVar,
     Dict,
     Generic,
+    Iterable,
     List,
     Optional,
     Sequence,
@@ -22,6 +24,7 @@ from typing import (
     Union,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
+from zipfile import ZipFile, is_zipfile
 
 import pooch
 import pydantic
@@ -52,6 +55,7 @@ from typing_extensions import TypeAliasType as _TypeAliasType
 from .._internal._settings import settings
 from .._internal.io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
+    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
@@ -73,18 +77,17 @@ else:
     SLOTS = {"slots": True}
 
 
-class Sha256(
-    ValidatedString[
+class Sha256(ValidatedString):
+    """SHA-256 hash value"""
+
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(
                 strip_whitespace=True, to_lower=True, min_length=64, max_length=64
             ),
         ]
-    ],
-    frozen=True,
-):
-    """SHA-256 hash value"""
+    ]
 
 
 AbsolutePathT = TypeVar(
@@ -303,7 +306,7 @@ class WithSuffix:
 
 
 def wo_special_file_name(src: FileSource) -> FileSource:
-    if has_valid_rdf_name(src):
+    if has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -323,7 +326,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
         if isinstance(value, Path):
             unpackaged = value
         elif isinstance(value, HttpUrl):
-            unpackaged = value.root
+            unpackaged = value
         elif isinstance(value, RelativeFilePath):
             unpackaged = Path(value.path)
         elif isinstance(value, AnyUrl):
@@ -395,22 +398,60 @@ ImportantFileSource = Annotated[
     AfterValidator(wo_special_file_name),
     include_in_package_serializer,
 ]
+InPackageIfLocalFileSource = Union[
+    Annotated[
+        Union[FilePath, RelativeFilePath],
+        AfterValidator(wo_special_file_name),
+        include_in_package_serializer,
+    ],
+    Union[HttpUrl, pydantic.HttpUrl],
+]
 
 
-def has_valid_rdf_name(src: FileSource) -> bool:
-    return is_valid_rdf_name(extract_file_name(src))
+def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:
+    return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
-def is_valid_rdf_name(file_name: FileName) -> bool:
-    for special in ALL_BIOIMAGEIO_YAML_NAMES:
-        if file_name.endswith(special):
+def is_valid_bioimageio_yaml_name(file_name: FileName) -> bool:
+    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
+        if file_name == bioimageio_name or file_name.endswith("." + bioimageio_name):
             return True
 
     return False
 
 
-def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
-    if not has_valid_rdf_name(src):
+def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileName:
+    file_names = sorted(file_names)
+    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
+        for file_name in file_names:
+            if file_name == bioimageio_name or file_name.endswith(
+                "." + bioimageio_name
+            ):
+                return file_name
+
+    raise ValueError(
+        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
+        + " or or any of the alterntive file names:"
+        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES}, or any file with an extension of"
+        + f"  those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
+    )
+
+
+def find_bioimageio_yaml_file_name(path: Path) -> FileName:
+    if path.is_file():
+        if not is_zipfile(path):
+            return path.name
+
+        with ZipFile(path, "r") as f:
+            file_names = identify_bioimageio_yaml_file_name(f.namelist())
+    else:
+        file_names = [p.name for p in path.glob("*")]
+
+    return identify_bioimageio_yaml_file_name(file_names)
+
+
+def ensure_has_valid_bioimageio_yaml_name(src: FileSource) -> FileSource:
+    if not has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' does not have a valid filename to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -419,8 +460,8 @@ def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
     return src
 
 
-def ensure_is_valid_rdf_name(file_name: FileName) -> FileName:
-    if not is_valid_rdf_name(file_name):
+def ensure_is_valid_bioimageio_yaml_name(file_name: FileName) -> FileName:
+    if not is_valid_bioimageio_yaml_name(file_name):
         raise ValueError(
             f"'{file_name}' is not a valid filename to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -448,14 +489,14 @@ BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent
     original_root: Union[AbsoluteDirectory, RootHttpUrl]
-    original_file_name: str
+    original_file_name: FileName
 
 
 @dataclass
 class DownloadedFile:
     path: FilePath
     original_root: Union[AbsoluteDirectory, RootHttpUrl]
-    original_file_name: str
+    original_file_name: FileName
 
 
 class HashKwargs(TypedDict):
@@ -502,6 +543,7 @@ def download(
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
+    """download `source` URL (or pass local file path)"""
     if isinstance(source, FileDescr):
         return source.download()
 
@@ -533,6 +575,7 @@ def download(
             known_hash=_get_known_hash(kwargs),
             downloader=downloader,
             fname=fname,
+            path=settings.cache_path,
         )
         local_source = Path(_ls).absolute()
         root = strict_source.parent

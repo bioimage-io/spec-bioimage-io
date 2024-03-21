@@ -211,7 +211,7 @@ def model_data():
         model = ModelDescr(
             documentation=UNET2D_ROOT / "README.md",
             license=LicenseId("MIT"),
-            git_repo=HttpUrl("https://github.com/bioimage-io/python-bioimage-io"),
+            git_repo=HttpUrl("https://github.com/bioimage-io/core-bioimage-io-python"),
             format_version="0.5.0",
             description="description",
             authors=[
@@ -340,7 +340,9 @@ def test_warn_long_name(model_data: Dict[str, Any]):
     model_data["name"] = (
         "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
     )
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
 
     assert summary.status == "passed", summary.format()
     assert summary.details[1].warnings[0].loc == ("name",), summary.format()
@@ -349,17 +351,21 @@ def test_warn_long_name(model_data: Dict[str, Any]):
 
 def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
     model_data["inputs"][0]["id"] = "invalid/id"
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "failed", summary.format()
 
 
 def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     model_data["outputs"][0]["halo"] = 999
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "failed", summary.format()
 
 
-def test_get_tensor_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
+def test_get_axis_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
     with ValidationContext(perform_io_checks=False):
         model = ModelDescr(**model_data)
 
@@ -367,12 +373,12 @@ def test_get_tensor_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
     output_axis_id = AxisId("y")
 
     with pytest.raises(ValueError):
-        _ = model.get_tensor_sizes(
+        _ = model.get_axis_sizes(
             ns={(output_tensor_id, output_axis_id): 1}, batch_size=1
         )
 
 
-def test_get_tensor_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
+def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
         "id": "x",
@@ -383,7 +389,7 @@ def test_get_tensor_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
     with ValidationContext(perform_io_checks=False):
         model = ModelDescr(**model_data)
     with pytest.raises(ValueError):
-        _ = model.get_tensor_sizes(ns={}, batch_size=1)
+        _ = model.get_axis_sizes(ns={}, batch_size=1)
 
 
 def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
@@ -393,7 +399,9 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
         "size": {"tensor_id": "input_1", "axis_id": "x"},
         "halo": 2,
     }
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
     # input_1.x -> input_1.z
     model_data["outputs"][0]["axes"][2] = {
@@ -429,7 +437,9 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     model_data["parent"] = dict(id="10.5281/zenodo.5764892", version_number=1)
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
 
@@ -450,11 +460,15 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     model_data["type"] = "model_as_generic"
     model_data["format_version"] = "0.3.0"
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "passed", summary.format()
 
 
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
-    summary = validate_format(model_data)
+    summary = validate_format(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
     assert summary.status == "failed", summary.format()

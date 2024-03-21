@@ -1,7 +1,7 @@
 import collections.abc
-from io import BytesIO
 import re
 import shutil
+from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
 from typing import IO, Dict, Literal, Optional, Sequence, Union, cast
@@ -16,7 +16,7 @@ from ._internal.io import (
     BioimageioYamlSource,
     YamlValue,
     download,
-    ensure_is_valid_rdf_name,
+    ensure_is_valid_bioimageio_yaml_name,
 )
 from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
@@ -53,7 +53,9 @@ def get_resource_package_content(
         name=os_friendly_name, type=rd.type
     )
 
-    bioimageio_yaml_file_name = ensure_is_valid_rdf_name(bioimageio_yaml_file_name)
+    bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
+        bioimageio_yaml_file_name
+    )
     content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name, file_sources=content
