@@ -11,8 +11,6 @@ from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
 from typing_extensions import Unpack
 
-from bioimageio.spec._internal.io import find_bioimageio_yaml_file_name
-
 from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
@@ -21,6 +19,7 @@ from .io import (
     OpenedBioimageioYaml,
     YamlValue,
     download,
+    find_bioimageio_yaml_file_name,
 )
 from .io_basics import FileName
 from .types import FileSource, PermissiveFileSource

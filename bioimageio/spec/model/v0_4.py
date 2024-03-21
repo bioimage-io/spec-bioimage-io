@@ -54,6 +54,7 @@ from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
+from ..dataset.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..dataset.v0_2 import DatasetDescr as DatasetDescr
 from ..dataset.v0_2 import LinkedDataset as LinkedDataset
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr

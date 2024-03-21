@@ -45,9 +45,6 @@ from pydantic import (
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
-from bioimageio.spec._internal.validator_annotations import RestrictCharacters
-from bioimageio.spec.generic.v0_3 import ResourceId as ResourceId
-
 from .._internal.common_nodes import (
     Converter,
     InvalidDescr,
@@ -75,11 +72,15 @@ from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
+from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import INFO
 from ..dataset.v0_3 import DatasetDescr as DatasetDescr
 from ..dataset.v0_3 import LinkedDataset as LinkedDataset
 from ..dataset.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import (
+    VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS,
+)
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
@@ -94,6 +95,7 @@ from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_3 import ResourceId as ResourceId
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency

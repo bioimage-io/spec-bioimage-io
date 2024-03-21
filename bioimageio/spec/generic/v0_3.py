@@ -20,9 +20,6 @@ from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.field_validation import validate_gh_user
-from bioimageio.spec._internal.validated_string import ValidatedString
-
 from .._internal.common_nodes import (
     Converter,
     Node,
@@ -31,6 +28,7 @@ from .._internal.common_nodes import (
 from .._internal.constants import (
     TAG_CATEGORIES,
 )
+from .._internal.field_validation import validate_gh_user
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -50,6 +48,7 @@ from .._internal.types import (
 )
 from .._internal.types import RelativeFilePath as RelativeFilePath
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validated_string import ValidatedString
 from .._internal.validator_annotations import (
     AfterValidator,
     Predicate,

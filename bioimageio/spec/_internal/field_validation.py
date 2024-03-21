@@ -12,10 +12,10 @@ from typing import (
 
 import requests
 
-from bioimageio.spec._internal._settings import settings
-from bioimageio.spec._internal.constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
-from bioimageio.spec._internal.field_warning import issue_warning
-from bioimageio.spec._internal.validation_context import validation_context_var
+from ._settings import settings
+from .constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
+from .field_warning import issue_warning
+from .validation_context import validation_context_var
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:
