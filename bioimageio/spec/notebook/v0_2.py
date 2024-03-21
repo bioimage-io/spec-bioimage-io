@@ -6,6 +6,7 @@ from .._internal.common_nodes import Node
 from .._internal.io import WithSuffix
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.url import HttpUrl
+from ..generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr

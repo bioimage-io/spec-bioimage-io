@@ -7,6 +7,7 @@ from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.url import HttpUrl as HttpUrl
+from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry

@@ -32,6 +32,7 @@ IGNORE_MEMBERS = {
     "ImportantFileSource",
     "include_in_package_serializer",
     "INFO",
+    "InPackageIfLocalFileSource",
     "issue_warning",
     "Len",
     "LicenseId",
@@ -90,7 +91,6 @@ GENERIC_ONLY_MEMBERS = {
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "ResourceDescrBase",
     "ResourceDescrType",
-    "VALID_COVER_IMAGE_EXTENSIONS",
 }
 
 GENERIC_v0_2_MEMBERS = {

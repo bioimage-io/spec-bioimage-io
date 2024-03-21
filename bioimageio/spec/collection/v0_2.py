@@ -22,6 +22,7 @@ from .._internal.warning_levels import ALERT
 from ..application import ApplicationDescr_v0_2, ApplicationDescr_v0_3
 from ..dataset import DatasetDescr_v0_2, DatasetDescr_v0_3
 from ..generic import GenericDescr_v0_2, GenericDescr_v0_3
+from ..generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
 from ..generic.v0_2 import Author as Author
 from ..generic.v0_2 import BadgeDescr as BadgeDescr
