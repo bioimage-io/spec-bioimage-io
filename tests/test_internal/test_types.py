@@ -1,4 +1,3 @@
-import typing
 from datetime import datetime
 from pathlib import Path
 
@@ -70,7 +69,7 @@ IGNORE_TYPES_MEMBERS = {
     ],
 )
 def test_type_is_usable(name: str):
-    """check if a type can be instantiated or is a common Python type (e.g. Union or Literal)"""
+    """check if a type can be instantiated"""
     typ = getattr(types, name)
     if typ in TYPE_ARGS:
         args = TYPE_ARGS[typ]
@@ -80,10 +79,7 @@ def test_type_is_usable(name: str):
     elif isinstance(typ, str):
         pass  # ignore string constants
     else:
-        origin = typing.get_origin(typ)
-        assert origin in (dict, list, typing.Union, typing.Literal) or type(typ) in (
-            typing.TypeVar,
-        ), name
+        raise ValueError(f"No idea how to test {name} -> {typ}")
 
 
 @pytest.mark.parametrize("path", [Path(__file__), Path()])

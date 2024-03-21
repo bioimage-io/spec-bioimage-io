@@ -13,6 +13,7 @@ from typing import (
     ClassVar,
     Dict,
     Generic,
+    Iterable,
     List,
     Optional,
     Sequence,
@@ -23,6 +24,7 @@ from typing import (
     Union,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
+from zipfile import ZipFile, is_zipfile
 
 import pooch
 import pydantic
@@ -53,6 +55,7 @@ from typing_extensions import TypeAliasType as _TypeAliasType
 from .._internal._settings import settings
 from .._internal.io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
+    ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
@@ -303,7 +306,7 @@ class WithSuffix:
 
 
 def wo_special_file_name(src: FileSource) -> FileSource:
-    if has_valid_rdf_name(src):
+    if has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -397,20 +400,50 @@ ImportantFileSource = Annotated[
 ]
 
 
-def has_valid_rdf_name(src: FileSource) -> bool:
-    return is_valid_rdf_name(extract_file_name(src))
+def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:
+    return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
-def is_valid_rdf_name(file_name: FileName) -> bool:
-    for special in ALL_BIOIMAGEIO_YAML_NAMES:
-        if file_name.endswith(special):
+def is_valid_bioimageio_yaml_name(file_name: FileName) -> bool:
+    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
+        if file_name == bioimageio_name or file_name.endswith("." + bioimageio_name):
             return True
 
     return False
 
 
-def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
-    if not has_valid_rdf_name(src):
+def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileName:
+    file_names = sorted(file_names)
+    for bioimageio_name in ALL_BIOIMAGEIO_YAML_NAMES:
+        for file_name in file_names:
+            if file_name == bioimageio_name or file_name.endswith(
+                "." + bioimageio_name
+            ):
+                return file_name
+
+    raise ValueError(
+        f"No {BIOIMAGEIO_YAML} found in {file_names}. (Looking for '{BIOIMAGEIO_YAML}'"
+        + " or or any of the alterntive file names:"
+        + f" {ALTERNATIVE_BIOIMAGEIO_YAML_NAMES}, or any file with an extension of"
+        + f"  those, e.g. 'anything.{BIOIMAGEIO_YAML}')."
+    )
+
+
+def find_bioimageio_yaml_file_name(path: Path) -> FileName:
+    if path.is_file():
+        if not is_zipfile(path):
+            return path.name
+
+        with ZipFile(path, "r") as f:
+            file_names = identify_bioimageio_yaml_file_name(f.namelist())
+    else:
+        file_names = [p.name for p in path.glob("*")]
+
+    return identify_bioimageio_yaml_file_name(file_names)
+
+
+def ensure_has_valid_bioimageio_yaml_name(src: FileSource) -> FileSource:
+    if not has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' does not have a valid filename to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -419,8 +452,8 @@ def ensure_has_valid_rdf_name(src: FileSource) -> FileSource:
     return src
 
 
-def ensure_is_valid_rdf_name(file_name: FileName) -> FileName:
-    if not is_valid_rdf_name(file_name):
+def ensure_is_valid_bioimageio_yaml_name(file_name: FileName) -> FileName:
+    if not is_valid_bioimageio_yaml_name(file_name):
         raise ValueError(
             f"'{file_name}' is not a valid filename to identify"
             + f" '{BIOIMAGEIO_YAML}' (or equivalent) files."
@@ -448,14 +481,14 @@ BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent
     original_root: Union[AbsoluteDirectory, RootHttpUrl]
-    original_file_name: str
+    original_file_name: FileName
 
 
 @dataclass
 class DownloadedFile:
     path: FilePath
     original_root: Union[AbsoluteDirectory, RootHttpUrl]
-    original_file_name: str
+    original_file_name: FileName
 
 
 class HashKwargs(TypedDict):
