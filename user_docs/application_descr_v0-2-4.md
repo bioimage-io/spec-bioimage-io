@@ -54,7 +54,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -84,7 +84,7 @@ Sequence of Union of
 [*Example:*](#authorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `authors.i.name`<sub> str</sub>
 
@@ -113,11 +113,23 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidato
 
 
 
-### `badges.i.icon`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `badges.i.icon`<sub> Union</sub> ≝ `None`
 
 [*Example:*](#badgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
+<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, Url*, None]
 
+</summary>
+
+Union of
+- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+- _internal.url.HttpUrl
+- Url (max_length=2083 allowed_schemes=['http', 'https'])
+- None
+
+
+</details>
 
 ### `badges.i.url`<sub> _internal.url.HttpUrl</sub>
 
@@ -141,11 +153,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidato
 
 
 
-### `cite.i.doi`<sub> Optional</sub> ≝ `None`
+### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 ### `cite.i.url`<sub> Optional[str]</sub> ≝ `None`
 
@@ -171,10 +182,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -192,7 +203,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -210,29 +221,28 @@ Optional[Union of
 ## `icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, str*, None]
+<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
 
 </summary>
 
 Union of
+- str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
   - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
-- str (Len(min_length=1, max_length=2))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
 </details>
 
-## `id`<sub> Optional</sub> ≝ `None`
+## `id`<sub> Optional[ApplicationId]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
 
 ## `id_emoji`<sub> Optional</sub> ≝ `None`
 
@@ -242,7 +252,7 @@ Optional[str (Len(min_length=1, max_length=1))]
 
 ## `license`<sub> Union</sub> ≝ `None`
 
-[*Examples:*](#license) ['CC-BY-4.0', 'MIT', 'BSD-2-Clause']
+[*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, str, None]
@@ -277,7 +287,7 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, 
 [*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `maintainers.i.name`<sub> Optional</sub> ≝ `None`
 
@@ -322,7 +332,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -385,7 +395,7 @@ cover.png
 ### `git_repo`
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `license`
-- CC-BY-4.0
+- CC0-1.0
 - MIT
 - BSD-2-Clause
 

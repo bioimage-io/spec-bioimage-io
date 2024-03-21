@@ -40,7 +40,13 @@
 
             </li>
             <li>
-                    <a class="variable" href="#Doi">Doi</a>
+                    <a class="class" href="#Doi">Doi</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Doi.root_model">root_model</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
                     <a class="variable" href="#FormatVersionPlaceholder">FormatVersionPlaceholder</a>
@@ -49,37 +55,43 @@
                     <a class="variable" href="#IdentifierAnno">IdentifierAnno</a>
             </li>
             <li>
-                    <a class="variable" href="#Identifier">Identifier</a>
+                    <a class="class" href="#Identifier">Identifier</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Identifier.root_model">root_model</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
                     <a class="variable" href="#LowerCaseIdentifierAnno">LowerCaseIdentifierAnno</a>
             </li>
             <li>
-                    <a class="variable" href="#LowerCaseIdentifier">LowerCaseIdentifier</a>
+                    <a class="class" href="#LowerCaseIdentifier">LowerCaseIdentifier</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#LowerCaseIdentifier.root_model">root_model</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
-                    <a class="variable" href="#OrcidId">OrcidId</a>
+                    <a class="class" href="#OrcidId">OrcidId</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#OrcidId.root_model">root_model</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
-                    <a class="variable" href="#SiUnit">SiUnit</a>
-            </li>
-            <li>
-                    <a class="variable" href="#ResourceId">ResourceId</a>
-            </li>
-            <li>
-                    <a class="variable" href="#ApplicationId">ApplicationId</a>
-            </li>
-            <li>
-                    <a class="variable" href="#CollectionId">CollectionId</a>
-            </li>
-            <li>
-                    <a class="variable" href="#DatasetId">DatasetId</a>
-            </li>
-            <li>
-                    <a class="variable" href="#ModelId">ModelId</a>
-            </li>
-            <li>
-                    <a class="variable" href="#NotebookId">NotebookId</a>
+                    <a class="class" href="#SiUnit">SiUnit</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#SiUnit.root_model">root_model</a>
+                        </li>
+                </ul>
+
             </li>
     </ul>
 
@@ -106,7 +118,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">keyword</span> <span class="kn">import</span> <span class="n">iskeyword</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">annotated_types</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">isoparse</span>
@@ -194,42 +206,55 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="n">Doi</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]]</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="n">FormatVersionPlaceholder</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="s2">&quot;discover&quot;</span><span class="p">]</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="n">IdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_identifier</span><span class="p">),</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_is_not_keyword</span><span class="p">),</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="p">]</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="n">Identifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">]</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="n">LowerCaseIdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">,</span> <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">]</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="n">LowerCaseIdentifier</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">LowerCaseIdentifierAnno</span><span class="p">]</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="n">OrcidId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_orcid_id</span><span class="p">)]]</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="n">SiUnit</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">StringConstraints</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">SI_UNIT_REGEX</span><span class="p">),</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">BeforeValidator</span><span class="p">(</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>                <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;×&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>                <span class="k">else</span> <span class="n">s</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="p">)</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="p">),</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="p">]</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="p">]</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="k">class</span> <span class="nc">Doi</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="p">]</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="n">FormatVersionPlaceholder</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="s2">&quot;discover&quot;</span><span class="p">]</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="n">IdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_identifier</span><span class="p">),</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_is_not_keyword</span><span class="p">),</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="p">]</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="k">class</span> <span class="nc">Identifier</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">]</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="n">LowerCaseIdentifierAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">,</span> <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">]</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="k">class</span> <span class="nc">LowerCaseIdentifier</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">LowerCaseIdentifierAnno</span><span class="p">]</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="n">_ResourceIdAnno</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">LowerCase</span><span class="p">,</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">annotated_types</span><span class="o">.</span><span class="n">Predicate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="p">]</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="n">ResourceId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="n">ApplicationId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="n">CollectionId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="n">DatasetId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="n">ModelId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="n">NotebookId</span> <span class="o">=</span> <span class="n">ValidatedString</span><span class="p">[</span><span class="n">_ResourceIdAnno</span><span class="p">]</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="k">class</span> <span class="nc">OrcidId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;an ORCID identifier&quot;&quot;&quot;</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_orcid_id</span><span class="p">)]</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="p">]</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="k">class</span> <span class="nc">SiUnit</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Si unit&quot;&quot;&quot;</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="n">StringConstraints</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">SI_UNIT_REGEX</span><span class="p">),</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">BeforeValidator</span><span class="p">(</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>                <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>                    <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;×&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>                    <span class="k">else</span> <span class="n">s</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>                <span class="p">)</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>            <span class="p">),</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="p">]</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -320,17 +345,105 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                 </section>
                 <section id="Doi">
-                    <div class="attr variable">
-            <span class="name">Doi</span>        =
-<input id="Doi-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Doi-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, StringConstraints]]&#39;&gt;</span>
+                            <input id="Doi-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Doi</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
+
+                <label class="view-source-button" for="Doi-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Doi"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Doi-94"><a href="#Doi-94"><span class="linenos">94</span></a><span class="k">class</span> <span class="nc">Doi</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="Doi-95"><a href="#Doi-95"><span class="linenos">95</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="Doi-96"><a href="#Doi-96"><span class="linenos">96</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]</span>
+</span><span id="Doi-97"><a href="#Doi-97"><span class="linenos">97</span></a>    <span class="p">]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
+
+                            <div id="Doi.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, StringConstraints]]&#39;&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#Doi"></a>
+    <a class="headerlink" href="#Doi.root_model"></a>
     
-    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
 
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="Doi.encode" class="function">encode</dd>
+                <dd id="Doi.replace" class="function">replace</dd>
+                <dd id="Doi.split" class="function">split</dd>
+                <dd id="Doi.rsplit" class="function">rsplit</dd>
+                <dd id="Doi.join" class="function">join</dd>
+                <dd id="Doi.capitalize" class="function">capitalize</dd>
+                <dd id="Doi.casefold" class="function">casefold</dd>
+                <dd id="Doi.title" class="function">title</dd>
+                <dd id="Doi.center" class="function">center</dd>
+                <dd id="Doi.count" class="function">count</dd>
+                <dd id="Doi.expandtabs" class="function">expandtabs</dd>
+                <dd id="Doi.find" class="function">find</dd>
+                <dd id="Doi.partition" class="function">partition</dd>
+                <dd id="Doi.index" class="function">index</dd>
+                <dd id="Doi.ljust" class="function">ljust</dd>
+                <dd id="Doi.lower" class="function">lower</dd>
+                <dd id="Doi.lstrip" class="function">lstrip</dd>
+                <dd id="Doi.rfind" class="function">rfind</dd>
+                <dd id="Doi.rindex" class="function">rindex</dd>
+                <dd id="Doi.rjust" class="function">rjust</dd>
+                <dd id="Doi.rstrip" class="function">rstrip</dd>
+                <dd id="Doi.rpartition" class="function">rpartition</dd>
+                <dd id="Doi.splitlines" class="function">splitlines</dd>
+                <dd id="Doi.strip" class="function">strip</dd>
+                <dd id="Doi.swapcase" class="function">swapcase</dd>
+                <dd id="Doi.translate" class="function">translate</dd>
+                <dd id="Doi.upper" class="function">upper</dd>
+                <dd id="Doi.startswith" class="function">startswith</dd>
+                <dd id="Doi.endswith" class="function">endswith</dd>
+                <dd id="Doi.removeprefix" class="function">removeprefix</dd>
+                <dd id="Doi.removesuffix" class="function">removesuffix</dd>
+                <dd id="Doi.isascii" class="function">isascii</dd>
+                <dd id="Doi.islower" class="function">islower</dd>
+                <dd id="Doi.isupper" class="function">isupper</dd>
+                <dd id="Doi.istitle" class="function">istitle</dd>
+                <dd id="Doi.isspace" class="function">isspace</dd>
+                <dd id="Doi.isdecimal" class="function">isdecimal</dd>
+                <dd id="Doi.isdigit" class="function">isdigit</dd>
+                <dd id="Doi.isnumeric" class="function">isnumeric</dd>
+                <dd id="Doi.isalpha" class="function">isalpha</dd>
+                <dd id="Doi.isalnum" class="function">isalnum</dd>
+                <dd id="Doi.isidentifier" class="function">isidentifier</dd>
+                <dd id="Doi.isprintable" class="function">isprintable</dd>
+                <dd id="Doi.zfill" class="function">zfill</dd>
+                <dd id="Doi.format" class="function">format</dd>
+                <dd id="Doi.format_map" class="function">format_map</dd>
+                <dd id="Doi.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="FormatVersionPlaceholder">
                     <div class="attr variable">
@@ -358,17 +471,103 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
                 </section>
                 <section id="Identifier">
-                    <div class="attr variable">
-            <span class="name">Identifier</span>        =
-<input id="Identifier-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Identifier-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, AfterValidator, AfterValidator]]&#39;&gt;</span>
+                            <input id="Identifier-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Identifier</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
+
+                <label class="view-source-button" for="Identifier-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Identifier"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Identifier-108"><a href="#Identifier-108"><span class="linenos">108</span></a><span class="k">class</span> <span class="nc">Identifier</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="Identifier-109"><a href="#Identifier-109"><span class="linenos">109</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">IdentifierAnno</span><span class="p">]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
+
+                            <div id="Identifier.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, MinLen, AfterValidator, AfterValidator]]&#39;&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#Identifier"></a>
+    <a class="headerlink" href="#Identifier.root_model"></a>
     
-    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
 
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="Identifier.encode" class="function">encode</dd>
+                <dd id="Identifier.replace" class="function">replace</dd>
+                <dd id="Identifier.split" class="function">split</dd>
+                <dd id="Identifier.rsplit" class="function">rsplit</dd>
+                <dd id="Identifier.join" class="function">join</dd>
+                <dd id="Identifier.capitalize" class="function">capitalize</dd>
+                <dd id="Identifier.casefold" class="function">casefold</dd>
+                <dd id="Identifier.title" class="function">title</dd>
+                <dd id="Identifier.center" class="function">center</dd>
+                <dd id="Identifier.count" class="function">count</dd>
+                <dd id="Identifier.expandtabs" class="function">expandtabs</dd>
+                <dd id="Identifier.find" class="function">find</dd>
+                <dd id="Identifier.partition" class="function">partition</dd>
+                <dd id="Identifier.index" class="function">index</dd>
+                <dd id="Identifier.ljust" class="function">ljust</dd>
+                <dd id="Identifier.lower" class="function">lower</dd>
+                <dd id="Identifier.lstrip" class="function">lstrip</dd>
+                <dd id="Identifier.rfind" class="function">rfind</dd>
+                <dd id="Identifier.rindex" class="function">rindex</dd>
+                <dd id="Identifier.rjust" class="function">rjust</dd>
+                <dd id="Identifier.rstrip" class="function">rstrip</dd>
+                <dd id="Identifier.rpartition" class="function">rpartition</dd>
+                <dd id="Identifier.splitlines" class="function">splitlines</dd>
+                <dd id="Identifier.strip" class="function">strip</dd>
+                <dd id="Identifier.swapcase" class="function">swapcase</dd>
+                <dd id="Identifier.translate" class="function">translate</dd>
+                <dd id="Identifier.upper" class="function">upper</dd>
+                <dd id="Identifier.startswith" class="function">startswith</dd>
+                <dd id="Identifier.endswith" class="function">endswith</dd>
+                <dd id="Identifier.removeprefix" class="function">removeprefix</dd>
+                <dd id="Identifier.removesuffix" class="function">removesuffix</dd>
+                <dd id="Identifier.isascii" class="function">isascii</dd>
+                <dd id="Identifier.islower" class="function">islower</dd>
+                <dd id="Identifier.isupper" class="function">isupper</dd>
+                <dd id="Identifier.istitle" class="function">istitle</dd>
+                <dd id="Identifier.isspace" class="function">isspace</dd>
+                <dd id="Identifier.isdecimal" class="function">isdecimal</dd>
+                <dd id="Identifier.isdigit" class="function">isdigit</dd>
+                <dd id="Identifier.isnumeric" class="function">isnumeric</dd>
+                <dd id="Identifier.isalpha" class="function">isalpha</dd>
+                <dd id="Identifier.isalnum" class="function">isalnum</dd>
+                <dd id="Identifier.isidentifier" class="function">isidentifier</dd>
+                <dd id="Identifier.isprintable" class="function">isprintable</dd>
+                <dd id="Identifier.zfill" class="function">zfill</dd>
+                <dd id="Identifier.format" class="function">format</dd>
+                <dd id="Identifier.format_map" class="function">format_map</dd>
+                <dd id="Identifier.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="LowerCaseIdentifierAnno">
                     <div class="attr variable">
@@ -384,120 +583,302 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
                 </section>
                 <section id="LowerCaseIdentifier">
-                    <div class="attr variable">
-            <span class="name">LowerCaseIdentifier</span>        =
-<input id="LowerCaseIdentifier-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="LowerCaseIdentifier-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]&#39;&gt;</span>
+                            <input id="LowerCaseIdentifier-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">LowerCaseIdentifier</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
-        
+                <label class="view-source-button" for="LowerCaseIdentifier-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#LowerCaseIdentifier"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LowerCaseIdentifier-115"><a href="#LowerCaseIdentifier-115"><span class="linenos">115</span></a><span class="k">class</span> <span class="nc">LowerCaseIdentifier</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="LowerCaseIdentifier-116"><a href="#LowerCaseIdentifier-116"><span class="linenos">116</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">LowerCaseIdentifierAnno</span><span class="p">]</span>
+</span></pre></div>
 
+
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
+
+                            <div id="LowerCaseIdentifier.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<input id="LowerCaseIdentifier.root_model-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="LowerCaseIdentifier.root_model-view-value"></label><span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LowerCaseIdentifier.root_model"></a>
+    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="LowerCaseIdentifier.encode" class="function">encode</dd>
+                <dd id="LowerCaseIdentifier.replace" class="function">replace</dd>
+                <dd id="LowerCaseIdentifier.split" class="function">split</dd>
+                <dd id="LowerCaseIdentifier.rsplit" class="function">rsplit</dd>
+                <dd id="LowerCaseIdentifier.join" class="function">join</dd>
+                <dd id="LowerCaseIdentifier.capitalize" class="function">capitalize</dd>
+                <dd id="LowerCaseIdentifier.casefold" class="function">casefold</dd>
+                <dd id="LowerCaseIdentifier.title" class="function">title</dd>
+                <dd id="LowerCaseIdentifier.center" class="function">center</dd>
+                <dd id="LowerCaseIdentifier.count" class="function">count</dd>
+                <dd id="LowerCaseIdentifier.expandtabs" class="function">expandtabs</dd>
+                <dd id="LowerCaseIdentifier.find" class="function">find</dd>
+                <dd id="LowerCaseIdentifier.partition" class="function">partition</dd>
+                <dd id="LowerCaseIdentifier.index" class="function">index</dd>
+                <dd id="LowerCaseIdentifier.ljust" class="function">ljust</dd>
+                <dd id="LowerCaseIdentifier.lower" class="function">lower</dd>
+                <dd id="LowerCaseIdentifier.lstrip" class="function">lstrip</dd>
+                <dd id="LowerCaseIdentifier.rfind" class="function">rfind</dd>
+                <dd id="LowerCaseIdentifier.rindex" class="function">rindex</dd>
+                <dd id="LowerCaseIdentifier.rjust" class="function">rjust</dd>
+                <dd id="LowerCaseIdentifier.rstrip" class="function">rstrip</dd>
+                <dd id="LowerCaseIdentifier.rpartition" class="function">rpartition</dd>
+                <dd id="LowerCaseIdentifier.splitlines" class="function">splitlines</dd>
+                <dd id="LowerCaseIdentifier.strip" class="function">strip</dd>
+                <dd id="LowerCaseIdentifier.swapcase" class="function">swapcase</dd>
+                <dd id="LowerCaseIdentifier.translate" class="function">translate</dd>
+                <dd id="LowerCaseIdentifier.upper" class="function">upper</dd>
+                <dd id="LowerCaseIdentifier.startswith" class="function">startswith</dd>
+                <dd id="LowerCaseIdentifier.endswith" class="function">endswith</dd>
+                <dd id="LowerCaseIdentifier.removeprefix" class="function">removeprefix</dd>
+                <dd id="LowerCaseIdentifier.removesuffix" class="function">removesuffix</dd>
+                <dd id="LowerCaseIdentifier.isascii" class="function">isascii</dd>
+                <dd id="LowerCaseIdentifier.islower" class="function">islower</dd>
+                <dd id="LowerCaseIdentifier.isupper" class="function">isupper</dd>
+                <dd id="LowerCaseIdentifier.istitle" class="function">istitle</dd>
+                <dd id="LowerCaseIdentifier.isspace" class="function">isspace</dd>
+                <dd id="LowerCaseIdentifier.isdecimal" class="function">isdecimal</dd>
+                <dd id="LowerCaseIdentifier.isdigit" class="function">isdigit</dd>
+                <dd id="LowerCaseIdentifier.isnumeric" class="function">isnumeric</dd>
+                <dd id="LowerCaseIdentifier.isalpha" class="function">isalpha</dd>
+                <dd id="LowerCaseIdentifier.isalnum" class="function">isalnum</dd>
+                <dd id="LowerCaseIdentifier.isidentifier" class="function">isidentifier</dd>
+                <dd id="LowerCaseIdentifier.isprintable" class="function">isprintable</dd>
+                <dd id="LowerCaseIdentifier.zfill" class="function">zfill</dd>
+                <dd id="LowerCaseIdentifier.format" class="function">format</dd>
+                <dd id="LowerCaseIdentifier.format_map" class="function">format_map</dd>
+                <dd id="LowerCaseIdentifier.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="OrcidId">
-                    <div class="attr variable">
-            <span class="name">OrcidId</span>        =
-<span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, AfterValidator]]&#39;&gt;</span>
+                            <input id="OrcidId-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">OrcidId</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
-        
+                <label class="view-source-button" for="OrcidId-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#OrcidId"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="OrcidId-119"><a href="#OrcidId-119"><span class="linenos">119</span></a><span class="k">class</span> <span class="nc">OrcidId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="OrcidId-120"><a href="#OrcidId-120"><span class="linenos">120</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;an ORCID identifier&quot;&quot;&quot;</span>
+</span><span id="OrcidId-121"><a href="#OrcidId-121"><span class="linenos">121</span></a>
+</span><span id="OrcidId-122"><a href="#OrcidId-122"><span class="linenos">122</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="OrcidId-123"><a href="#OrcidId-123"><span class="linenos">123</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_validate_orcid_id</span><span class="p">)]</span>
+</span><span id="OrcidId-124"><a href="#OrcidId-124"><span class="linenos">124</span></a>    <span class="p">]</span>
+</span></pre></div>
 
+
+            <div class="docstring"><p>an ORCID identifier</p>
+</div>
+
+
+                            <div id="OrcidId.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, AfterValidator]]&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#OrcidId.root_model"></a>
+    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="OrcidId.encode" class="function">encode</dd>
+                <dd id="OrcidId.replace" class="function">replace</dd>
+                <dd id="OrcidId.split" class="function">split</dd>
+                <dd id="OrcidId.rsplit" class="function">rsplit</dd>
+                <dd id="OrcidId.join" class="function">join</dd>
+                <dd id="OrcidId.capitalize" class="function">capitalize</dd>
+                <dd id="OrcidId.casefold" class="function">casefold</dd>
+                <dd id="OrcidId.title" class="function">title</dd>
+                <dd id="OrcidId.center" class="function">center</dd>
+                <dd id="OrcidId.count" class="function">count</dd>
+                <dd id="OrcidId.expandtabs" class="function">expandtabs</dd>
+                <dd id="OrcidId.find" class="function">find</dd>
+                <dd id="OrcidId.partition" class="function">partition</dd>
+                <dd id="OrcidId.index" class="function">index</dd>
+                <dd id="OrcidId.ljust" class="function">ljust</dd>
+                <dd id="OrcidId.lower" class="function">lower</dd>
+                <dd id="OrcidId.lstrip" class="function">lstrip</dd>
+                <dd id="OrcidId.rfind" class="function">rfind</dd>
+                <dd id="OrcidId.rindex" class="function">rindex</dd>
+                <dd id="OrcidId.rjust" class="function">rjust</dd>
+                <dd id="OrcidId.rstrip" class="function">rstrip</dd>
+                <dd id="OrcidId.rpartition" class="function">rpartition</dd>
+                <dd id="OrcidId.splitlines" class="function">splitlines</dd>
+                <dd id="OrcidId.strip" class="function">strip</dd>
+                <dd id="OrcidId.swapcase" class="function">swapcase</dd>
+                <dd id="OrcidId.translate" class="function">translate</dd>
+                <dd id="OrcidId.upper" class="function">upper</dd>
+                <dd id="OrcidId.startswith" class="function">startswith</dd>
+                <dd id="OrcidId.endswith" class="function">endswith</dd>
+                <dd id="OrcidId.removeprefix" class="function">removeprefix</dd>
+                <dd id="OrcidId.removesuffix" class="function">removesuffix</dd>
+                <dd id="OrcidId.isascii" class="function">isascii</dd>
+                <dd id="OrcidId.islower" class="function">islower</dd>
+                <dd id="OrcidId.isupper" class="function">isupper</dd>
+                <dd id="OrcidId.istitle" class="function">istitle</dd>
+                <dd id="OrcidId.isspace" class="function">isspace</dd>
+                <dd id="OrcidId.isdecimal" class="function">isdecimal</dd>
+                <dd id="OrcidId.isdigit" class="function">isdigit</dd>
+                <dd id="OrcidId.isnumeric" class="function">isnumeric</dd>
+                <dd id="OrcidId.isalpha" class="function">isalpha</dd>
+                <dd id="OrcidId.isalnum" class="function">isalnum</dd>
+                <dd id="OrcidId.isidentifier" class="function">isidentifier</dd>
+                <dd id="OrcidId.isprintable" class="function">isprintable</dd>
+                <dd id="OrcidId.zfill" class="function">zfill</dd>
+                <dd id="OrcidId.format" class="function">format</dd>
+                <dd id="OrcidId.format_map" class="function">format_map</dd>
+                <dd id="OrcidId.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="SiUnit">
-                    <div class="attr variable">
-            <span class="name">SiUnit</span>        =
-<input id="SiUnit-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="SiUnit-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, StringConstraints, BeforeValidator]]&#39;&gt;</span>
+                            <input id="SiUnit-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">SiUnit</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
-        
+                <label class="view-source-button" for="SiUnit-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#SiUnit"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SiUnit-127"><a href="#SiUnit-127"><span class="linenos">127</span></a><span class="k">class</span> <span class="nc">SiUnit</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="SiUnit-128"><a href="#SiUnit-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Si unit&quot;&quot;&quot;</span>
+</span><span id="SiUnit-129"><a href="#SiUnit-129"><span class="linenos">129</span></a>
+</span><span id="SiUnit-130"><a href="#SiUnit-130"><span class="linenos">130</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="SiUnit-131"><a href="#SiUnit-131"><span class="linenos">131</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="SiUnit-132"><a href="#SiUnit-132"><span class="linenos">132</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="SiUnit-133"><a href="#SiUnit-133"><span class="linenos">133</span></a>            <span class="n">StringConstraints</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">SI_UNIT_REGEX</span><span class="p">),</span>
+</span><span id="SiUnit-134"><a href="#SiUnit-134"><span class="linenos">134</span></a>            <span class="n">BeforeValidator</span><span class="p">(</span>
+</span><span id="SiUnit-135"><a href="#SiUnit-135"><span class="linenos">135</span></a>                <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
+</span><span id="SiUnit-136"><a href="#SiUnit-136"><span class="linenos">136</span></a>                    <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;×&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;·&quot;</span><span class="p">)</span>
+</span><span id="SiUnit-137"><a href="#SiUnit-137"><span class="linenos">137</span></a>                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+</span><span id="SiUnit-138"><a href="#SiUnit-138"><span class="linenos">138</span></a>                    <span class="k">else</span> <span class="n">s</span>
+</span><span id="SiUnit-139"><a href="#SiUnit-139"><span class="linenos">139</span></a>                <span class="p">)</span>
+</span><span id="SiUnit-140"><a href="#SiUnit-140"><span class="linenos">140</span></a>            <span class="p">),</span>
+</span><span id="SiUnit-141"><a href="#SiUnit-141"><span class="linenos">141</span></a>        <span class="p">]</span>
+</span><span id="SiUnit-142"><a href="#SiUnit-142"><span class="linenos">142</span></a>    <span class="p">]</span>
+</span></pre></div>
 
-                </section>
-                <section id="ResourceId">
-                    <div class="attr variable">
-            <span class="name">ResourceId</span>        =
-<input id="ResourceId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ResourceId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
 
-        
-    </div>
-    <a class="headerlink" href="#ResourceId"></a>
-    
-    
+            <div class="docstring"><p>Si unit</p>
+</div>
 
-                </section>
-                <section id="ApplicationId">
-                    <div class="attr variable">
-            <span class="name">ApplicationId</span>        =
-<input id="ApplicationId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ApplicationId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
 
-        
-    </div>
-    <a class="headerlink" href="#ApplicationId"></a>
-    
-    
-
-                </section>
-                <section id="CollectionId">
-                    <div class="attr variable">
-            <span class="name">CollectionId</span>        =
-<input id="CollectionId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="CollectionId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
+                            <div id="SiUnit.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, StringConstraints, BeforeValidator]]&#39;&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#CollectionId"></a>
+    <a class="headerlink" href="#SiUnit.root_model"></a>
     
-    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
 
-                </section>
-                <section id="DatasetId">
-                    <div class="attr variable">
-            <span class="name">DatasetId</span>        =
-<input id="DatasetId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="DatasetId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
 
-        
-    </div>
-    <a class="headerlink" href="#DatasetId"></a>
-    
-    
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="SiUnit.encode" class="function">encode</dd>
+                <dd id="SiUnit.replace" class="function">replace</dd>
+                <dd id="SiUnit.split" class="function">split</dd>
+                <dd id="SiUnit.rsplit" class="function">rsplit</dd>
+                <dd id="SiUnit.join" class="function">join</dd>
+                <dd id="SiUnit.capitalize" class="function">capitalize</dd>
+                <dd id="SiUnit.casefold" class="function">casefold</dd>
+                <dd id="SiUnit.title" class="function">title</dd>
+                <dd id="SiUnit.center" class="function">center</dd>
+                <dd id="SiUnit.count" class="function">count</dd>
+                <dd id="SiUnit.expandtabs" class="function">expandtabs</dd>
+                <dd id="SiUnit.find" class="function">find</dd>
+                <dd id="SiUnit.partition" class="function">partition</dd>
+                <dd id="SiUnit.index" class="function">index</dd>
+                <dd id="SiUnit.ljust" class="function">ljust</dd>
+                <dd id="SiUnit.lower" class="function">lower</dd>
+                <dd id="SiUnit.lstrip" class="function">lstrip</dd>
+                <dd id="SiUnit.rfind" class="function">rfind</dd>
+                <dd id="SiUnit.rindex" class="function">rindex</dd>
+                <dd id="SiUnit.rjust" class="function">rjust</dd>
+                <dd id="SiUnit.rstrip" class="function">rstrip</dd>
+                <dd id="SiUnit.rpartition" class="function">rpartition</dd>
+                <dd id="SiUnit.splitlines" class="function">splitlines</dd>
+                <dd id="SiUnit.strip" class="function">strip</dd>
+                <dd id="SiUnit.swapcase" class="function">swapcase</dd>
+                <dd id="SiUnit.translate" class="function">translate</dd>
+                <dd id="SiUnit.upper" class="function">upper</dd>
+                <dd id="SiUnit.startswith" class="function">startswith</dd>
+                <dd id="SiUnit.endswith" class="function">endswith</dd>
+                <dd id="SiUnit.removeprefix" class="function">removeprefix</dd>
+                <dd id="SiUnit.removesuffix" class="function">removesuffix</dd>
+                <dd id="SiUnit.isascii" class="function">isascii</dd>
+                <dd id="SiUnit.islower" class="function">islower</dd>
+                <dd id="SiUnit.isupper" class="function">isupper</dd>
+                <dd id="SiUnit.istitle" class="function">istitle</dd>
+                <dd id="SiUnit.isspace" class="function">isspace</dd>
+                <dd id="SiUnit.isdecimal" class="function">isdecimal</dd>
+                <dd id="SiUnit.isdigit" class="function">isdigit</dd>
+                <dd id="SiUnit.isnumeric" class="function">isnumeric</dd>
+                <dd id="SiUnit.isalpha" class="function">isalpha</dd>
+                <dd id="SiUnit.isalnum" class="function">isalnum</dd>
+                <dd id="SiUnit.isidentifier" class="function">isidentifier</dd>
+                <dd id="SiUnit.isprintable" class="function">isprintable</dd>
+                <dd id="SiUnit.zfill" class="function">zfill</dd>
+                <dd id="SiUnit.format" class="function">format</dd>
+                <dd id="SiUnit.format_map" class="function">format_map</dd>
+                <dd id="SiUnit.maketrans" class="function">maketrans</dd>
 
-                </section>
-                <section id="ModelId">
-                    <div class="attr variable">
-            <span class="name">ModelId</span>        =
-<input id="ModelId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ModelId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelId"></a>
-    
-    
-
-                </section>
-                <section id="NotebookId">
-                    <div class="attr variable">
-            <span class="name">NotebookId</span>        =
-<input id="NotebookId-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="NotebookId-view-value"></label><span class="default_value">&lt;class &#39;<a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a>[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]&#39;&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#NotebookId"></a>
-    
-    
-
+            </div>
+                                </dl>
+                            </div>
                 </section>
     </main>
 <script>

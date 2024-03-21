@@ -79,8 +79,8 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">AbsoluteDirectory</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">DirectoryPath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="n">AbsoluteFilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;rdf.yaml&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;bioimageio.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;bioimageio.yaml&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;rdf.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,)</span> <span class="o">+</span> <span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>
 </span></pre></div>
 
@@ -127,7 +127,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                 <section id="BIOIMAGEIO_YAML">
                     <div class="attr variable">
             <span class="name">BIOIMAGEIO_YAML</span>        =
-<span class="default_value">&#39;rdf.yaml&#39;</span>
+<span class="default_value">&#39;bioimageio.yaml&#39;</span>
 
         
     </div>
@@ -139,7 +139,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                 <section id="ALTERNATIVE_BIOIMAGEIO_YAML_NAMES">
                     <div class="attr variable">
             <span class="name">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>        =
-<span class="default_value">(&#39;bioimageio.yaml&#39;, &#39;model.yaml&#39;)</span>
+<span class="default_value">(&#39;rdf.yaml&#39;, &#39;model.yaml&#39;)</span>
 
         
     </div>
@@ -151,7 +151,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                 <section id="ALL_BIOIMAGEIO_YAML_NAMES">
                     <div class="attr variable">
             <span class="name">ALL_BIOIMAGEIO_YAML_NAMES</span>        =
-<span class="default_value">(&#39;rdf.yaml&#39;, &#39;bioimageio.yaml&#39;, &#39;model.yaml&#39;)</span>
+<span class="default_value">(&#39;bioimageio.yaml&#39;, &#39;rdf.yaml&#39;, &#39;model.yaml&#39;)</span>
 
         
     </div>

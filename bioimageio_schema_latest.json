@@ -13,7 +13,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -27,24 +27,22 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "callable": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__"
-                        }
-                    ],
                     "examples": [
                         "MyNetworkClass",
                         "get_my_model"
-                    ]
+                    ],
+                    "title": "Callable",
+                    "type": "string"
                 },
                 "kwargs": {
                     "additionalProperties": {
@@ -65,15 +63,12 @@
             "additionalProperties": false,
             "properties": {
                 "callable": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__"
-                        }
-                    ],
                     "examples": [
                         "MyNetworkClass",
                         "get_my_model"
-                    ]
+                    ],
+                    "title": "Callable",
+                    "type": "string"
                 },
                 "kwargs": {
                     "additionalProperties": {
@@ -108,7 +103,7 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "uri",
@@ -156,7 +151,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__AfterValidator__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -165,7 +160,8 @@
                     "default": null,
                     "examples": [
                         "0000-0001-2345-6789"
-                    ]
+                    ],
+                    "title": "Orcid"
                 },
                 "name": {
                     "title": "Name",
@@ -204,7 +200,20 @@
                 "icon": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "format": "file-path",
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/RelativeFilePath"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -213,17 +222,15 @@
                     "default": null,
                     "examples": [
                         "https://colab.research.google.com/assets/colab-badge.svg"
-                    ]
+                    ],
+                    "title": "Icon"
                 },
                 "url": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HttpUrl"
-                        }
-                    ],
                     "examples": [
                         "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
-                    ]
+                    ],
+                    "title": "Url",
+                    "type": "string"
                 }
             },
             "required": [
@@ -268,6 +275,32 @@
             "title": "BatchAxis",
             "type": "object"
         },
+        "BinarizeAlongAxisKwargs": {
+            "additionalProperties": false,
+            "properties": {
+                "threshold": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 1,
+                    "title": "Threshold",
+                    "type": "array"
+                },
+                "axis": {
+                    "examples": [
+                        "channel"
+                    ],
+                    "title": "Axis",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "threshold",
+                "axis"
+            ],
+            "title": "BinarizeAlongAxisKwargs",
+            "type": "object"
+        },
         "BinarizeKwargs": {
             "additionalProperties": false,
             "properties": {
@@ -303,7 +336,7 @@
                 },
                 "channel_names": {
                     "items": {
-                        "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__"
+                        "type": "string"
                     },
                     "title": "Channel Names",
                     "type": "array"
@@ -313,6 +346,44 @@
                 "channel_names"
             ],
             "title": "ChannelAxis",
+            "type": "object"
+        },
+        "CiteEntry": {
+            "additionalProperties": false,
+            "properties": {
+                "text": {
+                    "title": "Text",
+                    "type": "string"
+                },
+                "doi": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Doi"
+                },
+                "url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Url"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "title": "CiteEntry",
             "type": "object"
         },
         "ClipKwargs": {
@@ -366,43 +437,6 @@
             "title": "Datetime",
             "type": "string"
         },
-        "DeprecatedLicenseId": {
-            "enum": [
-                "AGPL-1.0",
-                "AGPL-3.0",
-                "BSD-2-Clause-FreeBSD",
-                "BSD-2-Clause-NetBSD",
-                "bzip2-1.0.5",
-                "eCos-2.0",
-                "GFDL-1.1",
-                "GFDL-1.2",
-                "GFDL-1.3",
-                "GPL-1.0",
-                "GPL-1.0+",
-                "GPL-2.0",
-                "GPL-2.0+",
-                "GPL-2.0-with-autoconf-exception",
-                "GPL-2.0-with-bison-exception",
-                "GPL-2.0-with-classpath-exception",
-                "GPL-2.0-with-font-exception",
-                "GPL-2.0-with-GCC-exception",
-                "GPL-3.0",
-                "GPL-3.0+",
-                "GPL-3.0-with-autoconf-exception",
-                "GPL-3.0-with-GCC-exception",
-                "LGPL-2.0",
-                "LGPL-2.0+",
-                "LGPL-2.1",
-                "LGPL-2.1+",
-                "LGPL-3.0",
-                "LGPL-3.0+",
-                "Nunit",
-                "StandardML-NJ",
-                "wxWindows"
-            ],
-            "title": "DeprecatedLicenseId",
-            "type": "string"
-        },
         "EnsureDtypeDescr": {
             "additionalProperties": false,
             "properties": {
@@ -425,6 +459,19 @@
             "additionalProperties": false,
             "properties": {
                 "dtype": {
+                    "enum": [
+                        "float32",
+                        "float64",
+                        "uint8",
+                        "int8",
+                        "uint16",
+                        "int16",
+                        "uint32",
+                        "int32",
+                        "uint64",
+                        "int64",
+                        "bool"
+                    ],
                     "title": "Dtype",
                     "type": "string"
                 }
@@ -448,7 +495,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -465,13 +512,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 }
             },
             "required": [
@@ -493,7 +541,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -507,19 +555,58 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 }
             },
             "required": [
                 "source"
             ],
             "title": "FileDescr",
+            "type": "object"
+        },
+        "FixedZeroMeanUnitVarianceAlongAxisKwargs": {
+            "additionalProperties": false,
+            "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
+            "properties": {
+                "mean": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 1,
+                    "title": "Mean",
+                    "type": "array"
+                },
+                "std": {
+                    "items": {
+                        "minimum": 1e-06,
+                        "type": "number"
+                    },
+                    "minItems": 1,
+                    "title": "Std",
+                    "type": "array"
+                },
+                "axis": {
+                    "examples": [
+                        "channel",
+                        "index"
+                    ],
+                    "title": "Axis",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "mean",
+                "std",
+                "axis"
+            ],
+            "title": "FixedZeroMeanUnitVarianceAlongAxisKwargs",
             "type": "object"
         },
         "FixedZeroMeanUnitVarianceDescr": {
@@ -532,7 +619,15 @@
                     "title": "Id"
                 },
                 "kwargs": {
-                    "$ref": "#/$defs/FixedZeroMeanUnitVarianceKwargs"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FixedZeroMeanUnitVarianceKwargs"
+                        },
+                        {
+                            "$ref": "#/$defs/FixedZeroMeanUnitVarianceAlongAxisKwargs"
+                        }
+                    ],
+                    "title": "Kwargs"
                 }
             },
             "required": [
@@ -546,68 +641,13 @@
             "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
             "properties": {
                 "mean": {
-                    "anyOf": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "items": {
-                                "type": "number"
-                            },
-                            "minItems": 1,
-                            "type": "array"
-                        }
-                    ],
-                    "examples": [
-                        3.14,
-                        [
-                            1.1,
-                            -2.2,
-                            3.3
-                        ]
-                    ],
-                    "title": "Mean"
+                    "title": "Mean",
+                    "type": "number"
                 },
                 "std": {
-                    "anyOf": [
-                        {
-                            "minimum": 1e-06,
-                            "type": "number"
-                        },
-                        {
-                            "items": {
-                                "minimum": 1e-06,
-                                "type": "number"
-                            },
-                            "minItems": 1,
-                            "type": "array"
-                        }
-                    ],
-                    "examples": [
-                        1.05,
-                        [
-                            0.1,
-                            0.2,
-                            0.3
-                        ]
-                    ],
-                    "title": "Std"
-                },
-                "axis": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "channel",
-                        "index"
-                    ],
-                    "title": "Axis"
+                    "minimum": 1e-06,
+                    "title": "Std",
+                    "type": "number"
                 }
             },
             "required": [
@@ -617,16 +657,13 @@
             "title": "FixedZeroMeanUnitVarianceKwargs",
             "type": "object"
         },
-        "HttpUrl": {
-            "title": "HttpUrl",
-            "type": "string"
-        },
         "ImplicitOutputShape": {
             "additionalProperties": false,
             "description": "Output tensor shape depending on an input tensor shape.\n`shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`",
             "properties": {
                 "reference_tensor": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___"
+                    "title": "Reference Tensor",
+                    "type": "string"
                 },
                 "scale": {
                     "items": {
@@ -834,7 +871,7 @@
                             "const": "arbitrary unit"
                         },
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__BeforeValidator__"
+                            "type": "string"
                         }
                     ],
                     "default": "arbitrary unit",
@@ -860,538 +897,6 @@
             },
             "title": "IntervalOrRatioDataDescr",
             "type": "object"
-        },
-        "LicenseId": {
-            "enum": [
-                "0BSD",
-                "AAL",
-                "Abstyles",
-                "AdaCore-doc",
-                "Adobe-2006",
-                "Adobe-Glyph",
-                "ADSL",
-                "AFL-1.1",
-                "AFL-1.2",
-                "AFL-2.0",
-                "AFL-2.1",
-                "AFL-3.0",
-                "Afmparse",
-                "AGPL-1.0-only",
-                "AGPL-1.0-or-later",
-                "AGPL-3.0-only",
-                "AGPL-3.0-or-later",
-                "Aladdin",
-                "AMDPLPA",
-                "AML",
-                "AMPAS",
-                "ANTLR-PD",
-                "ANTLR-PD-fallback",
-                "Apache-1.0",
-                "Apache-1.1",
-                "Apache-2.0",
-                "APAFML",
-                "APL-1.0",
-                "App-s2p",
-                "APSL-1.0",
-                "APSL-1.1",
-                "APSL-1.2",
-                "APSL-2.0",
-                "Arphic-1999",
-                "Artistic-1.0",
-                "Artistic-1.0-cl8",
-                "Artistic-1.0-Perl",
-                "Artistic-2.0",
-                "ASWF-Digital-Assets-1.0",
-                "ASWF-Digital-Assets-1.1",
-                "Baekmuk",
-                "Bahyph",
-                "Barr",
-                "Beerware",
-                "Bitstream-Charter",
-                "Bitstream-Vera",
-                "BitTorrent-1.0",
-                "BitTorrent-1.1",
-                "blessing",
-                "BlueOak-1.0.0",
-                "Boehm-GC",
-                "Borceux",
-                "Brian-Gladman-3-Clause",
-                "BSD-1-Clause",
-                "BSD-2-Clause",
-                "BSD-2-Clause-Patent",
-                "BSD-2-Clause-Views",
-                "BSD-3-Clause",
-                "BSD-3-Clause-Attribution",
-                "BSD-3-Clause-Clear",
-                "BSD-3-Clause-LBNL",
-                "BSD-3-Clause-Modification",
-                "BSD-3-Clause-No-Military-License",
-                "BSD-3-Clause-No-Nuclear-License",
-                "BSD-3-Clause-No-Nuclear-License-2014",
-                "BSD-3-Clause-No-Nuclear-Warranty",
-                "BSD-3-Clause-Open-MPI",
-                "BSD-4-Clause",
-                "BSD-4-Clause-Shortened",
-                "BSD-4-Clause-UC",
-                "BSD-4.3RENO",
-                "BSD-4.3TAHOE",
-                "BSD-Advertising-Acknowledgement",
-                "BSD-Attribution-HPND-disclaimer",
-                "BSD-Protection",
-                "BSD-Source-Code",
-                "BSL-1.0",
-                "BUSL-1.1",
-                "bzip2-1.0.6",
-                "C-UDA-1.0",
-                "CAL-1.0",
-                "CAL-1.0-Combined-Work-Exception",
-                "Caldera",
-                "CATOSL-1.1",
-                "CC-BY-1.0",
-                "CC-BY-2.0",
-                "CC-BY-2.5",
-                "CC-BY-2.5-AU",
-                "CC-BY-3.0",
-                "CC-BY-3.0-AT",
-                "CC-BY-3.0-DE",
-                "CC-BY-3.0-IGO",
-                "CC-BY-3.0-NL",
-                "CC-BY-3.0-US",
-                "CC-BY-4.0",
-                "CC-BY-NC-1.0",
-                "CC-BY-NC-2.0",
-                "CC-BY-NC-2.5",
-                "CC-BY-NC-3.0",
-                "CC-BY-NC-3.0-DE",
-                "CC-BY-NC-4.0",
-                "CC-BY-NC-ND-1.0",
-                "CC-BY-NC-ND-2.0",
-                "CC-BY-NC-ND-2.5",
-                "CC-BY-NC-ND-3.0",
-                "CC-BY-NC-ND-3.0-DE",
-                "CC-BY-NC-ND-3.0-IGO",
-                "CC-BY-NC-ND-4.0",
-                "CC-BY-NC-SA-1.0",
-                "CC-BY-NC-SA-2.0",
-                "CC-BY-NC-SA-2.0-DE",
-                "CC-BY-NC-SA-2.0-FR",
-                "CC-BY-NC-SA-2.0-UK",
-                "CC-BY-NC-SA-2.5",
-                "CC-BY-NC-SA-3.0",
-                "CC-BY-NC-SA-3.0-DE",
-                "CC-BY-NC-SA-3.0-IGO",
-                "CC-BY-NC-SA-4.0",
-                "CC-BY-ND-1.0",
-                "CC-BY-ND-2.0",
-                "CC-BY-ND-2.5",
-                "CC-BY-ND-3.0",
-                "CC-BY-ND-3.0-DE",
-                "CC-BY-ND-4.0",
-                "CC-BY-SA-1.0",
-                "CC-BY-SA-2.0",
-                "CC-BY-SA-2.0-UK",
-                "CC-BY-SA-2.1-JP",
-                "CC-BY-SA-2.5",
-                "CC-BY-SA-3.0",
-                "CC-BY-SA-3.0-AT",
-                "CC-BY-SA-3.0-DE",
-                "CC-BY-SA-3.0-IGO",
-                "CC-BY-SA-4.0",
-                "CC-PDDC",
-                "CC0-1.0",
-                "CDDL-1.0",
-                "CDDL-1.1",
-                "CDL-1.0",
-                "CDLA-Permissive-1.0",
-                "CDLA-Permissive-2.0",
-                "CDLA-Sharing-1.0",
-                "CECILL-1.0",
-                "CECILL-1.1",
-                "CECILL-2.0",
-                "CECILL-2.1",
-                "CECILL-B",
-                "CECILL-C",
-                "CERN-OHL-1.1",
-                "CERN-OHL-1.2",
-                "CERN-OHL-P-2.0",
-                "CERN-OHL-S-2.0",
-                "CERN-OHL-W-2.0",
-                "CFITSIO",
-                "checkmk",
-                "ClArtistic",
-                "Clips",
-                "CMU-Mach",
-                "CNRI-Jython",
-                "CNRI-Python",
-                "CNRI-Python-GPL-Compatible",
-                "COIL-1.0",
-                "Community-Spec-1.0",
-                "Condor-1.1",
-                "copyleft-next-0.3.0",
-                "copyleft-next-0.3.1",
-                "Cornell-Lossless-JPEG",
-                "CPAL-1.0",
-                "CPL-1.0",
-                "CPOL-1.02",
-                "Crossword",
-                "CrystalStacker",
-                "CUA-OPL-1.0",
-                "Cube",
-                "curl",
-                "D-FSL-1.0",
-                "diffmark",
-                "DL-DE-BY-2.0",
-                "DOC",
-                "Dotseqn",
-                "DRL-1.0",
-                "DSDP",
-                "dtoa",
-                "dvipdfm",
-                "ECL-1.0",
-                "ECL-2.0",
-                "EFL-1.0",
-                "EFL-2.0",
-                "eGenix",
-                "Elastic-2.0",
-                "Entessa",
-                "EPICS",
-                "EPL-1.0",
-                "EPL-2.0",
-                "ErlPL-1.1",
-                "etalab-2.0",
-                "EUDatagrid",
-                "EUPL-1.0",
-                "EUPL-1.1",
-                "EUPL-1.2",
-                "Eurosym",
-                "Fair",
-                "FDK-AAC",
-                "Frameworx-1.0",
-                "FreeBSD-DOC",
-                "FreeImage",
-                "FSFAP",
-                "FSFUL",
-                "FSFULLR",
-                "FSFULLRWD",
-                "FTL",
-                "GD",
-                "GFDL-1.1-invariants-only",
-                "GFDL-1.1-invariants-or-later",
-                "GFDL-1.1-no-invariants-only",
-                "GFDL-1.1-no-invariants-or-later",
-                "GFDL-1.1-only",
-                "GFDL-1.1-or-later",
-                "GFDL-1.2-invariants-only",
-                "GFDL-1.2-invariants-or-later",
-                "GFDL-1.2-no-invariants-only",
-                "GFDL-1.2-no-invariants-or-later",
-                "GFDL-1.2-only",
-                "GFDL-1.2-or-later",
-                "GFDL-1.3-invariants-only",
-                "GFDL-1.3-invariants-or-later",
-                "GFDL-1.3-no-invariants-only",
-                "GFDL-1.3-no-invariants-or-later",
-                "GFDL-1.3-only",
-                "GFDL-1.3-or-later",
-                "Giftware",
-                "GL2PS",
-                "Glide",
-                "Glulxe",
-                "GLWTPL",
-                "gnuplot",
-                "GPL-1.0-only",
-                "GPL-1.0-or-later",
-                "GPL-2.0-only",
-                "GPL-2.0-or-later",
-                "GPL-3.0-only",
-                "GPL-3.0-or-later",
-                "Graphics-Gems",
-                "gSOAP-1.3b",
-                "HaskellReport",
-                "Hippocratic-2.1",
-                "HP-1986",
-                "HPND",
-                "HPND-export-US",
-                "HPND-Markus-Kuhn",
-                "HPND-sell-variant",
-                "HPND-sell-variant-MIT-disclaimer",
-                "HTMLTIDY",
-                "IBM-pibs",
-                "ICU",
-                "IEC-Code-Components-EULA",
-                "IJG",
-                "IJG-short",
-                "ImageMagick",
-                "iMatix",
-                "Imlib2",
-                "Info-ZIP",
-                "Inner-Net-2.0",
-                "Intel",
-                "Intel-ACPI",
-                "Interbase-1.0",
-                "IPA",
-                "IPL-1.0",
-                "ISC",
-                "Jam",
-                "JasPer-2.0",
-                "JPL-image",
-                "JPNIC",
-                "JSON",
-                "Kazlib",
-                "Knuth-CTAN",
-                "LAL-1.2",
-                "LAL-1.3",
-                "Latex2e",
-                "Latex2e-translated-notice",
-                "Leptonica",
-                "LGPL-2.0-only",
-                "LGPL-2.0-or-later",
-                "LGPL-2.1-only",
-                "LGPL-2.1-or-later",
-                "LGPL-3.0-only",
-                "LGPL-3.0-or-later",
-                "LGPLLR",
-                "Libpng",
-                "libpng-2.0",
-                "libselinux-1.0",
-                "libtiff",
-                "libutil-David-Nugent",
-                "LiLiQ-P-1.1",
-                "LiLiQ-R-1.1",
-                "LiLiQ-Rplus-1.1",
-                "Linux-man-pages-1-para",
-                "Linux-man-pages-copyleft",
-                "Linux-man-pages-copyleft-2-para",
-                "Linux-man-pages-copyleft-var",
-                "Linux-OpenIB",
-                "LOOP",
-                "LPL-1.0",
-                "LPL-1.02",
-                "LPPL-1.0",
-                "LPPL-1.1",
-                "LPPL-1.2",
-                "LPPL-1.3a",
-                "LPPL-1.3c",
-                "LZMA-SDK-9.11-to-9.20",
-                "LZMA-SDK-9.22",
-                "MakeIndex",
-                "Martin-Birgmeier",
-                "metamail",
-                "Minpack",
-                "MirOS",
-                "MIT",
-                "MIT-0",
-                "MIT-advertising",
-                "MIT-CMU",
-                "MIT-enna",
-                "MIT-feh",
-                "MIT-Festival",
-                "MIT-Modern-Variant",
-                "MIT-open-group",
-                "MIT-Wu",
-                "MITNFA",
-                "Motosoto",
-                "mpi-permissive",
-                "mpich2",
-                "MPL-1.0",
-                "MPL-1.1",
-                "MPL-2.0",
-                "MPL-2.0-no-copyleft-exception",
-                "mplus",
-                "MS-LPL",
-                "MS-PL",
-                "MS-RL",
-                "MTLL",
-                "MulanPSL-1.0",
-                "MulanPSL-2.0",
-                "Multics",
-                "Mup",
-                "NAIST-2003",
-                "NASA-1.3",
-                "Naumen",
-                "NBPL-1.0",
-                "NCGL-UK-2.0",
-                "NCSA",
-                "Net-SNMP",
-                "NetCDF",
-                "Newsletr",
-                "NGPL",
-                "NICTA-1.0",
-                "NIST-PD",
-                "NIST-PD-fallback",
-                "NIST-Software",
-                "NLOD-1.0",
-                "NLOD-2.0",
-                "NLPL",
-                "Nokia",
-                "NOSL",
-                "Noweb",
-                "NPL-1.0",
-                "NPL-1.1",
-                "NPOSL-3.0",
-                "NRL",
-                "NTP",
-                "NTP-0",
-                "O-UDA-1.0",
-                "OCCT-PL",
-                "OCLC-2.0",
-                "ODbL-1.0",
-                "ODC-By-1.0",
-                "OFFIS",
-                "OFL-1.0",
-                "OFL-1.0-no-RFN",
-                "OFL-1.0-RFN",
-                "OFL-1.1",
-                "OFL-1.1-no-RFN",
-                "OFL-1.1-RFN",
-                "OGC-1.0",
-                "OGDL-Taiwan-1.0",
-                "OGL-Canada-2.0",
-                "OGL-UK-1.0",
-                "OGL-UK-2.0",
-                "OGL-UK-3.0",
-                "OGTSL",
-                "OLDAP-1.1",
-                "OLDAP-1.2",
-                "OLDAP-1.3",
-                "OLDAP-1.4",
-                "OLDAP-2.0",
-                "OLDAP-2.0.1",
-                "OLDAP-2.1",
-                "OLDAP-2.2",
-                "OLDAP-2.2.1",
-                "OLDAP-2.2.2",
-                "OLDAP-2.3",
-                "OLDAP-2.4",
-                "OLDAP-2.5",
-                "OLDAP-2.6",
-                "OLDAP-2.7",
-                "OLDAP-2.8",
-                "OLFL-1.3",
-                "OML",
-                "OpenPBS-2.3",
-                "OpenSSL",
-                "OPL-1.0",
-                "OPL-UK-3.0",
-                "OPUBL-1.0",
-                "OSET-PL-2.1",
-                "OSL-1.0",
-                "OSL-1.1",
-                "OSL-2.0",
-                "OSL-2.1",
-                "OSL-3.0",
-                "Parity-6.0.0",
-                "Parity-7.0.0",
-                "PDDL-1.0",
-                "PHP-3.0",
-                "PHP-3.01",
-                "Plexus",
-                "PolyForm-Noncommercial-1.0.0",
-                "PolyForm-Small-Business-1.0.0",
-                "PostgreSQL",
-                "PSF-2.0",
-                "psfrag",
-                "psutils",
-                "Python-2.0",
-                "Python-2.0.1",
-                "Qhull",
-                "QPL-1.0",
-                "QPL-1.0-INRIA-2004",
-                "Rdisc",
-                "RHeCos-1.1",
-                "RPL-1.1",
-                "RPL-1.5",
-                "RPSL-1.0",
-                "RSA-MD",
-                "RSCPL",
-                "Ruby",
-                "SAX-PD",
-                "Saxpath",
-                "SCEA",
-                "SchemeReport",
-                "Sendmail",
-                "Sendmail-8.23",
-                "SGI-B-1.0",
-                "SGI-B-1.1",
-                "SGI-B-2.0",
-                "SGP4",
-                "SHL-0.5",
-                "SHL-0.51",
-                "SimPL-2.0",
-                "SISSL",
-                "SISSL-1.2",
-                "Sleepycat",
-                "SMLNJ",
-                "SMPPL",
-                "SNIA",
-                "snprintf",
-                "Spencer-86",
-                "Spencer-94",
-                "Spencer-99",
-                "SPL-1.0",
-                "SSH-OpenSSH",
-                "SSH-short",
-                "SSPL-1.0",
-                "SugarCRM-1.1.3",
-                "SunPro",
-                "SWL",
-                "Symlinks",
-                "TAPR-OHL-1.0",
-                "TCL",
-                "TCP-wrappers",
-                "TermReadKey",
-                "TMate",
-                "TORQUE-1.1",
-                "TOSL",
-                "TPDL",
-                "TPL-1.0",
-                "TTWL",
-                "TU-Berlin-1.0",
-                "TU-Berlin-2.0",
-                "UCAR",
-                "UCL-1.0",
-                "Unicode-DFS-2015",
-                "Unicode-DFS-2016",
-                "Unicode-TOU",
-                "UnixCrypt",
-                "Unlicense",
-                "UPL-1.0",
-                "Vim",
-                "VOSTROM",
-                "VSL-1.0",
-                "W3C",
-                "W3C-19980720",
-                "W3C-20150513",
-                "w3m",
-                "Watcom-1.0",
-                "Widget-Workshop",
-                "Wsuipa",
-                "WTFPL",
-                "X11",
-                "X11-distribute-modifications-variant",
-                "Xdebug-1.03",
-                "Xerox",
-                "Xfig",
-                "XFree86-1.1",
-                "xinetd",
-                "xlock",
-                "Xnet",
-                "xpp",
-                "XSkat",
-                "YPL-1.0",
-                "YPL-1.1",
-                "Zed",
-                "Zend-2.0",
-                "Zimbra-1.3",
-                "Zimbra-1.4",
-                "Zlib",
-                "zlib-acknowledgement",
-                "ZPL-1.1",
-                "ZPL-2.0",
-                "ZPL-2.1"
-            ],
-            "title": "LicenseId",
-            "type": "string"
         },
         "Maintainer": {
             "additionalProperties": false,
@@ -1424,7 +929,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__AfterValidator__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -1433,7 +938,8 @@
                     "default": null,
                     "examples": [
                         "0000-0001-2345-6789"
-                    ]
+                    ],
+                    "title": "Orcid"
                 },
                 "name": {
                     "anyOf": [
@@ -1525,7 +1031,7 @@
                             "const": "arbitrary unit"
                         },
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__BeforeValidator__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -1621,19 +1127,62 @@
             "title": "RunMode",
             "type": "object"
         },
-        "Sha256": {
-            "description": "SHA-256 hash value",
-            "maxLength": 64,
-            "minLength": 64,
-            "title": "Sha256",
-            "type": "string"
+        "ScaleLinearAlongAxisKwargs": {
+            "additionalProperties": false,
+            "properties": {
+                "axis": {
+                    "examples": [
+                        "channel"
+                    ],
+                    "title": "Axis",
+                    "type": "string"
+                },
+                "gain": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "items": {
+                                "type": "number"
+                            },
+                            "minItems": 1,
+                            "type": "array"
+                        }
+                    ],
+                    "default": 1.0,
+                    "title": "Gain"
+                },
+                "offset": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "items": {
+                                "type": "number"
+                            },
+                            "minItems": 1,
+                            "type": "array"
+                        }
+                    ],
+                    "default": 0.0,
+                    "title": "Offset"
+                }
+            },
+            "required": [
+                "axis"
+            ],
+            "title": "ScaleLinearAlongAxisKwargs",
+            "type": "object"
         },
         "SizeReference": {
             "additionalProperties": false,
             "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
             "properties": {
                 "tensor_id": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
+                    "title": "Tensor Id",
+                    "type": "string"
                 },
                 "axis_id": {
                     "title": "Axis Id",
@@ -2077,42 +1626,6 @@
             "title": "Uploader",
             "type": "object"
         },
-        "ValidatedString_Annotated_str__AfterValidator__": {
-            "title": "ValidatedString[Annotated[str, AfterValidator]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__": {
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___": {
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__": {
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__": {
-            "minLength": 1,
-            "title": "ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__StringConstraints__": {
-            "pattern": "^10\\.[0-9]{4}.+$",
-            "title": "ValidatedString[Annotated[str, StringConstraints]]",
-            "type": "string"
-        },
-        "ValidatedString_Annotated_str__StringConstraints__BeforeValidator__": {
-            "minLength": 1,
-            "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((\u00b7(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
-            "title": "ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]",
-            "type": "string"
-        },
         "Version": {
             "anyOf": [
                 {
@@ -2188,7 +1701,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -2236,7 +1749,7 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "title": "Cite",
                     "type": "array"
@@ -2264,13 +1777,14 @@
                 "download_url": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Download Url"
                 },
                 "git_repo": {
                     "anyOf": [
@@ -2290,6 +1804,11 @@
                 "icon": {
                     "anyOf": [
                         {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2297,16 +1816,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -2359,7 +1873,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -2435,7 +1949,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -2457,12 +1971,6 @@
                 "license": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2471,7 +1979,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
@@ -2485,13 +1993,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "source": {
                     "anyOf": [
@@ -2503,7 +2012,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -2548,7 +2057,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -2593,27 +2102,20 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "config": {
                     "additionalProperties": {
@@ -2638,7 +2140,7 @@
                 "git_repo": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2647,10 +2149,16 @@
                     "default": null,
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ]
+                    ],
+                    "title": "Git Repo"
                 },
                 "icon": {
                     "anyOf": [
+                        {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
                         {
                             "format": "file-path",
                             "type": "string"
@@ -2659,16 +2167,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -2765,7 +2268,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2793,24 +2296,26 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "parent": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Parent"
                 },
                 "source": {
                     "anyOf": [
@@ -2822,7 +2327,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -2870,7 +2375,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -2918,7 +2423,7 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "title": "Cite",
                     "type": "array"
@@ -2946,13 +2451,14 @@
                 "download_url": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Download Url"
                 },
                 "git_repo": {
                     "anyOf": [
@@ -2972,6 +2478,11 @@
                 "icon": {
                     "anyOf": [
                         {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2979,16 +2490,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -3041,7 +2547,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3117,7 +2623,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3139,12 +2645,6 @@
                 "license": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3153,7 +2653,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
@@ -3167,13 +2667,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "collection": {
                     "items": {
@@ -3206,7 +2707,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3224,13 +2725,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 }
             },
             "title": "CollectionEntry",
@@ -3257,7 +2759,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -3302,27 +2804,20 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "config": {
                     "additionalProperties": {
@@ -3347,7 +2842,7 @@
                 "git_repo": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -3356,10 +2851,16 @@
                     "default": null,
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ]
+                    ],
+                    "title": "Git Repo"
                 },
                 "icon": {
                     "anyOf": [
+                        {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
                         {
                             "format": "file-path",
                             "type": "string"
@@ -3368,16 +2869,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -3474,7 +2970,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -3502,24 +2998,26 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "parent": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Parent"
                 },
                 "collection": {
                     "items": {
@@ -3555,7 +3053,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3573,13 +3071,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 }
             },
             "title": "CollectionEntry",
@@ -3606,7 +3105,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -3654,7 +3153,7 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "title": "Cite",
                     "type": "array"
@@ -3682,13 +3181,14 @@
                 "download_url": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Download Url"
                 },
                 "git_repo": {
                     "anyOf": [
@@ -3708,6 +3208,11 @@
                 "icon": {
                     "anyOf": [
                         {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -3715,16 +3220,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -3777,7 +3277,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3853,7 +3353,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -3875,12 +3375,6 @@
                 "license": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3889,7 +3383,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
@@ -3903,24 +3397,26 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "source": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Source"
                 }
             },
             "required": [
@@ -3935,7 +3431,8 @@
             "description": "Reference to a bioimage.io dataset.",
             "properties": {
                 "id": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                    "title": "Id",
+                    "type": "string"
                 },
                 "version_number": {
                     "anyOf": [
@@ -3977,7 +3474,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -4022,27 +3519,20 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "config": {
                     "additionalProperties": {
@@ -4067,7 +3557,7 @@
                 "git_repo": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -4076,10 +3566,16 @@
                     "default": null,
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ]
+                    ],
+                    "title": "Git Repo"
                 },
                 "icon": {
                     "anyOf": [
+                        {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
                         {
                             "format": "file-path",
                             "type": "string"
@@ -4088,16 +3584,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -4194,7 +3685,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -4222,35 +3713,38 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "parent": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Parent"
                 },
                 "source": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Source"
                 }
             },
             "required": [
@@ -4268,7 +3762,8 @@
             "description": "Reference to a bioimage.io dataset.",
             "properties": {
                 "id": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                    "title": "Id",
+                    "type": "string"
                 },
                 "version_number": {
                     "title": "Version Number",
@@ -4280,79 +3775,6 @@
                 "version_number"
             ],
             "title": "LinkedDataset",
-            "type": "object"
-        },
-        "bioimageio__spec__generic__v0_2__CiteEntry": {
-            "additionalProperties": false,
-            "properties": {
-                "text": {
-                    "title": "Text",
-                    "type": "string"
-                },
-                "doi": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Url"
-                }
-            },
-            "required": [
-                "text"
-            ],
-            "title": "CiteEntry",
-            "type": "object"
-        },
-        "bioimageio__spec__generic__v0_3__CiteEntry": {
-            "additionalProperties": false,
-            "properties": {
-                "text": {
-                    "title": "Text",
-                    "type": "string"
-                },
-                "doi": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__StringConstraints__"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "url": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/HttpUrl"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                }
-            },
-            "required": [
-                "text"
-            ],
-            "title": "CiteEntry",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__BinarizeDescr": {
@@ -4397,7 +3819,8 @@
             "additionalProperties": false,
             "properties": {
                 "name": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___"
+                    "title": "Name",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -4535,7 +3958,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -4549,13 +3972,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -4647,7 +4071,8 @@
             "description": "Reference to a bioimage.io model.",
             "properties": {
                 "id": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                    "title": "Id",
+                    "type": "string"
                 },
                 "version_number": {
                     "anyOf": [
@@ -4689,7 +4114,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -4738,7 +4163,7 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "title": "Cite",
                     "type": "array"
@@ -4766,13 +4191,14 @@
                 "download_url": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Download Url"
                 },
                 "git_repo": {
                     "anyOf": [
@@ -4792,6 +4218,11 @@
                 "icon": {
                     "anyOf": [
                         {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -4799,16 +4230,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -4861,7 +4287,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -4928,13 +4354,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "documentation": {
                     "anyOf": [
@@ -4946,7 +4373,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -4970,20 +4397,13 @@
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "outputs": {
                     "items": {
@@ -5033,7 +4453,7 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "uri",
@@ -5057,7 +4477,7 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "uri",
@@ -5081,7 +4501,7 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "uri",
@@ -5106,7 +4526,7 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "uri",
@@ -5171,7 +4591,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -5185,13 +4605,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -5284,7 +4705,8 @@
             "additionalProperties": false,
             "properties": {
                 "name": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___"
+                    "title": "Name",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -5427,7 +4849,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -5441,13 +4863,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -5536,14 +4959,15 @@
                 "architecture_sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "The SHA256 of the architecture source file, if the architecture is not defined in a module listed in `dependencies`\nYou can drag and drop your file to this\n[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.\nOr you can generate a SHA256 checksum with Python's `hashlib`,\n[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."
+                    "description": "The SHA256 of the architecture source file, if the architecture is not defined in a module listed in `dependencies`\nYou can drag and drop your file to this\n[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.\nOr you can generate a SHA256 checksum with Python's `hashlib`,\n[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).",
+                    "title": "Architecture Sha256"
                 },
                 "kwargs": {
                     "title": "Kwargs",
@@ -5670,7 +5094,8 @@
                     "type": "string"
                 },
                 "reference_tensor": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___"
+                    "title": "Reference Tensor",
+                    "type": "string"
                 },
                 "axes": {
                     "anyOf": [
@@ -5774,13 +5199,14 @@
                 "reference_tensor": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Reference Tensor"
                 }
             },
             "required": [
@@ -5816,7 +5242,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -5830,13 +5256,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -5936,7 +5363,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -5950,13 +5377,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -6056,7 +5484,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -6070,13 +5498,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "attachments": {
                     "anyOf": [
@@ -6351,7 +5780,15 @@
                     "title": "Id"
                 },
                 "kwargs": {
-                    "$ref": "#/$defs/BinarizeKwargs"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/BinarizeKwargs"
+                        },
+                        {
+                            "$ref": "#/$defs/BinarizeAlongAxisKwargs"
+                        }
+                    ],
+                    "title": "Kwargs"
                 }
             },
             "required": [
@@ -6383,12 +5820,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
-                        }
-                    ],
-                    "default": "input"
+                    "default": "input",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -6550,7 +5984,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -6564,13 +5998,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -6626,7 +6061,8 @@
             "description": "Reference to a bioimage.io model.",
             "properties": {
                 "id": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                    "title": "Id",
+                    "type": "string"
                 },
                 "version_number": {
                     "title": "Version Number",
@@ -6661,7 +6097,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -6706,27 +6142,20 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "config": {
                     "additionalProperties": {
@@ -6751,7 +6180,7 @@
                 "git_repo": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -6760,10 +6189,16 @@
                     "default": null,
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ]
+                    ],
+                    "title": "Git Repo"
                 },
                 "icon": {
                     "anyOf": [
+                        {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
                         {
                             "format": "file-path",
                             "type": "string"
@@ -6772,16 +6207,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -6876,13 +6306,14 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "documentation": {
                     "anyOf": [
@@ -6894,7 +6325,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         }
                     ],
                     "examples": [
@@ -6954,7 +6385,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-20T20:44:48.164037"
+                    "default": "2024-03-21T16:15:06.207043"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7002,7 +6433,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -7016,13 +6447,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -7079,12 +6511,9 @@
             "additionalProperties": false,
             "properties": {
                 "id": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
-                        }
-                    ],
-                    "default": "output"
+                    "default": "output",
+                    "title": "Id",
+                    "type": "string"
                 },
                 "description": {
                     "default": "",
@@ -7245,7 +6674,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -7259,13 +6688,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -7349,7 +6779,15 @@
                     "title": "Id"
                 },
                 "kwargs": {
-                    "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearKwargs"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearKwargs"
+                        },
+                        {
+                            "$ref": "#/$defs/ScaleLinearAlongAxisKwargs"
+                        }
+                    ],
+                    "title": "Kwargs"
                 }
             },
             "required": [
@@ -7361,52 +6799,15 @@
         "bioimageio__spec__model__v0_5__ScaleLinearKwargs": {
             "additionalProperties": false,
             "properties": {
-                "axis": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "channel"
-                    ],
-                    "title": "Axis"
-                },
                 "gain": {
-                    "anyOf": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "items": {
-                                "type": "number"
-                            },
-                            "minItems": 1,
-                            "type": "array"
-                        }
-                    ],
                     "default": 1.0,
-                    "title": "Gain"
+                    "title": "Gain",
+                    "type": "number"
                 },
                 "offset": {
-                    "anyOf": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "items": {
-                                "type": "number"
-                            },
-                            "minItems": 1,
-                            "type": "array"
-                        }
-                    ],
                     "default": 0.0,
-                    "title": "Offset"
+                    "title": "Offset",
+                    "type": "number"
                 }
             },
             "title": "ScaleLinearKwargs",
@@ -7436,7 +6837,8 @@
             "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
             "properties": {
                 "reference_tensor": {
-                    "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
+                    "title": "Reference Tensor",
+                    "type": "string"
                 },
                 "axes": {
                     "anyOf": [
@@ -7542,13 +6944,14 @@
                 "reference_tensor": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__AfterValidator__AfterValidator__Annotated_TypeVar__Predicate___MaxLen__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Reference Tensor"
                 }
             },
             "title": "ScaleRangeKwargs",
@@ -7580,7 +6983,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -7594,13 +6997,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -7664,7 +7068,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -7678,13 +7082,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -7759,7 +7164,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -7773,13 +7178,14 @@
                 "sha256": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Sha256"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Sha256"
                 },
                 "authors": {
                     "anyOf": [
@@ -7979,7 +7385,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -8027,7 +7433,7 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "title": "Cite",
                     "type": "array"
@@ -8055,13 +7461,14 @@
                 "download_url": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Download Url"
                 },
                 "git_repo": {
                     "anyOf": [
@@ -8081,6 +7488,11 @@
                 "icon": {
                     "anyOf": [
                         {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -8088,16 +7500,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -8150,7 +7557,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -8226,7 +7633,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
@@ -8248,12 +7655,6 @@
                 "license": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -8262,7 +7663,7 @@
                     ],
                     "default": null,
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
@@ -8276,18 +7677,19 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "source": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -8329,7 +7731,7 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/HttpUrl"
+                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -8374,27 +7776,20 @@
                 },
                 "cite": {
                     "items": {
-                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
+                        "$ref": "#/$defs/CiteEntry"
                     },
                     "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
                 "license": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LicenseId"
-                        },
-                        {
-                            "$ref": "#/$defs/DeprecatedLicenseId"
-                        }
-                    ],
                     "examples": [
-                        "CC-BY-4.0",
+                        "CC0-1.0",
                         "MIT",
                         "BSD-2-Clause"
                     ],
-                    "title": "License"
+                    "title": "License",
+                    "type": "string"
                 },
                 "config": {
                     "additionalProperties": {
@@ -8419,7 +7814,7 @@
                 "git_repo": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -8428,10 +7823,16 @@
                     "default": null,
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ]
+                    ],
+                    "title": "Git Repo"
                 },
                 "icon": {
                     "anyOf": [
+                        {
+                            "maxLength": 2,
+                            "minLength": 1,
+                            "type": "string"
+                        },
                         {
                             "format": "file-path",
                             "type": "string"
@@ -8440,16 +7841,11 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "uri",
                             "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -8546,7 +7942,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -8574,29 +7970,31 @@
                 "id": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Id"
                 },
                 "parent": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ValidatedString_Annotated_str__MinLen__Annotated_TypeVar__Predicate___Predicate__"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "title": "Parent"
                 },
                 "source": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/HttpUrl"
+                            "type": "string"
                         },
                         {
                             "format": "file-path",

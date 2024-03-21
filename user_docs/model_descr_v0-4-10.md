@@ -49,7 +49,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 [*Example:*](#authorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `authors.i.name`<sub> str</sub>
 
@@ -94,16 +94,10 @@ Union of
 
 
 **InputTensorDescr:**
-### `inputs.i.name`<sub> _internal.validated_string.Valid</sub>
+### `inputs.i.name`<sub> TensorName</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
-
-</details>
 
 ### `inputs.i.description`<sub> str</sub> ≝ ``
 
@@ -336,16 +330,10 @@ Union[float, Sequence[float] (MinLen(min_length=1)), None]
 
 
 
-##### `inputs.i.preprocessing.i.kwargs.reference_tensor`<sub> Optional</sub> ≝ `None`
+##### `inputs.i.preprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorName]</sub> ≝ `None`
 
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]]
-
-</details>
 
 </details>
 
@@ -355,7 +343,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 ## `license`<sub> Union</sub>
 
-[*Examples:*](#license) ['CC-BY-4.0', 'MIT', 'BSD-2-Clause']
+[*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, str]
@@ -374,16 +362,10 @@ Union[_internal.license_id.LicenseId, str]
 
 
 **OutputTensorDescr:**
-### `outputs.i.name`<sub> _internal.validated_string.Valid</sub>
+### `outputs.i.name`<sub> TensorName</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
-
-</details>
 
 ### `outputs.i.description`<sub> str</sub> ≝ ``
 
@@ -416,16 +398,10 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 
 
 **ImplicitOutputShape:**
-#### `outputs.i.shape.reference_tensor`<sub> _internal.validated_string.Valid</sub>
+#### `outputs.i.shape.reference_tensor`<sub> TensorName</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
-
-</details>
 
 #### `outputs.i.shape.scale`<sub> Sequence[Optional[float]]</sub>
 
@@ -641,16 +617,10 @@ Union[float, Sequence[float] (MinLen(min_length=1)), None]
 
 
 
-##### `outputs.i.postprocessing.i.kwargs.reference_tensor`<sub> Optional</sub> ≝ `None`
+##### `outputs.i.postprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorName]</sub> ≝ `None`
 
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]]
-
-</details>
 
 </details>
 
@@ -674,16 +644,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 
 
-##### `outputs.i.postprocessing.i.kwargs.reference_tensor`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.i.postprocessing.i.kwargs.reference_tensor`<sub> TensorName</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]
-
-</details>
 
 ##### `outputs.i.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
 
@@ -716,7 +680,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -733,7 +697,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -803,7 +767,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -833,7 +797,7 @@ Sequence of Union of
 [*Example:*](#weightskeras_hdf5authorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.keras_hdf5.authors.i.name`<sub> str</sub>
 
@@ -920,7 +884,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -950,7 +914,7 @@ Sequence of Union of
 [*Example:*](#weightsonnxauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.onnx.authors.i.name`<sub> str</sub>
 
@@ -1036,7 +1000,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1066,7 +1030,7 @@ Sequence of Union of
 [*Example:*](#weightspytorch_state_dictauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.pytorch_state_dict.authors.i.name`<sub> str</sub>
 
@@ -1174,7 +1138,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1204,7 +1168,7 @@ Sequence of Union of
 [*Example:*](#weightstensorflow_jsauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.tensorflow_js.authors.i.name`<sub> str</sub>
 
@@ -1291,7 +1255,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1321,7 +1285,7 @@ Sequence of Union of
 [*Example:*](#weightstensorflow_saved_model_bundleauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.tensorflow_saved_model_bundle.authors.i.name`<sub> str</sub>
 
@@ -1408,7 +1372,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1438,7 +1402,7 @@ Sequence of Union of
 [*Example:*](#weightstorchscriptauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.torchscript.authors.i.name`<sub> str</sub>
 
@@ -1497,7 +1461,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1517,11 +1481,10 @@ Sequence of Union of
 
 
 
-### `cite.i.doi`<sub> Optional</sub> ≝ `None`
+### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 ### `cite.i.url`<sub> Optional[str]</sub> ≝ `None`
 
@@ -1547,10 +1510,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1568,29 +1531,28 @@ Sequence of Union of
 ## `icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, str*, None]
+<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
 
 </summary>
 
 Union of
+- str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
   - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
-- str (Len(min_length=1, max_length=2))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
 </details>
 
-## `id`<sub> Optional</sub> ≝ `None`
+## `id`<sub> Optional[ModelId]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
 
 ## `id_emoji`<sub> Optional</sub> ≝ `None`
 
@@ -1628,7 +1590,7 @@ Optional[str (Len(min_length=1, max_length=1))]
 [*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `maintainers.i.name`<sub> Optional</sub> ≝ `None`
 
@@ -1667,7 +1629,7 @@ Optional[str (AfterValidator(_remove_slashes))]
 [*Example:*](#packaged_byiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `packaged_by.i.name`<sub> str</sub>
 
@@ -1690,11 +1652,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidato
 
 
 **LinkedModel:**
-### `parent.id`<sub> _internal.validated_string.Valid</sub>
+### `parent.id`<sub> ModelId</sub>
 
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]
 
 ### `parent.version_number`<sub> Optional[int]</sub> ≝ `None`
 
@@ -1754,7 +1715,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1771,7 +1732,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1790,11 +1751,10 @@ Sequence of Union of
 
 
 **dataset.v0_2.LinkedDataset:**
-### `training_data.id`<sub> _internal.validated_string.Valid</sub>
+### `training_data.id`<sub> dataset.v0_2.DatasetId</sub>
 
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]
 
 ### `training_data.version_number`<sub> Optional[int]</sub> ≝ `None`
 
@@ -1823,10 +1783,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1860,7 +1820,7 @@ Optional[str (Len(min_length=1, max_length=1))]
 [*Example:*](#training_dataauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 #### `training_data.authors.i.name`<sub> str</sub>
 
@@ -1896,7 +1856,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1916,11 +1876,10 @@ Sequence of Union of
 
 
 
-#### `training_data.cite.i.doi`<sub> Optional</sub> ≝ `None`
+#### `training_data.cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `training_data.cite.i.url`<sub> Optional[str]</sub> ≝ `None`
 
@@ -1949,19 +1908,19 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 ### `training_data.icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, str*, None]
+<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
 
 </summary>
 
 Union of
+- str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
   - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
-- str (Len(min_length=1, max_length=2))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2019,7 +1978,7 @@ Optional[str (AfterValidator(_remove_slashes))]
 [*Example:*](#training_datamaintainersiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 #### `training_data.maintainers.i.name`<sub> Optional</sub> ≝ `None`
 
@@ -2088,11 +2047,23 @@ Optional[_internal.version_type.Version]
 
 
 
-#### `training_data.badges.i.icon`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+#### `training_data.badges.i.icon`<sub> Union</sub> ≝ `None`
 
 [*Example:*](#training_databadgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
+<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, Url*, None]
 
+</summary>
+
+Union of
+- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+- _internal.url.HttpUrl
+- Url (max_length=2083 allowed_schemes=['http', 'https'])
+- None
+
+
+</details>
 
 #### `training_data.badges.i.url`<sub> _internal.url.HttpUrl</sub>
 
@@ -2116,13 +2087,13 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
 ### `training_data.license`<sub> Union</sub> ≝ `None`
 
-[*Examples:*](#training_datalicense) ['CC-BY-4.0', 'MIT', 'BSD-2-Clause']
+[*Examples:*](#training_datalicense) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, str, None]
@@ -2132,11 +2103,10 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, 
 
 
 
-### `training_data.id`<sub> Optional</sub> ≝ `None`
+### `training_data.id`<sub> Optional[dataset.v0_2.DatasetId]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
 
 ### `training_data.source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
@@ -2200,7 +2170,7 @@ xy
 ### `inputs.i.preprocessing.i.kwargs.axes`
 xy
 ### `license`
-- CC-BY-4.0
+- CC0-1.0
 - MIT
 - BSD-2-Clause
 
@@ -2313,7 +2283,7 @@ https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master
 - README.md
 
 ### `training_data.license`
-- CC-BY-4.0
+- CC0-1.0
 - MIT
 - BSD-2-Clause
 

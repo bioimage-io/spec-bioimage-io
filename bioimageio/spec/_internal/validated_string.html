@@ -33,60 +33,9 @@
             <li>
                     <a class="class" href="#ValidatedString">ValidatedString</a>
                             <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, AfterValidator]]">ValidatedString[Annotated[str, AfterValidator]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, StringConstraints]]">ValidatedString[Annotated[str, StringConstraints]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[TypeVar]">ValidatedString[TypeVar]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="variable" href="#ValidatedString[Annotated[str, StringConstraints]]_">ValidatedString[Annotated[str, StringConstraints]]_</a>
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="variable" href="#ValidatedString[Annotated[str, AfterValidator]]_">ValidatedString[Annotated[str, AfterValidator]]_</a>
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]">ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]">ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]</a>
-                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#ValidatedString.root_model">root_model</a>
+                        </li>
                 </ul>
 
             </li>
@@ -111,16 +60,32 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
                         <label class="view-source-button" for="mod-validated_string-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Type</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">RootModel</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="n">S</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">ValidatedString</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">S</span><span class="p">],</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">GetCoreSchemaHandler</span><span class="p">,</span> <span class="n">RootModel</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">pydantic_core.core_schema</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="n">CoreSchema</span><span class="p">,</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="n">no_info_after_validator_function</span><span class="p">,</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="p">)</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">ValidatedString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;the pydantic root model to validate the string&quot;&quot;&quot;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="c1"># TODO: should we use a TypeAdapter instead?</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="c1"># TODO: with future py version:  RootModel[Any] -&gt; RootModel[str | &quot;literal string type&quot;]</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">_validated</span><span class="p">:</span> <span class="n">Any</span>  <span class="c1"># pyright: ignore[reportUninitializedInstanceVariable]  # initalized in __new__</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">root_model</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="n">root</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="k">return</span> <span class="n">no_info_after_validator_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handler</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -130,604 +95,110 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ValidatedString</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
+    <span class="name">ValidatedString</span><wbr>(<span class="base">builtins.str</span>):
 
                 <label class="view-source-button" for="ValidatedString-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#ValidatedString"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ValidatedString-9"><a href="#ValidatedString-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">ValidatedString</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">S</span><span class="p">],</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span id="ValidatedString-10"><a href="#ValidatedString-10"><span class="linenos">10</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="ValidatedString-11"><a href="#ValidatedString-11"><span class="linenos">11</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ValidatedString-11"><a href="#ValidatedString-11"><span class="linenos">11</span></a><span class="k">class</span> <span class="nc">ValidatedString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+</span><span id="ValidatedString-12"><a href="#ValidatedString-12"><span class="linenos">12</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="ValidatedString-13"><a href="#ValidatedString-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;the pydantic root model to validate the string&quot;&quot;&quot;</span>
+</span><span id="ValidatedString-14"><a href="#ValidatedString-14"><span class="linenos">14</span></a>    <span class="c1"># TODO: should we use a TypeAdapter instead?</span>
+</span><span id="ValidatedString-15"><a href="#ValidatedString-15"><span class="linenos">15</span></a>    <span class="c1"># TODO: with future py version:  RootModel[Any] -&gt; RootModel[str | &quot;literal string type&quot;]</span>
+</span><span id="ValidatedString-16"><a href="#ValidatedString-16"><span class="linenos">16</span></a>    <span class="n">_validated</span><span class="p">:</span> <span class="n">Any</span>  <span class="c1"># pyright: ignore[reportUninitializedInstanceVariable]  # initalized in __new__</span>
+</span><span id="ValidatedString-17"><a href="#ValidatedString-17"><span class="linenos">17</span></a>
+</span><span id="ValidatedString-18"><a href="#ValidatedString-18"><span class="linenos">18</span></a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
+</span><span id="ValidatedString-19"><a href="#ValidatedString-19"><span class="linenos">19</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+</span><span id="ValidatedString-20"><a href="#ValidatedString-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">root_model</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="n">root</span>
+</span><span id="ValidatedString-21"><a href="#ValidatedString-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="ValidatedString-22"><a href="#ValidatedString-22"><span class="linenos">22</span></a>
+</span><span id="ValidatedString-23"><a href="#ValidatedString-23"><span class="linenos">23</span></a>    <span class="nd">@classmethod</span>
+</span><span id="ValidatedString-24"><a href="#ValidatedString-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+</span><span id="ValidatedString-25"><a href="#ValidatedString-25"><span class="linenos">25</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span>
+</span><span id="ValidatedString-26"><a href="#ValidatedString-26"><span class="linenos">26</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
+</span><span id="ValidatedString-27"><a href="#ValidatedString-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="n">no_info_after_validator_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handler</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
 
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
 </div>
 
 
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString.__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString.model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString.model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString.model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString.model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString.model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString.model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString.model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString.dict" class="function">dict</dd>
-                <dd id="ValidatedString.json" class="function">json</dd>
-                <dd id="ValidatedString.parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString.parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString.parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString.from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString.construct" class="function">construct</dd>
-                <dd id="ValidatedString.copy" class="function">copy</dd>
-                <dd id="ValidatedString.schema" class="function">schema</dd>
-                <dd id="ValidatedString.schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString.validate" class="function">validate</dd>
-                <dd id="ValidatedString.update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString.model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString.model_computed_fields" class="variable">model_computed_fields</dd>
+                            <div id="ValidatedString.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[str]&#39;&gt;</span>
 
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString.root" class="variable">root</dd>
+        
+    </div>
+    <a class="headerlink" href="#ValidatedString.root_model"></a>
+    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
 
-            </div>
-                                </dl>
+
                             </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, AfterValidator]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, AfterValidator]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, AfterValidator]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, AfterValidator]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, AfterValidator]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, AfterValidator]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, StringConstraints]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, StringConstraints]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, StringConstraints]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, StringConstraints]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, StringConstraints]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[TypeVar]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[TypeVar]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[TypeVar]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[TypeVar].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[TypeVar].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[TypeVar].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[TypeVar].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[TypeVar].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[TypeVar].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[TypeVar].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[TypeVar].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[TypeVar].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[TypeVar].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[TypeVar].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[TypeVar].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[TypeVar].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[TypeVar].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[TypeVar].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[TypeVar].dict" class="function">dict</dd>
-                <dd id="ValidatedString[TypeVar].json" class="function">json</dd>
-                <dd id="ValidatedString[TypeVar].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[TypeVar].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[TypeVar].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[TypeVar].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[TypeVar].construct" class="function">construct</dd>
-                <dd id="ValidatedString[TypeVar].copy" class="function">copy</dd>
-                <dd id="ValidatedString[TypeVar].schema" class="function">schema</dd>
-                <dd id="ValidatedString[TypeVar].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[TypeVar].validate" class="function">validate</dd>
-                <dd id="ValidatedString[TypeVar].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[TypeVar].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[TypeVar].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[TypeVar].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, StringConstraints]]_">
-                    <div class="attr variable">
-            <span class="name">ValidatedString[Annotated[str, StringConstraints]]_</span>        =
-<input id="ValidatedString[Annotated[str, StringConstraints]]_-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ValidatedString[Annotated[str, StringConstraints]]_-view-value"></label><span class="default_value">&lt;class &#39;<a href="#ValidatedString">ValidatedString</a>[Annotated[str, StringConstraints]]&#39;&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, StringConstraints]]_"></a>
-    
-    
-
-                </section>
-                <section id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate]]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, AfterValidator]]_">
-                    <div class="attr variable">
-            <span class="name">ValidatedString[Annotated[str, AfterValidator]]_</span>        =
-<span class="default_value">&lt;class &#39;<a href="#ValidatedString">ValidatedString</a>[Annotated[str, AfterValidator]]&#39;&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, AfterValidator]]_"></a>
-    
-    
-
-                </section>
-                <section id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, StringConstraints, BeforeValidator]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]].root" class="variable">root</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]</span><wbr>(<span class="base">pydantic.main.BaseModel</span>, <span class="base">typing.Generic[~RootModelRootType]</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]"></a>
-    
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.6/concepts/models/#rootmodel-and-custom-root-types</a></p>
-
-<p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
-
-<p>Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.</p>
-</div>
-
-
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].__init__" class="function">BaseModel</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_config" class="variable">model_config</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_extra" class="variable">model_extra</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_construct" class="function">model_construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_copy" class="function">model_copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_dump" class="function">model_dump</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_post_init" class="function">model_post_init</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_validate" class="function">model_validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].dict" class="function">dict</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].json" class="function">json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].parse_obj" class="function">parse_obj</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].parse_raw" class="function">parse_raw</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].parse_file" class="function">parse_file</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].from_orm" class="function">from_orm</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].construct" class="function">construct</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].copy" class="function">copy</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].schema" class="function">schema</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].schema_json" class="function">schema_json</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].validate" class="function">validate</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].update_forward_refs" class="function">update_forward_refs</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_fields" class="variable">model_fields</dd>
-                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].model_computed_fields" class="variable">model_computed_fields</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel</dt>
-                                <dd id="ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]].root" class="variable">root</dd>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="ValidatedString.encode" class="function">encode</dd>
+                <dd id="ValidatedString.replace" class="function">replace</dd>
+                <dd id="ValidatedString.split" class="function">split</dd>
+                <dd id="ValidatedString.rsplit" class="function">rsplit</dd>
+                <dd id="ValidatedString.join" class="function">join</dd>
+                <dd id="ValidatedString.capitalize" class="function">capitalize</dd>
+                <dd id="ValidatedString.casefold" class="function">casefold</dd>
+                <dd id="ValidatedString.title" class="function">title</dd>
+                <dd id="ValidatedString.center" class="function">center</dd>
+                <dd id="ValidatedString.count" class="function">count</dd>
+                <dd id="ValidatedString.expandtabs" class="function">expandtabs</dd>
+                <dd id="ValidatedString.find" class="function">find</dd>
+                <dd id="ValidatedString.partition" class="function">partition</dd>
+                <dd id="ValidatedString.index" class="function">index</dd>
+                <dd id="ValidatedString.ljust" class="function">ljust</dd>
+                <dd id="ValidatedString.lower" class="function">lower</dd>
+                <dd id="ValidatedString.lstrip" class="function">lstrip</dd>
+                <dd id="ValidatedString.rfind" class="function">rfind</dd>
+                <dd id="ValidatedString.rindex" class="function">rindex</dd>
+                <dd id="ValidatedString.rjust" class="function">rjust</dd>
+                <dd id="ValidatedString.rstrip" class="function">rstrip</dd>
+                <dd id="ValidatedString.rpartition" class="function">rpartition</dd>
+                <dd id="ValidatedString.splitlines" class="function">splitlines</dd>
+                <dd id="ValidatedString.strip" class="function">strip</dd>
+                <dd id="ValidatedString.swapcase" class="function">swapcase</dd>
+                <dd id="ValidatedString.translate" class="function">translate</dd>
+                <dd id="ValidatedString.upper" class="function">upper</dd>
+                <dd id="ValidatedString.startswith" class="function">startswith</dd>
+                <dd id="ValidatedString.endswith" class="function">endswith</dd>
+                <dd id="ValidatedString.removeprefix" class="function">removeprefix</dd>
+                <dd id="ValidatedString.removesuffix" class="function">removesuffix</dd>
+                <dd id="ValidatedString.isascii" class="function">isascii</dd>
+                <dd id="ValidatedString.islower" class="function">islower</dd>
+                <dd id="ValidatedString.isupper" class="function">isupper</dd>
+                <dd id="ValidatedString.istitle" class="function">istitle</dd>
+                <dd id="ValidatedString.isspace" class="function">isspace</dd>
+                <dd id="ValidatedString.isdecimal" class="function">isdecimal</dd>
+                <dd id="ValidatedString.isdigit" class="function">isdigit</dd>
+                <dd id="ValidatedString.isnumeric" class="function">isnumeric</dd>
+                <dd id="ValidatedString.isalpha" class="function">isalpha</dd>
+                <dd id="ValidatedString.isalnum" class="function">isalnum</dd>
+                <dd id="ValidatedString.isidentifier" class="function">isidentifier</dd>
+                <dd id="ValidatedString.isprintable" class="function">isprintable</dd>
+                <dd id="ValidatedString.zfill" class="function">zfill</dd>
+                <dd id="ValidatedString.format" class="function">format</dd>
+                <dd id="ValidatedString.format_map" class="function">format_map</dd>
+                <dd id="ValidatedString.maketrans" class="function">maketrans</dd>
 
             </div>
                                 </dl>

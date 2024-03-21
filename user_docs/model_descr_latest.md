@@ -48,7 +48,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 [*Example:*](#authorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `authors.i.name`<sub> str</sub>
 
@@ -76,11 +76,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidato
 
 
 
-### `cite.i.doi`<sub> Optional</sub> ≝ `None`
+### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 ### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
@@ -103,7 +102,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -119,16 +118,10 @@ Union of
 
 
 **InputTensorDescr:**
-### `inputs.id`<sub> _internal.validated_string.Valid</sub> ≝ `input`
+### `inputs.id`<sub> TensorId</sub> ≝ `input`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ### `inputs.description`<sub> str</sub> ≝ ``
 
@@ -185,7 +178,7 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 
 
-Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
+Sequence[_internal.types.Identifier]
 
 **IndexInputAxis:**
 #### `inputs.axes.size`<sub> Union</sub>
@@ -209,16 +202,10 @@ Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 
 **SizeReference:**
-##### `inputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -269,16 +256,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **SizeReference:**
-##### `inputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -369,16 +350,10 @@ Optional[Literal of
 
 
 **SizeReference:**
-##### `inputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `inputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `inputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -558,17 +533,8 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 #### `inputs.data.unit`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]], None]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-- None
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 **IntervalOrRatioDataDescr:**
 #### `inputs.data.type`<sub> Literal</sub> ≝ `float32`
@@ -587,16 +553,8 @@ Sequence[Optional[float], Optional[float]]
 #### `inputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit]
 
 #### `inputs.data.scale`<sub> float</sub> ≝ `1.0`
 
@@ -635,17 +593,8 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 #### `inputs.data.unit`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]], None]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-- None
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 **IntervalOrRatioDataDescr:**
 #### `inputs.data.type`<sub> Literal</sub> ≝ `float32`
@@ -664,16 +613,8 @@ Sequence[Optional[float], Optional[float]]
 #### `inputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit]
 
 #### `inputs.data.scale`<sub> float</sub> ≝ `1.0`
 
@@ -717,17 +658,29 @@ Sequence of Union of
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> model.v0_4.BinarizeKwargs</sub>
+#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>model.v0_4.BinarizeKwargs
+<details><summary>Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 </summary>
 
 
-**model.v0_4.BinarizeKwargs:**
+**BinarizeKwargs:**
 ##### `inputs.preprocessing.i.kwargs.threshold`<sub> float</sub>
 
+
+
+
+**BinarizeAlongAxisKwargs:**
+##### `inputs.preprocessing.i.kwargs.threshold`<sub> Sequence[float]</sub>
+
+
+
+
+##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
+
+[*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
 
 
@@ -775,10 +728,11 @@ Sequence of Union of
 
 
 **EnsureDtypeKwargs:**
-##### `inputs.preprocessing.i.kwargs.dtype`<sub> str</sub>
+##### `inputs.preprocessing.i.kwargs.dtype`<sub> Literal</sub>
 
 
 
+Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64, bool]
 
 </details>
 
@@ -788,21 +742,31 @@ Sequence of Union of
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> ScaleLinearKwargs</sub>
+#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>ScaleLinearKwargs
+<details><summary>Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 </summary>
 
 
 **ScaleLinearKwargs:**
-##### `inputs.preprocessing.i.kwargs.axis`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.i.kwargs.gain`<sub> float</sub> ≝ `1.0`
+
+
+
+
+##### `inputs.preprocessing.i.kwargs.offset`<sub> float</sub> ≝ `0.0`
+
+
+
+
+**ScaleLinearAlongAxisKwargs:**
+##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
 
 [*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7f4d231b91c0>))]
 
 ##### `inputs.preprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -831,35 +795,41 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 
 Literal[fixed_zero_mean_unit_variance]
 
-#### `inputs.preprocessing.i.kwargs`<sub> FixedZeroMeanUnitVarianceKwargs</sub>
+#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>FixedZeroMeanUnitVarianceKwargs
+<details><summary>Union[FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs]
 
 </summary>
 
 
 **FixedZeroMeanUnitVarianceKwargs:**
-##### `inputs.preprocessing.i.kwargs.mean`<sub> Union</sub>
-
-[*Examples:*](#inputspreprocessingikwargsmean) [3.14, (1.1, -2.2, 3.3)]
+##### `inputs.preprocessing.i.kwargs.mean`<sub> float</sub>
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
-
-##### `inputs.preprocessing.i.kwargs.std`<sub> Union</sub>
-
-[*Examples:*](#inputspreprocessingikwargsstd) [1.05, (0.1, 0.2, 0.3)]
 
 
-Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1))]
+##### `inputs.preprocessing.i.kwargs.std`<sub> float</sub>
 
-##### `inputs.preprocessing.i.kwargs.axis`<sub> Optional</sub> ≝ `None`
+
+
+
+**FixedZeroMeanUnitVarianceAlongAxisKwargs:**
+##### `inputs.preprocessing.i.kwargs.mean`<sub> Sequence[float]</sub>
+
+
+
+
+##### `inputs.preprocessing.i.kwargs.std`<sub> Sequence[float (Ge(ge=1e-06))]</sub>
+
+
+
+
+##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
 
 [*Examples:*](#inputspreprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7f4d231b91c0>))]
 
 </details>
 
@@ -929,16 +899,10 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 
 
-##### `inputs.preprocessing.i.kwargs.reference_tensor`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
 
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]
-
-</details>
 
 </details>
 
@@ -948,7 +912,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 ## `license`<sub> Union</sub>
 
-[*Examples:*](#license) ['CC-BY-4.0', 'MIT', 'BSD-2-Clause']
+[*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
@@ -967,16 +931,10 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 
 
 **OutputTensorDescr:**
-### `outputs.id`<sub> _internal.validated_string.Valid</sub> ≝ `output`
+### `outputs.id`<sub> TensorId</sub> ≝ `output`
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ### `outputs.description`<sub> str</sub> ≝ ``
 
@@ -1033,7 +991,7 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 
 
-Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]]
+Sequence[_internal.types.Identifier]
 
 **IndexOutputAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `index`
@@ -1061,16 +1019,10 @@ Sequence[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 
 **SizeReference:**
-##### `outputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -1106,16 +1058,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **SizeReference:**
-##### `outputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -1200,16 +1146,10 @@ Optional[Literal of
 
 
 **SizeReference:**
-##### `outputs.axes.size.tensor_id`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.axes.size.tensor_id`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
 
@@ -1394,17 +1334,8 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 #### `outputs.data.unit`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]], None]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-- None
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 **IntervalOrRatioDataDescr:**
 #### `outputs.data.type`<sub> Literal</sub> ≝ `float32`
@@ -1423,16 +1354,8 @@ Sequence[Optional[float], Optional[float]]
 #### `outputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit]
 
 #### `outputs.data.scale`<sub> float</sub> ≝ `1.0`
 
@@ -1471,17 +1394,8 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 #### `outputs.data.unit`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]], None]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-- None
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 **IntervalOrRatioDataDescr:**
 #### `outputs.data.type`<sub> Literal</sub> ≝ `float32`
@@ -1500,16 +1414,8 @@ Sequence[Optional[float], Optional[float]]
 #### `outputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
 
-<details><summary>Union[Literal[arbitrary unit], _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]]
 
-</summary>
-
-Union of
-- Literal[arbitrary unit]
-- _internal.validated_string.ValidatedString[Annotated[str, StringConstraints, BeforeValidator]]
-
-
-</details>
+Union[Literal[arbitrary unit], _internal.types.SiUnit]
 
 #### `outputs.data.scale`<sub> float</sub> ≝ `1.0`
 
@@ -1549,17 +1455,29 @@ Sequence of Union of
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> model.v0_4.BinarizeKwargs</sub>
+#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>model.v0_4.BinarizeKwargs
+<details><summary>Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 </summary>
 
 
-**model.v0_4.BinarizeKwargs:**
+**BinarizeKwargs:**
 ##### `outputs.postprocessing.i.kwargs.threshold`<sub> float</sub>
 
+
+
+
+**BinarizeAlongAxisKwargs:**
+##### `outputs.postprocessing.i.kwargs.threshold`<sub> Sequence[float]</sub>
+
+
+
+
+##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
+
+[*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
 
 
@@ -1607,10 +1525,11 @@ Sequence of Union of
 
 
 **EnsureDtypeKwargs:**
-##### `outputs.postprocessing.i.kwargs.dtype`<sub> str</sub>
+##### `outputs.postprocessing.i.kwargs.dtype`<sub> Literal</sub>
 
 
 
+Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64, bool]
 
 </details>
 
@@ -1620,21 +1539,31 @@ Sequence of Union of
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> ScaleLinearKwargs</sub>
+#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>ScaleLinearKwargs
+<details><summary>Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 </summary>
 
 
 **ScaleLinearKwargs:**
-##### `outputs.postprocessing.i.kwargs.axis`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.i.kwargs.gain`<sub> float</sub> ≝ `1.0`
+
+
+
+
+##### `outputs.postprocessing.i.kwargs.offset`<sub> float</sub> ≝ `0.0`
+
+
+
+
+**ScaleLinearAlongAxisKwargs:**
+##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
 
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7f4d231b91c0>))]
 
 ##### `outputs.postprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 
@@ -1663,35 +1592,41 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 
 Literal[fixed_zero_mean_unit_variance]
 
-#### `outputs.postprocessing.i.kwargs`<sub> FixedZeroMeanUnitVarianceKwargs</sub>
+#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
 
 
-<details><summary>FixedZeroMeanUnitVarianceKwargs
+<details><summary>Union[FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs]
 
 </summary>
 
 
 **FixedZeroMeanUnitVarianceKwargs:**
-##### `outputs.postprocessing.i.kwargs.mean`<sub> Union</sub>
-
-[*Examples:*](#outputspostprocessingikwargsmean) [3.14, (1.1, -2.2, 3.3)]
+##### `outputs.postprocessing.i.kwargs.mean`<sub> float</sub>
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
-
-##### `outputs.postprocessing.i.kwargs.std`<sub> Union</sub>
-
-[*Examples:*](#outputspostprocessingikwargsstd) [1.05, (0.1, 0.2, 0.3)]
 
 
-Union[float (Ge(ge=1e-06)), Sequence[float (Ge(ge=1e-06))] (MinLen(min_length=1))]
+##### `outputs.postprocessing.i.kwargs.std`<sub> float</sub>
 
-##### `outputs.postprocessing.i.kwargs.axis`<sub> Optional</sub> ≝ `None`
+
+
+
+**FixedZeroMeanUnitVarianceAlongAxisKwargs:**
+##### `outputs.postprocessing.i.kwargs.mean`<sub> Sequence[float]</sub>
+
+
+
+
+##### `outputs.postprocessing.i.kwargs.std`<sub> Sequence[float (Ge(ge=1e-06))]</sub>
+
+
+
+
+##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
 
 [*Examples:*](#outputspostprocessingikwargsaxis) ['channel', 'index']
 
 
-Optional[AxisId (Predicate(func=<function <lambda> at 0x7f4d231b91c0>))]
 
 </details>
 
@@ -1761,16 +1696,10 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 
 
-##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
 
 
-<details><summary>Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]
 
-</summary>
-
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]]
-
-</details>
 
 </details>
 
@@ -1789,16 +1718,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, After
 
 
 **ScaleMeanVarianceKwargs:**
-##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> _internal.validated_string.Valid</sub>
+##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> TensorId</sub>
 
 
-<details><summary>_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
 
-</summary>
-
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator, Annotated[TypeVar, Predicate], MaxLen]]
-
-</details>
 
 ##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
 
@@ -1881,7 +1804,7 @@ Union of
 [*Example:*](#weightskeras_hdf5authorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.keras_hdf5.authors.i.name`<sub> str</sub>
 
@@ -1963,7 +1886,7 @@ Union of
 [*Example:*](#weightsonnxauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.onnx.authors.i.name`<sub> str</sub>
 
@@ -2045,7 +1968,7 @@ Union of
 [*Example:*](#weightspytorch_state_dictauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.pytorch_state_dict.authors.i.name`<sub> str</sub>
 
@@ -2096,12 +2019,11 @@ Union of
 
 
 
-##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.validated_string.Valid</sub>
+##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.types.Identifier</sub>
 
 [*Examples:*](#weightspytorch_state_dictarchitecturecallable) ['MyNetworkClass', 'get_my_model']
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]
 
 ##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
 
@@ -2109,12 +2031,11 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator
 
 
 **ArchitectureFromLibraryDescr:**
-##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.validated_string.Valid</sub>
+##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.types.Identifier</sub>
 
 [*Examples:*](#weightspytorch_state_dictarchitecturecallable) ['MyNetworkClass', 'get_my_model']
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, AfterValidator, AfterValidator]]
 
 ##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
 
@@ -2222,7 +2143,7 @@ Union of
 [*Example:*](#weightstensorflow_jsauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.tensorflow_js.authors.i.name`<sub> str</sub>
 
@@ -2304,7 +2225,7 @@ Union of
 [*Example:*](#weightstensorflow_saved_model_bundleauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.tensorflow_saved_model_bundle.authors.i.name`<sub> str</sub>
 
@@ -2419,7 +2340,7 @@ Union of
 [*Example:*](#weightstorchscriptauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ##### `weights.torchscript.authors.i.name`<sub> str</sub>
 
@@ -2497,10 +2418,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2513,29 +2434,28 @@ Sequence of Union of
 ## `icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, str*, None]
+<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
 
 </summary>
 
 Union of
+- str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
   - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
-- str (Len(min_length=1, max_length=2))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
 </details>
 
-## `id`<sub> Optional</sub> ≝ `None`
+## `id`<sub> Optional[ModelId]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
 
 ## `id_emoji`<sub> Optional</sub> ≝ `None`
 
@@ -2573,7 +2493,7 @@ Optional[str (Len(min_length=1, max_length=1))]
 [*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `maintainers.i.name`<sub> Optional</sub> ≝ `None`
 
@@ -2612,7 +2532,7 @@ Optional[str (Predicate(_has_no_slash))]
 [*Example:*](#packaged_byiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 ### `packaged_by.i.name`<sub> str</sub>
 
@@ -2635,11 +2555,10 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidato
 
 
 **LinkedModel:**
-### `parent.id`<sub> _internal.validated_string.Valid</sub>
+### `parent.id`<sub> ModelId</sub>
 
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]
 
 ### `parent.version_number`<sub> int</sub>
 
@@ -2675,7 +2594,7 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 20, 20, 44, 46, 233500)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 21, 16, 15, 4, 315804)`
 
 
 
@@ -2689,11 +2608,10 @@ _internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[Type
 
 
 **dataset.v0_3.LinkedDataset:**
-### `training_data.id`<sub> _internal.validated_string.Valid</sub>
+### `training_data.id`<sub> dataset.v0_3.DatasetId</sub>
 
 
 
-_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]
 
 ### `training_data.version_number`<sub> int</sub>
 
@@ -2721,10 +2639,10 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 Sequence of Union of
 - _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
+(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2758,7 +2676,7 @@ Optional[str (Len(min_length=1, max_length=1))]
 [*Example:*](#training_dataauthorsiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 #### `training_data.authors.i.name`<sub> str</sub>
 
@@ -2818,11 +2736,10 @@ Union of
 
 
 
-#### `training_data.cite.i.doi`<sub> Optional</sub> ≝ `None`
+#### `training_data.cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstraints]]]
 
 #### `training_data.cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
@@ -2833,7 +2750,7 @@ Optional[_internal.validated_string.ValidatedString[Annotated[str, StringConstra
 
 ### `training_data.license`<sub> Union</sub>
 
-[*Examples:*](#training_datalicense) ['CC-BY-4.0', 'MIT', 'BSD-2-Clause']
+[*Examples:*](#training_datalicense) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
@@ -2853,19 +2770,19 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 ### `training_data.icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, str*, None]
+<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
 
 </summary>
 
 Union of
+- str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
   - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))
-- str (Len(min_length=1, max_length=2))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2923,7 +2840,7 @@ Optional[str (AfterValidator(_remove_slashes))]
 [*Example:*](#training_datamaintainersiorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, AfterValidator]]]
+Optional[_internal.types.OrcidId]
 
 #### `training_data.maintainers.i.name`<sub> Optional</sub> ≝ `None`
 
@@ -2969,11 +2886,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f4d32e41940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f4d2fbb5a80>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -2992,11 +2909,23 @@ Optional[Union of
 
 
 
-#### `training_data.badges.i.icon`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+#### `training_data.badges.i.icon`<sub> Union</sub> ≝ `None`
 
 [*Example:*](#training_databadgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
+<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, Url*, None]
 
+</summary>
+
+Union of
+- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+- _internal.url.HttpUrl
+- Url (max_length=2083 allowed_schemes=['http', 'https'])
+- None
+
+
+</details>
 
 #### `training_data.badges.i.url`<sub> _internal.url.HttpUrl</sub>
 
@@ -3011,17 +2940,15 @@ Optional[Union of
 
 
 
-### `training_data.id`<sub> Optional</sub> ≝ `None`
+### `training_data.id`<sub> Optional[dataset.v0_3.DatasetId]</sub> ≝ `None`
 
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
 
-### `training_data.parent`<sub> Optional</sub> ≝ `None`
-
+### `training_data.parent`<sub> Optional[dataset.v0_3.DatasetId]</sub> ≝ `None`
 
 
-Optional[_internal.validated_string.ValidatedString[Annotated[str, MinLen, Annotated[TypeVar, Predicate], Predicate]]]
+
 
 ### `training_data.source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 
@@ -3118,14 +3045,8 @@ Optional[_internal.version_type.Version]
 
 ### `inputs.preprocessing.i.kwargs.axis`
 channel
-### `inputs.preprocessing.i.kwargs.mean`
-- 3.14
-- (1.1, -2.2, 3.3)
-
-### `inputs.preprocessing.i.kwargs.std`
-- 1.05
-- (0.1, 0.2, 0.3)
-
+### `inputs.preprocessing.i.kwargs.axis`
+channel
 ### `inputs.preprocessing.i.kwargs.axis`
 - channel
 - index
@@ -3135,7 +3056,7 @@ channel
 ### `inputs.preprocessing.i.kwargs.axes`
 ('batch', 'x', 'y')
 ### `license`
-- CC-BY-4.0
+- CC0-1.0
 - MIT
 - BSD-2-Clause
 
@@ -3184,14 +3105,8 @@ channel
 
 ### `outputs.postprocessing.i.kwargs.axis`
 channel
-### `outputs.postprocessing.i.kwargs.mean`
-- 3.14
-- (1.1, -2.2, 3.3)
-
-### `outputs.postprocessing.i.kwargs.std`
-- 1.05
-- (0.1, 0.2, 0.3)
-
+### `outputs.postprocessing.i.kwargs.axis`
+channel
 ### `outputs.postprocessing.i.kwargs.axis`
 - channel
 - index
@@ -3253,7 +3168,7 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 ### `training_data.authors.i.orcid`
 0000-0001-2345-6789
 ### `training_data.license`
-- CC-BY-4.0
+- CC0-1.0
 - MIT
 - BSD-2-Clause
 

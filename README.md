@@ -71,6 +71,10 @@ or
 pip install -U bioimageio.core
 ```
 
+## 🏞 Environment variables
+
+TODO: link to settings in dev docs
+
 ## 🤝 How to contribute
 
 ## ♥ Contributors
@@ -84,6 +88,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 ## Δ Changelog
 
 ### bioimageio.spec Python package
+
+#### bioimageio.spec 0.5.1
+
+* new patch version model 0.5.1
 
 #### bioimageio.spec 0.5.0post2
 
@@ -228,11 +236,13 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### Resource Description Format Versions
 
-#### model 0.5.1 (planned)
+#### model 0.5.1
 
 * Non-breaking changes
   * added `DataDependentSize` for `outputs.i.size` to specify an output shape that is not known before inference is run.
   * added optional `inputs.i.optional` field to indicate that a tensor may be `None`
+  * made data type assumptions in `preprocessing` and `postprocessing` explicit by adding `'ensure_dtype'` operations per default.
+  * allow to specify multiple thresholds (along an `axis`) in a 'binarize' processing step
 
 #### generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0
 
