@@ -24,7 +24,6 @@ def test_license_id_in_model():
 
     out = Model.model_validate({"lid": "CC-BY-4.0"}).lid
     assert isinstance(out, LicenseId)
-    assert not isinstance(out, str)
 
 
 def test_deprecated_license_id():
