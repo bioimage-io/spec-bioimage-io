@@ -329,7 +329,7 @@ def model_data():
                     description="Input 1",
                     data_type="float32",
                     axes="xyc",
-                    shape=(128, 128, 3),
+                    shape=[128, 128, 3],
                 ),
             ],
             outputs=[
@@ -338,7 +338,7 @@ def model_data():
                     description="Output 1",
                     data_type="float32",
                     axes="xyc",
-                    shape=(128, 128, 3),
+                    shape=[128, 128, 3],
                 ),
             ],
             name="Model",
