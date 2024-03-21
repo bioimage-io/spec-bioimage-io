@@ -15,13 +15,13 @@ from bioimageio.spec._internal.io_basics import FileName
     ],
 )
 def test_is_valid_rdf_name(name: FileName):
-    from bioimageio.spec._internal.io import is_valid_rdf_name
+    from bioimageio.spec._internal.io import is_valid_bioimageio_yaml_name
 
-    assert is_valid_rdf_name(name), name
+    assert is_valid_bioimageio_yaml_name(name), name
 
 
 @pytest.mark.parametrize("name", ["bioimageio.yml", "RDF.yaml", "smth.yaml"])
 def test_is_invalid_rdf_name(name: FileName):
-    from bioimageio.spec._internal.io import is_valid_rdf_name
+    from bioimageio.spec._internal.io import is_valid_bioimageio_yaml_name
 
-    assert not is_valid_rdf_name(name), name
+    assert not is_valid_bioimageio_yaml_name(name), name

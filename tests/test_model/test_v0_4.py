@@ -307,7 +307,7 @@ def model_data():
         return ModelDescr(
             documentation=UNET2D_ROOT / "README.md",
             license="MIT",
-            git_repo="https://github.com/bioimage-io/python-bioimage-io",
+            git_repo="https://github.com/bioimage-io/core-bioimage-io-python",
             description="description",
             authors=[
                 Author(name="Author 1", affiliation="Affiliation 1"),
@@ -329,7 +329,7 @@ def model_data():
                     description="Input 1",
                     data_type="float32",
                     axes="xyc",
-                    shape=(128, 128, 3),
+                    shape=[128, 128, 3],
                 ),
             ],
             outputs=[
@@ -338,7 +338,7 @@ def model_data():
                     description="Output 1",
                     data_type="float32",
                     axes="xyc",
-                    shape=(128, 128, 3),
+                    shape=[128, 128, 3],
                 ),
             ],
             name="Model",

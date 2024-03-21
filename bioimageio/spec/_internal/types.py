@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from keyword import iskeyword
-from typing import Any, Sequence, TypeVar, Union
+from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
 
 import annotated_types
 from dateutil.parser import isoparse
@@ -90,39 +90,52 @@ class Datetime(
     """
 
 
-Doi = ValidatedString[Annotated[str, StringConstraints(pattern=DOI_REGEX)]]
+class Doi(ValidatedString):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[str, StringConstraints(pattern=DOI_REGEX)]
+    ]
+
+
 FormatVersionPlaceholder = Literal["latest", "discover"]
 IdentifierAnno = Annotated[
     NotEmpty[str],
     AfterValidator(_validate_identifier),
     AfterValidator(_validate_is_not_keyword),
 ]
-Identifier = ValidatedString[IdentifierAnno]
-LowerCaseIdentifierAnno = Annotated[IdentifierAnno, annotated_types.LowerCase]
-LowerCaseIdentifier = ValidatedString[LowerCaseIdentifierAnno]
-OrcidId = ValidatedString[Annotated[str, AfterValidator(_validate_orcid_id)]]
-SiUnit = ValidatedString[
-    Annotated[
-        str,
-        StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
-        BeforeValidator(
-            lambda s: (
-                s.replace("×", "·").replace("*", "·").replace(" ", "·")
-                if isinstance(s, str)
-                else s
-            )
-        ),
-    ]
-]
 
-_ResourceIdAnno = Annotated[
-    NotEmpty[str],
-    annotated_types.LowerCase,
-    annotated_types.Predicate(lambda s: "\\" not in s and s[0] != "/" and s[-1] != "/"),
-]
-ResourceId = ValidatedString[_ResourceIdAnno]
-ApplicationId = ValidatedString[_ResourceIdAnno]
-CollectionId = ValidatedString[_ResourceIdAnno]
-DatasetId = ValidatedString[_ResourceIdAnno]
-ModelId = ValidatedString[_ResourceIdAnno]
-NotebookId = ValidatedString[_ResourceIdAnno]
+
+class Identifier(ValidatedString):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[IdentifierAnno]
+
+
+LowerCaseIdentifierAnno = Annotated[IdentifierAnno, annotated_types.LowerCase]
+
+
+class LowerCaseIdentifier(ValidatedString):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[LowerCaseIdentifierAnno]
+
+
+class OrcidId(ValidatedString):
+    """an ORCID identifier"""
+
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[str, AfterValidator(_validate_orcid_id)]
+    ]
+
+
+class SiUnit(ValidatedString):
+    """Si unit"""
+
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            str,
+            StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
+            BeforeValidator(
+                lambda s: (
+                    s.replace("×", "·").replace("*", "·").replace(" ", "·")
+                    if isinstance(s, str)
+                    else s
+                )
+            ),
+        ]
+    ]

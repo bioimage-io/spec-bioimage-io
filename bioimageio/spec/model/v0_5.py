@@ -38,19 +38,12 @@ from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Field,
-    GetCoreSchemaHandler,
+    RootModel,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from pydantic_core.core_schema import (
-    CoreSchema,
-    no_info_after_validator_function,
-)
 from typing_extensions import Annotated, LiteralString, Self, assert_never
-
-from bioimageio.spec._internal.validated_string import ValidatedString
-from bioimageio.spec._internal.validator_annotations import RestrictCharacters
 
 from .._internal.common_nodes import (
     Converter,
@@ -69,18 +62,25 @@ from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
 from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
-from .._internal.types import ImportantFileSource, LowerCaseIdentifierAnno, SiUnit
+from .._internal.types import (
+    ImportantFileSource,
+    LowerCaseIdentifier,
+    LowerCaseIdentifierAnno,
+    SiUnit,
+)
 from .._internal.types import LicenseId as LicenseId
-from .._internal.types import ModelId as ModelId
 from .._internal.types import NotEmpty as NotEmpty
-from .._internal.types import ResourceId as ResourceId
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
+from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import INFO
 from ..dataset.v0_3 import DatasetDescr as DatasetDescr
 from ..dataset.v0_3 import LinkedDataset as LinkedDataset
 from ..dataset.v0_3 import Uploader as Uploader
+from ..generic.v0_3 import (
+    VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS,
+)
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
@@ -95,6 +95,7 @@ from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
+from ..generic.v0_3 import ResourceId as ResourceId
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -177,22 +178,18 @@ TimeUnit = Literal[
 ]
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
-TensorId = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(32)]]
 
 
-class AxisId(str):
-    root_model = ValidatedString[Annotated[LowerCaseIdentifierAnno, MaxLen(16)]]
+class TensorId(LowerCaseIdentifier):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(32)]
+    ]
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
-    ) -> CoreSchema:
-        return no_info_after_validator_function(cls._validate, handler(str))
 
-    @classmethod
-    def _validate(cls, value: str):
-        valid = cls.root_model.model_validate(value)
-        return cls(valid.root)
+class AxisId(LowerCaseIdentifier):
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+    ]
 
 
 NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
@@ -1870,6 +1867,10 @@ class WeightsDescr(Node):
         return self
 
 
+class ModelId(ResourceId):
+    pass
+
+
 class LinkedModel(Node):
     """Reference to a bioimage.io model."""
 
@@ -2398,7 +2399,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             format_version="0.5.0",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
-            id=src.id,
+            id=None if src.id is None else ModelId(src.id),
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,

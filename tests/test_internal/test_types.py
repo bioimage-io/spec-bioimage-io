@@ -1,4 +1,3 @@
-import typing
 from datetime import datetime
 from pathlib import Path
 
@@ -13,9 +12,6 @@ from bioimageio.spec._internal.types import Datetime, SiUnit
 from tests.utils import check_type
 
 TYPE_ARGS = {
-    types.ApplicationId: "appdev/app",
-    types.CollectionId: "collectionid",
-    types.DatasetId: "dataset-id",
     types.Datetime: (2024, 2, 14),
     types.Datetime: datetime.now().isoformat(),
     types.DeprecatedLicenseId: "AGPL-1.0",
@@ -26,11 +22,8 @@ TYPE_ARGS = {
     types.LicenseId: "MIT",
     types.LowerCaseIdentifier: "id",
     types.LowerCaseIdentifierAnno: "id",
-    types.ModelId: "modelid",
-    types.NotebookId: "notebookid",
     types.OrcidId: "0000-0001-2345-6789",
     types.RelativeFilePath: Path(__file__).relative_to(Path().absolute()),
-    types.ResourceId: "resoruce-id",
     types.SiUnit: "kg",
     types.AbsoluteDirectory: str(Path(__file__).absolute().parent),
     types.AbsoluteFilePath: str(Path(__file__).absolute()),
@@ -47,18 +40,23 @@ IGNORE_TYPES_MEMBERS = {
     "annotations",
     "Any",
     "BeforeValidator",
+    "ClassVar",
     "datetime",
     "field_validation",
+    "FileSource",
     "FormatVersionPlaceholder",  # a literal
     "ImportantFileSource",  # an annoated union
     "iskeyword",
     "isoparse",
     "Literal",
     "NotEmpty",
+    "PermissiveFileSource",
     "PlainSerializer",
     "RootModel",
+    "S",
     "Sequence",
     "StringConstraints",
+    "Type",
     "TypeVar",
     "typing",
     "Union",
@@ -76,7 +74,7 @@ IGNORE_TYPES_MEMBERS = {
     ],
 )
 def test_type_is_usable(name: str):
-    """check if a type can be instantiated or is a common Python type (e.g. Union or Literal)"""
+    """check if a type can be instantiated"""
     typ = getattr(types, name)
     if typ in TYPE_ARGS:
         args = TYPE_ARGS[typ]
@@ -86,10 +84,7 @@ def test_type_is_usable(name: str):
     elif isinstance(typ, str):
         pass  # ignore string constants
     else:
-        origin = typing.get_origin(typ)
-        assert origin in (dict, list, typing.Union, typing.Literal) or type(typ) in (
-            typing.TypeVar,
-        ), name
+        raise ValueError(f"No idea how to test {name} -> {typ}")
 
 
 @pytest.mark.parametrize("path", [Path(__file__), Path()])
