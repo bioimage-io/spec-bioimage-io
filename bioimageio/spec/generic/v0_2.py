@@ -31,6 +31,7 @@ from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_warning import as_warning, issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
+    InPackageIfLocalFileSource,
     WithSuffix,
     YamlValue,
     include_in_package_serializer,
@@ -140,7 +141,7 @@ class BadgeDescr(Node, title="Custom badge"):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Union[HttpUrl, None],
+        Optional[InPackageIfLocalFileSource],
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
     """badge icon"""
@@ -299,7 +300,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[
-        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
     ] = None
     """An icon for illustration"""
 

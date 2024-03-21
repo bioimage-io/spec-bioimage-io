@@ -398,6 +398,14 @@ ImportantFileSource = Annotated[
     AfterValidator(wo_special_file_name),
     include_in_package_serializer,
 ]
+InPackageIfLocalFileSource = Union[
+    Annotated[
+        Union[FilePath, RelativeFilePath],
+        AfterValidator(wo_special_file_name),
+        include_in_package_serializer,
+    ],
+    Union[HttpUrl, pydantic.HttpUrl],
+]
 
 
 def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:

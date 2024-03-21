@@ -286,7 +286,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """A URL to the Git repository where the resource is being developed."""
 
     icon: Union[
-        ImportantFileSource, Annotated[str, Len(min_length=1, max_length=2)], None
+        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
     ] = None
     """An icon for illustration, e.g. on bioimage.io"""
 
