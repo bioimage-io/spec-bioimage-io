@@ -235,7 +235,7 @@ class GenericModelDescrBase(ResourceDescrBase):
             LicenseId,
             "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
         ),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please

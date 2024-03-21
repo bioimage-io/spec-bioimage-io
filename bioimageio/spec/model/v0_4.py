@@ -900,7 +900,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     license: Annotated[
         Union[LicenseId, str],
         warn(LicenseId, "Unknown license id '{value}'."),
-        Field(examples=["CC-BY-4.0", "MIT", "BSD-2-Clause"]),
+        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ]
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do notsupport custom license beyond the SPDX license list, if you need that please
