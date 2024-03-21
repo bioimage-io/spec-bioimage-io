@@ -62,6 +62,7 @@ IGNORE_MEMBERS = {
     "string",
     "TAG_CATEGORIES",
     "Type",
+    "Type",
     "TypeVar",
     "Union",
     "V_suffix",
