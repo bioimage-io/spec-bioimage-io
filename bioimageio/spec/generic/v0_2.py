@@ -395,8 +395,10 @@ class GenericDescrBase(GenericModelDescrBase):
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[
-        Optional[Union[LicenseId, DeprecatedLicenseId, str]],
-        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
+        Union[LicenseId, DeprecatedLicenseId, str, None],
+        Field(
+            union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]
+        ),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please

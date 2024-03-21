@@ -1,5 +1,7 @@
+from pathlib import Path
 from typing import Optional, Union
 
+import pooch
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Annotated
@@ -32,6 +34,9 @@ class Settings(BaseSettings, extra="ignore"):
 
     user_agent: Optional[str] = None
     """user agent for http requests"""
+
+    cache_path: Path = pooch.os_cache("bioimageio")
+    """bioimageio cache location"""
 
     @property
     def github_auth(self):

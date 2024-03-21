@@ -543,6 +543,7 @@ def download(
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
+    """download `source` URL (or pass local file path)"""
     if isinstance(source, FileDescr):
         return source.download()
 
@@ -574,6 +575,7 @@ def download(
             known_hash=_get_known_hash(kwargs),
             downloader=downloader,
             fname=fname,
+            path=settings.cache_path,
         )
         local_source = Path(_ls).absolute()
         root = strict_source.parent
