@@ -30,6 +30,7 @@ setup(
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "annotated-types>=0.5.0",
+        "dotenv",
         "email_validator",
         "imageio",
         "loguru",
