@@ -183,7 +183,7 @@ class AnnotationName:
             if t.discriminator:
                 parts.append(f"discriminator={t.discriminator}")
 
-            return "; ".join(parts)
+            return "; ".join(map(str, parts))
 
         s = self.slim(str(t))
         if s.startswith("Annotated["):
