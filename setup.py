@@ -30,7 +30,6 @@ setup(
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
         "annotated-types>=0.5.0",
-        "dotenv",
         "email_validator",
         "imageio",
         "loguru",
@@ -40,6 +39,7 @@ setup(
         "pydantic-settings",
         "pydantic>=2.6.3",
         "python-dateutil",
+        "python-dotenv",
         "ruyaml",
         "tqdm",
         "typing-extensions",
