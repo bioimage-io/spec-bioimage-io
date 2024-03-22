@@ -1694,21 +1694,21 @@
                     "type": "string"
                 },
                 "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
+                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
                         "cover.png"
                     ],
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -2057,14 +2057,14 @@
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -2368,21 +2368,21 @@
                     "type": "string"
                 },
                 "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
+                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
                         "cover.png"
                     ],
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -2759,14 +2759,14 @@
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -3098,21 +3098,21 @@
                     "type": "string"
                 },
                 "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
+                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
                         "cover.png"
                     ],
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -3474,14 +3474,14 @@
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -4107,21 +4107,21 @@
                     "type": "string"
                 },
                 "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
+                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
                         "cover.png"
                     ],
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -6097,14 +6097,14 @@
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -6385,7 +6385,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-21T16:15:06.207043"
+                    "default": "2024-03-22T18:34:34.428680"
                 },
                 "training_data": {
                     "anyOf": [
@@ -7378,21 +7378,21 @@
                     "type": "string"
                 },
                 "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
+                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
                         "cover.png"
                     ],
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },
@@ -7731,14 +7731,14 @@
                     "items": {
                         "anyOf": [
                             {
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "type": "string"
                             }
                         ]
                     },

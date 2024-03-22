@@ -33,20 +33,20 @@ Note that collections cannot be nested; resources listed under `collection` may 
 
 
 **CollectionEntry:**
-### `collection.i.rdf_source`<sub> Union</sub> ≝ `None`
+### `collection.i.rdf_source`<sub> Optional</sub> ≝ `None`
 
 
-<details><summary>Union[Path*, ..., None]
+<details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*]
 
 </summary>
 
-Union of
+Optional[Union of
 - Path (PathType(path_type='file'))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
-- None
 
+(union_mode='left_to_right')]
 
 </details>
 
@@ -90,7 +90,7 @@ Sequence of Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f780db3efc0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -159,7 +159,7 @@ Optional[_internal.types.OrcidId]
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f780db3efc0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -209,19 +209,19 @@ Union of
 
 ## `covers`<sub> Sequence</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.
-The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
+The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')
 [*Example:*](#covers) 'cover.png'
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, Path*, _internal.io.RelativeFilePath]*]
+<details><summary>Sequence[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]*]
 
 </summary>
 
 Sequence of Union of
-- _internal.url.HttpUrl
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f8a787418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f7810e418a0>))
 - _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
 
-(WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f780db3efc0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -239,7 +239,7 @@ Optional[Union of
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-(AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f780db3efc0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -269,7 +269,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f8a75305b20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f780db3efc0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -338,20 +338,20 @@ Optional[str (AfterValidator(_remove_slashes))]
 
 </details>
 
-## `rdf_source`<sub> Union</sub> ≝ `None`
+## `rdf_source`<sub> Optional</sub> ≝ `None`
 
 
-<details><summary>Union[Path*, ..., None]
+<details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*]
 
 </summary>
 
-Union of
+Optional[Union of
 - Path (PathType(path_type='file'))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
-- None
 
+(union_mode='left_to_right')]
 
 </details>
 
