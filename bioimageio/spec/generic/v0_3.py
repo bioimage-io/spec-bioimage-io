@@ -92,6 +92,7 @@ def _validate_md_suffix(value: V_suffix) -> V_suffix:
 
 DocumentationSource = Annotated[
     Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    Field(union_mode="left_to_right"),
     AfterValidator(_validate_md_suffix),
     include_in_package_serializer,
 ]

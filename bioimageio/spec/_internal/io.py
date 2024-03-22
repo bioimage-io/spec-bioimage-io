@@ -31,6 +31,7 @@ import pydantic
 from pydantic import (
     AnyUrl,
     DirectoryPath,
+    Field,
     FilePath,
     GetCoreSchemaHandler,
     PlainSerializer,
@@ -110,6 +111,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     def model_post_init(self, __context: Any) -> None:
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
+
+        if self.root.parts and self.root.parts[0] in ("http:", "https:"):
+            raise ValueError(f"{self.root} looks like an http url.")
 
         self._absolute = (  # pyright: ignore[reportAttributeAccessIssue]
             self.get_absolute(validation_context_var.get().root)
@@ -226,7 +230,10 @@ class RelativeDirectory(
         return absolute
 
 
-FileSource = Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl]
+FileSource = Annotated[
+    Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl],
+    Field(union_mode="left_to_right"),
+]
 PermissiveFileSource = Union[FileSource, str]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)

@@ -1658,7 +1658,10 @@ class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
     """Where to import the callable from, i.e. `from <import_from> import <callable>`"""
 
 
-ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
+ArchitectureDescr = Annotated[
+    Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr],
+    Field(union_mode="left_to_right"),
+]
 
 
 class _ArchFileConv(
