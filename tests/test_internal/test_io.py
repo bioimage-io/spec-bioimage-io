@@ -11,7 +11,8 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 def test_valid_relative_file_path(p: Any):
     from bioimageio.spec._internal.io import RelativeFilePath
 
-    _ = RelativeFilePath(p)
+    with ValidationContext(perform_io_checks=False):
+        _ = RelativeFilePath(p)
 
 
 @pytest.mark.parametrize(
@@ -28,4 +29,17 @@ def test_invalid_relative_file_path(p: Any):
     from bioimageio.spec._internal.io import RelativeFilePath
 
     with ValidationContext(perform_io_checks=False), pytest.raises(ValidationError):
+        _ = RelativeFilePath(p)
+
+
+@pytest.mark.parametrize(
+    "p",
+    [
+        PurePath(__file__).parent,
+    ],
+)
+def test_invalid_relative_file_path_io_check(p: Any):
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    with ValidationContext(perform_io_checks=True), pytest.raises(ValidationError):
         _ = RelativeFilePath(p)
