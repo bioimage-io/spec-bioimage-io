@@ -235,7 +235,7 @@ class GenericModelDescrBase(ResourceDescrBase):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
 
         if not authors:
-            issue_warning("No author specified.", value=authors)
+            issue_warning("missing", value=authors, field="authors")
 
         return authors
 
@@ -249,7 +249,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     @classmethod
     def _warn_empty_cite(cls, value: Any):
         if not value:
-            issue_warning("No cite entry specified.", value=value)
+            issue_warning("missing", value=value, field="cite")
 
         return value
 
@@ -412,11 +412,19 @@ class GenericDescrBase(GenericModelDescrBase):
         if isinstance(value, LicenseId):
             pass
         elif value is None:
-            issue_warning("missing license.", value=value)
+            issue_warning("missing", value=value, field="license")
         elif isinstance(value, DeprecatedLicenseId):
-            issue_warning("'{value}' is a deprecated license identifier.", value=value)
+            issue_warning(
+                "'{value}' is a deprecated license identifier.",
+                value=value,
+                field="license",
+            )
         elif isinstance(value, str):
-            issue_warning("'{value}' is an unknown license identifier.", value=value)
+            issue_warning(
+                "'{value}' is an unknown license identifier.",
+                value=value,
+                field="license",
+            )
         else:
             assert_never(value)
 
