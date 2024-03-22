@@ -177,9 +177,10 @@ class CollectionDescr(
             if entry.rdf_source is not None:
                 if not context.perform_io_checks:
                     issue_warning(
-                        "Skipping IO relying validation for collection[{i}]",
+                        "Skipping IO dependent validation (perform_io_checks=False)",
                         value=entry.rdf_source,
                         msg_context=dict(i=i),
+                        field=f"collection[{i}]",
                     )
                     continue
 

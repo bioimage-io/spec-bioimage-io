@@ -23,6 +23,7 @@ from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
 from ._internal.packaging_context import PackagingContext
 from ._internal.url import HttpUrl
 from ._internal.validation_context import validation_context_var
+from ._internal.warning_levels import ERROR
 from ._io import load_description
 from .model.v0_4 import ModelDescr as ModelDescr04
 from .model.v0_4 import WeightsFormat
@@ -253,11 +254,12 @@ def save_bioimageio_package(
         compression=compression,
         compression_level=compression_level,
     )
-    if isinstance((exported := load_description(output_path)), InvalidDescr):
-        raise ValueError(
-            f"Exported package '{output_path}' is invalid:"
-            + f" {exported.validation_summary}"
-        )
+    with validation_context_var.get().replace(warning_level=ERROR):
+        if isinstance((exported := load_description(output_path)), InvalidDescr):
+            raise ValueError(
+                f"Exported package '{output_path}' is invalid:"
+                + f" {exported.validation_summary}"
+            )
 
     return output_path
 

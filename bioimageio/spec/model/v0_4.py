@@ -131,7 +131,8 @@ class CallableFromDepencency(StringNode):
 class CallableFromFile(StringNode):
     _pattern = r"^.+:.+$"
     source_file: Annotated[
-        Union[HttpUrl, RelativeFilePath],
+        Union[RelativeFilePath, HttpUrl],
+        Field(union_mode="left_to_right"),
         include_in_package_serializer,
     ]
     """∈📦 Python module that implements `callable_name`"""
@@ -144,7 +145,9 @@ class CallableFromFile(StringNode):
         return dict(source_file=":".join(file_parts), callable_name=callname)
 
 
-CustomCallable = Union[CallableFromFile, CallableFromDepencency]
+CustomCallable = Annotated[
+    Union[CallableFromFile, CallableFromDepencency], Field(union_mode="left_to_right")
+]
 
 
 class Dependencies(StringNode):
@@ -268,10 +271,11 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. Please specify the TensorFlow version"
+                "missing. Please specify the TensorFlow version"
                 + " these weights were created with.",
                 value=value,
                 severity=ALERT,
+                field="tensorflow_version",
             )
         return value
 
@@ -292,6 +296,7 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
                 + " with.",
                 value=value,
                 severity=ALERT,
+                field="opset_version",
             )
         return value
 
@@ -348,10 +353,11 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing PyTorch version. Please specify the PyTorch version these"
+                "missing. Please specify the PyTorch version these"
                 + " PyTorch state dict weights were created with.",
                 value=value,
                 severity=ALERT,
+                field="pytorch_version",
             )
         return value
 
@@ -367,10 +373,11 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     def _ptv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing PyTorch version. Please specify the PyTorch version these"
+                "missing. Please specify the PyTorch version these"
                 + " Torchscript weights were created with.",
                 value=value,
                 severity=ALERT,
+                field="pytorch_version",
             )
         return value
 
@@ -386,10 +393,11 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. Please specify the TensorFlow version"
+                "missing. Please specify the TensorFlow version"
                 + " these TensorflowJs weights were created with.",
                 value=value,
                 severity=ALERT,
+                field="tensorflow_version",
             )
         return value
 
@@ -409,10 +417,11 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     def _tfv(cls, value: Any):
         if value is None:
             issue_warning(
-                "Missing TensorFlow version. Please specify the TensorFlow version"
+                "missing. Please specify the TensorFlow version"
                 + " these Tensorflow saved model bundle weights were created with.",
                 value=value,
                 severity=ALERT,
+                field="tensorflow_version",
             )
         return value
 
@@ -444,7 +453,7 @@ class ImplicitOutputShape(Node):
     reference_tensor: TensorName
     """Name of the reference tensor."""
 
-    scale: NotEmpty[List[Union[float, None]]]
+    scale: NotEmpty[List[Optional[float]]]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 

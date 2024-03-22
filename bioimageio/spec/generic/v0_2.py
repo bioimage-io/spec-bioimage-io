@@ -81,11 +81,14 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".jpg",
     ".png",
     ".svg",
+    ".tif",
+    ".tiff",
 )
 
 _WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
 CoverImageSource = Annotated[
-    Union[HttpUrl, AbsoluteFilePath, RelativeFilePath],
+    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    Field(union_mode="left_to_right"),
     _WithImageSuffix,
     include_in_package_serializer,
 ]
@@ -234,7 +237,7 @@ class GenericModelDescrBase(ResourceDescrBase):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
 
         if not authors:
-            issue_warning("No author specified.", value=authors)
+            issue_warning("missing", value=authors, field="authors")
 
         return authors
 
@@ -248,7 +251,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     @classmethod
     def _warn_empty_cite(cls, value: Any):
         if not value:
-            issue_warning("No cite entry specified.", value=value)
+            issue_warning("missing", value=value, field="cite")
 
         return value
 
@@ -396,9 +399,7 @@ class GenericDescrBase(GenericModelDescrBase):
 
     license: Annotated[
         Union[LicenseId, DeprecatedLicenseId, str, None],
-        Field(
-            union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]
-        ),
+        Field(union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
@@ -413,11 +414,19 @@ class GenericDescrBase(GenericModelDescrBase):
         if isinstance(value, LicenseId):
             pass
         elif value is None:
-            issue_warning("missing license.", value=value)
+            issue_warning("missing", value=value, field="license")
         elif isinstance(value, DeprecatedLicenseId):
-            issue_warning("'{value}' is a deprecated license identifier.", value=value)
+            issue_warning(
+                "'{value}' is a deprecated license identifier.",
+                value=value,
+                field="license",
+            )
         elif isinstance(value, str):
-            issue_warning("'{value}' is an unknown license identifier.", value=value)
+            issue_warning(
+                "'{value}' is an unknown license identifier.",
+                value=value,
+                field="license",
+            )
         else:
             assert_never(value)
 

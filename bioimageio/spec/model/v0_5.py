@@ -1658,7 +1658,10 @@ class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
     """Where to import the callable from, i.e. `from <import_from> import <callable>`"""
 
 
-ArchitectureDescr = Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
+ArchitectureDescr = Annotated[
+    Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr],
+    Field(union_mode="left_to_right"),
+]
 
 
 class _ArchFileConv(
@@ -1842,6 +1845,7 @@ class WeightsDescr(Node):
                 + " already converted weights. They have to reference the weights format"
                 + " they were converted from as their `parent`.",
                 value=len(entries_wo_parent),
+                field="weights",
             )
 
         for wtype, entry in self:
@@ -1930,7 +1934,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         doc_content = doc_path.read_text()
         if not re.match("#.*[vV]alidation", doc_content):
             issue_warning(
-                "No '# Validation' (sub)section found in {value}.", value=value
+                "No '# Validation' (sub)section found in {value}.",
+                value=value,
+                field="documentation",
             )
 
         return value
@@ -2214,7 +2220,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
 
-    training_data: Union[LinkedDataset, DatasetDescr, None] = None
+    training_data: Union[None, LinkedDataset, DatasetDescr] = None
     """The dataset used to train this model"""
 
     weights: WeightsDescr
@@ -2237,6 +2243,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                 "Failed to generate cover image(s): {e}",
                 value=self.covers,
                 msg_context=dict(e=e),
+                field="covers",
             )
         else:
             self.covers.extend(generated_covers)

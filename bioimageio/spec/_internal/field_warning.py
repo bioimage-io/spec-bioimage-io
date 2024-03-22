@@ -139,9 +139,11 @@ def issue_warning(
     value: Any,
     severity: WarningSeverity = WARNING,
     msg_context: Optional[Dict[str, Any]] = None,
+    field: Optional[str] = None,
 ):
     msg_context = {"value": value, "severity": severity, **(msg_context or {})}
     if severity >= validation_context_var.get().warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
     elif validation_context_var.get().log_warnings:
-        logger.log(severity, msg.format(**msg_context))
+        log_msg = (field + ": " if field else "") + (msg.format(**msg_context))
+        logger.log(severity, log_msg)

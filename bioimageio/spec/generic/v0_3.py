@@ -57,9 +57,9 @@ from .._internal.validator_annotations import (
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
 from ._v0_3_converter import convert_from_older_format
-from .v0_2 import VALID_COVER_IMAGE_EXTENSIONS, CoverImageSource
 from .v0_2 import Author as _Author_v0_2
 from .v0_2 import BadgeDescr as BadgeDescr
+from .v0_2 import CoverImageSource
 from .v0_2 import Doi as Doi
 from .v0_2 import Maintainer as _Maintainer_v0_2
 from .v0_2 import OrcidId as OrcidId
@@ -71,6 +71,13 @@ KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "dataset",
     "model",
     "notebook",
+)
+VALID_COVER_IMAGE_EXTENSIONS = (
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".svg",
 )
 
 
@@ -92,6 +99,7 @@ def _validate_md_suffix(value: V_suffix) -> V_suffix:
 
 DocumentationSource = Annotated[
     Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+    Field(union_mode="left_to_right"),
     AfterValidator(_validate_md_suffix),
     include_in_package_serializer,
 ]

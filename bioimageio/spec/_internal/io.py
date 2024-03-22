@@ -31,6 +31,7 @@ import pydantic
 from pydantic import (
     AnyUrl,
     DirectoryPath,
+    Field,
     FilePath,
     GetCoreSchemaHandler,
     PlainSerializer,
@@ -110,6 +111,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     def model_post_init(self, __context: Any) -> None:
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
+
+        if self.root.parts and self.root.parts[0] in ("http:", "https:"):
+            raise ValueError(f"{self.root} looks like an http url.")
 
         self._absolute = (  # pyright: ignore[reportAttributeAccessIssue]
             self.get_absolute(validation_context_var.get().root)
@@ -195,6 +199,12 @@ class RelativePath(
 
 
 class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
+    def model_post_init(self, __context: Any) -> None:
+        if not self.root.parts:  # an empty path can only be a directory
+            raise ValueError(f"{self.root} is not a valid file path.")
+
+        super().model_post_init(__context)
+
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl"
     ) -> "AbsoluteFilePath | HttpUrl":
@@ -226,7 +236,10 @@ class RelativeDirectory(
         return absolute
 
 
-FileSource = Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl]
+FileSource = Annotated[
+    Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl],
+    Field(union_mode="left_to_right"),
+]
 PermissiveFileSource = Union[FileSource, str]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
@@ -503,18 +516,20 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-StrictFileSource = Union[HttpUrl, FilePath, RelativeFilePath]
+StrictFileSource = Annotated[
+    Union[HttpUrl, FilePath, RelativeFilePath], Field(union_mode="left_to_right")
+]
 _strict_file_source_adapter = TypeAdapter(StrictFileSource)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
+    if isinstance(file_source, (HttpUrl, Path)):
+        return file_source
+
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    if isinstance(file_source, str):
-        return _strict_file_source_adapter.validate_python(file_source)
-    else:
-        return file_source
+    return _strict_file_source_adapter.validate_python(file_source)
 
 
 def _get_known_hash(hash_kwargs: HashKwargs):

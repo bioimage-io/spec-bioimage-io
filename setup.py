@@ -39,6 +39,7 @@ setup(
         "pydantic-settings",
         "pydantic>=2.6.3",
         "python-dateutil",
+        "python-dotenv",
         "ruyaml",
         "tqdm",
         "typing-extensions",
