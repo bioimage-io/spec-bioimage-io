@@ -184,6 +184,12 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 class RelativePath(
     RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]], frozen=True
 ):
+    def model_post_init(self, __context: Any) -> None:
+        if not self.root.parts:  # an empty path can only be a directory
+            raise ValueError(f"{self.root} is not a valid file path.")
+
+        super().model_post_init(__context)
+
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl"
     ) -> "AbsoluteFilePath | AbsoluteDirectory | HttpUrl":
