@@ -516,18 +516,20 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-StrictFileSource = Union[HttpUrl, FilePath, RelativeFilePath]
+StrictFileSource = Annotated[
+    Union[HttpUrl, FilePath, RelativeFilePath], Field(union_mode="left_to_right")
+]
 _strict_file_source_adapter = TypeAdapter(StrictFileSource)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
+    if isinstance(file_source, (HttpUrl, Path)):
+        return file_source
+
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    if isinstance(file_source, str):
-        return _strict_file_source_adapter.validate_python(file_source)
-    else:
-        return file_source
+    return _strict_file_source_adapter.validate_python(file_source)
 
 
 def _get_known_hash(hash_kwargs: HashKwargs):
