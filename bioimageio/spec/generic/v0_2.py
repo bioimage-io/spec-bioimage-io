@@ -81,6 +81,8 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".jpg",
     ".png",
     ".svg",
+    ".tif",
+    ".tiff",
 )
 
 _WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
