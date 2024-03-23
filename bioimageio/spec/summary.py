@@ -3,6 +3,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
 
+import rich
 from pydantic import BaseModel, Field, model_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
@@ -279,12 +280,15 @@ class ValidationSummary(BaseModel, extra="allow"):
             from IPython.core.getipython import get_ipython
             from IPython.display import Markdown, display
         except ImportError:
-            print(formatted)
+            pass
         else:
-            if get_ipython() is None:
-                print(formatted)
-            else:
+            if get_ipython() is not None:
                 _ = display(Markdown(formatted))
+                return
+
+        rich_markdown = rich.markdown.Markdown(formatted)
+        console = rich.console.Console()
+        console.print(rich_markdown)
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
