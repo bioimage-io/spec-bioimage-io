@@ -2271,49 +2271,59 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
         input_ids = {d.id for d in self.inputs}
         output_ids = {d.id for d in self.outputs}
+
+        def get_axis_size(a: Union[InputAxis, OutputAxis]):
+            if isinstance(a, BatchAxis):
+                if (t_descr.id, a.id) in ns:
+                    raise ValueError(
+                        "No size increment factor (n) for batch axis of tensor"
+                        + f" '{t_descr.id}' expected."
+                    )
+                return batch_size
+            elif isinstance(a.size, int):
+                if (t_descr.id, a.id) in ns:
+                    raise ValueError(
+                        "No size increment factor (n) for fixed size axis"
+                        + f" '{a.id}' of tensor '{t_descr.id}' expected."
+                    )
+                return a.size
+            elif isinstance(a.size, ParameterizedSize):
+                if (t_descr.id, a.id) not in ns:
+                    raise ValueError(
+                        "Size increment factor (n) missing for parametrized axis"
+                        + f" '{a.id}' of tensor '{t_descr.id}'."
+                    )
+                return a.size.get_size(ns[(t_descr.id, a.id)])
+            elif isinstance(a.size, SizeReference):
+                if (t_descr.id, a.id) in ns:
+                    raise ValueError(
+                        f"No size increment factor (n) for axis '{a.id}' of tensor"
+                        + f" '{t_descr.id}' with size reference expected."
+                    )
+                assert not isinstance(a, BatchAxis)
+                ref_axis = all_axes[a.size.tensor_id][a.size.axis_id]
+                assert not isinstance(ref_axis, BatchAxis)
+                return a.size.get_size(
+                    axis=a,
+                    ref_axis=ref_axis,
+                    n=ns.get((a.size.tensor_id, a.size.axis_id), 0),
+                )
+            elif isinstance(a.size, DataDependentSize):
+                if (t_descr.id, a.id) in ns:
+                    raise ValueError(
+                        "No size increment factor (n) for data dependent size axis"
+                        + f" '{a.id}' of tensor '{t_descr.id}' expected."
+                    )
+                assert t_descr.id in output_ids
+                return _DataDepSize(a.size.min, a.size.max)
+            else:
+                assert_never(a.size)
+
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
-                if isinstance(a, BatchAxis):
-                    if (t_descr.id, a.id) in ns:
-                        raise ValueError(
-                            f"No size increment factor (n) for batch axis of tensor {t_descr.id} expected."
-                        )
-                    s = batch_size
-                elif isinstance(a.size, int):
-                    if (t_descr.id, a.id) in ns:
-                        raise ValueError(
-                            f"No size increment factor (n) for fixed size axis {a.id} of tensor {t_descr.id} expected."
-                        )
-                    s = a.size
-                elif isinstance(a.size, ParameterizedSize):
-                    if (t_descr.id, a.id) not in ns:
-                        raise ValueError(
-                            f"Size increment factor (n) not given for parametrized axis {a.id} of tensor {t_descr.id}."
-                        )
-                    s = a.size.get_size(ns[(t_descr.id, a.id)])
-                elif isinstance(a.size, SizeReference):
-                    assert not isinstance(a, BatchAxis)
-                    ref_axis = all_axes[a.size.tensor_id][a.size.axis_id]
-                    assert not isinstance(ref_axis, BatchAxis)
-                    if (a.size.tensor_id, a.size.axis_id) not in ns:
-                        raise ValueError(
-                            f"No increment (n) provided for axis {a.id} of tensor {t_descr.id}. Expected reference from tensor {a.size.tensor_id} and axis {a.size.axis_id}."
-                        )
-                    s = a.size.get_size(
-                        axis=a, ref_axis=ref_axis, n=ns[(t_descr.id, a.id)]
-                    )
-                elif isinstance(a.size, DataDependentSize):
-                    if (t_descr.id, a.id) in ns:
-                        raise ValueError(
-                            f"No size increment factor (n) for data dependent size axis {a.id} of tensor {t_descr.id} expected."
-                        )
-                    assert t_descr.id in output_ids
-                    outputs[t_descr.id, a.id] = _DataDepSize(a.size.min, a.size.max)
-                    continue
-                else:
-                    assert_never(a.size)
-
+                s = get_axis_size(a)
                 if t_descr.id in input_ids:
+                    assert not isinstance(s, _DataDepSize)
                     inputs[t_descr.id, a.id] = s
                 else:
                     assert t_descr.id in output_ids
