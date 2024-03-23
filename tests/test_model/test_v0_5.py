@@ -379,15 +379,15 @@ def test_get_axis_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
 
 
 def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["axes"][2] = {
+    model_data["inputs"][0]["axes"][2] = {
         "type": "space",
         "id": "x",
-        "size": {"tensor_id": "input_1", "axis_id": "x"},
-        "halo": 0,
+        "size": {"min": 10, "step": 5},
     }
 
     with ValidationContext(perform_io_checks=False):
         model = ModelDescr(**model_data)
+
     with pytest.raises(ValueError):
         _ = model.get_axis_sizes(ns={}, batch_size=1)
 
