@@ -1,10 +1,10 @@
-from typing import Any, Callable, Mapping, Optional, Type, TypeVar, Union
+from typing import Any, Callable, List, Mapping, Optional, Type, TypeVar, Union
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, validation_context_var
-from .generic import GenericDescr
+from .summary import ErrorEntry, ValidationDetail
 
 ResourceDescrT = TypeVar("ResourceDescrT", bound=ResourceDescrBase)
 
@@ -50,16 +50,48 @@ def build_description_impl(
     get_rd_class: Callable[[Any, Any], Type[ResourceDescrT]],
 ) -> Union[ResourceDescrT, InvalidDescr]:
     context = context or validation_context_var.get()
-    if not isinstance(content, dict):
-        # "Invalid content of type '{type(content)}'"
-        rd_class = GenericDescr
+    errors: List[ErrorEntry] = []
+    if isinstance(content, dict):
+        for minimum in ("type", "format_version"):
+            if minimum not in content:
+                errors.append(
+                    ErrorEntry(
+                        loc=(minimum,), msg=f"Missing field '{minimum}'", type="error"
+                    )
+                )
+            elif not isinstance(content[minimum], str):
+                errors.append(
+                    ErrorEntry(
+                        loc=(minimum,),
+                        msg=f"Invalid type '{type(content[minimum])}'",
+                        type="error",
+                    )
+                )
+    else:
+        errors.append(
+            ErrorEntry(
+                loc=(), msg=f"Invalid content of type '{type(content)}'", type="error"
+            )
+        )
+        content = {}
 
-    typ = content.get("type")
-    rd_class = get_rd_class(typ, content.get("format_version"))
+    if errors:
+        ret = InvalidDescr(**content)  # pyright: ignore[reportArgumentType]
+        ret.validation_summary.add_detail(
+            ValidationDetail(
+                name="extract fields to chose description class",
+                status="failed",
+                errors=errors,
+            )
+        )
+        return ret
 
+    typ = content["type"]
+    rd_class = get_rd_class(typ, content["format_version"])
     rd = rd_class.load(content, context=context)
-    assert rd.validation_summary is not None
+
     if format_version != DISCOVER and not isinstance(rd, InvalidDescr):
+        # load with requested format_version
         discover_details = rd.validation_summary.details
         as_rd_class = get_rd_class(typ, format_version)
         rd = as_rd_class.load(content, context=context)
