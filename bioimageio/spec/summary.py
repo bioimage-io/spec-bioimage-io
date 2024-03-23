@@ -3,7 +3,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
 
-import rich
+import rich.console
+import rich.markdown
 from pydantic import BaseModel, Field, model_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
