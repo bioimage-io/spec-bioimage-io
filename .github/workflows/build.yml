@@ -61,8 +61,16 @@ jobs:
         run: python scripts/generate_spec_documentation.py --dist dist/user_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
+      - id: get_version
+        run: python -c 'import bioimageio.spec;print(f"version={bioimageio.spec.__version__}")' >> $GITHUB_OUTPUT
       - name: Generate developer docs
-        run: pdoc -o ./dist bioimageio.spec
+        run: |
+          pdoc \
+          --logo https://bioimage.io/static/img/bioimage-io-logo.svg \
+          --logo-link https://bioimage.io/ \
+          --favicon https://bioimage.io/static/img/bioimage-io-icon-small.svg \
+          --footer-text 'bioimageio.spec ${{steps.get_version.outputs.version}}' \
+          -o ./dist bioimageio.spec
       - run: cp README.md ./dist/README.md
       - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
