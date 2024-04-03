@@ -2346,7 +2346,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         )
 
     def get_axis_sizes(
-        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
     ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
