@@ -8,6 +8,7 @@ from abc import ABC
 from copy import deepcopy
 from datetime import datetime
 from itertools import chain
+from math import ceil
 from pathlib import Path, PurePosixPath
 from tempfile import mkdtemp
 from typing import (
@@ -242,6 +243,10 @@ class ParameterizedSize(Node):
     def get_size(self, n: ParameterizedSize.N) -> int:
         return self.min + self.step * n
 
+    def get_n(self, s: int) -> ParameterizedSize.N:
+        """return smallest n parameterizing a size greater or equal than `s`"""
+        return ceil((s - self.min) / self.step)
+
 
 ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
@@ -393,9 +398,12 @@ class WithHalo(Node):
     To document a halo that is already cropped by the model use `size.offset` instead."""
 
 
+BATCH_AXIS_ID = AxisId("batch")
+
+
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-    id: Annotated[AxisId, Predicate(lambda x: x == AxisId("batch"))] = AxisId("batch")
+    id: Annotated[AxisId, Predicate(lambda x: x == BATCH_AXIS_ID)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
@@ -1886,8 +1894,17 @@ class _DataDepSize(NamedTuple):
 
 
 class _AxisSizes(NamedTuple):
+    """the lenghts of all axes of model inputs and outputs"""
+
     inputs: Dict[Tuple[TensorId, AxisId], int]
     outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]
+
+
+class _TensorSizes(NamedTuple):
+    """_AxisSizes as nested dicts"""
+
+    inputs: Dict[TensorId, Dict[AxisId, int]]
+    outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
@@ -2260,6 +2277,74 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
+    @staticmethod
+    def get_batch_size(tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]) -> int:
+        batch_size = 1
+        tensor_with_batchsize: Optional[TensorId] = None
+        for tid in tensor_sizes:
+            for aid, s in tensor_sizes[tid].items():
+                if aid != BATCH_AXIS_ID or s == 1 or s == batch_size:
+                    continue
+
+                if batch_size != 1:
+                    assert tensor_with_batchsize is not None
+                    raise ValueError(
+                        f"batch size mismatch for tensors '{tensor_with_batchsize}' ({batch_size}) and '{tid}' ({s})"
+                    )
+
+                batch_size = s
+                tensor_with_batchsize = tid
+
+        return batch_size
+
+    def get_output_tensor_sizes(
+        self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
+    ) -> Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]:
+        batch_size = self.get_batch_size(input_sizes)
+        ns = self.get_ns(input_sizes)
+
+        tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
+        assert tensor_sizes.inputs == {k: dict(v) for k, v in input_sizes.items()}
+        return tensor_sizes.outputs
+
+    def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
+        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N] = {}
+        axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
+        for tid in input_sizes:
+            for aid, s in input_sizes[tid].items():
+                size_descr = axes[tid][aid].size
+                if size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                    pass
+                elif isinstance(size_descr, ParameterizedSize):
+                    ret[(tid, aid)] = size_descr.get_n(s)
+                else:
+                    assert_never(size_descr)
+
+        return ret
+
+    def get_tensor_sizes(
+        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+    ) -> _TensorSizes:
+        axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
+        return _TensorSizes(
+            {
+                t: {
+                    aa: axis_sizes.inputs[(tt, aa)]
+                    for tt, aa in axis_sizes.inputs
+                    if tt == t
+                }
+                for t, _ in axis_sizes.inputs
+            },
+            {
+                t: {
+                    aa: axis_sizes.outputs[(tt, aa)]
+                    for tt, aa in axis_sizes.outputs
+                    if tt == t
+                }
+                for t, _ in axis_sizes.outputs
+            },
+        )
+
     def get_axis_sizes(
         self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
     ) -> _AxisSizes:
@@ -2269,8 +2354,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
         inputs: Dict[Tuple[TensorId, AxisId], int] = {}
         outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
-        input_ids = {d.id for d in self.inputs}
-        output_ids = {d.id for d in self.outputs}
 
         def get_axis_size(a: Union[InputAxis, OutputAxis]):
             if isinstance(a, BatchAxis):
@@ -2314,20 +2397,20 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         "No size increment factor (n) for data dependent size axis"
                         + f" '{a.id}' of tensor '{t_descr.id}' expected."
                     )
-                assert t_descr.id in output_ids
                 return _DataDepSize(a.size.min, a.size.max)
             else:
                 assert_never(a.size)
 
+        for t_descr in self.inputs:
+            for a in t_descr.axes:
+                s = get_axis_size(a)
+                assert not isinstance(s, _DataDepSize)
+                inputs[t_descr.id, a.id] = s
+
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 s = get_axis_size(a)
-                if t_descr.id in input_ids:
-                    assert not isinstance(s, _DataDepSize)
-                    inputs[t_descr.id, a.id] = s
-                else:
-                    assert t_descr.id in output_ids
-                    outputs[t_descr.id, a.id] = s
+                outputs[t_descr.id, a.id] = s
 
         return _AxisSizes(inputs=inputs, outputs=outputs)
 
