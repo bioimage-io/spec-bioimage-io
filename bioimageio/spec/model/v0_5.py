@@ -2323,7 +2323,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return ret
 
     def get_tensor_sizes(
-        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
     ) -> _TensorSizes:
         axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
         return _TensorSizes(
@@ -2333,7 +2333,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     for tt, aa in axis_sizes.inputs
                     if tt == t
                 }
-                for t, _ in axis_sizes.inputs
+                for t in {tt for tt, _ in axis_sizes.inputs}
             },
             {
                 t: {
@@ -2341,7 +2341,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     for tt, aa in axis_sizes.outputs
                     if tt == t
                 }
-                for t, _ in axis_sizes.outputs
+                for t in {tt for tt, _ in axis_sizes.outputs}
             },
         )
 
