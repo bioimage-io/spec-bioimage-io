@@ -38,8 +38,10 @@ from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
+    Discriminator,
     Field,
     RootModel,
+    Tag,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -318,7 +320,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
         ref_axis: Union[
             ChannelAxis,
@@ -327,7 +331,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
         n: ParameterizedSize.N,
     ):
@@ -374,7 +380,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
     ):
         return axis.unit
@@ -392,10 +400,23 @@ class AxisBase(NodeWithExplicitlySetFields):
 
 
 class WithHalo(Node):
-    halo: Annotated[int, Ge(0)] = 0
+    halo: Annotated[int, Ge(1)]
     """The halo should be cropped from the output tensor to avoid boundary effects.
     It is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.
     To document a halo that is already cropped by the model use `size.offset` instead."""
+
+    size: Annotated[
+        SizeReference,
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """reference to another axis with an optional offset (see `SizeReference`)"""
 
 
 BATCH_AXIS_ID = AxisId("batch")
@@ -468,24 +489,6 @@ class _WithInputAxisSize(Node):
     """
 
 
-class _WithOutputAxisSize(Node):
-    size: Annotated[
-        Union[Annotated[int, Gt(0)], SizeReference],
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
-    ]
-    """The size/length of this axis can be specified as
-    - fixed integer
-    - reference to another axis with an optional offset (`SizeReference`)
-    """
-
-
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     pass
 
@@ -537,16 +540,67 @@ _InputAxisUnion = Union[
 InputAxis = Annotated[_InputAxisUnion, Field(discriminator="type")]
 
 
-class TimeOutputAxis(TimeAxisBase, WithHalo, _WithOutputAxisSize):
+class _WithOutputAxisSize(Node):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], SizeReference],
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - reference to another axis with an optional offset (see `SizeReference`)
+    """
+
+
+class TimeOutputAxis(TimeAxisBase, _WithOutputAxisSize):
     pass
 
 
-class SpaceOutputAxis(SpaceAxisBase, WithHalo, _WithOutputAxisSize):
+class TimeOutputAxisWithHalo(TimeAxisBase, WithHalo):
     pass
+
+
+def _get_halo_axis_discriminator_value(v: Any) -> Literal["with_halo", "wo_halo"]:
+    if isinstance(v, dict):
+        return "with_halo" if "halo" in v else "wo_halo"
+    else:
+        return "with_halo" if hasattr(v, "halo") else "wo_halo"
+
+
+_TimeOutputAxisUnion = Annotated[
+    Union[
+        Annotated[TimeOutputAxis, Tag("wo_halo")],
+        Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
+    ],
+    Discriminator(_get_halo_axis_discriminator_value),
+]
+
+
+class SpaceOutputAxis(SpaceAxisBase, _WithOutputAxisSize):
+    pass
+
+
+class SpaceOutputAxisWithHalo(SpaceAxisBase, WithHalo):
+    pass
+
+
+_SpaceOutputAxisUnion = Annotated[
+    Union[
+        Annotated[SpaceOutputAxis, Tag("wo_halo")],
+        Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
+    ],
+    Discriminator(_get_halo_axis_discriminator_value),
+]
 
 
 _OutputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexOutputAxis, TimeOutputAxis, SpaceOutputAxis
+    BatchAxis, ChannelAxis, IndexOutputAxis, _TimeOutputAxisUnion, _SpaceOutputAxisUnion
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Field(discriminator="type")]
 
@@ -1250,7 +1304,7 @@ def convert_axes(
                     offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
         elif isinstance(shape, collections.abc.Sequence):
-            size: Any = shape[i]
+            size = shape[i]
             assert isinstance(size, int)
         else:
             assert_never(shape)
@@ -1259,15 +1313,22 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(TimeInputAxis(size=size, scale=scale))
             else:
-                ret.append(
-                    TimeOutputAxis(
-                        size=size, scale=scale, halo=0 if halo is None else halo[i]
+                assert not isinstance(size, ParameterizedSize)
+                if halo is None:
+                    ret.append(TimeOutputAxis(size=size, scale=scale))
+                else:
+                    assert not isinstance(size, int)
+                    ret.append(
+                        TimeOutputAxisWithHalo(size=size, scale=scale, halo=halo[i])
                     )
-                )
+
         elif axis_type == "index":
             if tensor_type == "input":
                 ret.append(IndexInputAxis(size=size))
             else:
+                if isinstance(size, ParameterizedSize):
+                    size = DataDependentSize(min=size.min)
+
                 ret.append(IndexOutputAxis(size=size))
         elif axis_type == "channel":
             assert not isinstance(size, ParameterizedSize)
@@ -1293,7 +1354,16 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
             else:
-                ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
+                assert not isinstance(size, ParameterizedSize)
+                if halo is None:
+                    ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
+                else:
+                    assert not isinstance(size, int)
+                    ret.append(
+                        SpaceOutputAxisWithHalo(
+                            id=AxisId(a), size=size, scale=scale, halo=halo[i]
+                        )
+                    )
 
     return ret
 
@@ -2004,65 +2074,72 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
         ],
     ):
-        if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
+        if isinstance(axis, BatchAxis) or isinstance(
+            axis.size, (int, ParameterizedSize, DataDependentSize)
+        ):
             return
+        elif not isinstance(axis.size, SizeReference):
+            assert_never(axis.size)
 
-        if isinstance(axis.size, (ParameterizedSize, DataDependentSize)):
-            if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
+        # validate axis.size SizeReference
+        ref = (axis.size.tensor_id, axis.size.axis_id)
+        if ref not in valid_independent_refs:
+            raise ValueError(
+                "Invalid tensor axis reference at"
+                + f" {field_name}[{i}].axes[{a}].size: {axis.size}."
+            )
+        if ref == (tensor_id, axis.id):
+            raise ValueError(
+                "Self-referencing not allowed for"
+                + f" {field_name}[{i}].axes[{a}].size: {axis.size}"
+            )
+        if axis.type == "channel":
+            if valid_independent_refs[ref][1].type != "channel":
                 raise ValueError(
-                    f"axis {axis.id} with minimum size {axis.size.min} is too small for"
-                    + f" halo {axis.halo}."
+                    "A channel axis' size may only reference another fixed size"
+                    + " channel axis."
                 )
+            if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
+                ref_size = valid_independent_refs[ref][2]
+                assert isinstance(ref_size, int), (
+                    "channel axis ref (another channel axis) has to specify fixed"
+                    + " size"
+                )
+                generated_channel_names = [
+                    Identifier(axis.channel_names.format(i=i))
+                    for i in range(1, ref_size + 1)
+                ]
+                axis.channel_names = generated_channel_names
 
-        elif isinstance(axis.size, SizeReference):
-            ref = (axis.size.tensor_id, axis.size.axis_id)
-            if ref not in valid_independent_refs:
-                raise ValueError(
-                    "Invalid tensor axis reference at"
-                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}."
-                )
-            if ref == (tensor_id, axis.id):
-                raise ValueError(
-                    "Self-referencing not allowed for"
-                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}"
-                )
-            if axis.type == "channel":
-                if valid_independent_refs[ref][1].type != "channel":
-                    raise ValueError(
-                        "A channel axis' size may only reference another fixed size"
-                        + " channel axis."
-                    )
-                if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
-                    ref_size = valid_independent_refs[ref][2]
-                    assert isinstance(ref_size, int), (
-                        "channel axis ref (another channel axis) has to specify fixed"
-                        + " size"
-                    )
-                    generated_channel_names = [
-                        Identifier(axis.channel_names.format(i=i))
-                        for i in range(1, ref_size + 1)
-                    ]
-                    axis.channel_names = generated_channel_names
+        if (ax_unit := getattr(axis, "unit", None)) != (
+            ref_unit := getattr(valid_independent_refs[ref][1], "unit", None)
+        ):
+            raise ValueError(
+                "The units of an axis and its reference axis need to match, but"
+                + f" '{ax_unit}' != '{ref_unit}'."
+            )
+        ref_axis = valid_independent_refs[ref][1]
+        if isinstance(ref_axis, BatchAxis):
+            raise ValueError(
+                f"Invalid reference axis '{ref_axis.id}' for {tensor_id}.{axis.id}"
+                + " (a batch axis is not allowed as reference)."
+            )
 
-            if (ax_unit := getattr(axis, "unit", None)) != (
-                ref_unit := getattr(valid_independent_refs[ref][1], "unit", None)
-            ):
-                raise ValueError(
-                    "The units of an axis and its reference axis need to match, but"
-                    + f" '{ax_unit}' != '{ref_unit}'."
-                )
-            min_size = valid_independent_refs[ref][2]
-            if isinstance(min_size, ParameterizedSize):
-                min_size = min_size.min
-
-            if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
+        if isinstance(axis, WithHalo):
+            min_size = axis.size.get_size(axis, ref_axis, n=0)
+            if (min_size - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {min_size} is too small for halo"
                     + f" {axis.halo}."
                 )
 
-        else:
-            assert_never(axis.size)
+            input_halo = axis.halo * axis.scale / ref_axis.scale
+            if input_halo != int(input_halo) or input_halo % 2 == 1:
+                raise ValueError(
+                    f"input_halo {input_halo} (output_halo {axis.halo} *"
+                    + f" output_scale {axis.scale} / input_scale {ref_axis.scale})"
+                    + f" is not an even integer for {tensor_id}.{axis.id}."
+                )
 
     @model_validator(mode="after")
     def _validate_test_tensors(self) -> Self:
