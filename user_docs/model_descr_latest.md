@@ -102,7 +102,7 @@ Optional[_internal.types.OrcidId]
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f744f6418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f033a141940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -944,11 +944,11 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 ### `outputs.axes`<sub> Sequence</sub>
 
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f032a0931a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f032a0931a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, bioimageio.spec.model.v0_5.TimeOutputAxis, bioimageio.spec.model.v0_5.SpaceOutputAxis], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f032a0931a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f032a0931a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], FieldInfo(annotation=NoneType, required=True, discriminator='type')]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1075,10 +1075,93 @@ Sequence[_internal.types.Identifier]
 
 </details>
 
-#### `outputs.axes.halo`<sub> int</sub> ≝ `0`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `time`
 
 
 
+
+#### `outputs.axes.description`<sub> str</sub> ≝ ``
+
+
+
+
+#### `outputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
+
+
+
+
+#### `outputs.axes.unit`<sub> Optional</sub> ≝ `None`
+
+
+<details><summary>Optional[Literal[attosecond, ..., zettasecond]]
+
+</summary>
+
+Optional[Literal of
+- attosecond
+- centisecond
+- day
+- decisecond
+- exasecond
+- femtosecond
+- gigasecond
+- hectosecond
+- hour
+- kilosecond
+- megasecond
+- microsecond
+- millisecond
+- minute
+- nanosecond
+- petasecond
+- picosecond
+- second
+- terasecond
+- yoctosecond
+- yottasecond
+- zeptosecond
+- zettasecond
+]
+
+</details>
+
+#### `outputs.axes.scale`<sub> float</sub> ≝ `1.0`
+
+
+
+
+**TimeOutputAxisWithHalo:**
+#### `outputs.axes.halo`<sub> int</sub>
+
+
+
+
+#### `outputs.axes.size`<sub> SizeReference</sub>
+
+[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+
+<details><summary>SizeReference
+
+</summary>
+
+
+**SizeReference:**
+##### `outputs.axes.size.tensor_id`<sub> TensorId</sub>
+
+
+
+
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
+
+
+
+
+##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
+
+
+
+
+</details>
 
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `time`
 
@@ -1163,10 +1246,97 @@ Optional[Literal of
 
 </details>
 
-#### `outputs.axes.halo`<sub> int</sub> ≝ `0`
+#### `outputs.axes.id`<sub> AxisId</sub> ≝ `x`
+
+[*Examples:*](#outputsaxesid) ['x', 'y', 'z']
 
 
 
+#### `outputs.axes.description`<sub> str</sub> ≝ ``
+
+
+
+
+#### `outputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
+
+
+
+
+#### `outputs.axes.unit`<sub> Optional</sub> ≝ `None`
+
+
+<details><summary>Optional[Literal[attometer, ..., zettameter]]
+
+</summary>
+
+Optional[Literal of
+- attometer
+- angstrom
+- centimeter
+- decimeter
+- exameter
+- femtometer
+- foot
+- gigameter
+- hectometer
+- inch
+- kilometer
+- megameter
+- meter
+- micrometer
+- mile
+- millimeter
+- nanometer
+- parsec
+- petameter
+- picometer
+- terameter
+- yard
+- yoctometer
+- yottameter
+- zeptometer
+- zettameter
+]
+
+</details>
+
+#### `outputs.axes.scale`<sub> float</sub> ≝ `1.0`
+
+
+
+
+**SpaceOutputAxisWithHalo:**
+#### `outputs.axes.halo`<sub> int</sub>
+
+
+
+
+#### `outputs.axes.size`<sub> SizeReference</sub>
+
+[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+
+<details><summary>SizeReference
+
+</summary>
+
+
+**SizeReference:**
+##### `outputs.axes.size.tensor_id`<sub> TensorId</sub>
+
+
+
+
+##### `outputs.axes.size.axis_id`<sub> AxisId</sub>
+
+
+
+
+##### `outputs.axes.size.offset`<sub> int</sub> ≝ `0`
+
+
+
+
+</details>
 
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `x`
 
@@ -2417,11 +2587,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f744f6418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f033a141940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2446,7 +2616,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2594,7 +2764,7 @@ Optional[_internal.types.OrcidId]
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 3, 27, 14, 3, 45, 560323)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 4, 9, 9, 11, 25, 147182)`
 
 
 
@@ -2638,11 +2808,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f744f6418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f033a141940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2782,7 +2952,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2886,11 +3056,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f744f6418a0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7f033a141940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -2919,7 +3089,7 @@ Optional[Union of
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f744bf92b60>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f0336b6f380>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -3067,6 +3237,19 @@ channel
 ### `outputs.axes.size`
 - 10
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
+
+### `outputs.axes.size`
+- 10
+- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
+
+### `outputs.axes.size`
+- 10
+- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
+
+### `outputs.axes.id`
+- x
+- y
+- z
 
 ### `outputs.axes.size`
 - 10

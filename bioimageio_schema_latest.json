@@ -1328,12 +1328,6 @@
                     ],
                     "title": "Size"
                 },
-                "halo": {
-                    "default": 0,
-                    "minimum": 0,
-                    "title": "Halo",
-                    "type": "integer"
-                },
                 "id": {
                     "default": "x",
                     "examples": [
@@ -1406,6 +1400,104 @@
                 "size"
             ],
             "title": "SpaceOutputAxis",
+            "type": "object"
+        },
+        "SpaceOutputAxisWithHalo": {
+            "additionalProperties": false,
+            "properties": {
+                "halo": {
+                    "minimum": 1,
+                    "title": "Halo",
+                    "type": "integer"
+                },
+                "size": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ]
+                },
+                "id": {
+                    "default": "x",
+                    "examples": [
+                        "x",
+                        "y",
+                        "z"
+                    ],
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "space",
+                    "default": "space",
+                    "title": "Type"
+                },
+                "unit": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "attometer",
+                                "angstrom",
+                                "centimeter",
+                                "decimeter",
+                                "exameter",
+                                "femtometer",
+                                "foot",
+                                "gigameter",
+                                "hectometer",
+                                "inch",
+                                "kilometer",
+                                "megameter",
+                                "meter",
+                                "micrometer",
+                                "mile",
+                                "millimeter",
+                                "nanometer",
+                                "parsec",
+                                "petameter",
+                                "picometer",
+                                "terameter",
+                                "yard",
+                                "yoctometer",
+                                "yottameter",
+                                "zeptometer",
+                                "zettameter"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Unit"
+                },
+                "scale": {
+                    "default": 1.0,
+                    "exclusiveMinimum": 0.0,
+                    "title": "Scale",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "halo",
+                "size"
+            ],
+            "title": "SpaceOutputAxisWithHalo",
             "type": "object"
         },
         "TimeInputAxis": {
@@ -1527,12 +1619,6 @@
                     ],
                     "title": "Size"
                 },
-                "halo": {
-                    "default": 0,
-                    "minimum": 0,
-                    "title": "Halo",
-                    "type": "integer"
-                },
                 "id": {
                     "default": "time",
                     "title": "Id",
@@ -1597,6 +1683,96 @@
                 "size"
             ],
             "title": "TimeOutputAxis",
+            "type": "object"
+        },
+        "TimeOutputAxisWithHalo": {
+            "additionalProperties": false,
+            "properties": {
+                "halo": {
+                    "minimum": 1,
+                    "title": "Halo",
+                    "type": "integer"
+                },
+                "size": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/SizeReference"
+                        }
+                    ],
+                    "examples": [
+                        10,
+                        {
+                            "axis_id": "a",
+                            "offset": 5,
+                            "tensor_id": "t"
+                        }
+                    ]
+                },
+                "id": {
+                    "default": "time",
+                    "title": "Id",
+                    "type": "string"
+                },
+                "description": {
+                    "default": "",
+                    "maxLength": 128,
+                    "title": "Description",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "time",
+                    "default": "time",
+                    "title": "Type"
+                },
+                "unit": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "attosecond",
+                                "centisecond",
+                                "day",
+                                "decisecond",
+                                "exasecond",
+                                "femtosecond",
+                                "gigasecond",
+                                "hectosecond",
+                                "hour",
+                                "kilosecond",
+                                "megasecond",
+                                "microsecond",
+                                "millisecond",
+                                "minute",
+                                "nanosecond",
+                                "petasecond",
+                                "picosecond",
+                                "second",
+                                "terasecond",
+                                "yoctosecond",
+                                "yottasecond",
+                                "zeptosecond",
+                                "zettasecond"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Unit"
+                },
+                "scale": {
+                    "default": 1.0,
+                    "exclusiveMinimum": 0.0,
+                    "title": "Scale",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "halo",
+                "size"
+            ],
+            "title": "TimeOutputAxisWithHalo",
             "type": "object"
         },
         "Uploader": {
@@ -6385,7 +6561,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-03-27T14:03:47.456210"
+                    "default": "2024-04-09T09:11:27.026709"
                 },
                 "training_data": {
                     "anyOf": [
@@ -6528,8 +6704,26 @@
                                 "batch": "#/$defs/BatchAxis",
                                 "channel": "#/$defs/ChannelAxis",
                                 "index": "#/$defs/IndexOutputAxis",
-                                "space": "#/$defs/SpaceOutputAxis",
-                                "time": "#/$defs/TimeOutputAxis"
+                                "space": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/$defs/SpaceOutputAxis"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/SpaceOutputAxisWithHalo"
+                                        }
+                                    ]
+                                },
+                                "time": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/$defs/TimeOutputAxis"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/TimeOutputAxisWithHalo"
+                                        }
+                                    ]
+                                }
                             },
                             "propertyName": "type"
                         },
@@ -6544,10 +6738,24 @@
                                 "$ref": "#/$defs/IndexOutputAxis"
                             },
                             {
-                                "$ref": "#/$defs/TimeOutputAxis"
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/$defs/TimeOutputAxis"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/TimeOutputAxisWithHalo"
+                                    }
+                                ]
                             },
                             {
-                                "$ref": "#/$defs/SpaceOutputAxis"
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/$defs/SpaceOutputAxis"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/SpaceOutputAxisWithHalo"
+                                    }
+                                ]
                             }
                         ]
                     },
