@@ -8,6 +8,7 @@ from abc import ABC
 from copy import deepcopy
 from datetime import datetime
 from itertools import chain
+from math import ceil
 from pathlib import Path, PurePosixPath
 from tempfile import mkdtemp
 from typing import (
@@ -37,8 +38,10 @@ from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
+    Discriminator,
     Field,
     RootModel,
+    Tag,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -242,6 +245,10 @@ class ParameterizedSize(Node):
     def get_size(self, n: ParameterizedSize.N) -> int:
         return self.min + self.step * n
 
+    def get_n(self, s: int) -> ParameterizedSize.N:
+        """return smallest n parameterizing a size greater or equal than `s`"""
+        return ceil((s - self.min) / self.step)
+
 
 ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
@@ -313,7 +320,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
         ref_axis: Union[
             ChannelAxis,
@@ -322,7 +331,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
         n: ParameterizedSize.N,
     ):
@@ -369,7 +380,9 @@ class SizeReference(Node):
             TimeInputAxis,
             SpaceInputAxis,
             TimeOutputAxis,
+            TimeOutputAxisWithHalo,
             SpaceOutputAxis,
+            SpaceOutputAxisWithHalo,
         ],
     ):
         return axis.unit
@@ -387,15 +400,31 @@ class AxisBase(NodeWithExplicitlySetFields):
 
 
 class WithHalo(Node):
-    halo: Annotated[int, Ge(0)] = 0
+    halo: Annotated[int, Ge(1)]
     """The halo should be cropped from the output tensor to avoid boundary effects.
     It is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.
     To document a halo that is already cropped by the model use `size.offset` instead."""
 
+    size: Annotated[
+        SizeReference,
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """reference to another axis with an optional offset (see `SizeReference`)"""
+
+
+BATCH_AXIS_ID = AxisId("batch")
+
 
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-    id: Annotated[AxisId, Predicate(lambda x: x == AxisId("batch"))] = AxisId("batch")
+    id: Annotated[AxisId, Predicate(lambda x: x == BATCH_AXIS_ID)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
@@ -460,24 +489,6 @@ class _WithInputAxisSize(Node):
     """
 
 
-class _WithOutputAxisSize(Node):
-    size: Annotated[
-        Union[Annotated[int, Gt(0)], SizeReference],
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
-    ]
-    """The size/length of this axis can be specified as
-    - fixed integer
-    - reference to another axis with an optional offset (`SizeReference`)
-    """
-
-
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     pass
 
@@ -529,16 +540,67 @@ _InputAxisUnion = Union[
 InputAxis = Annotated[_InputAxisUnion, Field(discriminator="type")]
 
 
-class TimeOutputAxis(TimeAxisBase, WithHalo, _WithOutputAxisSize):
+class _WithOutputAxisSize(Node):
+    size: Annotated[
+        Union[Annotated[int, Gt(0)], SizeReference],
+        Field(
+            examples=[
+                10,
+                SizeReference(
+                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
+                ).model_dump(mode="json"),
+            ]
+        ),
+    ]
+    """The size/length of this axis can be specified as
+    - fixed integer
+    - reference to another axis with an optional offset (see `SizeReference`)
+    """
+
+
+class TimeOutputAxis(TimeAxisBase, _WithOutputAxisSize):
     pass
 
 
-class SpaceOutputAxis(SpaceAxisBase, WithHalo, _WithOutputAxisSize):
+class TimeOutputAxisWithHalo(TimeAxisBase, WithHalo):
     pass
+
+
+def _get_halo_axis_discriminator_value(v: Any) -> Literal["with_halo", "wo_halo"]:
+    if isinstance(v, dict):
+        return "with_halo" if "halo" in v else "wo_halo"
+    else:
+        return "with_halo" if hasattr(v, "halo") else "wo_halo"
+
+
+_TimeOutputAxisUnion = Annotated[
+    Union[
+        Annotated[TimeOutputAxis, Tag("wo_halo")],
+        Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
+    ],
+    Discriminator(_get_halo_axis_discriminator_value),
+]
+
+
+class SpaceOutputAxis(SpaceAxisBase, _WithOutputAxisSize):
+    pass
+
+
+class SpaceOutputAxisWithHalo(SpaceAxisBase, WithHalo):
+    pass
+
+
+_SpaceOutputAxisUnion = Annotated[
+    Union[
+        Annotated[SpaceOutputAxis, Tag("wo_halo")],
+        Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
+    ],
+    Discriminator(_get_halo_axis_discriminator_value),
+]
 
 
 _OutputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexOutputAxis, TimeOutputAxis, SpaceOutputAxis
+    BatchAxis, ChannelAxis, IndexOutputAxis, _TimeOutputAxisUnion, _SpaceOutputAxisUnion
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Field(discriminator="type")]
 
@@ -1242,7 +1304,7 @@ def convert_axes(
                     offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
         elif isinstance(shape, collections.abc.Sequence):
-            size: Any = shape[i]
+            size = shape[i]
             assert isinstance(size, int)
         else:
             assert_never(shape)
@@ -1251,15 +1313,22 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(TimeInputAxis(size=size, scale=scale))
             else:
-                ret.append(
-                    TimeOutputAxis(
-                        size=size, scale=scale, halo=0 if halo is None else halo[i]
+                assert not isinstance(size, ParameterizedSize)
+                if halo is None:
+                    ret.append(TimeOutputAxis(size=size, scale=scale))
+                else:
+                    assert not isinstance(size, int)
+                    ret.append(
+                        TimeOutputAxisWithHalo(size=size, scale=scale, halo=halo[i])
                     )
-                )
+
         elif axis_type == "index":
             if tensor_type == "input":
                 ret.append(IndexInputAxis(size=size))
             else:
+                if isinstance(size, ParameterizedSize):
+                    size = DataDependentSize(min=size.min)
+
                 ret.append(IndexOutputAxis(size=size))
         elif axis_type == "channel":
             assert not isinstance(size, ParameterizedSize)
@@ -1285,7 +1354,16 @@ def convert_axes(
             if tensor_type == "input":
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
             else:
-                ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
+                assert not isinstance(size, ParameterizedSize)
+                if halo is None:
+                    ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
+                else:
+                    assert not isinstance(size, int)
+                    ret.append(
+                        SpaceOutputAxisWithHalo(
+                            id=AxisId(a), size=size, scale=scale, halo=halo[i]
+                        )
+                    )
 
     return ret
 
@@ -1886,8 +1964,17 @@ class _DataDepSize(NamedTuple):
 
 
 class _AxisSizes(NamedTuple):
+    """the lenghts of all axes of model inputs and outputs"""
+
     inputs: Dict[Tuple[TensorId, AxisId], int]
     outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]
+
+
+class _TensorSizes(NamedTuple):
+    """_AxisSizes as nested dicts"""
+
+    inputs: Dict[TensorId, Dict[AxisId, int]]
+    outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
@@ -1987,65 +2074,72 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
         ],
     ):
-        if isinstance(axis, BatchAxis) or isinstance(axis.size, int):
+        if isinstance(axis, BatchAxis) or isinstance(
+            axis.size, (int, ParameterizedSize, DataDependentSize)
+        ):
             return
+        elif not isinstance(axis.size, SizeReference):
+            assert_never(axis.size)
 
-        if isinstance(axis.size, (ParameterizedSize, DataDependentSize)):
-            if isinstance(axis, WithHalo) and (axis.size.min - 2 * axis.halo) < 1:
+        # validate axis.size SizeReference
+        ref = (axis.size.tensor_id, axis.size.axis_id)
+        if ref not in valid_independent_refs:
+            raise ValueError(
+                "Invalid tensor axis reference at"
+                + f" {field_name}[{i}].axes[{a}].size: {axis.size}."
+            )
+        if ref == (tensor_id, axis.id):
+            raise ValueError(
+                "Self-referencing not allowed for"
+                + f" {field_name}[{i}].axes[{a}].size: {axis.size}"
+            )
+        if axis.type == "channel":
+            if valid_independent_refs[ref][1].type != "channel":
                 raise ValueError(
-                    f"axis {axis.id} with minimum size {axis.size.min} is too small for"
-                    + f" halo {axis.halo}."
+                    "A channel axis' size may only reference another fixed size"
+                    + " channel axis."
                 )
+            if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
+                ref_size = valid_independent_refs[ref][2]
+                assert isinstance(ref_size, int), (
+                    "channel axis ref (another channel axis) has to specify fixed"
+                    + " size"
+                )
+                generated_channel_names = [
+                    Identifier(axis.channel_names.format(i=i))
+                    for i in range(1, ref_size + 1)
+                ]
+                axis.channel_names = generated_channel_names
 
-        elif isinstance(axis.size, SizeReference):
-            ref = (axis.size.tensor_id, axis.size.axis_id)
-            if ref not in valid_independent_refs:
-                raise ValueError(
-                    "Invalid tensor axis reference at"
-                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}."
-                )
-            if ref == (tensor_id, axis.id):
-                raise ValueError(
-                    "Self-referencing not allowed for"
-                    + f" {field_name}[{i}].axes[{a}].size: {axis.size}"
-                )
-            if axis.type == "channel":
-                if valid_independent_refs[ref][1].type != "channel":
-                    raise ValueError(
-                        "A channel axis' size may only reference another fixed size"
-                        + " channel axis."
-                    )
-                if isinstance(axis.channel_names, str) and "{i}" in axis.channel_names:
-                    ref_size = valid_independent_refs[ref][2]
-                    assert isinstance(ref_size, int), (
-                        "channel axis ref (another channel axis) has to specify fixed"
-                        + " size"
-                    )
-                    generated_channel_names = [
-                        Identifier(axis.channel_names.format(i=i))
-                        for i in range(1, ref_size + 1)
-                    ]
-                    axis.channel_names = generated_channel_names
+        if (ax_unit := getattr(axis, "unit", None)) != (
+            ref_unit := getattr(valid_independent_refs[ref][1], "unit", None)
+        ):
+            raise ValueError(
+                "The units of an axis and its reference axis need to match, but"
+                + f" '{ax_unit}' != '{ref_unit}'."
+            )
+        ref_axis = valid_independent_refs[ref][1]
+        if isinstance(ref_axis, BatchAxis):
+            raise ValueError(
+                f"Invalid reference axis '{ref_axis.id}' for {tensor_id}.{axis.id}"
+                + " (a batch axis is not allowed as reference)."
+            )
 
-            if (ax_unit := getattr(axis, "unit", None)) != (
-                ref_unit := getattr(valid_independent_refs[ref][1], "unit", None)
-            ):
-                raise ValueError(
-                    "The units of an axis and its reference axis need to match, but"
-                    + f" '{ax_unit}' != '{ref_unit}'."
-                )
-            min_size = valid_independent_refs[ref][2]
-            if isinstance(min_size, ParameterizedSize):
-                min_size = min_size.min
-
-            if isinstance(axis, WithHalo) and (min_size - 2 * axis.halo) < 1:
+        if isinstance(axis, WithHalo):
+            min_size = axis.size.get_size(axis, ref_axis, n=0)
+            if (min_size - 2 * axis.halo) < 1:
                 raise ValueError(
                     f"axis {axis.id} with minimum size {min_size} is too small for halo"
                     + f" {axis.halo}."
                 )
 
-        else:
-            assert_never(axis.size)
+            input_halo = axis.halo * axis.scale / ref_axis.scale
+            if input_halo != int(input_halo) or input_halo % 2 == 1:
+                raise ValueError(
+                    f"input_halo {input_halo} (output_halo {axis.halo} *"
+                    + f" output_scale {axis.scale} / input_scale {ref_axis.scale})"
+                    + f" is not an even integer for {tensor_id}.{axis.id}."
+                )
 
     @model_validator(mode="after")
     def _validate_test_tensors(self) -> Self:
@@ -2260,8 +2354,76 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
+    @staticmethod
+    def get_batch_size(tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]) -> int:
+        batch_size = 1
+        tensor_with_batchsize: Optional[TensorId] = None
+        for tid in tensor_sizes:
+            for aid, s in tensor_sizes[tid].items():
+                if aid != BATCH_AXIS_ID or s == 1 or s == batch_size:
+                    continue
+
+                if batch_size != 1:
+                    assert tensor_with_batchsize is not None
+                    raise ValueError(
+                        f"batch size mismatch for tensors '{tensor_with_batchsize}' ({batch_size}) and '{tid}' ({s})"
+                    )
+
+                batch_size = s
+                tensor_with_batchsize = tid
+
+        return batch_size
+
+    def get_output_tensor_sizes(
+        self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
+    ) -> Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]:
+        batch_size = self.get_batch_size(input_sizes)
+        ns = self.get_ns(input_sizes)
+
+        tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
+        assert tensor_sizes.inputs == {k: dict(v) for k, v in input_sizes.items()}
+        return tensor_sizes.outputs
+
+    def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
+        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N] = {}
+        axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
+        for tid in input_sizes:
+            for aid, s in input_sizes[tid].items():
+                size_descr = axes[tid][aid].size
+                if size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                    pass
+                elif isinstance(size_descr, ParameterizedSize):
+                    ret[(tid, aid)] = size_descr.get_n(s)
+                else:
+                    assert_never(size_descr)
+
+        return ret
+
+    def get_tensor_sizes(
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+    ) -> _TensorSizes:
+        axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
+        return _TensorSizes(
+            {
+                t: {
+                    aa: axis_sizes.inputs[(tt, aa)]
+                    for tt, aa in axis_sizes.inputs
+                    if tt == t
+                }
+                for t in {tt for tt, _ in axis_sizes.inputs}
+            },
+            {
+                t: {
+                    aa: axis_sizes.outputs[(tt, aa)]
+                    for tt, aa in axis_sizes.outputs
+                    if tt == t
+                }
+                for t in {tt for tt, _ in axis_sizes.outputs}
+            },
+        )
+
     def get_axis_sizes(
-        self, ns: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
     ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
@@ -2269,8 +2431,6 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
         inputs: Dict[Tuple[TensorId, AxisId], int] = {}
         outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
-        input_ids = {d.id for d in self.inputs}
-        output_ids = {d.id for d in self.outputs}
 
         def get_axis_size(a: Union[InputAxis, OutputAxis]):
             if isinstance(a, BatchAxis):
@@ -2314,20 +2474,20 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         "No size increment factor (n) for data dependent size axis"
                         + f" '{a.id}' of tensor '{t_descr.id}' expected."
                     )
-                assert t_descr.id in output_ids
                 return _DataDepSize(a.size.min, a.size.max)
             else:
                 assert_never(a.size)
 
+        for t_descr in self.inputs:
+            for a in t_descr.axes:
+                s = get_axis_size(a)
+                assert not isinstance(s, _DataDepSize)
+                inputs[t_descr.id, a.id] = s
+
         for t_descr in chain(self.inputs, self.outputs):
             for a in t_descr.axes:
                 s = get_axis_size(a)
-                if t_descr.id in input_ids:
-                    assert not isinstance(s, _DataDepSize)
-                    inputs[t_descr.id, a.id] = s
-                else:
-                    assert t_descr.id in output_ids
-                    outputs[t_descr.id, a.id] = s
+                outputs[t_descr.id, a.id] = s
 
         return _AxisSizes(inputs=inputs, outputs=outputs)
 
