@@ -10,7 +10,7 @@ VERSION_FILE = ROOT_DIR / "bioimageio" / "spec" / "VERSION"
 VERSION = json.loads(VERSION_FILE.read_text(encoding="utf-8"))["version"]
 
 
-setup(
+_ = setup(
     name="bioimageio.spec",
     version=VERSION,
     description="Parser and validator library for bioimage.io specifications",
