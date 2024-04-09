@@ -16,17 +16,23 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
     if not validation_context_var.get().perform_io_checks:
         return pydantic.AnyUrl(url)
 
+    val_url = url
+
     if url.startswith("https://colab.research.google.com/github/"):
-        # head request for colab returns "Value error, 405: Method Not Allowed"
-        # therefore we check if the source notebook exists at github instead
+        # get requests for colab returns 200 even if the source notebook does not exists.
+        # We therefore validate the url to the notebbok instead (for github notebooks)
         val_url = url.replace(
             "https://colab.research.google.com/github/", "https://github.com/"
         )
-    else:
-        val_url = url
+    elif url.startswith("https://colab.research.google.com/"):
+        # TODO: improve validation of non-github colab urls
+        issue_warning(
+            "colab urls currently pass even if the notebook url was not found. Cannot fully validate {value}",
+            value=url,
+        )
 
     try:
-        response = requests.head(val_url, timeout=(3, 3))
+        response = requests.get(val_url, timeout=(3, 3))
     except (
         requests.exceptions.ChunkedEncodingError,
         requests.exceptions.ContentDecodingError,
@@ -56,7 +62,6 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
             msg_context={"error": str(e)},
         )
     else:
-        follow_up_with_get = False
         if response.status_code == 302:  # found
             pass
         elif response.status_code in (301, 303, 308):
@@ -67,16 +72,6 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
                 msg_context={
                     "status_code": response.status_code,
                     "location": response.headers.get("location"),
-                },
-            )
-        elif response.status_code == 403:  # forbidden
-            follow_up_with_get = True
-            issue_warning(
-                "{status_code}: {reason} {value}",
-                value=url,
-                msg_context={
-                    "status_code": response.status_code,
-                    "reason": response.reason,
                 },
             )
         elif response.status_code == 405:
@@ -90,11 +85,6 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
             )
         elif response.status_code != 200:
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
-
-        if follow_up_with_get:
-            pass
-            # TODO follow up forbidden head request with get
-            # motivating example: 403: Forbidden https://elifesciences.org/articles/57613
 
     return pydantic.AnyUrl(url)
 
