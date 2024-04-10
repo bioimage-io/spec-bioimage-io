@@ -19,6 +19,7 @@ from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
 from numpy.typing import NDArray
 from pydantic import (
     AllowInfNan,
+    Discriminator,
     Field,
     TypeAdapter,
     ValidationInfo,
@@ -723,7 +724,7 @@ PreprocessingDescr = Annotated[
         ZeroMeanUnitVarianceDescr,
         ScaleRangeDescr,
     ],
-    Field(discriminator="name"),
+    Discriminator("name"),
 ]
 PostprocessingDescr = Annotated[
     Union[
@@ -735,7 +736,7 @@ PostprocessingDescr = Annotated[
         ScaleRangeDescr,
         ScaleMeanVarianceDescr,
     ],
-    Field(discriminator="name"),
+    Discriminator("name"),
 ]
 
 
