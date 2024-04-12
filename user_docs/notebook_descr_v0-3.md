@@ -113,7 +113,7 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 Union of
 - _internal.url.HttpUrl (WithSuffix(suffix='.ipynb', case_sensitive=True))
 - Path
-  (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7febb8341940>); WithSuffix(suffix='.ipynb', case_sensitive=True))
+  (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fdcc4941940>); WithSuffix(suffix='.ipynb', case_sensitive=True))
 - _internal.io.RelativeFilePath (WithSuffix(suffix='.ipynb', case_sensitive=True))
 
 
@@ -176,7 +176,7 @@ Union of
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7febb4ccc680>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fdcc130c680>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -207,11 +207,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7febb8341940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fdcc4941940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7febb4ccc680>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fdcc130c680>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -224,11 +224,11 @@ Sequence of Union of
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7febb8341940>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fdcc4941940>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7febb4ccc680>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fdcc130c680>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -253,7 +253,7 @@ Union of
   - _internal.url.HttpUrl
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7febb4ccc680>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fdcc130c680>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
