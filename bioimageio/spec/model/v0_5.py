@@ -441,7 +441,7 @@ class BatchAxis(AxisBase):
 class ChannelAxis(AxisBase):
     type: Literal["channel"] = "channel"
     id: NonBatchAxisId = AxisId("channel")
-    channel_names: List[Identifier]
+    channel_names: NotEmpty[List[Identifier]]
 
     @property
     def size(self) -> int:
