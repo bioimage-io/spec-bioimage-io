@@ -67,7 +67,7 @@ weights:
     parent: pytorch_state_dict
   pytorch_state_dict:
     architecture: multi_tensor_unet.py:MultiTensorUNet
-    architecture_sha256: 5e3d36b5187b85d5c935f2efde7cafe293dbffa413618f49a0744bf1be75c22b
+    architecture_sha256: 89204f8f3513b3c227127a8137bedaec9eafe49925f7734c73c6650ec135b34e
     kwargs: { depth: 3, in_channels: 2, initial_features: 16, out_channels: 2 }
     sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00
     source: weights.pt

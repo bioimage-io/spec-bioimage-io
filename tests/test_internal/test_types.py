@@ -155,7 +155,7 @@ def test_datetime_more(value: str):
     )
 
     root_adapter = TypeAdapter(Datetime)
-    datetime_adapter = TypeAdapter(  # pyright: ignore[reportCallIssue]
+    datetime_adapter = TypeAdapter(
         Annotated[
             datetime,
             PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
