@@ -27,7 +27,7 @@ inputs:
       - kwargs:
           axes: xy
           gain: 0.003921568627
-          offset: [0.0, 0.0, 0.0, 0.0]
+          offset: 0.0
         name: scale_linear
     shape: [1, 4, 1024, 1024]
 license: MIT
