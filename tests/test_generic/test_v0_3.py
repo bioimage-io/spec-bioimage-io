@@ -147,15 +147,9 @@ def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]
     [
         (UNET2D_ROOT / "README.md", a)
         for a in [
-            TypeAdapter(
-                Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]
-            ),  # pyright: ignore[reportCallIssue]
-            TypeAdapter(
-                Annotated[Path, WithSuffix(".md", case_sensitive=True)]
-            ),  # pyright: ignore[reportCallIssue]
-            TypeAdapter(
-                Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]
-            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
+            TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
+            TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
             TypeAdapter(
                 Annotated[
                     Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
@@ -176,9 +170,7 @@ def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]
     + [
         (text_md_url, a)
         for a in [
-            TypeAdapter(
-                Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]
-            ),  # pyright: ignore[reportCallIssue]
+            TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
             TypeAdapter(
                 Annotated[
                     Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
