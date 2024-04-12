@@ -257,12 +257,20 @@
                 "type": {
                     "const": "batch",
                     "default": "batch",
-                    "title": "Type"
+                    "enum": [
+                        "batch"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "size": {
                     "anyOf": [
                         {
-                            "const": 1
+                            "const": 1,
+                            "enum": [
+                                1
+                            ],
+                            "type": "integer"
                         },
                         {
                             "type": "null"
@@ -332,7 +340,11 @@
                 "type": {
                     "const": "channel",
                     "default": "channel",
-                    "title": "Type"
+                    "enum": [
+                        "channel"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "channel_names": {
                     "items": {
@@ -443,7 +455,11 @@
                 "id": {
                     "const": "ensure_dtype",
                     "default": "ensure_dtype",
-                    "title": "Id"
+                    "enum": [
+                        "ensure_dtype"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/EnsureDtypeKwargs"
@@ -616,7 +632,11 @@
                 "id": {
                     "const": "fixed_zero_mean_unit_variance",
                     "default": "fixed_zero_mean_unit_variance",
-                    "title": "Id"
+                    "enum": [
+                        "fixed_zero_mean_unit_variance"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "anyOf": [
@@ -749,7 +769,11 @@
                 "type": {
                     "const": "index",
                     "default": "index",
-                    "title": "Type"
+                    "enum": [
+                        "index"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -775,7 +799,11 @@
                 "type": {
                     "const": "index",
                     "default": "index",
-                    "title": "Type"
+                    "enum": [
+                        "index"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "size": {
                     "anyOf": [
@@ -868,7 +896,11 @@
                 "unit": {
                     "anyOf": [
                         {
-                            "const": "arbitrary unit"
+                            "const": "arbitrary unit",
+                            "enum": [
+                                "arbitrary unit"
+                            ],
+                            "type": "string"
                         },
                         {
                             "type": "string"
@@ -1028,7 +1060,11 @@
                 "unit": {
                     "anyOf": [
                         {
-                            "const": "arbitrary unit"
+                            "const": "arbitrary unit",
+                            "enum": [
+                                "arbitrary unit"
+                            ],
+                            "type": "string"
                         },
                         {
                             "type": "string"
@@ -1108,7 +1144,11 @@
                 "name": {
                     "anyOf": [
                         {
-                            "const": "deepimagej"
+                            "const": "deepimagej",
+                            "enum": [
+                                "deepimagej"
+                            ],
+                            "type": "string"
                         },
                         {
                             "type": "string"
@@ -1250,7 +1290,11 @@
                 "type": {
                     "const": "space",
                     "default": "space",
-                    "title": "Type"
+                    "enum": [
+                        "space"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -1347,7 +1391,11 @@
                 "type": {
                     "const": "space",
                     "default": "space",
-                    "title": "Type"
+                    "enum": [
+                        "space"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -1444,7 +1492,11 @@
                 "type": {
                     "const": "space",
                     "default": "space",
-                    "title": "Type"
+                    "enum": [
+                        "space"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -1544,7 +1596,11 @@
                 "type": {
                     "const": "time",
                     "default": "time",
-                    "title": "Type"
+                    "enum": [
+                        "time"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -1633,7 +1689,11 @@
                 "type": {
                     "const": "time",
                     "default": "time",
-                    "title": "Type"
+                    "enum": [
+                        "time"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -1722,7 +1782,11 @@
                 "type": {
                     "const": "time",
                     "default": "time",
-                    "title": "Type"
+                    "enum": [
+                        "time"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "unit": {
                     "anyOf": [
@@ -2106,7 +2170,11 @@
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.2.4"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "badges": {
                     "items": {
@@ -2164,7 +2232,11 @@
                 "type": {
                     "const": "application",
                     "default": "application",
-                    "title": "Type"
+                    "enum": [
+                        "application"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -2432,7 +2504,11 @@
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.3.0"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
@@ -2467,7 +2543,11 @@
                 "type": {
                     "const": "application",
                     "default": "application",
-                    "title": "Type"
+                    "enum": [
+                        "application"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -2780,7 +2860,11 @@
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.2.4"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "badges": {
                     "items": {
@@ -2838,7 +2922,11 @@
                 "type": {
                     "const": "collection",
                     "default": "collection",
-                    "title": "Type"
+                    "enum": [
+                        "collection"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -3134,7 +3222,11 @@
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.3.0"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
@@ -3169,7 +3261,11 @@
                 "type": {
                     "const": "collection",
                     "default": "collection",
-                    "title": "Type"
+                    "enum": [
+                        "collection"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -3510,7 +3606,11 @@
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.2.4"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "badges": {
                     "items": {
@@ -3568,7 +3668,11 @@
                 "type": {
                     "const": "dataset",
                     "default": "dataset",
-                    "title": "Type"
+                    "enum": [
+                        "dataset"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -3849,7 +3953,11 @@
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.3.0"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
@@ -3884,7 +3992,11 @@
                 "type": {
                     "const": "dataset",
                     "default": "dataset",
-                    "title": "Type"
+                    "enum": [
+                        "dataset"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -3960,7 +4072,11 @@
                 "name": {
                     "const": "binarize",
                     "default": "binarize",
-                    "title": "Name"
+                    "enum": [
+                        "binarize"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/BinarizeKwargs"
@@ -3979,7 +4095,11 @@
                 "name": {
                     "const": "clip",
                     "default": "clip",
-                    "title": "Name"
+                    "enum": [
+                        "clip"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/ClipKwargs"
@@ -4520,12 +4640,20 @@
                 "format_version": {
                     "const": "0.4.10",
                     "default": "0.4.10",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.4.10"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "type": {
                     "const": "model",
                     "default": "model",
-                    "title": "Type"
+                    "enum": [
+                        "model"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -5175,7 +5303,11 @@
                 "name": {
                     "const": "scale_linear",
                     "default": "scale_linear",
-                    "title": "Name"
+                    "enum": [
+                        "scale_linear"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_4__ScaleLinearKwargs"
@@ -5246,7 +5378,11 @@
                 "name": {
                     "const": "scale_mean_variance",
                     "default": "scale_mean_variance",
-                    "title": "Name"
+                    "enum": [
+                        "scale_mean_variance"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_4__ScaleMeanVarianceKwargs"
@@ -5310,7 +5446,11 @@
                 "name": {
                     "const": "scale_range",
                     "default": "scale_range",
-                    "title": "Name"
+                    "enum": [
+                        "scale_range"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_4__ScaleRangeKwargs"
@@ -5399,7 +5539,11 @@
                 "name": {
                     "const": "sigmoid",
                     "default": "sigmoid",
-                    "title": "Name"
+                    "enum": [
+                        "sigmoid"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 }
             },
             "title": "SigmoidDescr",
@@ -5848,7 +5992,11 @@
                 "name": {
                     "const": "zero_mean_unit_variance",
                     "default": "zero_mean_unit_variance",
-                    "title": "Name"
+                    "enum": [
+                        "zero_mean_unit_variance"
+                    ],
+                    "title": "Name",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceKwargs"
@@ -5953,7 +6101,11 @@
                 "id": {
                     "const": "binarize",
                     "default": "binarize",
-                    "title": "Id"
+                    "enum": [
+                        "binarize"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "anyOf": [
@@ -5980,7 +6132,11 @@
                 "id": {
                     "const": "clip",
                     "default": "clip",
-                    "title": "Id"
+                    "enum": [
+                        "clip"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/ClipKwargs"
@@ -6472,12 +6628,20 @@
                 "format_version": {
                     "const": "0.5.0",
                     "default": "0.5.0",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.5.0"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "type": {
                     "const": "model",
                     "default": "model",
-                    "title": "Type"
+                    "enum": [
+                        "model"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -6561,7 +6725,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-04-10T14:11:43.557301"
+                    "default": "2024-04-12T08:55:27.720932"
                 },
                 "training_data": {
                     "anyOf": [
@@ -6984,7 +7148,11 @@
                 "id": {
                     "const": "scale_linear",
                     "default": "scale_linear",
-                    "title": "Id"
+                    "enum": [
+                        "scale_linear"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "anyOf": [
@@ -7028,7 +7196,11 @@
                 "id": {
                     "const": "scale_mean_variance",
                     "default": "scale_mean_variance",
-                    "title": "Id"
+                    "enum": [
+                        "scale_mean_variance"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleMeanVarianceKwargs"
@@ -7091,7 +7263,11 @@
                 "id": {
                     "const": "scale_range",
                     "default": "scale_range",
-                    "title": "Id"
+                    "enum": [
+                        "scale_range"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeKwargs"
@@ -7172,7 +7348,11 @@
                 "id": {
                     "const": "sigmoid",
                     "default": "sigmoid",
-                    "title": "Id"
+                    "enum": [
+                        "sigmoid"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 }
             },
             "title": "SigmoidDescr",
@@ -7524,7 +7704,11 @@
                 "id": {
                     "const": "zero_mean_unit_variance",
                     "default": "zero_mean_unit_variance",
-                    "title": "Id"
+                    "enum": [
+                        "zero_mean_unit_variance"
+                    ],
+                    "title": "Id",
+                    "type": "string"
                 },
                 "kwargs": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs"
@@ -7822,7 +8006,11 @@
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.2.4"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "badges": {
                     "items": {
@@ -7880,7 +8068,11 @@
                 "type": {
                     "const": "notebook",
                     "default": "notebook",
-                    "title": "Type"
+                    "enum": [
+                        "notebook"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
@@ -8138,7 +8330,11 @@
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
-                    "title": "Format Version"
+                    "enum": [
+                        "0.3.0"
+                    ],
+                    "title": "Format Version",
+                    "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
@@ -8173,7 +8369,11 @@
                 "type": {
                     "const": "notebook",
                     "default": "notebook",
-                    "title": "Type"
+                    "enum": [
+                        "notebook"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "id": {
                     "anyOf": [
