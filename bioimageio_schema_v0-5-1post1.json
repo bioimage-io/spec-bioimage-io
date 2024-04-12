@@ -350,6 +350,7 @@
                     "items": {
                         "type": "string"
                     },
+                    "minItems": 1,
                     "title": "Channel Names",
                     "type": "array"
                 }
@@ -6725,7 +6726,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-04-12T08:55:27.720932"
+                    "default": "2024-04-12T20:51:11.163386"
                 },
                 "training_data": {
                     "anyOf": [

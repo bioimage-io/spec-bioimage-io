@@ -922,7 +922,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f156a370400&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f1bc58a0400&gt;)]</span>
 
         
     </div>
@@ -1051,7 +1051,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f156a370400&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f1bc58a0400&gt;)]]</span>
 
         
     </div>
@@ -1662,7 +1662,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.description" class="classattr">
                                 <div class="attr variable">
-            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f15692bfc40&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
+            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f1bc48d3c40&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
 
         
     </div>
@@ -1675,7 +1675,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.covers" class="classattr">
                                 <div class="attr variable">
-            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(func=&lt;function PurePath.is_absolute at 0x7f157a345940&gt;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f1576aa6f20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
+            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(func=&lt;function PurePath.is_absolute at 0x7f1bd5845940&gt;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f1bd204af20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
 
         
     </div>
@@ -1740,7 +1740,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, <a href="../_internal/license_id.html#DeprecatedLicenseId">bioimageio.spec._internal.license_id.DeprecatedLicenseId</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f15692bf380&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, <a href="../_internal/license_id.html#DeprecatedLicenseId">bioimageio.spec._internal.license_id.DeprecatedLicenseId</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f1bc48d3380&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
 
         
     </div>
@@ -1802,7 +1802,7 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
                             </div>
                             <div id="GenericModelDescrBase.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f1576aa6020&gt;), PlainSerializer(func=&lt;function _package at 0x7f1576aa6f20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
+            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f1bd204a020&gt;), PlainSerializer(func=&lt;function _package at 0x7f1bd204af20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
 
         
     </div>
@@ -2130,7 +2130,7 @@ method.</p>
                             </div>
                             <div id="GenericDescrBase.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(func=&lt;function PurePath.is_absolute at 0x7f157a345940&gt;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f15788baac0&gt;), PlainSerializer(func=&lt;function _package at 0x7f1576aa6f20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(func=&lt;function PurePath.is_absolute at 0x7f1bd5845940&gt;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f1bd3eb6ac0&gt;), PlainSerializer(func=&lt;function _package at 0x7f1bd204af20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
