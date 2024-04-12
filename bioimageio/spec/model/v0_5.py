@@ -537,7 +537,7 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
 _InputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
 ]
-InputAxis = Annotated[_InputAxisUnion, Field(discriminator="type")]
+InputAxis = Annotated[_InputAxisUnion, Discriminator("type")]
 
 
 class _WithOutputAxisSize(Node):
@@ -602,7 +602,7 @@ _SpaceOutputAxisUnion = Annotated[
 _OutputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexOutputAxis, _TimeOutputAxisUnion, _SpaceOutputAxisUnion
 ]
-OutputAxis = Annotated[_OutputAxisUnion, Field(discriminator="type")]
+OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
 AnyAxis = Union[InputAxis, OutputAxis]
 
@@ -1012,7 +1012,7 @@ PreprocessingDescr = Annotated[
         ZeroMeanUnitVarianceDescr,
         ScaleRangeDescr,
     ],
-    Field(discriminator="id"),
+    Discriminator("id"),
 ]
 PostprocessingDescr = Annotated[
     Union[
@@ -1026,7 +1026,7 @@ PostprocessingDescr = Annotated[
         ScaleRangeDescr,
         ScaleMeanVarianceDescr,
     ],
-    Field(discriminator="id"),
+    Discriminator("id"),
 ]
 
 IO_AxisT = TypeVar("IO_AxisT", InputAxis, OutputAxis)

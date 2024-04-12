@@ -176,6 +176,20 @@ def test_input_tensor_invalid(kwargs: Dict[str, Any]):
     )
 
 
+def test_input_tensor_error_count(model_data: Dict[str, Any]):
+    """this test checks that the discrminated union for `InputAxis` does its
+    thing and we don't get errors for all options"""
+    from bioimageio.spec import build_description
+
+    model_data["inputs"][0]["axes"][0]["id"] = 42
+    invalid = build_description(
+        model_data, context=ValidationContext(perform_io_checks=False)
+    )
+    assert (
+        len(invalid.validation_summary.details[1].errors) == 1
+    ), invalid.validation_summary.details[1].errors
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [{}, {"type": "batch"}],
