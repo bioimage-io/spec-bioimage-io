@@ -283,6 +283,8 @@ class SizeReference(Node):
     1. The axis and the referenced axis need to have the same unit (or no unit).
     2. Batch axes may not be referenced.
     3. Fractions are rounded down.
+    4. If the reference axis is `concatenable` the referencing axis is assumed to be
+        `concatenable` as well with the same block order.
 
     example:
     An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
@@ -434,6 +436,10 @@ class BatchAxis(AxisBase):
         return 1.0
 
     @property
+    def concatenable(self):
+        return True
+
+    @property
     def unit(self):
         return None
 
@@ -446,6 +452,10 @@ class ChannelAxis(AxisBase):
     @property
     def size(self) -> int:
         return len(self.channel_names)
+
+    @property
+    def concatenable(self):
+        return False
 
     @property
     def scale(self) -> float:
@@ -490,7 +500,12 @@ class _WithInputAxisSize(Node):
 
 
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
-    pass
+    concatenable: bool = False
+    """If a model has a `concatenable` input axis, it can be processed blockwise,
+    splitting a longer sample axis into blocks matching its input tensor description.
+    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    input axis.
+    """
 
 
 class IndexOutputAxis(IndexAxisBase):
@@ -520,7 +535,12 @@ class TimeAxisBase(AxisBase):
 
 
 class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
-    pass
+    concatenable: bool = False
+    """If a model has a `concatenable` input axis, it can be processed blockwise,
+    splitting a longer sample axis into blocks matching its input tensor description.
+    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    input axis.
+    """
 
 
 class SpaceAxisBase(AxisBase):
@@ -531,7 +551,12 @@ class SpaceAxisBase(AxisBase):
 
 
 class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
-    pass
+    concatenable: bool = False
+    """If a model has a `concatenable` input axis, it can be processed blockwise,
+    splitting a longer sample axis into blocks matching its input tensor description.
+    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    input axis.
+    """
 
 
 _InputAxisUnion = Union[
