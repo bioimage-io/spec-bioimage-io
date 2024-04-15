@@ -636,7 +636,7 @@ class FileDescr(Node):
 
 def extract_file_name(
     src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath],
-) -> str:
+) -> FileName:
     if isinstance(src, RelativeFilePath):
         return src.path.name
     elif isinstance(src, PurePath):
