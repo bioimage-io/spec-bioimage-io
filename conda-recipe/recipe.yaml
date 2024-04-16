@@ -23,8 +23,9 @@ requirements:
     - "pooch"
     - "pydantic-settings"
     - "pydantic>=2.6.3"
-    - email-validator
     - "python-dateutil"
+    - "python-dotenv"
+    - "rich"
     - "ruyaml"
     - "tqdm"
     - "typing-extensions"
