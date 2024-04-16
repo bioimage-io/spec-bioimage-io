@@ -775,6 +775,11 @@
                     ],
                     "title": "Type",
                     "type": "string"
+                },
+                "concatenable": {
+                    "default": false,
+                    "title": "Concatenable",
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -1219,7 +1224,7 @@
         },
         "SizeReference": {
             "additionalProperties": false,
-            "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
+            "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
             "properties": {
                 "tensor_id": {
                     "title": "Tensor Id",
@@ -1342,6 +1347,11 @@
                     "exclusiveMinimum": 0.0,
                     "title": "Scale",
                     "type": "number"
+                },
+                "concatenable": {
+                    "default": false,
+                    "title": "Concatenable",
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -1645,6 +1655,11 @@
                     "exclusiveMinimum": 0.0,
                     "title": "Scale",
                     "type": "number"
+                },
+                "concatenable": {
+                    "default": false,
+                    "title": "Concatenable",
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -6726,7 +6741,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-04-16T12:23:47.087985"
+                    "default": "2024-04-16T15:29:27.444191"
                 },
                 "training_data": {
                     "anyOf": [
