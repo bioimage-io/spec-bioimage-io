@@ -192,7 +192,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         """format `rows` as markdown table"""
         n_cols = len(rows[0])
         assert all(len(row) == n_cols for row in rows)
-        col_widths = [max(len(row[i]) for row in rows) for i in range(n_cols)]
+        col_widths = [max(max(len(row[i]) for row in rows), 3) for i in range(n_cols)]
 
         lines = [" | ".join(rows[0][i].center(col_widths[i]) for i in range(n_cols))]
         lines.append(" | ".join("---".center(col_widths[i]) for i in range(n_cols)))
