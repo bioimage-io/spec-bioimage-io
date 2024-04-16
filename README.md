@@ -89,6 +89,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.2
+
+* new patch version model 0.5.2
+
 #### bioimageio.spec 0.5.1
 
 * new patch version model 0.5.1
@@ -235,6 +239,11 @@ Made with [contrib.rocks](https://contrib.rocks).
 * `load_raw_resource_description` accepts `update_to_format` kwarg
 
 ### Resource Description Format Versions
+
+#### model 0.5.2
+
+* Non-breaking changes
+  * added `concatenable` flag to index, time and space input axes
 
 #### model 0.5.1
 
