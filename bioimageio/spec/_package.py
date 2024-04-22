@@ -25,9 +25,7 @@ from ._internal.url import HttpUrl
 from ._internal.validation_context import validation_context_var
 from ._internal.warning_levels import ERROR
 from ._io import load_description
-from .model.v0_4 import ModelDescr as ModelDescr04
 from .model.v0_4 import WeightsFormat
-from .model.v0_5 import ModelDescr as ModelDescr05
 
 
 def get_os_friendly_file_name(name: str) -> str:
@@ -59,49 +57,15 @@ def get_resource_package_content(
     )
     content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {}
     with PackagingContext(
-        bioimageio_yaml_file_name=bioimageio_yaml_file_name, file_sources=content
+        bioimageio_yaml_file_name=bioimageio_yaml_file_name,
+        file_sources=content,
+        weights_priority_order=weights_priority_order,
     ):
         rdf_content: BioimageioYamlContent = rd.model_dump(
             mode="json", exclude_unset=True
         )
 
     _ = rdf_content.pop("rdf_source", None)
-
-    if weights_priority_order is not None and isinstance(
-        rd, (ModelDescr04, ModelDescr05)
-    ):
-        # select single weights entry
-        assert isinstance(rdf_content["weights"], dict), type(rdf_content["weights"])
-        for wf in weights_priority_order:
-            w = rdf_content["weights"].get(wf)
-            if w is not None:
-                break
-        else:
-            raise ValueError(
-                "None of the weight formats in `weights_priority_order` is present in"
-                + " the given model."
-            )
-
-        assert isinstance(w, dict), type(w)
-        _ = w.pop("parent", None)
-        rdf_content["weights"] = {wf: w}
-        parent = rdf_content.pop("id", None)
-        parent_version = rdf_content.pop("version", None)
-        if parent is not None:
-            rdf_content["parent"] = {"id": parent, "version": parent_version}
-
-        with validation_context_var.get().replace(
-            root=rd.root, file_name=bioimageio_yaml_file_name
-        ):
-            rd_slim = build_description(rdf_content)
-
-        assert not isinstance(
-            rd_slim, InvalidDescr
-        ), rd_slim.validation_summary.format()
-        # repackage without other weights entries
-        return get_resource_package_content(
-            rd_slim, bioimageio_yaml_file_name=bioimageio_yaml_file_name
-        )
 
     return {**content, bioimageio_yaml_file_name: rdf_content}
 
