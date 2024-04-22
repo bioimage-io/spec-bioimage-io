@@ -21,8 +21,11 @@ from pydantic import (
     AllowInfNan,
     Discriminator,
     Field,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
     TypeAdapter,
     ValidationInfo,
+    WrapSerializer,
     field_validator,
     model_validator,
 )
@@ -46,6 +49,7 @@ from .._internal.io import (
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import ImportantFileSource, LowerCaseIdentifier
@@ -870,6 +874,32 @@ class LinkedModel(Node):
     """version number (n-th published version, not the semantic version) of linked model"""
 
 
+def package_weights(
+    value: Node,
+    handler: SerializerFunctionWrapHandler,
+    info: SerializationInfo,
+):
+    ctxt = packaging_context_var.get()
+    if ctxt is not None and ctxt.weights_priority_order is not None:
+        for wf in ctxt.weights_priority_order:
+            w = getattr(value, wf, None)
+            if w is not None:
+                break
+        else:
+            raise ValueError(
+                "None of the weight formats in `weights_priority_order`"
+                + f" ({ctxt.weights_priority_order}) is present in the given model."
+            )
+
+        for field_name in value.model_fields:
+            if field_name != w:
+                setattr(value, field_name, None)
+
+    return handler(
+        value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
+    )
+
+
 class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
     """Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
@@ -1114,7 +1144,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     training_data: Union[LinkedDataset, DatasetDescr, None] = None
     """The dataset used to train this model"""
 
-    weights: WeightsDescr
+    weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

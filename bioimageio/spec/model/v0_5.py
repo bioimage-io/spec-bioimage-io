@@ -43,6 +43,7 @@ from pydantic import (
     RootModel,
     Tag,
     ValidationInfo,
+    WrapSerializer,
     field_validator,
     model_validator,
 )
@@ -123,6 +124,7 @@ from .v0_4 import SigmoidDescr as _SigmoidDescr_v0_4
 from .v0_4 import TensorName as _TensorName_v0_4
 from .v0_4 import WeightsFormat as WeightsFormat
 from .v0_4 import ZeroMeanUnitVarianceDescr as _ZeroMeanUnitVarianceDescr_v0_4
+from .v0_4 import package_weights
 
 # unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
@@ -2342,7 +2344,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     training_data: Union[None, LinkedDataset, DatasetDescr] = None
     """The dataset used to train this model"""
 
-    weights: WeightsDescr
+    weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""

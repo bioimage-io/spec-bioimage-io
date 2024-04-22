@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Literal, Optional, Sequence, Union
 
 from .io_basics import AbsoluteFilePath, FileName
 from .url import HttpUrl
@@ -16,16 +16,20 @@ class PackagingContext:
 
     bioimageio_yaml_file_name: FileName
 
-    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]] = field(
-        default_factory=dict
-    )
+    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]
     """File sources to include in the packaged resource"""
+
+    weights_priority_order: Optional[Sequence[str]] = None
+    """set to select a single weights entry when packaging model resources"""
 
     def replace(
         self,
         *,
         bioimageio_yaml_file_name: Optional[FileName] = None,
         file_sources: Optional[Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]] = None,
+        weights_priority_order: Union[
+            Optional[Sequence[str]], Literal["unchanged"]
+        ] = "unchanged",
     ) -> "PackagingContext":
         """return a modiefied copy"""
         return PackagingContext(
@@ -36,6 +40,11 @@ class PackagingContext:
             ),
             file_sources=(
                 dict(self.file_sources) if file_sources is None else file_sources
+            ),
+            weights_priority_order=(
+                self.weights_priority_order
+                if weights_priority_order == "unchanged"
+                else weights_priority_order
             ),
         )
 
