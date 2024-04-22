@@ -893,7 +893,8 @@ def package_weights(
 
         # remove links to parent entry (otherwise we cannot remove the parent)
         for _, w in value:
-            w.parent = None
+            if w is not None:
+                w.parent = None
 
         for field_name in value.model_fields:
             if field_name != wf:
