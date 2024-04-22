@@ -89,6 +89,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.2post1
+
+* fix model packaging with weights format priority
+
 #### bioimageio.spec 0.5.2
 
 * new patch version model 0.5.2
