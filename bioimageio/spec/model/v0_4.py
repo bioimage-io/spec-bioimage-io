@@ -891,8 +891,11 @@ def package_weights(
                 + f" ({ctxt.weights_priority_order}) is present in the given model."
             )
 
+        w.parent = (
+            None  # remove link to parent entry (otherwise we cannot remove the parent)
+        )
         for field_name in value.model_fields:
-            if field_name != w:
+            if field_name != wf:
                 setattr(value, field_name, None)
 
     return handler(
