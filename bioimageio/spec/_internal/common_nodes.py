@@ -68,7 +68,7 @@ class StringNode(collections.UserString, ABC):
     _node_class: Type[Node]
     _node: Optional[Node] = None
 
-    def __init__(self: Self, seq: object) -> None:
+    def __init__(self, seq: object) -> None:
         super().__init__(seq)
         type_hints = {
             fn: t

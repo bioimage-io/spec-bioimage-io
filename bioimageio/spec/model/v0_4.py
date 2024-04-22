@@ -921,7 +921,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     id: Optional[ModelId] = None
     """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
 
-    authors: NotEmpty[List[Author]]
+    authors: NotEmpty[  # pyright: ignore[reportGeneralTypeIssues]  # make mandatory
+        List[Author]
+    ]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
