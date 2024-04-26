@@ -40,6 +40,7 @@ _ = setup(
         "pydantic>=2.6.3",
         "python-dateutil",
         "python-dotenv",
+        "requests",
         "rich",
         "ruyaml",
         "tqdm",
