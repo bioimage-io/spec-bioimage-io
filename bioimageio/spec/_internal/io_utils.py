@@ -1,22 +1,38 @@
 import io
 import warnings
 from contextlib import nullcontext
+from functools import lru_cache
 from pathlib import Path
-from typing import IO, Any, Dict, Mapping, Optional, TextIO, Union, cast
+from typing import (
+    IO,
+    Any,
+    Dict,
+    List,
+    Mapping,
+    NamedTuple,
+    Optional,
+    TextIO,
+    Union,
+    cast,
+)
 from zipfile import ZipFile, is_zipfile
 
 import numpy
+import requests
+from loguru import logger
 from numpy.typing import NDArray
 from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
 from typing_extensions import Unpack
 
+from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
     HashKwargs,
     OpenedBioimageioYaml,
+    Sha256,
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
@@ -68,7 +84,21 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 def open_bioimageio_yaml(
     source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
-    downloaded = download(source, **kwargs)
+    try:
+        downloaded = download(source, **kwargs)
+    except Exception:
+        # check if `source` is a collection id
+        if not isinstance(source, str):
+            raise
+
+        entries = get_collection()
+        if source not in entries:
+            raise
+
+        entry = entries[source]
+        logger.info("{} loading {} from {}", entry.emoji, source, entry.url)
+        downloaded = download(entry.url, sha256=entry.sha256)
+
     local_source = downloaded.path
     root = downloaded.original_root
 
@@ -82,6 +112,41 @@ def open_bioimageio_yaml(
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
 
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
+
+
+class _CollectionEntry(NamedTuple):
+    emoji: str
+    url: str
+    sha256: Sha256
+
+
+@lru_cache
+def get_collection() -> Mapping[str, _CollectionEntry]:
+    if not settings.collection:
+        return {}
+    try:
+        collection: List[Dict[Any, Any]] = requests.get(settings.collection).json()[
+            "collection"
+        ]
+        assert isinstance(
+            collection, list
+        ), f"collection field has type {type(collection)}"
+        ret: Dict[str, _CollectionEntry] = {}
+        for entry in collection:
+            assert isinstance(entry, dict), f"entry has type {type(entry)}"
+            assert isinstance(entry["id"], str)
+            assert isinstance(entry["id_emoji"], str)
+            assert isinstance(entry["entry_url"], str)
+            assert isinstance(entry["entry_sha256"], str)
+            ret[entry["id"]] = _CollectionEntry(
+                entry["id_emoji"], entry["entry_url"], Sha256(entry["entry_sha256"])
+            )
+
+        return ret
+
+    except Exception as e:
+        logger.error("failed to get resource id mapping: {}", e)
+        return {}
 
 
 def unzip(
