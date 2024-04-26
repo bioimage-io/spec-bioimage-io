@@ -132,6 +132,9 @@ class CollectionEntry(Node, extra="allow"):
     entry_source: Optional[FileSource] = None
     """an external source this entry description is based on"""
 
+    entry_sha256: Optional[Sha256] = None
+    """SHA256 of `entry_source`"""
+
     id: Optional[ResourceId] = None
     """Collection entry sub id overwriting `rdf_source.id`.
     The full collection entry's id is the collection's base id, followed by this sub id and separated by a slash '/'."""
@@ -196,7 +199,12 @@ class CollectionDescr(
             entry_root = context.root
             entry_file_name = context.file_name
 
-            if entry.entry_source is not None:
+            if entry.entry_source is None:
+                if entry.entry_sha256 is None:
+                    raise ValueError(
+                        f"Got unexpected `entry_sha256` {entry.entry_sha256} for unspecified `entry_source`"
+                    )
+            else:
                 if not context.perform_io_checks:
                     issue_warning(
                         "Skipping IO relying validation for collection[{i}]",
@@ -205,7 +213,9 @@ class CollectionDescr(
                     )
                     continue
 
-                external_data = open_bioimageio_yaml(entry.entry_source)
+                external_data = open_bioimageio_yaml(
+                    entry.entry_source, sha256=entry.entry_sha256
+                )
                 # add/overwrite common collection entry content with external source
                 entry_data.update(external_data.content)
                 entry_root = external_data.original_root
