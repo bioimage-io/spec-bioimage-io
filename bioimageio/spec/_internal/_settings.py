@@ -14,29 +14,34 @@ class Settings(BaseSettings, extra="ignore"):
         env_prefix="BIOIMAGEIO_", env_file=".env", env_file_encoding="utf-8"
     )
 
+    cache_path: Path = pooch.os_cache("bioimageio")
+    """bioimageio cache location"""
+
+    collection: str = (
+        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json"
+    )
+    """url to bioimageio collection.json to resolve collection specific resource IDs."""
+
+    perform_io_checks: bool = True
+    """wether or not to perform validation that requires file io,
+    e.g. downloading a remote files.
+
+    Existence of any local absolute file paths is still being checked."""
+
+    log_warnings: bool = True
+    """log validation warnings to console"""
+
     github_username: Optional[str] = None
     """GitHub username for API requests"""
 
     github_token: Optional[str] = None
     """GitHub token for API requests"""
 
-    log_warnings: bool = True
-    """log validation warnings to console"""
-
-    perform_io_checks: bool = True
-    """wether or not to perform validation that requires file io,
-    e.g. downloading a remote files.
-
-    Existence of local absolute file paths is still being checked."""
-
     CI: Annotated[Union[bool, str], Field(alias="CI")] = False
     """wether or not the execution happens in a continuous integration (CI) environment"""
 
     user_agent: Optional[str] = None
     """user agent for http requests"""
-
-    cache_path: Path = pooch.os_cache("bioimageio")
-    """bioimageio cache location"""
 
     @property
     def github_auth(self):
