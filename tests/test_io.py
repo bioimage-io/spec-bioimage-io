@@ -10,3 +10,13 @@ def test_load_non_existing_rdf():
 
     with pytest.raises(FileNotFoundError):
         _ = load_description(spec_path)
+
+
+def test_load_by_id():
+    from bioimageio.spec import InvalidDescr, load_description
+
+    id_ = "frank-water-buffalo"
+
+    model = load_description(id_)
+    assert not isinstance(model, InvalidDescr)
+    assert model.id == id_
