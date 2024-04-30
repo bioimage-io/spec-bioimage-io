@@ -568,6 +568,8 @@ def download(
         strict_source = strict_source.absolute
 
     if isinstance(strict_source, PurePath):
+        if not strict_source.exists():
+            raise FileNotFoundError(strict_source)
         local_source = strict_source
         root: Union[RootHttpUrl, DirectoryPath] = strict_source.parent
     else:
