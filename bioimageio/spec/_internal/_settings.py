@@ -20,7 +20,19 @@ class Settings(BaseSettings, extra="ignore"):
     collection: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json"
     )
-    """url to bioimageio collection.json to resolve collection specific resource IDs."""
+    """url to bioimageio collection.json to resolve collection specific resource IDs.
+    """
+
+    collection_staged: str = (
+        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_staged.json"
+    )
+    """url to bioimageio collection_staged.json to resolve collection specific, staged
+    resource IDs."""
+
+    resolve_staged_only_ids: bool = False
+    """Flag to to resolve staged resource versions with a resource id that has no
+    associated published version (yet). Note that anyone may stage a resource version,
+    thus setting this flag to true poses a security risk."""
 
     perform_io_checks: bool = True
     """wether or not to perform validation that requires file io,
