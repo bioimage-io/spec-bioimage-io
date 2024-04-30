@@ -160,6 +160,10 @@ def _get_one_collection(url: str):
         return ret
 
     for entry in collection:
+        if entry["entry_sha256"] is None:
+            logger.debug("skipping {} with entry_sha256=None", entry["id"])
+            continue
+
         if not isinstance(entry, dict):
             logger.error("entry has type {}", type(entry))
             continue

@@ -32,7 +32,7 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
         )
 
     try:
-        response = requests.get(val_url, timeout=(3, 3))
+        response = requests.get(val_url, stream=True, timeout=(3, 3))
     except (
         requests.exceptions.ChunkedEncodingError,
         requests.exceptions.ContentDecodingError,
