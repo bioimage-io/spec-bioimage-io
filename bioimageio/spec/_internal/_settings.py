@@ -29,10 +29,12 @@ class Settings(BaseSettings, extra="ignore"):
     """url to bioimageio collection_staged.json to resolve collection specific, staged
     resource IDs."""
 
-    resolve_staged_only_ids: bool = False
-    """Flag to to resolve staged resource versions with a resource id that has no
-    associated published version (yet). Note that anyone may stage a resource version,
-    thus setting this flag to true poses a security risk."""
+    resolve_staged: bool = True
+    """Flag to resolve staged resource versions following the pattern
+    <resource id>/staged/<stage number>.
+    Note that anyone may stage a new resource version and that such a staged version
+    may not have been reviewed.
+    Set this flag to False to avoid this potential security risk."""
 
     perform_io_checks: bool = True
     """wether or not to perform validation that requires file io,

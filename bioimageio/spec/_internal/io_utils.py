@@ -97,11 +97,19 @@ def open_bioimageio_yaml(
 
         entries = get_collection()
         if source not in entries:
-            logger.error(
-                "'{}' not found in collection (RESOLVE_STAGED_ONLY_IDS: {})",
-                source,
-                settings.resolve_staged_only_ids,
-            )
+            if "/staged/" in source:
+                if settings.resolve_staged:
+                    collection_url = settings.collection_staged
+                else:
+                    collection_url = ""
+                    logger.error(
+                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_STAGED is set to False",
+                        source,
+                    )
+            else:
+                collection_url = settings.collection
+
+            logger.error("'{}' not found in collection {}", source, collection_url)
             raise
 
         entry = entries[source]
@@ -211,7 +219,7 @@ def _get_one_collection(url: str):
 @lru_cache
 def get_collection() -> Mapping[str, _CollectionEntry]:
     try:
-        if settings.resolve_staged_only_ids:
+        if settings.resolve_staged:
             ret = _get_one_collection(settings.collection_staged)
         else:
             ret = {}
