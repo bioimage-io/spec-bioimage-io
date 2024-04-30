@@ -89,6 +89,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.2post3
+
+* avoid full download when validating urls
+
 #### bioimageio.spec 0.5.2post2
 
 * resolve version (un)specific collection IDs, e.g. `load_description('affable-shark')`, `load_description('affable-shark/1')`
