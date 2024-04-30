@@ -88,15 +88,30 @@ def open_bioimageio_yaml(
         downloaded = download(source, **kwargs)
     except Exception:
         # check if `source` is a collection id
-        if not isinstance(source, str):
+        if (
+            not isinstance(source, str)
+            or not isinstance(settings.collection, str)
+            or "/" not in settings.collection
+        ):
             raise
 
         entries = get_collection()
         if source not in entries:
+            logger.error(
+                "'{}' not found in collection (RESOLVE_STAGED_ONLY_IDS: {})",
+                source,
+                settings.resolve_staged_only_ids,
+            )
             raise
 
         entry = entries[source]
-        logger.info("{} loading {} from {}", entry.emoji, source, entry.url)
+        logger.info(
+            "{} loading {} {} from {}",
+            entry.emoji,
+            entry.id,
+            entry.version,
+            entry.url,
+        )
         downloaded = download(entry.url, sha256=entry.sha256)
 
     local_source = downloaded.path
@@ -115,33 +130,93 @@ def open_bioimageio_yaml(
 
 
 class _CollectionEntry(NamedTuple):
+    id: str
     emoji: str
     url: str
-    sha256: Sha256
+    sha256: Optional[Sha256]
+    version: str
+
+
+def _get_one_collection(url: str):
+    ret: Dict[str, _CollectionEntry] = {}
+    if not isinstance(url, str) or "/" not in url:
+        logger.error("invalid collection url: {}", url)
+    try:
+        collection: List[Dict[Any, Any]] = requests.get(url).json().get("collection")
+    except Exception as e:
+        logger.error("failed to get {}: {}", url, e)
+        return ret
+
+    if not isinstance(collection, list):
+        logger.error("`collection` field of {} has type {}", url, type(collection))
+        return ret
+
+    for entry in collection:
+        if not isinstance(entry, dict):
+            logger.error("entry has type {}", type(entry))
+            continue
+        if not isinstance(entry["id"], str):
+            logger.error("entry['id'] has type {}", type(entry["id"]))
+            continue
+        if not isinstance(entry["id_emoji"], str):
+            logger.error(
+                "{}.id_emoji has type {}", entry["id"], type(entry["id_emoji"])
+            )
+            continue
+        if not isinstance(entry["entry_source"], str):
+            logger.error(
+                "{}.entry_source has type {}", entry["id"], type(entry["entry_source"])
+            )
+            continue
+        if not isinstance(entry["entry_sha256"], str):
+            logger.error(
+                "{}.entry_sha256 has type {}", entry["id"], type(entry["entry_sha256"])
+            )
+            continue
+
+        c_entry = _CollectionEntry(
+            entry["id"],
+            entry["id_emoji"],
+            entry["entry_source"],
+            (
+                None
+                if entry.get("entry_sha256") is None
+                else Sha256(entry["entry_sha256"])
+            ),
+            version=str(entry["version_number"]),
+        )
+        # set version specific entry
+        ret[entry["id"] + "/" + str(entry["version_number"])] = c_entry
+
+        # update 'latest version' entry
+        if entry["id"] not in ret:
+            update = True
+        else:
+            old_v = ret[entry["id"]].version
+            v = c_entry.version
+
+            if old_v.startswith("staged"):
+                update = not v.startswith("staged") or int(
+                    v.replace("staged/", "")
+                ) > int(old_v.replace("staged/", ""))
+            else:
+                update = not v.startswith("staged") and int(v) > int(old_v)
+
+        if update:
+            ret[entry["id"]] = c_entry
+
+    return ret
 
 
 @lru_cache
 def get_collection() -> Mapping[str, _CollectionEntry]:
-    if not settings.collection:
-        return {}
     try:
-        collection: List[Dict[Any, Any]] = requests.get(settings.collection).json()[
-            "collection"
-        ]
-        assert isinstance(
-            collection, list
-        ), f"collection field has type {type(collection)}"
-        ret: Dict[str, _CollectionEntry] = {}
-        for entry in collection:
-            assert isinstance(entry, dict), f"entry has type {type(entry)}"
-            assert isinstance(entry["id"], str)
-            assert isinstance(entry["id_emoji"], str)
-            assert isinstance(entry["entry_url"], str)
-            assert isinstance(entry["entry_sha256"], str)
-            ret[entry["id"]] = _CollectionEntry(
-                entry["id_emoji"], entry["entry_url"], Sha256(entry["entry_sha256"])
-            )
+        if settings.resolve_staged_only_ids:
+            ret = _get_one_collection(settings.collection_staged)
+        else:
+            ret = {}
 
+        ret.update(_get_one_collection(settings.collection))
         return ret
 
     except Exception as e:
