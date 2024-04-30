@@ -1,22 +1,38 @@
 import io
 import warnings
 from contextlib import nullcontext
+from functools import lru_cache
 from pathlib import Path
-from typing import IO, Any, Dict, Mapping, Optional, TextIO, Union, cast
+from typing import (
+    IO,
+    Any,
+    Dict,
+    List,
+    Mapping,
+    NamedTuple,
+    Optional,
+    TextIO,
+    Union,
+    cast,
+)
 from zipfile import ZipFile, is_zipfile
 
 import numpy
+import requests
+from loguru import logger
 from numpy.typing import NDArray
 from pydantic import DirectoryPath, FilePath, NewPath
 from ruyaml import YAML
 from typing_extensions import Unpack
 
+from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
     HashKwargs,
     OpenedBioimageioYaml,
+    Sha256,
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
@@ -68,7 +84,44 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 def open_bioimageio_yaml(
     source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
-    downloaded = download(source, **kwargs)
+    try:
+        downloaded = download(source, **kwargs)
+    except Exception:
+        # check if `source` is a collection id
+        if (
+            not isinstance(source, str)
+            or not isinstance(settings.collection, str)
+            or "/" not in settings.collection
+        ):
+            raise
+
+        collection = get_collection()
+        if source not in collection:
+            if "/staged/" in source:
+                if settings.resolve_staged:
+                    collection_url = settings.collection_staged
+                else:
+                    collection_url = ""
+                    logger.error(
+                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_STAGED is set to False",
+                        source,
+                    )
+            else:
+                collection_url = settings.collection
+
+            logger.error("'{}' not found in collection {}", source, collection_url)
+            raise
+
+        entry = collection[source]
+        logger.info(
+            "{} loading {} {} from {}",
+            entry.emoji,
+            entry.id,
+            entry.version,
+            entry.url,
+        )
+        downloaded = download(entry.url, sha256=entry.sha256)
+
     local_source = downloaded.path
     root = downloaded.original_root
 
@@ -82,6 +135,101 @@ def open_bioimageio_yaml(
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
 
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
+
+
+class _CollectionEntry(NamedTuple):
+    id: str
+    emoji: str
+    url: str
+    sha256: Optional[Sha256]
+    version: str
+
+
+def _get_one_collection(url: str):
+    ret: Dict[str, _CollectionEntry] = {}
+    if not isinstance(url, str) or "/" not in url:
+        logger.error("invalid collection url: {}", url)
+    try:
+        collection: List[Dict[Any, Any]] = requests.get(url).json().get("collection")
+    except Exception as e:
+        logger.error("failed to get {}: {}", url, e)
+        return ret
+
+    if not isinstance(collection, list):
+        logger.error("`collection` field of {} has type {}", url, type(collection))
+        return ret
+
+    for entry in collection:
+        if not isinstance(entry, dict):
+            logger.error("entry has type {}", type(entry))
+            continue
+        if not isinstance(entry["id"], str):
+            logger.error("entry['id'] has type {}", type(entry["id"]))
+            continue
+        if not isinstance(entry["id_emoji"], str):
+            logger.error(
+                "{}.id_emoji has type {}", entry["id"], type(entry["id_emoji"])
+            )
+            continue
+        if not isinstance(entry["entry_source"], str):
+            logger.error(
+                "{}.entry_source has type {}", entry["id"], type(entry["entry_source"])
+            )
+            continue
+        if not isinstance(entry["entry_sha256"], str):
+            logger.error(
+                "{}.entry_sha256 has type {}", entry["id"], type(entry["entry_sha256"])
+            )
+            continue
+
+        c_entry = _CollectionEntry(
+            entry["id"],
+            entry["id_emoji"],
+            entry["entry_source"],
+            (
+                None
+                if entry.get("entry_sha256") is None
+                else Sha256(entry["entry_sha256"])
+            ),
+            version=str(entry["version_number"]),
+        )
+        # set version specific entry
+        ret[c_entry.id + "/" + str(entry["version_number"])] = c_entry
+
+        # update 'latest version' entry
+        if c_entry.id not in ret:
+            update = True
+        else:
+            old_v = ret[c_entry.id].version
+            v = c_entry.version
+
+            if old_v.startswith("staged"):
+                update = not v.startswith("staged") or int(
+                    v.replace("staged/", "")
+                ) > int(old_v.replace("staged/", ""))
+            else:
+                update = not v.startswith("staged") and int(v) > int(old_v)
+
+        if update:
+            ret[c_entry.id] = c_entry
+
+    return ret
+
+
+@lru_cache
+def get_collection() -> Mapping[str, _CollectionEntry]:
+    try:
+        if settings.resolve_staged:
+            ret = _get_one_collection(settings.collection_staged)
+        else:
+            ret = {}
+
+        ret.update(_get_one_collection(settings.collection))
+        return ret
+
+    except Exception as e:
+        logger.error("failed to get resource id mapping: {}", e)
+        return {}
 
 
 def unzip(
