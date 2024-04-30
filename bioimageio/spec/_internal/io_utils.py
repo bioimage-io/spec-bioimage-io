@@ -95,8 +95,8 @@ def open_bioimageio_yaml(
         ):
             raise
 
-        entries = get_collection()
-        if source not in entries:
+        collection = get_collection()
+        if source not in collection:
             if "/staged/" in source:
                 if settings.resolve_staged:
                     collection_url = settings.collection_staged
@@ -112,7 +112,7 @@ def open_bioimageio_yaml(
             logger.error("'{}' not found in collection {}", source, collection_url)
             raise
 
-        entry = entries[source]
+        entry = collection[source]
         logger.info(
             "{} loading {} {} from {}",
             entry.emoji,
