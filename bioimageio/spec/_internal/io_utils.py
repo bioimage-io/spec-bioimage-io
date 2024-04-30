@@ -194,13 +194,13 @@ def _get_one_collection(url: str):
             version=str(entry["version_number"]),
         )
         # set version specific entry
-        ret[entry["id"] + "/" + str(entry["version_number"])] = c_entry
+        ret[c_entry.id + "/" + str(entry["version_number"])] = c_entry
 
         # update 'latest version' entry
-        if entry["id"] not in ret:
+        if c_entry.id not in ret:
             update = True
         else:
-            old_v = ret[entry["id"]].version
+            old_v = ret[c_entry.id].version
             v = c_entry.version
 
             if old_v.startswith("staged"):
@@ -211,7 +211,7 @@ def _get_one_collection(url: str):
                 update = not v.startswith("staged") and int(v) > int(old_v)
 
         if update:
-            ret[entry["id"]] = c_entry
+            ret[c_entry.id] = c_entry
 
     return ret
 
