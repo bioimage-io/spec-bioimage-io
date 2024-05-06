@@ -63,7 +63,8 @@ The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bi
 
 ## 🖥 Installation
 
-bioimageio.spec can be installed with either `conda` or `pip`, we recommend to install `bioimageio.core` instead:
+bioimageio.spec can be installed with either `conda` or `pip`. 
+We recommend installing `bioimageio.core` instead to get access to the Python programmatic features available in the BioImage.IO community:
 
 ```console
 conda install -c conda-forge bioimageio.core
@@ -74,6 +75,19 @@ or
 ```console
 pip install -U bioimageio.core
 ```
+
+Still, for a lighter package or just testing, you can install the `bioimageio.spec` package solely:
+
+```console
+conda install -c conda-forge bioimageio.spec
+```
+
+or
+
+```console
+pip install -U bioimageio.spec
+```
+
 
 ## 🏞 Environment variables
 
