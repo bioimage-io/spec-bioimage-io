@@ -4,9 +4,11 @@
 
 # Specifications for bioimage.io
 
-This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named `rdf.yaml`. Such a rdf.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).
+This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the [bioimage.io website](https://bioimage.io). 
+Each item in the content is always described using a YAML 1.2 file named `rdf.yaml` or `bioimageio.yaml`. 
+This `rdf.yaml` \ `bioimageio.yaml`--- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik). 
 
-bioimage.io-compatible resources must fulfill the following rules:
+[These](https://github.com/bioimage-io/spec-bioimage-io?tab=readme-ov-file#format-version-overview) are the rules and format that bioimage.io-compatible resources must fulfill.
 
 Note that the Python package PyYAML does not support YAML 1.2 .
 We therefore use and recommend [ruyaml](https://ruyaml.readthedocs.io/en/latest/).
@@ -45,7 +47,9 @@ These are primarily intended for syntax highlighting and form generation.
 
 ## Examples
 
-We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md).
+We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md),
+and an [example notebook to programmatically access the models, applications, notebooks and datasets descriptions](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb).
+
 
 ## 💁 Recommendations
 
