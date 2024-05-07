@@ -107,6 +107,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.2post4 (to be released)
+
+* resolve backup DOIs
+
 #### bioimageio.spec 0.5.2post3
 
 * avoid full download when validating urls
