@@ -17,6 +17,8 @@ def test_load_non_existing_rdf():
     [
         "invigorating-lab-coat",
         "invigorating-lab-coat/1",
+        "10.5281/zenodo.11092896",  # backup doi of version 1
+        "10.5281/zenodo.11092895",  # concept doi of backup
         "invigorating-lab-coat/staged/1",
     ],
 )

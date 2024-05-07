@@ -200,6 +200,11 @@ def _get_one_collection(url: str):
         # set version specific entry
         ret[c_entry.id + "/" + str(entry["version_number"])] = c_entry
 
+        # set doi entry
+        doi = entry.get("doi")
+        if doi is not None:
+            ret[doi] = c_entry
+
         # update 'latest version' entry
         if c_entry.id not in ret:
             update = True
@@ -216,6 +221,10 @@ def _get_one_collection(url: str):
 
         if update:
             ret[c_entry.id] = c_entry
+            # set concept doi entry
+            concept_doi = entry.get("concept_doi")
+            if concept_doi is not None:
+                ret[concept_doi] = c_entry
 
     return ret
 
