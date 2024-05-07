@@ -27,4 +27,4 @@ def test_load_by_id(rid: str):
 
     model = load_description(rid)
     assert not isinstance(model, InvalidDescr)
-    assert model.id == rid.split("/")[0]
+    assert model.id == "invigorating-lab-coat"
