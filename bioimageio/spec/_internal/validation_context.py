@@ -3,13 +3,14 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Union
+from types import MappingProxyType
+from typing import List, Mapping, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import DirectoryPath
 
 from ._settings import settings
-from .io_basics import AbsoluteDirectory, FileName
+from .io_basics import AbsoluteDirectory, FileName, Sha256
 from .root_url import RootHttpUrl
 from .warning_levels import WarningLevel
 
@@ -37,6 +38,9 @@ class ValidationContext:
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
+
+    known_files: Mapping[str, Sha256] = MappingProxyType({})
+    """allows to bypass download and hashing of referenced files"""
 
     def replace(
         self,

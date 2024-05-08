@@ -19,9 +19,9 @@ from .._build_description import build_description_impl, get_rd_class_impl
 from .._internal.common_nodes import InvalidDescr, Node
 from .._internal.field_warning import issue_warning
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import Sha256 as Sha256
 from .._internal.io import YamlValue
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import open_bioimageio_yaml
 from .._internal.types import FileSource, NotEmpty
 from .._internal.url import HttpUrl as HttpUrl

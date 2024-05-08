@@ -59,9 +59,9 @@ from .._internal.constants import DTYPE_LIMITS
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent as BioimageioYamlContent
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import Sha256 as Sha256
 from .._internal.io import WithSuffix, YamlValue, download
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
 from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId

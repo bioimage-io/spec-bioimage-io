@@ -14,10 +14,10 @@ from .io import FileSource as FileSource
 from .io import ImportantFileSource as ImportantFileSource
 from .io import PermissiveFileSource as PermissiveFileSource
 from .io import RelativeFilePath as RelativeFilePath
-from .io import Sha256 as Sha256
 from .io_basics import AbsoluteDirectory as AbsoluteDirectory
 from .io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .io_basics import FileName as FileName
+from .io_basics import Sha256 as Sha256
 from .license_id import DeprecatedLicenseId as DeprecatedLicenseId
 from .license_id import LicenseId as LicenseId
 from .url import HttpUrl as HttpUrl

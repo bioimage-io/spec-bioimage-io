@@ -15,8 +15,8 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-from .._internal.validation_context import validation_context_var
-from .._internal.warning_levels import WARNING, WarningSeverity
+from .validation_context import validation_context_var
+from .warning_levels import WARNING, WarningSeverity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore

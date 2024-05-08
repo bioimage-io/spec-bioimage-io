@@ -47,8 +47,8 @@ from .._internal.io import (
     include_in_package_serializer,
 )
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_basics import Sha256 as Sha256
 from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
