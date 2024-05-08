@@ -81,9 +81,11 @@ bioimageio<wbr>.spec    </h1>
 
 <h1 id="specifications-for-bioimageio">Specifications for bioimage.io</h1>
 
-<p>This repository contains specifications defined by the bioimage.io community. These specifications are used for defining fields in YAML 1.2 files which should be named <code>rdf.yaml</code>. Such a rdf.yaml --- along with files referenced in it --- can be downloaded from or uploaded to the <a href="https://bioimage.io">bioimage.io website</a> and may be produced or consumed by bioimage.io-compatible consumers (e.g. image analysis software like ilastik).</p>
+<p>This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the <a href="https://bioimage.io">bioimage.io website</a>. 
+Each item in the content is always described using a YAML 1.2 file named <code>rdf.yaml</code> or <code>bioimageio.yaml</code>. 
+This <code>rdf.yaml</code> \ <code>bioimageio.yaml</code>--- along with the files referenced in it --- can be downloaded from or uploaded to the <a href="https://bioimage.io">bioimage.io website</a> and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik). </p>
 
-<p>bioimage.io-compatible resources must fulfill the following rules:</p>
+<p><a href="https://github.com/bioimage-io/spec-bioimage-io?tab=readme-ov-file#format-version-overview">These</a> are the rules and format that bioimage.io-compatible resources must fulfill.</p>
 
 <p>Note that the Python package PyYAML does not support YAML 1.2 .
 We therefore use and recommend <a href="https://ruyaml.readthedocs.io/en/latest/">ruyaml</a>.
@@ -168,7 +170,8 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 
 <h2 id="examples">Examples</h2>
 
-<p>We provide some <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md">examples for using rdf.yaml files to describe models, applications, notebooks and datasets</a>.</p>
+<p>We provide some <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md">examples for using rdf.yaml files to describe models, applications, notebooks and datasets</a>,
+and an <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb">example notebook to programmatically access the models, applications, notebooks and datasets descriptions</a>.</p>
 
 <h2 id="recommendations">💁 Recommendations</h2>
 
@@ -184,7 +187,8 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 
 <h2 id="installation">🖥 Installation</h2>
 
-<p><a href="">bioimageio.spec</a> can be installed with either <code>conda</code> or <code>pip</code>, we recommend to install <code>bioimageio.core</code> instead:</p>
+<p><a href="">bioimageio.spec</a> can be installed with either <code>conda</code> or <code>pip</code>. 
+We recommend installing <code>bioimageio.core</code> instead to get access to the Python programmatic features available in the BioImage.IO community:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="go">conda install -c conda-forge bioimageio.core</span>
@@ -195,6 +199,20 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="go">pip install -U bioimageio.core</span>
+</code></pre>
+</div>
+
+<p>Still, for a lighter package or just testing, you can install the <code><a href="">bioimageio.spec</a></code> package solely:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="go">conda install -c conda-forge <a href="">bioimageio.spec</a></span>
+</code></pre>
+</div>
+
+<p>or</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="go">pip install -U <a href="">bioimageio.spec</a></span>
 </code></pre>
 </div>
 
