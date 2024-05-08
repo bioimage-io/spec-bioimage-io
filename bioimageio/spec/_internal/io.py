@@ -67,7 +67,7 @@ from .._internal.packaging_context import packaging_context_var
 from .._internal.root_url import RootHttpUrl
 from .._internal.url import HttpUrl
 from .._internal.validated_string import ValidatedString
-from .._internal.validation_context import ValidationContext, validation_context_var
+from .._internal.validation_context import validation_context_var
 from .validator_annotations import AfterValidator
 
 if sys.version_info < (3, 10):
@@ -527,7 +527,7 @@ def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSourc
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    with ValidationContext(perform_io_checks=False):
+    with validation_context_var.get().replace(perform_io_checks=False):
         strict = _strict_file_source_adapter.validate_python(file_source)
 
     return strict
