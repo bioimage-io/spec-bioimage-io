@@ -3,8 +3,7 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
-from types import MappingProxyType
-from typing import List, Mapping, Optional, Union
+from typing import Dict, List, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import DirectoryPath
@@ -39,7 +38,7 @@ class ValidationContext:
 
     Existence of local absolute file paths is still being checked."""
 
-    known_files: Mapping[str, Sha256] = MappingProxyType({})
+    known_files: Dict[str, Sha256] = field(default_factory=dict)
     """allows to bypass download and hashing of referenced files"""
 
     def replace(
@@ -49,6 +48,7 @@ class ValidationContext:
         log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
+        known_files: Optional[Dict[str, Sha256]] = None,
     ) -> "ValidationContext":
         return ValidationContext(
             root=self.root if root is None else root,
@@ -62,6 +62,7 @@ class ValidationContext:
                 if perform_io_checks is None
                 else perform_io_checks
             ),
+            known_files=self.known_files if known_files is None else known_files,
         )
 
     def __enter__(self):

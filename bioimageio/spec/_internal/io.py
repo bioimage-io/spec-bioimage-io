@@ -7,6 +7,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
+from functools import lru_cache
 from pathlib import Path, PurePath
 from typing import (
     Any,
@@ -607,6 +608,7 @@ class FileDescr(Node):
         else:
             local_source = download(self.source, sha256=self.sha256).path
             actual_sha = get_sha256(local_source)
+            context.known_files[str(self.source)] = actual_sha
 
         if self.sha256 is None:
             self.sha256 = actual_sha
@@ -644,6 +646,7 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
+@lru_cache
 def get_sha256(path: Path) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
     h = hashlib.sha256()
