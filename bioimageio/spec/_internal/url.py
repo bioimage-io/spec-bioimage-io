@@ -13,7 +13,8 @@ from .validation_context import validation_context_var
 
 def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
     url = str(url)
-    if not validation_context_var.get().perform_io_checks:
+    context = validation_context_var.get()
+    if not context.perform_io_checks or url in context.known_files:
         return pydantic.AnyUrl(url)
 
     val_url = url

@@ -70,3 +70,35 @@ def test_interprete_file_source_from_rel_path():
     assert isinstance(interpreted, RelativeFilePath)
     assert isinstance(interpreted.absolute, Path)
     assert interpreted.absolute.exists()
+
+
+def test_known_files(tmp_path: Path):
+    from bioimageio.spec._internal.io import FileDescr, get_sha256
+
+    file_name = "lala.txt"
+    src = tmp_path / file_name
+    _ = src.write_text("lala")
+    sha = get_sha256(src)
+
+    with ValidationContext(root=tmp_path):
+        # set sha on loading
+        file_descr = FileDescr(source=file_name)  # pyright: ignore[reportArgumentType]
+        assert file_descr.sha256 == sha
+
+        # validate given sha
+        file_descr = FileDescr(
+            source=file_name, sha256=sha  #  pyright: ignore[reportArgumentType]
+        )
+        assert file_descr.sha256 == sha
+
+    # give known files to bypass file io
+    with ValidationContext(known_files={file_name: sha}):
+        # set sha on loading
+        file_descr = FileDescr(source=file_name)  # pyright: ignore[reportArgumentType]
+        assert file_descr.sha256 == sha
+
+        # validate given sha
+        file_descr = FileDescr(
+            source=file_name, sha256=sha  # pyright: ignore[reportArgumentType]
+        )
+        assert file_descr.sha256 == sha

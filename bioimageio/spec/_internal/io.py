@@ -174,7 +174,8 @@ class RelativePath(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and (context := validation_context_var.get()).perform_io_checks
+            and str(self.root) not in context.known_files
             and not absolute.exists()
         ):
             raise ValueError(f"{absolute} does not exist")
@@ -195,7 +196,8 @@ class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], froze
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and (context := validation_context_var.get()).perform_io_checks
+            and str(self.root) not in context.known_files
             and not absolute.is_file()
         ):
             raise ValueError(f"{absolute} does not point to an existing file")
@@ -221,7 +223,7 @@ class RelativeDirectory(
 
 
 FileSource = Annotated[
-    Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl],
+    Union[FilePath, HttpUrl, RelativeFilePath, pydantic.HttpUrl],
     Field(union_mode="left_to_right"),
 ]
 PermissiveFileSource = Union[FileSource, str]
