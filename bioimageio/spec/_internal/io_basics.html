@@ -50,10 +50,19 @@
             <li>
                     <a class="variable" href="#ALL_BIOIMAGEIO_YAML_NAMES">ALL_BIOIMAGEIO_YAML_NAMES</a>
             </li>
+            <li>
+                    <a class="class" href="#Sha256">Sha256</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Sha256.root_model">root_model</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.2post3</footer>
+            <footer>bioimageio.spec 0.5.2post4</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -73,18 +82,34 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                         <label class="view-source-button" for="mod-io_basics-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">annotated_types</span> <span class="kn">import</span> <span class="n">Predicate</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">DirectoryPath</span><span class="p">,</span> <span class="n">FilePath</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">FileName</span> <span class="o">=</span> <span class="nb">str</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">AbsoluteDirectory</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">DirectoryPath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="n">AbsoluteFilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;bioimageio.yaml&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;rdf.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,)</span> <span class="o">+</span> <span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Type</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">annotated_types</span> <span class="kn">import</span> <span class="n">Predicate</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">DirectoryPath</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">RootModel</span><span class="p">,</span> <span class="n">StringConstraints</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span> <span class="nn">.validated_string</span> <span class="kn">import</span> <span class="n">ValidatedString</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="n">FileName</span> <span class="o">=</span> <span class="nb">str</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">AbsoluteDirectory</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">DirectoryPath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">AbsoluteFilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">)]</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;bioimageio.yaml&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;rdf.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,)</span> <span class="o">+</span> <span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">class</span> <span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA-256 hash value&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>            <span class="p">),</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="p">]</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -162,6 +187,105 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     
     
 
+                </section>
+                <section id="Sha256">
+                            <input id="Sha256-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Sha256</span><wbr>(<span class="base"><a href="validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
+
+                <label class="view-source-button" for="Sha256-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Sha256"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sha256-20"><a href="#Sha256-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="Sha256-21"><a href="#Sha256-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA-256 hash value&quot;&quot;&quot;</span>
+</span><span id="Sha256-22"><a href="#Sha256-22"><span class="linenos">22</span></a>
+</span><span id="Sha256-23"><a href="#Sha256-23"><span class="linenos">23</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="Sha256-24"><a href="#Sha256-24"><span class="linenos">24</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="Sha256-25"><a href="#Sha256-25"><span class="linenos">25</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="Sha256-26"><a href="#Sha256-26"><span class="linenos">26</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
+</span><span id="Sha256-27"><a href="#Sha256-27"><span class="linenos">27</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
+</span><span id="Sha256-28"><a href="#Sha256-28"><span class="linenos">28</span></a>            <span class="p">),</span>
+</span><span id="Sha256-29"><a href="#Sha256-29"><span class="linenos">29</span></a>        <span class="p">]</span>
+</span><span id="Sha256-30"><a href="#Sha256-30"><span class="linenos">30</span></a>    <span class="p">]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>SHA-256 hash value</p>
+</div>
+
+
+                            <div id="Sha256.root_model" class="classattr">
+                                <div class="attr variable">
+            <span class="name">root_model</span><span class="annotation">: ClassVar[Type[pydantic.root_model.RootModel[Any]]]</span>        =
+<span class="default_value">&lt;class &#39;pydantic.root_model.RootModel[Annotated[str, StringConstraints]]&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Sha256.root_model"></a>
+    
+            <div class="docstring"><p>the pydantic root model to validate the string</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="Sha256.encode" class="function">encode</dd>
+                <dd id="Sha256.replace" class="function">replace</dd>
+                <dd id="Sha256.split" class="function">split</dd>
+                <dd id="Sha256.rsplit" class="function">rsplit</dd>
+                <dd id="Sha256.join" class="function">join</dd>
+                <dd id="Sha256.capitalize" class="function">capitalize</dd>
+                <dd id="Sha256.casefold" class="function">casefold</dd>
+                <dd id="Sha256.title" class="function">title</dd>
+                <dd id="Sha256.center" class="function">center</dd>
+                <dd id="Sha256.count" class="function">count</dd>
+                <dd id="Sha256.expandtabs" class="function">expandtabs</dd>
+                <dd id="Sha256.find" class="function">find</dd>
+                <dd id="Sha256.partition" class="function">partition</dd>
+                <dd id="Sha256.index" class="function">index</dd>
+                <dd id="Sha256.ljust" class="function">ljust</dd>
+                <dd id="Sha256.lower" class="function">lower</dd>
+                <dd id="Sha256.lstrip" class="function">lstrip</dd>
+                <dd id="Sha256.rfind" class="function">rfind</dd>
+                <dd id="Sha256.rindex" class="function">rindex</dd>
+                <dd id="Sha256.rjust" class="function">rjust</dd>
+                <dd id="Sha256.rstrip" class="function">rstrip</dd>
+                <dd id="Sha256.rpartition" class="function">rpartition</dd>
+                <dd id="Sha256.splitlines" class="function">splitlines</dd>
+                <dd id="Sha256.strip" class="function">strip</dd>
+                <dd id="Sha256.swapcase" class="function">swapcase</dd>
+                <dd id="Sha256.translate" class="function">translate</dd>
+                <dd id="Sha256.upper" class="function">upper</dd>
+                <dd id="Sha256.startswith" class="function">startswith</dd>
+                <dd id="Sha256.endswith" class="function">endswith</dd>
+                <dd id="Sha256.removeprefix" class="function">removeprefix</dd>
+                <dd id="Sha256.removesuffix" class="function">removesuffix</dd>
+                <dd id="Sha256.isascii" class="function">isascii</dd>
+                <dd id="Sha256.islower" class="function">islower</dd>
+                <dd id="Sha256.isupper" class="function">isupper</dd>
+                <dd id="Sha256.istitle" class="function">istitle</dd>
+                <dd id="Sha256.isspace" class="function">isspace</dd>
+                <dd id="Sha256.isdecimal" class="function">isdecimal</dd>
+                <dd id="Sha256.isdigit" class="function">isdigit</dd>
+                <dd id="Sha256.isnumeric" class="function">isnumeric</dd>
+                <dd id="Sha256.isalpha" class="function">isalpha</dd>
+                <dd id="Sha256.isalnum" class="function">isalnum</dd>
+                <dd id="Sha256.isidentifier" class="function">isidentifier</dd>
+                <dd id="Sha256.isprintable" class="function">isprintable</dd>
+                <dd id="Sha256.zfill" class="function">zfill</dd>
+                <dd id="Sha256.format" class="function">format</dd>
+                <dd id="Sha256.format_map" class="function">format_map</dd>
+                <dd id="Sha256.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
     </main>
 <script>

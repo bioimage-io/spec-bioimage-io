@@ -102,7 +102,7 @@ Optional[_internal.types.OrcidId]
 </summary>
 
 Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
@@ -455,23 +455,24 @@ Optional[Literal of
 #### `inputs.test_tensor.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `inputs.test_tensor.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `inputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -487,23 +488,24 @@ Union of
 #### `inputs.sample_tensor.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `inputs.sample_tensor.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `inputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -959,11 +961,11 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 ### `outputs.axes`<sub> Sequence</sub>
 
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbc0f212de0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbc0f212de0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fb363236f20>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fb363236f20>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbc0f212de0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbc0f212de0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fb363236f20>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fb363236f20>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1426,23 +1428,24 @@ Optional[Literal of
 #### `outputs.test_tensor.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `outputs.test_tensor.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `outputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -1458,23 +1461,24 @@ Union of
 #### `outputs.sample_tensor.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `outputs.sample_tensor.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `outputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -1947,23 +1951,24 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 #### `weights.keras_hdf5.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.keras_hdf5.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.keras_hdf5.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.keras_hdf5.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2029,23 +2034,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 #### `weights.onnx.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.onnx.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.onnx.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.onnx.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2111,23 +2117,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 #### `weights.pytorch_state_dict.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.pytorch_state_dict.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.pytorch_state_dict.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.pytorch_state_dict.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2186,23 +2193,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 ##### `weights.pytorch_state_dict.architecture.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-##### `weights.pytorch_state_dict.architecture.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+##### `weights.pytorch_state_dict.architecture.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 ##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.types.Identifier</sub>
 
@@ -2252,23 +2260,24 @@ Union of
 
 [*Example:*](#weightspytorch_state_dictdependenciessource) 'environment.yaml'
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-##### `weights.pytorch_state_dict.dependencies.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+##### `weights.pytorch_state_dict.dependencies.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -2286,23 +2295,24 @@ Union of
 #### `weights.tensorflow_js.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.tensorflow_js.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.tensorflow_js.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.tensorflow_js.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2368,23 +2378,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 #### `weights.tensorflow_saved_model_bundle.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.tensorflow_saved_model_bundle.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2449,23 +2460,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 
 [*Example:*](#weightstensorflow_saved_model_bundledependenciessource) 'environment.yaml'
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-##### `weights.tensorflow_saved_model_bundle.dependencies.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+##### `weights.tensorflow_saved_model_bundle.dependencies.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -2483,23 +2495,24 @@ Union of
 #### `weights.torchscript.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `weights.torchscript.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `weights.torchscript.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 #### `weights.torchscript.authors`<sub> Optional</sub> ≝ `None`
 
@@ -2567,23 +2580,24 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 ### `attachments.i.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-### `attachments.i.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -2602,11 +2616,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2619,7 +2633,7 @@ Sequence of Union of
 ## `icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
+<details><summary>Union[str*, Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]*, None]
 
 </summary>
 
@@ -2627,11 +2641,11 @@ Union of
 - str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
-  - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
+  - _internal.io.RelativeFilePath
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2779,7 +2793,7 @@ Optional[_internal.types.OrcidId]
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 5, 8, 10, 7, 7, 959361)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 5, 8, 13, 55, 18, 274549)`
 
 
 
@@ -2823,11 +2837,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2887,23 +2901,24 @@ Optional[_internal.types.OrcidId]
 #### `training_data.attachments.i.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-#### `training_data.attachments.i.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+#### `training_data.attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -2955,7 +2970,7 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 ### `training_data.icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
+<details><summary>Union[str*, Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]*, None]
 
 </summary>
 
@@ -2963,11 +2978,11 @@ Union of
 - str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
-  - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
+  - _internal.io.RelativeFilePath
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3071,11 +3086,11 @@ Optional[_internal.version_type.Version]
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3104,7 +3119,7 @@ Optional[Union of
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None

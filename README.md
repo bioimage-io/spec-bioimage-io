@@ -107,9 +107,11 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.2post4 (to be released)
+#### bioimageio.spec 0.5.2post4
 
 * resolve backup DOIs
+* fix resolving relative file paths given as strings
+* allow to bypass download and hashing of known files
 
 #### bioimageio.spec 0.5.2post3
 

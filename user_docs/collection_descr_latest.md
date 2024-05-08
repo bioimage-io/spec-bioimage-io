@@ -101,24 +101,25 @@ Optional[_internal.types.OrcidId]
 ### `collection.i.entry_source`<sub> Optional</sub> ≝ `None`
 
 
-<details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*]
+<details><summary>Optional[Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]*]
 
 </summary>
 
 Optional[Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 (union_mode='left_to_right')]
 
 </details>
 
-### `collection.i.entry_sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+### `collection.i.entry_sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 ### `collection.i.id`<sub> Optional</sub> ≝ `None`
 
@@ -157,23 +158,24 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 ### `attachments.i.source`<sub> Union</sub>
 
 
-<details><summary>Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]
+<details><summary>Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]
 
 </summary>
 
 Union of
 - Path (PathType(path_type='file'))
-- _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
+- _internal.io.RelativeFilePath
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
 
 </details>
 
-### `attachments.i.sha256`<sub> Optional[_internal.io.Sha256]</sub> ≝ `None`
+### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 
 
 
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -202,7 +204,7 @@ Union of
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -233,11 +235,11 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -250,11 +252,11 @@ Sequence of Union of
 </summary>
 
 Optional[Union of
-- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fbc1f163ba0>))
+- Path (PathType(path_type='file'); Predicate(func=<function PurePath.is_absolute at 0x7fb373363ba0>))
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -267,7 +269,7 @@ Optional[Union of
 ## `icon`<sub> Union</sub> ≝ `None`
 
 
-<details><summary>Union[str*, Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl, Url*]*, None]
+<details><summary>Union[str*, Union[Path*, _internal.url.HttpUrl, _internal.io.RelativeFilePath, Url*]*, None]
 
 </summary>
 
@@ -275,11 +277,11 @@ Union of
 - str (Len(min_length=1, max_length=2))
 - Union of
   - Path (PathType(path_type='file'))
-  - _internal.io.RelativeFilePath
   - _internal.url.HttpUrl
+  - _internal.io.RelativeFilePath
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbc1bc105e0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb36fe2dee0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
