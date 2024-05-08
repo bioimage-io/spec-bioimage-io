@@ -6,6 +6,7 @@ from dateutil.parser import isoparse
 from pydantic import PlainSerializer, TypeAdapter
 from typing_extensions import Annotated
 
+import bioimageio.spec._internal.io_basics
 from bioimageio.spec._internal import types
 from bioimageio.spec._internal.io import RelativeFilePath
 from bioimageio.spec._internal.types import Datetime, SiUnit
@@ -30,7 +31,7 @@ TYPE_ARGS = {
     types.FileName: "lala.py",
     types.Version: "1.0",
     types.HttpUrl: "http://example.com",
-    types.Sha256: "0" * 64,
+    bioimageio.spec._internal.io_basics.Sha256: "0" * 64,
 }
 
 IGNORE_TYPES_MEMBERS = {

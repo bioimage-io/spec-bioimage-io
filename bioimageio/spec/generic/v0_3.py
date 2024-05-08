@@ -38,8 +38,8 @@ from .._internal.io import (
     validate_suffix,
 )
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath
+from .._internal.io_basics import Sha256 as Sha256
 from .._internal.license_id import LicenseId
 from .._internal.types import (
     DeprecatedLicenseId,

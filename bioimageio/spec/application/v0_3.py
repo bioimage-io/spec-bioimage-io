@@ -5,8 +5,8 @@ from typing_extensions import Annotated
 
 from .._internal.common_nodes import Node
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import Sha256 as Sha256
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_basics import Sha256 as Sha256
 from .._internal.types import ImportantFileSource
 from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS

@@ -7,10 +7,10 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
+from functools import lru_cache
 from pathlib import Path, PurePath
 from typing import (
     Any,
-    ClassVar,
     Dict,
     Generic,
     Iterable,
@@ -38,7 +38,6 @@ from pydantic import (
     PrivateAttr,
     RootModel,
     SerializationInfo,
-    StringConstraints,
     TypeAdapter,
     model_validator,
 )
@@ -53,40 +52,27 @@ from typing_extensions import (
 )
 from typing_extensions import TypeAliasType as _TypeAliasType
 
-from .._internal._settings import settings
-from .._internal.io_basics import (
+from ._settings import settings
+from .io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
     ALTERNATIVE_BIOIMAGEIO_YAML_NAMES,
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
     FileName,
+    Sha256,
 )
-from .._internal.node import Node
-from .._internal.packaging_context import packaging_context_var
-from .._internal.root_url import RootHttpUrl
-from .._internal.url import HttpUrl
-from .._internal.validated_string import ValidatedString
-from .._internal.validation_context import ValidationContext, validation_context_var
+from .node import Node
+from .packaging_context import packaging_context_var
+from .root_url import RootHttpUrl
+from .url import HttpUrl
+from .validation_context import validation_context_var
 from .validator_annotations import AfterValidator
 
 if sys.version_info < (3, 10):
     SLOTS: Dict[str, bool] = {}
 else:
     SLOTS = {"slots": True}
-
-
-class Sha256(ValidatedString):
-    """SHA-256 hash value"""
-
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[
-            str,
-            StringConstraints(
-                strip_whitespace=True, to_lower=True, min_length=64, max_length=64
-            ),
-        ]
-    ]
 
 
 AbsolutePathT = TypeVar(
@@ -188,7 +174,8 @@ class RelativePath(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and (context := validation_context_var.get()).perform_io_checks
+            and str(self.root) not in context.known_files
             and not absolute.exists()
         ):
             raise ValueError(f"{absolute} does not exist")
@@ -209,7 +196,8 @@ class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], froze
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and (context := validation_context_var.get()).perform_io_checks
+            and str(self.root) not in context.known_files
             and not absolute.is_file()
         ):
             raise ValueError(f"{absolute} does not point to an existing file")
@@ -235,7 +223,7 @@ class RelativeDirectory(
 
 
 FileSource = Annotated[
-    Union[FilePath, RelativeFilePath, HttpUrl, pydantic.HttpUrl],
+    Union[FilePath, HttpUrl, RelativeFilePath, pydantic.HttpUrl],
     Field(union_mode="left_to_right"),
 ]
 PermissiveFileSource = Union[FileSource, str]
@@ -527,7 +515,7 @@ def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSourc
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    with ValidationContext(perform_io_checks=False):
+    with validation_context_var.get().replace(perform_io_checks=False):
         strict = _strict_file_source_adapter.validate_python(file_source)
 
     return strict
@@ -617,9 +605,13 @@ class FileDescr(Node):
         context = validation_context_var.get()
         if not context.perform_io_checks:
             return self
+        elif (src_str := str(self.source)) in context.known_files:
+            actual_sha = context.known_files[src_str]
+        else:
+            local_source = download(self.source, sha256=self.sha256).path
+            actual_sha = get_sha256(local_source)
+            context.known_files[str(self.source)] = actual_sha
 
-        local_source = download(self.source, sha256=self.sha256).path
-        actual_sha = get_sha256(local_source)
         if self.sha256 is None:
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
@@ -656,6 +648,7 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
+@lru_cache
 def get_sha256(path: Path) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
     h = hashlib.sha256()

@@ -32,12 +32,11 @@ from .io import (
     FileDescr,
     HashKwargs,
     OpenedBioimageioYaml,
-    Sha256,
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
 )
-from .io_basics import FileName
+from .io_basics import FileName, Sha256
 from .types import FileSource, PermissiveFileSource
 
 yaml = YAML(typ="safe")

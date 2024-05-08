@@ -3,13 +3,13 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import DirectoryPath
 
 from ._settings import settings
-from .io_basics import AbsoluteDirectory, FileName
+from .io_basics import AbsoluteDirectory, FileName, Sha256
 from .root_url import RootHttpUrl
 from .warning_levels import WarningLevel
 
@@ -38,6 +38,9 @@ class ValidationContext:
 
     Existence of local absolute file paths is still being checked."""
 
+    known_files: Dict[str, Sha256] = field(default_factory=dict)
+    """allows to bypass download and hashing of referenced files"""
+
     def replace(
         self,
         root: Optional[Union[RootHttpUrl, DirectoryPath]] = None,
@@ -45,6 +48,7 @@ class ValidationContext:
         log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
+        known_files: Optional[Dict[str, Sha256]] = None,
     ) -> "ValidationContext":
         return ValidationContext(
             root=self.root if root is None else root,
@@ -58,6 +62,7 @@ class ValidationContext:
                 if perform_io_checks is None
                 else perform_io_checks
             ),
+            known_files=self.known_files if known_files is None else known_files,
         )
 
     def __enter__(self):
