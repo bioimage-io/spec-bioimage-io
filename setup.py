@@ -29,15 +29,15 @@ _ = setup(
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
-        "annotated-types>=0.5.0",
+        "annotated-types>=0.5.0,<1",
         "email_validator",
         "imageio",
         "loguru",
         "numpy>=1.21",
         "packaging>=17.0",
-        "pooch",
+        "pooch>=1.5,<2",
         "pydantic-settings",
-        "pydantic>=2.6.3",
+        "pydantic>=2.6.3,<3",
         "python-dateutil",
         "python-dotenv",
         "requests",
