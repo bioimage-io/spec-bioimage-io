@@ -6,10 +6,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -19,6 +15,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -96,10 +96,6 @@
                     "items": {
                         "anyOf": [
                             {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
                                 "type": "string"
                             },
                             {
@@ -109,6 +105,10 @@
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
+                                "type": "string"
+                            },
+                            {
+                                "format": "file-path",
                                 "type": "string"
                             }
                         ]
@@ -505,10 +505,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -518,6 +514,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -551,10 +551,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -564,6 +560,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -2065,10 +2065,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2078,6 +2074,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2122,10 +2122,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2135,6 +2131,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2202,10 +2202,6 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2215,6 +2211,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2269,10 +2269,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2282,6 +2278,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2424,10 +2424,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2437,6 +2433,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2592,10 +2592,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2605,6 +2601,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2755,10 +2755,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2768,6 +2764,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2812,10 +2812,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2825,6 +2821,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2892,10 +2892,6 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2905,6 +2901,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -2980,10 +2980,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -2993,6 +2989,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3142,10 +3142,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3155,6 +3151,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3334,10 +3334,6 @@
                 "entry_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3347,6 +3343,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3513,10 +3513,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3526,6 +3522,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3570,10 +3570,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3583,6 +3579,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3650,10 +3650,6 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3663,6 +3659,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -3885,10 +3885,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -3898,6 +3894,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -4275,10 +4275,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -4288,6 +4284,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -4547,10 +4547,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -4560,6 +4556,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -4604,10 +4604,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -4617,6 +4613,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -4698,10 +4698,6 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -4711,6 +4707,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -4778,10 +4778,6 @@
                     "items": {
                         "anyOf": [
                             {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
                                 "type": "string"
                             },
                             {
@@ -4791,6 +4787,10 @@
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
+                                "type": "string"
+                            },
+                            {
+                                "format": "file-path",
                                 "type": "string"
                             }
                         ]
@@ -4802,10 +4802,6 @@
                     "items": {
                         "anyOf": [
                             {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
                                 "type": "string"
                             },
                             {
@@ -4815,6 +4811,10 @@
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
+                                "type": "string"
+                            },
+                            {
+                                "format": "file-path",
                                 "type": "string"
                             }
                         ]
@@ -4826,10 +4826,6 @@
                     "items": {
                         "anyOf": [
                             {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
                                 "type": "string"
                             },
                             {
@@ -4839,6 +4835,10 @@
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
+                                "type": "string"
+                            },
+                            {
+                                "format": "file-path",
                                 "type": "string"
                             }
                         ]
@@ -4851,10 +4851,6 @@
                     "items": {
                         "anyOf": [
                             {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
                                 "type": "string"
                             },
                             {
@@ -4864,6 +4860,10 @@
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
+                                "type": "string"
+                            },
+                            {
+                                "format": "file-path",
                                 "type": "string"
                             }
                         ]
@@ -4916,10 +4916,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -4929,6 +4925,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -5174,10 +5174,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -5187,6 +5183,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -5583,10 +5583,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -5596,6 +5592,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -5704,10 +5704,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -5717,6 +5713,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -5825,10 +5825,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -5838,6 +5834,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -6337,10 +6337,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -6350,6 +6346,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -6560,10 +6560,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -6573,6 +6569,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -6753,7 +6753,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-05-15T11:29:57.365573"
+                    "default": "2024-05-15T11:30:24.472985"
                 },
                 "training_data": {
                     "anyOf": [
@@ -6794,10 +6794,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -6807,6 +6803,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -7067,10 +7067,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7080,6 +7076,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -7392,10 +7392,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7405,6 +7401,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -7477,10 +7477,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7490,6 +7486,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -7573,10 +7573,6 @@
                 "source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7586,6 +7582,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         }
                     ],
@@ -7913,10 +7913,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7926,6 +7922,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -7970,10 +7970,6 @@
                 "rdf_source": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -7983,6 +7979,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -8050,10 +8050,6 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -8063,6 +8059,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
@@ -8262,10 +8262,6 @@
                             "type": "string"
                         },
                         {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
                             "type": "string"
                         },
                         {
@@ -8275,6 +8271,10 @@
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "format": "file-path",
                             "type": "string"
                         },
                         {
