@@ -160,6 +160,8 @@ class ValidationDetail(BaseModel, extra="allow"):
 class ValidationSummary(BaseModel, extra="allow"):
     name: str
     source_name: str
+    type: str
+    format_version: str
     status: Literal["passed", "failed"]
     details: List[ValidationDetail]
     env: List[InstalledPackage] = Field(
@@ -218,14 +220,20 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_env: bool = False,
         root_loc: Loc = (),
     ) -> str:
-        indent = "   " if root_loc else ""
-        src = "" if hide_source else f"\n{indent}source: {self.source_name}"
+        info = self._format_md_table(
+            [
+                [self.status_icon, f"{self.name.strip('.').strip()} {self.status}"],
+                ["source", self.source_name],
+                ["resource type", self.type],
+                ["format version", self.format_version],
+            ]
+        )
         env = "" if hide_env else self._format_env()
-        details = [["❓", "location", "detail"]]
 
         def format_loc(loc: Loc):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
 
+        details = [["❓", "location", "detail"]]
         for d in self.details:
             details.append([d.status_icon, "", d.name])
             for entry in d.errors:
@@ -269,10 +277,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             if d.warnings:
                 details.append(["", "", ""])
 
-        return (
-            f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n"
-            + f"{src}{env}\n{self._format_md_table(details)}"
-        )
+        return f"{info}{env}{self._format_md_table(details)}"
 
     @no_type_check
     def display(self) -> None:
