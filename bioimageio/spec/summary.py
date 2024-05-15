@@ -235,8 +235,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
             + ([] if hide_source else [["source", self.source_name]])
             + [
-                ["resource type", self.type],
-                ["format version", self.format_version],
+                ["format version", f"{self.type} {self.format_version}"],
             ]
             + ([] if hide_env else [[e["name"], e["version"]] for e in self.env])
         )
