@@ -4,7 +4,12 @@ from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, validation_context_var
-from .summary import ErrorEntry, ValidationDetail
+from .summary import (
+    WARNING_LEVEL_TO_NAME,
+    ErrorEntry,
+    ValidationContextSummary,
+    ValidationDetail,
+)
 
 ResourceDescrT = TypeVar("ResourceDescrT", bound=ResourceDescrBase)
 
@@ -82,6 +87,12 @@ def build_description_impl(
                 name="extract fields to chose description class",
                 status="failed",
                 errors=errors,
+                context=ValidationContextSummary(
+                    perform_io_checks=context.perform_io_checks,
+                    known_files=context.known_files,
+                    root=str(context.root),
+                    warning_level=WARNING_LEVEL_TO_NAME[context.warning_level],
+                ),
             )
         )
         return ret

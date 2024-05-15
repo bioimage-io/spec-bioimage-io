@@ -1,7 +1,17 @@
 from itertools import chain
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
+from typing import (
+    Any,
+    Iterable,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+    no_type_check,
+)
 
 import rich.console
 import rich.markdown
@@ -97,11 +107,19 @@ class InstalledPackage(TypedDict):
     version: str
 
 
+class ValidationContextSummary(TypedDict):
+    perform_io_checks: bool
+    known_files: Mapping[str, str]
+    root: str
+    warning_level: str
+
+
 class ValidationDetail(BaseModel, extra="allow"):
     name: str
     status: Literal["passed", "failed"]
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
+    context: Optional[ValidationContextSummary] = None
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
@@ -160,6 +178,8 @@ class ValidationDetail(BaseModel, extra="allow"):
 class ValidationSummary(BaseModel, extra="allow"):
     name: str
     source_name: str
+    type: str
+    format_version: str
     status: Literal["passed", "failed"]
     details: List[ValidationDetail]
     env: List[InstalledPackage] = Field(
@@ -204,13 +224,6 @@ class ValidationSummary(BaseModel, extra="allow"):
         )
         return "\n| " + " |\n| ".join(lines) + " |\n"
 
-    def _format_env(self):
-        if not self.env:
-            return ""
-
-        rows = [["package", "version"]] + [[e["name"], e["version"]] for e in self.env]
-        return self._format_md_table(rows)
-
     def format(
         self,
         hide_tracebacks: bool = False,
@@ -218,16 +231,38 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_env: bool = False,
         root_loc: Loc = (),
     ) -> str:
-        indent = "   " if root_loc else ""
-        src = "" if hide_source else f"\n{indent}source: {self.source_name}"
-        env = "" if hide_env else self._format_env()
-        details = [["❓", "location", "detail"]]
+        info = self._format_md_table(
+            [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
+            + ([] if hide_source else [["source", self.source_name]])
+            + [
+                ["format version", f"{self.type} {self.format_version}"],
+            ]
+            + ([] if hide_env else [[e["name"], e["version"]] for e in self.env])
+        )
 
         def format_loc(loc: Loc):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
 
-        for d in self.details:
+        details = [["❓", "location", "detail"]]
+        for i, d in enumerate(self.details):
             details.append([d.status_icon, "", d.name])
+            if d.context is not None:
+                details.append(
+                    [
+                        "🔍",
+                        "context.perform_io_checks",
+                        str(d.context["perform_io_checks"]),
+                    ]
+                )
+                if d.context["perform_io_checks"]:
+                    details.append(["🔍", "context.root", d.context["root"]])
+                    for kfn, sha in d.context["known_files"].items():
+                        details.append(["🔍", f"context.known_files.{kfn}", sha])
+
+                details.append(
+                    ["🔍", "context.warning_level", d.context["warning_level"]]
+                )
+
             for entry in d.errors:
                 details.append(["❌", format_loc(entry.loc), entry.msg])
                 if hide_tracebacks:
@@ -261,18 +296,13 @@ class ValidationSummary(BaseModel, extra="allow"):
 
                     details.append(["", "", first_tb_line + tb_rest])
 
-            if d.errors:
-                details.append(["", "", ""])
-
             for entry in d.warnings:
                 details.append(["⚠", format_loc(entry.loc), entry.msg])
-            if d.warnings:
+
+            if i != len(details) - 1:
                 details.append(["", "", ""])
 
-        return (
-            f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}\n"
-            + f"{src}{env}\n{self._format_md_table(details)}"
-        )
+        return f"{info}{self._format_md_table(details)}"
 
     @no_type_check
     def display(self) -> None:

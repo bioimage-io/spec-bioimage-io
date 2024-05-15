@@ -45,6 +45,7 @@ from typing_extensions import (
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
+    ValidationContextSummary,
     ValidationDetail,
     ValidationSummary,
     WarningEntry,
@@ -326,11 +327,14 @@ class ResourceDescrBase(
         self._validation_summary = ValidationSummary(
             name="bioimageio validation",
             source_name=context.source_name,
-            status="passed",
+            type=self.type,
+            format_version=self.format_version,
+            status="failed" if isinstance(self, InvalidDescr) else "passed",
             details=[
                 ValidationDetail(
-                    name=f"initialized {self.type} {self.implemented_format_version}",
+                    name=f"initialized {self.__class__.__name__} to describe {self.type} {self.implemented_format_version}",
                     status="passed",
+                    context=None,  # context for format validation detail is identical
                 )
             ],
         )
@@ -392,6 +396,12 @@ class ResourceDescrBase(
                 ),
                 status="failed" if errors else "passed",
                 warnings=val_warnings,
+                context=ValidationContextSummary(
+                    perform_io_checks=context.perform_io_checks,
+                    known_files=context.known_files,
+                    root=str(context.root),
+                    warning_level=WARNING_LEVEL_TO_NAME[context.warning_level],
+                ),
             )
         )
 
