@@ -105,9 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.2post5 (to be released)
+#### bioimageio.spec 0.5.2post5
 
 * added more information to validation summary
+* deprioritize `Path` objects in the `FileSource` union
 
 #### bioimageio.spec 0.5.2post4
 
