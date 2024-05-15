@@ -224,13 +224,6 @@ class ValidationSummary(BaseModel, extra="allow"):
         )
         return "\n| " + " |\n| ".join(lines) + " |\n"
 
-    def _format_env(self):
-        if not self.env:
-            return ""
-
-        rows = [["package", "version"]] + [[e["name"], e["version"]] for e in self.env]
-        return self._format_md_table(rows)
-
     def format(
         self,
         hide_tracebacks: bool = False,
@@ -239,14 +232,14 @@ class ValidationSummary(BaseModel, extra="allow"):
         root_loc: Loc = (),
     ) -> str:
         info = self._format_md_table(
-            [
-                [self.status_icon, f"{self.name.strip('.').strip()} {self.status}"],
-                ["source", self.source_name],
+            [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
+            + ([] if hide_source else [["source", self.source_name]])
+            + [
                 ["resource type", self.type],
                 ["format version", self.format_version],
             ]
+            + ([] if hide_env else [[e["name"], e["version"]] for e in self.env])
         )
-        env = "" if hide_env else self._format_env()
 
         def format_loc(loc: Loc):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
@@ -310,7 +303,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             if i != len(details) - 1:
                 details.append(["", "", ""])
 
-        return f"{info}{env}{self._format_md_table(details)}"
+        return f"{info}{self._format_md_table(details)}"
 
     @no_type_check
     def display(self) -> None:
