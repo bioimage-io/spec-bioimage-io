@@ -1,8 +1,8 @@
 # autogen: start
 """
 implementaions of all released minor versions are available in submodules:
-- generic v0_2: `bioimageio.spec.generic.v0_2.GenericDescr` [user documentation](../../../user_docs/generic_descr_v0-2.md)
-- generic v0_3: `bioimageio.spec.generic.v0_3.GenericDescr` [user documentation](../../../user_docs/generic_descr_v0-3.md)
+- generic v0_2: `bioimageio.spec.generic.v0_2.GenericDescr`
+- generic v0_3: `bioimageio.spec.generic.v0_3.GenericDescr`
 """
 from typing import Union
 

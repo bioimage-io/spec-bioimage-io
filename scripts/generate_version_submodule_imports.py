@@ -112,8 +112,7 @@ class Info:
         self.submodule_list = "\n".join(
             [
                 f"- {self.target} {vm}: `bioimageio.spec.{self.target}.{vm}."
-                + f"{self.target_node}` [user documentation](../../../user_docs/"
-                + f"{self.target}_descr_{vm.replace('_', '-')}.md)"
+                + f"{self.target_node}`"
                 for vm in self.all_version_modules
             ]
         )

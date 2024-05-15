@@ -1,8 +1,8 @@
 # autogen: start
 """
 implementaions of all released minor versions are available in submodules:
-- collection v0_2: `bioimageio.spec.collection.v0_2.CollectionDescr` [user documentation](../../../user_docs/collection_descr_v0-2.md)
-- collection v0_3: `bioimageio.spec.collection.v0_3.CollectionDescr` [user documentation](../../../user_docs/collection_descr_v0-3.md)
+- collection v0_2: `bioimageio.spec.collection.v0_2.CollectionDescr`
+- collection v0_3: `bioimageio.spec.collection.v0_3.CollectionDescr`
 """
 from typing import Union
 
