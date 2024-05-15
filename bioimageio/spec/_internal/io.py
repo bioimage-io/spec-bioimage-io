@@ -223,7 +223,7 @@ class RelativeDirectory(
 
 
 FileSource = Annotated[
-    Union[FilePath, HttpUrl, RelativeFilePath, pydantic.HttpUrl],
+    Union[HttpUrl, RelativeFilePath, pydantic.HttpUrl, FilePath],
     Field(union_mode="left_to_right"),
 ]
 PermissiveFileSource = Union[FileSource, str]

@@ -1,7 +1,17 @@
 from itertools import chain
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Iterable, List, Literal, Mapping, Tuple, Union, no_type_check
+from typing import (
+    Any,
+    Iterable,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+    no_type_check,
+)
 
 import rich.console
 import rich.markdown
@@ -97,11 +107,19 @@ class InstalledPackage(TypedDict):
     version: str
 
 
+class ValidationContextSummary(TypedDict):
+    perform_io_checks: bool
+    known_files: Mapping[str, str]
+    root: str
+    warning_level: str
+
+
 class ValidationDetail(BaseModel, extra="allow"):
     name: str
     status: Literal["passed", "failed"]
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
+    context: Optional[ValidationContextSummary] = None
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
@@ -234,8 +252,25 @@ class ValidationSummary(BaseModel, extra="allow"):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
 
         details = [["❓", "location", "detail"]]
-        for d in self.details:
+        for i, d in enumerate(self.details):
             details.append([d.status_icon, "", d.name])
+            if d.context is not None:
+                details.append(
+                    [
+                        "🔍",
+                        "context.perform_io_checks",
+                        str(d.context["perform_io_checks"]),
+                    ]
+                )
+                if d.context["perform_io_checks"]:
+                    details.append(["🔍", "context.root", d.context["root"]])
+                    for kfn, sha in d.context["known_files"].items():
+                        details.append(["", f"context.known_files.{kfn}", sha])
+
+                details.append(
+                    ["🔍", "context.warning_level", d.context["warning_level"]]
+                )
+
             for entry in d.errors:
                 details.append(["❌", format_loc(entry.loc), entry.msg])
                 if hide_tracebacks:
@@ -269,12 +304,10 @@ class ValidationSummary(BaseModel, extra="allow"):
 
                     details.append(["", "", first_tb_line + tb_rest])
 
-            if d.errors:
-                details.append(["", "", ""])
-
             for entry in d.warnings:
                 details.append(["⚠", format_loc(entry.loc), entry.msg])
-            if d.warnings:
+
+            if i != len(details) - 1:
                 details.append(["", "", ""])
 
         return f"{info}{env}{self._format_md_table(details)}"
