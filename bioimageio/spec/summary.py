@@ -265,7 +265,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                 if d.context["perform_io_checks"]:
                     details.append(["🔍", "context.root", d.context["root"]])
                     for kfn, sha in d.context["known_files"].items():
-                        details.append(["", f"context.known_files.{kfn}", sha])
+                        details.append(["🔍", f"context.known_files.{kfn}", sha])
 
                 details.append(
                     ["🔍", "context.warning_level", d.context["warning_level"]]
