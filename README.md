@@ -4,9 +4,9 @@
 
 # Specifications for bioimage.io
 
-This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the [bioimage.io website](https://bioimage.io). 
-Each item in the content is always described using a YAML 1.2 file named `rdf.yaml` or `bioimageio.yaml`. 
-This `rdf.yaml` \ `bioimageio.yaml`--- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik). 
+This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the [bioimage.io website](https://bioimage.io).
+Each item in the content is always described using a YAML 1.2 file named `rdf.yaml` or `bioimageio.yaml`.
+This `rdf.yaml` \ `bioimageio.yaml`--- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik).
 
 [These](https://github.com/bioimage-io/spec-bioimage-io?tab=readme-ov-file#format-version-overview) are the rules and format that bioimage.io-compatible resources must fulfill.
 
@@ -50,7 +50,6 @@ These are primarily intended for syntax highlighting and form generation.
 We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md),
 and an [example notebook to programmatically access the models, applications, notebooks and datasets descriptions](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb).
 
-
 ## 💁 Recommendations
 
 * Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `rdf.yaml` file and try to avoid using subdirectories.
@@ -63,7 +62,7 @@ The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bi
 
 ## 🖥 Installation
 
-bioimageio.spec can be installed with either `conda` or `pip`. 
+bioimageio.spec can be installed with either `conda` or `pip`.
 We recommend installing `bioimageio.core` instead to get access to the Python programmatic features available in the BioImage.IO community:
 
 ```console
@@ -88,7 +87,6 @@ or
 pip install -U bioimageio.spec
 ```
 
-
 ## 🏞 Environment variables
 
 TODO: link to settings in dev docs
@@ -106,6 +104,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 ## Δ Changelog
 
 ### bioimageio.spec Python package
+
+#### bioimageio.spec 0.5.2post5 (to be released)
+
+* added more information to validation summary
 
 #### bioimageio.spec 0.5.2post4
 
