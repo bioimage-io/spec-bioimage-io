@@ -54,7 +54,7 @@ def main(*, tag: str):
         for lic in licenses_full["licenses"]
     ]
 
-    with LICENSES_JSON_FILE.open("wt") as f:
+    with LICENSES_JSON_FILE.open("wt", encoding="utf-8") as f:
         json.dump(licenses_full, f, indent=2)
 
     print(f"Updated {LICENSES_JSON_FILE}")
