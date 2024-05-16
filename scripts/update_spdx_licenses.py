@@ -39,10 +39,27 @@ def main(*, tag: str):
     url = URL.format(tag=tag)
     print("requesting:", url)
     text = urllib.request.urlopen(url).read().decode("utf-8")
-    _ = LICENSES_JSON_FILE.write_text(text, encoding="utf-8")
+    licenses_full = json.loads(text)
+    licenses_full["licenses"] = [
+        {
+            k: lic[k]
+            for k in [
+                "isDeprecatedLicenseId",
+                "isOsiApproved",
+                "licenseId",
+                "name",
+                "reference",
+            ]
+        }
+        for lic in licenses_full["licenses"]
+    ]
+
+    with LICENSES_JSON_FILE.open("wt") as f:
+        json.dump(licenses_full, f, indent=2)
+
     print(f"Updated {LICENSES_JSON_FILE}")
 
-    licenses = json.loads(text)["licenses"]
+    licenses = licenses_full["licenses"]
     license_ids = [x["licenseId"] for x in licenses if not x["isDeprecatedLicenseId"]]
     deprecated_license_ids = [
         x["licenseId"] for x in licenses if x["isDeprecatedLicenseId"]
