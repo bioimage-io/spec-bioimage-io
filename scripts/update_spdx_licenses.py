@@ -29,7 +29,7 @@ DeprecatedLicenseId = Literal{deprecated_license_ids}
 
 def parse_args():
     p = ArgumentParser(description="script that generates weights formats overview")
-    _ = p.add_argument("tag", nargs="?", default="v3.21")
+    _ = p.add_argument("tag", nargs="?", default="v3.23")
 
     args = p.parse_args()
     return dict(tag=args.tag)
