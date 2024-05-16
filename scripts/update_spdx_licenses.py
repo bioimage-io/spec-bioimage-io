@@ -9,6 +9,8 @@ from pathlib import Path
 import black.files
 import black.mode
 
+from bioimageio.spec.utils import SpdxLicenseEntry, SpdxLicenses
+
 PROJECT_ROOT = Path(__file__).parent.parent
 
 URL = (
@@ -39,18 +41,16 @@ def main(*, tag: str):
     url = URL.format(tag=tag)
     print("requesting:", url)
     text = urllib.request.urlopen(url).read().decode("utf-8")
-    licenses_full = json.loads(text)
+    licenses_full = SpdxLicenses(**json.loads(text))
     licenses_full["licenses"] = [
-        {
-            k: lic[k]
-            for k in [
-                "isDeprecatedLicenseId",
-                "isOsiApproved",
-                "licenseId",
-                "name",
-                "reference",
-            ]
-        }
+        SpdxLicenseEntry(
+            isDeprecatedLicenseId=lic["isDeprecatedLicenseId"],
+            isOsiApproved=lic["isOsiApproved"],
+            licenseId=lic["licenseId"],
+            name=lic["name"],
+            reference=lic["reference"],
+            isKnownByZenodo=None,  # pyright: ignore[reportArgumentType]
+        )
         for lic in licenses_full["licenses"]
     ]
 
