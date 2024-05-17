@@ -6753,7 +6753,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-05-16T09:22:13.187458"
+                    "default": "2024-05-17T12:03:34.526000"
                 },
                 "training_data": {
                     "anyOf": [
