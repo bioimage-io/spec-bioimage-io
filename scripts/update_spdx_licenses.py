@@ -9,6 +9,8 @@ from pathlib import Path
 import black.files
 import black.mode
 
+from bioimageio.spec.utils import SpdxLicenseEntry, SpdxLicenses
+
 PROJECT_ROOT = Path(__file__).parent.parent
 
 URL = (
@@ -29,7 +31,7 @@ DeprecatedLicenseId = Literal{deprecated_license_ids}
 
 def parse_args():
     p = ArgumentParser(description="script that generates weights formats overview")
-    _ = p.add_argument("tag", nargs="?", default="v3.21")
+    _ = p.add_argument("tag", nargs="?", default="v3.23")
 
     args = p.parse_args()
     return dict(tag=args.tag)
@@ -39,10 +41,25 @@ def main(*, tag: str):
     url = URL.format(tag=tag)
     print("requesting:", url)
     text = urllib.request.urlopen(url).read().decode("utf-8")
-    _ = LICENSES_JSON_FILE.write_text(text, encoding="utf-8")
+    licenses_full = SpdxLicenses(**json.loads(text))
+    licenses_full["licenses"] = [
+        SpdxLicenseEntry(
+            isDeprecatedLicenseId=lic["isDeprecatedLicenseId"],
+            isOsiApproved=lic["isOsiApproved"],
+            licenseId=lic["licenseId"],
+            name=lic["name"],
+            reference=lic["reference"],
+            isKnownByZenodo=None,  # pyright: ignore[reportArgumentType]
+        )
+        for lic in licenses_full["licenses"]
+    ]
+
+    with LICENSES_JSON_FILE.open("wt", encoding="utf-8") as f:
+        json.dump(licenses_full, f, indent=2)
+
     print(f"Updated {LICENSES_JSON_FILE}")
 
-    licenses = json.loads(text)["licenses"]
+    licenses = licenses_full["licenses"]
     license_ids = [x["licenseId"] for x in licenses if not x["isDeprecatedLicenseId"]]
     deprecated_license_ids = [
         x["licenseId"] for x in licenses if x["isDeprecatedLicenseId"]
