@@ -105,6 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.2post6 (to be released)
+
+* update SPDX license list
+
 #### bioimageio.spec 0.5.2post5
 
 * added more information to validation summary
