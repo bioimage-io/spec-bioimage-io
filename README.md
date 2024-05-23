@@ -283,6 +283,17 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### Resource Description Format Versions
 
+#### collection 0.3.1
+
+* breaking changes
+  * rename `entry_source` -> `rdf_source`
+  * rename `entry_sha256` -> `rdf_sha256`
+
+#### general 0.3.1 and model 0.5.3
+
+* Non-breaking changes
+  * remove `version_number` in favor of using `version`
+
 #### model 0.5.2
 
 * Non-breaking changes

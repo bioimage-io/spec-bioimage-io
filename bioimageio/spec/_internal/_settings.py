@@ -31,8 +31,8 @@ class Settings(BaseSettings, extra="ignore"):
 
     resolve_staged: bool = True
     """Flag to resolve staged resource versions following the pattern
-    <resource id>/staged/<stage number>.
-    Note that anyone may stage a new resource version and that such a staged version
+    <resource id>/draft.
+    Note that anyone may stage a new resource version and that such a version draft
     may not have been reviewed.
     Set this flag to False to avoid this potential security risk."""
 

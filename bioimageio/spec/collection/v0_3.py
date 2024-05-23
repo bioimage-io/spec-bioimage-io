@@ -39,6 +39,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
     GenericDescrBase,
+    LinkedResourceNode,
     ResourceId,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
@@ -340,11 +341,8 @@ class CollectionDescr(
         return data
 
 
-class LinkedCollection(Node):
+class LinkedCollection(LinkedResourceNode):
     """Reference to a bioimage.io collection."""
 
     id: CollectionId
     """A valid collection `id` from the bioimage.io collection."""
-
-    version_number: int
-    """version number (n-th published version, not the semantic version) of linked collection"""
