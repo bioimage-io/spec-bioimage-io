@@ -40,9 +40,9 @@ from .._internal.io import (
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
-from .._internal.license_id import LicenseId
+from .._internal.license_id import DeprecatedLicenseId as DeprecatedLicenseId
+from .._internal.license_id import LicenseId as LicenseId
 from .._internal.types import (
-    DeprecatedLicenseId,
     ImportantFileSource,
     NotEmpty,
 )
