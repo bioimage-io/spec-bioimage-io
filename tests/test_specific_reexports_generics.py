@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 import pytest
 
-from bioimageio.spec import application, collection, dataset, generic, model, notebook
+from bioimageio.spec import application, dataset, generic, model, notebook
 
 IGNORE_MEMBERS = {
     "AfterValidator",
@@ -110,12 +110,10 @@ GENERIC_v0_3_MEMBERS = {
     "generic_members,specific",
     [
         (GENERIC_v0_2_MEMBERS, application.v0_2),
-        (GENERIC_v0_2_MEMBERS, collection.v0_2),
         (GENERIC_v0_2_MEMBERS, dataset.v0_2),
         (GENERIC_v0_2_MEMBERS, model.v0_4),
         (GENERIC_v0_2_MEMBERS, notebook.v0_2),
         (GENERIC_v0_3_MEMBERS, application.v0_3),
-        (GENERIC_v0_3_MEMBERS, collection.v0_3),
         (GENERIC_v0_3_MEMBERS, dataset.v0_3),
         (GENERIC_v0_3_MEMBERS, model.v0_5),
         (GENERIC_v0_3_MEMBERS, notebook.v0_3),
