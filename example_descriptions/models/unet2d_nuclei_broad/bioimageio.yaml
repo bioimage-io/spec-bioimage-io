@@ -1,5 +1,5 @@
 type: model
-format_version: 0.5.1
+format_version: 0.5.3
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
