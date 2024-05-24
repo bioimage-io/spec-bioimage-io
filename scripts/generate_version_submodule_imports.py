@@ -42,7 +42,6 @@ def main(command: Literal["check", "generate"]):
         "generic",
         "model",
         "dataset",
-        "collection",
         "notebook",
         "application",
     ]:

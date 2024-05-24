@@ -13,9 +13,6 @@ from ._internal.validation_context import ValidationContext, validation_context_
 from .application import AnyApplicationDescr, ApplicationDescr
 from .application.v0_2 import ApplicationDescr as ApplicationDescr02
 from .application.v0_3 import ApplicationDescr as ApplicationDescr03
-from .collection import AnyCollectionDescr, CollectionDescr
-from .collection.v0_2 import CollectionDescr as CollectionDescr02
-from .collection.v0_3 import CollectionDescr as CollectionDescr03
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .dataset.v0_2 import DatasetDescr as DatasetDescr02
 from .dataset.v0_3 import DatasetDescr as DatasetDescr03
@@ -38,7 +35,6 @@ LatestResourceDescr = Union[
     Annotated[
         Union[
             ApplicationDescr,
-            CollectionDescr,
             DatasetDescr,
             ModelDescr,
             NotebookDescr,
@@ -53,7 +49,6 @@ LatestResourceDescr = Union[
 SpecificResourceDescr = Annotated[
     Union[
         AnyApplicationDescr,
-        AnyCollectionDescr,
         AnyDatasetDescr,
         AnyModelDescr,
         AnyNotebookDescr,
@@ -97,13 +92,6 @@ DESCRIPTIONS_MAP = MappingProxyType(
                 "0.2": ApplicationDescr02,
                 "0.3": ApplicationDescr03,
                 None: ApplicationDescr,
-            }
-        ),
-        "collection": MappingProxyType(
-            {
-                "0.2": CollectionDescr02,
-                "0.3": CollectionDescr03,
-                None: CollectionDescr,
             }
         ),
         "dataset": MappingProxyType(

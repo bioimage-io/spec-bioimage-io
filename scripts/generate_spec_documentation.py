@@ -16,7 +16,6 @@ from pydantic_core import PydanticUndefined
 from bioimageio.spec import (
     ResourceDescr,
     application,
-    collection,
     dataset,
     generic,
     model,
@@ -512,7 +511,6 @@ def main(dist: Path):
     dist.mkdir(exist_ok=True, parents=True)
 
     export_module_documentations(dist, application)
-    export_module_documentations(dist, collection)
     export_module_documentations(dist, dataset)
     export_module_documentations(dist, generic)
     export_module_documentations(dist, model)

@@ -3,7 +3,6 @@
 """
 
 from . import application as application
-from . import collection as collection
 from . import dataset as dataset
 from . import generic as generic
 from . import model as model
@@ -31,8 +30,6 @@ from ._package import (
 )
 from .application import AnyApplicationDescr as AnyApplicationDescr
 from .application import ApplicationDescr as ApplicationDescr
-from .collection import AnyCollectionDescr as AnyCollectionDescr
-from .collection import CollectionDescr as CollectionDescr
 from .dataset import AnyDatasetDescr as AnyDatasetDescr
 from .dataset import DatasetDescr as DatasetDescr
 from .generic import AnyGenericDescr as AnyGenericDescr
