@@ -66,11 +66,11 @@ jobs:
       - name: Generate developer docs
         run: |
           pdoc \
-          --logo https://bioimage.io/static/img/bioimage-io-logo.svg \
-          --logo-link https://bioimage.io/ \
-          --favicon https://bioimage.io/static/img/bioimage-io-icon-small.svg \
-          --footer-text 'bioimageio.spec ${{steps.get_version.outputs.version}}' \
-          -o ./dist bioimageio.spec
+          --logo "https://bioimage.io/static/img/bioimage-io-logo.svg" \
+          --logo-link "https://bioimage.io/" \
+          --favicon "https://bioimage.io/static/img/bioimage-io-icon-small.svg" \
+          --footer-text "bioimageio.spec ${{steps.get_version.outputs.version}}" \
+          -o ./dist bioimageio.spec bioimageio.spec._internal
       - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
