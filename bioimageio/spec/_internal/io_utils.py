@@ -168,7 +168,7 @@ def _get_one_collection(url: str):
                 entry = _CollectionEntry(
                     id=raw_entry["id"],
                     concept_id=raw_entry["concept_id"],
-                    emoji=raw_entry["id_emoji"],
+                    emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
                     url=raw_entry["rdf_source"],
                     sha256=raw_entry["rdf_sha256"],
                     version=v,
