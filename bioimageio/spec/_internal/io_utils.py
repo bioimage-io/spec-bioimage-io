@@ -115,9 +115,9 @@ def open_bioimageio_yaml(
 
         entry = collection[source]
         logger.info(
-            "{} loading {} {} from {}",
+            "{} loading {}/{} from {}",
             entry.emoji,
-            f"{entry.id}/{entry.version}",
+            entry.id,
             entry.version,
             entry.url,
         )
