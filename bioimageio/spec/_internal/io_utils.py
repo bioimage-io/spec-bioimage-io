@@ -97,12 +97,12 @@ def open_bioimageio_yaml(
         collection = get_collection()
         if source not in collection:
             if isinstance(source, str) and source.endswith("/draft"):
-                if settings.resolve_staged:
-                    collection_url = settings.collection_staged
+                if settings.resolve_draft:
+                    collection_url = settings.collection_draft
                 else:
                     collection_url = ""
                     logger.error(
-                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_STAGED is set to False",
+                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_DRAFT is set to False",
                         source,
                     )
             else:
@@ -201,8 +201,8 @@ def _get_one_collection(url: str):
 @lru_cache
 def get_collection() -> Mapping[str, _CollectionEntry]:
     try:
-        if settings.resolve_staged:
-            ret = _get_one_collection(settings.collection_staged)
+        if settings.resolve_draft:
+            ret = _get_one_collection(settings.collection_draft)
         else:
             ret = {}
 
