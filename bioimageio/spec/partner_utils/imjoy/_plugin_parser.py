@@ -179,7 +179,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
 
 def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
     """Get imjoy plugin config in RDF format."""
-    req = requests.get(source_url)
+    req = requests.get(source_url, timeout=5)
     source = req.text
     plugin_config = parse_imjoy_plugin(source)
     rdf = convert_config_to_rdf(plugin_config, source_url)

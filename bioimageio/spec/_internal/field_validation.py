@@ -73,17 +73,27 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
     if username.lower() in KNOWN_INVALID_GH_USERS:
         raise ValueError(f"Known invalid GitHub user '{username}'")
 
-    r = requests.get(
-        f"https://api.github.com/users/{username}", auth=settings.github_auth
-    )
-    if r.status_code == 403 and r.reason == "rate limit exceeded":
+    try:
+        r = requests.get(
+            f"https://api.github.com/users/{username}",
+            auth=settings.github_auth,
+            timeout=3,
+        )
+    except requests.exceptions.Timeout:
         issue_warning(
-            "Could not verify GitHub user '{value}' due to GitHub API rate limit",
+            "Could not verify GitHub user '{value}' due to connection timeout",
             value=username,
         )
-    elif r.status_code != 200:
-        KNOWN_INVALID_GH_USERS.add(username.lower())
-        raise ValueError(f"Could not find GitHub user '{username}'")
+    else:
+        if r.status_code == 403 and r.reason == "rate limit exceeded":
+            issue_warning(
+                "Could not verify GitHub user '{value}' due to GitHub API rate limit",
+                value=username,
+            )
+        elif r.status_code != 200:
+            KNOWN_INVALID_GH_USERS.add(username.lower())
+            raise ValueError(f"Could not find GitHub user '{username}'")
 
-    KNOWN_GH_USERS.add(username.lower())
+        KNOWN_GH_USERS.add(username.lower())
+
     return username
