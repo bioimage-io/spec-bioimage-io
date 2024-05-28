@@ -96,13 +96,13 @@ def open_bioimageio_yaml(
 
         collection = get_collection()
         if source not in collection:
-            if "/staged/" in source:
-                if settings.resolve_staged:
-                    collection_url = settings.collection_staged
+            if isinstance(source, str) and source.endswith("/draft"):
+                if settings.resolve_draft:
+                    collection_url = settings.collection_draft
                 else:
                     collection_url = ""
                     logger.error(
-                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_STAGED is set to False",
+                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_DRAFT is set to False",
                         source,
                     )
             else:
@@ -115,7 +115,7 @@ def open_bioimageio_yaml(
         logger.info(
             "{} loading {} {} from {}",
             entry.emoji,
-            entry.id,
+            f"{entry.id}/{entry.version}",
             entry.version,
             entry.url,
         )
@@ -142,6 +142,7 @@ class _CollectionEntry(NamedTuple):
     url: str
     sha256: Optional[Sha256]
     version: str
+    doi: Optional[str]
 
 
 def _get_one_collection(url: str):
@@ -160,72 +161,40 @@ def _get_one_collection(url: str):
         logger.error("`collection` field of {} has type {}", url, type(collection))
         return ret
 
-    for entry in collection:
-        if entry["entry_sha256"] is None:
-            logger.debug("skipping {} with entry_sha256=None", entry["id"])
-            continue
+    for raw_entry in collection:
+        try:
+            for i, (v, d) in enumerate(zip(raw_entry["versions"], raw_entry["dois"])):
+                entry = _CollectionEntry(
+                    id=raw_entry["id"],
+                    emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
+                    url=raw_entry["rdf_source"],
+                    sha256=raw_entry["rdf_sha256"],
+                    version=v,
+                    doi=d,
+                )
+                ret[f"{raw_entry['id']}/{v}"] = entry
+                if i == 0:
+                    # latest version
+                    ret[raw_entry["id"]] = entry
+                    if (concept_doi := raw_entry.get("concept_doi")) is not None:
+                        ret[concept_doi] = entry
 
-        if not isinstance(entry, dict):
-            logger.error("entry has type {}", type(entry))
-            continue
-        if not isinstance(entry["id"], str):
-            logger.error("entry['id'] has type {}", type(entry["id"]))
-            continue
-        if not isinstance(entry["id_emoji"], str):
+                    if (nickname := raw_entry.get("nickname")) is not None:
+                        ret[nickname] = entry
+
+                if d is not None:
+                    ret[d] = entry
+
+        except Exception as e:
+            entry_id = (
+                raw_entry.get("id", "unknown")
+                if isinstance(raw_entry, dict)
+                else "unknown"
+            )
             logger.error(
-                "{}.id_emoji has type {}", entry["id"], type(entry["id_emoji"])
+                "failed to parse collection entry with `id={}`: {}", entry_id, e
             )
             continue
-        if not isinstance(entry["entry_source"], str):
-            logger.error(
-                "{}.entry_source has type {}", entry["id"], type(entry["entry_source"])
-            )
-            continue
-        if not isinstance(entry["entry_sha256"], str):
-            logger.error(
-                "{}.entry_sha256 has type {}", entry["id"], type(entry["entry_sha256"])
-            )
-            continue
-
-        c_entry = _CollectionEntry(
-            entry["id"],
-            entry["id_emoji"],
-            entry["entry_source"],
-            (
-                None
-                if entry.get("entry_sha256") is None
-                else Sha256(entry["entry_sha256"])
-            ),
-            version=str(entry["version_number"]),
-        )
-        # set version specific entry
-        ret[c_entry.id + "/" + str(entry["version_number"])] = c_entry
-
-        # set doi entry
-        doi = entry.get("doi")
-        if doi is not None:
-            ret[doi] = c_entry
-
-        # update 'latest version' entry
-        if c_entry.id not in ret:
-            update = True
-        else:
-            old_v = ret[c_entry.id].version
-            v = c_entry.version
-
-            if old_v.startswith("staged"):
-                update = not v.startswith("staged") or int(
-                    v.replace("staged/", "")
-                ) > int(old_v.replace("staged/", ""))
-            else:
-                update = not v.startswith("staged") and int(v) > int(old_v)
-
-        if update:
-            ret[c_entry.id] = c_entry
-            # set concept doi entry
-            concept_doi = entry.get("concept_doi")
-            if concept_doi is not None:
-                ret[concept_doi] = c_entry
 
     return ret
 
@@ -233,8 +202,8 @@ def _get_one_collection(url: str):
 @lru_cache
 def get_collection() -> Mapping[str, _CollectionEntry]:
     try:
-        if settings.resolve_staged:
-            ret = _get_one_collection(settings.collection_staged)
+        if settings.resolve_draft:
+            ret = _get_one_collection(settings.collection_draft)
         else:
             ret = {}
 

@@ -40,9 +40,9 @@ from .._internal.io import (
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
-from .._internal.license_id import LicenseId
+from .._internal.license_id import DeprecatedLicenseId as DeprecatedLicenseId
+from .._internal.license_id import LicenseId as LicenseId
 from .._internal.types import (
-    DeprecatedLicenseId,
     ImportantFileSource,
     NotEmpty,
 )
@@ -186,9 +186,6 @@ class LinkedResource(Node):
 
     id: ResourceId
     """A valid resource `id` from the official bioimage.io collection."""
-
-    version_number: int
-    """version number (n-th published version, not the semantic version) of linked resource"""
 
 
 class GenericModelDescrBase(ResourceDescrBase):
@@ -364,8 +361,14 @@ class GenericModelDescrBase(ResourceDescrBase):
     version: Optional[Version] = None
     """The version of the resource following SemVer 2.0."""
 
-    version_number: Optional[int] = None
-    """version number (n-th published version, not the semantic version)"""
+    @model_validator(mode="before")
+    def _remove_version_number(cls, value: Union[Any, Dict[Any, Any]]):
+        if isinstance(value, dict):
+            vn: Any = value.pop("version_number", None)
+            if vn is not None and "id" in value:
+                value["id"] = f"{value['id']}/{vn}"
+
+        return value
 
 
 class GenericDescrBase(GenericModelDescrBase):
@@ -431,5 +434,17 @@ class GenericDescr(
                 f"Use the {value} description instead of this generic description for"
                 + f" your '{value}' resource."
             )
+
+        return value
+
+
+class LinkedResourceNode(Node):
+
+    @model_validator(mode="before")
+    def _remove_version_number(cls, value: Union[Any, Dict[Any, Any]]):
+        if isinstance(value, dict):
+            vn: Any = value.pop("version_number", None)
+            if vn is not None and "id" in value:
+                value["id"] = f"{value['id']}/{vn}"
 
         return value

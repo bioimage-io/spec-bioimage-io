@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, cast
 
 from pydantic import model_validator
 
-from .._internal.common_nodes import InvalidDescr, Node
+from .._internal.common_nodes import InvalidDescr
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
@@ -14,6 +14,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericDescrBase,
+    LinkedResourceNode,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -101,11 +102,8 @@ class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
         return data
 
 
-class LinkedDataset(Node):
+class LinkedDataset(LinkedResourceNode):
     """Reference to a bioimage.io dataset."""
 
     id: DatasetId
     """A valid dataset `id` from the bioimage.io collection."""
-
-    version_number: int
-    """version number (n-th published version, not the semantic version) of linked dataset"""

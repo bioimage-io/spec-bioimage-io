@@ -23,18 +23,19 @@ class Settings(BaseSettings, extra="ignore"):
     """url to bioimageio collection.json to resolve collection specific resource IDs.
     """
 
-    collection_staged: str = (
-        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_staged.json"
+    collection_draft: str = (
+        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json"
     )
-    """url to bioimageio collection_staged.json to resolve collection specific, staged
-    resource IDs."""
+    """url to bioimageio collection_draft.json to resolve collection specific draft
+    versions of resources ending with '/draft'."""
 
-    resolve_staged: bool = True
-    """Flag to resolve staged resource versions following the pattern
-    <resource id>/staged/<stage number>.
-    Note that anyone may stage a new resource version and that such a staged version
-    may not have been reviewed.
-    Set this flag to False to avoid this potential security risk."""
+    resolve_draft: bool = True
+    """Flag to resolve draft resource versions following the pattern
+    <resource id>/draft.
+    Note that anyone may stage a new draft and that such a draft version
+    may not have been reviewed yet.
+    Set this flag to False to avoid this potential security risk
+    and disallow loading draft versions."""
 
     perform_io_checks: bool = True
     """wether or not to perform validation that requires file io,

@@ -230,7 +230,7 @@ def model_data():
             documentation=UNET2D_ROOT / "README.md",
             license=LicenseId("MIT"),
             git_repo=HttpUrl("https://github.com/bioimage-io/core-bioimage-io-python"),
-            format_version="0.5.0",
+            format_version="0.5.3",
             description="description",
             authors=[
                 Author(name="Author 1", affiliation="Affiliation 1"),
@@ -454,7 +454,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892", version_number=1)
+    model_data["parent"] = dict(id="10.5281/zenodo.5764892/6647674")
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )

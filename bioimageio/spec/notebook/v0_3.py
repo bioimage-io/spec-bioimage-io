@@ -1,6 +1,5 @@
 from typing import Literal, Optional
 
-from .._internal.common_nodes import Node
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
@@ -10,7 +9,7 @@ from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import Doi as Doi
-from ..generic.v0_3 import GenericDescrBase
+from ..generic.v0_3 import GenericDescrBase, LinkedResourceNode
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
@@ -40,11 +39,8 @@ class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"
     """The Jupyter notebook"""
 
 
-class LinkedNotebook(Node):
+class LinkedNotebook(LinkedResourceNode):
     """Reference to a bioimage.io notebook."""
 
     id: NotebookId
     """A valid notebook `id` from the bioimage.io collection."""
-
-    version_number: int
-    """version number (n-th published version, not the semantic version) of linked notebook"""

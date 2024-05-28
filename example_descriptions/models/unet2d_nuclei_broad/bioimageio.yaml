@@ -1,5 +1,5 @@
 type: model
-format_version: 0.5.0
+format_version: 0.5.3
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -122,5 +122,4 @@ weights:
     pytorch_version: "1.5.1"
 
 training_data:
-  id: ilastik/covid_if_training_data # note: not the real training data
-  version_number: 1
+  id: ilastik/covid_if_training_data/1 # note: not the real training data

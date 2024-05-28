@@ -91,6 +91,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
+    LinkedResourceNode,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -1975,14 +1976,11 @@ class ModelId(ResourceId):
     pass
 
 
-class LinkedModel(Node):
+class LinkedModel(LinkedResourceNode):
     """Reference to a bioimage.io model."""
 
     id: ModelId
     """A valid model `id` from the bioimage.io collection."""
-
-    version_number: int
-    """version number (n-th published version, not the semantic version) of linked model"""
 
 
 class _DataDepSize(NamedTuple):
@@ -2009,7 +2007,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.5.0"] = "0.5.0"
+    format_version: Literal["0.5.3"] = "0.5.3"
     """Version of the bioimage.io model description specification used.
     When creating a new model always use the latest micro/patch version described here.
     The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -2595,7 +2593,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.0",
+            format_version="0.5.3",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

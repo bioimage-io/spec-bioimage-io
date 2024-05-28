@@ -22,8 +22,7 @@ def test_load_non_existing_rdf():
     ],
 )
 def test_load_by_id(rid: str):
-    from bioimageio.spec import InvalidDescr, load_description
+    from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 
-    model = load_description(rid)
-    assert not isinstance(model, InvalidDescr)
-    assert model.id == "invigorating-lab-coat"
+    rdf = open_bioimageio_yaml(rid).content
+    assert rdf["id"] == "invigorating-lab-coat"

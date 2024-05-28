@@ -33,7 +33,6 @@ from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
-from bioimageio.spec.collection.v0_2 import CollectionDescr as CollectionDescr02
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
 from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
@@ -195,7 +194,6 @@ def check_bioimageio_yaml(
         (
             ModelDescr04,
             ApplicationDescr02,
-            CollectionDescr02,
             DatasetDescr02,
             GenericDescr02,
             NotebookDescr02,
