@@ -71,7 +71,6 @@ jobs:
           --favicon https://bioimage.io/static/img/bioimage-io-icon-small.svg \
           --footer-text 'bioimageio.spec ${{steps.get_version.outputs.version}}' \
           -o ./dist bioimageio.spec
-      - run: cp README.md ./dist/README.md
       - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
