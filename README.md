@@ -111,6 +111,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 * update SPDX license list
 * update generic description to 0.3.1
 * update model description to 0.5.3
+* add timeout argument to all requests.get calls
 
 #### bioimageio.spec 0.5.2post5
 
