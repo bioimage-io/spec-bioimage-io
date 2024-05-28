@@ -1,15 +1,15 @@
 import io
 import warnings
 from contextlib import nullcontext
-from functools import lru_cache
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import (
     IO,
     Any,
     Dict,
     List,
     Mapping,
-    NamedTuple,
     Optional,
     TextIO,
     Union,
@@ -28,6 +28,7 @@ from typing_extensions import Unpack
 from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
+    SLOTS,
     BioimageioYamlContent,
     FileDescr,
     HashKwargs,
@@ -38,6 +39,7 @@ from .io import (
 )
 from .io_basics import FileName, Sha256
 from .types import FileSource, PermissiveFileSource
+from .utils import cache
 
 yaml = YAML(typ="safe")
 
@@ -136,17 +138,32 @@ def open_bioimageio_yaml(
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
-class _CollectionEntry(NamedTuple):
+@dataclass(frozen=True, **SLOTS)
+class CollectionEntry:
+    """collection entry
+
+    note: The BioImage.IO collection is still under development;
+          this collection entry might change in the future!
+    """
+
     id: str
-    emoji: str
-    url: str
-    sha256: Optional[Sha256]
+    """concept id of the resource; to identify a resource version use <id>/<version>.
+    See `version` below."""
     version: str
+    """version. To identify a resource version use <id>/<version> for reference"""
+    emoji: str
+    """a Unicode emoji string symbolizing this resource"""
+    url: str
+    """Resource Description File (RDF) URL"""
+    sha256: Optional[Sha256]
+    """SHA256 hash value of RDF"""
     doi: Optional[str]
+    """DOI (regsitered through zenodo.org)
+    as alternative reference of this bioimage.io upload."""
 
 
 def _get_one_collection(url: str):
-    ret: Dict[str, _CollectionEntry] = {}
+    ret: Dict[str, CollectionEntry] = {}
     if not isinstance(url, str) or "/" not in url:
         logger.error("invalid collection url: {}", url)
     try:
@@ -164,7 +181,7 @@ def _get_one_collection(url: str):
     for raw_entry in collection:
         try:
             for i, (v, d) in enumerate(zip(raw_entry["versions"], raw_entry["dois"])):
-                entry = _CollectionEntry(
+                entry = CollectionEntry(
                     id=raw_entry["id"],
                     emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
                     url=raw_entry["rdf_source"],
@@ -199,8 +216,8 @@ def _get_one_collection(url: str):
     return ret
 
 
-@lru_cache
-def get_collection() -> Mapping[str, _CollectionEntry]:
+@cache
+def get_collection() -> Mapping[str, CollectionEntry]:
     try:
         if settings.resolve_draft:
             ret = _get_one_collection(settings.collection_draft)
@@ -208,11 +225,12 @@ def get_collection() -> Mapping[str, _CollectionEntry]:
             ret = {}
 
         ret.update(_get_one_collection(settings.collection))
-        return ret
 
     except Exception as e:
         logger.error("failed to get resource id mapping: {}", e)
-        return {}
+        ret = {}
+
+    return MappingProxyType(ret)
 
 
 def unzip(

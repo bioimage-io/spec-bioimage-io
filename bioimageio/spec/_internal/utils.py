@@ -22,12 +22,14 @@ NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
 
 if sys.version_info < (3, 9):
+    from functools import lru_cache as cache
 
     def files(package_name: str):
         assert package_name == "bioimageio.spec", package_name
         return Path(__file__).parent.parent
 
 else:
+    from functools import cache as cache
     from importlib.resources import files as files
 
 

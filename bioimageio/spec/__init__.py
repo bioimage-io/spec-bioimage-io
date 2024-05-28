@@ -15,6 +15,7 @@ from ._description import validate_format as validate_format
 from ._internal import settings as settings
 from ._internal.common_nodes import InvalidDescr as InvalidDescr
 from ._internal.constants import VERSION
+from ._internal.io_utils import get_collection as get_collection
 from ._internal.validation_context import ValidationContext as ValidationContext
 from ._io import load_description as load_description
 from ._io import (
