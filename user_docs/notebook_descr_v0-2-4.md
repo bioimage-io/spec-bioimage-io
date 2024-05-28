@@ -69,7 +69,7 @@ Sequence of Union of
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - Path (PathType(path_type='file'))
 
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb6abf4cd60>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd2c2c98c20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -138,7 +138,7 @@ Optional[_internal.types.OrcidId]
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb6abf4cd60>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd2c2c98c20>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -196,7 +196,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fb6abf4cd60>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd2c2c98c20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -214,7 +214,7 @@ Optional[Union of
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - Path (PathType(path_type='file'))
 
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb6abf4cd60>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd2c2c98c20>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -244,7 +244,7 @@ Union of
   - Url (max_length=2083 allowed_schemes=['http', 'https'])
   - Path (PathType(path_type='file'))
 
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fb6abf4cd60>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd2c2c98c20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 

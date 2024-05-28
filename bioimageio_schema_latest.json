@@ -2505,18 +2505,6 @@
                     ],
                     "default": null
                 },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
@@ -2624,764 +2612,6 @@
                 "license"
             ],
             "title": "bioimage.io application specification",
-            "type": "object"
-        },
-        "bioimageio__spec__collection__v0_2__CollectionDescr": {
-            "additionalProperties": true,
-            "description": "A bioimage.io collection describes several other bioimage.io resources.\nNote that collections cannot be nested; resources listed under `collection` may not be collections themselves.",
-            "properties": {
-                "name": {
-                    "minLength": 1,
-                    "title": "Name",
-                    "type": "string"
-                },
-                "description": {
-                    "title": "Description",
-                    "type": "string"
-                },
-                "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
-                    "examples": [
-                        "cover.png"
-                    ],
-                    "items": {
-                        "anyOf": [
-                            {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    },
-                    "title": "Covers",
-                    "type": "array"
-                },
-                "id_emoji": {
-                    "anyOf": [
-                        {
-                            "maxLength": 1,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id Emoji"
-                },
-                "authors": {
-                    "items": {
-                        "$ref": "#/$defs/Author"
-                    },
-                    "title": "Authors",
-                    "type": "array"
-                },
-                "attachments": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/AttachmentsDescr"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "cite": {
-                    "items": {
-                        "$ref": "#/$defs/CiteEntry"
-                    },
-                    "title": "Cite",
-                    "type": "array"
-                },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
-                "download_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Download Url"
-                },
-                "git_repo": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ],
-                    "title": "Git Repo"
-                },
-                "icon": {
-                    "anyOf": [
-                        {
-                            "maxLength": 2,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Icon"
-                },
-                "links": {
-                    "examples": [
-                        [
-                            "ilastik/ilastik",
-                            "deepimagej/deepimagej",
-                            "zero/notebook_u-net_3d_zerocostdl4mic"
-                        ]
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Links",
-                    "type": "array"
-                },
-                "uploader": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/Uploader"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "maintainers": {
-                    "items": {
-                        "$ref": "#/$defs/Maintainer"
-                    },
-                    "title": "Maintainers",
-                    "type": "array"
-                },
-                "rdf_source": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Rdf Source"
-                },
-                "tags": {
-                    "examples": [
-                        [
-                            "unet2d",
-                            "pytorch",
-                            "nucleus",
-                            "segmentation",
-                            "dsb2018"
-                        ]
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Tags",
-                    "type": "array"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
-                "format_version": {
-                    "const": "0.2.4",
-                    "default": "0.2.4",
-                    "enum": [
-                        "0.2.4"
-                    ],
-                    "title": "Format Version",
-                    "type": "string"
-                },
-                "badges": {
-                    "items": {
-                        "$ref": "#/$defs/BadgeDescr"
-                    },
-                    "title": "Badges",
-                    "type": "array"
-                },
-                "documentation": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
-                    "title": "Documentation"
-                },
-                "license": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "CC0-1.0",
-                        "MIT",
-                        "BSD-2-Clause"
-                    ],
-                    "title": "License"
-                },
-                "type": {
-                    "const": "collection",
-                    "default": "collection",
-                    "enum": [
-                        "collection"
-                    ],
-                    "title": "Type",
-                    "type": "string"
-                },
-                "id": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id"
-                },
-                "collection": {
-                    "items": {
-                        "$ref": "#/$defs/bioimageio__spec__collection__v0_2__CollectionEntry"
-                    },
-                    "minItems": 1,
-                    "title": "Collection",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "name",
-                "description",
-                "collection"
-            ],
-            "title": "bioimage.io collection specification",
-            "type": "object"
-        },
-        "bioimageio__spec__collection__v0_2__CollectionEntry": {
-            "additionalProperties": true,
-            "description": "A valid resource description (RD).\nThe entry RD is based on the collection description itself.\nFields are added/overwritten by the content of `rdf_source` if `rdf_source` is specified,\nand finally added/overwritten by any fields specified directly in the entry.\nExcept for the `id` field, fields are overwritten entirely, their content is not merged!\nThe final `id` for each collection entry is composed of the collection's `id`\nand the entry's 'sub-'`id`, specified remotely as part of `rdf_source` or superseeded in-place,\nsuch that the `final_entry_id = <collection_id>/<entry_id>`",
-            "properties": {
-                "rdf_source": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Rdf Source"
-                },
-                "id": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id"
-                }
-            },
-            "title": "CollectionEntry",
-            "type": "object"
-        },
-        "bioimageio__spec__collection__v0_3__CollectionDescr": {
-            "additionalProperties": true,
-            "description": "A bioimage.io collection resource description file (collection RDF) describes a collection of bioimage.io\nresources.\nThe resources listed in a collection RDF have types other than 'collection'; collections cannot be nested.",
-            "properties": {
-                "name": {
-                    "maxLength": 128,
-                    "minLength": 1,
-                    "title": "Name",
-                    "type": "string"
-                },
-                "description": {
-                    "maxLength": 1024,
-                    "title": "Description",
-                    "type": "string"
-                },
-                "covers": {
-                    "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
-                    "examples": [],
-                    "items": {
-                        "anyOf": [
-                            {
-                                "format": "file-path",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    },
-                    "title": "Covers",
-                    "type": "array"
-                },
-                "id_emoji": {
-                    "anyOf": [
-                        {
-                            "maxLength": 1,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id Emoji"
-                },
-                "authors": {
-                    "items": {
-                        "$ref": "#/$defs/Author"
-                    },
-                    "minItems": 1,
-                    "title": "Authors",
-                    "type": "array"
-                },
-                "attachments": {
-                    "items": {
-                        "$ref": "#/$defs/FileDescr"
-                    },
-                    "title": "Attachments",
-                    "type": "array"
-                },
-                "cite": {
-                    "items": {
-                        "$ref": "#/$defs/CiteEntry"
-                    },
-                    "minItems": 1,
-                    "title": "Cite",
-                    "type": "array"
-                },
-                "license": {
-                    "examples": [
-                        "CC0-1.0",
-                        "MIT",
-                        "BSD-2-Clause"
-                    ],
-                    "title": "License",
-                    "type": "string"
-                },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
-                "git_repo": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
-                    ],
-                    "title": "Git Repo"
-                },
-                "icon": {
-                    "anyOf": [
-                        {
-                            "maxLength": 2,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Icon"
-                },
-                "links": {
-                    "examples": [
-                        [
-                            "ilastik/ilastik",
-                            "deepimagej/deepimagej",
-                            "zero/notebook_u-net_3d_zerocostdl4mic"
-                        ]
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Links",
-                    "type": "array"
-                },
-                "uploader": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/Uploader"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "maintainers": {
-                    "items": {
-                        "$ref": "#/$defs/Maintainer"
-                    },
-                    "title": "Maintainers",
-                    "type": "array"
-                },
-                "tags": {
-                    "examples": [
-                        [
-                            "unet2d",
-                            "pytorch",
-                            "nucleus",
-                            "segmentation",
-                            "dsb2018"
-                        ]
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Tags",
-                    "type": "array"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
-                "format_version": {
-                    "const": "0.3.0",
-                    "default": "0.3.0",
-                    "enum": [
-                        "0.3.0"
-                    ],
-                    "title": "Format Version",
-                    "type": "string"
-                },
-                "documentation": {
-                    "anyOf": [
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
-                    "title": "Documentation"
-                },
-                "badges": {
-                    "items": {
-                        "$ref": "#/$defs/BadgeDescr"
-                    },
-                    "title": "Badges",
-                    "type": "array"
-                },
-                "type": {
-                    "const": "collection",
-                    "default": "collection",
-                    "enum": [
-                        "collection"
-                    ],
-                    "title": "Type",
-                    "type": "string"
-                },
-                "id": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id"
-                },
-                "parent": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Parent"
-                },
-                "collection": {
-                    "items": {
-                        "$ref": "#/$defs/bioimageio__spec__collection__v0_3__CollectionEntry"
-                    },
-                    "minItems": 1,
-                    "title": "Collection",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "name",
-                "description",
-                "authors",
-                "cite",
-                "license",
-                "collection"
-            ],
-            "title": "bioimage.io collection specification",
-            "type": "object"
-        },
-        "bioimageio__spec__collection__v0_3__CollectionEntry": {
-            "additionalProperties": true,
-            "description": "A collection entry description is based on the collection description itself.\nFields are added/overwritten by the content of `descr_source` if `descr_source` is set,\nand finally added/overwritten by any fields specified directly in the entry.\nExcept for the `id` field, fields are overwritten entirely, their content is not merged!\nThe final `id` for each collection entry is composed of the collection's `id`\nand the entry's 'sub-'`id`, specified externally in `descr_source` or superseeded in-place,\nsuch that the `final_entry_id = <collection_id>/<entry_id>`",
-            "properties": {
-                "entry_source": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
-                            "format": "file-path",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Entry Source"
-                },
-                "entry_sha256": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Entry Sha256"
-                },
-                "id": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Id"
-                }
-            },
-            "title": "CollectionEntry",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_2__DatasetDescr": {
@@ -3966,18 +3196,6 @@
                     ],
                     "default": null
                 },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
@@ -4080,15 +3298,10 @@
                 "id": {
                     "title": "Id",
                     "type": "string"
-                },
-                "version_number": {
-                    "title": "Version Number",
-                    "type": "integer"
                 }
             },
             "required": [
-                "id",
-                "version_number"
+                "id"
             ],
             "title": "LinkedDataset",
             "type": "object"
@@ -6423,15 +5636,10 @@
                 "id": {
                     "title": "Id",
                     "type": "string"
-                },
-                "version_number": {
-                    "title": "Version Number",
-                    "type": "integer"
                 }
             },
             "required": [
-                "id",
-                "version_number"
+                "id"
             ],
             "title": "LinkedModel",
             "type": "object"
@@ -6641,23 +5849,11 @@
                     ],
                     "default": null
                 },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
                 "format_version": {
-                    "const": "0.5.0",
-                    "default": "0.5.0",
+                    "const": "0.5.3",
+                    "default": "0.5.3",
                     "enum": [
-                        "0.5.0"
+                        "0.5.3"
                     ],
                     "title": "Format Version",
                     "type": "string"
@@ -6753,7 +5949,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-05-28T09:13:54.329166"
+                    "default": "2024-05-28T12:14:28.993351"
                 },
                 "training_data": {
                     "anyOf": [
@@ -8343,18 +7539,6 @@
                     ],
                     "default": null
                 },
-                "version_number": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Version Number"
-                },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
@@ -8474,23 +7658,6 @@
                     }
                 ]
             },
-            "collection": {
-                "discriminator": {
-                    "mapping": {
-                        "0.2.4": "#/$defs/bioimageio__spec__collection__v0_2__CollectionDescr",
-                        "0.3.0": "#/$defs/bioimageio__spec__collection__v0_3__CollectionDescr"
-                    },
-                    "propertyName": "format_version"
-                },
-                "oneOf": [
-                    {
-                        "$ref": "#/$defs/bioimageio__spec__collection__v0_2__CollectionDescr"
-                    },
-                    {
-                        "$ref": "#/$defs/bioimageio__spec__collection__v0_3__CollectionDescr"
-                    }
-                ]
-            },
             "dataset": {
                 "discriminator": {
                     "mapping": {
@@ -8512,7 +7679,7 @@
                 "discriminator": {
                     "mapping": {
                         "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                        "0.5.0": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                        "0.5.3": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                     },
                     "propertyName": "format_version"
                 },
@@ -8566,23 +7733,6 @@
         {
             "discriminator": {
                 "mapping": {
-                    "0.2.4": "#/$defs/bioimageio__spec__collection__v0_2__CollectionDescr",
-                    "0.3.0": "#/$defs/bioimageio__spec__collection__v0_3__CollectionDescr"
-                },
-                "propertyName": "format_version"
-            },
-            "oneOf": [
-                {
-                    "$ref": "#/$defs/bioimageio__spec__collection__v0_2__CollectionDescr"
-                },
-                {
-                    "$ref": "#/$defs/bioimageio__spec__collection__v0_3__CollectionDescr"
-                }
-            ]
-        },
-        {
-            "discriminator": {
-                "mapping": {
                     "0.2.4": "#/$defs/bioimageio__spec__dataset__v0_2__DatasetDescr",
                     "0.3.0": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
                 },
@@ -8601,7 +7751,7 @@
             "discriminator": {
                 "mapping": {
                     "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                    "0.5.0": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                    "0.5.3": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                 },
                 "propertyName": "format_version"
             },

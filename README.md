@@ -105,9 +105,13 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.2post6 (to be released)
+#### bioimageio.spec 0.5.3
 
+* remove collection description
 * update SPDX license list
+* update generic description to 0.3.1
+* update model description to 0.5.3
+* add timeout argument to all requests.get calls
 
 #### bioimageio.spec 0.5.2post5
 
@@ -282,6 +286,11 @@ Made with [contrib.rocks](https://contrib.rocks).
 * `load_raw_resource_description` accepts `update_to_format` kwarg
 
 ### Resource Description Format Versions
+
+#### general 0.3.1 and model 0.5.3
+
+* Non-breaking changes
+  * remove `version_number` in favor of using `version`
 
 #### model 0.5.2
 
