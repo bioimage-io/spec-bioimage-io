@@ -149,7 +149,9 @@ def _get_one_collection(url: str):
     if not isinstance(url, str) or "/" not in url:
         logger.error("invalid collection url: {}", url)
     try:
-        collection: List[Dict[Any, Any]] = requests.get(url).json().get("collection")
+        collection: List[Dict[Any, Any]] = (
+            requests.get(url, timeout=5).json().get("collection")
+        )
     except Exception as e:
         logger.error("failed to get {}: {}", url, e)
         return ret

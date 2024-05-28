@@ -35,7 +35,7 @@ def get_ref_url(
         "github.com", "raw.githubusercontent.com"
     ).replace("/blob/", "/")
     try:
-        code = requests.get(raw_github_file_url).text
+        code = requests.get(raw_github_file_url, timeout=5).text
     except requests.RequestException as e:
         warnings.warn(
             f"Could not resolve {github_file_url} due to {e}. Please check your"
