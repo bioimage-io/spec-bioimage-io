@@ -176,6 +176,9 @@ def _get_one_collection(url: str):
                 if i == 0:
                     # latest version
                     ret[raw_entry["id"]] = entry
+                    if (concept_doi := raw_entry.get("concept_doi")) is not None:
+                        ret[concept_doi] = entry
+
                     if (nickname := raw_entry.get("nickname")) is not None:
                         ret[nickname] = entry
 
