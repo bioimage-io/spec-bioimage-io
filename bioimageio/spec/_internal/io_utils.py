@@ -115,7 +115,7 @@ def open_bioimageio_yaml(
         logger.info(
             "{} loading {} {} from {}",
             entry.emoji,
-            entry.id,
+            f"{entry.id}/{entry.version}",
             entry.version,
             entry.url,
         )
@@ -138,7 +138,6 @@ def open_bioimageio_yaml(
 
 class _CollectionEntry(NamedTuple):
     id: str
-    concept_id: str
     emoji: str
     url: str
     sha256: Optional[Sha256]
@@ -167,20 +166,19 @@ def _get_one_collection(url: str):
             for i, (v, d) in enumerate(zip(raw_entry["versions"], raw_entry["dois"])):
                 entry = _CollectionEntry(
                     id=raw_entry["id"],
-                    concept_id=raw_entry["concept_id"],
                     emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
                     url=raw_entry["rdf_source"],
                     sha256=raw_entry["rdf_sha256"],
                     version=v,
                     doi=d,
                 )
+                ret[f"{raw_entry['id']}/{v}"] = entry
                 if i == 0:
                     # latest version
-                    ret[raw_entry["concept_id"]] = entry
+                    ret[raw_entry["id"]] = entry
                     if (nickname := raw_entry.get("nickname")) is not None:
                         ret[nickname] = entry
 
-                ret[raw_entry["id"]] = entry
                 if d is not None:
                     ret[d] = entry
 
