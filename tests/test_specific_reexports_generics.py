@@ -94,6 +94,7 @@ GENERIC_ONLY_MEMBERS = {
     "GenericDescrBase",
     "GenericModelDescrBase",
     "KNOWN_SPECIFIC_RESOURCE_TYPES",
+    "LinkedResourceNode",
     "ResourceDescrBase",
     "ResourceDescrType",
 }

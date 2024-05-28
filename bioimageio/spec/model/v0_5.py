@@ -91,6 +91,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
+    LinkedResourceNode,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -1975,7 +1976,7 @@ class ModelId(ResourceId):
     pass
 
 
-class LinkedModel(Node):
+class LinkedModel(LinkedResourceNode):
     """Reference to a bioimage.io model."""
 
     id: ModelId
