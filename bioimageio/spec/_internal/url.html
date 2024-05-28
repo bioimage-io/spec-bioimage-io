@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.4.0"/>
+    <meta name="generator" content="pdoc 14.5.0"/>
     <title>bioimageio.spec._internal.url API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -98,7 +98,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="p">)</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">val_url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">val_url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">except</span> <span class="p">(</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ChunkedEncodingError</span><span class="p">,</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ContentDecodingError</span><span class="p">,</span>

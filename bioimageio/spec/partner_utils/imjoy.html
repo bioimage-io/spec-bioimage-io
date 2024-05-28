@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.4.0"/>
+    <meta name="generator" content="pdoc 14.5.0"/>
     <title>bioimageio.spec.partner_utils.imjoy API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -161,7 +161,7 @@ Due to resolving imjoy plugins this is not done in <a href="../collection.html">
     <a class="headerlink" href="#get_plugin_as_rdf"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_plugin_as_rdf-181"><a href="#get_plugin_as_rdf-181"><span class="linenos">181</span></a><span class="k">def</span> <span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n">source_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="get_plugin_as_rdf-182"><a href="#get_plugin_as_rdf-182"><span class="linenos">182</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get imjoy plugin config in RDF format.&quot;&quot;&quot;</span>
-</span><span id="get_plugin_as_rdf-183"><a href="#get_plugin_as_rdf-183"><span class="linenos">183</span></a>    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_url</span><span class="p">)</span>
+</span><span id="get_plugin_as_rdf-183"><a href="#get_plugin_as_rdf-183"><span class="linenos">183</span></a>    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </span><span id="get_plugin_as_rdf-184"><a href="#get_plugin_as_rdf-184"><span class="linenos">184</span></a>    <span class="n">source</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
 </span><span id="get_plugin_as_rdf-185"><a href="#get_plugin_as_rdf-185"><span class="linenos">185</span></a>    <span class="n">plugin_config</span> <span class="o">=</span> <span class="n">parse_imjoy_plugin</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 </span><span id="get_plugin_as_rdf-186"><a href="#get_plugin_as_rdf-186"><span class="linenos">186</span></a>    <span class="n">rdf</span> <span class="o">=</span> <span class="n">convert_config_to_rdf</span><span class="p">(</span><span class="n">plugin_config</span><span class="p">,</span> <span class="n">source_url</span><span class="p">)</span>
