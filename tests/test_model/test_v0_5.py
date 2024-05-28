@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, Union
 
 import pytest
+from pydantic import RootModel, ValidationError
 
 from bioimageio.spec import validate_format
 from bioimageio.spec._internal.io import FileDescr
@@ -489,3 +490,18 @@ def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
     assert summary.status == "failed", summary.format()
+
+
+def test_empty_axis_data():
+    from bioimageio.spec.model.v0_5 import InputAxis as InputAxisUnion
+    from bioimageio.spec.model.v0_5 import OutputAxis as OutputAxisUnion
+
+    InputAxis = RootModel[InputAxisUnion]
+
+    with pytest.raises(ValidationError):
+        _ = InputAxis.model_validate({})
+
+    OutputAxis = RootModel[OutputAxisUnion]
+
+    with pytest.raises(ValidationError):
+        _ = OutputAxis.model_validate({})
