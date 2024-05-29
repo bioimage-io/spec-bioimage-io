@@ -89,7 +89,7 @@ class WarningEntry(ValidationEntry):
         return data
 
 
-def format_loc(loc: Loc) -> str:
+def format_loc(loc: Loc, enclose_in: str = "`") -> str:
     if not loc:
         loc = ("__root__",)
 
@@ -99,7 +99,7 @@ def format_loc(loc: Loc) -> str:
     # `weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url['http','https']]` Input should be a valid URL, relative URL without a base
     # therefore we remove the `.function-after[validate_url_ok(), url['http','https']]` here
     brief_loc_str, *_ = loc_str.split(".function-after")
-    return f"`{brief_loc_str}`"
+    return f"{enclose_in}{brief_loc_str}{enclose_in}"
 
 
 class InstalledPackage(TypedDict):

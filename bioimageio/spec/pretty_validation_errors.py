@@ -29,8 +29,7 @@ try:
                 ipt = " ".join([il.strip() for il in ipt_lines])
 
                 errors.append(
-                    f"\n{format_loc(e['loc'])}\n  {e['msg']} [type={e['type']},"
-                    + f" input={ipt}]"
+                    f"\n{format_loc(e['loc'], enclose_in='')}\n  {e['msg']} [input={ipt}]"
                 )
 
             return (
@@ -52,8 +51,8 @@ try:
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
         )
         if isinstance(stb, list):
-            orig_stb = list(stb)
-            for line in orig_stb:
+            stb_clean = []
+            for line in stb:
                 if (
                     isinstance(line, str)
                     and "pydantic" in line
@@ -61,7 +60,9 @@ try:
                 ):
                     # ignore pydantic internal frame in traceback
                     continue
-                stb.append(line)
+                stb_clean.append(line)
+
+            stb = stb_clean
 
         self._showtraceback(etype, PrettyValidationError(evalue), stb)  # type: ignore
 
