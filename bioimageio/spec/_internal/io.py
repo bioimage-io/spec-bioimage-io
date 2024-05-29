@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import lru_cache
+from math import ceil
 from pathlib import Path, PurePath
 from typing import (
     Any,
@@ -42,6 +43,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
+from tqdm import tqdm
 from typing_extensions import (
     Annotated,
     LiteralString,
@@ -652,10 +654,15 @@ def extract_file_name(
 def get_sha256(path: Path) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
     h = hashlib.sha256()
-    b = bytearray(128 * 1024)
+    chunksize = 128 * 1024
+    b = bytearray(chunksize)
     mv = memoryview(b)
     with open(path, "rb", buffering=0) as f:
-        for n in iter(lambda: f.readinto(mv), 0):
+        for n in tqdm(
+            iter(lambda: f.readinto(mv), 0),
+            desc=f"computing SHA256 of {path.name}",
+            total=ceil(path.stat().st_size / chunksize),
+        ):
             h.update(mv[:n])
 
     sha = h.hexdigest()
