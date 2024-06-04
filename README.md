@@ -105,6 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3post1
+
+* improve validation error formatting
+
 #### bioimageio.spec 0.5.3
 
 * remove collection description
