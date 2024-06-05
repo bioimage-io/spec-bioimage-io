@@ -108,6 +108,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 #### bioimageio.spec 0.5.3post1
 
 * improve validation error formatting
+* validate URLs first with a head request, if forbidden, follow up with a get request that is streamed and if that is also forbidden a regular get request.
 
 #### bioimageio.spec 0.5.3
 
