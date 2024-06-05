@@ -657,14 +657,14 @@ def get_sha256(path: Path) -> Sha256:
     chunksize = 128 * 1024
     b = bytearray(chunksize)
     mv = memoryview(b)
+    desc = f"computing SHA256 of {path.name}"
+    pbar = tqdm(desc=desc, total=ceil(path.stat().st_size / chunksize))
     with open(path, "rb", buffering=0) as f:
-        for n in tqdm(
-            iter(lambda: f.readinto(mv), 0),
-            desc=f"computing SHA256 of {path.name}",
-            total=ceil(path.stat().st_size / chunksize),
-        ):
+        for n in iter(lambda: f.readinto(mv), 0):
             h.update(mv[:n])
-
+            _ = pbar.update()
     sha = h.hexdigest()
+
+    pbar.set_description(desc=desc + f" (result: {sha})")
     assert len(sha) == 64
     return Sha256(sha)
