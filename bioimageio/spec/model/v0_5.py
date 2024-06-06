@@ -2528,11 +2528,22 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
-            and (fv.startswith("0.3.") or fv.startswith("0.4."))
+            and fv.count(".") == 2
         ):
-            m04 = _ModelDescr_v0_4.load(data)
-            if not isinstance(m04, InvalidDescr):
-                return _model_conv.convert_as_dict(m04)
+            fv_parts = fv.split(".")
+            if any(not p.isdigit() for p in fv_parts):
+                return data
+
+            fv_tuple = tuple(map(int, fv_parts))
+
+            assert cls.implemented_format_version_tuple[0:2] == (0, 5)
+            if fv_tuple[:2] in ((0, 3), (0, 4)):
+                m04 = _ModelDescr_v0_4.load(data)
+                if not isinstance(m04, InvalidDescr):
+                    return _model_conv.convert_as_dict(m04)
+            elif fv_tuple[:2] == (0, 5):
+                # bump patch version
+                data["format_version"] = cls.implemented_format_version
 
         return data
 
