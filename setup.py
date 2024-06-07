@@ -60,6 +60,7 @@ _ = setup(
             "pyright",
             "pytest-xdist",  # parallel pytest
             "pytest",
+            "python-devtools",
             "ruff",  # check line length in cases black cannot fix it
         ]
     },
