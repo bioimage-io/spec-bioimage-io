@@ -54,7 +54,7 @@ def test_interprete_file_source_from_str():
     with ValidationContext(root=Path(__file__).parent.parent):
         interpreted = interprete_file_source(src)
         assert isinstance(interpreted, RelativeFilePath)
-        assert isinstance(interpreted.absolute, Path)
+        assert isinstance(interpreted.absolute(), Path)
         assert interpreted.absolute().exists()
 
 
