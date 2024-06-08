@@ -89,9 +89,13 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     def path(self) -> PurePath:
         return self.root
 
-    @property
-    def absolute(self) -> AbsolutePathT:
-        """the absolute path/url (resolved at time of initialization with the root of the ValidationContext)"""
+    def absolute(  # method not property analog to `pathlib.Path.absolute()`
+        self,
+    ) -> AbsolutePathT:
+        """get the absolute path/url
+
+        (resolved at time of initialization with the root of the ValidationContext)
+        """
         return self._absolute
 
     def model_post_init(self, __context: Any) -> None:
@@ -355,7 +359,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
     # package the file source:
     # add it to the current package's file sources and return its collision free file name
     if isinstance(value, RelativeFilePath):
-        src = value.absolute
+        src = value.absolute()
     elif isinstance(value, pydantic.AnyUrl):
         src = HttpUrl(str(value))
     elif isinstance(value, HttpUrl):
@@ -552,7 +556,7 @@ def download(
 
     strict_source = interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
-        strict_source = strict_source.absolute
+        strict_source = strict_source.absolute()
 
     if isinstance(strict_source, PurePath):
         if not strict_source.exists():

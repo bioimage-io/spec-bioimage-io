@@ -55,7 +55,7 @@ def test_interprete_file_source_from_str():
         interpreted = interprete_file_source(src)
         assert isinstance(interpreted, RelativeFilePath)
         assert isinstance(interpreted.absolute, Path)
-        assert interpreted.absolute.exists()
+        assert interpreted.absolute().exists()
 
 
 def test_interprete_file_source_from_rel_path():
@@ -68,8 +68,8 @@ def test_interprete_file_source_from_rel_path():
 
     interpreted = interprete_file_source(src)
     assert isinstance(interpreted, RelativeFilePath)
-    assert isinstance(interpreted.absolute, Path)
-    assert interpreted.absolute.exists()
+    assert isinstance(interpreted.absolute(), Path)
+    assert interpreted.absolute().exists()
 
 
 def test_known_files(tmp_path: Path):
