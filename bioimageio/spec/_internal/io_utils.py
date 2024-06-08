@@ -179,6 +179,9 @@ def _get_one_collection(url: str):
         return ret
 
     for raw_entry in collection:
+        assert isinstance(raw_entry, dict), type(raw_entry)
+        v: Any
+        d: Any
         try:
             for i, (v, d) in enumerate(zip(raw_entry["versions"], raw_entry["dois"])):
                 entry = CollectionEntry(

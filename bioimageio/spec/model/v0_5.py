@@ -2843,7 +2843,7 @@ def generate_covers(
 
                     assert data.shape[i] == 3
 
-            slices += (slice(None),)  # type: ignore
+            slices += (slice(None),)
 
         data, axes = squeeze(data, axes)
         assert len(axes) == ndim
@@ -2875,7 +2875,7 @@ def generate_covers(
                 data = data[slices + (slice(s // 2 - 1, s // 2),)]
                 ndim -= 1
 
-            slices += (slice(None),)  # type: ignore
+            slices += (slice(None),)
 
         del slices
         data, axes = squeeze(data, axes)
