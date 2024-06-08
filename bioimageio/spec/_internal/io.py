@@ -225,10 +225,10 @@ class RelativeDirectory(
 
 
 FileSource = Annotated[
-    Union[HttpUrl, RelativeFilePath, pydantic.HttpUrl, FilePath],
+    Union[HttpUrl, RelativeFilePath, FilePath],
     Field(union_mode="left_to_right"),
 ]
-PermissiveFileSource = Union[FileSource, str]
+PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
@@ -504,13 +504,10 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-StrictFileSource = Annotated[
-    Union[HttpUrl, FilePath, RelativeFilePath], Field(union_mode="left_to_right")
-]
-_strict_file_source_adapter = TypeAdapter(StrictFileSource)
+_file_source_adapter = TypeAdapter(FileSource)
 
 
-def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
+def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
     if isinstance(file_source, (HttpUrl, Path)):
         return file_source
 
@@ -518,7 +515,7 @@ def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSourc
         file_source = str(file_source)
 
     with validation_context_var.get().replace(perform_io_checks=False):
-        strict = _strict_file_source_adapter.validate_python(file_source)
+        strict = _file_source_adapter.validate_python(file_source)
 
     return strict
 

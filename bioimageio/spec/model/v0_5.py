@@ -2609,7 +2609,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             config=src.config,
             covers=src.covers,
             description=src.description,
-            documentation=src.documentation,  # pyright: ignore[reportArgumentType]
+            documentation=src.documentation,
             format_version="0.5.3",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
