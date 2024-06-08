@@ -1,10 +1,11 @@
-from typing import Any, ClassVar, Type, Union
+from typing import Any, ClassVar, Optional, Type, Union
 
 import pydantic
 import requests
 import requests.exceptions
-from pydantic import AfterValidator, RootModel
-from typing_extensions import Annotated, Literal, assert_never
+from loguru import logger
+from pydantic import RootModel, model_validator
+from typing_extensions import Literal, assert_never
 
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
@@ -22,10 +23,6 @@ def _validate_url_impl(
 ) -> pydantic.AnyUrl:
 
     url = str(url)
-    context = validation_context_var.get()
-    if not context.perform_io_checks or url in context.known_files:
-        return pydantic.AnyUrl(url)
-
     val_url = url
 
     if url.startswith("https://colab.research.google.com/github/"):
@@ -118,6 +115,28 @@ def _validate_url_impl(
 
 
 class HttpUrl(RootHttpUrl):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[pydantic.HttpUrl, AfterValidator(_validate_url)]
-    ]
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    _exists: Optional[bool] = None
+
+    @model_validator(mode="after")
+    def _validate_url(self):
+        url = self._validated
+        context = validation_context_var.get()
+        if context.perform_io_checks and str(url) not in context.known_files:
+            self._validated = _validate_url(url)
+            self._exists = True
+
+        return self
+
+    def exists(self):
+        """True if URL is available"""
+        if self._exists is None:
+            try:
+                self._validated = _validate_url(self._validated)
+            except Exception as e:
+                logger.info(e)
+                self._exists = False
+            else:
+                self._exists = True
+
+        return self._exists
