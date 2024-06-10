@@ -242,7 +242,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3</footer>
+            <footer>bioimageio.spec 0.5.3post1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -352,7 +352,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.summary    </h1>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">return</span> <span class="n">data</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="k">def</span> <span class="nf">format_loc</span><span class="p">(</span><span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="k">def</span> <span class="nf">format_loc</span><span class="p">(</span><span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">,</span> <span class="n">enclose_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;`&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">loc</span><span class="p">:</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">loc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;__root__&quot;</span><span class="p">,)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
@@ -362,7 +362,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.summary    </h1>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="c1"># `weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url[&#39;http&#39;,&#39;https&#39;]]` Input should be a valid URL, relative URL without a base</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="c1"># therefore we remove the `.function-after[validate_url_ok(), url[&#39;http&#39;,&#39;https&#39;]]` here</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">brief_loc_str</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">loc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.function-after&quot;</span><span class="p">)</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">brief_loc_str</span><span class="si">}</span><span class="s2">`&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">enclose_in</span><span class="si">}{</span><span class="n">brief_loc_str</span><span class="si">}{</span><span class="n">enclose_in</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">class</span> <span class="nc">InstalledPackage</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
@@ -1175,13 +1175,13 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">format_loc</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">loc</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">format_loc</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">loc</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>, </span><span class="param"><span class="n">enclose_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;`&#39;</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="format_loc-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#format_loc"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="format_loc-93"><a href="#format_loc-93"><span class="linenos"> 93</span></a><span class="k">def</span> <span class="nf">format_loc</span><span class="p">(</span><span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="format_loc-93"><a href="#format_loc-93"><span class="linenos"> 93</span></a><span class="k">def</span> <span class="nf">format_loc</span><span class="p">(</span><span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">,</span> <span class="n">enclose_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;`&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="format_loc-94"><a href="#format_loc-94"><span class="linenos"> 94</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">loc</span><span class="p">:</span>
 </span><span id="format_loc-95"><a href="#format_loc-95"><span class="linenos"> 95</span></a>        <span class="n">loc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;__root__&quot;</span><span class="p">,)</span>
 </span><span id="format_loc-96"><a href="#format_loc-96"><span class="linenos"> 96</span></a>
@@ -1191,7 +1191,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </span><span id="format_loc-100"><a href="#format_loc-100"><span class="linenos">100</span></a>    <span class="c1"># `weights.pytorch_state_dict.dependencies.source.function-after[validate_url_ok(), url[&#39;http&#39;,&#39;https&#39;]]` Input should be a valid URL, relative URL without a base</span>
 </span><span id="format_loc-101"><a href="#format_loc-101"><span class="linenos">101</span></a>    <span class="c1"># therefore we remove the `.function-after[validate_url_ok(), url[&#39;http&#39;,&#39;https&#39;]]` here</span>
 </span><span id="format_loc-102"><a href="#format_loc-102"><span class="linenos">102</span></a>    <span class="n">brief_loc_str</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">loc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.function-after&quot;</span><span class="p">)</span>
-</span><span id="format_loc-103"><a href="#format_loc-103"><span class="linenos">103</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">brief_loc_str</span><span class="si">}</span><span class="s2">`&quot;</span>
+</span><span id="format_loc-103"><a href="#format_loc-103"><span class="linenos">103</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">enclose_in</span><span class="si">}{</span><span class="n">brief_loc_str</span><span class="si">}{</span><span class="n">enclose_in</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 

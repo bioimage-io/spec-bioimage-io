@@ -12,12 +12,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -100,12 +94,6 @@
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
-                            },
-                            {
-                                "format": "uri",
-                                "maxLength": 2083,
-                                "minLength": 1,
-                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -511,12 +499,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -555,12 +537,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -2071,12 +2047,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2126,12 +2096,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -2208,12 +2172,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2275,12 +2233,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2338,7 +2290,7 @@
                 "id_emoji": {
                     "anyOf": [
                         {
-                            "maxLength": 1,
+                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -2428,12 +2380,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -2584,12 +2530,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -2749,12 +2689,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -2804,12 +2738,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -2884,12 +2812,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -3029,7 +2951,7 @@
                 "id_emoji": {
                     "anyOf": [
                         {
-                            "maxLength": 1,
+                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -3119,12 +3041,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -3494,12 +3410,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -3766,12 +3676,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -3821,12 +3725,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -3917,12 +3815,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -3997,12 +3889,6 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "format": "uri",
-                                "maxLength": 2083,
-                                "minLength": 1,
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             }
@@ -4019,12 +3905,6 @@
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
-                            },
-                            {
-                                "format": "uri",
-                                "maxLength": 2083,
-                                "minLength": 1,
-                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -4045,12 +3925,6 @@
                                 "$ref": "#/$defs/RelativeFilePath"
                             },
                             {
-                                "format": "uri",
-                                "maxLength": 2083,
-                                "minLength": 1,
-                                "type": "string"
-                            },
-                            {
                                 "format": "file-path",
                                 "type": "string"
                             }
@@ -4068,12 +3942,6 @@
                             },
                             {
                                 "$ref": "#/$defs/RelativeFilePath"
-                            },
-                            {
-                                "format": "uri",
-                                "maxLength": 2083,
-                                "minLength": 1,
-                                "type": "string"
                             },
                             {
                                 "format": "file-path",
@@ -4133,12 +4001,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -4391,12 +4253,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -4802,12 +4658,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -4923,12 +4773,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -5042,12 +4886,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -5556,12 +5394,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -5682,7 +5514,7 @@
                 "id_emoji": {
                     "anyOf": [
                         {
-                            "maxLength": 1,
+                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -5772,12 +5604,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -5949,7 +5775,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-05-28T13:49:30.439901"
+                    "default": "2024-06-10T08:29:44.782997"
                 },
                 "training_data": {
                     "anyOf": [
@@ -5958,6 +5784,9 @@
                         },
                         {
                             "$ref": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
+                        },
+                        {
+                            "$ref": "#/$defs/bioimageio__spec__dataset__v0_2__DatasetDescr"
                         },
                         {
                             "type": "null"
@@ -5994,12 +5823,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -6267,12 +6090,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -6594,12 +6411,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         }
@@ -6677,12 +6488,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -6773,12 +6578,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -7115,12 +6914,6 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         },
                         {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
-                        },
-                        {
                             "format": "file-path",
                             "type": "string"
                         },
@@ -7170,12 +6963,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -7250,12 +7037,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",
@@ -7372,7 +7153,7 @@
                 "id_emoji": {
                     "anyOf": [
                         {
-                            "maxLength": 1,
+                            "maxLength": 2,
                             "minLength": 1,
                             "type": "string"
                         },
@@ -7462,12 +7243,6 @@
                         },
                         {
                             "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "type": "string"
                         },
                         {
                             "format": "file-path",

@@ -60,7 +60,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3</footer>
+            <footer>bioimageio.spec 0.5.3post1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -232,6 +232,15 @@ We recommend installing <code>bioimageio.core</code> instead to get access to th
 <h2 id="changelog">Δ Changelog</h2>
 
 <h3 id="bioimageiospec-python-package"><a href="">bioimageio.spec</a> Python package</h3>
+
+<h4 id="bioimageiospec-053post1"><a href="">bioimageio.spec</a> 0.5.3post1</h4>
+
+<ul>
+<li>bump patch version during loading for model 0.5.x</li>
+<li>improve validation error formatting</li>
+<li>validate URLs first with a head request, if forbidden, follow up with a get request that is streamed and if that is also forbidden a regular get request.</li>
+<li><code>RelativePath.absolute()</code> is now a method (not a property) analog to <code>pathlib.Path</code></li>
+</ul>
 
 <h4 id="bioimageiospec-053"><a href="">bioimageio.spec</a> 0.5.3</h4>
 
