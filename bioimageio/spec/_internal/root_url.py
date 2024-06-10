@@ -15,6 +15,10 @@ class RootHttpUrl(ValidatedString):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _validated: pydantic.HttpUrl
 
+    def absolute(self):
+        """analog to `absolute` method of pathlib."""
+        return self
+
     @property
     def scheme(self) -> str:
         return self._validated.scheme

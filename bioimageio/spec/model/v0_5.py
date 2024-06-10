@@ -79,7 +79,10 @@ from .._internal.validation_context import validation_context_var
 from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import INFO
+from ..dataset.v0_2 import DatasetDescr as DatasetDescr02
+from ..dataset.v0_2 import LinkedDataset as LinkedDataset02
 from ..dataset.v0_3 import DatasetDescr as DatasetDescr
+from ..dataset.v0_3 import DatasetId as DatasetId
 from ..dataset.v0_3 import LinkedDataset as LinkedDataset
 from ..dataset.v0_3 import Uploader as Uploader
 from ..generic.v0_3 import (
@@ -1383,10 +1386,13 @@ def convert_axes(
                 ret.append(SpaceInputAxis(id=AxisId(a), size=size, scale=scale))
             else:
                 assert not isinstance(size, ParameterizedSize)
-                if halo is None:
+                if halo is None or halo[i] == 0:
                     ret.append(SpaceOutputAxis(id=AxisId(a), size=size, scale=scale))
+                elif isinstance(size, int):
+                    raise NotImplementedError(
+                        f"output axis with halo and fixed size (here {size}) not allowed"
+                    )
                 else:
-                    assert not isinstance(size, int)
                     ret.append(
                         SpaceOutputAxisWithHalo(
                             id=AxisId(a), size=size, scale=scale, halo=halo[i]
@@ -2339,7 +2345,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
 
-    training_data: Union[None, LinkedDataset, DatasetDescr] = None
+    training_data: Union[None, LinkedDataset, DatasetDescr, DatasetDescr02] = None
     """The dataset used to train this model"""
 
     weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]
@@ -2522,11 +2528,22 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
-            and (fv.startswith("0.3.") or fv.startswith("0.4."))
+            and fv.count(".") == 2
         ):
-            m04 = _ModelDescr_v0_4.load(data)
-            if not isinstance(m04, InvalidDescr):
-                return _model_conv.convert_as_dict(m04)
+            fv_parts = fv.split(".")
+            if any(not p.isdigit() for p in fv_parts):
+                return data
+
+            fv_tuple = tuple(map(int, fv_parts))
+
+            assert cls.implemented_format_version_tuple[0:2] == (0, 5)
+            if fv_tuple[:2] in ((0, 3), (0, 4)):
+                m04 = _ModelDescr_v0_4.load(data)
+                if not isinstance(m04, InvalidDescr):
+                    return _model_conv.convert_as_dict(m04)
+            elif fv_tuple[:2] == (0, 5):
+                # bump patch version
+                data["format_version"] = cls.implemented_format_version
 
         return data
 
@@ -2592,7 +2609,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             config=src.config,
             covers=src.covers,
             description=src.description,
-            documentation=src.documentation,  # pyright: ignore[reportArgumentType]
+            documentation=src.documentation,
             format_version="0.5.3",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
@@ -2624,6 +2641,43 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                     src.sample_outputs or [None] * len(src.test_outputs),
                 )
             ],
+            parent=(
+                None
+                if src.parent is None
+                else LinkedModel(
+                    id=ModelId(
+                        str(src.parent.id)
+                        + (
+                            ""
+                            if src.parent.version_number is None
+                            else f"/{src.parent.version_number}"
+                        )
+                    )
+                )
+            ),
+            training_data=(
+                None
+                if src.training_data is None
+                else (
+                    LinkedDataset(
+                        id=DatasetId(
+                            str(src.training_data.id)
+                            + (
+                                ""
+                                if src.training_data.version_number is None
+                                else f"/{src.training_data.version_number}"
+                            )
+                        )
+                    )
+                    if isinstance(src.training_data, LinkedDataset02)
+                    else src.training_data
+                )
+            ),
+            packaged_by=[
+                _author_conv.convert_as_dict(a) for a in src.packaged_by
+            ],  # pyright: ignore[reportArgumentType]
+            run_mode=src.run_mode,
+            timestamp=src.timestamp,
             weights=(WeightsDescr if TYPE_CHECKING else dict)(
                 keras_hdf5=(w := src.weights.keras_hdf5)
                 and (KerasHdf5WeightsDescr if TYPE_CHECKING else dict)(
@@ -2789,7 +2843,7 @@ def generate_covers(
 
                     assert data.shape[i] == 3
 
-            slices += (slice(None),)  # type: ignore
+            slices += (slice(None),)
 
         data, axes = squeeze(data, axes)
         assert len(axes) == ndim
@@ -2821,7 +2875,7 @@ def generate_covers(
                 data = data[slices + (slice(s // 2 - 1, s // 2),)]
                 ndim -= 1
 
-            slices += (slice(None),)  # type: ignore
+            slices += (slice(None),)
 
         del slices
         data, axes = squeeze(data, axes)

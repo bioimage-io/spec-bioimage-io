@@ -54,7 +54,7 @@ from .field_warning import issue_warning
 from .io import BioimageioYamlContent
 from .node import Node as Node
 from .url import HttpUrl
-from .utils import assert_all_params_set_explicitly
+from .utils import assert_all_params_set_explicitly, get_format_version_tuple
 from .validation_context import (
     ValidationContext,
     validation_context_var,
@@ -282,34 +282,21 @@ class ResourceDescrBase(
     @model_validator(mode="before")
     @classmethod
     def _ignore_future_patch(cls, data: Union[Dict[Any, Any], Any], /) -> Any:
-        if not isinstance(data, dict) or "format_version" not in data:
+        if (
+            cls.implemented_format_version == "unknown"
+            or not isinstance(data, dict)
+            or "format_version" not in data
+        ):
             return data
 
         value = data["format_version"]
-
-        def get_maj(v: str):
-            parts = v.split(".")
-            if parts and (p := parts[0]).isdecimal():
-                return int(p)
-            else:
-                return 0
-
-        def get_min_patch(v: str):
-            parts = v.split(".")
-            if len(parts) == 3:
-                _, m, p = parts
-                if m.isdecimal() and p.isdecimal():
-                    return int(m), int(p)
-
-            return (0, 0)
+        fv = get_format_version_tuple(value)
+        if fv is None:
+            return data
 
         if (
-            cls.implemented_format_version != "unknown"
-            and value != cls.implemented_format_version
-            and isinstance(value, str)
-            and value.count(".") == 2
-            and get_maj(value) == cls.implemented_format_version_tuple[0]
-            and get_min_patch(value) > cls.implemented_format_version_tuple[1:]
+            fv[0] == cls.implemented_format_version_tuple[0]
+            and fv[1:] > cls.implemented_format_version_tuple[1:]
         ):
             issue_warning(
                 "future format_version '{value}' treated as '{implemented}'",
@@ -364,13 +351,11 @@ class ResourceDescrBase(
             if "." not in cls.implemented_format_version:
                 cls.implemented_format_version_tuple = (0, 0, 0)
             else:
-                cls.implemented_format_version_tuple = cast(
-                    Tuple[int, int, int],
-                    tuple(int(x) for x in cls.implemented_format_version.split(".")),
-                )
-            assert (
-                len(cls.implemented_format_version_tuple) == 3
-            ), cls.implemented_format_version_tuple
+                fv_tuple = get_format_version_tuple(cls.implemented_format_version)
+                assert (
+                    fv_tuple is not None
+                ), f"failed to cast '{cls.implemented_format_version}' to tuple"
+                cls.implemented_format_version_tuple = fv_tuple
 
     @classmethod
     def load(

@@ -196,7 +196,6 @@ def enrich_partial_rdf_with_imjoy_plugin(
 ) -> Dict[str, Any]:
     """
     a (partial) rdf may have 'rdf_source' or 'source' which resolve to rdf data that may be overwritten.
-    Due to resolving imjoy plugins this is not done in bioimageio.spec.collection atm
     """
 
     enriched_rdf: Dict[str, Any] = {}

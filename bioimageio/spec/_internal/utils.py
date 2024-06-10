@@ -5,6 +5,7 @@ from functools import wraps
 from inspect import signature
 from pathlib import Path
 from typing import (
+    Any,
     Callable,
     Dict,
     Set,
@@ -14,6 +15,7 @@ from typing import (
     Union,
 )
 
+from ruyaml import Optional
 from typing_extensions import ParamSpec
 
 K = TypeVar("K")
@@ -22,13 +24,28 @@ NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
 
 if sys.version_info < (3, 9):
+    from functools import lru_cache as cache
 
     def files(package_name: str):
         assert package_name == "bioimageio.spec", package_name
         return Path(__file__).parent.parent
 
 else:
+    from functools import cache as cache
     from importlib.resources import files as files
+
+
+def get_format_version_tuple(format_version: Any) -> Optional[Tuple[int, int, int]]:
+    if (
+        not isinstance(format_version, str)
+        or format_version.count(".") != 2
+        or any(not v.isdigit() for v in format_version.split("."))
+    ):
+        return None
+
+    parsed = tuple(map(int, format_version.split(".")))
+    assert len(parsed) == 3
+    return parsed
 
 
 def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:

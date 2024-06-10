@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import lru_cache
+from math import ceil
 from pathlib import Path, PurePath
 from typing import (
     Any,
@@ -42,6 +43,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
+from tqdm import tqdm
 from typing_extensions import (
     Annotated,
     LiteralString,
@@ -87,9 +89,13 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     def path(self) -> PurePath:
         return self.root
 
-    @property
-    def absolute(self) -> AbsolutePathT:
-        """the absolute path/url (resolved at time of initialization with the root of the ValidationContext)"""
+    def absolute(  # method not property analog to `pathlib.Path.absolute()`
+        self,
+    ) -> AbsolutePathT:
+        """get the absolute path/url
+
+        (resolved at time of initialization with the root of the ValidationContext)
+        """
         return self._absolute
 
     def model_post_init(self, __context: Any) -> None:
@@ -223,10 +229,10 @@ class RelativeDirectory(
 
 
 FileSource = Annotated[
-    Union[HttpUrl, RelativeFilePath, pydantic.HttpUrl, FilePath],
+    Union[HttpUrl, RelativeFilePath, FilePath],
     Field(union_mode="left_to_right"),
 ]
-PermissiveFileSource = Union[FileSource, str]
+PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
@@ -353,7 +359,7 @@ def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, Fil
     # package the file source:
     # add it to the current package's file sources and return its collision free file name
     if isinstance(value, RelativeFilePath):
-        src = value.absolute
+        src = value.absolute()
     elif isinstance(value, pydantic.AnyUrl):
         src = HttpUrl(str(value))
     elif isinstance(value, HttpUrl):
@@ -502,13 +508,10 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-StrictFileSource = Annotated[
-    Union[HttpUrl, FilePath, RelativeFilePath], Field(union_mode="left_to_right")
-]
-_strict_file_source_adapter = TypeAdapter(StrictFileSource)
+_file_source_adapter = TypeAdapter(FileSource)
 
 
-def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSource:
+def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
     if isinstance(file_source, (HttpUrl, Path)):
         return file_source
 
@@ -516,7 +519,7 @@ def interprete_file_source(file_source: PermissiveFileSource) -> StrictFileSourc
         file_source = str(file_source)
 
     with validation_context_var.get().replace(perform_io_checks=False):
-        strict = _strict_file_source_adapter.validate_python(file_source)
+        strict = _file_source_adapter.validate_python(file_source)
 
     return strict
 
@@ -553,7 +556,7 @@ def download(
 
     strict_source = interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
-        strict_source = strict_source.absolute
+        strict_source = strict_source.absolute()
 
     if isinstance(strict_source, PurePath):
         if not strict_source.exists():
@@ -652,12 +655,17 @@ def extract_file_name(
 def get_sha256(path: Path) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
     h = hashlib.sha256()
-    b = bytearray(128 * 1024)
+    chunksize = 128 * 1024
+    b = bytearray(chunksize)
     mv = memoryview(b)
+    desc = f"computing SHA256 of {path.name}"
+    pbar = tqdm(desc=desc, total=ceil(path.stat().st_size / chunksize))
     with open(path, "rb", buffering=0) as f:
         for n in iter(lambda: f.readinto(mv), 0):
             h.update(mv[:n])
-
+            _ = pbar.update()
     sha = h.hexdigest()
+
+    pbar.set_description(desc=desc + f" (result: {sha})")
     assert len(sha) == 64
     return Sha256(sha)

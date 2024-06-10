@@ -221,7 +221,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = Field(default_factory=list)
     """∈📦 Cover images."""
 
-    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
+    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=2)]] = None
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: NotEmpty[List[Author]]
