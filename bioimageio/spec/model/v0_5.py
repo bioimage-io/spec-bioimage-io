@@ -2524,7 +2524,9 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
     @model_validator(mode="before")
     @classmethod
-    def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert(
+        cls, data: Dict[str, Any]
+    ) -> Dict[str, Any]:  # TODO: expose convert method
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)

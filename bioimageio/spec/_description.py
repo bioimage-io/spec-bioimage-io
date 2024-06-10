@@ -7,7 +7,8 @@ from typing_extensions import Annotated
 
 from ._build_description import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
-from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
+from ._internal.io import BioimageioYamlContent
+from ._internal.io_utils import write_yaml
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, validation_context_var
 from .application import AnyApplicationDescr, ApplicationDescr
@@ -19,7 +20,7 @@ from .dataset.v0_3 import DatasetDescr as DatasetDescr03
 from .generic import AnyGenericDescr, GenericDescr
 from .generic.v0_2 import GenericDescr as GenericDescr02
 from .generic.v0_3 import GenericDescr as GenericDescr03
-from .model import AnyModelDescr, ModelDescr
+from .model import AnyModelDescr, ModelDescr, v0_4, v0_5
 from .model.v0_4 import ModelDescr as ModelDescr04
 from .model.v0_5 import ModelDescr as ModelDescr05
 from .notebook import AnyNotebookDescr, NotebookDescr
@@ -155,10 +156,48 @@ def validate_format(
 
 
 def update_format(
-    source: BioimageioYamlSource,
+    source: Union[
+        v0_4.ModelDescr,
+        GenericDescr02,
+        ApplicationDescr02,
+        DatasetDescr02,
+        NotebookDescr02,
+    ],
     *,
     output_path: Optional[Path] = None,
     target_format_version: Union[Literal["latest"], str] = LATEST,
 ) -> BioimageioYamlContent:
-    """update a bioimageio.yaml file without validating it"""
-    raise NotImplementedError("Oh no! This feature is not yet implemented")
+    """update an outdated resource description (partially) without validating it"""
+
+    if isinstance(source, ModelDescr04):
+        if (
+            target_format_version != LATEST
+            or "0.5"
+            or ModelDescr05.implemented_format_version
+        ):
+            raise NotImplementedError(
+                f"Updating model format to version {target_format_version} is supported."
+                + f" (supported are: '{LATEST}', '0.5.', '{ModelDescr05.implemented_format_version}')"
+            )
+
+        updated = (
+            v0_5._model_conv.convert_as_dict(  # pyright: ignore[reportPrivateUsage]
+                source
+            )
+        )
+
+    elif isinstance(
+        source, (GenericDescr02, ApplicationDescr02, DatasetDescr02, NotebookDescr02)
+    ):
+        raise NotImplementedError(
+            f"Updating {type(source)} not yet implemented"
+        )  # TODO: Write conversion as simple dict manipulation again and expose it
+    else:
+        raise NotImplementedError(
+            f"Updating format not implemented for {type(source)}."
+        )
+
+    if output_path is not None:
+        write_yaml(updated, file=output_path)
+
+    return updated

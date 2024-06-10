@@ -56,7 +56,11 @@ def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
     return content
 
 
-def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
+def write_yaml(
+    content: Union[YamlValue, Dict[str, YamlValue]],
+    /,
+    file: Union[NewPath, FilePath, TextIO],
+):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
     else:

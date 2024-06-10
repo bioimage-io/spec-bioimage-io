@@ -51,7 +51,7 @@ from ..summary import (
     WarningEntry,
 )
 from .field_warning import issue_warning
-from .io import BioimageioYamlContent
+from .io import BioimageioYamlContent, YamlValue
 from .node import Node as Node
 from .url import HttpUrl
 from .utils import assert_all_params_set_explicitly, get_format_version_tuple
@@ -203,8 +203,8 @@ class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
 
     @abstractmethod
     def _convert(
-        self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: Unpack[CArgs]
-    ) -> "TGT | dict[str, Any]": ...
+        self, src: SRC, tgt: "type[TGT | dict[str, YamlValue]]", /, *args: Unpack[CArgs]
+    ) -> "TGT | dict[str, YamlValue]": ...
 
     # note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399
     #       we therefore use `kwargs` (and not `**kwargs`)
@@ -221,8 +221,10 @@ class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
         data = self.convert_as_dict(source, *args)
         return assert_all_params_set_explicitly(self.tgt)(**data)
 
-    def convert_as_dict(self, source: SRC, /, *args: Unpack[CArgs]) -> Dict[str, Any]:
-        return cast(Dict[str, Any], self._convert(source, dict, *args))
+    def convert_as_dict(
+        self, source: SRC, /, *args: Unpack[CArgs]
+    ) -> Dict[str, YamlValue]:
+        return cast(Dict[str, YamlValue], self._convert(source, dict, *args))
 
 
 class NodeWithExplicitlySetFields(Node):
