@@ -5775,7 +5775,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-06-10T10:13:40.534595"
+                    "default": "2024-06-10T13:59:00.194941"
                 },
                 "training_data": {
                     "anyOf": [
