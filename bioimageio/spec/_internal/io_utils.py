@@ -181,18 +181,27 @@ def _get_one_collection(url: str):
     for raw_entry in collection:
         assert isinstance(raw_entry, dict), type(raw_entry)
         v: Any
+        sha: Any
         d: Any
         try:
-            for i, (v, d) in enumerate(zip(raw_entry["versions"], raw_entry["dois"])):
+            for i, (v, sha, d) in enumerate(
+                zip(
+                    raw_entry["versions"],
+                    raw_entry["versions_sha256"],
+                    raw_entry["dois"],
+                )
+            ):
                 entry = CollectionEntry(
                     id=raw_entry["id"],
                     emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
-                    url=raw_entry["rdf_source"],
-                    sha256=raw_entry["rdf_sha256"],
+                    url=raw_entry["rdf_source"].replace(
+                        f"/{raw_entry['versions'][0]}/", f"/{v}/"
+                    ),
+                    sha256=sha,
                     version=v,
                     doi=d,
                 )
-                ret[f"{raw_entry['id']}/{v}"] = entry
+                ret[v] = entry
                 if i == 0:
                     # latest version
                     ret[raw_entry["id"]] = entry
