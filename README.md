@@ -105,6 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3post2
+
+* fix SHA-256 value when resolving a RDF version from the bioimage.io collection that is not the latest
+
 #### bioimageio.spec 0.5.3post1
 
 * bump patch version during loading for model 0.5.x
