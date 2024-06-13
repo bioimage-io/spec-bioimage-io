@@ -30,6 +30,7 @@ from .io import (
     BioimageioYamlContent,
     FileDescr,
     HashKwargs,
+    LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
     download,
@@ -126,10 +127,10 @@ def open_bioimageio_yaml(
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
-_IdMap = RootModel[Dict[str, FileDescr]]
+_IdMap = RootModel[Dict[str, LightHttpFileDescr]]
 
 
-def _get_id_map_impl(url: str) -> Dict[str, FileDescr]:
+def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
         logger.error("invalid id map url: {}", url)
     try:
@@ -143,7 +144,7 @@ def _get_id_map_impl(url: str) -> Dict[str, FileDescr]:
 
 
 @cache
-def get_id_map() -> Mapping[str, FileDescr]:
+def get_id_map() -> Mapping[str, LightHttpFileDescr]:
     try:
         if settings.resolve_draft:
             ret = _get_id_map_impl(settings.id_map_draft)
