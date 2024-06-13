@@ -42,10 +42,10 @@
                                 <a class="variable" href="#Settings.cache_path">cache_path</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Settings.collection">collection</a>
+                                <a class="variable" href="#Settings.id_map">id_map</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Settings.collection_draft">collection_draft</a>
+                                <a class="variable" href="#Settings.id_map_draft">id_map_draft</a>
                         </li>
                         <li>
                                 <a class="variable" href="#Settings.resolve_draft">resolve_draft</a>
@@ -124,56 +124,55 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">cache_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;bioimageio&quot;</span><span class="p">)</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimageio cache location&quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">id_map</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json&quot;</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="p">)</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio collection.json to resolve collection specific resource IDs.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio id_map.json to resolve resource IDs.</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">collection_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">id_map_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json&quot;</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="p">)</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio collection_draft.json to resolve collection specific draft</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    versions of resources ending with &#39;/draft&#39;.&quot;&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">resolve_draft</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flag to resolve draft resource versions following the pattern</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    &lt;resource id&gt;/draft.</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    Note that anyone may stage a new draft and that such a draft version</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    may not have been reviewed yet.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    Set this flag to False to avoid this potential security risk</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    and disallow loading draft versions.&quot;&quot;&quot;</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">perform_io_checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not to perform validation that requires file io,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    e.g. downloading a remote files.</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">    Existence of any local absolute file paths is still being checked.&quot;&quot;&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">log_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;log validation warnings to console&quot;&quot;&quot;</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">github_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub username for API requests&quot;&quot;&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">github_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub token for API requests&quot;&quot;&quot;</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">CI</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;CI&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not the execution happens in a continuous integration (CI) environment&quot;&quot;&quot;</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">user_agent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;user agent for http requests&quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="nd">@property</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="k">return</span> <span class="kc">None</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio id_map_draft.json to resolve draft IDs ending with &#39;/draft&#39;.&quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">resolve_draft</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flag to resolve draft resource versions following the pattern</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    &lt;resource id&gt;/draft.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    Note that anyone may stage a new draft and that such a draft version</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    may not have been reviewed yet.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    Set this flag to False to avoid this potential security risk</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    and disallow loading draft versions.&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">perform_io_checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not to perform validation that requires file io,</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    e.g. downloading a remote files.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    Existence of any local absolute file paths is still being checked.&quot;&quot;&quot;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="n">log_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;log validation warnings to console&quot;&quot;&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">github_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub username for API requests&quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">github_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub token for API requests&quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">CI</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;CI&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not the execution happens in a continuous integration (CI) environment&quot;&quot;&quot;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">user_agent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;user agent for http requests&quot;&quot;&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
 </span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -199,53 +198,52 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="Settings-18"><a href="#Settings-18"><span class="linenos">18</span></a>    <span class="n">cache_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;bioimageio&quot;</span><span class="p">)</span>
 </span><span id="Settings-19"><a href="#Settings-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimageio cache location&quot;&quot;&quot;</span>
 </span><span id="Settings-20"><a href="#Settings-20"><span class="linenos">20</span></a>
-</span><span id="Settings-21"><a href="#Settings-21"><span class="linenos">21</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="Settings-22"><a href="#Settings-22"><span class="linenos">22</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json&quot;</span>
+</span><span id="Settings-21"><a href="#Settings-21"><span class="linenos">21</span></a>    <span class="n">id_map</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="Settings-22"><a href="#Settings-22"><span class="linenos">22</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json&quot;</span>
 </span><span id="Settings-23"><a href="#Settings-23"><span class="linenos">23</span></a>    <span class="p">)</span>
-</span><span id="Settings-24"><a href="#Settings-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio collection.json to resolve collection specific resource IDs.</span>
+</span><span id="Settings-24"><a href="#Settings-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio id_map.json to resolve resource IDs.</span>
 </span><span id="Settings-25"><a href="#Settings-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Settings-26"><a href="#Settings-26"><span class="linenos">26</span></a>
-</span><span id="Settings-27"><a href="#Settings-27"><span class="linenos">27</span></a>    <span class="n">collection_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="Settings-28"><a href="#Settings-28"><span class="linenos">28</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json&quot;</span>
+</span><span id="Settings-27"><a href="#Settings-27"><span class="linenos">27</span></a>    <span class="n">id_map_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="Settings-28"><a href="#Settings-28"><span class="linenos">28</span></a>        <span class="s2">&quot;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json&quot;</span>
 </span><span id="Settings-29"><a href="#Settings-29"><span class="linenos">29</span></a>    <span class="p">)</span>
-</span><span id="Settings-30"><a href="#Settings-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio collection_draft.json to resolve collection specific draft</span>
-</span><span id="Settings-31"><a href="#Settings-31"><span class="linenos">31</span></a><span class="sd">    versions of resources ending with &#39;/draft&#39;.&quot;&quot;&quot;</span>
-</span><span id="Settings-32"><a href="#Settings-32"><span class="linenos">32</span></a>
-</span><span id="Settings-33"><a href="#Settings-33"><span class="linenos">33</span></a>    <span class="n">resolve_draft</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="Settings-34"><a href="#Settings-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flag to resolve draft resource versions following the pattern</span>
-</span><span id="Settings-35"><a href="#Settings-35"><span class="linenos">35</span></a><span class="sd">    &lt;resource id&gt;/draft.</span>
-</span><span id="Settings-36"><a href="#Settings-36"><span class="linenos">36</span></a><span class="sd">    Note that anyone may stage a new draft and that such a draft version</span>
-</span><span id="Settings-37"><a href="#Settings-37"><span class="linenos">37</span></a><span class="sd">    may not have been reviewed yet.</span>
-</span><span id="Settings-38"><a href="#Settings-38"><span class="linenos">38</span></a><span class="sd">    Set this flag to False to avoid this potential security risk</span>
-</span><span id="Settings-39"><a href="#Settings-39"><span class="linenos">39</span></a><span class="sd">    and disallow loading draft versions.&quot;&quot;&quot;</span>
-</span><span id="Settings-40"><a href="#Settings-40"><span class="linenos">40</span></a>
-</span><span id="Settings-41"><a href="#Settings-41"><span class="linenos">41</span></a>    <span class="n">perform_io_checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="Settings-42"><a href="#Settings-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not to perform validation that requires file io,</span>
-</span><span id="Settings-43"><a href="#Settings-43"><span class="linenos">43</span></a><span class="sd">    e.g. downloading a remote files.</span>
-</span><span id="Settings-44"><a href="#Settings-44"><span class="linenos">44</span></a>
-</span><span id="Settings-45"><a href="#Settings-45"><span class="linenos">45</span></a><span class="sd">    Existence of any local absolute file paths is still being checked.&quot;&quot;&quot;</span>
-</span><span id="Settings-46"><a href="#Settings-46"><span class="linenos">46</span></a>
-</span><span id="Settings-47"><a href="#Settings-47"><span class="linenos">47</span></a>    <span class="n">log_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="Settings-48"><a href="#Settings-48"><span class="linenos">48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;log validation warnings to console&quot;&quot;&quot;</span>
-</span><span id="Settings-49"><a href="#Settings-49"><span class="linenos">49</span></a>
-</span><span id="Settings-50"><a href="#Settings-50"><span class="linenos">50</span></a>    <span class="n">github_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Settings-51"><a href="#Settings-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub username for API requests&quot;&quot;&quot;</span>
-</span><span id="Settings-52"><a href="#Settings-52"><span class="linenos">52</span></a>
-</span><span id="Settings-53"><a href="#Settings-53"><span class="linenos">53</span></a>    <span class="n">github_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Settings-54"><a href="#Settings-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub token for API requests&quot;&quot;&quot;</span>
-</span><span id="Settings-55"><a href="#Settings-55"><span class="linenos">55</span></a>
-</span><span id="Settings-56"><a href="#Settings-56"><span class="linenos">56</span></a>    <span class="n">CI</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;CI&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="Settings-57"><a href="#Settings-57"><span class="linenos">57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not the execution happens in a continuous integration (CI) environment&quot;&quot;&quot;</span>
-</span><span id="Settings-58"><a href="#Settings-58"><span class="linenos">58</span></a>
-</span><span id="Settings-59"><a href="#Settings-59"><span class="linenos">59</span></a>    <span class="n">user_agent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Settings-60"><a href="#Settings-60"><span class="linenos">60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;user agent for http requests&quot;&quot;&quot;</span>
-</span><span id="Settings-61"><a href="#Settings-61"><span class="linenos">61</span></a>
-</span><span id="Settings-62"><a href="#Settings-62"><span class="linenos">62</span></a>    <span class="nd">@property</span>
-</span><span id="Settings-63"><a href="#Settings-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Settings-64"><a href="#Settings-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Settings-65"><a href="#Settings-65"><span class="linenos">65</span></a>            <span class="k">return</span> <span class="kc">None</span>
-</span><span id="Settings-66"><a href="#Settings-66"><span class="linenos">66</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Settings-67"><a href="#Settings-67"><span class="linenos">67</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
+</span><span id="Settings-30"><a href="#Settings-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;url to bioimageio id_map_draft.json to resolve draft IDs ending with &#39;/draft&#39;.&quot;&quot;&quot;</span>
+</span><span id="Settings-31"><a href="#Settings-31"><span class="linenos">31</span></a>
+</span><span id="Settings-32"><a href="#Settings-32"><span class="linenos">32</span></a>    <span class="n">resolve_draft</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Settings-33"><a href="#Settings-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flag to resolve draft resource versions following the pattern</span>
+</span><span id="Settings-34"><a href="#Settings-34"><span class="linenos">34</span></a><span class="sd">    &lt;resource id&gt;/draft.</span>
+</span><span id="Settings-35"><a href="#Settings-35"><span class="linenos">35</span></a><span class="sd">    Note that anyone may stage a new draft and that such a draft version</span>
+</span><span id="Settings-36"><a href="#Settings-36"><span class="linenos">36</span></a><span class="sd">    may not have been reviewed yet.</span>
+</span><span id="Settings-37"><a href="#Settings-37"><span class="linenos">37</span></a><span class="sd">    Set this flag to False to avoid this potential security risk</span>
+</span><span id="Settings-38"><a href="#Settings-38"><span class="linenos">38</span></a><span class="sd">    and disallow loading draft versions.&quot;&quot;&quot;</span>
+</span><span id="Settings-39"><a href="#Settings-39"><span class="linenos">39</span></a>
+</span><span id="Settings-40"><a href="#Settings-40"><span class="linenos">40</span></a>    <span class="n">perform_io_checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Settings-41"><a href="#Settings-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not to perform validation that requires file io,</span>
+</span><span id="Settings-42"><a href="#Settings-42"><span class="linenos">42</span></a><span class="sd">    e.g. downloading a remote files.</span>
+</span><span id="Settings-43"><a href="#Settings-43"><span class="linenos">43</span></a>
+</span><span id="Settings-44"><a href="#Settings-44"><span class="linenos">44</span></a><span class="sd">    Existence of any local absolute file paths is still being checked.&quot;&quot;&quot;</span>
+</span><span id="Settings-45"><a href="#Settings-45"><span class="linenos">45</span></a>
+</span><span id="Settings-46"><a href="#Settings-46"><span class="linenos">46</span></a>    <span class="n">log_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="Settings-47"><a href="#Settings-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;log validation warnings to console&quot;&quot;&quot;</span>
+</span><span id="Settings-48"><a href="#Settings-48"><span class="linenos">48</span></a>
+</span><span id="Settings-49"><a href="#Settings-49"><span class="linenos">49</span></a>    <span class="n">github_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Settings-50"><a href="#Settings-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub username for API requests&quot;&quot;&quot;</span>
+</span><span id="Settings-51"><a href="#Settings-51"><span class="linenos">51</span></a>
+</span><span id="Settings-52"><a href="#Settings-52"><span class="linenos">52</span></a>    <span class="n">github_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Settings-53"><a href="#Settings-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub token for API requests&quot;&quot;&quot;</span>
+</span><span id="Settings-54"><a href="#Settings-54"><span class="linenos">54</span></a>
+</span><span id="Settings-55"><a href="#Settings-55"><span class="linenos">55</span></a>    <span class="n">CI</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;CI&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="Settings-56"><a href="#Settings-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wether or not the execution happens in a continuous integration (CI) environment&quot;&quot;&quot;</span>
+</span><span id="Settings-57"><a href="#Settings-57"><span class="linenos">57</span></a>
+</span><span id="Settings-58"><a href="#Settings-58"><span class="linenos">58</span></a>    <span class="n">user_agent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Settings-59"><a href="#Settings-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;user agent for http requests&quot;&quot;&quot;</span>
+</span><span id="Settings-60"><a href="#Settings-60"><span class="linenos">60</span></a>
+</span><span id="Settings-61"><a href="#Settings-61"><span class="linenos">61</span></a>    <span class="nd">@property</span>
+</span><span id="Settings-62"><a href="#Settings-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Settings-63"><a href="#Settings-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Settings-64"><a href="#Settings-64"><span class="linenos">64</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="Settings-65"><a href="#Settings-65"><span class="linenos">65</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Settings-66"><a href="#Settings-66"><span class="linenos">66</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -279,29 +277,28 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
 
                             </div>
-                            <div id="Settings.collection" class="classattr">
+                            <div id="Settings.id_map" class="classattr">
                                 <div class="attr variable">
-            <span class="name">collection</span><span class="annotation">: str</span>
+            <span class="name">id_map</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Settings.collection"></a>
+    <a class="headerlink" href="#Settings.id_map"></a>
     
-            <div class="docstring"><p>url to bioimageio collection.json to resolve collection specific resource IDs.</p>
+            <div class="docstring"><p>url to bioimageio id_map.json to resolve resource IDs.</p>
 </div>
 
 
                             </div>
-                            <div id="Settings.collection_draft" class="classattr">
+                            <div id="Settings.id_map_draft" class="classattr">
                                 <div class="attr variable">
-            <span class="name">collection_draft</span><span class="annotation">: str</span>
+            <span class="name">id_map_draft</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Settings.collection_draft"></a>
+    <a class="headerlink" href="#Settings.id_map_draft"></a>
     
-            <div class="docstring"><p>url to bioimageio collection_draft.json to resolve collection specific draft
-versions of resources ending with '/draft'.</p>
+            <div class="docstring"><p>url to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'.</p>
 </div>
 
 
@@ -414,12 +411,12 @@ e.g. downloading a remote files.</p>
 
     </div>
     <a class="headerlink" href="#Settings.github_auth"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Settings.github_auth-62"><a href="#Settings.github_auth-62"><span class="linenos">62</span></a>    <span class="nd">@property</span>
-</span><span id="Settings.github_auth-63"><a href="#Settings.github_auth-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Settings.github_auth-64"><a href="#Settings.github_auth-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Settings.github_auth-65"><a href="#Settings.github_auth-65"><span class="linenos">65</span></a>            <span class="k">return</span> <span class="kc">None</span>
-</span><span id="Settings.github_auth-66"><a href="#Settings.github_auth-66"><span class="linenos">66</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Settings.github_auth-67"><a href="#Settings.github_auth-67"><span class="linenos">67</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Settings.github_auth-61"><a href="#Settings.github_auth-61"><span class="linenos">61</span></a>    <span class="nd">@property</span>
+</span><span id="Settings.github_auth-62"><a href="#Settings.github_auth-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">github_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Settings.github_auth-63"><a href="#Settings.github_auth-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Settings.github_auth-64"><a href="#Settings.github_auth-64"><span class="linenos">64</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="Settings.github_auth-65"><a href="#Settings.github_auth-65"><span class="linenos">65</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Settings.github_auth-66"><a href="#Settings.github_auth-66"><span class="linenos">66</span></a>            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">github_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">github_token</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -430,7 +427,7 @@ e.g. downloading a remote files.</p>
                                 <div class="attr variable">
             <span class="name">model_fields</span>        =
 <input id="Settings.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Settings.model_fields-view-value"></label><span class="default_value">{&#39;cache_path&#39;: FieldInfo(annotation=Path, required=False, default=PosixPath(&#39;/home/runner/.cache/bioimageio&#39;)), &#39;collection&#39;: FieldInfo(annotation=str, required=False, default=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json&#39;), &#39;collection_draft&#39;: FieldInfo(annotation=str, required=False, default=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json&#39;), &#39;resolve_draft&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;perform_io_checks&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;log_warnings&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;github_username&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None), &#39;github_token&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None), &#39;CI&#39;: FieldInfo(annotation=Union[bool, str], required=False, default=False, alias=&#39;CI&#39;, alias_priority=2), &#39;user_agent&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}</span>
+            <label class="view-value-button pdoc-button" for="Settings.model_fields-view-value"></label><span class="default_value">{&#39;cache_path&#39;: FieldInfo(annotation=Path, required=False, default=PosixPath(&#39;/home/runner/.cache/bioimageio&#39;)), &#39;id_map&#39;: FieldInfo(annotation=str, required=False, default=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json&#39;), &#39;id_map_draft&#39;: FieldInfo(annotation=str, required=False, default=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json&#39;), &#39;resolve_draft&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;perform_io_checks&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;log_warnings&#39;: FieldInfo(annotation=bool, required=False, default=True), &#39;github_username&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None), &#39;github_token&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None), &#39;CI&#39;: FieldInfo(annotation=Union[bool, str], required=False, default=False, alias=&#39;CI&#39;, alias_priority=2), &#39;user_agent&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}</span>
 
         
     </div>
@@ -494,7 +491,7 @@ e.g. downloading a remote files.</p>
                     <div class="attr variable">
             <span class="name">settings</span>        =
 <input id="settings-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="settings-view-value"></label><span class="default_value">Settings(cache_path=PosixPath(&#39;/home/runner/.cache/bioimageio&#39;), collection=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json&#39;, collection_draft=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json&#39;, resolve_draft=True, perform_io_checks=True, log_warnings=True, github_username=None, github_token=None, CI=&#39;true&#39;, user_agent=None)</span>
+            <label class="view-value-button pdoc-button" for="settings-view-value"></label><span class="default_value">Settings(cache_path=PosixPath(&#39;/home/runner/.cache/bioimageio&#39;), id_map=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json&#39;, id_map_draft=&#39;https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json&#39;, resolve_draft=True, perform_io_checks=True, log_warnings=True, github_username=None, github_token=None, CI=&#39;true&#39;, user_agent=None)</span>
 
         
     </div>

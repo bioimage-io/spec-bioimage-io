@@ -213,6 +213,30 @@
                     <a class="function" href="#download">download</a>
             </li>
             <li>
+                    <a class="class" href="#LightHttpFileDescr">LightHttpFileDescr</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#LightHttpFileDescr.source">source</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LightHttpFileDescr.sha256">sha256</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#LightHttpFileDescr.download">download</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LightHttpFileDescr.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LightHttpFileDescr.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LightHttpFileDescr.model_computed_fields">model_computed_fields</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#FileDescr">FileDescr</a>
                             <ul class="memberlist">
                         <li>
@@ -886,79 +910,92 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-596"><a href="#L-596"><span class="linenos">596</span></a>    <span class="p">)</span>
 </span><span id="L-597"><a href="#L-597"><span class="linenos">597</span></a>
 </span><span id="L-598"><a href="#L-598"><span class="linenos">598</span></a>
-</span><span id="L-599"><a href="#L-599"><span class="linenos">599</span></a><span class="k">class</span> <span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-</span><span id="L-600"><a href="#L-600"><span class="linenos">600</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">ImportantFileSource</span>
-</span><span id="L-601"><a href="#L-601"><span class="linenos">601</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 file source&quot;&quot;&quot;</span>
-</span><span id="L-602"><a href="#L-602"><span class="linenos">602</span></a>
-</span><span id="L-603"><a href="#L-603"><span class="linenos">603</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-604"><a href="#L-604"><span class="linenos">604</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
-</span><span id="L-605"><a href="#L-605"><span class="linenos">605</span></a>
-</span><span id="L-606"><a href="#L-606"><span class="linenos">606</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-607"><a href="#L-607"><span class="linenos">607</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="L-608"><a href="#L-608"><span class="linenos">608</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="L-609"><a href="#L-609"><span class="linenos">609</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
-</span><span id="L-610"><a href="#L-610"><span class="linenos">610</span></a>            <span class="k">return</span> <span class="bp">self</span>
-</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
-</span><span id="L-612"><a href="#L-612"><span class="linenos">612</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
-</span><span id="L-613"><a href="#L-613"><span class="linenos">613</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
-</span><span id="L-615"><a href="#L-615"><span class="linenos">615</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
-</span><span id="L-616"><a href="#L-616"><span class="linenos">616</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a>
-</span><span id="L-618"><a href="#L-618"><span class="linenos">618</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-619"><a href="#L-619"><span class="linenos">619</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
-</span><span id="L-621"><a href="#L-621"><span class="linenos">621</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="L-622"><a href="#L-622"><span class="linenos">622</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
-</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
-</span><span id="L-624"><a href="#L-624"><span class="linenos">624</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
-</span><span id="L-625"><a href="#L-625"><span class="linenos">625</span></a>            <span class="p">)</span>
-</span><span id="L-626"><a href="#L-626"><span class="linenos">626</span></a>
-</span><span id="L-627"><a href="#L-627"><span class="linenos">627</span></a>        <span class="k">return</span> <span class="bp">self</span>
-</span><span id="L-628"><a href="#L-628"><span class="linenos">628</span></a>
-</span><span id="L-629"><a href="#L-629"><span class="linenos">629</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-599"><a href="#L-599"><span class="linenos">599</span></a><span class="k">class</span> <span class="nc">LightHttpFileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-600"><a href="#L-600"><span class="linenos">600</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;http source with sha256 value (minimal validation)&quot;&quot;&quot;</span>
+</span><span id="L-601"><a href="#L-601"><span class="linenos">601</span></a>
+</span><span id="L-602"><a href="#L-602"><span class="linenos">602</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span>
+</span><span id="L-603"><a href="#L-603"><span class="linenos">603</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;file source&quot;&quot;&quot;</span>
+</span><span id="L-604"><a href="#L-604"><span class="linenos">604</span></a>
+</span><span id="L-605"><a href="#L-605"><span class="linenos">605</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span>
+</span><span id="L-606"><a href="#L-606"><span class="linenos">606</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
+</span><span id="L-607"><a href="#L-607"><span class="linenos">607</span></a>
+</span><span id="L-608"><a href="#L-608"><span class="linenos">608</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-609"><a href="#L-609"><span class="linenos">609</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+</span><span id="L-610"><a href="#L-610"><span class="linenos">610</span></a>
+</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>
+</span><span id="L-612"><a href="#L-612"><span class="linenos">612</span></a><span class="k">class</span> <span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-613"><a href="#L-613"><span class="linenos">613</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">ImportantFileSource</span>
+</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 file source&quot;&quot;&quot;</span>
+</span><span id="L-615"><a href="#L-615"><span class="linenos">615</span></a>
+</span><span id="L-616"><a href="#L-616"><span class="linenos">616</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
+</span><span id="L-618"><a href="#L-618"><span class="linenos">618</span></a>
+</span><span id="L-619"><a href="#L-619"><span class="linenos">619</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="L-621"><a href="#L-621"><span class="linenos">621</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-622"><a href="#L-622"><span class="linenos">622</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
+</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>            <span class="k">return</span> <span class="bp">self</span>
+</span><span id="L-624"><a href="#L-624"><span class="linenos">624</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
+</span><span id="L-625"><a href="#L-625"><span class="linenos">625</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
+</span><span id="L-626"><a href="#L-626"><span class="linenos">626</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-627"><a href="#L-627"><span class="linenos">627</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+</span><span id="L-628"><a href="#L-628"><span class="linenos">628</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
+</span><span id="L-629"><a href="#L-629"><span class="linenos">629</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
 </span><span id="L-630"><a href="#L-630"><span class="linenos">630</span></a>
-</span><span id="L-631"><a href="#L-631"><span class="linenos">631</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
-</span><span id="L-632"><a href="#L-632"><span class="linenos">632</span></a>
-</span><span id="L-633"><a href="#L-633"><span class="linenos">633</span></a>
-</span><span id="L-634"><a href="#L-634"><span class="linenos">634</span></a><span class="k">def</span> <span class="nf">extract_file_name</span><span class="p">(</span>
-</span><span id="L-635"><a href="#L-635"><span class="linenos">635</span></a>    <span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">],</span>
-</span><span id="L-636"><a href="#L-636"><span class="linenos">636</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
-</span><span id="L-637"><a href="#L-637"><span class="linenos">637</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
-</span><span id="L-638"><a href="#L-638"><span class="linenos">638</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-639"><a href="#L-639"><span class="linenos">639</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">):</span>
-</span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-641"><a href="#L-641"><span class="linenos">641</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a>        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
-</span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a>        <span class="k">if</span> <span class="p">(</span>
-</span><span id="L-644"><a href="#L-644"><span class="linenos">644</span></a>            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span>
-</span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;zenodo.org&quot;</span>
-</span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/api/records/&quot;</span><span class="p">)</span>
-</span><span id="L-647"><a href="#L-647"><span class="linenos">647</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/content&quot;</span><span class="p">)</span>
-</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>        <span class="p">):</span>
-</span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-</span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>
-</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>
-</span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a><span class="nd">@lru_cache</span>
-</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a><span class="k">def</span> <span class="nf">get_sha256</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
-</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;from https://stackoverflow.com/a/44873382&quot;&quot;&quot;</span>
-</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
-</span><span id="L-658"><a href="#L-658"><span class="linenos">658</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
-</span><span id="L-659"><a href="#L-659"><span class="linenos">659</span></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
-</span><span id="L-660"><a href="#L-660"><span class="linenos">660</span></a>    <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-</span><span id="L-661"><a href="#L-661"><span class="linenos">661</span></a>    <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;computing SHA256 of </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-662"><a href="#L-662"><span class="linenos">662</span></a>    <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">ceil</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">/</span> <span class="n">chunksize</span><span class="p">))</span>
-</span><span id="L-663"><a href="#L-663"><span class="linenos">663</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="L-664"><a href="#L-664"><span class="linenos">664</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
-</span><span id="L-665"><a href="#L-665"><span class="linenos">665</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
-</span><span id="L-666"><a href="#L-666"><span class="linenos">666</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-</span><span id="L-667"><a href="#L-667"><span class="linenos">667</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-</span><span id="L-668"><a href="#L-668"><span class="linenos">668</span></a>
-</span><span id="L-669"><a href="#L-669"><span class="linenos">669</span></a>    <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (result: </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-</span><span id="L-670"><a href="#L-670"><span class="linenos">670</span></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
-</span><span id="L-671"><a href="#L-671"><span class="linenos">671</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
+</span><span id="L-631"><a href="#L-631"><span class="linenos">631</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-632"><a href="#L-632"><span class="linenos">632</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
+</span><span id="L-633"><a href="#L-633"><span class="linenos">633</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
+</span><span id="L-634"><a href="#L-634"><span class="linenos">634</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="L-635"><a href="#L-635"><span class="linenos">635</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
+</span><span id="L-636"><a href="#L-636"><span class="linenos">636</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
+</span><span id="L-637"><a href="#L-637"><span class="linenos">637</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
+</span><span id="L-638"><a href="#L-638"><span class="linenos">638</span></a>            <span class="p">)</span>
+</span><span id="L-639"><a href="#L-639"><span class="linenos">639</span></a>
+</span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="L-641"><a href="#L-641"><span class="linenos">641</span></a>
+</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a>
+</span><span id="L-644"><a href="#L-644"><span class="linenos">644</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+</span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a>
+</span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a>
+</span><span id="L-647"><a href="#L-647"><span class="linenos">647</span></a><span class="k">def</span> <span class="nf">extract_file_name</span><span class="p">(</span>
+</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>    <span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">],</span>
+</span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+</span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
+</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">):</span>
+</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
+</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span>
+</span><span id="L-658"><a href="#L-658"><span class="linenos">658</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;zenodo.org&quot;</span>
+</span><span id="L-659"><a href="#L-659"><span class="linenos">659</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/api/records/&quot;</span><span class="p">)</span>
+</span><span id="L-660"><a href="#L-660"><span class="linenos">660</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/content&quot;</span><span class="p">)</span>
+</span><span id="L-661"><a href="#L-661"><span class="linenos">661</span></a>        <span class="p">):</span>
+</span><span id="L-662"><a href="#L-662"><span class="linenos">662</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+</span><span id="L-663"><a href="#L-663"><span class="linenos">663</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-664"><a href="#L-664"><span class="linenos">664</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="L-665"><a href="#L-665"><span class="linenos">665</span></a>
+</span><span id="L-666"><a href="#L-666"><span class="linenos">666</span></a>
+</span><span id="L-667"><a href="#L-667"><span class="linenos">667</span></a><span class="nd">@lru_cache</span>
+</span><span id="L-668"><a href="#L-668"><span class="linenos">668</span></a><span class="k">def</span> <span class="nf">get_sha256</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="L-669"><a href="#L-669"><span class="linenos">669</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;from https://stackoverflow.com/a/44873382&quot;&quot;&quot;</span>
+</span><span id="L-670"><a href="#L-670"><span class="linenos">670</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+</span><span id="L-671"><a href="#L-671"><span class="linenos">671</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
+</span><span id="L-672"><a href="#L-672"><span class="linenos">672</span></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span id="L-673"><a href="#L-673"><span class="linenos">673</span></a>    <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span><span id="L-674"><a href="#L-674"><span class="linenos">674</span></a>    <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;computing SHA256 of </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-675"><a href="#L-675"><span class="linenos">675</span></a>    <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">ceil</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">/</span> <span class="n">chunksize</span><span class="p">))</span>
+</span><span id="L-676"><a href="#L-676"><span class="linenos">676</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="L-677"><a href="#L-677"><span class="linenos">677</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
+</span><span id="L-678"><a href="#L-678"><span class="linenos">678</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span><span id="L-679"><a href="#L-679"><span class="linenos">679</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</span><span id="L-680"><a href="#L-680"><span class="linenos">680</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span id="L-681"><a href="#L-681"><span class="linenos">681</span></a>
+</span><span id="L-682"><a href="#L-682"><span class="linenos">682</span></a>    <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (result: </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</span><span id="L-683"><a href="#L-683"><span class="linenos">683</span></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+</span><span id="L-684"><a href="#L-684"><span class="linenos">684</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -2412,6 +2449,156 @@ method.</p>
 
 
                 </section>
+                <section id="LightHttpFileDescr">
+                            <input id="LightHttpFileDescr-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">LightHttpFileDescr</span><wbr>(<span class="base"><a href="node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
+
+                <label class="view-source-button" for="LightHttpFileDescr-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LightHttpFileDescr-600"><a href="#LightHttpFileDescr-600"><span class="linenos">600</span></a><span class="k">class</span> <span class="nc">LightHttpFileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="LightHttpFileDescr-601"><a href="#LightHttpFileDescr-601"><span class="linenos">601</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;http source with sha256 value (minimal validation)&quot;&quot;&quot;</span>
+</span><span id="LightHttpFileDescr-602"><a href="#LightHttpFileDescr-602"><span class="linenos">602</span></a>
+</span><span id="LightHttpFileDescr-603"><a href="#LightHttpFileDescr-603"><span class="linenos">603</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span>
+</span><span id="LightHttpFileDescr-604"><a href="#LightHttpFileDescr-604"><span class="linenos">604</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;file source&quot;&quot;&quot;</span>
+</span><span id="LightHttpFileDescr-605"><a href="#LightHttpFileDescr-605"><span class="linenos">605</span></a>
+</span><span id="LightHttpFileDescr-606"><a href="#LightHttpFileDescr-606"><span class="linenos">606</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span>
+</span><span id="LightHttpFileDescr-607"><a href="#LightHttpFileDescr-607"><span class="linenos">607</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
+</span><span id="LightHttpFileDescr-608"><a href="#LightHttpFileDescr-608"><span class="linenos">608</span></a>
+</span><span id="LightHttpFileDescr-609"><a href="#LightHttpFileDescr-609"><span class="linenos">609</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LightHttpFileDescr-610"><a href="#LightHttpFileDescr-610"><span class="linenos">610</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>http source with sha256 value (minimal validation)</p>
+</div>
+
+
+                            <div id="LightHttpFileDescr.source" class="classattr">
+                                <div class="attr variable">
+            <span class="name">source</span><span class="annotation">: Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.source"></a>
+    
+            <div class="docstring"><p>file source</p>
+</div>
+
+
+                            </div>
+                            <div id="LightHttpFileDescr.sha256" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sha256</span><span class="annotation">: <a href="io_basics.html#Sha256">bioimageio.spec._internal.io_basics.Sha256</a></span>
+
+        
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.sha256"></a>
+    
+            <div class="docstring"><p>SHA256 checksum of the source file</p>
+</div>
+
+
+                            </div>
+                            <div id="LightHttpFileDescr.download" class="classattr">
+                                        <input id="LightHttpFileDescr.download-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">download</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="LightHttpFileDescr.download-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.download"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LightHttpFileDescr.download-609"><a href="#LightHttpFileDescr.download-609"><span class="linenos">609</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LightHttpFileDescr.download-610"><a href="#LightHttpFileDescr.download-610"><span class="linenos">610</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="LightHttpFileDescr.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<input id="LightHttpFileDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="LightHttpFileDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="LightHttpFileDescr.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<input id="LightHttpFileDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="LightHttpFileDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Url, required=True, metadata=[UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)]), &#39;sha256&#39;: FieldInfo(annotation=Sha256, required=True)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="LightHttpFileDescr.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LightHttpFileDescr.model_computed_fields"></a>
+    
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>pydantic.main.BaseModel</dt>
+                                <dd id="LightHttpFileDescr.__init__" class="function">BaseModel</dd>
+                <dd id="LightHttpFileDescr.model_extra" class="variable">model_extra</dd>
+                <dd id="LightHttpFileDescr.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="LightHttpFileDescr.model_construct" class="function">model_construct</dd>
+                <dd id="LightHttpFileDescr.model_copy" class="function">model_copy</dd>
+                <dd id="LightHttpFileDescr.model_dump" class="function">model_dump</dd>
+                <dd id="LightHttpFileDescr.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="LightHttpFileDescr.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="LightHttpFileDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="LightHttpFileDescr.model_post_init" class="function">model_post_init</dd>
+                <dd id="LightHttpFileDescr.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="LightHttpFileDescr.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="LightHttpFileDescr.model_validate_strings" class="function">model_validate_strings</dd>
+                <dd id="LightHttpFileDescr.dict" class="function">dict</dd>
+                <dd id="LightHttpFileDescr.json" class="function">json</dd>
+                <dd id="LightHttpFileDescr.parse_obj" class="function">parse_obj</dd>
+                <dd id="LightHttpFileDescr.parse_raw" class="function">parse_raw</dd>
+                <dd id="LightHttpFileDescr.parse_file" class="function">parse_file</dd>
+                <dd id="LightHttpFileDescr.from_orm" class="function">from_orm</dd>
+                <dd id="LightHttpFileDescr.construct" class="function">construct</dd>
+                <dd id="LightHttpFileDescr.copy" class="function">copy</dd>
+                <dd id="LightHttpFileDescr.schema" class="function">schema</dd>
+                <dd id="LightHttpFileDescr.schema_json" class="function">schema_json</dd>
+                <dd id="LightHttpFileDescr.validate" class="function">validate</dd>
+                <dd id="LightHttpFileDescr.update_forward_refs" class="function">update_forward_refs</dd>
+
+            </div>
+            <div><dt><a href="node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="LightHttpFileDescr.model_validate" class="function"><a href="node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="FileDescr">
                             <input id="FileDescr-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -2423,39 +2610,39 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#FileDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr-600"><a href="#FileDescr-600"><span class="linenos">600</span></a><span class="k">class</span> <span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-</span><span id="FileDescr-601"><a href="#FileDescr-601"><span class="linenos">601</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">ImportantFileSource</span>
-</span><span id="FileDescr-602"><a href="#FileDescr-602"><span class="linenos">602</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 file source&quot;&quot;&quot;</span>
-</span><span id="FileDescr-603"><a href="#FileDescr-603"><span class="linenos">603</span></a>
-</span><span id="FileDescr-604"><a href="#FileDescr-604"><span class="linenos">604</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="FileDescr-605"><a href="#FileDescr-605"><span class="linenos">605</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
-</span><span id="FileDescr-606"><a href="#FileDescr-606"><span class="linenos">606</span></a>
-</span><span id="FileDescr-607"><a href="#FileDescr-607"><span class="linenos">607</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="FileDescr-608"><a href="#FileDescr-608"><span class="linenos">608</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="FileDescr-609"><a href="#FileDescr-609"><span class="linenos">609</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="FileDescr-610"><a href="#FileDescr-610"><span class="linenos">610</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
-</span><span id="FileDescr-611"><a href="#FileDescr-611"><span class="linenos">611</span></a>            <span class="k">return</span> <span class="bp">self</span>
-</span><span id="FileDescr-612"><a href="#FileDescr-612"><span class="linenos">612</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
-</span><span id="FileDescr-613"><a href="#FileDescr-613"><span class="linenos">613</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
-</span><span id="FileDescr-614"><a href="#FileDescr-614"><span class="linenos">614</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="FileDescr-615"><a href="#FileDescr-615"><span class="linenos">615</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
-</span><span id="FileDescr-616"><a href="#FileDescr-616"><span class="linenos">616</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
-</span><span id="FileDescr-617"><a href="#FileDescr-617"><span class="linenos">617</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="FileDescr-618"><a href="#FileDescr-618"><span class="linenos">618</span></a>
-</span><span id="FileDescr-619"><a href="#FileDescr-619"><span class="linenos">619</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileDescr-620"><a href="#FileDescr-620"><span class="linenos">620</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="FileDescr-621"><a href="#FileDescr-621"><span class="linenos">621</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
-</span><span id="FileDescr-622"><a href="#FileDescr-622"><span class="linenos">622</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="FileDescr-623"><a href="#FileDescr-623"><span class="linenos">623</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
-</span><span id="FileDescr-624"><a href="#FileDescr-624"><span class="linenos">624</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
-</span><span id="FileDescr-625"><a href="#FileDescr-625"><span class="linenos">625</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
-</span><span id="FileDescr-626"><a href="#FileDescr-626"><span class="linenos">626</span></a>            <span class="p">)</span>
-</span><span id="FileDescr-627"><a href="#FileDescr-627"><span class="linenos">627</span></a>
-</span><span id="FileDescr-628"><a href="#FileDescr-628"><span class="linenos">628</span></a>        <span class="k">return</span> <span class="bp">self</span>
-</span><span id="FileDescr-629"><a href="#FileDescr-629"><span class="linenos">629</span></a>
-</span><span id="FileDescr-630"><a href="#FileDescr-630"><span class="linenos">630</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr-613"><a href="#FileDescr-613"><span class="linenos">613</span></a><span class="k">class</span> <span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="FileDescr-614"><a href="#FileDescr-614"><span class="linenos">614</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">ImportantFileSource</span>
+</span><span id="FileDescr-615"><a href="#FileDescr-615"><span class="linenos">615</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 file source&quot;&quot;&quot;</span>
+</span><span id="FileDescr-616"><a href="#FileDescr-616"><span class="linenos">616</span></a>
+</span><span id="FileDescr-617"><a href="#FileDescr-617"><span class="linenos">617</span></a>    <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="FileDescr-618"><a href="#FileDescr-618"><span class="linenos">618</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
+</span><span id="FileDescr-619"><a href="#FileDescr-619"><span class="linenos">619</span></a>
+</span><span id="FileDescr-620"><a href="#FileDescr-620"><span class="linenos">620</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="FileDescr-621"><a href="#FileDescr-621"><span class="linenos">621</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="FileDescr-622"><a href="#FileDescr-622"><span class="linenos">622</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="FileDescr-623"><a href="#FileDescr-623"><span class="linenos">623</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
+</span><span id="FileDescr-624"><a href="#FileDescr-624"><span class="linenos">624</span></a>            <span class="k">return</span> <span class="bp">self</span>
+</span><span id="FileDescr-625"><a href="#FileDescr-625"><span class="linenos">625</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
+</span><span id="FileDescr-626"><a href="#FileDescr-626"><span class="linenos">626</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
+</span><span id="FileDescr-627"><a href="#FileDescr-627"><span class="linenos">627</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="FileDescr-628"><a href="#FileDescr-628"><span class="linenos">628</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+</span><span id="FileDescr-629"><a href="#FileDescr-629"><span class="linenos">629</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
+</span><span id="FileDescr-630"><a href="#FileDescr-630"><span class="linenos">630</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
 </span><span id="FileDescr-631"><a href="#FileDescr-631"><span class="linenos">631</span></a>
-</span><span id="FileDescr-632"><a href="#FileDescr-632"><span class="linenos">632</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+</span><span id="FileDescr-632"><a href="#FileDescr-632"><span class="linenos">632</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileDescr-633"><a href="#FileDescr-633"><span class="linenos">633</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
+</span><span id="FileDescr-634"><a href="#FileDescr-634"><span class="linenos">634</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
+</span><span id="FileDescr-635"><a href="#FileDescr-635"><span class="linenos">635</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="FileDescr-636"><a href="#FileDescr-636"><span class="linenos">636</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
+</span><span id="FileDescr-637"><a href="#FileDescr-637"><span class="linenos">637</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
+</span><span id="FileDescr-638"><a href="#FileDescr-638"><span class="linenos">638</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
+</span><span id="FileDescr-639"><a href="#FileDescr-639"><span class="linenos">639</span></a>            <span class="p">)</span>
+</span><span id="FileDescr-640"><a href="#FileDescr-640"><span class="linenos">640</span></a>
+</span><span id="FileDescr-641"><a href="#FileDescr-641"><span class="linenos">641</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="FileDescr-642"><a href="#FileDescr-642"><span class="linenos">642</span></a>
+</span><span id="FileDescr-643"><a href="#FileDescr-643"><span class="linenos">643</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="FileDescr-644"><a href="#FileDescr-644"><span class="linenos">644</span></a>
+</span><span id="FileDescr-645"><a href="#FileDescr-645"><span class="linenos">645</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -2465,7 +2652,7 @@ method.</p>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f7c997f3560&gt;), PlainSerializer(func=&lt;function _package at 0x7f7c997f1ee0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6e6ec67560&gt;), PlainSerializer(func=&lt;function _package at 0x7f6e6ec65ee0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -2501,28 +2688,28 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#FileDescr.validate_sha256"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.validate_sha256-607"><a href="#FileDescr.validate_sha256-607"><span class="linenos">607</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="FileDescr.validate_sha256-608"><a href="#FileDescr.validate_sha256-608"><span class="linenos">608</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-609"><a href="#FileDescr.validate_sha256-609"><span class="linenos">609</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="FileDescr.validate_sha256-610"><a href="#FileDescr.validate_sha256-610"><span class="linenos">610</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-611"><a href="#FileDescr.validate_sha256-611"><span class="linenos">611</span></a>            <span class="k">return</span> <span class="bp">self</span>
-</span><span id="FileDescr.validate_sha256-612"><a href="#FileDescr.validate_sha256-612"><span class="linenos">612</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-613"><a href="#FileDescr.validate_sha256-613"><span class="linenos">613</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
-</span><span id="FileDescr.validate_sha256-614"><a href="#FileDescr.validate_sha256-614"><span class="linenos">614</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-615"><a href="#FileDescr.validate_sha256-615"><span class="linenos">615</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
-</span><span id="FileDescr.validate_sha256-616"><a href="#FileDescr.validate_sha256-616"><span class="linenos">616</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
-</span><span id="FileDescr.validate_sha256-617"><a href="#FileDescr.validate_sha256-617"><span class="linenos">617</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="FileDescr.validate_sha256-618"><a href="#FileDescr.validate_sha256-618"><span class="linenos">618</span></a>
-</span><span id="FileDescr.validate_sha256-619"><a href="#FileDescr.validate_sha256-619"><span class="linenos">619</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-620"><a href="#FileDescr.validate_sha256-620"><span class="linenos">620</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
-</span><span id="FileDescr.validate_sha256-621"><a href="#FileDescr.validate_sha256-621"><span class="linenos">621</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
-</span><span id="FileDescr.validate_sha256-622"><a href="#FileDescr.validate_sha256-622"><span class="linenos">622</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="FileDescr.validate_sha256-623"><a href="#FileDescr.validate_sha256-623"><span class="linenos">623</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
-</span><span id="FileDescr.validate_sha256-624"><a href="#FileDescr.validate_sha256-624"><span class="linenos">624</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
-</span><span id="FileDescr.validate_sha256-625"><a href="#FileDescr.validate_sha256-625"><span class="linenos">625</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
-</span><span id="FileDescr.validate_sha256-626"><a href="#FileDescr.validate_sha256-626"><span class="linenos">626</span></a>            <span class="p">)</span>
-</span><span id="FileDescr.validate_sha256-627"><a href="#FileDescr.validate_sha256-627"><span class="linenos">627</span></a>
-</span><span id="FileDescr.validate_sha256-628"><a href="#FileDescr.validate_sha256-628"><span class="linenos">628</span></a>        <span class="k">return</span> <span class="bp">self</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.validate_sha256-620"><a href="#FileDescr.validate_sha256-620"><span class="linenos">620</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="FileDescr.validate_sha256-621"><a href="#FileDescr.validate_sha256-621"><span class="linenos">621</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-622"><a href="#FileDescr.validate_sha256-622"><span class="linenos">622</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="FileDescr.validate_sha256-623"><a href="#FileDescr.validate_sha256-623"><span class="linenos">623</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-624"><a href="#FileDescr.validate_sha256-624"><span class="linenos">624</span></a>            <span class="k">return</span> <span class="bp">self</span>
+</span><span id="FileDescr.validate_sha256-625"><a href="#FileDescr.validate_sha256-625"><span class="linenos">625</span></a>        <span class="k">elif</span> <span class="p">(</span><span class="n">src_str</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">))</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-626"><a href="#FileDescr.validate_sha256-626"><span class="linenos">626</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="n">src_str</span><span class="p">]</span>
+</span><span id="FileDescr.validate_sha256-627"><a href="#FileDescr.validate_sha256-627"><span class="linenos">627</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-628"><a href="#FileDescr.validate_sha256-628"><span class="linenos">628</span></a>            <span class="n">local_source</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+</span><span id="FileDescr.validate_sha256-629"><a href="#FileDescr.validate_sha256-629"><span class="linenos">629</span></a>            <span class="n">actual_sha</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="n">local_source</span><span class="p">)</span>
+</span><span id="FileDescr.validate_sha256-630"><a href="#FileDescr.validate_sha256-630"><span class="linenos">630</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">known_files</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)]</span> <span class="o">=</span> <span class="n">actual_sha</span>
+</span><span id="FileDescr.validate_sha256-631"><a href="#FileDescr.validate_sha256-631"><span class="linenos">631</span></a>
+</span><span id="FileDescr.validate_sha256-632"><a href="#FileDescr.validate_sha256-632"><span class="linenos">632</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-633"><a href="#FileDescr.validate_sha256-633"><span class="linenos">633</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">=</span> <span class="n">actual_sha</span>
+</span><span id="FileDescr.validate_sha256-634"><a href="#FileDescr.validate_sha256-634"><span class="linenos">634</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span> <span class="o">!=</span> <span class="n">actual_sha</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-635"><a href="#FileDescr.validate_sha256-635"><span class="linenos">635</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="FileDescr.validate_sha256-636"><a href="#FileDescr.validate_sha256-636"><span class="linenos">636</span></a>                <span class="sa">f</span><span class="s2">&quot;Sha256 mismatch for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="si">}</span><span class="s2">, got &quot;</span>
+</span><span id="FileDescr.validate_sha256-637"><a href="#FileDescr.validate_sha256-637"><span class="linenos">637</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_sha</span><span class="si">}</span><span class="s2">. Update expected `sha256` or point to the matching &quot;</span>
+</span><span id="FileDescr.validate_sha256-638"><a href="#FileDescr.validate_sha256-638"><span class="linenos">638</span></a>                <span class="o">+</span> <span class="s2">&quot;file.&quot;</span>
+</span><span id="FileDescr.validate_sha256-639"><a href="#FileDescr.validate_sha256-639"><span class="linenos">639</span></a>            <span class="p">)</span>
+</span><span id="FileDescr.validate_sha256-640"><a href="#FileDescr.validate_sha256-640"><span class="linenos">640</span></a>
+</span><span id="FileDescr.validate_sha256-641"><a href="#FileDescr.validate_sha256-641"><span class="linenos">641</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span></pre></div>
 
 
@@ -2540,9 +2727,9 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#FileDescr.download"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.download-630"><a href="#FileDescr.download-630"><span class="linenos">630</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="FileDescr.download-631"><a href="#FileDescr.download-631"><span class="linenos">631</span></a>
-</span><span id="FileDescr.download-632"><a href="#FileDescr.download-632"><span class="linenos">632</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.download-643"><a href="#FileDescr.download-643"><span class="linenos">643</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="FileDescr.download-644"><a href="#FileDescr.download-644"><span class="linenos">644</span></a>
+</span><span id="FileDescr.download-645"><a href="#FileDescr.download-645"><span class="linenos">645</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -2636,24 +2823,24 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#extract_file_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="extract_file_name-635"><a href="#extract_file_name-635"><span class="linenos">635</span></a><span class="k">def</span> <span class="nf">extract_file_name</span><span class="p">(</span>
-</span><span id="extract_file_name-636"><a href="#extract_file_name-636"><span class="linenos">636</span></a>    <span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">],</span>
-</span><span id="extract_file_name-637"><a href="#extract_file_name-637"><span class="linenos">637</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
-</span><span id="extract_file_name-638"><a href="#extract_file_name-638"><span class="linenos">638</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
-</span><span id="extract_file_name-639"><a href="#extract_file_name-639"><span class="linenos">639</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">name</span>
-</span><span id="extract_file_name-640"><a href="#extract_file_name-640"><span class="linenos">640</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">):</span>
-</span><span id="extract_file_name-641"><a href="#extract_file_name-641"><span class="linenos">641</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span>
-</span><span id="extract_file_name-642"><a href="#extract_file_name-642"><span class="linenos">642</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="extract_file_name-643"><a href="#extract_file_name-643"><span class="linenos">643</span></a>        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
-</span><span id="extract_file_name-644"><a href="#extract_file_name-644"><span class="linenos">644</span></a>        <span class="k">if</span> <span class="p">(</span>
-</span><span id="extract_file_name-645"><a href="#extract_file_name-645"><span class="linenos">645</span></a>            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span>
-</span><span id="extract_file_name-646"><a href="#extract_file_name-646"><span class="linenos">646</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;zenodo.org&quot;</span>
-</span><span id="extract_file_name-647"><a href="#extract_file_name-647"><span class="linenos">647</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/api/records/&quot;</span><span class="p">)</span>
-</span><span id="extract_file_name-648"><a href="#extract_file_name-648"><span class="linenos">648</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/content&quot;</span><span class="p">)</span>
-</span><span id="extract_file_name-649"><a href="#extract_file_name-649"><span class="linenos">649</span></a>        <span class="p">):</span>
-</span><span id="extract_file_name-650"><a href="#extract_file_name-650"><span class="linenos">650</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-</span><span id="extract_file_name-651"><a href="#extract_file_name-651"><span class="linenos">651</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="extract_file_name-652"><a href="#extract_file_name-652"><span class="linenos">652</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="extract_file_name-648"><a href="#extract_file_name-648"><span class="linenos">648</span></a><span class="k">def</span> <span class="nf">extract_file_name</span><span class="p">(</span>
+</span><span id="extract_file_name-649"><a href="#extract_file_name-649"><span class="linenos">649</span></a>    <span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">],</span>
+</span><span id="extract_file_name-650"><a href="#extract_file_name-650"><span class="linenos">650</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+</span><span id="extract_file_name-651"><a href="#extract_file_name-651"><span class="linenos">651</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
+</span><span id="extract_file_name-652"><a href="#extract_file_name-652"><span class="linenos">652</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">name</span>
+</span><span id="extract_file_name-653"><a href="#extract_file_name-653"><span class="linenos">653</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">):</span>
+</span><span id="extract_file_name-654"><a href="#extract_file_name-654"><span class="linenos">654</span></a>        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span>
+</span><span id="extract_file_name-655"><a href="#extract_file_name-655"><span class="linenos">655</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="extract_file_name-656"><a href="#extract_file_name-656"><span class="linenos">656</span></a>        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
+</span><span id="extract_file_name-657"><a href="#extract_file_name-657"><span class="linenos">657</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="extract_file_name-658"><a href="#extract_file_name-658"><span class="linenos">658</span></a>            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span>
+</span><span id="extract_file_name-659"><a href="#extract_file_name-659"><span class="linenos">659</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;zenodo.org&quot;</span>
+</span><span id="extract_file_name-660"><a href="#extract_file_name-660"><span class="linenos">660</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/api/records/&quot;</span><span class="p">)</span>
+</span><span id="extract_file_name-661"><a href="#extract_file_name-661"><span class="linenos">661</span></a>            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/content&quot;</span><span class="p">)</span>
+</span><span id="extract_file_name-662"><a href="#extract_file_name-662"><span class="linenos">662</span></a>        <span class="p">):</span>
+</span><span id="extract_file_name-663"><a href="#extract_file_name-663"><span class="linenos">663</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+</span><span id="extract_file_name-664"><a href="#extract_file_name-664"><span class="linenos">664</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="extract_file_name-665"><a href="#extract_file_name-665"><span class="linenos">665</span></a>            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -2672,24 +2859,24 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#get_sha256"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_sha256-655"><a href="#get_sha256-655"><span class="linenos">655</span></a><span class="nd">@lru_cache</span>
-</span><span id="get_sha256-656"><a href="#get_sha256-656"><span class="linenos">656</span></a><span class="k">def</span> <span class="nf">get_sha256</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
-</span><span id="get_sha256-657"><a href="#get_sha256-657"><span class="linenos">657</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;from https://stackoverflow.com/a/44873382&quot;&quot;&quot;</span>
-</span><span id="get_sha256-658"><a href="#get_sha256-658"><span class="linenos">658</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
-</span><span id="get_sha256-659"><a href="#get_sha256-659"><span class="linenos">659</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
-</span><span id="get_sha256-660"><a href="#get_sha256-660"><span class="linenos">660</span></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
-</span><span id="get_sha256-661"><a href="#get_sha256-661"><span class="linenos">661</span></a>    <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-</span><span id="get_sha256-662"><a href="#get_sha256-662"><span class="linenos">662</span></a>    <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;computing SHA256 of </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="get_sha256-663"><a href="#get_sha256-663"><span class="linenos">663</span></a>    <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">ceil</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">/</span> <span class="n">chunksize</span><span class="p">))</span>
-</span><span id="get_sha256-664"><a href="#get_sha256-664"><span class="linenos">664</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="get_sha256-665"><a href="#get_sha256-665"><span class="linenos">665</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
-</span><span id="get_sha256-666"><a href="#get_sha256-666"><span class="linenos">666</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
-</span><span id="get_sha256-667"><a href="#get_sha256-667"><span class="linenos">667</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-</span><span id="get_sha256-668"><a href="#get_sha256-668"><span class="linenos">668</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-</span><span id="get_sha256-669"><a href="#get_sha256-669"><span class="linenos">669</span></a>
-</span><span id="get_sha256-670"><a href="#get_sha256-670"><span class="linenos">670</span></a>    <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (result: </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-</span><span id="get_sha256-671"><a href="#get_sha256-671"><span class="linenos">671</span></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
-</span><span id="get_sha256-672"><a href="#get_sha256-672"><span class="linenos">672</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_sha256-668"><a href="#get_sha256-668"><span class="linenos">668</span></a><span class="nd">@lru_cache</span>
+</span><span id="get_sha256-669"><a href="#get_sha256-669"><span class="linenos">669</span></a><span class="k">def</span> <span class="nf">get_sha256</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="get_sha256-670"><a href="#get_sha256-670"><span class="linenos">670</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;from https://stackoverflow.com/a/44873382&quot;&quot;&quot;</span>
+</span><span id="get_sha256-671"><a href="#get_sha256-671"><span class="linenos">671</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+</span><span id="get_sha256-672"><a href="#get_sha256-672"><span class="linenos">672</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
+</span><span id="get_sha256-673"><a href="#get_sha256-673"><span class="linenos">673</span></a>    <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span id="get_sha256-674"><a href="#get_sha256-674"><span class="linenos">674</span></a>    <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span><span id="get_sha256-675"><a href="#get_sha256-675"><span class="linenos">675</span></a>    <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;computing SHA256 of </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="get_sha256-676"><a href="#get_sha256-676"><span class="linenos">676</span></a>    <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">ceil</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">/</span> <span class="n">chunksize</span><span class="p">))</span>
+</span><span id="get_sha256-677"><a href="#get_sha256-677"><span class="linenos">677</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="get_sha256-678"><a href="#get_sha256-678"><span class="linenos">678</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
+</span><span id="get_sha256-679"><a href="#get_sha256-679"><span class="linenos">679</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span><span id="get_sha256-680"><a href="#get_sha256-680"><span class="linenos">680</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</span><span id="get_sha256-681"><a href="#get_sha256-681"><span class="linenos">681</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span id="get_sha256-682"><a href="#get_sha256-682"><span class="linenos">682</span></a>
+</span><span id="get_sha256-683"><a href="#get_sha256-683"><span class="linenos">683</span></a>    <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (result: </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</span><span id="get_sha256-684"><a href="#get_sha256-684"><span class="linenos">684</span></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+</span><span id="get_sha256-685"><a href="#get_sha256-685"><span class="linenos">685</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
 </span></pre></div>
 
 
