@@ -24,8 +24,7 @@ class Node(
     validate_assignment=True,
     validate_default=False,
     validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
-    # use_attribute_docstrings=True,  TODO: use this from future pydantic 2.7
-    # see https://github.com/pydantic/pydantic/issues/5656
+    use_attribute_docstrings=True,
 ):
     """Subpart of a resource description"""
 
