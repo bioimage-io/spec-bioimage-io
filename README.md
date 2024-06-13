@@ -105,6 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3post4
+
+* fix pinning of pydantic
+
 #### bioimageio.spec 0.5.3post3
 
 * update resolving of bioimage.io resource IDs
