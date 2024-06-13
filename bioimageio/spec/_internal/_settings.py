@@ -17,17 +17,16 @@ class Settings(BaseSettings, extra="ignore"):
     cache_path: Path = pooch.os_cache("bioimageio")
     """bioimageio cache location"""
 
-    collection: str = (
-        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection.json"
+    id_map: str = (
+        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
-    """url to bioimageio collection.json to resolve collection specific resource IDs.
+    """url to bioimageio id_map.json to resolve resource IDs.
     """
 
-    collection_draft: str = (
-        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/collection_draft.json"
+    id_map_draft: str = (
+        "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json"
     )
-    """url to bioimageio collection_draft.json to resolve collection specific draft
-    versions of resources ending with '/draft'."""
+    """url to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'."""
 
     resolve_draft: bool = True
     """Flag to resolve draft resource versions following the pattern

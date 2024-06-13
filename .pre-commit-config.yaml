@@ -24,7 +24,7 @@ repos:
         always_run: true
         pass_filenames: false
       - id: generate json schemas
-        name: generate json modules
+        name: generate json schemas
         entry: python scripts/generate_json_schemas.py
         language: system
         always_run: true
