@@ -1,14 +1,13 @@
 import io
 import warnings
 from contextlib import nullcontext
-from dataclasses import dataclass
+from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
 from typing import (
     IO,
     Any,
     Dict,
-    List,
     Mapping,
     Optional,
     TextIO,
@@ -21,23 +20,23 @@ import numpy
 import requests
 from loguru import logger
 from numpy.typing import NDArray
-from pydantic import DirectoryPath, FilePath, NewPath
+from pydantic import DirectoryPath, FilePath, NewPath, RootModel
 from ruyaml import YAML
 from typing_extensions import Unpack
 
 from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
-    SLOTS,
     BioimageioYamlContent,
     FileDescr,
     HashKwargs,
+    LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
 )
-from .io_basics import FileName, Sha256
+from .io_basics import FileName
 from .types import FileSource, PermissiveFileSource
 from .utils import cache
 
@@ -91,37 +90,27 @@ def open_bioimageio_yaml(
         # check if `source` is a collection id
         if (
             not isinstance(source, str)
-            or not isinstance(settings.collection, str)
-            or "/" not in settings.collection
+            or not isinstance(settings.id_map, str)
+            or "/" not in settings.id_map
         ):
             raise
 
-        collection = get_collection()
-        if source not in collection:
-            if isinstance(source, str) and source.endswith("/draft"):
-                if settings.resolve_draft:
-                    collection_url = settings.collection_draft
-                else:
-                    collection_url = ""
-                    logger.error(
-                        "Did not try to resolve '{}' as BIOIMAGEIO_RESOLVE_DRAFT is set to False",
-                        source,
-                    )
+        id_map = get_id_map()
+        if id_map and source not in id_map:
+            close_matches = get_close_matches(source, id_map)
+            if len(close_matches) == 0:
+                raise
+
+            if len(close_matches) == 1:
+                did_you_mean = f" Did you mean '{close_matches[0]}'?"
             else:
-                collection_url = settings.collection
+                did_you_mean = f" Did you mean any of {close_matches}?"
 
-            logger.error("'{}' not found in collection {}", source, collection_url)
-            raise
+            raise FileNotFoundError(f"'{source}' not found.{did_you_mean}")
 
-        entry = collection[source]
-        logger.info(
-            "{} loading {}/{} from {}",
-            entry.emoji,
-            entry.id,
-            entry.version,
-            entry.url,
-        )
-        downloaded = download(entry.url, sha256=entry.sha256)
+        entry = id_map[source]
+        logger.info("loading {} from {}", source, entry.source)
+        downloaded = entry.download()
 
     local_source = downloaded.path
     root = downloaded.original_root
@@ -138,105 +127,31 @@ def open_bioimageio_yaml(
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
-@dataclass(frozen=True, **SLOTS)
-class CollectionEntry:
-    """collection entry
-
-    note: The BioImage.IO collection is still under development;
-          this collection entry might change in the future!
-    """
-
-    id: str
-    """concept id of the resource; to identify a resource version use <id>/<version>.
-    See `version` below."""
-    version: str
-    """version. To identify a resource version use <id>/<version> for reference"""
-    emoji: str
-    """a Unicode emoji string symbolizing this resource"""
-    url: str
-    """Resource Description File (RDF) URL"""
-    sha256: Optional[Sha256]
-    """SHA256 hash value of RDF"""
-    doi: Optional[str]
-    """DOI (regsitered through zenodo.org)
-    as alternative reference of this bioimage.io upload."""
+_IdMap = RootModel[Dict[str, LightHttpFileDescr]]
 
 
-def _get_one_collection(url: str):
-    ret: Dict[str, CollectionEntry] = {}
+def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
-        logger.error("invalid collection url: {}", url)
+        logger.error("invalid id map url: {}", url)
     try:
-        collection: List[Dict[Any, Any]] = (
-            requests.get(url, timeout=5).json().get("collection")
-        )
+        id_map_raw: Any = requests.get(url, timeout=10).json()
     except Exception as e:
         logger.error("failed to get {}: {}", url, e)
-        return ret
+        return {}
 
-    if not isinstance(collection, list):
-        logger.error("`collection` field of {} has type {}", url, type(collection))
-        return ret
-
-    for raw_entry in collection:
-        assert isinstance(raw_entry, dict), type(raw_entry)
-        v: Any
-        sha: Any
-        d: Any
-        try:
-            for i, (v, sha, d) in enumerate(
-                zip(
-                    raw_entry["versions"],
-                    raw_entry["versions_sha256"],
-                    raw_entry["dois"],
-                )
-            ):
-                entry = CollectionEntry(
-                    id=raw_entry["id"],
-                    emoji=raw_entry.get("id_emoji", raw_entry.get("nickname_icon", "")),
-                    url=raw_entry["rdf_source"].replace(
-                        f"/{raw_entry['versions'][0]}/", f"/{v}/"
-                    ),
-                    sha256=sha,
-                    version=v,
-                    doi=d,
-                )
-                ret[v] = entry
-                if i == 0:
-                    # latest version
-                    ret[raw_entry["id"]] = entry
-                    if (concept_doi := raw_entry.get("concept_doi")) is not None:
-                        ret[concept_doi] = entry
-
-                    if (nickname := raw_entry.get("nickname")) is not None:
-                        ret[nickname] = entry
-
-                if d is not None:
-                    ret[d] = entry
-
-        except Exception as e:
-            entry_id = (
-                raw_entry.get("id", "unknown")
-                if isinstance(raw_entry, dict)
-                else "unknown"
-            )
-            logger.error(
-                "failed to parse collection entry with `id={}`: {}", entry_id, e
-            )
-            continue
-
-    return ret
+    id_map = _IdMap.model_validate(id_map_raw)
+    return id_map.root
 
 
 @cache
-def get_collection() -> Mapping[str, CollectionEntry]:
+def get_id_map() -> Mapping[str, LightHttpFileDescr]:
     try:
         if settings.resolve_draft:
-            ret = _get_one_collection(settings.collection_draft)
+            ret = _get_id_map_impl(settings.id_map_draft)
         else:
             ret = {}
 
-        ret.update(_get_one_collection(settings.collection))
+        ret.update(_get_id_map_impl(settings.id_map))
 
     except Exception as e:
         logger.error("failed to get resource id mapping: {}", e)

@@ -596,6 +596,19 @@ def download(
     )
 
 
+class LightHttpFileDescr(Node):
+    """http source with sha256 value (minimal validation)"""
+
+    source: pydantic.HttpUrl
+    """file source"""
+
+    sha256: Sha256
+    """SHA256 checksum of the source file"""
+
+    def download(self):
+        return download(self.source, sha256=self.sha256)
+
+
 class FileDescr(Node):
     source: ImportantFileSource
     """∈📦 file source"""
