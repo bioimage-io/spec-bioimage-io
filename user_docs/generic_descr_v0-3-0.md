@@ -18,17 +18,17 @@ Use this generic resource description, if none of the known specific types match
 | ∈📦  | Files referenced in fields which are marked with '∈📦 ' are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |
 
 ## `type`<sub> str</sub> ≝ `generic`
-
+The resource type assigns a broad category to the resource.
 
 
 
 ## `format_version`<sub> Literal[0.3.0]</sub> ≝ `0.3.0`
-
+The **format** version of this resource specification
 
 
 
 ## `authors`<sub> Sequence[Author]</sub>
-
+The authors are the creators of this resource description and the primary points of contact.
 
 <details><summary>Sequence[Author]
 
@@ -37,17 +37,20 @@ Use this generic resource description, if none of the known specific types match
 
 **Author:**
 ### `authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
-
+Affiliation
 
 
 
 ### `authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
-
+Email
 
 
 
 ### `authors.i.orcid`<sub> Optional</sub> ≝ `None`
-
+An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
+) in hyphenated groups of 4 digits, (and [valid](
+https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
+) as per ISO 7064 11,2.)
 [*Example:*](#authorsiorcid) '0000-0001-2345-6789'
 
 
@@ -66,7 +69,7 @@ Optional[_internal.types.OrcidId]
 </details>
 
 ## `cite`<sub> Sequence[CiteEntry]</sub>
-
+citations
 
 <details><summary>Sequence[CiteEntry]
 
@@ -75,41 +78,46 @@ Optional[_internal.types.OrcidId]
 
 **CiteEntry:**
 ### `cite.i.text`<sub> str</sub>
-
+free text description
 
 
 
 ### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
-
+A digital object identifier (DOI) is the prefered citation reference.
+See https://www.doi.org/ for details. (alternatively specify `url`)
 
 
 
 ### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-
+URL to cite (preferably specify a `doi` instead)
 
 
 
 </details>
 
 ## `description`<sub> str</sub>
-
+A string containing a brief description.
 
 
 
 ## `license`<sub> Union</sub>
-
+A [SPDX license identifier](https://spdx.org/licenses/).
+We do not support custom license beyond the SPDX license list, if you need that please
+[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
+to discuss your intentions with the community.
 [*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 
 ## `name`<sub> str</sub>
-
+A human-friendly name of the resource description.
+May only contains letters, digits, underscore, minus, parentheses and spaces.
 
 
 
 ## `attachments`<sub> Sequence[_internal.io.FileDescr]</sub> ≝ `[]`
-
+file attachments
 
 <details><summary>Sequence[_internal.io.FileDescr]
 
@@ -118,13 +126,13 @@ Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
-
+∈📦 file source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
 
 ### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
-
+SHA256 checksum of the source file
 
 
 Optional[_internal.io_basics.Sha256]
@@ -132,7 +140,7 @@ Optional[_internal.io_basics.Sha256]
 </details>
 
 ## `badges`<sub> Sequence</sub> ≝ `[]`
-
+badges associated with this resource
 
 <details><summary>Sequence[generic.v0_2.BadgeDescr]
 
@@ -141,13 +149,13 @@ Optional[_internal.io_basics.Sha256]
 
 **generic.v0_2.BadgeDescr:**
 ### `badges.i.label`<sub> str</sub>
-
+badge label to display on hover
 [*Example:*](#badgesilabel) 'Open in Colab'
 
 
 
 ### `badges.i.icon`<sub> Union</sub> ≝ `None`
-
+badge icon
 [*Example:*](#badgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
 <details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, Url*, None]
@@ -156,7 +164,7 @@ Optional[_internal.io_basics.Sha256]
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbdf06ee340>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fc7d5ed4e00>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -165,7 +173,7 @@ Union of
 </details>
 
 ### `badges.i.url`<sub> _internal.url.HttpUrl</sub>
-
+target URL
 [*Example:*](#badgesiurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 
 
@@ -173,7 +181,24 @@ Union of
 </details>
 
 ## `config`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
-
+A field for custom configuration that can contain any keys not present in the RDF spec.
+This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
+Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
+it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
+for example:
+```yaml
+config:
+    bioimageio:  # here is the domain name
+        my_custom_key: 3837283
+        another_key:
+            nested: value
+    imagej:       # config specific to ImageJ
+        macro_dir: path/to/macro/file
+```
+If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+You may want to list linked files additionally under `attachments` to include them when packaging a resource.
+(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
+an altered rdf.yaml file with local references to the downloaded files.)
 [*Example:*](#config) {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
 
 
@@ -187,12 +212,13 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbdf06ee340>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fc7d5ed4e00>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
-
+∈📦 URL or relative path to a markdown file with additional documentation.
+The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
 [*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 <details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]*]
@@ -200,18 +226,18 @@ Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _in
 </summary>
 
 Optional[Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fbdf06ee340>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fc7d5ed4e00>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
 ## `git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-
+A URL to the Git repository where the resource is being developed.
 [*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
 
 
 ## `icon`<sub> Union</sub> ≝ `None`
-
+An icon for illustration, e.g. on bioimage.io
 
 <details><summary>Union[str*, Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*, None]
 
@@ -220,31 +246,32 @@ Optional[Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _inter
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbdf06ee340>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fc7d5ed4e00>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
 </details>
 
 ## `id`<sub> Optional[ResourceId]</sub> ≝ `None`
-
+Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)
 
 
 
 ## `id_emoji`<sub> Optional</sub> ≝ `None`
-
+UTF-8 emoji for display alongside the `id`.
 
 
 Optional[str (Len(min_length=1, max_length=2))]
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
-
+IDs of other bioimage.io resources
 [*Example:*](#links) ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 
 
 
 ## `maintainers`<sub> Sequence[Maintainer]</sub> ≝ `[]`
-
+Maintainers of this resource.
+If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name
 
 <details><summary>Sequence[Maintainer]
 
@@ -253,17 +280,20 @@ Optional[str (Len(min_length=1, max_length=2))]
 
 **Maintainer:**
 ### `maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
-
+Affiliation
 
 
 
 ### `maintainers.i.email`<sub> Optional[Email]</sub> ≝ `None`
-
+Email
 
 
 
 ### `maintainers.i.orcid`<sub> Optional</sub> ≝ `None`
-
+An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
+) in hyphenated groups of 4 digits, (and [valid](
+https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
+) as per ISO 7064 11,2.)
 [*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
 
 
@@ -283,23 +313,23 @@ Optional[str (Predicate(_has_no_slash))]
 </details>
 
 ## `parent`<sub> Optional[ResourceId]</sub> ≝ `None`
-
+The description from which this one is derived
 
 
 
 ## `source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-
+The primary source of the resource
 
 
 
 ## `tags`<sub> Sequence[str]</sub> ≝ `[]`
-
+Associated tags
 [*Example:*](#tags) ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 
 
 
 ## `uploader`<sub> Optional[generic.v0_2.Uploader]</sub> ≝ `None`
-
+The person who uploaded the model (e.g. to bioimage.io)
 
 <details><summary>Optional[generic.v0_2.Uploader]
 
@@ -308,12 +338,12 @@ Optional[str (Predicate(_has_no_slash))]
 
 **generic.v0_2.Uploader:**
 ### `uploader.email`<sub> Email</sub>
-
+Email
 
 
 
 ### `uploader.name`<sub> Optional</sub> ≝ `None`
-
+name
 
 
 Optional[str (AfterValidator(_remove_slashes))]
@@ -321,7 +351,7 @@ Optional[str (AfterValidator(_remove_slashes))]
 </details>
 
 ## `version`<sub> Optional</sub> ≝ `None`
-
+The version of the resource following SemVer 2.0.
 
 
 Optional[_internal.version_type.Version]

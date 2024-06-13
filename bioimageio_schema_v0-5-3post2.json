@@ -16,6 +16,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 file source",
                     "title": "Source"
                 },
                 "sha256": {
@@ -28,9 +29,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "callable": {
+                    "description": "Identifier of the callable that returns a torch.nn.Module instance.",
                     "examples": [
                         "MyNetworkClass",
                         "get_my_model"
@@ -42,6 +45,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "key word arguments for the `callable`",
                     "title": "Kwargs",
                     "type": "object"
                 }
@@ -57,6 +61,7 @@
             "additionalProperties": false,
             "properties": {
                 "callable": {
+                    "description": "Identifier of the callable that returns a torch.nn.Module instance.",
                     "examples": [
                         "MyNetworkClass",
                         "get_my_model"
@@ -68,10 +73,12 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "key word arguments for the `callable`",
                     "title": "Kwargs",
                     "type": "object"
                 },
                 "import_from": {
+                    "description": "Where to import the callable from, i.e. `from <import_from> import <callable>`",
                     "title": "Import From",
                     "type": "string"
                 }
@@ -87,6 +94,7 @@
             "additionalProperties": true,
             "properties": {
                 "files": {
+                    "description": "\u2208\ud83d\udce6 File attachments",
                     "items": {
                         "anyOf": [
                             {
@@ -121,6 +129,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Affiliation",
                     "title": "Affiliation"
                 },
                 "email": {
@@ -134,6 +143,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Email",
                     "title": "Email"
                 },
                 "orcid": {
@@ -146,6 +156,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
                     "examples": [
                         "0000-0001-2345-6789"
                     ],
@@ -179,6 +190,7 @@
             "description": "A custom badge",
             "properties": {
                 "label": {
+                    "description": "badge label to display on hover",
                     "examples": [
                         "Open in Colab"
                     ],
@@ -208,12 +220,14 @@
                         }
                     ],
                     "default": null,
+                    "description": "badge icon",
                     "examples": [
                         "https://colab.research.google.com/assets/colab-badge.svg"
                     ],
                     "title": "Icon"
                 },
                 "url": {
+                    "description": "target URL",
                     "examples": [
                         "https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"
                     ],
@@ -265,6 +279,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The batch size may be fixed to 1,\notherwise (the default) it may be chosen arbitrarily depending on available memory",
                     "title": "Size"
                 }
             },
@@ -275,6 +290,7 @@
             "additionalProperties": false,
             "properties": {
                 "threshold": {
+                    "description": "The fixed threshold values along `axis`",
                     "items": {
                         "type": "number"
                     },
@@ -283,6 +299,7 @@
                     "type": "array"
                 },
                 "axis": {
+                    "description": "The `threshold` axis",
                     "examples": [
                         "channel"
                     ],
@@ -301,6 +318,7 @@
             "additionalProperties": false,
             "properties": {
                 "threshold": {
+                    "description": "The fixed threshold",
                     "title": "Threshold",
                     "type": "number"
                 }
@@ -353,6 +371,7 @@
             "additionalProperties": false,
             "properties": {
                 "text": {
+                    "description": "free text description",
                     "title": "Text",
                     "type": "string"
                 },
@@ -366,6 +385,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A digital object identifier (DOI) is the prefered citation reference.\nSee https://www.doi.org/ for details. (alternatively specify `url`)",
                     "title": "Doi"
                 },
                 "url": {
@@ -378,6 +398,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL to cite (preferably specify a `doi` instead)",
                     "title": "Url"
                 }
             },
@@ -391,10 +412,12 @@
             "additionalProperties": false,
             "properties": {
                 "min": {
+                    "description": "minimum value for clipping",
                     "title": "Min",
                     "type": "number"
                 },
                 "max": {
+                    "description": "maximum value for clipping",
                     "title": "Max",
                     "type": "number"
                 }
@@ -503,6 +526,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 Conda environment file.\nAllows to specify custom dependencies, see conda docs:\n- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)\n- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)",
                     "examples": [
                         "environment.yaml"
                     ],
@@ -518,6 +542,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 }
             },
@@ -543,6 +568,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 file source",
                     "title": "Source"
                 },
                 "sha256": {
@@ -555,6 +581,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 }
             },
@@ -569,6 +596,7 @@
             "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
             "properties": {
                 "mean": {
+                    "description": "The mean value(s) to normalize with.",
                     "items": {
                         "type": "number"
                     },
@@ -577,6 +605,7 @@
                     "type": "array"
                 },
                 "std": {
+                    "description": "The standard deviation value(s) to normalize with.\nSize must match `mean` values.",
                     "items": {
                         "minimum": 1e-06,
                         "type": "number"
@@ -586,6 +615,7 @@
                     "type": "array"
                 },
                 "axis": {
+                    "description": "The axis of the mean/std values to normalize each entry along that dimension\nseparately.",
                     "examples": [
                         "channel",
                         "index"
@@ -638,10 +668,12 @@
             "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
             "properties": {
                 "mean": {
+                    "description": "The mean value to normalize with.",
                     "title": "Mean",
                     "type": "number"
                 },
                 "std": {
+                    "description": "The standard deviation value to normalize with.",
                     "minimum": 1e-06,
                     "title": "Std",
                     "type": "number"
@@ -659,10 +691,12 @@
             "description": "Output tensor shape depending on an input tensor shape.\n`shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`",
             "properties": {
                 "reference_tensor": {
+                    "description": "Name of the reference tensor.",
                     "title": "Reference Tensor",
                     "type": "string"
                 },
                 "scale": {
+                    "description": "output_pix/input_pix for each dimension.\n'null' values indicate new dimensions, whose length is defined by 2*`offset`",
                     "items": {
                         "anyOf": [
                             {
@@ -678,6 +712,7 @@
                     "type": "array"
                 },
                 "offset": {
+                    "description": "Position of origin wrt to input.",
                     "items": {
                         "anyOf": [
                             {
@@ -718,6 +753,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- parameterized series of valid sizes (`ParameterizedSize`)\n- reference to another axis with an optional offset (`SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -754,6 +790,7 @@
                 },
                 "concatenable": {
                     "default": false,
+                    "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
                     "title": "Concatenable",
                     "type": "boolean"
                 }
@@ -800,6 +837,7 @@
                             "$ref": "#/$defs/DataDependentSize"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- reference to another axis with an optional offset (`SizeReference`)\n- data dependent size using `DataDependentSize` (size is only known after model inference)",
                     "examples": [
                         10,
                         {
@@ -848,6 +886,7 @@
                         null,
                         null
                     ],
+                    "description": "Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\n`None` corresponds to min/max of what can be expressed by `data_type`.",
                     "maxItems": 2,
                     "minItems": 2,
                     "prefixItems": [
@@ -893,6 +932,7 @@
                 },
                 "scale": {
                     "default": 1.0,
+                    "description": "Scale for data on an interval (or ratio) scale.",
                     "title": "Scale",
                     "type": "number"
                 },
@@ -906,6 +946,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Offset for data on a ratio scale.",
                     "title": "Offset"
                 }
             },
@@ -925,6 +966,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Affiliation",
                     "title": "Affiliation"
                 },
                 "email": {
@@ -938,6 +980,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Email",
                     "title": "Email"
                 },
                 "orcid": {
@@ -950,6 +993,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
                     "examples": [
                         "0000-0001-2345-6789"
                     ],
@@ -1012,6 +1056,7 @@
                             "type": "array"
                         }
                     ],
+                    "description": "A fixed set of nominal or an ascending sequence of ordinal values.\nIn this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.\nString `values` are interpreted as labels for tensor values 0, ..., N.\nNote: as YAML 1.2 does not natively support a \"set\" datatype,\nnominal values should be given as a sequence (aka list/array) as well.",
                     "title": "Values"
                 },
                 "type": {
@@ -1070,6 +1115,7 @@
             "description": "A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`.",
             "properties": {
                 "min": {
+                    "description": "The minimum input shape",
                     "items": {
                         "type": "integer"
                     },
@@ -1078,6 +1124,7 @@
                     "type": "array"
                 },
                 "step": {
+                    "description": "The minimum shape change",
                     "items": {
                         "type": "integer"
                     },
@@ -1136,9 +1183,11 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Run mode name",
                     "title": "Name"
                 },
                 "kwargs": {
+                    "description": "Run mode specific key word arguments",
                     "title": "Kwargs",
                     "type": "object"
                 }
@@ -1153,6 +1202,7 @@
             "additionalProperties": false,
             "properties": {
                 "axis": {
+                    "description": "The axis of of gains/offsets values.",
                     "examples": [
                         "channel"
                     ],
@@ -1173,6 +1223,7 @@
                         }
                     ],
                     "default": 1.0,
+                    "description": "multiplicative factor",
                     "title": "Gain"
                 },
                 "offset": {
@@ -1189,6 +1240,7 @@
                         }
                     ],
                     "default": 0.0,
+                    "description": "additive term",
                     "title": "Offset"
                 }
             },
@@ -1203,10 +1255,12 @@
             "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
             "properties": {
                 "tensor_id": {
+                    "description": "tensor id of the reference axis",
                     "title": "Tensor Id",
                     "type": "string"
                 },
                 "axis_id": {
+                    "description": "axis id of the reference axis",
                     "title": "Axis Id",
                     "type": "string"
                 },
@@ -1239,6 +1293,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- parameterized series of valid sizes (`ParameterizedSize`)\n- reference to another axis with an optional offset (`SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1326,6 +1381,7 @@
                 },
                 "concatenable": {
                     "default": false,
+                    "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
                     "title": "Concatenable",
                     "type": "boolean"
                 }
@@ -1349,6 +1405,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1441,6 +1498,7 @@
             "additionalProperties": false,
             "properties": {
                 "halo": {
+                    "description": "The halo should be cropped from the output tensor to avoid boundary effects.\nIt is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.\nTo document a halo that is already cropped by the model use `size.offset` instead.",
                     "minimum": 1,
                     "title": "Halo",
                     "type": "integer"
@@ -1451,6 +1509,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1555,6 +1614,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- parameterized series of valid sizes (`ParameterizedSize`)\n- reference to another axis with an optional offset (`SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1634,6 +1694,7 @@
                 },
                 "concatenable": {
                     "default": false,
+                    "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
                     "title": "Concatenable",
                     "type": "boolean"
                 }
@@ -1657,6 +1718,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "The size/length of this axis can be specified as\n- fixed integer\n- reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1741,6 +1803,7 @@
             "additionalProperties": false,
             "properties": {
                 "halo": {
+                    "description": "The halo should be cropped from the output tensor to avoid boundary effects.\nIt is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.\nTo document a halo that is already cropped by the model use `size.offset` instead.",
                     "minimum": 1,
                     "title": "Halo",
                     "type": "integer"
@@ -1751,6 +1814,7 @@
                             "$ref": "#/$defs/SizeReference"
                         }
                     ],
+                    "description": "reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
                         {
@@ -1835,6 +1899,7 @@
             "additionalProperties": false,
             "properties": {
                 "email": {
+                    "description": "Email",
                     "format": "email",
                     "title": "Email",
                     "type": "string"
@@ -1849,6 +1914,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "name",
                     "title": "Name"
                 }
             },
@@ -1917,6 +1983,7 @@
             "description": "Bioimage.io description of an application.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description",
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
@@ -1959,9 +2026,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -1977,9 +2046,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "file and other attachments"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -1990,6 +2061,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -2016,6 +2088,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL to download the resource from (deprecated)",
                     "title": "Download Url"
                 },
                 "git_repo": {
@@ -2028,6 +2101,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -2055,9 +2129,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -2080,9 +2156,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -2106,9 +2184,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.",
                     "title": "Rdf Source"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -2133,7 +2213,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "version_number": {
                     "anyOf": [
@@ -2145,11 +2226,13 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version)",
                     "title": "Version Number"
                 },
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
+                    "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
                     ],
@@ -2157,6 +2240,7 @@
                     "type": "string"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -2180,6 +2264,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -2196,6 +2281,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -2222,6 +2308,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "source": {
@@ -2257,12 +2344,14 @@
             "description": "Bioimage.io description of an application.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
                     "type": "string"
@@ -2299,9 +2388,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -2310,6 +2401,7 @@
                     "type": "array"
                 },
                 "attachments": {
+                    "description": "file attachments",
                     "items": {
                         "$ref": "#/$defs/FileDescr"
                     },
@@ -2317,6 +2409,7 @@
                     "type": "array"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -2325,6 +2418,7 @@
                     "type": "array"
                 },
                 "license": {
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -2337,6 +2431,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -2363,6 +2458,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -2390,9 +2486,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration, e.g. on bioimage.io",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -2415,9 +2513,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -2425,6 +2525,7 @@
                     "type": "array"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -2449,11 +2550,13 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
+                    "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
                     ],
@@ -2477,6 +2580,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -2484,6 +2588,7 @@
                     "title": "Documentation"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -2509,6 +2614,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "parent": {
@@ -2521,6 +2627,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The description from which this one is derived",
                     "title": "Parent"
                 },
                 "source": {
@@ -2559,6 +2666,7 @@
             "description": "A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage\nprocessing.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description",
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
@@ -2601,9 +2709,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -2619,9 +2729,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "file and other attachments"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -2632,6 +2744,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -2658,6 +2771,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL to download the resource from (deprecated)",
                     "title": "Download Url"
                 },
                 "git_repo": {
@@ -2670,6 +2784,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -2697,9 +2812,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -2722,9 +2839,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -2748,9 +2867,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.",
                     "title": "Rdf Source"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -2775,7 +2896,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "version_number": {
                     "anyOf": [
@@ -2787,11 +2909,13 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version)",
                     "title": "Version Number"
                 },
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
+                    "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
                     ],
@@ -2799,6 +2923,7 @@
                     "type": "string"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -2822,6 +2947,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -2838,6 +2964,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -2864,6 +2991,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "source": {
@@ -2876,6 +3004,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\"URL to the source of the dataset.",
                     "title": "Source"
                 }
             },
@@ -2891,6 +3020,7 @@
             "description": "Reference to a bioimage.io dataset.",
             "properties": {
                 "id": {
+                    "description": "A valid dataset `id` from the bioimage.io collection.",
                     "title": "Id",
                     "type": "string"
                 },
@@ -2904,6 +3034,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version) of linked dataset",
                     "title": "Version Number"
                 }
             },
@@ -2918,12 +3049,14 @@
             "description": "A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage\nprocessing.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
                     "type": "string"
@@ -2960,9 +3093,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -2971,6 +3106,7 @@
                     "type": "array"
                 },
                 "attachments": {
+                    "description": "file attachments",
                     "items": {
                         "$ref": "#/$defs/FileDescr"
                     },
@@ -2978,6 +3114,7 @@
                     "type": "array"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -2986,6 +3123,7 @@
                     "type": "array"
                 },
                 "license": {
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -2998,6 +3136,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -3024,6 +3163,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -3051,9 +3191,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration, e.g. on bioimage.io",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -3076,9 +3218,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -3086,6 +3230,7 @@
                     "type": "array"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -3110,11 +3255,13 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
+                    "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
                     ],
@@ -3138,6 +3285,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -3145,6 +3293,7 @@
                     "title": "Documentation"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -3170,6 +3319,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "parent": {
@@ -3182,6 +3332,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The description from which this one is derived",
                     "title": "Parent"
                 },
                 "source": {
@@ -3194,6 +3345,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\"URL to the source of the dataset.",
                     "title": "Source"
                 }
             },
@@ -3212,6 +3364,7 @@
             "description": "Reference to a bioimage.io dataset.",
             "properties": {
                 "id": {
+                    "description": "A valid dataset `id` from the bioimage.io collection.",
                     "title": "Id",
                     "type": "string"
                 }
@@ -3272,6 +3425,7 @@
             "additionalProperties": false,
             "properties": {
                 "name": {
+                    "description": "Tensor name. No duplicates are allowed.",
                     "title": "Name",
                     "type": "string"
                 },
@@ -3281,6 +3435,7 @@
                     "type": "string"
                 },
                 "axes": {
+                    "description": "Axes identifying characters. Same length and order as the axes in `shape`.\n| axis | description |\n| --- | --- |\n|  b  |  batch (groups multiple samples) |\n|  i  |  instance/index/element |\n|  t  |  time |\n|  c  |  channel |\n|  z  |  spatial dimension z |\n|  y  |  spatial dimension y |\n|  x  |  spatial dimension x |",
                     "title": "Axes",
                     "type": "string"
                 },
@@ -3304,9 +3459,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\nIf not specified, the full data range that can be expressed in `data_type` is allowed.",
                     "title": "Data Range"
                 },
                 "data_type": {
+                    "description": "For now an input tensor is expected to be given as `float32`.\nThe data flow in bioimage.io models is explained\n[in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).",
                     "enum": [
                         "float32",
                         "uint8",
@@ -3327,6 +3484,7 @@
                             "$ref": "#/$defs/ParameterizedInputShape"
                         }
                     ],
+                    "description": "Specification of input tensor shape.",
                     "examples": [
                         [
                             1,
@@ -3352,6 +3510,7 @@
                     "title": "Shape"
                 },
                 "preprocessing": {
+                    "description": "Description of how this input should be preprocessed.",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -3414,6 +3573,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -3426,6 +3586,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -3437,7 +3598,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -3452,6 +3614,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -3465,6 +3628,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -3490,6 +3654,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -3504,7 +3669,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "TensorFlow version used to create these weights"
                 }
             },
             "required": [
@@ -3518,6 +3684,7 @@
             "description": "Reference to a bioimage.io model.",
             "properties": {
                 "id": {
+                    "description": "A valid model `id` from the bioimage.io collection.",
                     "title": "Id",
                     "type": "string"
                 },
@@ -3531,6 +3698,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version) of linked model",
                     "title": "Version Number"
                 }
             },
@@ -3545,6 +3713,7 @@
             "description": "Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.\n\nThese fields are typically stored in a YAML file which we call a model resource description file (model RDF).",
             "properties": {
                 "name": {
+                    "description": "A human-readable name of this model.\nIt should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters.",
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
@@ -3587,9 +3756,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of the model RDF and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -3606,9 +3777,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "file and other attachments"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -3619,6 +3792,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -3645,6 +3819,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL to download the resource from (deprecated)",
                     "title": "Download Url"
                 },
                 "git_repo": {
@@ -3657,6 +3832,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -3684,9 +3860,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -3709,9 +3887,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -3735,9 +3915,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.",
                     "title": "Rdf Source"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -3762,7 +3944,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "version_number": {
                     "anyOf": [
@@ -3774,11 +3957,13 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version)",
                     "title": "Version Number"
                 },
                 "format_version": {
                     "const": "0.4.10",
                     "default": "0.4.10",
+                    "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.4.10"
                     ],
@@ -3788,6 +3973,7 @@
                 "type": {
                     "const": "model",
                     "default": "model",
+                    "description": "Specialized resource type 'model'",
                     "enum": [
                         "model"
                     ],
@@ -3804,6 +3990,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "documentation": {
@@ -3819,6 +4006,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '[#[#]]# Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -3826,6 +4014,7 @@
                     "title": "Documentation"
                 },
                 "inputs": {
+                    "description": "Describes the input tensors expected by this model.",
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_4__InputTensorDescr"
                     },
@@ -3834,6 +4023,7 @@
                     "type": "array"
                 },
                 "license": {
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do notsupport custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -3843,6 +4033,7 @@
                     "type": "string"
                 },
                 "outputs": {
+                    "description": "Describes the output tensors.",
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_4__OutputTensorDescr"
                     },
@@ -3851,6 +4042,7 @@
                     "type": "array"
                 },
                 "packaged_by": {
+                    "description": "The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -3866,7 +4058,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The model from which this model is derived, e.g. by fine-tuning the weights."
                 },
                 "run_mode": {
                     "anyOf": [
@@ -3877,9 +4070,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet."
                 },
                 "sample_inputs": {
+                    "description": "\u2208\ud83d\udce6 URLs/relative paths to sample inputs to illustrate possible inputs for the model,\nfor example stored as PNG or TIFF images.\nThe sample files primarily serve to inform a human user about an example use case",
                     "items": {
                         "anyOf": [
                             {
@@ -3898,6 +4093,7 @@
                     "type": "array"
                 },
                 "sample_outputs": {
+                    "description": "\u2208\ud83d\udce6 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
                     "items": {
                         "anyOf": [
                             {
@@ -3916,6 +4112,7 @@
                     "type": "array"
                 },
                 "test_inputs": {
+                    "description": "\u2208\ud83d\udce6 Test input tensors compatible with the `inputs` description for a **single test case**.\nThis means if your model has more than one input, you should provide one URL/relative path for each input.\nEach test input should be a file with an ndarray in\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe extension must be '.npy'.",
                     "items": {
                         "anyOf": [
                             {
@@ -3935,6 +4132,7 @@
                     "type": "array"
                 },
                 "test_outputs": {
+                    "description": "\u2208\ud83d\udce6 Analog to `test_inputs`.",
                     "items": {
                         "anyOf": [
                             {
@@ -3969,10 +4167,16 @@
                         }
                     ],
                     "default": null,
+                    "description": "The dataset used to train this model",
                     "title": "Training Data"
                 },
                 "weights": {
-                    "$ref": "#/$defs/bioimageio__spec__model__v0_4__WeightsDescr"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/bioimageio__spec__model__v0_4__WeightsDescr"
+                        }
+                    ],
+                    "description": "The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model."
                 }
             },
             "required": [
@@ -4007,6 +4211,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -4019,6 +4224,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -4030,7 +4236,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -4045,6 +4252,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -4058,6 +4266,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -4083,6 +4292,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -4099,6 +4309,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "ONNX opset version",
                     "title": "Opset Version"
                 }
             },
@@ -4112,6 +4323,7 @@
             "additionalProperties": false,
             "properties": {
                 "name": {
+                    "description": "Tensor name. No duplicates are allowed.",
                     "title": "Name",
                     "type": "string"
                 },
@@ -4121,6 +4333,7 @@
                     "type": "string"
                 },
                 "axes": {
+                    "description": "Axes identifying characters. Same length and order as the axes in `shape`.\n| axis | description |\n| --- | --- |\n|  b  |  batch (groups multiple samples) |\n|  i  |  instance/index/element |\n|  t  |  time |\n|  c  |  channel |\n|  z  |  spatial dimension z |\n|  y  |  spatial dimension y |\n|  x  |  spatial dimension x |",
                     "title": "Axes",
                     "type": "string"
                 },
@@ -4144,9 +4357,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\nIf not specified, the full data range that can be expressed in `data_type` is allowed.",
                     "title": "Data Range"
                 },
                 "data_type": {
+                    "description": "Data type.\nThe data flow in bioimage.io models is explained\n[in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).",
                     "enum": [
                         "float32",
                         "float64",
@@ -4175,6 +4390,7 @@
                             "$ref": "#/$defs/ImplicitOutputShape"
                         }
                     ],
+                    "description": "Output tensor shape.",
                     "title": "Shape"
                 },
                 "halo": {
@@ -4190,9 +4406,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "The `halo` that should be cropped from the output tensor to avoid boundary effects.\nThe `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.\nTo document a `halo` that is already cropped by the model `shape.offset` has to be used instead.",
                     "title": "Halo"
                 },
                 "postprocessing": {
+                    "description": "Description of how this output should be postprocessed.",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -4259,6 +4477,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -4271,6 +4490,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -4282,7 +4502,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -4297,6 +4518,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -4310,6 +4532,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -4335,6 +4558,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -4351,6 +4575,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "callable returning a torch.nn.Module instance.\nLocal implementation: `<relative path to file>:<identifier of implementation within the file>`.\nImplementation in a dependency: `<dependency-package>.<[dependency-module]>.<identifier>`.",
                     "examples": [
                         "my_function.py:MyNetworkClass",
                         "my_module.submodule.get_my_model"
@@ -4371,6 +4596,7 @@
                     "title": "Architecture Sha256"
                 },
                 "kwargs": {
+                    "description": "key word arguments for the `architecture` callable",
                     "title": "Kwargs",
                     "type": "object"
                 },
@@ -4383,7 +4609,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Version of the PyTorch library used.\nIf `depencencies` is specified it should include pytorch and the verison has to match.\n(`dependencies` overrules `pytorch_version`)"
                 }
             },
             "required": [
@@ -4429,6 +4656,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The subset of axes to scale jointly.\nFor example xy to scale the two image axes for 2d data jointly.",
                     "examples": [
                         "xy"
                     ],
@@ -4447,6 +4675,7 @@
                         }
                     ],
                     "default": 1.0,
+                    "description": "multiplicative factor",
                     "title": "Gain"
                 },
                 "offset": {
@@ -4462,6 +4691,7 @@
                         }
                     ],
                     "default": 0.0,
+                    "description": "additive term",
                     "title": "Offset"
                 }
             },
@@ -4495,6 +4725,7 @@
             "additionalProperties": false,
             "properties": {
                 "mode": {
+                    "description": "Mode for computing mean and variance.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | Compute for the entire dataset       |\n| per_sample  | Compute for each sample individually |",
                     "enum": [
                         "per_dataset",
                         "per_sample"
@@ -4503,6 +4734,7 @@
                     "type": "string"
                 },
                 "reference_tensor": {
+                    "description": "Name of tensor to match.",
                     "title": "Reference Tensor",
                     "type": "string"
                 },
@@ -4516,6 +4748,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The subset of axes to scale jointly.\nFor example xy to normalize the two image axes for 2d data jointly.\nDefault: scale all non-batch axes jointly.",
                     "examples": [
                         "xy"
                     ],
@@ -4523,6 +4756,7 @@
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "Epsilon for numeric stability:\n\"`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -4563,6 +4797,7 @@
             "additionalProperties": false,
             "properties": {
                 "mode": {
+                    "description": "Mode for computing percentiles.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | compute for the entire dataset       |\n| per_sample  | compute for each sample individually |",
                     "enum": [
                         "per_dataset",
                         "per_sample"
@@ -4571,6 +4806,7 @@
                     "type": "string"
                 },
                 "axes": {
+                    "description": "The subset of axes to normalize jointly.\nFor example xy to normalize the two image axes for 2d data jointly.",
                     "examples": [
                         "xy"
                     ],
@@ -4587,6 +4823,7 @@
                         }
                     ],
                     "default": 0.0,
+                    "description": "The lower percentile used for normalization.",
                     "title": "Min Percentile"
                 },
                 "max_percentile": {
@@ -4599,11 +4836,13 @@
                         }
                     ],
                     "default": 100.0,
+                    "description": "The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
                     "gt": 1,
                     "title": "Max Percentile"
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -4619,6 +4858,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Tensor name to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.\nFor a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`",
                     "title": "Reference Tensor"
                 }
             },
@@ -4662,6 +4902,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -4674,6 +4915,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -4685,7 +4927,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -4700,6 +4943,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -4713,6 +4957,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -4738,6 +4983,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -4752,7 +4998,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Version of the TensorFlow library used."
                 }
             },
             "required": [
@@ -4777,6 +5024,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -4789,6 +5037,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -4800,7 +5049,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -4815,6 +5065,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -4828,6 +5079,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -4853,6 +5105,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -4867,7 +5120,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Version of the TensorFlow library used."
                 }
             },
             "required": [
@@ -4892,6 +5146,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -4904,6 +5159,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -4915,7 +5171,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Attachments that are specific to this weights entry."
                 },
                 "authors": {
                     "anyOf": [
@@ -4930,6 +5187,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "dependencies": {
@@ -4943,6 +5201,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`.",
                     "examples": [
                         "conda:environment.yaml",
                         "maven:./pom.xml",
@@ -4968,6 +5227,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -4982,7 +5242,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Version of the PyTorch library used."
                 }
             },
             "required": [
@@ -5092,6 +5353,7 @@
             "properties": {
                 "mode": {
                     "default": "fixed",
+                    "description": "Mode for computing mean and variance.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n|   fixed     | Fixed values for mean and variance   |\n| per_dataset | Compute for the entire dataset       |\n| per_sample  | Compute for each sample individually |",
                     "enum": [
                         "fixed",
                         "per_dataset",
@@ -5101,6 +5363,7 @@
                     "type": "string"
                 },
                 "axes": {
+                    "description": "The subset of axes to normalize jointly.\nFor example `xy` to normalize the two image axes for 2d data jointly.",
                     "examples": [
                         "xy"
                     ],
@@ -5124,6 +5387,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The mean value(s) to use for `mode: fixed`.\nFor example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`.",
                     "examples": [
                         [
                             1.1,
@@ -5150,6 +5414,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The standard deviation values to use for `mode: fixed`. Analogous to mean.",
                     "examples": [
                         [
                             0.1,
@@ -5161,6 +5426,7 @@
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -5232,16 +5498,19 @@
             "properties": {
                 "id": {
                     "default": "input",
+                    "description": "Input tensor id.\nNo duplicates are allowed across all inputs and outputs.",
                     "title": "Id",
                     "type": "string"
                 },
                 "description": {
                     "default": "",
+                    "description": "free text description",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
                 },
                 "axes": {
+                    "description": "tensor axes",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -5276,7 +5545,12 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "$ref": "#/$defs/FileDescr"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/FileDescr"
+                        }
+                    ],
+                    "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
                     "anyOf": [
@@ -5287,7 +5561,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "A sample tensor to illustrate a possible input/output for the model,\nThe sample image primarily serves to inform a human user about an example use case\nand is typically stored as .hdf5, .png or .tiff.\nIt has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)\n(numpy's `.npy` format is not supported).\nThe image dimensionality has to match the number of axes specified in this tensor description."
                 },
                 "data": {
                     "anyOf": [
@@ -5322,14 +5597,17 @@
                         "scale": 1.0,
                         "offset": null
                     },
+                    "description": "Description of the tensor's data values, optionally per channel.\nIf specified per channel, the data `type` needs to match across channels.",
                     "title": "Data"
                 },
                 "optional": {
                     "default": false,
+                    "description": "indicates that this tensor may be `None`",
                     "title": "Optional",
                     "type": "boolean"
                 },
                 "preprocessing": {
+                    "description": "Description of how this input should be preprocessed.\n\nnotes:\n- If preprocessing does not start with an 'ensure_dtype' entry, it is added\n  to ensure an input tensor's data type matches the input tensor's data description.\n- If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an\n  'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally\n  changing the data type.",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -5398,6 +5676,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -5410,6 +5689,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -5425,6 +5705,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -5445,13 +5726,19 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "$ref": "#/$defs/Version"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        }
+                    ],
+                    "description": "TensorFlow version used to create these weights."
                 }
             },
             "required": [
@@ -5466,6 +5753,7 @@
             "description": "Reference to a bioimage.io model.",
             "properties": {
                 "id": {
+                    "description": "A valid model `id` from the bioimage.io collection.",
                     "title": "Id",
                     "type": "string"
                 }
@@ -5481,12 +5769,14 @@
             "description": "Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.\nThese fields are typically stored in a YAML file which we call a model resource description file (model RDF).",
             "properties": {
                 "name": {
+                    "description": "A human-readable name of this model.\nIt should be no longer than 64 characters\nand may only contain letter, number, underscore, minus, parentheses and spaces.\nWe recommend to chose a name that refers to the model's task and image modality.",
                     "maxLength": 128,
                     "minLength": 5,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
                     "type": "string"
@@ -5523,9 +5813,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of the model RDF and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -5534,6 +5826,7 @@
                     "type": "array"
                 },
                 "attachments": {
+                    "description": "file attachments",
                     "items": {
                         "$ref": "#/$defs/FileDescr"
                     },
@@ -5541,6 +5834,7 @@
                     "type": "array"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -5549,6 +5843,7 @@
                     "type": "array"
                 },
                 "license": {
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -5561,6 +5856,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -5587,6 +5883,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -5614,9 +5911,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration, e.g. on bioimage.io",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -5639,9 +5938,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -5649,6 +5950,7 @@
                     "type": "array"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -5673,11 +5975,13 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "format_version": {
                     "const": "0.5.3",
                     "default": "0.5.3",
+                    "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.5.3"
                     ],
@@ -5687,6 +5991,7 @@
                 "type": {
                     "const": "model",
                     "default": "model",
+                    "description": "Specialized resource type 'model'",
                     "enum": [
                         "model"
                     ],
@@ -5703,6 +6008,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "documentation": {
@@ -5718,6 +6024,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -5725,6 +6032,7 @@
                     "title": "Documentation"
                 },
                 "inputs": {
+                    "description": "Describes the input tensors expected by this model.",
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_5__InputTensorDescr"
                     },
@@ -5733,6 +6041,7 @@
                     "type": "array"
                 },
                 "outputs": {
+                    "description": "Describes the output tensors.",
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_5__OutputTensorDescr"
                     },
@@ -5741,6 +6050,7 @@
                     "type": "array"
                 },
                 "packaged_by": {
+                    "description": "The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -5756,7 +6066,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The model from which this model is derived, e.g. by fine-tuning the weights."
                 },
                 "run_mode": {
                     "anyOf": [
@@ -5767,7 +6078,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet."
                 },
                 "timestamp": {
                     "allOf": [
@@ -5775,7 +6087,8 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-06-13T10:14:21.845694"
+                    "default": "2024-06-13T10:21:01.742469",
+                    "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
                     "anyOf": [
@@ -5793,10 +6106,16 @@
                         }
                     ],
                     "default": null,
+                    "description": "The dataset used to train this model",
                     "title": "Training Data"
                 },
                 "weights": {
-                    "$ref": "#/$defs/bioimageio__spec__model__v0_5__WeightsDescr"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/bioimageio__spec__model__v0_5__WeightsDescr"
+                        }
+                    ],
+                    "description": "The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model."
                 }
             },
             "required": [
@@ -5829,6 +6148,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -5841,6 +6161,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -5856,6 +6177,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -5876,12 +6198,14 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
                 },
                 "opset_version": {
+                    "description": "ONNX opset version",
                     "minimum": 7,
                     "title": "Opset Version",
                     "type": "integer"
@@ -5899,16 +6223,19 @@
             "properties": {
                 "id": {
                     "default": "output",
+                    "description": "Output tensor id.\nNo duplicates are allowed across all inputs and outputs.",
                     "title": "Id",
                     "type": "string"
                 },
                 "description": {
                     "default": "",
+                    "description": "free text description",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
                 },
                 "axes": {
+                    "description": "tensor axes",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -5975,7 +6302,12 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "$ref": "#/$defs/FileDescr"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/FileDescr"
+                        }
+                    ],
+                    "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
                     "anyOf": [
@@ -5986,7 +6318,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "A sample tensor to illustrate a possible input/output for the model,\nThe sample image primarily serves to inform a human user about an example use case\nand is typically stored as .hdf5, .png or .tiff.\nIt has to be readable by the [imageio library](https://imageio.readthedocs.io/en/stable/formats/index.html#supported-formats)\n(numpy's `.npy` format is not supported).\nThe image dimensionality has to match the number of axes specified in this tensor description."
                 },
                 "data": {
                     "anyOf": [
@@ -6021,9 +6354,11 @@
                         "scale": 1.0,
                         "offset": null
                     },
+                    "description": "Description of the tensor's data values, optionally per channel.\nIf specified per channel, the data `type` needs to match across channels.",
                     "title": "Data"
                 },
                 "postprocessing": {
+                    "description": "Description of how this output should be postprocessed.\n\nnote: `postprocessing` always ends with an 'ensure_dtype' operation.\n      If not given this is added to cast to this tensor's `data.type`.",
                     "items": {
                         "discriminator": {
                             "mapping": {
@@ -6096,6 +6431,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -6108,6 +6444,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -6123,6 +6460,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -6143,6 +6481,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
@@ -6160,7 +6499,12 @@
                     "title": "Architecture"
                 },
                 "pytorch_version": {
-                    "$ref": "#/$defs/Version"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        }
+                    ],
+                    "description": "Version of the PyTorch library used.\nIf `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible."
                 },
                 "dependencies": {
                     "anyOf": [
@@ -6171,7 +6515,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Custom depencies beyond pytorch.\nThe conda environment file should include pytorch and any version pinning has to be compatible with\n`pytorch_version`."
                 }
             },
             "required": [
@@ -6218,11 +6563,13 @@
             "properties": {
                 "gain": {
                     "default": 1.0,
+                    "description": "multiplicative factor",
                     "title": "Gain",
                     "type": "number"
                 },
                 "offset": {
                     "default": 0.0,
+                    "description": "additive term",
                     "title": "Offset",
                     "type": "number"
                 }
@@ -6258,6 +6605,7 @@
             "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
             "properties": {
                 "reference_tensor": {
+                    "description": "Name of tensor to match.",
                     "title": "Reference Tensor",
                     "type": "string"
                 },
@@ -6274,6 +6622,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.\nFor example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.\nTo normalize samples independently, leave out the 'batch' axis.\nDefault: Scale all axes jointly.",
                     "examples": [
                         [
                             "batch",
@@ -6285,6 +6634,7 @@
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "Epsilon for numeric stability:\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -6336,6 +6686,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.\nFor example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.\nTo normalize samples indepdencently, leave out the \"batch\" axis.\nDefault: Scale all axes jointly.",
                     "examples": [
                         [
                             "batch",
@@ -6347,6 +6698,7 @@
                 },
                 "min_percentile": {
                     "default": 0.0,
+                    "description": "The lower percentile used for normalization.",
                     "exclusiveMaximum": 100.0,
                     "minimum": 0.0,
                     "title": "Min Percentile",
@@ -6354,6 +6706,7 @@
                 },
                 "max_percentile": {
                     "default": 100.0,
+                    "description": "The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
                     "exclusiveMinimum": 1.0,
                     "maximum": 100.0,
                     "title": "Max Percentile",
@@ -6361,6 +6714,7 @@
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -6376,6 +6730,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Tensor ID to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.",
                     "title": "Reference Tensor"
                 }
             },
@@ -6415,6 +6770,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -6427,6 +6783,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -6442,6 +6799,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -6462,13 +6820,19 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "$ref": "#/$defs/Version"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        }
+                    ],
+                    "description": "Version of the TensorFlow library used."
                 }
             },
             "required": [
@@ -6494,6 +6858,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -6506,6 +6871,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -6521,6 +6887,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -6541,13 +6908,19 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "$ref": "#/$defs/Version"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        }
+                    ],
+                    "description": "Version of the TensorFlow library used."
                 },
                 "dependencies": {
                     "anyOf": [
@@ -6558,7 +6931,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "Custom dependencies beyond tensorflow.\nShould include tensorflow and any version pinning has to be compatible with `tensorflow_version`."
                 }
             },
             "required": [
@@ -6584,6 +6958,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "\u2208\ud83d\udce6 The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -6596,6 +6971,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "SHA256 checksum of the source file",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -6611,6 +6987,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
                     "title": "Authors"
                 },
                 "parent": {
@@ -6631,13 +7008,19 @@
                         }
                     ],
                     "default": null,
+                    "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
                     "examples": [
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
                 },
                 "pytorch_version": {
-                    "$ref": "#/$defs/Version"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        }
+                    ],
+                    "description": "Version of the PyTorch library used."
                 }
             },
             "required": [
@@ -6759,6 +7142,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.\nFor example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.\nTo normalize each sample independently leave out the 'batch' axis.\nDefault: Scale all axes jointly.",
                     "examples": [
                         [
                             "batch",
@@ -6770,6 +7154,7 @@
                 },
                 "eps": {
                     "default": 1e-06,
+                    "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
                     "exclusiveMinimum": 0.0,
                     "maximum": 0.1,
                     "title": "Eps",
@@ -6784,6 +7169,7 @@
             "description": "Bioimage.io description of a Jupyter Notebook.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description",
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
@@ -6826,9 +7212,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -6844,9 +7232,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "file and other attachments"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -6857,6 +7247,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -6883,6 +7274,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL to download the resource from (deprecated)",
                     "title": "Download Url"
                 },
                 "git_repo": {
@@ -6895,6 +7287,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -6922,9 +7315,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -6947,9 +7342,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -6973,9 +7370,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.",
                     "title": "Rdf Source"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -7000,7 +7399,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "version_number": {
                     "anyOf": [
@@ -7012,11 +7412,13 @@
                         }
                     ],
                     "default": null,
+                    "description": "version number (n-th published version, not the semantic version)",
                     "title": "Version Number"
                 },
                 "format_version": {
                     "const": "0.2.4",
                     "default": "0.2.4",
+                    "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
                     ],
@@ -7024,6 +7426,7 @@
                     "type": "string"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -7047,6 +7450,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -7063,6 +7467,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -7089,6 +7494,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "source": {
@@ -7104,6 +7510,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         }
                     ],
+                    "description": "The Jupyter notebook",
                     "title": "Source"
                 }
             },
@@ -7120,12 +7527,14 @@
             "description": "Bioimage.io description of a Jupyter notebook.",
             "properties": {
                 "name": {
+                    "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
                     "minLength": 1,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
                     "type": "string"
@@ -7162,9 +7571,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "UTF-8 emoji for display alongside the `id`.",
                     "title": "Id Emoji"
                 },
                 "authors": {
+                    "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
                         "$ref": "#/$defs/Author"
                     },
@@ -7173,6 +7584,7 @@
                     "type": "array"
                 },
                 "attachments": {
+                    "description": "file attachments",
                     "items": {
                         "$ref": "#/$defs/FileDescr"
                     },
@@ -7180,6 +7592,7 @@
                     "type": "array"
                 },
                 "cite": {
+                    "description": "citations",
                     "items": {
                         "$ref": "#/$defs/CiteEntry"
                     },
@@ -7188,6 +7601,7 @@
                     "type": "array"
                 },
                 "license": {
+                    "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
                         "MIT",
@@ -7200,6 +7614,7 @@
                     "additionalProperties": {
                         "$ref": "#/$defs/YamlValue"
                     },
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
                     "examples": [
                         {
                             "bioimageio": {
@@ -7226,6 +7641,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "A URL to the Git repository where the resource is being developed.",
                     "examples": [
                         "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
                     ],
@@ -7253,9 +7669,11 @@
                         }
                     ],
                     "default": null,
+                    "description": "An icon for illustration, e.g. on bioimage.io",
                     "title": "Icon"
                 },
                 "links": {
+                    "description": "IDs of other bioimage.io resources",
                     "examples": [
                         [
                             "ilastik/ilastik",
@@ -7278,9 +7696,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The person who uploaded the model (e.g. to bioimage.io)"
                 },
                 "maintainers": {
+                    "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
                         "$ref": "#/$defs/Maintainer"
                     },
@@ -7288,6 +7708,7 @@
                     "type": "array"
                 },
                 "tags": {
+                    "description": "Associated tags",
                     "examples": [
                         [
                             "unet2d",
@@ -7312,11 +7733,13 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The version of the resource following SemVer 2.0."
                 },
                 "format_version": {
                     "const": "0.3.0",
                     "default": "0.3.0",
+                    "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
                     ],
@@ -7340,6 +7763,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -7347,6 +7771,7 @@
                     "title": "Documentation"
                 },
                 "badges": {
+                    "description": "badges associated with this resource",
                     "items": {
                         "$ref": "#/$defs/BadgeDescr"
                     },
@@ -7372,6 +7797,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
                     "title": "Id"
                 },
                 "parent": {
@@ -7384,6 +7810,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "The description from which this one is derived",
                     "title": "Parent"
                 },
                 "source": {
@@ -7399,6 +7826,7 @@
                             "$ref": "#/$defs/RelativeFilePath"
                         }
                     ],
+                    "description": "The Jupyter notebook",
                     "title": "Source"
                 }
             },
