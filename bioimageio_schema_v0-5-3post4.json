@@ -4824,6 +4824,8 @@
                     ],
                     "default": 0.0,
                     "description": "The lower percentile used for normalization.",
+                    "ge": 0,
+                    "lt": 100,
                     "title": "Min Percentile"
                 },
                 "max_percentile": {
@@ -4838,6 +4840,7 @@
                     "default": 100.0,
                     "description": "The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
                     "gt": 1,
+                    "le": 100,
                     "title": "Max Percentile"
                 },
                 "eps": {
@@ -5540,7 +5543,7 @@
                             }
                         ]
                     },
-                    "minLength": 1,
+                    "minItems": 1,
                     "title": "Axes",
                     "type": "array"
                 },
@@ -5583,7 +5586,7 @@
                                     }
                                 ]
                             },
-                            "minLength": 1,
+                            "minItems": 1,
                             "type": "array"
                         }
                     ],
@@ -6036,7 +6039,7 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_5__InputTensorDescr"
                     },
-                    "minLength": 1,
+                    "minItems": 1,
                     "title": "Inputs",
                     "type": "array"
                 },
@@ -6045,7 +6048,7 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__model__v0_5__OutputTensorDescr"
                     },
-                    "minLength": 1,
+                    "minItems": 1,
                     "title": "Outputs",
                     "type": "array"
                 },
@@ -6087,7 +6090,7 @@
                             "$ref": "#/$defs/Datetime"
                         }
                     ],
-                    "default": "2024-06-13T11:28:26.771387",
+                    "default": "2024-07-05T11:23:18.002379",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -6297,7 +6300,7 @@
                             }
                         ]
                     },
-                    "minLength": 1,
+                    "minItems": 1,
                     "title": "Axes",
                     "type": "array"
                 },
@@ -6340,7 +6343,7 @@
                                     }
                                 ]
                             },
-                            "minLength": 1,
+                            "minItems": 1,
                             "type": "array"
                         }
                     ],
