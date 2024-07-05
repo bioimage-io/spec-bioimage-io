@@ -172,6 +172,8 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
 
 class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
+    """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
+
     def model_post_init(self, __context: Any) -> None:
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
