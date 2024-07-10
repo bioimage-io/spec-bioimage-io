@@ -55,6 +55,7 @@ _ = setup(
             "jupyter",
             "lxml",
             "pdoc",
+            "json_schema_for_humans",
             "pre-commit",
             "psutil",  # parallel pytest with '-n auto'
             "pyright",
