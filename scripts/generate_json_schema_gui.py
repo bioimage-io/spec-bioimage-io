@@ -40,6 +40,3 @@ if __name__ == "__main__":
     )
 
     print(f"Generated json schema docs at {output_dir}", file=sys.stderr)
-
-# Your doc is now in a file named "schema_doc.html". Next to it, "schema_doc.min.js" was copied, but not "schema_doc.css"
-# Your doc will contain a "Expand all" and a "Collapse all" button at the top
