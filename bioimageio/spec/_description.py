@@ -131,6 +131,22 @@ def build_description(
     context: Optional[ValidationContext] = None,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescr]:
+    """build a bioimage.io resource description from an RDF's content.
+
+    Use `load_description` if you want to build a resource description from an rdf.yaml
+    or bioimage.io zip-package.
+
+    Args:
+        content: loaded rdf.yaml file (loaded with YAML, not bioimageio.spec)
+        context: validation context to use during validation
+        format_version: (optional) use this argument to load the resource and
+                        convert its metadata to a higher format_version
+
+    Returns:
+        An object holding all metadata of the bioimage.io resource
+
+    """
+
     return build_description_impl(
         content,
         context=context,
