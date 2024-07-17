@@ -37,6 +37,7 @@ inputs:
     description: raw input
     axes:
       - type: batch
+        size: 1 # due to the onnx weights
       - type: channel
         channel_names: [raw_intensity]
       - type: space # todo: scale/unit
