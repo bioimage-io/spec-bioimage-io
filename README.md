@@ -107,6 +107,8 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 #### bioimageio.spec 0.5.3post5
 
+* add `load_model_description` and `load_dataset_description`
+* add `ensure_description_is_model` and `ensure_description_is_dataset`
 * expose `perform_io_checks` and `known_files` from `ValidationContext` to `load_description` and `load_description_and_validate_format_only`
 
 #### bioimageio.spec 0.5.3post4
