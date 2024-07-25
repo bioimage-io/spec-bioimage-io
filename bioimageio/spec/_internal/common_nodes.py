@@ -128,9 +128,8 @@ class StringNode(collections.UserString, ABC):
     @classmethod
     def _validate(cls, value: str) -> Self:
         constrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
-        constrained_str_adapter = TypeAdapter(constrained_str_type)
+        constrained_str_adapter: TypeAdapter[str] = TypeAdapter(constrained_str_type)
         valid_string_data = constrained_str_adapter.validate_python(value)
-        assert isinstance(valid_string_data, str)
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)
         object.__setattr__(self, "_node", self._node_class.model_validate(data))
