@@ -105,6 +105,10 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3post5
+
+* expose `perform_io_checks` and `known_files` from `ValidationContext` to `load_description` and `load_description_and_validate_format_only`
+
 #### bioimageio.spec 0.5.3post4
 
 * fix pinning of pydantic
