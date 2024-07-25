@@ -101,11 +101,20 @@ TODO: link to settings in dev docs
 
 Made with [contrib.rocks](https://contrib.rocks).
 
+## 🛈 Versioining scheme
+
+To keep the bioimageio.spec Python package version in sync with the (model) description format version, bioimageio.spec is versioned as MAJOR.MINRO.PATCH.LIB, where MAJOR.MINRO.PATCH correspond to the latest model description format version implemented and LIB may be bumpbed for library changes that do not affect the format version.
+[This change was introduced with bioimageio.spec 0.5.3.1](#bioimageiospec-0531).
+
 ## Δ Changelog
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.3post5
+#### bioimageio.spec 0.5.3.1
+
+note: the versioning scheme was changed as our previous `post` releases include changes beyond what a post release should entail (only changing docstrings, etc).
+This was motivated by the desire to keep the library version in sync with the (model) format version to avoid confusion.
+To keep this relation, but avoid overbearing post releases a library version number is now added as the 4th part MAJOR.MINOR.PATCH.LIB_VERSION.
 
 * add `load_model_description` and `load_dataset_description`
 * add `ensure_description_is_model` and `ensure_description_is_dataset`
