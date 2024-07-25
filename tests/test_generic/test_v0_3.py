@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Any, Dict, Union
+from typing import Any, Dict, Sequence, Union
 
 import pytest
 from pydantic import (
@@ -106,7 +106,7 @@ def test_documentation_source():
     from bioimageio.spec.generic.v0_3 import DocumentationSource
 
     doc_src = "https://example.com/away.md"
-    adapter = TypeAdapter(DocumentationSource)
+    adapter: TypeAdapter[Any] = TypeAdapter(DocumentationSource)
     with ValidationContext(perform_io_checks=False):
         valid = adapter.validate_python(doc_src)
 
@@ -118,7 +118,7 @@ def test_documentation_source_abs_path():
 
     doc_src = UNET2D_ROOT / "README.md"
     assert doc_src.exists(), doc_src
-    adapter = TypeAdapter(DocumentationSource)
+    adapter: TypeAdapter[Any] = TypeAdapter(DocumentationSource)
 
     valid = adapter.validate_python(doc_src)
     assert str(valid) == str(doc_src)
@@ -142,52 +142,43 @@ def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]
     return validate_suffix(value, ".md", case_sensitive=True)
 
 
+_type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
+    TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(
+        Annotated[Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)]
+    ),
+    TypeAdapter(
+        Annotated[
+            Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+            WithSuffix(".md", case_sensitive=True),
+        ]
+    ),
+    TypeAdapter(DocumentationSource),
+    TypeAdapter(Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]),
+)
+
+_type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
+    TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(
+        Annotated[Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)]
+    ),
+    TypeAdapter(
+        Annotated[
+            Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+            WithSuffix(".md", case_sensitive=True),
+        ]
+    ),
+    TypeAdapter(DocumentationSource),
+    TypeAdapter(Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]),
+)
+
+
 @pytest.mark.parametrize(
     "src,adapter",
-    [
-        (UNET2D_ROOT / "README.md", a)
-        for a in [
-            TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
-            TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
-            TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
-            TypeAdapter(
-                Annotated[
-                    Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
-                ]
-            ),
-            TypeAdapter(
-                Annotated[
-                    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-                    WithSuffix(".md", case_sensitive=True),
-                ]
-            ),
-            TypeAdapter(DocumentationSource),
-            TypeAdapter(
-                Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
-            ),
-        ]
-    ]
-    + [
-        (text_md_url, a)
-        for a in [
-            TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
-            TypeAdapter(
-                Annotated[
-                    Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)
-                ]
-            ),
-            TypeAdapter(
-                Annotated[
-                    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-                    WithSuffix(".md", case_sensitive=True),
-                ]
-            ),
-            TypeAdapter(DocumentationSource),
-            TypeAdapter(
-                Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]
-            ),
-        ]
-    ],
+    [(UNET2D_ROOT / "README.md", a) for a in _type_adapters_for_path]
+    + [(text_md_url, a) for a in _type_adapters_for_url],
 )
 def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
     with ValidationContext(perform_io_checks=False):

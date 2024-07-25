@@ -492,7 +492,9 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-_file_source_adapter = TypeAdapter(FileSource)
+_file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = (
+    TypeAdapter(FileSource)
+)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:

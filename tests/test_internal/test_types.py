@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import pytest
 from dateutil.parser import isoparse
@@ -156,7 +157,7 @@ def test_datetime_more(value: str):
     )
 
     root_adapter = TypeAdapter(Datetime)
-    datetime_adapter = TypeAdapter(
+    datetime_adapter: TypeAdapter[Any] = TypeAdapter(
         Annotated[
             datetime,
             PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
