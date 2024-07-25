@@ -49,6 +49,7 @@ from .._internal.io import (
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
+from .._internal.io_utils import load_array
 from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
@@ -74,7 +75,6 @@ from ..generic.v0_2 import OrcidId as OrcidId
 from ..generic.v0_2 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_2 import ResourceId as ResourceId
 from ..generic.v0_2 import Uploader as Uploader
-from ..utils import load_array
 from ._v0_4_converter import convert_from_older_format
 
 
