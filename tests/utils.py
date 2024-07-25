@@ -22,7 +22,7 @@ from pydantic import (
     RootModel,
     TypeAdapter,
     ValidationError,
-    create_model,  # type: ignore
+    create_model,
 )
 from ruyaml import YAML
 

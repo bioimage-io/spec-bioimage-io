@@ -16,10 +16,12 @@ from ._internal import settings as settings
 from ._internal.common_nodes import InvalidDescr as InvalidDescr
 from ._internal.constants import VERSION
 from ._internal.validation_context import ValidationContext as ValidationContext
+from ._io import load_dataset_description as load_dataset_description
 from ._io import load_description as load_description
 from ._io import (
     load_description_and_validate_format_only as load_description_and_validate_format_only,
 )
+from ._io import load_model_description as load_model_description
 from ._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
 from ._package import save_bioimageio_package as save_bioimageio_package
 from ._package import (

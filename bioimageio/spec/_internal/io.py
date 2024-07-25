@@ -171,25 +171,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         return cls(PurePath(value))
 
 
-class RelativePath(
-    RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]], frozen=True
-):
-    def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl"
-    ) -> "AbsoluteFilePath | AbsoluteDirectory | HttpUrl":
-        absolute = self._get_absolute_impl(root)
-        if (
-            isinstance(absolute, Path)
-            and (context := validation_context_var.get()).perform_io_checks
-            and str(self.root) not in context.known_files
-            and not absolute.exists()
-        ):
-            raise ValueError(f"{absolute} does not exist")
-
-        return absolute
-
-
 class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
+    """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
+
     def model_post_init(self, __context: Any) -> None:
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
@@ -508,7 +492,9 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-_file_source_adapter = TypeAdapter(FileSource)
+_file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = (
+    TypeAdapter(FileSource)
+)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:

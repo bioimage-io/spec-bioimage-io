@@ -41,7 +41,7 @@ def warn(
     if isinstance(typ, get_args(AnnotationMetaData)):
         typ = Annotated[Any, typ]
 
-    validator = TypeAdapter(typ)
+    validator: TypeAdapter[Any] = TypeAdapter(typ)
 
     return AfterWarner(
         validator.validate_python, severity=severity, msg=msg, context={"typ": typ}

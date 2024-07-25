@@ -228,10 +228,13 @@ PreprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
+ParameterizedSize_N = int
+
+
 class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
 
-    N: ClassVar[Type[int]] = int
+    N: ClassVar[Type[int]] = ParameterizedSize_N
     """integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
@@ -248,10 +251,10 @@ class ParameterizedSize(Node):
 
         return size
 
-    def get_size(self, n: ParameterizedSize.N) -> int:
+    def get_size(self, n: ParameterizedSize_N) -> int:
         return self.min + self.step * n
 
-    def get_n(self, s: int) -> ParameterizedSize.N:
+    def get_n(self, s: int) -> ParameterizedSize_N:
         """return smallest n parameterizing a size greater or equal than `s`"""
         return ceil((s - self.min) / self.step)
 
@@ -343,7 +346,7 @@ class SizeReference(Node):
             SpaceOutputAxis,
             SpaceOutputAxisWithHalo,
         ],
-        n: ParameterizedSize.N,
+        n: ParameterizedSize_N,
     ):
         """helper method to compute concrete size for a given axis and its reference axis.
         If the reference axis is parameterized, `n` is used to compute the concrete size of it, see `ParameterizedSize`.
@@ -2416,7 +2419,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return tensor_sizes.outputs
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
-        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N] = {}
+        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize_N] = {}
         axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
             for aid, s in input_sizes[tid].items():
@@ -2431,7 +2434,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return ret
 
     def get_tensor_sizes(
-        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
     ) -> _TensorSizes:
         axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
         return _TensorSizes(
@@ -2454,7 +2457,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         )
 
     def get_axis_sizes(
-        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
     ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
