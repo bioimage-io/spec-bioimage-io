@@ -5,7 +5,7 @@ from typing import Any, Literal, Optional, TypeVar, Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from ._build_description import DISCOVER, build_description_impl, get_rd_class_impl
+from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
 from ._internal.types import FormatVersionPlaceholder
