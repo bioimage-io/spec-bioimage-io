@@ -309,7 +309,7 @@ class ResourceDescrBase(
         return data
 
     @model_validator(mode="after")
-    def _set_init_validation_summary(self):
+    def _set_init_validation_summary(self) -> Self:
         context = validation_context_var.get()
         self._validation_summary = ValidationSummary(
             name="bioimageio validation",
