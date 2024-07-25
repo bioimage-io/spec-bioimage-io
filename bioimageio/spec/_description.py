@@ -178,3 +178,51 @@ def update_format(
 ) -> BioimageioYamlContent:
     """update a bioimageio.yaml file without validating it"""
     raise NotImplementedError("Oh no! This feature is not yet implemented")
+
+
+def ensure_description_is_model(
+    rd: Union[InvalidDescr, ResourceDescr],
+) -> AnyModelDescr:
+    if isinstance(rd, InvalidDescr):
+        rd.validation_summary.display()
+        raise ValueError("resource description is invalid")
+
+    if rd.type != "model":
+        rd.validation_summary.display()
+        raise ValueError(
+            f"expected a model resource, but got resource type '{rd.type}'"
+        )
+
+    assert not isinstance(
+        rd,
+        (
+            GenericDescr02,
+            GenericDescr03,
+        ),
+    )
+
+    return rd
+
+
+def ensure_description_is_dataset(
+    rd: Union[InvalidDescr, ResourceDescr],
+) -> AnyDatasetDescr:
+    if isinstance(rd, InvalidDescr):
+        rd.validation_summary.display()
+        raise ValueError("resource description is invalid")
+
+    if rd.type != "dataset":
+        rd.validation_summary.display()
+        raise ValueError(
+            f"expected a dataset resource, but got resource type '{rd.type}'"
+        )
+
+    assert not isinstance(
+        rd,
+        (
+            GenericDescr02,
+            GenericDescr03,
+        ),
+    )
+
+    return rd

@@ -11,6 +11,8 @@ from ._description import (
     ResourceDescr,
     build_description,
     dump_description,
+    ensure_description_is_dataset,
+    ensure_description_is_model,
 )
 from ._internal._settings import settings
 from ._internal.common_nodes import ResourceDescrBase
@@ -18,6 +20,8 @@ from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
 from ._internal.validation_context import validation_context_var
 from .common import PermissiveFileSource
+from .dataset import AnyDatasetDescr
+from .model import AnyModelDescr
 from .summary import ValidationSummary
 
 
@@ -65,6 +69,46 @@ def load_description(
         context=context,
         format_version=format_version,
     )
+
+
+def load_model_description(
+    source: PermissiveFileSource,
+    /,
+    *,
+    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+) -> AnyModelDescr:
+    """same as `load_description`, but addtionally ensures that the loaded
+    description is valid and of type 'model'.
+    """
+    rd = load_description(
+        source,
+        format_version=format_version,
+        perform_io_checks=perform_io_checks,
+        known_files=known_files,
+    )
+    return ensure_description_is_model(rd)
+
+
+def load_dataset_description(
+    source: PermissiveFileSource,
+    /,
+    *,
+    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+) -> AnyDatasetDescr:
+    """same as `load_description`, but addtionally ensures that the loaded
+    description is valid and of type 'dataset'.
+    """
+    rd = load_description(
+        source,
+        format_version=format_version,
+        perform_io_checks=perform_io_checks,
+        known_files=known_files,
+    )
+    return ensure_description_is_dataset(rd)
 
 
 def save_bioimageio_yaml_only(
