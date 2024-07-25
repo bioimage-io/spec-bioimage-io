@@ -57,7 +57,7 @@ _ = setup(
             "pdoc",
             "pre-commit",
             "psutil",  # parallel pytest with '-n auto'
-            "pyright==1.1.366",  # TODO: update pyright
+            "pyright",
             "pytest-xdist",  # parallel pytest
             "pytest",
             "python-devtools",
