@@ -61,6 +61,8 @@ jobs:
         run: python scripts/generate_spec_documentation.py --dist dist/user_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
+      - name: Generate JSON schema gui docs
+        run: python scripts/generate_json_schema_gui.py
       - id: get_version
         run: python -c 'import bioimageio.spec;print(f"version={bioimageio.spec.__version__}")' >> $GITHUB_OUTPUT
       - name: Generate developer docs
