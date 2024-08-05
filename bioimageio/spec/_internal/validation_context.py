@@ -50,6 +50,10 @@ class ValidationContext:
         perform_io_checks: Optional[bool] = None,
         known_files: Optional[Dict[str, Sha256]] = None,
     ) -> "ValidationContext":
+        if known_files is None and root is not None and self.root != root:
+            # reset known files if root changes, but no new known_files are given
+            known_files = {}
+
         return ValidationContext(
             root=self.root if root is None else root,
             warning_level=(
