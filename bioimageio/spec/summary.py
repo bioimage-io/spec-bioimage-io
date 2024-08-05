@@ -43,7 +43,7 @@ WARNING_SEVERITY_TO_NAME: Mapping[WarningSeverity, WarningSeverityName] = (
     MappingProxyType({INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME})
 )
 WARNING_LEVEL_TO_NAME: Mapping[WarningLevel, WarningLevelName] = MappingProxyType(
-    {**WARNING_SEVERITY_TO_NAME, ERROR: ERROR_NAME}
+    {INFO: INFO_NAME, WARNING: WARNING_NAME, ALERT: ALERT_NAME, ERROR: ERROR_NAME}
 )
 WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyType(
     {v: k for k, v in WARNING_LEVEL_TO_NAME.items()}
