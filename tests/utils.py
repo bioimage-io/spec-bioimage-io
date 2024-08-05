@@ -22,7 +22,7 @@ from pydantic import (
     RootModel,
     TypeAdapter,
     ValidationError,
-    create_model,  # pyright: ignore[reportUnknownVariableType]
+    create_model,
 )
 from ruyaml import YAML
 
