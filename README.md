@@ -113,6 +113,10 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3.2
+
+* bugfix "reset known files if root changes" (#619)
+
 #### bioimageio.spec 0.5.3.1
 
 note: the versioning scheme was changed as our previous `post` releases include changes beyond what a post release should entail (only changing docstrings, etc).
