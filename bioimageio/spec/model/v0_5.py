@@ -824,31 +824,29 @@ class EnsureDtypeDescr(ProcessingDescrBase):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    gain: float = 1.0
+    gain: float
     """multiplicative factor"""
 
-    offset: float = 0.0
+    offset: float
     """additive term"""
 
-    @model_validator(mode="after")
-    def _validate(self) -> Self:
-        if self.gain == 1.0 and self.offset == 0.0:
-            raise ValueError(
-                "Redundant linear scaling not allowd. Set `gain` != 1.0 and/or `offset`"
-                + " != 0.0."
-            )
 
-        return self
+class ScaleLinearKwargsDefaultGain(ScaleLinearKwargs):
+    gain = 1.0
+
+
+class ScaleLinearKwargsDefaultOffset(ScaleLinearKwargs):
+    offset = 0.0
 
 
 class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of of gains/offsets values."""
 
-    gain: Union[float, NotEmpty[List[float]]] = 1.0
+    gain: Union[float, NotEmpty[List[float]]]
     """multiplicative factor"""
 
-    offset: Union[float, NotEmpty[List[float]]] = 0.0
+    offset: Union[float, NotEmpty[List[float]]]
     """additive term"""
 
     @model_validator(mode="after")
@@ -960,7 +958,9 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract mean and divide by variance."""
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
-    kwargs: ZeroMeanUnitVarianceKwargs
+    kwargs: ZeroMeanUnitVarianceKwargs = Field(
+        default_factory=ZeroMeanUnitVarianceKwargs
+    )
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
@@ -1004,7 +1004,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
     """Scale with percentiles."""
 
     id: Literal["scale_range"] = "scale_range"
-    kwargs: ScaleRangeKwargs
+    kwargs: ScaleRangeKwargs = Field(default_factory=ScaleRangeKwargs)
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
@@ -1032,7 +1032,7 @@ class ScaleMeanVarianceDescr(ProcessingDescrBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     id: Literal["scale_mean_variance"] = "scale_mean_variance"
-    kwargs: ScaleMeanVarianceKwargs
+    kwargs: ScaleMeanVarianceKwargs = Field(default_factory=ScaleMeanVarianceKwargs)
 
 
 PreprocessingDescr = Annotated[

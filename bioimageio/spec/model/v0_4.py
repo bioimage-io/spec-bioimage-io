@@ -553,36 +553,26 @@ class ScaleLinearKwargs(ProcessingKwargs):
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
 
-    gain: Union[float, List[float]] = 1.0
+    gain: Union[float, List[float]]
     """multiplicative factor"""
 
-    offset: Union[float, List[float]] = 0.0
+    offset: Union[float, List[float]]
     """additive term"""
 
-    @model_validator(mode="after")
-    def either_gain_or_offset(self) -> Self:
-        if (
-            self.gain == 1.0
-            or isinstance(self.gain, list)
-            and all(g == 1.0 for g in self.gain)
-        ) and (
-            self.offset == 0.0
-            or isinstance(self.offset, list)
-            and all(off == 0.0 for off in self.offset)
-        ):
-            raise ValueError(
-                "Redunt linear scaling not allowd. Set `gain` != 1.0 and/or `offset` !="
-                + " 0.0."
-            )
 
-        return self
+class ScaleLinearKwargsDefaultGain(ScaleLinearKwargs):
+    gain = 1.0
+
+
+class ScaleLinearKwargsDefaultOffset(ScaleLinearKwargs):
+    offset = 0.0
 
 
 class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
     name: Literal["scale_linear"] = "scale_linear"
-    kwargs: ScaleLinearKwargs
+    kwargs: Union[ScaleLinearKwargsDefaultGain, ScaleLinearKwargsDefaultOffset]
 
 
 class SigmoidDescr(ProcessingDescrBase):
