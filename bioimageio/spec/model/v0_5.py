@@ -1255,10 +1255,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes")
+            if kwargs_axes is None:
+                continue
+
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
-                    f"Expeted `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
+                    f"Expected `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
                 )
 
             if any(a not in axes_ids for a in kwargs_axes):
