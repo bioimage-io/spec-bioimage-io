@@ -32,10 +32,9 @@ from typing import (
     cast,
 )
 
-import imageio
 import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
-from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
+from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Discriminator,
@@ -2948,10 +2947,10 @@ def generate_covers(
     cover_folder = Path(mkdtemp())
     if ipt_img.shape == out_img.shape:
         covers = [cover_folder / "cover.png"]
-        imageio.imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
+        imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
     else:
         covers = [cover_folder / "input.png", cover_folder / "output.png"]
-        imageio.imwrite(covers[0], ipt_img)
-        imageio.imwrite(covers[1], out_img)
+        imwrite(covers[0], ipt_img)
+        imwrite(covers[1], out_img)
 
     return covers
