@@ -304,6 +304,7 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         return f"{info}{self._format_md_table(details)}"
 
+    # TODO: fix bug which casuses extensive white space between the info table and details table
     @no_type_check
     def display(self) -> None:
         formatted = self.format()
