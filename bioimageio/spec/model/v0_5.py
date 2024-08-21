@@ -32,10 +32,9 @@ from typing import (
     cast,
 )
 
-import imageio
 import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
-from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
+from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Discriminator,
@@ -1255,10 +1254,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes")
+            if kwargs_axes is None:
+                continue
+
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
-                    f"Expeted `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
+                    f"Expected `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
                 )
 
             if any(a not in axes_ids for a in kwargs_axes):
@@ -2945,10 +2947,10 @@ def generate_covers(
     cover_folder = Path(mkdtemp())
     if ipt_img.shape == out_img.shape:
         covers = [cover_folder / "cover.png"]
-        imageio.imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
+        imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
     else:
         covers = [cover_folder / "input.png", cover_folder / "output.png"]
-        imageio.imwrite(covers[0], ipt_img)
-        imageio.imwrite(covers[1], out_img)
+        imwrite(covers[0], ipt_img)
+        imwrite(covers[1], out_img)
 
     return covers

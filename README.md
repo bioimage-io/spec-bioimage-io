@@ -113,6 +113,10 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3.3 (not yet released)
+
+* bugfix: allow optional pre- and postprocessing to be missing in an RDF (before it required an empty dict).
+
 #### bioimageio.spec 0.5.3.2
 
 * bugfix "reset known files if root changes" (#619)
