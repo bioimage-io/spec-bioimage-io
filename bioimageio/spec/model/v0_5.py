@@ -1370,7 +1370,7 @@ def convert_axes(
             assert not isinstance(size, ParameterizedSize)
             if isinstance(size, SizeReference):
                 warnings.warn(
-                    "Conversion of channel size from an implicit output shape may by"
+                    "Conversion of channel size from an implicit output shape may be"
                     + " wrong"
                 )
                 ret.append(
@@ -1957,7 +1957,7 @@ class WeightsDescr(Node):
         if len(entries_wo_parent) != 1:
             issue_warning(
                 "Exactly one weights entry may not specify the `parent` field (got"
-                + " {value}).That entry is considered the original set of model weights."
+                + " {value}). That entry is considered the original set of model weights."
                 + " Other weight formats are created through conversion of the orignal or"
                 + " already converted weights. They have to reference the weights format"
                 + " they were converted from as their `parent`.",
