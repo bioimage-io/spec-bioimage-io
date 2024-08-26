@@ -3,7 +3,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Final
 
 from deepdiff import DeepDiff
 from pydantic import ConfigDict, TypeAdapter
@@ -11,16 +11,15 @@ from typing_extensions import assert_never
 
 import bioimageio.spec
 
+MAJOR_MINOR_VERSION: Final[str] = "v" + "-".join(bioimageio.spec.__version__.split(".")[0:2])
 
-def export_json_schemas_from_type(folder: Path, type_: Any, *, title: str):
+def export_json_schemas_from_type(output: Path, type_: Any, *, title: str):
     adapter = TypeAdapter(
         type_,
         config=ConfigDict(title=title),
     )
     schema = adapter.json_schema()
-    for version in ("v" + "-".join(bioimageio.spec.__version__.split(".")), "latest"):
-        write_schema(schema, folder / f"bioimageio_schema_{version}.json")
-
+    write_schema(schema, output)
 
 def write_schema(schema: Dict[str, Any], path: Path):
     with path.open("w") as f:
@@ -32,11 +31,12 @@ def write_schema(schema: Dict[str, Any], path: Path):
 def export_json_schemas(dist: Path):
     assert dist.exists()
 
-    export_json_schemas_from_type(
-        dist,
-        bioimageio.spec.SpecificResourceDescr,
-        title=f"bioimage.io resource description {bioimageio.spec.__version__}",
-    )
+    for version in (MAJOR_MINOR_VERSION, "latest"):
+        export_json_schemas_from_type(
+            dist / f"bioimageio_schema_{version}.json",
+            bioimageio.spec.SpecificResourceDescr,
+            title=f"bioimage.io resource description {bioimageio.spec.__version__}",
+        )
 
 
 def parse_args():
