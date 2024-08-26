@@ -11,7 +11,10 @@ from typing_extensions import assert_never
 
 import bioimageio.spec
 
-MAJOR_MINOR_VERSION: Final[str] = "v" + "-".join(bioimageio.spec.__version__.split(".")[0:2])
+MAJOR_MINOR_VERSION: Final[str] = "v" + "-".join(
+    bioimageio.spec.__version__.split(".")[0:2]
+)
+
 
 def export_json_schemas_from_type(output: Path, type_: Any, *, title: str):
     adapter = TypeAdapter(
@@ -20,6 +23,7 @@ def export_json_schemas_from_type(output: Path, type_: Any, *, title: str):
     )
     schema = adapter.json_schema()
     write_schema(schema, output)
+
 
 def write_schema(schema: Dict[str, Any], path: Path):
     with path.open("w") as f:
