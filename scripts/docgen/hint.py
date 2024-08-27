@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from collections.abc import Mapping, Sequence
 from xml.etree import ElementTree as et
 import json
+import typing
 from typing import ClassVar, Dict, Any, Final, ForwardRef, Literal, Optional, Tuple, Type, Union, cast, final
 from typing_extensions import TypeAliasType, assert_never
-import typing
 from typing_extensions import List, TypeAlias, TypeGuard, Any
 import types
 import datetime
@@ -72,12 +72,12 @@ class Example:
             json_value: JsonValue = cast(JsonValue, val.model_dump(mode="json"))
             return Example(value=json_value)
         try:
-            adapter = pydantic.TypeAdapter(type(val))
+            #FIXME: stricter typing here?
+            adapter: Any = pydantic.TypeAdapter(type(val)) # pyright: ignore [reportUnknownArgumentType]
             dumped_value = json.loads(adapter.dump_json(val))
             return Example(value=dumped_value)
         except Exception as e:
             return Exception(f"Value {val} is not Json-serializable: {e}")
-        return Exception(f"Value {val} is not Json-serializable")
 
     def to_json_str(self) -> str:
         return json.dumps(self.value, indent=4)
@@ -453,7 +453,7 @@ class MappingHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_mapping_hint(hint: Any) -> TypeGuard[typing_extensions.GenericAlias]:
+    def is_mapping_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
         if inspect.isclass(hint):
             return issubclass(hint, Mapping)
         if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias"):
@@ -689,7 +689,7 @@ class PrimitiveHint(Hint):
 
 
 
-def is_tuple_hint(hint: Any) -> TypeGuard[types.GenericAlias]:
+def is_tuple_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
     if isinstance(hint, type) and hint.__name__ == "tuple":
         return True
     if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias") and hint.__origin__ == tuple:
@@ -810,7 +810,7 @@ class ListHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_list_hint(hint: Any) -> TypeGuard[types.GenericAlias]:
+    def is_list_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
         if inspect.isclass(hint):
             return issubclass(hint, Sequence)
         if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias"):
