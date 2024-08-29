@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import Union, Any
+from typing import TypeAlias, Union, Any
 from typing_extensions import TypeGuard
 from collections.abc import Sequence, Mapping
 
-type JsonLeafValue = Union[int, float, str, bool, None]
-type JsonObject = Mapping[Union[str, int], JsonValue]
-type JsonArray = Sequence[JsonValue]
-type JsonValue = Union[JsonLeafValue, JsonArray, JsonObject]
+JsonLeafValue: TypeAlias = Union[int, float, str, bool, None]
+JsonObject: TypeAlias = Mapping[Union[str, int], "JsonValue"]
+JsonArray: TypeAlias = Sequence["JsonValue"]
+JsonValue: TypeAlias = Union[JsonLeafValue, JsonArray, JsonObject]
 
 class NotJsonvalue(Exception):
     def __init__(self, value: Any) -> None:
