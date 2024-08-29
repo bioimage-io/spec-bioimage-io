@@ -73,7 +73,7 @@ class Example:
             return Example(value=json_value)
         try:
             #FIXME: stricter typing here?
-            adapter: Any = pydantic.TypeAdapter(type(val)) # pyright: ignore [reportUnknownArgumentType]
+            adapter: Any = pydantic.TypeAdapter(type(val))
             dumped_value = json.loads(adapter.dump_json(val))
             return Example(value=dumped_value)
         except Exception as e:
