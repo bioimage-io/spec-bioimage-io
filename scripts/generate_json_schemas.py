@@ -5,7 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Dict, Literal, Final
 
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # pyright: ignore [reportMissingTypeStubs]
 from pydantic import ConfigDict, TypeAdapter
 from typing_extensions import assert_never
 

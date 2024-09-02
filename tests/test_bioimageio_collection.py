@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping
 
-import pooch
+import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pytest
 
 from bioimageio.spec import settings
