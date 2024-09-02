@@ -16,7 +16,7 @@ from typing import (
 
 import jsonschema
 import pytest
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff # pyright: ignore [reportMissingTypeStubs]
 from pydantic import (
     DirectoryPath,
     RootModel,
