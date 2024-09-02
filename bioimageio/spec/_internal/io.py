@@ -29,7 +29,7 @@ from typing import (
 from urllib.parse import urlparse, urlsplit, urlunsplit
 from zipfile import ZipFile, is_zipfile
 
-import pooch # pyright: ignore [reportMissingTypeStubs]
+import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pydantic
 from pydantic import (
     AnyUrl,
@@ -222,7 +222,9 @@ PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 # the type hints available for different python versions require this ignoring of reportUnknownVariableType
-path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl]) # pyright: ignore [reportUnknownVariableType]
+path_or_url_adapter = TypeAdapter(
+    Union[FilePath, DirectoryPath, HttpUrl]
+)  # pyright: ignore [reportUnknownVariableType]
 
 
 def validate_suffix(
