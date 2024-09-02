@@ -222,7 +222,7 @@ PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 # the type hints available for different python versions require this ignoring of reportUnknownVariableType
-path_or_url_adapter = TypeAdapter( # pyright: ignore [reportUnknownVariableType]
+path_or_url_adapter = TypeAdapter(  # pyright: ignore [reportUnknownVariableType]
     Union[FilePath, DirectoryPath, HttpUrl]
 )
 
