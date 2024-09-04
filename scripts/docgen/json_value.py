@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import TypeAlias, Union, Any
-from typing_extensions import TypeGuard
+from typing import Union, Any
+from typing_extensions import TypeGuard, TypeAlias
 from collections.abc import Sequence, Mapping
 
 JsonLeafValue: TypeAlias = Union[int, float, str, bool, None]
