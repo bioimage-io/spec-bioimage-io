@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from collections.abc import Mapping, Sequence
 from xml.etree import ElementTree as et
 import json
+import yaml
 import typing
 from typing import ClassVar, Dict, Any, Final, ForwardRef, Literal, Optional, Tuple, Type, Union, cast, final
 from typing_extensions import TypeAliasType, assert_never
@@ -18,7 +19,7 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined, PydanticUndefinedType
 import typing_extensions
 
-from .json_value import JsonValue, is_json_value
+from bioimageio.spec._internal.io import YamlValue, is_yaml_value
 
 def eprint(message: str):
     import sys
@@ -64,15 +65,15 @@ def any_is_subclass(child: Any, parent: Type[Any]) -> bool:
 
 @dataclass
 class Example:
-    value: JsonValue
+    value: YamlValue
 
     @classmethod
     def try_from_value(cls, val: Any) -> "Example | Exception":
-        if is_json_value(val):
+        if is_yaml_value(val):
             return Example(value=val)
         if isinstance(val, BaseModel):
-            json_value: JsonValue = cast(JsonValue, val.model_dump(mode="json"))
-            return Example(value=json_value)
+            yaml_value: YamlValue = cast(YamlValue, val.model_dump(mode="json"))
+            return Example(value=yaml_value)
         try:
             #FIXME: stricter typing here?
             val_type: Any = type(val)
@@ -82,8 +83,8 @@ class Example:
         except Exception as e:
             return Exception(f"Value {val} is not Json-serializable: {e}")
 
-    def to_json_str(self) -> str:
-        return json.dumps(self.value, indent=4)
+    def to_yaml_str(self) -> str:
+        return yaml.dump(self.value)
 
 def get_field_annotation(field_info: FieldInfo) -> Any:
     if field_info.metadata:
@@ -751,7 +752,7 @@ class NTuple(Hint):
         )
 
     def get_example(self) -> "Example | Exception":
-        return Example(tuple(arg[1].value for arg in self.generic_args))
+        return Example(list(arg[1].value for arg in self.generic_args))
 
 class VarLenTuple(Hint):
     """Represents a type-hint like Tuple[T, ...]"""
@@ -802,7 +803,7 @@ class VarLenTuple(Hint):
         ])
 
     def get_example(self) -> "Example | Exception":
-        return Example((self.element_example.value,))
+        return Example([self.element_example.value])
 
 class ListHint(Hint):
     """Represents a list-hint like List[T]"""
@@ -1058,7 +1059,7 @@ class LiteralWidget(Widget):
 class ExampleWidget(Widget):
     CSS_CLASS: ClassVar[str] = "collapsible_example"
     def __init__(self, example: Example) -> None:
-        text = example.to_json_str()
+        text = example.to_yaml_str()
         if len(text.split("\n")) == 1:
             super().__init__("pre", text=text)
         else:
@@ -1128,7 +1129,7 @@ class OptMarkerWidget(Widget):
 
     def __init__(self, default_value: Example):
         super().__init__(
-            "span", text="opt", title=default_value.to_json_str(), css_classes=[OptMarkerWidget.CSS_CLASS]
+            "span", text="opt", title=default_value.to_yaml_str(), css_classes=[OptMarkerWidget.CSS_CLASS]
         )
 
 class CheckboxWidget(Widget):
