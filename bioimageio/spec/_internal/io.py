@@ -6,6 +6,7 @@ import hashlib
 import sys
 import warnings
 from abc import abstractmethod
+from collections.abc import Mapping as MappingAbc
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
@@ -51,6 +52,7 @@ from typing_extensions import (
     LiteralString,
     NotRequired,
     Self,
+    TypeGuard,
     Unpack,
     assert_never,
 )
@@ -477,6 +479,23 @@ YamlValue = _TypeAliasType(
 )
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
+
+def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
+    return isinstance(value, (bool, _date, _datetime, int, float, str, type(None)))
+
+def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+    return isinstance(value, Sequence) and \
+        all(is_yaml_value(item) for item in value) #pyright: ignore [reportUnknownVariableType]
+
+def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
+    return isinstance(value, MappingAbc) and \
+        all(
+            isinstance(key, str) and is_yaml_value(val)
+            for key, val in value.items() #pyright: ignore [reportUnknownVariableType]
+        )
+
+def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
+    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_mapping(value)
 
 
 @dataclass
