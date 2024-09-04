@@ -59,6 +59,9 @@ class ParsingError(Exception):
     def with_context(self, message: str) -> "ParsingError":
         return ParsingError(message=message, cause=self)
 
+def any_is_subclass(child: Any, parent: Type[Any]) -> bool:
+    return inspect.isclass(child) and issubclass(child, parent)
+
 @dataclass
 class Example:
     value: JsonValue
@@ -457,7 +460,7 @@ class MappingHint(Hint):
         if inspect.isclass(hint):
             return issubclass(hint, Mapping)
         if issubclass(type(hint), type(typing.Mapping[int, str])):
-            return issubclass(hint.__origin__, Mapping)
+            return any_is_subclass(hint.__origin__, Mapping)
         return False
 
     @classmethod
@@ -693,7 +696,7 @@ def is_tuple_hint(hint: Any) -> bool: # FIXME: can't use TypeGuard[types.Generic
     if inspect.isclass(hint) and hint.__name__ == "tuple":
         return True
     if issubclass(type(hint), type(typing.Tuple[int, str])):
-        return issubclass(hint.__origin__, tuple)
+        return any_is_subclass(hint.__origin__, tuple)
     return False
 
 class NTuple(Hint):
@@ -814,7 +817,7 @@ class ListHint(Hint):
         if inspect.isclass(hint):
             return issubclass(hint, Sequence)
         if issubclass(type(hint), type(typing.Sequence[int])):
-            return issubclass(hint.__origin__, Sequence)
+            return any_is_subclass(hint.__origin__, Sequence)
         return False
 
     @classmethod
