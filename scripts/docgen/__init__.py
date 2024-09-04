@@ -12,6 +12,11 @@ def generate_docs(*, raw_type: Any, root_path: List[str]) -> "str | Exception":
     return f"""
         <!doctype html>
         <html>
+            <head>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/school-book.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+            </head>
             <script>
                 document.addEventListener("DOMContentLoaded", () => {{
                     if(location.hash){{
@@ -41,8 +46,7 @@ def generate_docs(*, raw_type: Any, root_path: List[str]) -> "str | Exception":
                 {root_hint_widget.to_html()}
             </body>
             <script>
-                const p = document.createElement('p')
-                document.body.prepend(document.createElement('p'))
+                hljs.highlightAll();
             </script>
         </html>
 

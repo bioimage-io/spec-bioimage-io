@@ -19,7 +19,7 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined, PydanticUndefinedType
 import typing_extensions
 
-from bioimageio.spec._internal.io import YamlValue, is_yaml_value
+from bioimageio.spec._internal.io import YamlValue, is_yaml_leaf_value, is_yaml_value
 
 def eprint(message: str):
     import sys
@@ -84,7 +84,12 @@ class Example:
             return Exception(f"Value {val} is not Json-serializable: {e}")
 
     def to_yaml_str(self) -> str:
-        return yaml.dump(self.value)
+        out = yaml.dump(self.value)
+        yaml_end_of_file = "\n...\n" #FIXME: can't we just dump without the end-of-file marker?
+        if out.endswith(yaml_end_of_file):
+            return out[:-len(yaml_end_of_file)]
+        else:
+            return out
 
 def get_field_annotation(field_info: FieldInfo) -> Any:
     if field_info.metadata:
@@ -901,7 +906,7 @@ class UnionHint(Hint):
             Widget("thead", children=[
                 Widget("tr", children=[
                     Widget("th", text="variant type", css_classes=[FieldsWidget.TYPE_TABLE_HEADER]),
-                    Widget("th", text="example", css_classes=[FieldsWidget.EXAMPLE_TABLE_HEADER]),
+                    Widget("th", text="example yaml", css_classes=[FieldsWidget.EXAMPLE_TABLE_HEADER]),
                 ])
             ]),
             Widget("tbody", children=variant_widgets)
@@ -1022,7 +1027,7 @@ class Widget:
                 padding: {theme_spacing};
             }}
             td{{
-                padding: {theme_spacing};
+                padding: 0;
             }}
             td:has(> table){{
                 padding: 0;
@@ -1057,15 +1062,28 @@ class LiteralWidget(Widget):
         super().__init__("span", text=json.dumps(value), css_classes=[LiteralWidget.CSS_CLASS])
 
 class ExampleWidget(Widget):
-    CSS_CLASS: ClassVar[str] = "collapsible_example"
+    CSS_CLASS: ClassVar[str] = "example_widget"
+
+    @classmethod
+    def get_css(cls) -> str:
+        return f"""
+            .{ExampleWidget.CSS_CLASS}{{
+                margin: 0;
+            }}
+        """
+
     def __init__(self, example: Example) -> None:
         text = example.to_yaml_str()
-        if len(text.split("\n")) == 1:
-            super().__init__("pre", text=text)
+        if is_yaml_leaf_value(example.value):
+            super().__init__("pre", css_classes=[self.CSS_CLASS], children=[
+                Widget("code", text=text, css_classes=["language-yaml"])
+            ])
         else:
-            super().__init__("details", css_classes=[self.CSS_CLASS], children=[
+            super().__init__("details", children=[
                 Widget("summary", text="example"),
-                Widget("pre", text=text)
+                Widget("pre", css_classes=[self.CSS_CLASS], children=[
+                    Widget("code", text=text, css_classes=["language-yaml"])
+                ])
             ])
 
 class InlinePre(Widget):
@@ -1249,13 +1267,15 @@ class FieldsWidget(Widget):
             .{cls.FIELD_NAME_CSS_CLASS}{{
                 background-color: white;
                 font-weight: normal;
+                padding: 0.3em;
             }}
             .{cls.FIELD_TYPE_CSS_CLASS}{{
                 background-color: #84b4dd;
                 font-weight: bold;
+                padding: 0.3em;
             }}
             .{cls.EXAMPLE_FIELD_CSS_CLASS}{{
-                background-color: #dfdfdf;
+                background-color: #f6f5b2;
                 font-weight: normal;
             }}
             .{cls.EXAMPLE_TABLE_HEADER}{{
@@ -1274,7 +1294,7 @@ class FieldsWidget(Widget):
                 Widget("tr", children=[
                     Widget("th", text="field name"),
                     Widget("th", text="field type", css_classes=[self.TYPE_TABLE_HEADER]),
-                    Widget("th", text="example", css_classes=[self.EXAMPLE_TABLE_HEADER]),
+                    Widget("th", text="example yaml", css_classes=[self.EXAMPLE_TABLE_HEADER]),
                 ])
             ]),
             Widget("tbody", children=[
