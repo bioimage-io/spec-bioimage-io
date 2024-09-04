@@ -6,8 +6,7 @@ import json
 import typing
 from typing import ClassVar, Dict, Any, Final, ForwardRef, Literal, Optional, Tuple, Type, Union, cast, final
 from typing_extensions import TypeAliasType, assert_never
-from typing_extensions import List, TypeAlias, TypeGuard, Any
-import types
+from typing_extensions import List, TypeAlias, Any
 import datetime
 from xml.etree import ElementTree as et
 import inspect
@@ -454,10 +453,10 @@ class MappingHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_mapping_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
+    def is_mapping_hint(hint: Any) -> bool: #Can't use TypeGuard[typing.GenericAlias] in py 3.8
         if inspect.isclass(hint):
             return issubclass(hint, Mapping)
-        if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias"):
+        if issubclass(type(hint), type(typing.Mapping[int, str])):
             return issubclass(hint.__origin__, Mapping)
         return False
 
@@ -690,11 +689,11 @@ class PrimitiveHint(Hint):
 
 
 
-def is_tuple_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
-    if isinstance(hint, type) and hint.__name__ == "tuple":
+def is_tuple_hint(hint: Any) -> bool: # FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8
+    if inspect.isclass(hint) and hint.__name__ == "tuple":
         return True
-    if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias") and hint.__origin__ == tuple:
-        return True
+    if issubclass(type(hint), type(typing.Tuple[int, str])):
+        return issubclass(hint.__origin__, tuple)
     return False
 
 class NTuple(Hint):
@@ -811,10 +810,10 @@ class ListHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_list_hint(hint: Any) -> "TypeGuard[types.GenericAlias]":
+    def is_list_hint(hint: Any) -> bool: #FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8:
         if inspect.isclass(hint):
             return issubclass(hint, Sequence)
-        if hint.__class__.__name__ in ("_GenericAlias", "GenericAlias"):
+        if issubclass(type(hint), type(typing.Sequence[int])):
             return issubclass(hint.__origin__, Sequence)
         return False
 
