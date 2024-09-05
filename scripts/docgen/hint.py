@@ -91,6 +91,9 @@ class Example:
         else:
             return out
 
+    def to_json_str(self) -> str:
+        return json.dumps(self.value, indent=4)
+
 def get_field_annotation(field_info: FieldInfo) -> Any:
     if field_info.metadata:
         inner_annotation: Any = field_info.annotation #FIXME?
@@ -302,7 +305,7 @@ class AnnotatedHint(Hint):
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
         return self.inner_hint.short_description(extra=[
-            WarningIconWidget(title="!"), *extra
+            WarningIconWidget(title="This field has further restrictions"), *extra
         ])
 
     def get_example(self) -> "Example | Exception":
@@ -311,7 +314,7 @@ class AnnotatedHint(Hint):
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         inner_widget = self.inner_hint.to_type_widget(path=path, extra_summary=[
-            WarningIconWidget(title="!"), *extra_summary
+            WarningIconWidget(title="This field has further restrictions"), *extra_summary
         ])
 
         restrictions_widget = Widget("div", children=[
@@ -1080,7 +1083,7 @@ class ExampleWidget(Widget):
             ])
         else:
             super().__init__("details", children=[
-                Widget("summary", text="example"),
+                Widget("summary", text="example yaml"),
                 Widget("pre", css_classes=[self.CSS_CLASS], children=[
                     Widget("code", text=text, css_classes=["language-yaml"])
                 ])
@@ -1147,7 +1150,10 @@ class OptMarkerWidget(Widget):
 
     def __init__(self, default_value: Example):
         super().__init__(
-            "span", text="opt", title=default_value.to_yaml_str(), css_classes=[OptMarkerWidget.CSS_CLASS]
+            "span",
+            text="opt",
+            title=f"This field is optional and defaults to {default_value.to_json_str()}",
+            css_classes=[OptMarkerWidget.CSS_CLASS]
         )
 
 class CheckboxWidget(Widget):
