@@ -487,8 +487,9 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
 
 def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
     return isinstance(value, Sequence) and all(
-        is_yaml_value(item) for item in value
-    )  # pyright: ignore [reportUnknownVariableType]
+        is_yaml_value(item)
+        for item in value  # pyright: ignore [reportUnknownVariableType]
+    )
 
 
 def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
