@@ -186,10 +186,12 @@ class YamlValueHint(Hint):
         return Unrecognized(raw_hint=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
             InlinePre(text="YamlValue"),
             *extra
         ])
+        #fmt: on
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         return self.short_description(extra=extra_summary)
@@ -212,15 +214,22 @@ class RecursionHint(Hint):
         return RecursionHint(raw_hint=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text=f"(Recursion to {self.raw_hint})"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text=f"(Recursion to {self.raw_hint})"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("... RECURSE ...")
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
             self.short_description(extra=extra_summary)
         ])
+        #fmt: on
 
 class StringNodeHint(Hint):
     def __init__(self, pattern: str) -> None:
@@ -233,7 +242,12 @@ class StringNodeHint(Hint):
         return StringNodeHint(pattern=getattr(raw_hint, "_pattern")) #FIXME: use types from spec
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="ISO 8601 datetime"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text="ISO 8601 datetime"),
+            *extra
+        ])
+        #fmt: on
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         return self.short_description(extra=extra_summary)
@@ -317,6 +331,7 @@ class AnnotatedHint(Hint):
             WarningIconWidget(title="This field has further restrictions"), *extra_summary
         ])
 
+        #fmt: off
         restrictions_widget = Widget("div", children=[
             Widget("p", text="Restrictions:"),
             Widget("ul", css_classes=[self.RESTRICTION_CSS_CLASS], children=[
@@ -324,15 +339,18 @@ class AnnotatedHint(Hint):
                 for annotation in self.restrictions
             ]),
         ])
+        #fmt: on
 
         if inner_widget.tag == "details":
             inner_widget.appendChildren([restrictions_widget])
             return inner_widget
         else:
+            #fmt: off
             return Widget("details", children=[
                 Widget("summary", children=[inner_widget]),
                 restrictions_widget,
             ])
+            #fmt: on
 
 class TypeAliasHint(Hint):
     def __init__(self, name: str, inner: Hint) -> None:
@@ -350,11 +368,13 @@ class TypeAliasHint(Hint):
         return TypeAliasHint(name=raw_hint.__name__, inner=inner)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text=f"{self.name}"),
             Widget("span", text=f" (Alias)", style="font-style: italic; opacity: 0.6"),
             *extra
         ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         inner_example = self.inner.get_example()
@@ -396,7 +416,12 @@ class DateHint(Hint):
         return DateHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="date (YYYY-MM-DD)"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text="date (YYYY-MM-DD)"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("2024-12-31")
@@ -413,7 +438,12 @@ class PathHint(Hint):
         return PathHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="Path"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text="Path"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("/some/path")
@@ -430,7 +460,12 @@ class EmailHint(Hint):
         return EmailHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="EmailStr"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text="EmailStr"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("john.doe@example.com")
@@ -447,7 +482,12 @@ class UrlHint(Hint):
         return UrlHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="HttpUrl"), *extra])
+        #fmt: off
+        return Widget("span", children=[
+            InlinePre(text="HttpUrl"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("https://example.com/some/path")
@@ -489,12 +529,14 @@ class MappingHint(Hint):
         return MappingHint(value_hint=value_hint, value_example=value_example)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text="{ str: "),
             self.value_hint.short_description(),
             InlinePre(text="}"),
             *extra,
         ])
+        #fmt: on
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         field_name = "[...]" #FIXME: clearer key type?
@@ -555,9 +597,13 @@ class LiteralHint(Hint):
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         if len(self.values) <= LiteralHint.LIMIT:
+            #fmt: off
             return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
                 self.short_description(extra=extra_summary)
             ])
+            #fmt: on
+
+        #fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
                 self.short_description(extra=extra_summary)
@@ -573,6 +619,7 @@ class LiteralHint(Hint):
                 ])
             ])
         ])
+        #fmt: on
 
 
 
@@ -629,10 +676,12 @@ class ModelHint(Hint):
         return ModelHint(model=raw_hint, fields=fields)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text=self.model.__module__ + "." + self.model.__qualname__),
             *extra
         ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example({
@@ -677,10 +726,12 @@ class PrimitiveHint(Hint):
         return PrimitiveHint(hint_type=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text="null" if self.hint_type == type(None) else self.hint_type.__name__),
             *extra
         ])
+        #fmt: on
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
         return self.short_description(extra=extra_summary)
