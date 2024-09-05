@@ -125,7 +125,7 @@ def get_field_annotation(field_info: FieldInfo) -> Any:
         # FIXME: thisrequired python 3.11
         # return typing_extensions.Annotated[inner_annotation, *field_info.metadata]
         out = typing_extensions.Annotated[inner_annotation, "placeholder"]
-        out.__metadata__ = ( # pyright: ignore [reportAttributeAccessIssue]
+        out.__metadata__ = (  # pyright: ignore [reportAttributeAccessIssue]
             field_info.metadata
         )
         return out
@@ -1688,4 +1688,3 @@ class FieldsWidget(Widget):
             fields_table,
         ])
         # fmt: on
-
