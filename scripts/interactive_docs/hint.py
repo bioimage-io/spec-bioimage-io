@@ -5,7 +5,20 @@ from xml.etree import ElementTree as et
 import json
 import yaml
 import typing
-from typing import ClassVar, Dict, Any, Final, ForwardRef, Literal, Optional, Tuple, Type, Union, cast, final
+from typing import (
+    ClassVar,
+    Dict,
+    Any,
+    Final,
+    ForwardRef,
+    Literal,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+    cast,
+    final,
+)
 from typing_extensions import TypeAliasType, assert_never
 from typing_extensions import List, TypeAlias, Any
 import datetime
@@ -21,12 +34,16 @@ import typing_extensions
 
 from bioimageio.spec._internal.io import YamlValue, is_yaml_leaf_value, is_yaml_value
 
+
 def eprint(message: str):
     import sys
+
     print(message, file=sys.stderr)
+
 
 class Unrecognized:
     raw_hint: Any
+
     def __init__(self, raw_hint: Any):
         self.raw_hint = raw_hint
         super().__init__()
@@ -37,14 +54,17 @@ class Unrecognized:
     def with_context(self, message: str) -> "ParsingError":
         return ParsingError(message=message, cause=self)
 
+
 class ParsingError(Exception):
-    def __init__(self, message: str, cause: "ParsingError | Unrecognized | None" = None) -> None:
+    def __init__(
+        self, message: str, cause: "ParsingError | Unrecognized | None" = None
+    ) -> None:
         self.message = message
         self.cause = cause
         super().__init__()
 
     def _display(self, level: int) -> str:
-        base_message = '  ' * level + self.message
+        base_message = "  " * level + self.message
         if isinstance(self.cause, ParsingError):
             return base_message + ":\n" + self.cause._display(level + 1)
         elif isinstance(self.cause, Unrecognized):
@@ -60,8 +80,10 @@ class ParsingError(Exception):
     def with_context(self, message: str) -> "ParsingError":
         return ParsingError(message=message, cause=self)
 
+
 def any_is_subclass(child: Any, parent: Type[Any]) -> bool:
     return inspect.isclass(child) and issubclass(child, parent)
+
 
 @dataclass
 class Example:
@@ -75,7 +97,7 @@ class Example:
             yaml_value: YamlValue = cast(YamlValue, val.model_dump(mode="json"))
             return Example(value=yaml_value)
         try:
-            #FIXME: stricter typing here?
+            # FIXME: stricter typing here?
             val_type: Any = type(val)
             adapter: Any = pydantic.TypeAdapter(val_type)
             dumped_value = json.loads(adapter.dump_json(val))
@@ -85,28 +107,35 @@ class Example:
 
     def to_yaml_str(self) -> str:
         out = yaml.dump(self.value)
-        yaml_end_of_file = "\n...\n" #FIXME: can't we just dump without the end-of-file marker?
+        yaml_end_of_file = (
+            "\n...\n"  # FIXME: can't we just dump without the end-of-file marker?
+        )
         if out.endswith(yaml_end_of_file):
-            return out[:-len(yaml_end_of_file)]
+            return out[: -len(yaml_end_of_file)]
         else:
             return out
 
     def to_json_str(self) -> str:
         return json.dumps(self.value, indent=4)
 
+
 def get_field_annotation(field_info: FieldInfo) -> Any:
     if field_info.metadata:
-        inner_annotation: Any = field_info.annotation #FIXME?
+        inner_annotation: Any = field_info.annotation  # FIXME?
         # FIXME: thisrequired python 3.11
-        #return typing_extensions.Annotated[inner_annotation, *field_info.metadata]
+        # return typing_extensions.Annotated[inner_annotation, *field_info.metadata]
         out = typing_extensions.Annotated[inner_annotation, "placeholder"]
-        out.__metadata__ = field_info.metadata # pyright: ignore [reportAttributeAccessIssue]
+        out.__metadata__ = ( # pyright: ignore [reportAttributeAccessIssue]
+            field_info.metadata
+        )
         return out
     else:
         return field_info.annotation
 
+
 def field_has_default_value(info: FieldInfo) -> bool:
     return not isinstance(info.default, PydanticUndefinedType)
+
 
 class Hint(ABC):
     @staticmethod
@@ -135,9 +164,11 @@ class Hint(ABC):
 
     @final
     @classmethod
-    def parse(cls, *, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def parse(
+        cls, *, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         # if raw_hint in cls.hint_cache:
-            # return cls.hint_cache[raw_hint] #FIXME: maybe move this into the individual do_parse impls?
+        # return cls.hint_cache[raw_hint] #FIXME: maybe move this into the individual do_parse impls?
         hint: "Hint | Unrecognized | Exception" = Unrecognized(raw_hint=raw_hint)
         for subclass in Hint.get_subclasses():
             hint = subclass.do_parse(raw_hint, parent_raw_hints=parent_raw_hints)
@@ -154,11 +185,15 @@ class Hint(ABC):
 
     @classmethod
     @abstractmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         raise NotImplementedError
 
     @abstractmethod
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         raise NotImplementedError
 
     @abstractmethod
@@ -172,8 +207,12 @@ class Hint(ABC):
 
 class YamlValueHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
-        if raw_hint == Any: #FIXME: since the spec is yaml, "Any" mostly translates to YamlValue.... but is this always true?
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
+        if (
+            raw_hint == Any
+        ):  # FIXME: since the spec is yaml, "Any" mostly translates to YamlValue.... but is this always true?
             return YamlValueHint()
         if raw_hint == "YamlValue":
             return YamlValueHint()
@@ -186,21 +225,21 @@ class YamlValueHint(Hint):
         return Unrecognized(raw_hint=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
             InlinePre(text="YamlValue"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
 
     def get_example(self) -> "Example | Exception":
-        return Example({
-            "some_key": "some_value",
-            "another_key": [123, 456]
-        })
+        return Example({"some_key": "some_value", "another_key": [123, 456]})
+
 
 class RecursionHint(Hint):
     def __init__(self, raw_hint: Any) -> None:
@@ -208,57 +247,76 @@ class RecursionHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if raw_hint not in parent_raw_hints:
             return Unrecognized(raw_hint=raw_hint)
         return RecursionHint(raw_hint=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text=f"(Recursion to {self.raw_hint})"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("... RECURSE ...")
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
+        # fmt: off
         return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
             self.short_description(extra=extra_summary)
         ])
-        #fmt: on
+        # fmt: on
+
 
 class StringNodeHint(Hint):
     def __init__(self, pattern: str) -> None:
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
-        if not inspect.isclass(raw_hint) or not any(klass.__name__ == "StringNode" for klass in raw_hint.__mro__):
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
+        if not inspect.isclass(raw_hint) or not any(
+            klass.__name__ == "StringNode" for klass in raw_hint.__mro__
+        ):
             return Unrecognized(raw_hint=raw_hint)
-        return StringNodeHint(pattern=getattr(raw_hint, "_pattern")) #FIXME: use types from spec
+        return StringNodeHint(
+            pattern=getattr(raw_hint, "_pattern")
+        )  # FIXME: use types from spec
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="ISO 8601 datetime"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
 
     def get_example(self) -> "Example | Exception":
-        return Example("*NO EXAMPLE PROVIDED*") #FIXME: maybe have a type just for absent examples
+        return Example(
+            "*NO EXAMPLE PROVIDED*"
+        )  # FIXME: maybe have a type just for absent examples
+
 
 class RootModelHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         from pydantic import RootModel
+
         if not inspect.isclass(raw_hint):
             return Unrecognized(raw_hint=raw_hint)
         if issubclass(raw_hint, RootModel):
@@ -270,6 +328,7 @@ class RootModelHint(Hint):
             return Unrecognized(raw_hint=raw_hint)
         # FIXME: this misses the extra restrictions that might be defined in `raw_hint`
         return Hint.parse(raw_hint=inner_hint, parent_raw_hints=parent_raw_hints)
+
 
 class AnnotatedHint(Hint):
     CSS_CLASS: ClassVar[str] = "annotated_type"
@@ -284,21 +343,36 @@ class AnnotatedHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if raw_hint.__class__ != typing_extensions.Annotated[int, None].__class__:
             return Unrecognized(raw_hint)
-        inner_hint = Hint.parse(raw_hint=raw_hint.__args__[0], parent_raw_hints=[*parent_raw_hints, raw_hint])
+        inner_hint = Hint.parse(
+            raw_hint=raw_hint.__args__[0],
+            parent_raw_hints=[*parent_raw_hints, raw_hint],
+        )
         if isinstance(inner_hint, (ParsingError, Unrecognized)):
             return inner_hint.with_context(f"Could not parse inner hint for {raw_hint}")
-        if len(raw_hint.__metadata__) == 1 and isinstance(raw_hint.__metadata__[0], pydantic.Discriminator):
-            return inner_hint # "discriminator" is onl helpful for the parser, not for the user
+        if len(raw_hint.__metadata__) == 1 and isinstance(
+            raw_hint.__metadata__[0], pydantic.Discriminator
+        ):
+            return inner_hint  # "discriminator" is onl helpful for the parser, not for the user
         metadata: List[str] = []
         for md in raw_hint.__metadata__:
             # pydantic.Discriminator and pydantic.PlainSerializer are not useful for consumers.
             # A FieldInfo can appear if in types like Annotated[int, pydantic.Field(...)]. It usually has nothing useful
-            if isinstance(md, (pydantic.Discriminator, pydantic.PlainSerializer, pydantic.fields.FieldInfo)):
+            if isinstance(
+                md,
+                (
+                    pydantic.Discriminator,
+                    pydantic.PlainSerializer,
+                    pydantic.fields.FieldInfo,
+                ),
+            ):
                 continue
-            if type(md).__name__ == "AfterWarner": #FIXME: use isinstance, maybe render it somehow?
+            # FIXME: use isinstance, maybe render it somehow?
+            if type(md).__name__ == "AfterWarner":
                 continue
             if "PydanticGeneralMetadata" in type(md).__name__:
                 continue
@@ -307,31 +381,45 @@ class AnnotatedHint(Hint):
                 if md.func.__doc__:
                     metadata_str += f": {md.func.__doc__}"
                 else:
-                    eprint(f"WARNING: no predicated docstring in {parent_raw_hints}.{raw_hint}")
+                    eprint(
+                        f"WARNING: no predicated docstring in {parent_raw_hints}.{raw_hint}"
+                    )
                 metadata.append(metadata_str)
                 continue
             metadata.append(str(md))
         if metadata.__len__() == 0:
             return inner_hint
         if isinstance(inner_hint, AnnotatedHint):
-            return AnnotatedHint(inner_hint=inner_hint.inner_hint, restrictions=metadata + list(inner_hint.restrictions))
+            return AnnotatedHint(
+                inner_hint=inner_hint.inner_hint,
+                restrictions=metadata + list(inner_hint.restrictions),
+            )
         return AnnotatedHint(inner_hint=inner_hint, restrictions=metadata)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return self.inner_hint.short_description(extra=[
-            WarningIconWidget(title="This field has further restrictions"), *extra
-        ])
+        return self.inner_hint.short_description(
+            extra=[
+                WarningIconWidget(title="This field has further restrictions"),
+                *extra,
+            ]
+        )
 
     def get_example(self) -> "Example | Exception":
         eprint(f"WARNING: Annotated type without a manually provided example")
         return self.inner_hint.get_example()
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
-        inner_widget = self.inner_hint.to_type_widget(path=path, extra_summary=[
-            WarningIconWidget(title="This field has further restrictions"), *extra_summary
-        ])
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
+        inner_widget = self.inner_hint.to_type_widget(
+            path=path,
+            extra_summary=[
+                WarningIconWidget(title="This field has further restrictions"),
+                *extra_summary,
+            ],
+        )
 
-        #fmt: off
+        # fmt: off
         restrictions_widget = Widget("div", children=[
             Widget("p", text="Restrictions:"),
             Widget("ul", css_classes=[self.RESTRICTION_CSS_CLASS], children=[
@@ -339,18 +427,19 @@ class AnnotatedHint(Hint):
                 for annotation in self.restrictions
             ]),
         ])
-        #fmt: on
+        # fmt: on
 
         if inner_widget.tag == "details":
             inner_widget.appendChildren([restrictions_widget])
             return inner_widget
         else:
-            #fmt: off
+            # fmt: off
             return Widget("details", children=[
                 Widget("summary", children=[inner_widget]),
                 restrictions_widget,
             ])
-            #fmt: on
+            # fmt: on
+
 
 class TypeAliasHint(Hint):
     def __init__(self, name: str, inner: Hint) -> None:
@@ -359,22 +448,28 @@ class TypeAliasHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if not isinstance(raw_hint, TypeAliasType):
             return Unrecognized(raw_hint=raw_hint)
-        inner = Hint.parse(raw_hint=raw_hint.__value__, parent_raw_hints=[*parent_raw_hints, raw_hint])
+        inner = Hint.parse(
+            raw_hint=raw_hint.__value__, parent_raw_hints=[*parent_raw_hints, raw_hint]
+        )
         if isinstance(inner, (Unrecognized, ParsingError)):
-            return inner.with_context(f"Could not parse definition of alias {raw_hint.__name__}")
+            return inner.with_context(
+                f"Could not parse definition of alias {raw_hint.__name__}"
+            )
         return TypeAliasHint(name=raw_hint.__name__, inner=inner)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text=f"{self.name}"),
             Widget("span", text=f" (Alias)", style="font-style: italic; opacity: 0.6"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         inner_example = self.inner.get_example()
@@ -382,7 +477,9 @@ class TypeAliasHint(Hint):
             return Exception(f"Could not get example for {self.name}: {inner_example}")
         return inner_example
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         # fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
@@ -392,12 +489,14 @@ class TypeAliasHint(Hint):
                 Widget("span", text=f" (Aliased)", style="font-style: italic; opacity: 0.6"),
             ])
         ])
-        #fmt: on
+        # fmt: on
 
 
 class DatetimeHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if raw_hint != datetime.datetime:
             return Unrecognized(raw_hint=raw_hint)
         return DatetimeHint()
@@ -408,100 +507,126 @@ class DatetimeHint(Hint):
             InlinePre(text="ISO 8601 datetime"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example(datetime.datetime.now().isoformat())
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
+
 
 class DateHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if raw_hint != datetime.date:
             return Unrecognized(raw_hint=raw_hint)
         return DateHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="date (YYYY-MM-DD)"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("2024-12-31")
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
+
 
 class PathHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         from pathlib import Path, PurePath
+
         if raw_hint != Path and raw_hint != PurePath:
             return Unrecognized(raw_hint=raw_hint)
         return PathHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="Path"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("/some/path")
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
+
 
 class EmailHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         from pydantic.networks import EmailStr
+
         if raw_hint != EmailStr:
             return Unrecognized(raw_hint=raw_hint)
         return EmailHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="EmailStr"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("john.doe@example.com")
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
+
 
 class UrlHint(Hint):
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         from pydantic import AnyUrl
+
         if not inspect.isclass(raw_hint) or not issubclass(raw_hint, AnyUrl):
             return Unrecognized(raw_hint=raw_hint)
         return UrlHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="HttpUrl"),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example("https://example.com/some/path")
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
+
 
 class MappingHint(Hint):
     value_hint: Hint
@@ -513,7 +638,9 @@ class MappingHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_mapping_hint(hint: Any) -> bool: #Can't use TypeGuard[typing.GenericAlias] in py 3.8
+    def is_mapping_hint(
+        hint: Any,
+    ) -> bool:  # Can't use TypeGuard[typing.GenericAlias] in py 3.8
         if inspect.isclass(hint):
             return issubclass(hint, Mapping)
         if issubclass(type(hint), type(typing.Mapping[int, str])):
@@ -521,33 +648,44 @@ class MappingHint(Hint):
         return False
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "MappingHint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "MappingHint | Unrecognized | ParsingError":
         if not cls.is_mapping_hint(raw_hint):
             return Unrecognized(raw_hint)
         type_args: Tuple[Type[Any], Type[Any]] = getattr(raw_hint, "__args__")
         key_type = type_args[0]
         if key_type != str and key_type != int and key_type != typing.Union[int, str]:
-            return ParsingError(f"Mappings with keys that are not ints or strings is not supported yet: {raw_hint}")
-        value_hint = Hint.parse(raw_hint=raw_hint.__args__[1], parent_raw_hints=[*parent_raw_hints, raw_hint])
+            return ParsingError(
+                f"Mappings with keys that are not ints or strings is not supported yet: {raw_hint}"
+            )
+        value_hint = Hint.parse(
+            raw_hint=raw_hint.__args__[1],
+            parent_raw_hints=[*parent_raw_hints, raw_hint],
+        )
         if isinstance(value_hint, (Unrecognized, ParsingError)):
             return value_hint.with_context(f"Could not parse value type of {raw_hint}")
         value_example = value_hint.get_example()
         if isinstance(value_example, Exception):
-            return ParsingError(f"Could not get example for {value_hint}: {value_example}")
+            return ParsingError(
+                f"Could not get example for {value_hint}: {value_example}"
+            )
         return MappingHint(value_hint=value_hint, value_example=value_example)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="{ str: "),
             self.value_hint.short_description(),
             InlinePre(text="}"),
             *extra,
         ])
-        #fmt: on
+        # fmt: on
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
-        field_name = "[...]" #FIXME: clearer key type?
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
+        field_name = "[...]"  # FIXME: clearer key type?
         return FieldsWidget(
             base_path=path,
             short_description=self.short_description(extra=extra_summary),
@@ -555,17 +693,21 @@ class MappingHint(Hint):
                 FieldData(
                     name=field_name,
                     description=None,
-                    type_widget=self.value_hint.to_type_widget(path=[*path, field_name]),
-                    example=self.value_example
+                    type_widget=self.value_hint.to_type_widget(
+                        path=[*path, field_name]
+                    ),
+                    example=self.value_example,
                 )
-            ]
+            ],
         )
 
     def get_example(self) -> "Example":
         return Example({"some_key": self.value_example.value})
 
-def literal_value_to_code(lit_value: 'int | bool | float | str | None') -> str:
+
+def literal_value_to_code(lit_value: "int | bool | float | str | None") -> str:
     return f"'{lit_value}'" if isinstance(lit_value, str) else str(lit_value)
+
 
 class LiteralHint(Hint):
     LIMIT = 10
@@ -575,22 +717,28 @@ class LiteralHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "LiteralHint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "LiteralHint | Unrecognized | ParsingError":
         some_dummy_literal_hint = Literal["a"]
         if raw_hint.__class__ != some_dummy_literal_hint.__class__:
             return Unrecognized(raw_hint)
-        assert all(isinstance(val, (int, float, str, type(None), bool)) for val in raw_hint.__args__)
+        assert all(
+            isinstance(val, (int, float, str, type(None), bool))
+            for val in raw_hint.__args__
+        )
         return LiteralHint(values=raw_hint.__args__)
-
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
         widgets: List[Widget] = []
 
         if len(self.values) > LiteralHint.LIMIT:
-            for part in self.values[0:LiteralHint.LIMIT]:
+            for part in self.values[0 : LiteralHint.LIMIT]:
                 widgets.append(LiteralWidget(value=part))
                 widgets.append(InlinePre(text=", "))
-            widgets.append(InlinePre(text=f"({len(self.values) - LiteralHint.LIMIT} more)"))
+            widgets.append(
+                InlinePre(text=f"({len(self.values) - LiteralHint.LIMIT} more)")
+            )
             widgets.append(InlinePre(text=", "))
             widgets.append(LiteralWidget(value=self.values[-1]))
         else:
@@ -603,15 +751,17 @@ class LiteralHint(Hint):
     def get_example(self) -> "Example | Exception":
         return Example(self.values[0])
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         if len(self.values) <= LiteralHint.LIMIT:
-            #fmt: off
+            # fmt: off
             return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
                 self.short_description(extra=extra_summary)
             ])
-            #fmt: on
+            # fmt: on
 
-        #fmt: off
+        # fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
                 self.short_description(extra=extra_summary)
@@ -627,14 +777,13 @@ class LiteralHint(Hint):
                 ])
             ])
         ])
-        #fmt: on
-
+        # fmt: on
 
 
 class ModelHint(Hint):
     def __init__(
         self,
-        model: Type['BaseModel'],
+        model: Type["BaseModel"],
         fields: Mapping[str, Tuple[Hint, Example]],
     ):
         self.model = model
@@ -642,7 +791,9 @@ class ModelHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "Hint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "Hint | Unrecognized | ParsingError":
         if not inspect.isclass(raw_hint) or not issubclass(raw_hint, BaseModel):
             return Unrecognized(raw_hint)
 
@@ -650,7 +801,7 @@ class ModelHint(Hint):
 
         required_fields_first = sorted(
             raw_hint.model_fields.items(),
-            key=lambda item: field_has_default_value(item[1])
+            key=lambda item: field_has_default_value(item[1]),
         )
 
         for field_name, field_info in required_fields_first:
@@ -661,42 +812,52 @@ class ModelHint(Hint):
             field_hint = Hint.parse(
                 raw_hint=get_field_annotation(field_info),
                 # raw_hint=typing.get_type_hints(raw_hint, include_extras=True)[field_name],
-                parent_raw_hints=[*parent_raw_hints, raw_hint]
+                parent_raw_hints=[*parent_raw_hints, raw_hint],
             )
             if isinstance(field_hint, (ParsingError, Unrecognized)):
-                return field_hint.with_context(f"Could not parse type of field {field_descriptor}")
-
+                return field_hint.with_context(
+                    f"Could not parse type of field {field_descriptor}"
+                )
 
             if field_info.examples is None or len(field_info.examples) == 0:
                 raw_field_example = field_hint.get_example()
                 if isinstance(raw_field_example, Exception):
-                    return ParsingError(f"Could not get example for {field_descriptor}: {raw_field_example}")
+                    return ParsingError(
+                        f"Could not get example for {field_descriptor}: {raw_field_example}"
+                    )
                 raw_field_example = raw_field_example.value
             else:
                 raw_field_example = field_info.examples[0]
 
             field_example = Example.try_from_value(raw_field_example)
             if isinstance(field_example, Exception):
-                return ParsingError(f"Could not get example for {field_descriptor}: {field_example}")
+                return ParsingError(
+                    f"Could not get example for {field_descriptor}: {field_example}"
+                )
 
             fields[field_name] = (field_hint, field_example)
 
         return ModelHint(model=raw_hint, fields=fields)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text=self.model.__module__ + "." + self.model.__qualname__),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
-        return Example({
-            field_name: field_example.value for field_name, (_, field_example) in self.fields.items()
-        })
+        return Example(
+            {
+                field_name: field_example.value
+                for field_name, (_, field_example) in self.fields.items()
+            }
+        )
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         fields: List[FieldData] = []
         for field_name, (hint, example) in self.fields.items():
             field_info = self.model.model_fields[field_name]
@@ -704,13 +865,15 @@ class ModelHint(Hint):
             if not isinstance(field_default, PydanticUndefinedType):
                 field_default = Example.try_from_value(field_default)
                 assert not isinstance(field_default, Exception)
-            fields.append(FieldData(
-                name=field_name,
-                description=field_info.description,
-                example=example,
-                type_widget=hint.to_type_widget(path=[*path, field_name]),
-                default=field_default
-            ))
+            fields.append(
+                FieldData(
+                    name=field_name,
+                    description=field_info.description,
+                    example=example,
+                    type_widget=hint.to_type_widget(path=[*path, field_name]),
+                    default=field_default,
+                )
+            )
 
         return FieldsWidget(
             base_path=path,
@@ -718,7 +881,11 @@ class ModelHint(Hint):
             fields=fields,
         )
 
-PrimitiveType: TypeAlias = Union[Type[int], Type[float], Type[bool], Type[str], Type[None]]
+
+PrimitiveType: TypeAlias = Union[
+    Type[int], Type[float], Type[bool], Type[str], Type[None]
+]
+
 
 class PrimitiveHint(Hint):
     def __init__(self, hint_type: PrimitiveType):
@@ -726,66 +893,85 @@ class PrimitiveHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "PrimitiveHint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "PrimitiveHint | Unrecognized | ParsingError":
         if raw_hint == None:
             raw_hint = type(None)
-        if not inspect.isclass(raw_hint) or not issubclass(raw_hint, (int, float, bool, str, type(None))):
+        if not inspect.isclass(raw_hint) or not issubclass(
+            raw_hint, (int, float, bool, str, type(None))
+        ):
             return Unrecognized(raw_hint=raw_hint)
         return PrimitiveHint(hint_type=raw_hint)
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="null" if self.hint_type == type(None) else self.hint_type.__name__),
             *extra
         ])
-        #fmt: on
+        # fmt: on
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return self.short_description(extra=extra_summary)
 
     def get_example(self) -> Example:
         hint_type = self.hint_type
         if hint_type == int:
             return Example(123456)
-        if hint_type ==  float:
+        if hint_type == float:
             return Example(3.14)
-        if hint_type ==  bool:
+        if hint_type == bool:
             return Example(True)
-        if hint_type ==  str:
+        if hint_type == str:
             return Example("some free-format string")
-        if hint_type ==  type(None):
+        if hint_type == type(None):
             return Example(None)
         return Example("--- NO EXAMPLES PROVIDED ---")
 
 
-
-def is_tuple_hint(hint: Any) -> bool: # FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8
+def is_tuple_hint(
+    hint: Any,
+) -> bool:  # FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8
     if inspect.isclass(hint) and hint.__name__ == "tuple":
         return True
     if issubclass(type(hint), type(typing.Tuple[int, str])):
         return any_is_subclass(hint.__origin__, tuple)
     return False
 
+
 class NTuple(Hint):
     """Represents tuple a type-hint with all items defined, like Tuple[int, str]"""
 
-    def __init__(self, generic_args: Sequence[Tuple[Hint, Example]],):
+    def __init__(
+        self,
+        generic_args: Sequence[Tuple[Hint, Example]],
+    ):
         self.generic_args = generic_args
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "NTuple | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "NTuple | Unrecognized | ParsingError":
         if not is_tuple_hint(raw_hint) or (... in raw_hint.__args__):
             return Unrecognized(raw_hint)
         generic_args: List[Tuple[Hint, Example]] = []
-        for arg_inx, arg  in enumerate(raw_hint.__args__):
-            hint = Hint.parse(raw_hint=arg, parent_raw_hints=[*parent_raw_hints, raw_hint])
+        for arg_inx, arg in enumerate(raw_hint.__args__):
+            hint = Hint.parse(
+                raw_hint=arg, parent_raw_hints=[*parent_raw_hints, raw_hint]
+            )
             if isinstance(hint, (Unrecognized, ParsingError)):
-                return hint.with_context(f"Could not parse {arg_inx}-th NTuple type argument")
+                return hint.with_context(
+                    f"Could not parse {arg_inx}-th NTuple type argument"
+                )
             example = hint.get_example()
             if isinstance(example, Exception):
-                return ParsingError(f"Could not get example for {arg_inx}-th NTuple type argument: {example}")
+                return ParsingError(
+                    f"Could not get example for {arg_inx}-th NTuple type argument: {example}"
+                )
             generic_args.append((hint, example))
         return NTuple(generic_args=generic_args)
 
@@ -796,14 +982,18 @@ class NTuple(Hint):
             if arg_idx < len(self.generic_args) - 1:
                 children.append(InlinePre(text=", "))
 
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="("),
             *children,
             InlinePre(text=")"),
             *extra,
         ])
+        # fmt: on
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         return FieldsWidget(
             base_path=path,
             short_description=self.short_description(extra=extra_summary),
@@ -815,11 +1005,12 @@ class NTuple(Hint):
                     example=example,
                 )
                 for idx, (hint, example) in enumerate(self.generic_args)
-            ]
+            ],
         )
 
     def get_example(self) -> "Example | Exception":
         return Example(list(arg[1].value for arg in self.generic_args))
+
 
 class VarLenTuple(Hint):
     """Represents a type-hint like Tuple[T, ...]"""
@@ -830,7 +1021,9 @@ class VarLenTuple(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "VarLenTuple | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "VarLenTuple | Unrecognized | ParsingError":
         if not is_tuple_hint(raw_hint):
             return Unrecognized(raw_hint=raw_hint)
         if len(raw_hint.__args__) != 2:
@@ -838,15 +1031,24 @@ class VarLenTuple(Hint):
         last_type_arg = raw_hint.__args__[-1]
         if last_type_arg.__name__ != "ellipsis":
             return Unrecognized(raw_hint=raw_hint)
-        element_hint = Hint.parse(raw_hint=raw_hint.__args__[0], parent_raw_hints=[*parent_raw_hints, raw_hint])
+        element_hint = Hint.parse(
+            raw_hint=raw_hint.__args__[0],
+            parent_raw_hints=[*parent_raw_hints, raw_hint],
+        )
         if isinstance(element_hint, (Unrecognized, Exception)):
-            return element_hint.with_context(f"Could not parse VarLenTuple element type: {element_hint}")
+            return element_hint.with_context(
+                f"Could not parse VarLenTuple element type: {element_hint}"
+            )
         element_example = element_hint.get_example()
         if isinstance(element_example, Exception):
-            return ParsingError(f"Could not get example for element type: {element_example}")
+            return ParsingError(
+                f"Could not get example for element type: {element_example}"
+            )
         return VarLenTuple(element_type=element_hint, element_example=element_example)
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         field_name = "[...]"
         return FieldsWidget(
             base_path=path,
@@ -854,7 +1056,9 @@ class VarLenTuple(Hint):
                 FieldData(
                     name=field_name,
                     description=None,
-                    type_widget=self.element_type.to_type_widget(path=[*path, field_name]),
+                    type_widget=self.element_type.to_type_widget(
+                        path=[*path, field_name]
+                    ),
                     example=self.element_example,
                 )
             ],
@@ -862,17 +1066,18 @@ class VarLenTuple(Hint):
         )
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="("),
             self.element_type.short_description(),
             InlinePre(text=", ...)"),
             *extra,
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example([self.element_example.value])
+
 
 class ListHint(Hint):
     """Represents a list-hint like List[T]"""
@@ -883,7 +1088,9 @@ class ListHint(Hint):
         super().__init__()
 
     @staticmethod
-    def is_list_hint(hint: Any) -> bool: #FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8:
+    def is_list_hint(
+        hint: Any,
+    ) -> bool:  # FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8:
         if inspect.isclass(hint):
             return issubclass(hint, Sequence)
         if issubclass(type(hint), type(typing.Sequence[int])):
@@ -891,18 +1098,27 @@ class ListHint(Hint):
         return False
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "ListHint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "ListHint | Unrecognized | ParsingError":
         if not cls.is_list_hint(raw_hint):
             return Unrecognized(raw_hint=raw_hint)
-        element_hint = Hint.parse(raw_hint=raw_hint.__args__[0], parent_raw_hints=[*parent_raw_hints, raw_hint])
+        element_hint = Hint.parse(
+            raw_hint=raw_hint.__args__[0],
+            parent_raw_hints=[*parent_raw_hints, raw_hint],
+        )
         if isinstance(element_hint, (Unrecognized, ParsingError)):
             return element_hint.with_context(f"Could not parse List element type")
         element_example = element_hint.get_example()
         if isinstance(element_example, Exception):
-            return ParsingError(f"Could not get example for List element type: {element_example}")
+            return ParsingError(
+                f"Could not get example for List element type: {element_example}"
+            )
         return ListHint(element_type=element_hint, element_example=element_example)
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         field_name = "[...]"
         return FieldsWidget(
             base_path=path,
@@ -910,7 +1126,9 @@ class ListHint(Hint):
                 FieldData(
                     name=field_name,
                     description=None,
-                    type_widget=self.element_type.to_type_widget(path=[*path, field_name]),
+                    type_widget=self.element_type.to_type_widget(
+                        path=[*path, field_name]
+                    ),
                     example=self.element_example,
                 )
             ],
@@ -918,17 +1136,18 @@ class ListHint(Hint):
         )
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        #fmt: off
+        # fmt: off
         return Widget("span", children=[
             InlinePre(text="List["),
             self.element_type.short_description(),
             InlinePre(text="]"),
             *extra,
         ])
-        #fmt: on
+        # fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example([self.element_example.value])
+
 
 class UnionHint(Hint):
     def __init__(self, args: Sequence[Tuple[Hint, Example]]):
@@ -936,41 +1155,56 @@ class UnionHint(Hint):
         super().__init__()
 
     @classmethod
-    def do_parse(cls, raw_hint: Any, parent_raw_hints: Sequence[Any]) -> "UnionHint | Unrecognized | ParsingError":
+    def do_parse(
+        cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
+    ) -> "UnionHint | Unrecognized | ParsingError":
         some_dummy_union = Union[int, str]
         if raw_hint.__class__ != some_dummy_union.__class__:
             return Unrecognized(raw_hint=raw_hint)
 
         union_args: List[Tuple[Hint, Example]] = []
         for arg_idx, arg in enumerate(raw_hint.__args__):
-            hint = Hint.parse(raw_hint=arg, parent_raw_hints=[*parent_raw_hints, raw_hint])
+            hint = Hint.parse(
+                raw_hint=arg, parent_raw_hints=[*parent_raw_hints, raw_hint]
+            )
             if isinstance(hint, (Unrecognized, ParsingError)):
-                return hint.with_context(f"Could not parse Union arg #{arg_idx} in {raw_hint}")
+                return hint.with_context(
+                    f"Could not parse Union arg #{arg_idx} in {raw_hint}"
+                )
             if isinstance(hint, UnionHint):
                 union_args += list(hint.variant_hints)
             else:
                 example = hint.get_example()
                 if isinstance(example, Exception):
-                    return ParsingError(f"Could not get example for variant {hint}: {example}")
+                    return ParsingError(
+                        f"Could not get example for variant {hint}: {example}"
+                    )
                 union_args.append((hint, example))
         return UnionHint(args=union_args)
 
-    def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+    def to_type_widget(
+        self, path: List[str], extra_summary: Sequence["Widget"] = ()
+    ) -> "Widget":
         variant_widgets: List[Widget] = []
-        for variant_index, (variant_hint, variant_example) in enumerate(self.variant_hints):
-            variant_path = [*path, f"VARIANT_{variant_index}"]  # FIXME: maybe variant name?
+        for variant_index, (variant_hint, variant_example) in enumerate(
+            self.variant_hints
+        ):
+            variant_path = [
+                *path,
+                f"VARIANT_{variant_index}",
+            ]  # FIXME: maybe variant name?
             variant_type_widget = variant_hint.to_type_widget(path=variant_path)
 
-            #fmt: off
+            # fmt: off
             variant_widgets.append(Widget("tr", children=[
                 Widget("td", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
                     variant_type_widget
                 ]),
                 Widget("td", css_classes=[FieldsWidget.EXAMPLE_FIELD_CSS_CLASS], children=[ExampleWidget(variant_example)])
             ]))
-            #fmt: on
+            # fmt: on
 
-        #fmt: off
+        # fmt: off
         variants_table = Widget("table", children=[
             Widget("thead", children=[
                 Widget("tr", children=[
@@ -991,7 +1225,7 @@ class UnionHint(Hint):
             ]),
             variants_table
         ])
-        #fmt: on
+        # fmt: on
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
         children: List[Widget] = []
@@ -1005,7 +1239,7 @@ class UnionHint(Hint):
             children.append(InlinePre(text=")"))
         return Widget("span", children=[*children, *extra])
 
-    def get_example(self) ->  "Example":
+    def get_example(self) -> "Example":
         return self.variant_hints[0][1]
 
 
@@ -1017,17 +1251,17 @@ class Widget:
     subclasses: ClassVar[List[Type["Widget"]]] = []
 
     def __init__(
-         self,
-         tag: str,
-         *,
-         text: Optional[str] = None,
-         children: Sequence["Widget"] = (),
-         css_classes: Optional[List[str]] = None,
-         title: str = "",
-         style: str = "",
-         element_id: str = "",
-         attribs: Mapping[str, str] = {},
-     ):
+        self,
+        tag: str,
+        *,
+        text: Optional[str] = None,
+        children: Sequence["Widget"] = (),
+        css_classes: Optional[List[str]] = None,
+        title: str = "",
+        style: str = "",
+        element_id: str = "",
+        attribs: Mapping[str, str] = {},
+    ):
         self.tag = tag
         self.element = et.Element(tag)
         self.element_id = element_id or f"autoid_{Widget.id_counter}"
@@ -1118,6 +1352,7 @@ class Widget:
         super().__init_subclass__()
         Widget.subclasses.append(cls)
 
+
 class LiteralWidget(Widget):
     CSS_CLASS: ClassVar[str] = "literal_widget"
 
@@ -1131,7 +1366,10 @@ class LiteralWidget(Widget):
         """
 
     def __init__(self, *, value: "str | int | None | float"):
-        super().__init__("span", text=json.dumps(value), css_classes=[LiteralWidget.CSS_CLASS])
+        super().__init__(
+            "span", text=json.dumps(value), css_classes=[LiteralWidget.CSS_CLASS]
+        )
+
 
 class ExampleWidget(Widget):
     CSS_CLASS: ClassVar[str] = "example_widget"
@@ -1147,20 +1385,34 @@ class ExampleWidget(Widget):
     def __init__(self, example: Example) -> None:
         text = example.to_yaml_str()
         if is_yaml_leaf_value(example.value):
-            super().__init__("pre", css_classes=[self.CSS_CLASS], children=[
-                Widget("code", text=text, css_classes=["language-yaml"])
-            ])
+            super().__init__(
+                "pre",
+                css_classes=[self.CSS_CLASS],
+                children=[Widget("code", text=text, css_classes=["language-yaml"])],
+            )
         else:
-            super().__init__("details", children=[
-                Widget("summary", text="example yaml"),
-                Widget("pre", css_classes=[self.CSS_CLASS], children=[
-                    Widget("code", text=text, css_classes=["language-yaml"])
-                ])
-            ])
+            super().__init__(
+                "details",
+                children=[
+                    Widget("summary", text="example yaml"),
+                    Widget(
+                        "pre",
+                        css_classes=[self.CSS_CLASS],
+                        children=[
+                            Widget("code", text=text, css_classes=["language-yaml"])
+                        ],
+                    ),
+                ],
+            )
+
 
 class InlinePre(Widget):
     def __init__(
-        self, *, text: Optional[str] = None, children: Sequence["Widget"] = (), css_classes: Optional[List[str]] = None
+        self,
+        *,
+        text: Optional[str] = None,
+        children: Sequence["Widget"] = (),
+        css_classes: Optional[List[str]] = None,
     ):
         super().__init__(
             "span",
@@ -1170,14 +1422,16 @@ class InlinePre(Widget):
             style="font-family: monospace, monospace;",
         )
 
+
 class WarningIconWidget(Widget):
     def __init__(self, title: str) -> None:
         super().__init__(
             "span",
             text="!",
             style="background-color: yellow; margin-right: 0.2em; margin-left: 0.2em; font-weight: bold;",
-            title=title
+            title=title,
         )
+
 
 class InfoIconWidget(Widget):
     CSS_CLASS: ClassVar[str] = "info_icon_widget"
@@ -1195,11 +1449,9 @@ class InfoIconWidget(Widget):
 
     def __init__(self, title: str) -> None:
         super().__init__(
-            "span",
-            text="?",
-            css_classes=[InfoIconWidget.CSS_CLASS],
-            title=title
+            "span", text="?", css_classes=[InfoIconWidget.CSS_CLASS], title=title
         )
+
 
 class OptMarkerWidget(Widget):
     CSS_CLASS: ClassVar[str] = "opt_marker_widget"
@@ -1222,8 +1474,9 @@ class OptMarkerWidget(Widget):
             "span",
             text="opt",
             title=f"This field is optional and defaults to {default_value.to_json_str()}",
-            css_classes=[OptMarkerWidget.CSS_CLASS]
+            css_classes=[OptMarkerWidget.CSS_CLASS],
         )
+
 
 class CheckboxWidget(Widget):
     def __init__(
@@ -1237,18 +1490,31 @@ class CheckboxWidget(Widget):
         style: str = "",
     ):
         super().__init__("span")
-        self._checkbox = Widget("input", text=text, children=children, css_classes=css_classes, title=title, style=style)
+        self._checkbox = Widget(
+            "input",
+            text=text,
+            children=children,
+            css_classes=css_classes,
+            title=title,
+            style=style,
+        )
         self._checkbox.element.set("type", "checkbox")
         self._checkbox.element.set("checked", "checked")
         self.appendChildren([self._checkbox])
         if on_click:
-            self.appendChildren([
-                Widget("script", text=f"""
+            self.appendChildren(
+                [
+                    Widget(
+                        "script",
+                        text=f"""
                     document.getElementById("{self._checkbox.element_id}").addEventListener("click", (ev) => {{
                         {on_click}
                     }});
-                """)
-            ])
+                """,
+                    )
+                ]
+            )
+
 
 class FragmentAnchorWidget(Widget):
     CSS_CLASS: Final[str] = "fragment_anchor_widget"
@@ -1265,6 +1531,7 @@ class FragmentAnchorWidget(Widget):
                 text-decoration: underline;
             }}
         """
+
     def __init__(
         self,
         *,
@@ -1283,6 +1550,7 @@ class FragmentAnchorWidget(Widget):
             attribs={"href": f"#{fragment_contents}"},
         )
 
+
 class ColumnControls(Widget):
     CSS_CLASS: ClassVar[str] = "column_controls_widget"
     TYPES_CHECKBOX_CSS_CLASS: Final[str] = "types_checkbox"
@@ -1297,27 +1565,45 @@ class ColumnControls(Widget):
             }}
         """
 
-    def __init__(self, root_element_id: str, style: str = "float: right; margin-left: 4em;"):
-        super().__init__("span", style=style, css_classes=[ColumnControls.CSS_CLASS], children=[
-            CheckboxWidget(text="Ty", css_classes=[self.TYPES_CHECKBOX_CSS_CLASS], on_click=f"""
-                const table = document.querySelector("#{root_element_id}");
-                for(const ex of table.querySelectorAll(".{FieldsWidget.FIELD_TYPE_CSS_CLASS}, .{FieldsWidget.TYPE_TABLE_HEADER}")){{
-                    ex.style.display = ev.target.checked ? "" : "none"
-                }}
-                for(const cb of table.querySelectorAll(".{self.TYPES_CHECKBOX_CSS_CLASS}")){{
-                    cb.checked = ev.target.checked
-                }}
-            """),
-            CheckboxWidget(text="e.g.", css_classes=[self.EXAMPLES_CHECKBOX_CSS_CLASS], on_click=f"""
-                const table = document.querySelector("#{root_element_id}");
-                for(const ex of table.querySelectorAll(".{FieldsWidget.EXAMPLE_FIELD_CSS_CLASS}, .{FieldsWidget.EXAMPLE_TABLE_HEADER}")){{
-                    ex.style.display = ev.target.checked ? "" : "none"
-                }}
-                for(const cb of table.querySelectorAll(".{self.EXAMPLES_CHECKBOX_CSS_CLASS}")){{
-                    cb.checked = ev.target.checked
-                }}
-            """),
-        ])
+    def __init__(
+        self, root_element_id: str, style: str = "float: right; margin-left: 4em;"
+    ):
+        # fmt: off
+        super().__init__(
+            "span",
+            style=style,
+            css_classes=[ColumnControls.CSS_CLASS],
+            children=[
+                CheckboxWidget(
+                    text="Ty",
+                    css_classes=[self.TYPES_CHECKBOX_CSS_CLASS],
+                    on_click=f"""
+                        const table = document.querySelector("#{root_element_id}");
+                        for(const ex of table.querySelectorAll(".{FieldsWidget.FIELD_TYPE_CSS_CLASS}, .{FieldsWidget.TYPE_TABLE_HEADER}")){{
+                            ex.style.display = ev.target.checked ? "" : "none"
+                        }}
+                        for(const cb of table.querySelectorAll(".{self.TYPES_CHECKBOX_CSS_CLASS}")){{
+                            cb.checked = ev.target.checked
+                        }}
+                    """,
+                ),
+                CheckboxWidget(
+                    text="e.g.",
+                    css_classes=[self.EXAMPLES_CHECKBOX_CSS_CLASS],
+                    on_click=f"""
+                        const table = document.querySelector("#{root_element_id}");
+                        for(const ex of table.querySelectorAll(".{FieldsWidget.EXAMPLE_FIELD_CSS_CLASS}, .{FieldsWidget.EXAMPLE_TABLE_HEADER}")){{
+                            ex.style.display = ev.target.checked ? "" : "none"
+                        }}
+                        for(const cb of table.querySelectorAll(".{self.EXAMPLES_CHECKBOX_CSS_CLASS}")){{
+                            cb.checked = ev.target.checked
+                        }}
+                    """,
+                ),
+            ],
+        )
+        # fmt: on
+
 
 @dataclass
 class FieldData:
@@ -1326,6 +1612,7 @@ class FieldData:
     type_widget: Widget
     example: Optional[Example]
     default: "Example | PydanticUndefinedType" = PydanticUndefined
+
 
 class FieldsWidget(Widget):
     FIELD_NAME_CSS_CLASS: ClassVar[str] = "field_name"
@@ -1364,6 +1651,7 @@ class FieldsWidget(Widget):
         short_description: Widget,
         fields: Sequence[FieldData],
     ) -> None:
+        # fmt: off
         fields_table = Widget("table", children=[
             Widget("thead", children=[
                 Widget("tr", children=[
@@ -1385,9 +1673,13 @@ class FieldsWidget(Widget):
                     ])
                 ])
                 for field in fields
-            ])
-        ])
+                    ],
+                ),
+            ],
+        )
+        # fmt: on
 
+        # fmt: off
         super().__init__("details", children=[
             Widget("summary", children=[
                 FragmentAnchorWidget(children=[short_description], path=base_path),
@@ -1395,4 +1687,5 @@ class FieldsWidget(Widget):
             ]),
             fields_table,
         ])
+        # fmt: on
 
