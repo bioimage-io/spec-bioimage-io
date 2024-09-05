@@ -383,6 +383,7 @@ class TypeAliasHint(Hint):
         return inner_example
 
     def to_type_widget(self, path: List[str], extra_summary: Sequence["Widget"] = ()) -> "Widget":
+        # fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
                 self.short_description(extra=extra_summary)
@@ -391,6 +392,8 @@ class TypeAliasHint(Hint):
                 Widget("span", text=f" (Aliased)", style="font-style: italic; opacity: 0.6"),
             ])
         ])
+        #fmt: on
+
 
 class DatetimeHint(Hint):
     @classmethod
@@ -400,7 +403,12 @@ class DatetimeHint(Hint):
         return DatetimeHint()
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
-        return Widget("span", children=[InlinePre(text="ISO 8601 datetime"), *extra])
+        # fmt: off
+        return Widget("span", children=[
+            InlinePre(text="ISO 8601 datetime"),
+            *extra
+        ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example(datetime.datetime.now().isoformat())
@@ -854,12 +862,14 @@ class VarLenTuple(Hint):
         )
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text="("),
             self.element_type.short_description(),
             InlinePre(text=", ...)"),
             *extra,
         ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example([self.element_example.value])
@@ -908,12 +918,14 @@ class ListHint(Hint):
         )
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
+        #fmt: off
         return Widget("span", children=[
             InlinePre(text="List["),
             self.element_type.short_description(),
             InlinePre(text="]"),
             *extra,
         ])
+        #fmt: on
 
     def get_example(self) -> "Example | Exception":
         return Example([self.element_example.value])
@@ -949,13 +961,16 @@ class UnionHint(Hint):
             variant_path = [*path, f"VARIANT_{variant_index}"]  # FIXME: maybe variant name?
             variant_type_widget = variant_hint.to_type_widget(path=variant_path)
 
+            #fmt: off
             variant_widgets.append(Widget("tr", children=[
                 Widget("td", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
                     variant_type_widget
                 ]),
                 Widget("td", css_classes=[FieldsWidget.EXAMPLE_FIELD_CSS_CLASS], children=[ExampleWidget(variant_example)])
             ]))
+            #fmt: on
 
+        #fmt: off
         variants_table = Widget("table", children=[
             Widget("thead", children=[
                 Widget("tr", children=[
@@ -965,8 +980,10 @@ class UnionHint(Hint):
             ]),
             Widget("tbody", children=variant_widgets)
         ])
+        #fmt: on
 
 
+        #fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
                 self.short_description(extra=extra_summary),
@@ -974,6 +991,7 @@ class UnionHint(Hint):
             ]),
             variants_table
         ])
+        #fmt: on
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
         children: List[Widget] = []
