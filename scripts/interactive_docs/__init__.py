@@ -1,6 +1,7 @@
 from typing import Any, List
 from .hint import Hint, Unrecognized, Widget
 
+
 def generate_docs(*, raw_type: Any, root_path: List[str]) -> "str | Exception":
     hint = Hint.parse(raw_hint=raw_type, parent_raw_hints=[])
     if isinstance(hint, (Exception, Unrecognized)):
