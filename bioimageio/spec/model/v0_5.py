@@ -33,7 +33,7 @@ from typing import (
 )
 
 import numpy as np
-from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
+from annotated_types import Ge, Gt, Interval, MaxLen, MinLen
 from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
@@ -45,6 +45,7 @@ from pydantic import (
     WrapSerializer,
     field_validator,
     model_validator,
+    StringConstraints
 )
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
@@ -200,7 +201,7 @@ class AxisId(LowerCaseIdentifier):
     ]
 
 
-NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
+NonBatchAxisId = Annotated[AxisId, StringConstraints(pattern="[^batch$].*")]
 
 PostprocessingId = Literal[
     "binarize",
@@ -434,7 +435,7 @@ BATCH_AXIS_ID = AxisId("batch")
 
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-    id: Annotated[AxisId, Predicate(lambda x: x == BATCH_AXIS_ID)] = BATCH_AXIS_ID
+    id: Annotated[AxisId, StringConstraints(pattern="^batch$")] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
