@@ -20,7 +20,7 @@ from typing import (
     final,
 )
 from typing_extensions import TypeAliasType, assert_never
-from typing_extensions import List, TypeAlias, Any
+from typing_extensions import List, TypeAlias
 import datetime
 from xml.etree import ElementTree as et
 import inspect
@@ -210,9 +210,8 @@ class YamlValueHint(Hint):
     def do_parse(
         cls, raw_hint: Any, parent_raw_hints: Sequence[Any]
     ) -> "Hint | Unrecognized | ParsingError":
-        if (
-            raw_hint == Any
-        ):  # FIXME: since the spec is yaml, "Any" mostly translates to YamlValue.... but is this always true?
+        # FIXME: since the spec is yaml, "Any" mostly translates to YamlValue.... but is this always true?
+        if raw_hint == typing.Any:
             return YamlValueHint()
         if raw_hint == "YamlValue":
             return YamlValueHint()
