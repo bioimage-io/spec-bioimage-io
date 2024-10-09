@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec._internal.io API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -1071,7 +1071,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types</a></p>
 
 <p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
 
@@ -1141,12 +1141,12 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#RelativePathBase.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativePathBase.model_post_init-105"><a href="#RelativePathBase.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RelativePathBase.model_post_init-106"><a href="#RelativePathBase.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="RelativePathBase.model_post_init-107"><a href="#RelativePathBase.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="RelativePathBase.model_post_init-108"><a href="#RelativePathBase.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="RelativePathBase.model_post_init-109"><a href="#RelativePathBase.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="RelativePathBase.model_post_init-110"><a href="#RelativePathBase.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativePathBase.model_post_init-124"><a href="#RelativePathBase.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RelativePathBase.model_post_init-125"><a href="#RelativePathBase.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="RelativePathBase.model_post_init-126"><a href="#RelativePathBase.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="RelativePathBase.model_post_init-127"><a href="#RelativePathBase.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="RelativePathBase.model_post_init-128"><a href="#RelativePathBase.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="RelativePathBase.model_post_init-129"><a href="#RelativePathBase.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1186,6 +1186,12 @@ method.</p>
                 <dd id="RelativePathBase.model_construct" class="function">model_construct</dd>
 
             </div>
+            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
+                                <dd id="RelativePathBase.model_config" class="variable">model_config</dd>
+                <dd id="RelativePathBase.model_fields" class="variable">model_fields</dd>
+                <dd id="RelativePathBase.model_computed_fields" class="variable">model_computed_fields</dd>
+
+            </div>
             <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="RelativePathBase.model_extra" class="variable">model_extra</dd>
                 <dd id="RelativePathBase.model_fields_set" class="variable">model_fields_set</dd>
@@ -1210,12 +1216,6 @@ method.</p>
                 <dd id="RelativePathBase.schema_json" class="function">schema_json</dd>
                 <dd id="RelativePathBase.validate" class="function">validate</dd>
                 <dd id="RelativePathBase.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
-                                <dd id="RelativePathBase.model_config" class="variable">model_config</dd>
-                <dd id="RelativePathBase.model_fields" class="variable">model_fields</dd>
-                <dd id="RelativePathBase.model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
                                 </dl>
@@ -1272,12 +1272,12 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#RelativeFilePath.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.model_post_init-105"><a href="#RelativeFilePath.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RelativeFilePath.model_post_init-106"><a href="#RelativeFilePath.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="RelativeFilePath.model_post_init-107"><a href="#RelativeFilePath.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="RelativeFilePath.model_post_init-108"><a href="#RelativeFilePath.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="RelativeFilePath.model_post_init-109"><a href="#RelativeFilePath.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="RelativeFilePath.model_post_init-110"><a href="#RelativeFilePath.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.model_post_init-124"><a href="#RelativeFilePath.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RelativeFilePath.model_post_init-125"><a href="#RelativeFilePath.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="RelativeFilePath.model_post_init-126"><a href="#RelativeFilePath.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="RelativeFilePath.model_post_init-127"><a href="#RelativeFilePath.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="RelativeFilePath.model_post_init-128"><a href="#RelativeFilePath.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="RelativeFilePath.model_post_init-129"><a href="#RelativeFilePath.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1331,6 +1331,12 @@ method.</p>
                 <dd id="RelativeFilePath.absolute" class="function"><a href="#RelativePathBase.absolute">absolute</a></dd>
 
             </div>
+            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
+                                <dd id="RelativeFilePath.model_config" class="variable">model_config</dd>
+                <dd id="RelativeFilePath.model_fields" class="variable">model_fields</dd>
+                <dd id="RelativeFilePath.model_computed_fields" class="variable">model_computed_fields</dd>
+
+            </div>
             <div><dt>pydantic.main.BaseModel</dt>
                                 <dd id="RelativeFilePath.model_extra" class="variable">model_extra</dd>
                 <dd id="RelativeFilePath.model_fields_set" class="variable">model_fields_set</dd>
@@ -1355,12 +1361,6 @@ method.</p>
                 <dd id="RelativeFilePath.schema_json" class="function">schema_json</dd>
                 <dd id="RelativeFilePath.validate" class="function">validate</dd>
                 <dd id="RelativeFilePath.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
-                                <dd id="RelativeFilePath.model_config" class="variable">model_config</dd>
-                <dd id="RelativeFilePath.model_fields" class="variable">model_fields</dd>
-                <dd id="RelativeFilePath.model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
                                 </dl>
@@ -1395,7 +1395,7 @@ method.</p>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types</a></p>
 
 <p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
 
@@ -1447,12 +1447,12 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#RelativeDirectory.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeDirectory.model_post_init-105"><a href="#RelativeDirectory.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RelativeDirectory.model_post_init-106"><a href="#RelativeDirectory.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="RelativeDirectory.model_post_init-107"><a href="#RelativeDirectory.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="RelativeDirectory.model_post_init-108"><a href="#RelativeDirectory.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="RelativeDirectory.model_post_init-109"><a href="#RelativeDirectory.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="RelativeDirectory.model_post_init-110"><a href="#RelativeDirectory.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeDirectory.model_post_init-124"><a href="#RelativeDirectory.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RelativeDirectory.model_post_init-125"><a href="#RelativeDirectory.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="RelativeDirectory.model_post_init-126"><a href="#RelativeDirectory.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="RelativeDirectory.model_post_init-127"><a href="#RelativeDirectory.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="RelativeDirectory.model_post_init-128"><a href="#RelativeDirectory.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="RelativeDirectory.model_post_init-129"><a href="#RelativeDirectory.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1474,6 +1474,12 @@ method.</p>
             <div><dt><a href="#RelativePathBase">RelativePathBase</a></dt>
                                 <dd id="RelativeDirectory.path" class="variable"><a href="#RelativePathBase.path">path</a></dd>
                 <dd id="RelativeDirectory.absolute" class="function"><a href="#RelativePathBase.absolute">absolute</a></dd>
+
+            </div>
+            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
+                                <dd id="RelativeDirectory.model_config" class="variable">model_config</dd>
+                <dd id="RelativeDirectory.model_fields" class="variable">model_fields</dd>
+                <dd id="RelativeDirectory.model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
@@ -1500,12 +1506,6 @@ method.</p>
                 <dd id="RelativeDirectory.schema_json" class="function">schema_json</dd>
                 <dd id="RelativeDirectory.validate" class="function">validate</dd>
                 <dd id="RelativeDirectory.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
-                                <dd id="RelativeDirectory.model_config" class="variable">model_config</dd>
-                <dd id="RelativeDirectory.model_fields" class="variable">model_fields</dd>
-                <dd id="RelativeDirectory.model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
                                 </dl>
@@ -2342,7 +2342,7 @@ method.</p>
                             </div>
                             <div id="LightHttpFileDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="LightHttpFileDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LightHttpFileDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -2350,12 +2350,14 @@ method.</p>
     </div>
     <a class="headerlink" href="#LightHttpFileDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="LightHttpFileDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="LightHttpFileDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LightHttpFileDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Url, required=True, description=&#39;file source&#39;, metadata=[UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)]), &#39;sha256&#39;: FieldInfo(annotation=Sha256, required=True, description=&#39;SHA256 checksum of the source file&#39;)}</span>
 
@@ -2363,19 +2365,26 @@ method.</p>
     </div>
     <a class="headerlink" href="#LightHttpFileDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="LightHttpFileDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#LightHttpFileDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -2469,7 +2478,7 @@ method.</p>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -2555,7 +2564,7 @@ method.</p>
                             </div>
                             <div id="FileDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="FileDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="FileDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -2563,12 +2572,14 @@ method.</p>
     </div>
     <a class="headerlink" href="#FileDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="FileDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="FileDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="FileDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 file source&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;)}</span>
 
@@ -2576,19 +2587,26 @@ method.</p>
     </div>
     <a class="headerlink" href="#FileDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="FileDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#FileDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -2712,7 +2730,7 @@ method.</p>
     </div>
     <a class="headerlink" href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]]"></a>
     
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.8/concepts/models/#rootmodel-and-custom-root-types</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types">https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types</a></p>
 
 <p>A Pydantic <code>BaseModel</code> for the root object of the model.</p>
 
@@ -2735,12 +2753,12 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-105"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-106"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-107"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-108"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-109"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-110"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-124"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-125"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-126"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-127"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-128"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-129"><a href="#RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -2762,6 +2780,12 @@ method.</p>
             <div><dt>pydantic.root_model.RootModel</dt>
                                 <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].root" class="variable">root</dd>
                 <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_construct" class="function">model_construct</dd>
+
+            </div>
+            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
+                                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_config" class="variable">model_config</dd>
+                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_fields" class="variable">model_fields</dd>
+                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
             <div><dt>pydantic.main.BaseModel</dt>
@@ -2788,12 +2812,6 @@ method.</p>
                 <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].schema_json" class="function">schema_json</dd>
                 <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].validate" class="function">validate</dd>
                 <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt>pydantic.root_model.RootModel[PurePath]</dt>
-                                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_config" class="variable">model_config</dd>
-                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_fields" class="variable">model_fields</dd>
-                <dd id="RelativePathBase[Union[Annotated[Path, PathType, Predicate], HttpUrl]].model_computed_fields" class="variable">model_computed_fields</dd>
 
             </div>
                                 </dl>

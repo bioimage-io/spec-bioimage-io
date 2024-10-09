@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec._internal.common_nodes API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -111,13 +111,13 @@
                                 <a class="variable" href="#ResourceDescrBase.model_config">model_config</a>
                         </li>
                         <li>
-                                <a class="function" href="#ResourceDescrBase.model_post_init">model_post_init</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#ResourceDescrBase.model_fields">model_fields</a>
                         </li>
                         <li>
                                 <a class="variable" href="#ResourceDescrBase.model_computed_fields">model_computed_fields</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ResourceDescrBase.model_post_init">model_post_init</a>
                         </li>
                 </ul>
 
@@ -144,13 +144,13 @@
                                 <a class="variable" href="#InvalidDescr.model_config">model_config</a>
                         </li>
                         <li>
-                                <a class="function" href="#InvalidDescr.model_post_init">model_post_init</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#InvalidDescr.model_fields">model_fields</a>
                         </li>
                         <li>
                                 <a class="variable" href="#InvalidDescr.model_computed_fields">model_computed_fields</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#InvalidDescr.model_post_init">model_post_init</a>
                         </li>
                 </ul>
 
@@ -1131,7 +1131,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             </div>
                             <div id="NodeWithExplicitlySetFields.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="NodeWithExplicitlySetFields.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="NodeWithExplicitlySetFields.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -1139,31 +1139,40 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     </div>
     <a class="headerlink" href="#NodeWithExplicitlySetFields.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="NodeWithExplicitlySetFields.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#NodeWithExplicitlySetFields.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="NodeWithExplicitlySetFields.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#NodeWithExplicitlySetFields.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -1413,7 +1422,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             <div id="ResourceDescrBase.fields_to_set_explicitly" class="classattr">
                                 <div class="attr variable">
             <span class="name">fields_to_set_explicitly</span><span class="annotation">: ClassVar[FrozenSet[LiteralString]]</span>        =
-<span class="default_value">frozenset({&#39;type&#39;, &#39;format_version&#39;})</span>
+<span class="default_value">frozenset({&#39;format_version&#39;, &#39;type&#39;})</span>
 
         
     </div>
@@ -1538,7 +1547,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             </div>
                             <div id="ResourceDescrBase.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ResourceDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ResourceDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -1546,7 +1555,40 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     </div>
     <a class="headerlink" href="#ResourceDescrBase.model_config"></a>
     
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
+
+                            </div>
+                            <div id="ResourceDescrBase.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ResourceDescrBase.model_fields"></a>
     
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
+
+                            </div>
+                            <div id="ResourceDescrBase.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ResourceDescrBase.model_computed_fields"></a>
+    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div id="ResourceDescrBase.model_post_init" class="classattr">
@@ -1560,22 +1602,22 @@ such that they are always included even when dumping with 'exlude_unset'</p>
 
     </div>
     <a class="headerlink" href="#ResourceDescrBase.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ResourceDescrBase.model_post_init-281"><a href="#ResourceDescrBase.model_post_init-281"><span class="linenos">281</span></a><span class="k">def</span> <span class="nf">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ResourceDescrBase.model_post_init-282"><a href="#ResourceDescrBase.model_post_init-282"><span class="linenos">282</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is meant to behave like a BaseModel method to initialise private attributes.</span>
-</span><span id="ResourceDescrBase.model_post_init-283"><a href="#ResourceDescrBase.model_post_init-283"><span class="linenos">283</span></a>
-</span><span id="ResourceDescrBase.model_post_init-284"><a href="#ResourceDescrBase.model_post_init-284"><span class="linenos">284</span></a><span class="sd">    It takes context as an argument since that&#39;s what pydantic-core passes when calling it.</span>
-</span><span id="ResourceDescrBase.model_post_init-285"><a href="#ResourceDescrBase.model_post_init-285"><span class="linenos">285</span></a>
-</span><span id="ResourceDescrBase.model_post_init-286"><a href="#ResourceDescrBase.model_post_init-286"><span class="linenos">286</span></a><span class="sd">    Args:</span>
-</span><span id="ResourceDescrBase.model_post_init-287"><a href="#ResourceDescrBase.model_post_init-287"><span class="linenos">287</span></a><span class="sd">        self: The BaseModel instance.</span>
-</span><span id="ResourceDescrBase.model_post_init-288"><a href="#ResourceDescrBase.model_post_init-288"><span class="linenos">288</span></a><span class="sd">        context: The context.</span>
-</span><span id="ResourceDescrBase.model_post_init-289"><a href="#ResourceDescrBase.model_post_init-289"><span class="linenos">289</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="ResourceDescrBase.model_post_init-290"><a href="#ResourceDescrBase.model_post_init-290"><span class="linenos">290</span></a>    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ResourceDescrBase.model_post_init-291"><a href="#ResourceDescrBase.model_post_init-291"><span class="linenos">291</span></a>        <span class="n">pydantic_private</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="ResourceDescrBase.model_post_init-292"><a href="#ResourceDescrBase.model_post_init-292"><span class="linenos">292</span></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">private_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__private_attributes__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="ResourceDescrBase.model_post_init-293"><a href="#ResourceDescrBase.model_post_init-293"><span class="linenos">293</span></a>            <span class="n">default</span> <span class="o">=</span> <span class="n">private_attr</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
-</span><span id="ResourceDescrBase.model_post_init-294"><a href="#ResourceDescrBase.model_post_init-294"><span class="linenos">294</span></a>            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PydanticUndefined</span><span class="p">:</span>
-</span><span id="ResourceDescrBase.model_post_init-295"><a href="#ResourceDescrBase.model_post_init-295"><span class="linenos">295</span></a>                <span class="n">pydantic_private</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
-</span><span id="ResourceDescrBase.model_post_init-296"><a href="#ResourceDescrBase.model_post_init-296"><span class="linenos">296</span></a>        <span class="n">object_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="n">pydantic_private</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ResourceDescrBase.model_post_init-306"><a href="#ResourceDescrBase.model_post_init-306"><span class="linenos">306</span></a><span class="k">def</span> <span class="nf">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ResourceDescrBase.model_post_init-307"><a href="#ResourceDescrBase.model_post_init-307"><span class="linenos">307</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is meant to behave like a BaseModel method to initialise private attributes.</span>
+</span><span id="ResourceDescrBase.model_post_init-308"><a href="#ResourceDescrBase.model_post_init-308"><span class="linenos">308</span></a>
+</span><span id="ResourceDescrBase.model_post_init-309"><a href="#ResourceDescrBase.model_post_init-309"><span class="linenos">309</span></a><span class="sd">    It takes context as an argument since that&#39;s what pydantic-core passes when calling it.</span>
+</span><span id="ResourceDescrBase.model_post_init-310"><a href="#ResourceDescrBase.model_post_init-310"><span class="linenos">310</span></a>
+</span><span id="ResourceDescrBase.model_post_init-311"><a href="#ResourceDescrBase.model_post_init-311"><span class="linenos">311</span></a><span class="sd">    Args:</span>
+</span><span id="ResourceDescrBase.model_post_init-312"><a href="#ResourceDescrBase.model_post_init-312"><span class="linenos">312</span></a><span class="sd">        self: The BaseModel instance.</span>
+</span><span id="ResourceDescrBase.model_post_init-313"><a href="#ResourceDescrBase.model_post_init-313"><span class="linenos">313</span></a><span class="sd">        context: The context.</span>
+</span><span id="ResourceDescrBase.model_post_init-314"><a href="#ResourceDescrBase.model_post_init-314"><span class="linenos">314</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ResourceDescrBase.model_post_init-315"><a href="#ResourceDescrBase.model_post_init-315"><span class="linenos">315</span></a>    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ResourceDescrBase.model_post_init-316"><a href="#ResourceDescrBase.model_post_init-316"><span class="linenos">316</span></a>        <span class="n">pydantic_private</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="ResourceDescrBase.model_post_init-317"><a href="#ResourceDescrBase.model_post_init-317"><span class="linenos">317</span></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">private_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__private_attributes__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="ResourceDescrBase.model_post_init-318"><a href="#ResourceDescrBase.model_post_init-318"><span class="linenos">318</span></a>            <span class="n">default</span> <span class="o">=</span> <span class="n">private_attr</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+</span><span id="ResourceDescrBase.model_post_init-319"><a href="#ResourceDescrBase.model_post_init-319"><span class="linenos">319</span></a>            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PydanticUndefined</span><span class="p">:</span>
+</span><span id="ResourceDescrBase.model_post_init-320"><a href="#ResourceDescrBase.model_post_init-320"><span class="linenos">320</span></a>                <span class="n">pydantic_private</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+</span><span id="ResourceDescrBase.model_post_init-321"><a href="#ResourceDescrBase.model_post_init-321"><span class="linenos">321</span></a>        <span class="n">object_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="n">pydantic_private</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1588,30 +1630,6 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     context: The context.</p>
 </div>
 
-
-                            </div>
-                            <div id="ResourceDescrBase.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ResourceDescrBase.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="ResourceDescrBase.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ResourceDescrBase.model_computed_fields"></a>
-    
-    
 
                             </div>
                             <div class="inherited">
@@ -1749,7 +1767,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             </div>
                             <div id="InvalidDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="InvalidDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="InvalidDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;allow&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True, &#39;title&#39;: &#39;An invalid resource description&#39;}</span>
 
@@ -1757,7 +1775,41 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     </div>
     <a class="headerlink" href="#InvalidDescr.model_config"></a>
     
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
+
+                            </div>
+                            <div id="InvalidDescr.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
+<input id="InvalidDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="InvalidDescr.model_fields-view-value"></label><span class="default_value">{&#39;type&#39;: FieldInfo(annotation=Any, required=False, default=&#39;unknown&#39;), &#39;format_version&#39;: FieldInfo(annotation=Any, required=False, default=&#39;unknown&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InvalidDescr.model_fields"></a>
     
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
+
+                            </div>
+                            <div id="InvalidDescr.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InvalidDescr.model_computed_fields"></a>
+    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div id="InvalidDescr.model_post_init" class="classattr">
@@ -1771,12 +1823,12 @@ such that they are always included even when dumping with 'exlude_unset'</p>
 
     </div>
     <a class="headerlink" href="#InvalidDescr.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr.model_post_init-105"><a href="#InvalidDescr.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="InvalidDescr.model_post_init-106"><a href="#InvalidDescr.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="InvalidDescr.model_post_init-107"><a href="#InvalidDescr.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="InvalidDescr.model_post_init-108"><a href="#InvalidDescr.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="InvalidDescr.model_post_init-109"><a href="#InvalidDescr.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="InvalidDescr.model_post_init-110"><a href="#InvalidDescr.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr.model_post_init-124"><a href="#InvalidDescr.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="InvalidDescr.model_post_init-125"><a href="#InvalidDescr.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="InvalidDescr.model_post_init-126"><a href="#InvalidDescr.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="InvalidDescr.model_post_init-127"><a href="#InvalidDescr.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="InvalidDescr.model_post_init-128"><a href="#InvalidDescr.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="InvalidDescr.model_post_init-129"><a href="#InvalidDescr.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1784,31 +1836,6 @@ such that they are always included even when dumping with 'exlude_unset'</p>
 method.</p>
 </div>
 
-
-                            </div>
-                            <div id="InvalidDescr.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<input id="InvalidDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="InvalidDescr.model_fields-view-value"></label><span class="default_value">{&#39;type&#39;: FieldInfo(annotation=Any, required=False, default=&#39;unknown&#39;), &#39;format_version&#39;: FieldInfo(annotation=Any, required=False, default=&#39;unknown&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#InvalidDescr.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="InvalidDescr.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#InvalidDescr.model_computed_fields"></a>
-    
-    
 
                             </div>
                             <div class="inherited">
@@ -1909,7 +1936,7 @@ method.</p>
                             </div>
                             <div id="KwargsNode.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="KwargsNode.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="KwargsNode.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -1917,31 +1944,40 @@ method.</p>
     </div>
     <a class="headerlink" href="#KwargsNode.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="KwargsNode.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#KwargsNode.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="KwargsNode.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#KwargsNode.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">

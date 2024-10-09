@@ -1505,11 +1505,7 @@
                     "type": "integer"
                 },
                 "size": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/SizeReference"
-                        }
-                    ],
+                    "$ref": "#/$defs/SizeReference",
                     "description": "reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
@@ -1810,11 +1806,7 @@
                     "type": "integer"
                 },
                 "size": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/SizeReference"
-                        }
-                    ],
+                    "$ref": "#/$defs/SizeReference",
                     "description": "reference to another axis with an optional offset (see `SizeReference`)",
                     "examples": [
                         10,
@@ -4172,11 +4164,7 @@
                     "title": "Training Data"
                 },
                 "weights": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/bioimageio__spec__model__v0_4__WeightsDescr"
-                        }
-                    ],
+                    "$ref": "#/$defs/bioimageio__spec__model__v0_4__WeightsDescr",
                     "description": "The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model."
                 }
             },
@@ -5549,11 +5537,7 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/FileDescr"
-                        }
-                    ],
+                    "$ref": "#/$defs/FileDescr",
                     "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
@@ -5737,11 +5721,7 @@
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        }
-                    ],
+                    "$ref": "#/$defs/Version",
                     "description": "TensorFlow version used to create these weights."
                 }
             },
@@ -6086,12 +6066,8 @@
                     "description": "Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet."
                 },
                 "timestamp": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Datetime"
-                        }
-                    ],
-                    "default": "2024-09-02T13:54:43.348719",
+                    "$ref": "#/$defs/Datetime",
+                    "default": "2024-10-09T16:11:33.614668",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -6114,11 +6090,7 @@
                     "title": "Training Data"
                 },
                 "weights": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/bioimageio__spec__model__v0_5__WeightsDescr"
-                        }
-                    ],
+                    "$ref": "#/$defs/bioimageio__spec__model__v0_5__WeightsDescr",
                     "description": "The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model."
                 }
             },
@@ -6306,11 +6278,7 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/FileDescr"
-                        }
-                    ],
+                    "$ref": "#/$defs/FileDescr",
                     "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
@@ -6503,11 +6471,7 @@
                     "title": "Architecture"
                 },
                 "pytorch_version": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        }
-                    ],
+                    "$ref": "#/$defs/Version",
                     "description": "Version of the PyTorch library used.\nIf `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible."
                 },
                 "dependencies": {
@@ -6831,11 +6795,7 @@
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        }
-                    ],
+                    "$ref": "#/$defs/Version",
                     "description": "Version of the TensorFlow library used."
                 }
             },
@@ -6919,11 +6879,7 @@
                     "title": "Parent"
                 },
                 "tensorflow_version": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        }
-                    ],
+                    "$ref": "#/$defs/Version",
                     "description": "Version of the TensorFlow library used."
                 },
                 "dependencies": {
@@ -7019,11 +6975,7 @@
                     "title": "Parent"
                 },
                 "pytorch_version": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Version"
-                        }
-                    ],
+                    "$ref": "#/$defs/Version",
                     "description": "Version of the PyTorch library used."
                 }
             },

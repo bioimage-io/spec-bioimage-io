@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec._internal.field_warning API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -526,7 +526,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                             <div id="BeforeWarner.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">BeforeWarner</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="s1">&#39;core_schema.NoInfoValidatorFunction | core_schema.WithInfoValidatorFunction&#39;</span>,</span><span class="param">	<span class="n">severity</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>,</span><span class="param">	<span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LiteralString</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">BeforeWarner</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">func</span><span class="p">:</span> <span class="s1">&#39;core_schema.NoInfoValidatorFunction | core_schema.WithInfoValidatorFunction&#39;</span>,</span><span class="param">	<span class="n">json_schema_input_type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">PydanticUndefined</span>,</span><span class="param">	<span class="n">severity</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>,</span><span class="param">	<span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LiteralString</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -573,6 +573,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                                 <dl>
                                     <div><dt>pydantic.functional_validators.BeforeValidator</dt>
                                 <dd id="BeforeWarner.func" class="variable">func</dd>
+                <dd id="BeforeWarner.json_schema_input_type" class="variable">json_schema_input_type</dd>
 
             </div>
                                 </dl>

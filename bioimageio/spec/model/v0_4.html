@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec.model.v0_4 API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -966,13 +966,13 @@
                                 <a class="variable" href="#ModelDescr.model_config">model_config</a>
                         </li>
                         <li>
-                                <a class="function" href="#ModelDescr.model_post_init">model_post_init</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#ModelDescr.model_fields">model_fields</a>
                         </li>
                         <li>
                                 <a class="variable" href="#ModelDescr.model_computed_fields">model_computed_fields</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelDescr.model_post_init">model_post_init</a>
                         </li>
                 </ul>
 
@@ -2587,7 +2587,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="CallableFromFile.source_file" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source_file</span><span class="annotation">: Annotated[Union[<a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source_file</span><span class="annotation">: Annotated[Union[<a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -2733,7 +2733,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Dependencies.file" class="classattr">
                                 <div class="attr variable">
-            <span class="name">file</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;, &#39;pom.xml&#39;, &#39;requirements.txt&#39;])]</span>
+            <span class="name">file</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;, &#39;pom.xml&#39;, &#39;requirements.txt&#39;])]</span>
 
         
     </div>
@@ -2964,7 +2964,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="WeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="WeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="WeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -2972,12 +2972,14 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#WeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="WeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="WeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="WeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;keras_hdf5&#39;: FieldInfo(annotation=Union[KerasHdf5WeightsDescr, NoneType], required=False, default=None), &#39;onnx&#39;: FieldInfo(annotation=Union[OnnxWeightsDescr, NoneType], required=False, default=None), &#39;pytorch_state_dict&#39;: FieldInfo(annotation=Union[PytorchStateDictWeightsDescr, NoneType], required=False, default=None), &#39;tensorflow_js&#39;: FieldInfo(annotation=Union[TensorflowJsWeightsDescr, NoneType], required=False, default=None), &#39;tensorflow_saved_model_bundle&#39;: FieldInfo(annotation=Union[TensorflowSavedModelBundleWeightsDescr, NoneType], required=False, default=None), &#39;torchscript&#39;: FieldInfo(annotation=Union[TorchscriptWeightsDescr, NoneType], required=False, default=None)}</span>
 
@@ -2985,19 +2987,26 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#WeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="WeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#WeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -3133,7 +3142,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="WeightsEntryDescrBase.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -3146,7 +3155,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="WeightsEntryDescrBase.attachments" class="classattr">
                                 <div class="attr variable">
-            <span class="name">attachments</span><span class="annotation">: Annotated[Optional[<a href="../generic/v0_2.html#AttachmentsDescr">bioimageio.spec.generic.v0_2.AttachmentsDescr</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab339631a0&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]</span>
+            <span class="name">attachments</span><span class="annotation">: Annotated[Optional[<a href="../generic/v0_2.html#AttachmentsDescr">bioimageio.spec.generic.v0_2.AttachmentsDescr</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c3955a660&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]</span>
 
         
     </div>
@@ -3176,7 +3185,7 @@ Or the person(s) who have converted the weights to this weights format.
                             </div>
                             <div id="WeightsEntryDescrBase.dependencies" class="classattr">
                                 <div class="attr variable">
-            <span class="name">dependencies</span><span class="annotation">: Annotated[Optional[<a href="#Dependencies">Dependencies</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab33962f20&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;])]</span>
+            <span class="name">dependencies</span><span class="annotation">: Annotated[Optional[<a href="#Dependencies">Dependencies</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c39558680&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;])]</span>
 
         
     </div>
@@ -3230,7 +3239,7 @@ need to have this field.</p>
                             </div>
                             <div id="WeightsEntryDescrBase.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="WeightsEntryDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="WeightsEntryDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -3238,12 +3247,14 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#WeightsEntryDescrBase.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="WeightsEntryDescrBase.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="WeightsEntryDescrBase.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="WeightsEntryDescrBase.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;])}</span>
 
@@ -3251,19 +3262,26 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#WeightsEntryDescrBase.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="WeightsEntryDescrBase.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#WeightsEntryDescrBase.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -3385,7 +3403,7 @@ need to have this field.</p>
                             </div>
                             <div id="KerasHdf5WeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="KerasHdf5WeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="KerasHdf5WeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -3393,12 +3411,14 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#KerasHdf5WeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="KerasHdf5WeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="KerasHdf5WeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="KerasHdf5WeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;tensorflow_version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;TensorFlow version used to create these weights&#39;)}</span>
 
@@ -3406,19 +3426,26 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#KerasHdf5WeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="KerasHdf5WeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#KerasHdf5WeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -3550,7 +3577,7 @@ need to have this field.</p>
                             </div>
                             <div id="OnnxWeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="OnnxWeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="OnnxWeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -3558,12 +3585,14 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#OnnxWeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="OnnxWeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="OnnxWeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="OnnxWeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;opset_version&#39;: FieldInfo(annotation=Union[Annotated[int, Ge], NoneType], required=False, default=None, description=&#39;ONNX opset version&#39;)}</span>
 
@@ -3571,19 +3600,26 @@ need to have this field.</p>
     </div>
     <a class="headerlink" href="#OnnxWeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="OnnxWeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#OnnxWeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -3832,7 +3868,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
                             </div>
                             <div id="PytorchStateDictWeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="PytorchStateDictWeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="PytorchStateDictWeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -3840,12 +3876,14 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
     </div>
     <a class="headerlink" href="#PytorchStateDictWeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="PytorchStateDictWeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="PytorchStateDictWeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="PytorchStateDictWeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;architecture&#39;: FieldInfo(annotation=Union[CallableFromFile, CallableFromDepencency], required=True, description=&#39;callable returning a torch.nn.Module instance.\nLocal implementation: `&lt;relative path to file&gt;:&lt;identifier of implementation within the file&gt;`.\nImplementation in a dependency: `&lt;dependency-package&gt;.&lt;[dependency-module]&gt;.&lt;identifier&gt;`.&#39;, examples=[&#39;my_function.py:MyNetworkClass&#39;, &#39;my_module.submodule.get_my_model&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), &#39;architecture_sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#34;The SHA256 of the architecture source file, if the architecture is not defined in a module listed in `dependencies`\nYou can drag and drop your file to this\n[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.\nOr you can generate a SHA256 checksum with Python&#39;s `hashlib`,\n[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).&#34;), &#39;kwargs&#39;: FieldInfo(annotation=Dict[str, Any], required=False, default_factory=dict, description=&#39;key word arguments for the `architecture` callable&#39;), &#39;pytorch_version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;Version of the PyTorch library used.\nIf `depencencies` is specified it should include pytorch and the verison has to match.\n(`dependencies` overrules `pytorch_version`)&#39;)}</span>
 
@@ -3853,19 +3891,26 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
     </div>
     <a class="headerlink" href="#PytorchStateDictWeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="PytorchStateDictWeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#PytorchStateDictWeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -3996,7 +4041,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
                             </div>
                             <div id="TorchscriptWeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="TorchscriptWeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TorchscriptWeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4004,12 +4049,14 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
     </div>
     <a class="headerlink" href="#TorchscriptWeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="TorchscriptWeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="TorchscriptWeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TorchscriptWeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;pytorch_version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;Version of the PyTorch library used.&#39;)}</span>
 
@@ -4017,19 +4064,26 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
     </div>
     <a class="headerlink" href="#TorchscriptWeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="TorchscriptWeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#TorchscriptWeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -4164,7 +4218,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
                             </div>
                             <div id="TensorflowJsWeightsDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -4178,7 +4232,7 @@ All required files/folders should be a zip archive.</p>
                             </div>
                             <div id="TensorflowJsWeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="TensorflowJsWeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorflowJsWeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4186,12 +4240,14 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#TensorflowJsWeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="TensorflowJsWeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="TensorflowJsWeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorflowJsWeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The multi-file weights.\nAll required files/folders should be a zip archive.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;tensorflow_version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;Version of the TensorFlow library used.&#39;)}</span>
 
@@ -4199,19 +4255,26 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#TensorflowJsWeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="TensorflowJsWeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#TensorflowJsWeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -4341,7 +4404,7 @@ All required files/folders should be a zip archive.</p>
                             </div>
                             <div id="TensorflowSavedModelBundleWeightsDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="TensorflowSavedModelBundleWeightsDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorflowSavedModelBundleWeightsDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4349,12 +4412,14 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#TensorflowSavedModelBundleWeightsDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="TensorflowSavedModelBundleWeightsDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="TensorflowSavedModelBundleWeightsDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorflowSavedModelBundleWeightsDescr.model_fields-view-value"></label><span class="default_value">{&#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#39;∈📦 The weights file.&#39;, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;sha256&#39;: FieldInfo(annotation=Union[Sha256, NoneType], required=False, default=None, description=&#39;SHA256 checksum of the source file&#39;), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;Attachments that are specific to this weights entry.&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]), &#39;authors&#39;: FieldInfo(annotation=Union[List[Author], NoneType], required=False, default=None, description=&#39;Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)&#39;), &#39;dependencies&#39;: FieldInfo(annotation=Union[Dependencies, NoneType], required=False, default=None, description=&#39;Dependency manager and dependency file, specified as `&lt;dependency manager&gt;:&lt;relative file path&gt;`.&#39;, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None})]), &#39;parent&#39;: FieldInfo(annotation=Union[Literal[&#39;keras_hdf5&#39;, &#39;onnx&#39;, &#39;pytorch_state_dict&#39;, &#39;tensorflow_js&#39;, &#39;tensorflow_saved_model_bundle&#39;, &#39;torchscript&#39;], NoneType], required=False, default=None, description=&#34;The source weights these weights were converted from.\nFor example, if a model&#39;s weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.&#34;, examples=[&#39;pytorch_state_dict&#39;]), &#39;tensorflow_version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;Version of the TensorFlow library used.&#39;)}</span>
 
@@ -4362,19 +4427,26 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#TensorflowSavedModelBundleWeightsDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="TensorflowSavedModelBundleWeightsDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#TensorflowSavedModelBundleWeightsDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -4518,7 +4590,7 @@ All required files/folders should be a zip archive.</p>
                             </div>
                             <div id="ParameterizedInputShape.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ParameterizedInputShape.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ParameterizedInputShape.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4526,12 +4598,14 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#ParameterizedInputShape.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ParameterizedInputShape.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ParameterizedInputShape.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ParameterizedInputShape.model_fields-view-value"></label><span class="default_value">{&#39;min&#39;: FieldInfo(annotation=List[int], required=True, description=&#39;The minimum input shape&#39;, metadata=[MinLen(min_length=1)]), &#39;step&#39;: FieldInfo(annotation=List[int], required=True, description=&#39;The minimum shape change&#39;, metadata=[MinLen(min_length=1)])}</span>
 
@@ -4539,19 +4613,26 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#ParameterizedInputShape.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ParameterizedInputShape.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ParameterizedInputShape.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -4712,7 +4793,7 @@ All required files/folders should be a zip archive.</p>
                             </div>
                             <div id="ImplicitOutputShape.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ImplicitOutputShape.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ImplicitOutputShape.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4720,12 +4801,14 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#ImplicitOutputShape.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ImplicitOutputShape.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ImplicitOutputShape.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ImplicitOutputShape.model_fields-view-value"></label><span class="default_value">{&#39;reference_tensor&#39;: FieldInfo(annotation=TensorName, required=True, description=&#39;Name of the reference tensor.&#39;), &#39;scale&#39;: FieldInfo(annotation=List[Union[float, NoneType]], required=True, description=&#34;output_pix/input_pix for each dimension.\n&#39;null&#39; values indicate new dimensions, whose length is defined by 2*`offset`&#34;, metadata=[MinLen(min_length=1)]), &#39;offset&#39;: FieldInfo(annotation=List[Union[int, Annotated[float, MultipleOf]]], required=True, description=&#39;Position of origin wrt to input.&#39;, metadata=[MinLen(min_length=1)])}</span>
 
@@ -4733,19 +4816,26 @@ All required files/folders should be a zip archive.</p>
     </div>
     <a class="headerlink" href="#ImplicitOutputShape.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ImplicitOutputShape.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ImplicitOutputShape.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -4854,7 +4944,7 @@ All required files/folders should be a zip archive.</p>
                             </div>
                             <div id="TensorDescrBase.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7fab41521e40&gt;)]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f8c4744cc20&gt;)]</span>
 
         
     </div>
@@ -4920,7 +5010,7 @@ If not specified, the full data range that can be expressed in <code>data_type</
                             </div>
                             <div id="TensorDescrBase.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="TensorDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -4928,12 +5018,14 @@ If not specified, the full data range that can be expressed in <code>data_type</
     </div>
     <a class="headerlink" href="#TensorDescrBase.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="TensorDescrBase.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="TensorDescrBase.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="TensorDescrBase.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=TensorName, required=True, description=&#39;Tensor name. No duplicates are allowed.&#39;), &#39;description&#39;: FieldInfo(annotation=str, required=False, default=&#39;&#39;), &#39;axes&#39;: FieldInfo(annotation=str, required=True, description=&#39;Axes identifying characters. Same length and order as the axes in `shape`.\n| axis | description |\n| --- | --- |\n|  b  |  batch (groups multiple samples) |\n|  i  |  instance/index/element |\n|  t  |  time |\n|  c  |  channel |\n|  z  |  spatial dimension z |\n|  y  |  spatial dimension y |\n|  x  |  spatial dimension x |&#39;, metadata=[RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries&gt;)]), &#39;data_range&#39;: FieldInfo(annotation=Union[Tuple[Annotated[float, AllowInfNan(allow_inf_nan=True)], Annotated[float, AllowInfNan(allow_inf_nan=True)]], NoneType], required=False, default=None, description=&#39;Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\nIf not specified, the full data range that can be expressed in `data_type` is allowed.&#39;)}</span>
 
@@ -4941,19 +5033,26 @@ If not specified, the full data range that can be expressed in <code>data_type</
     </div>
     <a class="headerlink" href="#TensorDescrBase.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="TensorDescrBase.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#TensorDescrBase.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5016,7 +5115,7 @@ If not specified, the full data range that can be expressed in <code>data_type</
 
                             <div id="ProcessingKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ProcessingKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ProcessingKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5024,31 +5123,40 @@ If not specified, the full data range that can be expressed in <code>data_type</
     </div>
     <a class="headerlink" href="#ProcessingKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ProcessingKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ProcessingKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ProcessingKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ProcessingKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5133,7 +5241,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             </div>
                             <div id="ProcessingDescrBase.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ProcessingDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ProcessingDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5141,31 +5249,40 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     </div>
     <a class="headerlink" href="#ProcessingDescrBase.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ProcessingDescrBase.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ProcessingDescrBase.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ProcessingDescrBase.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ProcessingDescrBase.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5246,7 +5363,7 @@ such that they are always included even when dumping with 'exlude_unset'</p>
                             </div>
                             <div id="BinarizeKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="BinarizeKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="BinarizeKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5254,31 +5371,40 @@ such that they are always included even when dumping with 'exlude_unset'</p>
     </div>
     <a class="headerlink" href="#BinarizeKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="BinarizeKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{&#39;threshold&#39;: FieldInfo(annotation=float, required=True, description=&#39;The fixed threshold&#39;)}</span>
 
         
     </div>
     <a class="headerlink" href="#BinarizeKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="BinarizeKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#BinarizeKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5373,7 +5499,7 @@ Values above the threshold will be set to one, values below the threshold to zer
                             </div>
                             <div id="BinarizeDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="BinarizeDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="BinarizeDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5381,12 +5507,14 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#BinarizeDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="BinarizeDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="BinarizeDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="BinarizeDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;binarize&#39;], required=False, default=&#39;binarize&#39;), &#39;kwargs&#39;: FieldInfo(annotation=BinarizeKwargs, required=True)}</span>
 
@@ -5394,19 +5522,26 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#BinarizeDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="BinarizeDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#BinarizeDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5506,7 +5641,7 @@ Values above the threshold will be set to one, values below the threshold to zer
                             </div>
                             <div id="ClipKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ClipKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ClipKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5514,12 +5649,14 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#ClipKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ClipKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ClipKwargs.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ClipKwargs.model_fields-view-value"></label><span class="default_value">{&#39;min&#39;: FieldInfo(annotation=float, required=True, description=&#39;minimum value for clipping&#39;), &#39;max&#39;: FieldInfo(annotation=float, required=True, description=&#39;maximum value for clipping&#39;)}</span>
 
@@ -5527,19 +5664,26 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#ClipKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ClipKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ClipKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5632,7 +5776,7 @@ Values above the threshold will be set to one, values below the threshold to zer
                             </div>
                             <div id="ClipDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ClipDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ClipDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5640,12 +5784,14 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#ClipDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ClipDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ClipDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ClipDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;clip&#39;], required=False, default=&#39;clip&#39;), &#39;kwargs&#39;: FieldInfo(annotation=ClipKwargs, required=True)}</span>
 
@@ -5653,19 +5799,26 @@ Values above the threshold will be set to one, values below the threshold to zer
     </div>
     <a class="headerlink" href="#ClipDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ClipDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ClipDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5762,7 +5915,7 @@ Values above the threshold will be set to one, values below the threshold to zer
 
                             <div id="ScaleLinearKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7fab41521e40&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f8c4744cc20&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -5837,7 +5990,7 @@ For example xy to scale the two image axes for 2d data jointly.</p>
                             </div>
                             <div id="ScaleLinearKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleLinearKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleLinearKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5845,12 +5998,14 @@ For example xy to scale the two image axes for 2d data jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleLinearKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleLinearKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleLinearKwargs.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleLinearKwargs.model_fields-view-value"></label><span class="default_value">{&#39;axes&#39;: FieldInfo(annotation=Union[Annotated[str, RestrictCharacters, AfterValidator], NoneType], required=False, default=None, description=&#39;The subset of axes to scale jointly.\nFor example xy to scale the two image axes for 2d data jointly.&#39;, examples=[&#39;xy&#39;]), &#39;gain&#39;: FieldInfo(annotation=Union[float, List[float]], required=False, default=1.0, description=&#39;multiplicative factor&#39;), &#39;offset&#39;: FieldInfo(annotation=Union[float, List[float]], required=False, default=0.0, description=&#39;additive term&#39;)}</span>
 
@@ -5858,19 +6013,26 @@ For example xy to scale the two image axes for 2d data jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleLinearKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleLinearKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleLinearKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -5962,7 +6124,7 @@ For example xy to scale the two image axes for 2d data jointly.</p>
                             </div>
                             <div id="ScaleLinearDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleLinearDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleLinearDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -5970,12 +6132,14 @@ For example xy to scale the two image axes for 2d data jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleLinearDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleLinearDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleLinearDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleLinearDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;scale_linear&#39;], required=False, default=&#39;scale_linear&#39;), &#39;kwargs&#39;: FieldInfo(annotation=ScaleLinearKwargs, required=True)}</span>
 
@@ -5983,19 +6147,26 @@ For example xy to scale the two image axes for 2d data jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleLinearDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleLinearDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleLinearDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -6105,7 +6276,7 @@ For example xy to scale the two image axes for 2d data jointly.</p>
                             </div>
                             <div id="SigmoidDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="SigmoidDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="SigmoidDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -6113,31 +6284,40 @@ For example xy to scale the two image axes for 2d data jointly.</p>
     </div>
     <a class="headerlink" href="#SigmoidDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="SigmoidDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;sigmoid&#39;], required=False, default=&#39;sigmoid&#39;)}</span>
 
         
     </div>
     <a class="headerlink" href="#SigmoidDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="SigmoidDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#SigmoidDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -6278,7 +6458,7 @@ For example xy to scale the two image axes for 2d data jointly.</p>
                             </div>
                             <div id="ZeroMeanUnitVarianceKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7fab41521e40&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f8c4744cc20&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -6358,7 +6538,7 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
                             </div>
                             <div id="ZeroMeanUnitVarianceKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ZeroMeanUnitVarianceKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ZeroMeanUnitVarianceKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -6366,12 +6546,14 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ZeroMeanUnitVarianceKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ZeroMeanUnitVarianceKwargs.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ZeroMeanUnitVarianceKwargs.model_fields-view-value"></label><span class="default_value">{&#39;mode&#39;: FieldInfo(annotation=Literal[&#39;fixed&#39;, &#39;per_dataset&#39;, &#39;per_sample&#39;], required=False, default=&#39;fixed&#39;, description=&#39;Mode for computing mean and variance.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n|   fixed     | Fixed values for mean and variance   |\n| per_dataset | Compute for the entire dataset       |\n| per_sample  | Compute for each sample individually |&#39;), &#39;axes&#39;: FieldInfo(annotation=str, required=True, description=&#39;The subset of axes to normalize jointly.\nFor example `xy` to normalize the two image axes for 2d data jointly.&#39;, examples=[&#39;xy&#39;], metadata=[RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries&gt;)]), &#39;mean&#39;: FieldInfo(annotation=Union[float, Annotated[List[float], MinLen], NoneType], required=False, default=None, description=&#39;The mean value(s) to use for `mode: fixed`.\nFor example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`.&#39;, examples=[(1.1, 2.2, 3.3)]), &#39;std&#39;: FieldInfo(annotation=Union[float, Annotated[List[float], MinLen], NoneType], required=False, default=None, description=&#39;The standard deviation values to use for `mode: fixed`. Analogous to mean.&#39;, examples=[(0.1, 0.2, 0.3)]), &#39;eps&#39;: FieldInfo(annotation=float, required=False, default=1e-06, description=&#39;epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.&#39;, metadata=[Interval(gt=0, ge=None, lt=None, le=0.1)])}</span>
 
@@ -6379,19 +6561,26 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ZeroMeanUnitVarianceKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -6483,7 +6672,7 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
                             </div>
                             <div id="ZeroMeanUnitVarianceDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ZeroMeanUnitVarianceDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ZeroMeanUnitVarianceDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -6491,12 +6680,14 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ZeroMeanUnitVarianceDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ZeroMeanUnitVarianceDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ZeroMeanUnitVarianceDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;zero_mean_unit_variance&#39;], required=False, default=&#39;zero_mean_unit_variance&#39;), &#39;kwargs&#39;: FieldInfo(annotation=ZeroMeanUnitVarianceKwargs, required=True)}</span>
 
@@ -6504,19 +6695,26 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ZeroMeanUnitVarianceDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ZeroMeanUnitVarianceDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -6657,7 +6855,7 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
                             </div>
                             <div id="ScaleRangeKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7fab41521e40&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f8c4744cc20&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -6757,7 +6955,7 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
                             </div>
                             <div id="ScaleRangeKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleRangeKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleRangeKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -6765,12 +6963,14 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
     </div>
     <a class="headerlink" href="#ScaleRangeKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleRangeKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleRangeKwargs.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleRangeKwargs.model_fields-view-value"></label><span class="default_value">{&#39;mode&#39;: FieldInfo(annotation=Literal[&#39;per_dataset&#39;, &#39;per_sample&#39;], required=True, description=&#39;Mode for computing percentiles.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | compute for the entire dataset       |\n| per_sample  | compute for each sample individually |&#39;), &#39;axes&#39;: FieldInfo(annotation=str, required=True, description=&#39;The subset of axes to normalize jointly.\nFor example xy to normalize the two image axes for 2d data jointly.&#39;, examples=[&#39;xy&#39;], metadata=[RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries&gt;)]), &#39;min_percentile&#39;: FieldInfo(annotation=Union[int, float], required=False, default=0.0, description=&#39;The lower percentile used for normalization.&#39;, metadata=[Interval(gt=None, ge=0, lt=100, le=None)]), &#39;max_percentile&#39;: FieldInfo(annotation=Union[int, float], required=False, default=100.0, description=&#39;The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.&#39;, metadata=[Interval(gt=1, ge=None, lt=None, le=100)]), &#39;eps&#39;: FieldInfo(annotation=float, required=False, default=1e-06, description=&#39;Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.&#39;, metadata=[Interval(gt=0, ge=None, lt=None, le=0.1)]), &#39;reference_tensor&#39;: FieldInfo(annotation=Union[TensorName, NoneType], required=False, default=None, description=&#39;Tensor name to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.\nFor a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`&#39;)}</span>
 
@@ -6778,19 +6978,26 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
     </div>
     <a class="headerlink" href="#ScaleRangeKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleRangeKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleRangeKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -6882,7 +7089,7 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
                             </div>
                             <div id="ScaleRangeDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleRangeDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleRangeDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -6890,12 +7097,14 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
     </div>
     <a class="headerlink" href="#ScaleRangeDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleRangeDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleRangeDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleRangeDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;scale_range&#39;], required=False, default=&#39;scale_range&#39;), &#39;kwargs&#39;: FieldInfo(annotation=ScaleRangeKwargs, required=True)}</span>
 
@@ -6903,19 +7112,26 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
     </div>
     <a class="headerlink" href="#ScaleRangeDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleRangeDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleRangeDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -7049,7 +7265,7 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
                             </div>
                             <div id="ScaleMeanVarianceKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7fab41521e40&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f8c4744cc20&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -7078,7 +7294,7 @@ Default: scale all non-batch axes jointly.</p>
                             </div>
                             <div id="ScaleMeanVarianceKwargs.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleMeanVarianceKwargs.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleMeanVarianceKwargs.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -7086,12 +7302,14 @@ Default: scale all non-batch axes jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceKwargs.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleMeanVarianceKwargs.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleMeanVarianceKwargs.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleMeanVarianceKwargs.model_fields-view-value"></label><span class="default_value">{&#39;mode&#39;: FieldInfo(annotation=Literal[&#39;per_dataset&#39;, &#39;per_sample&#39;], required=True, description=&#39;Mode for computing mean and variance.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | Compute for the entire dataset       |\n| per_sample  | Compute for each sample individually |&#39;), &#39;reference_tensor&#39;: FieldInfo(annotation=TensorName, required=True, description=&#39;Name of tensor to match.&#39;), &#39;axes&#39;: FieldInfo(annotation=Union[Annotated[str, RestrictCharacters, AfterValidator], NoneType], required=False, default=None, description=&#39;The subset of axes to scale jointly.\nFor example xy to normalize the two image axes for 2d data jointly.\nDefault: scale all non-batch axes jointly.&#39;, examples=[&#39;xy&#39;]), &#39;eps&#39;: FieldInfo(annotation=float, required=False, default=1e-06, description=&#39;Epsilon for numeric stability:\n&#34;`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.&#39;, metadata=[Interval(gt=0, ge=None, lt=None, le=0.1)])}</span>
 
@@ -7099,19 +7317,26 @@ Default: scale all non-batch axes jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceKwargs.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleMeanVarianceKwargs.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceKwargs.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -7203,7 +7428,7 @@ Default: scale all non-batch axes jointly.</p>
                             </div>
                             <div id="ScaleMeanVarianceDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ScaleMeanVarianceDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleMeanVarianceDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -7211,12 +7436,14 @@ Default: scale all non-batch axes jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="ScaleMeanVarianceDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="ScaleMeanVarianceDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ScaleMeanVarianceDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Literal[&#39;scale_mean_variance&#39;], required=False, default=&#39;scale_mean_variance&#39;), &#39;kwargs&#39;: FieldInfo(annotation=ScaleMeanVarianceKwargs, required=True)}</span>
 
@@ -7224,19 +7451,26 @@ Default: scale all non-batch axes jointly.</p>
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="ScaleMeanVarianceDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#ScaleMeanVarianceDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -7498,7 +7732,7 @@ The data flow in bioimage.io models is explained
                             </div>
                             <div id="InputTensorDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="InputTensorDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="InputTensorDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -7506,12 +7740,14 @@ The data flow in bioimage.io models is explained
     </div>
     <a class="headerlink" href="#InputTensorDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="InputTensorDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="InputTensorDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="InputTensorDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=TensorName, required=True, description=&#39;Tensor name. No duplicates are allowed.&#39;), &#39;description&#39;: FieldInfo(annotation=str, required=False, default=&#39;&#39;), &#39;axes&#39;: FieldInfo(annotation=str, required=True, description=&#39;Axes identifying characters. Same length and order as the axes in `shape`.\n| axis | description |\n| --- | --- |\n|  b  |  batch (groups multiple samples) |\n|  i  |  instance/index/element |\n|  t  |  time |\n|  c  |  channel |\n|  z  |  spatial dimension z |\n|  y  |  spatial dimension y |\n|  x  |  spatial dimension x |&#39;, metadata=[RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries&gt;)]), &#39;data_range&#39;: FieldInfo(annotation=Union[Tuple[Annotated[float, AllowInfNan(allow_inf_nan=True)], Annotated[float, AllowInfNan(allow_inf_nan=True)]], NoneType], required=False, default=None, description=&#39;Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\nIf not specified, the full data range that can be expressed in `data_type` is allowed.&#39;), &#39;data_type&#39;: FieldInfo(annotation=Literal[&#39;float32&#39;, &#39;uint8&#39;, &#39;uint16&#39;], required=True, description=&#39;For now an input tensor is expected to be given as `float32`.\nThe data flow in bioimage.io models is explained\n[in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).&#39;), &#39;shape&#39;: FieldInfo(annotation=Union[Sequence[int], ParameterizedInputShape], required=True, description=&#39;Specification of input tensor shape.&#39;, examples=[(1, 512, 512, 1), {&#39;min&#39;: (1, 64, 64, 1), &#39;step&#39;: (0, 32, 32, 0)}]), &#39;preprocessing&#39;: FieldInfo(annotation=List[Annotated[Union[BinarizeDescr, ClipDescr, ScaleLinearDescr, SigmoidDescr, ZeroMeanUnitVarianceDescr, ScaleRangeDescr], Discriminator]], required=False, default_factory=list, description=&#39;Description of how this input should be preprocessed.&#39;)}</span>
 
@@ -7519,19 +7755,26 @@ The data flow in bioimage.io models is explained
     </div>
     <a class="headerlink" href="#InputTensorDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="InputTensorDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#InputTensorDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -7759,7 +8002,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
                             </div>
                             <div id="OutputTensorDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="OutputTensorDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="OutputTensorDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -7767,12 +8010,14 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#OutputTensorDescr.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="OutputTensorDescr.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="OutputTensorDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="OutputTensorDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=TensorName, required=True, description=&#39;Tensor name. No duplicates are allowed.&#39;), &#39;description&#39;: FieldInfo(annotation=str, required=False, default=&#39;&#39;), &#39;axes&#39;: FieldInfo(annotation=str, required=True, description=&#39;Axes identifying characters. Same length and order as the axes in `shape`.\n| axis | description |\n| --- | --- |\n|  b  |  batch (groups multiple samples) |\n|  i  |  instance/index/element |\n|  t  |  time |\n|  c  |  channel |\n|  z  |  spatial dimension z |\n|  y  |  spatial dimension y |\n|  x  |  spatial dimension x |&#39;, metadata=[RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries&gt;)]), &#39;data_range&#39;: FieldInfo(annotation=Union[Tuple[Annotated[float, AllowInfNan(allow_inf_nan=True)], Annotated[float, AllowInfNan(allow_inf_nan=True)]], NoneType], required=False, default=None, description=&#39;Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\nIf not specified, the full data range that can be expressed in `data_type` is allowed.&#39;), &#39;data_type&#39;: FieldInfo(annotation=Literal[&#39;float32&#39;, &#39;float64&#39;, &#39;uint8&#39;, &#39;int8&#39;, &#39;uint16&#39;, &#39;int16&#39;, &#39;uint32&#39;, &#39;int32&#39;, &#39;uint64&#39;, &#39;int64&#39;, &#39;bool&#39;], required=True, description=&#39;Data type.\nThe data flow in bioimage.io models is explained\n[in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit).&#39;), &#39;shape&#39;: FieldInfo(annotation=Union[Sequence[int], ImplicitOutputShape], required=True, description=&#39;Output tensor shape.&#39;), &#39;halo&#39;: FieldInfo(annotation=Union[Sequence[int], NoneType], required=False, default=None, description=&#39;The `halo` that should be cropped from the output tensor to avoid boundary effects.\nThe `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.\nTo document a `halo` that is already cropped by the model `shape.offset` has to be used instead.&#39;), &#39;postprocessing&#39;: FieldInfo(annotation=List[Annotated[Union[BinarizeDescr, ClipDescr, ScaleLinearDescr, SigmoidDescr, ZeroMeanUnitVarianceDescr, ScaleRangeDescr, ScaleMeanVarianceDescr], Discriminator]], required=False, default_factory=list, description=&#39;Description of how this output should be postprocessed.&#39;)}</span>
 
@@ -7780,19 +8025,26 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#OutputTensorDescr.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="OutputTensorDescr.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#OutputTensorDescr.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -7880,7 +8132,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
 
                             <div id="RunMode.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[Union[Literal[&#39;deepimagej&#39;], str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab33961e40&gt;, severity=30, msg=&#34;Unknown run mode &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: Literal[&#39;deepimagej&#39;]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[Union[Literal[&#39;deepimagej&#39;], str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c39559d00&gt;, severity=30, msg=&#34;Unknown run mode &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: Literal[&#39;deepimagej&#39;]})]</span>
 
         
     </div>
@@ -7906,7 +8158,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
                             </div>
                             <div id="RunMode.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="RunMode.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="RunMode.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -7914,12 +8166,14 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#RunMode.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="RunMode.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="RunMode.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="RunMode.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=Union[Literal[&#39;deepimagej&#39;], str], required=True, description=&#39;Run mode name&#39;, metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#34;Unknown run mode &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: typing.Literal[&#39;deepimagej&#39;]})]), &#39;kwargs&#39;: FieldInfo(annotation=Dict[str, Any], required=False, default_factory=dict, description=&#39;Run mode specific key word arguments&#39;)}</span>
 
@@ -7927,19 +8181,26 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#RunMode.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="RunMode.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#RunMode.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -8034,7 +8295,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
                             </div>
                             <div id="LinkedModel.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="LinkedModel.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LinkedModel.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -8042,12 +8303,14 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#LinkedModel.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="LinkedModel.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="LinkedModel.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LinkedModel.model_fields-view-value"></label><span class="default_value">{&#39;id&#39;: FieldInfo(annotation=ModelId, required=True, description=&#39;A valid model `id` from the bioimage.io collection.&#39;), &#39;version_number&#39;: FieldInfo(annotation=Union[int, NoneType], required=False, default=None, description=&#39;version number (n-th published version, not the semantic version) of linked model&#39;)}</span>
 
@@ -8055,19 +8318,26 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
     </div>
     <a class="headerlink" href="#LinkedModel.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="LinkedModel.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#LinkedModel.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -8498,7 +8768,7 @@ The <code><a href="#ModelDescr.format_version">format_version</a></code> is impo
                             </div>
                             <div id="ModelDescr.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -8527,7 +8797,7 @@ with details on how to quantitatively validate the model on unseen data.</p>
                             </div>
                             <div id="ModelDescr.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab33962660&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c3955a020&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
 
         
     </div>
@@ -8543,7 +8813,7 @@ We do notsupport custom license beyond the SPDX license list, if you need that p
                             </div>
                             <div id="ModelDescr.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab33a28860&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fab3352aa20&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c398defc0&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f8c398df7e0&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
 
         
     </div>
@@ -8820,7 +9090,7 @@ No standard run modes are defined yet.</p>
                             </div>
                             <div id="ModelDescr.sample_inputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">sample_inputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">sample_inputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -8835,7 +9105,7 @@ The sample files primarily serve to inform a human user about an example use cas
                             </div>
                             <div id="ModelDescr.sample_outputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">sample_outputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">sample_outputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -8848,7 +9118,7 @@ The sample files primarily serve to inform a human user about an example use cas
                             </div>
                             <div id="ModelDescr.test_inputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">test_inputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
+            <span class="name">test_inputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
 
         
     </div>
@@ -8865,7 +9135,7 @@ The extension must be '.npy'.</p>
                             </div>
                             <div id="ModelDescr.test_outputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">test_outputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fab415e65c0&gt;), PlainSerializer(func=&lt;function _package at 0x7fab415e6d40&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
+            <span class="name">test_outputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f8c474fc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f8c474fd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
 
         
     </div>
@@ -8905,7 +9175,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                             <div id="ModelDescr.weights" class="classattr">
                                 <div class="attr variable">
-            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7fab359fbba0&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
+            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f8c3b9fbce0&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
 
         
     </div>
@@ -8986,7 +9256,7 @@ The available weight formats determine which consumers can use this model.</p>
                             </div>
                             <div id="ModelDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="ModelDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="ModelDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True, &#39;title&#39;: &#39;bioimage.io model specification&#39;}</span>
 
@@ -8994,7 +9264,41 @@ The available weight formats determine which consumers can use this model.</p>
     </div>
     <a class="headerlink" href="#ModelDescr.model_config"></a>
     
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelDescr.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
+<input id="ModelDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="ModelDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-readable name of this model.\nIt should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters.&#39;, metadata=[MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=64)]})]), &#39;description&#39;: FieldInfo(annotation=str, required=True), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of the model RDF and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;file and other attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=False, default_factory=list, description=&#39;citations&#39;), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;download_url&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;URL to download the resource from (deprecated)&#39;), &#39;git_repo&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name&#39;), &#39;rdf_source&#39;: FieldInfo(annotation=Union[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])], NoneType], required=False, default=None, description=&#39;Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;version_number&#39;: FieldInfo(annotation=Union[int, NoneType], required=False, default=None, description=&#39;version number (n-th published version, not the semantic version)&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.4.10&#39;], required=False, default=&#39;0.4.10&#39;, description=&#39;Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.&#39;), &#39;type&#39;: FieldInfo(annotation=Literal[&#39;model&#39;], required=False, default=&#39;model&#39;, description=&#34;Specialized resource type &#39;model&#39;&#34;), &#39;id&#39;: FieldInfo(annotation=Union[ModelId, NoneType], required=False, default=None, description=&#39;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#34;∈📦 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a &#39;[#[#]]# Validation&#39; (sub)section\nwith details on how to quantitatively validate the model on unseen data.&#34;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;inputs&#39;: FieldInfo(annotation=List[InputTensorDescr], required=True, description=&#39;Describes the input tensors expected by this model.&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, str], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do notsupport custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;outputs&#39;: FieldInfo(annotation=List[OutputTensorDescr], required=True, description=&#39;Describes the output tensors.&#39;, metadata=[MinLen(min_length=1)]), &#39;packaged_by&#39;: FieldInfo(annotation=List[Author], required=False, default_factory=list, description=&#39;The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.&#39;), &#39;parent&#39;: FieldInfo(annotation=Union[LinkedModel, NoneType], required=False, default=None, description=&#39;The model from which this model is derived, e.g. by fine-tuning the weights.&#39;), &#39;run_mode&#39;: FieldInfo(annotation=Union[RunMode, NoneType], required=False, default=None, description=&#39;Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet.&#39;), &#39;sample_inputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer]], required=False, default_factory=list, description=&#39;∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,\nfor example stored as PNG or TIFF images.\nThe sample files primarily serve to inform a human user about an example use case&#39;), &#39;sample_outputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer]], required=False, default_factory=list, description=&#39;∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.&#39;), &#39;test_inputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer, WithSuffix]], required=True, description=&#34;∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.\nThis means if your model has more than one input, you should provide one URL/relative path for each input.\nEach test input should be a file with an ndarray in\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe extension must be &#39;.npy&#39;.&#34;, metadata=[MinLen(min_length=1)]), &#39;test_outputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer, WithSuffix]], required=True, description=&#39;∈📦 Analog to `test_inputs`.&#39;, metadata=[MinLen(min_length=1)]), &#39;timestamp&#39;: FieldInfo(annotation=Datetime, required=True, description=&#39;Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).&#39;), &#39;training_data&#39;: FieldInfo(annotation=Union[LinkedDataset, DatasetDescr, NoneType], required=False, default=None, description=&#39;The dataset used to train this model&#39;), &#39;weights&#39;: FieldInfo(annotation=WeightsDescr, required=True, description=&#39;The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model.&#39;, metadata=[WrapSerializer(func=&lt;function package_weights&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)])}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelDescr.model_fields"></a>
     
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelDescr.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelDescr.model_computed_fields"></a>
+    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div id="ModelDescr.model_post_init" class="classattr">
@@ -9008,12 +9312,12 @@ The available weight formats determine which consumers can use this model.</p>
 
     </div>
     <a class="headerlink" href="#ModelDescr.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelDescr.model_post_init-105"><a href="#ModelDescr.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ModelDescr.model_post_init-106"><a href="#ModelDescr.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="ModelDescr.model_post_init-107"><a href="#ModelDescr.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="ModelDescr.model_post_init-108"><a href="#ModelDescr.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="ModelDescr.model_post_init-109"><a href="#ModelDescr.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="ModelDescr.model_post_init-110"><a href="#ModelDescr.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelDescr.model_post_init-124"><a href="#ModelDescr.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ModelDescr.model_post_init-125"><a href="#ModelDescr.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="ModelDescr.model_post_init-126"><a href="#ModelDescr.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="ModelDescr.model_post_init-127"><a href="#ModelDescr.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="ModelDescr.model_post_init-128"><a href="#ModelDescr.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="ModelDescr.model_post_init-129"><a href="#ModelDescr.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -9021,31 +9325,6 @@ The available weight formats determine which consumers can use this model.</p>
 method.</p>
 </div>
 
-
-                            </div>
-                            <div id="ModelDescr.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<input id="ModelDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ModelDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-readable name of this model.\nIt should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters.&#39;, metadata=[MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=64)]})]), &#39;description&#39;: FieldInfo(annotation=str, required=True), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of the model RDF and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=Union[AttachmentsDescr, NoneType], required=False, default=None, description=&#39;file and other attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=False, default_factory=list, description=&#39;citations&#39;), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;download_url&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;URL to download the resource from (deprecated)&#39;), &#39;git_repo&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name&#39;), &#39;rdf_source&#39;: FieldInfo(annotation=Union[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])], NoneType], required=False, default=None, description=&#39;Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.\nDo not set this field in a YAML file.&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;version_number&#39;: FieldInfo(annotation=Union[int, NoneType], required=False, default=None, description=&#39;version number (n-th published version, not the semantic version)&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.4.10&#39;], required=False, default=&#39;0.4.10&#39;, description=&#39;Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.&#39;), &#39;type&#39;: FieldInfo(annotation=Literal[&#39;model&#39;], required=False, default=&#39;model&#39;, description=&#34;Specialized resource type &#39;model&#39;&#34;), &#39;id&#39;: FieldInfo(annotation=Union[ModelId, NoneType], required=False, default=None, description=&#39;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], required=True, description=&#34;∈📦 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a &#39;[#[#]]# Validation&#39; (sub)section\nwith details on how to quantitatively validate the model on unseen data.&#34;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterValidator(func=&lt;function wo_special_file_name&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]), &#39;inputs&#39;: FieldInfo(annotation=List[InputTensorDescr], required=True, description=&#39;Describes the input tensors expected by this model.&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, str], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do notsupport custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose\n) to discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;outputs&#39;: FieldInfo(annotation=List[OutputTensorDescr], required=True, description=&#39;Describes the output tensors.&#39;, metadata=[MinLen(min_length=1)]), &#39;packaged_by&#39;: FieldInfo(annotation=List[Author], required=False, default_factory=list, description=&#39;The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.&#39;), &#39;parent&#39;: FieldInfo(annotation=Union[LinkedModel, NoneType], required=False, default=None, description=&#39;The model from which this model is derived, e.g. by fine-tuning the weights.&#39;), &#39;run_mode&#39;: FieldInfo(annotation=Union[RunMode, NoneType], required=False, default=None, description=&#39;Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet.&#39;), &#39;sample_inputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer]], required=False, default_factory=list, description=&#39;∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,\nfor example stored as PNG or TIFF images.\nThe sample files primarily serve to inform a human user about an example use case&#39;), &#39;sample_outputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer]], required=False, default_factory=list, description=&#39;∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.&#39;), &#39;test_inputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer, WithSuffix]], required=True, description=&#34;∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.\nThis means if your model has more than one input, you should provide one URL/relative path for each input.\nEach test input should be a file with an ndarray in\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe extension must be &#39;.npy&#39;.&#34;, metadata=[MinLen(min_length=1)]), &#39;test_outputs&#39;: FieldInfo(annotation=List[Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer, WithSuffix]], required=True, description=&#39;∈📦 Analog to `test_inputs`.&#39;, metadata=[MinLen(min_length=1)]), &#39;timestamp&#39;: FieldInfo(annotation=Datetime, required=True, description=&#39;Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).&#39;), &#39;training_data&#39;: FieldInfo(annotation=Union[LinkedDataset, DatasetDescr, NoneType], required=False, default=None, description=&#39;The dataset used to train this model&#39;), &#39;weights&#39;: FieldInfo(annotation=WeightsDescr, required=True, description=&#39;The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model.&#39;, metadata=[WrapSerializer(func=&lt;function package_weights&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)])}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelDescr.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="ModelDescr.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelDescr.model_computed_fields"></a>
-    
-    
 
                             </div>
                             <div class="inherited">

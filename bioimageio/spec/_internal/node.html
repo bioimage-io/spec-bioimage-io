@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec._internal.node API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -285,7 +285,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                             </div>
                             <div id="Node.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="Node.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="Node.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -293,31 +293,40 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     </div>
     <a class="headerlink" href="#Node.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="Node.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#Node.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="Node.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#Node.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">

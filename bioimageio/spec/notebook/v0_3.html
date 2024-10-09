@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.6.1"/>
+    <meta name="generator" content="pdoc 14.7.0"/>
     <title>bioimageio.spec.notebook.v0_3 API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -63,13 +63,13 @@
                                 <a class="variable" href="#NotebookDescr.model_config">model_config</a>
                         </li>
                         <li>
-                                <a class="function" href="#NotebookDescr.model_post_init">model_post_init</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#NotebookDescr.model_fields">model_fields</a>
                         </li>
                         <li>
                                 <a class="variable" href="#NotebookDescr.model_computed_fields">model_computed_fields</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#NotebookDescr.model_post_init">model_post_init</a>
                         </li>
                 </ul>
 
@@ -360,7 +360,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="NotebookDescr.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="NotebookDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="NotebookDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True, &#39;title&#39;: &#39;bioimage.io notebook specification&#39;}</span>
 
@@ -368,7 +368,41 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#NotebookDescr.model_config"></a>
     
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
+
+                            </div>
+                            <div id="NotebookDescr.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
+<input id="NotebookDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="NotebookDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.&#39;, metadata=[MinLen(min_length=1), MaxLen(max_length=128)]), &#39;description&#39;: FieldInfo(annotation=str, required=True, description=&#39;A string containing a brief description.&#39;, metadata=[MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=512)]})]), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of this resource description and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=List[FileDescr], required=False, default_factory=list, description=&#39;file attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=True, description=&#39;citations&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, DeprecatedLicenseId], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;git_repo&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration, e.g. on bioimage.io&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.3.0&#39;], required=False, default=&#39;0.3.0&#39;, description=&#39;The **format** version of this resource specification&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;∈📦 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&#39;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;]), &#39;badges&#39;: FieldInfo(annotation=List[BadgeDescr], required=False, default_factory=list, description=&#39;badges associated with this resource&#39;), &#39;type&#39;: FieldInfo(annotation=Literal[&#39;notebook&#39;], required=False, default=&#39;notebook&#39;), &#39;id&#39;: FieldInfo(annotation=Union[NotebookId, NoneType], required=False, default=None, description=&#39;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&#39;), &#39;parent&#39;: FieldInfo(annotation=Union[NotebookId, NoneType], required=False, default=None, description=&#39;The description from which this one is derived&#39;), &#39;source&#39;: FieldInfo(annotation=Union[Annotated[HttpUrl, WithSuffix], Annotated[Path, PathType, Predicate, WithSuffix], Annotated[RelativeFilePath, WithSuffix]], required=True, description=&#39;The Jupyter notebook&#39;)}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#NotebookDescr.model_fields"></a>
     
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
+
+                            </div>
+                            <div id="NotebookDescr.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#NotebookDescr.model_computed_fields"></a>
+    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div id="NotebookDescr.model_post_init" class="classattr">
@@ -382,12 +416,12 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#NotebookDescr.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="NotebookDescr.model_post_init-105"><a href="#NotebookDescr.model_post_init-105"><span class="linenos">105</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="NotebookDescr.model_post_init-106"><a href="#NotebookDescr.model_post_init-106"><span class="linenos">106</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
-</span><span id="NotebookDescr.model_post_init-107"><a href="#NotebookDescr.model_post_init-107"><span class="linenos">107</span></a><span class="sd">                        method.</span>
-</span><span id="NotebookDescr.model_post_init-108"><a href="#NotebookDescr.model_post_init-108"><span class="linenos">108</span></a><span class="sd">                        &quot;&quot;&quot;</span>
-</span><span id="NotebookDescr.model_post_init-109"><a href="#NotebookDescr.model_post_init-109"><span class="linenos">109</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-</span><span id="NotebookDescr.model_post_init-110"><a href="#NotebookDescr.model_post_init-110"><span class="linenos">110</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NotebookDescr.model_post_init-124"><a href="#NotebookDescr.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="NotebookDescr.model_post_init-125"><a href="#NotebookDescr.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
+</span><span id="NotebookDescr.model_post_init-126"><a href="#NotebookDescr.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
+</span><span id="NotebookDescr.model_post_init-127"><a href="#NotebookDescr.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
+</span><span id="NotebookDescr.model_post_init-128"><a href="#NotebookDescr.model_post_init-128"><span class="linenos">128</span></a>                        <span class="n">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span><span id="NotebookDescr.model_post_init-129"><a href="#NotebookDescr.model_post_init-129"><span class="linenos">129</span></a>                        <span class="n">original_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -395,31 +429,6 @@ errors defaults to 'strict'.</p>
 method.</p>
 </div>
 
-
-                            </div>
-                            <div id="NotebookDescr.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<input id="NotebookDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="NotebookDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.&#39;, metadata=[MinLen(min_length=1), MaxLen(max_length=128)]), &#39;description&#39;: FieldInfo(annotation=str, required=True, description=&#39;A string containing a brief description.&#39;, metadata=[MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=512)]})]), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of this resource description and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=List[FileDescr], required=False, default_factory=list, description=&#39;file attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=True, description=&#39;citations&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, DeprecatedLicenseId], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;git_repo&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration, e.g. on bioimage.io&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.3.0&#39;], required=False, default=&#39;0.3.0&#39;, description=&#39;The **format** version of this resource specification&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;∈📦 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&#39;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;]), &#39;badges&#39;: FieldInfo(annotation=List[BadgeDescr], required=False, default_factory=list, description=&#39;badges associated with this resource&#39;), &#39;type&#39;: FieldInfo(annotation=Literal[&#39;notebook&#39;], required=False, default=&#39;notebook&#39;), &#39;id&#39;: FieldInfo(annotation=Union[NotebookId, NoneType], required=False, default=None, description=&#39;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&#39;), &#39;parent&#39;: FieldInfo(annotation=Union[NotebookId, NoneType], required=False, default=None, description=&#39;The description from which this one is derived&#39;), &#39;source&#39;: FieldInfo(annotation=Union[Annotated[HttpUrl, WithSuffix], Annotated[Path, PathType, Predicate, WithSuffix], Annotated[RelativeFilePath, WithSuffix]], required=True, description=&#39;The Jupyter notebook&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#NotebookDescr.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="NotebookDescr.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#NotebookDescr.model_computed_fields"></a>
-    
-    
 
                             </div>
                             <div class="inherited">
@@ -535,7 +544,7 @@ method.</p>
                             </div>
                             <div id="LinkedNotebook.model_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_config</span>        =
+            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
 <input id="LinkedNotebook.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LinkedNotebook.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
 
@@ -543,12 +552,14 @@ method.</p>
     </div>
     <a class="headerlink" href="#LinkedNotebook.model_config"></a>
     
-    
+            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
+</div>
+
 
                             </div>
                             <div id="LinkedNotebook.model_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_fields</span>        =
+            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
 <input id="LinkedNotebook.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
             <label class="view-value-button pdoc-button" for="LinkedNotebook.model_fields-view-value"></label><span class="default_value">{&#39;id&#39;: FieldInfo(annotation=NotebookId, required=True, description=&#39;A valid notebook `id` from the bioimage.io collection.&#39;)}</span>
 
@@ -556,19 +567,26 @@ method.</p>
     </div>
     <a class="headerlink" href="#LinkedNotebook.model_fields"></a>
     
-    
+            <div class="docstring"><p>Metadata about the fields defined on the model,
+mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
+
+<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
+</div>
+
 
                             </div>
                             <div id="LinkedNotebook.model_computed_fields" class="classattr">
                                 <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
+            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
 <span class="default_value">{}</span>
 
         
     </div>
     <a class="headerlink" href="#LinkedNotebook.model_computed_fields"></a>
     
-    
+            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
+</div>
+
 
                             </div>
                             <div class="inherited">
