@@ -11,8 +11,8 @@ FileName = str
 AbsoluteDirectory = Annotated[DirectoryPath, Predicate(Path.is_absolute)]
 AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
 
-BIOIMAGEIO_YAML = "bioimageio.yaml"
-ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("rdf.yaml", "model.yaml")
+BIOIMAGEIO_YAML = "rdf.yaml"
+ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
 ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
 
 

@@ -123,6 +123,7 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 #### bioimageio.spec 0.5.3.3 (not yet released)
 
+* prefer `rdf.yaml` over `bioimageio.yaml` (name `bioimageio.yaml` file `rdf.yaml` file when packaging, look for `rdf.yaml` first, etc.)
 * enforce: (generic 0.3/model 0.5 spec) documentation source file encoding has to be UTF-8.
 * bugfix: allow optional pre- and postprocessing to be missing in an RDF (before it required an empty dict).
 
