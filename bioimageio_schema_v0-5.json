@@ -2573,7 +2573,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -3278,7 +3278,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -6067,7 +6067,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2024-10-09T16:11:33.614668",
+                    "default": "2024-10-10T11:42:51.376285",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -7719,7 +7719,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
