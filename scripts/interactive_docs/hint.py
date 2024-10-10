@@ -25,6 +25,7 @@ import datetime
 from xml.etree import ElementTree as et
 import inspect
 from annotated_types import Predicate
+import types
 
 import pydantic
 from pydantic import BaseModel
@@ -385,6 +386,12 @@ class AnnotatedHint(Hint):
             if "PydanticGeneralMetadata" in type(md).__name__:
                 continue
             if isinstance(md, Predicate):
+                if isinstance(md.func, types.LambdaType):
+                    try:
+                        metadata.append(inspect.getsource(md.func).strip())
+                    except OSError:
+                        eprint("WARNING: could not get lambda source")
+                    continue
                 metadata_str = md.func.__name__
                 if md.func.__doc__:
                     metadata_str += f": {md.func.__doc__}"
