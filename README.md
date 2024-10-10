@@ -44,9 +44,17 @@ Simplified descriptions are available as [JSON schema](https://json-schema.org/)
 | bioimageio.spec version | JSON schema |
 | --- | --- |
 | latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) |
-| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) [rendered](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/interactive_docs_v0-5.html) |
+| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) |
 
 These are primarily intended for syntax highlighting and form generation.
+
+## Flattened, interactive docs
+
+A flattened view of the types used by the spec that also shows values constraints.
+
+[rendered](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/interactive_docs_v0-5.html)
+
+You can also generate these docs locally by running `PYTHONPATH=./scripts python -m interactive_docs`
 
 ## Examples
 
