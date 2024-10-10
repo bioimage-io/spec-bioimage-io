@@ -394,7 +394,7 @@ class GenericDescrBase(GenericModelDescrBase):
             ],
         ),
     ] = None
-    """∈📦 URL or relative path to a markdown file with additional documentation.
+    """∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     badges: List[BadgeDescr] = Field(default_factory=list)
