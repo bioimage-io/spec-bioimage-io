@@ -42,7 +42,7 @@ jobs:
       - run: ruff check **/*.py # ignore notebooks for now
         if: matrix.test-format
       - run: pyright --version
-      - run: pyright -p pyproject.toml
+      - run: pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
       - run: pytest
 
   deploy:
