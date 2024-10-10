@@ -2054,7 +2054,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return value
 
         doc_path = download(value).path
-        doc_content = doc_path.read_text()
+        doc_content = doc_path.read_text(encoding="utf-8")
         if not re.match("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
