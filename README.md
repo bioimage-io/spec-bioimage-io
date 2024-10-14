@@ -121,8 +121,9 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.3.3 (not yet released)
+#### bioimageio.spec 0.5.3.3
 
+* expose `progressbar` to customize display of download progress
 * expose `get_resource_package_content`
 * prefer `rdf.yaml` over `bioimageio.yaml` (name `bioimageio.yaml` file `rdf.yaml` file when packaging, look for `rdf.yaml` first, etc.)
 * enforce: (generic 0.3/model 0.5 spec) documentation source file encoding has to be UTF-8.
