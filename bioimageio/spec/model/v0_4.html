@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.7.0"/>
+    <meta name="generator" content="pdoc 15.0.0"/>
     <title>bioimageio.spec.model.v0_4 API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -11,7 +11,7 @@
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
     <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .decorator-deprecated{color:#842029;}.pdoc .decorator-deprecated ~ span{filter:grayscale(1) opacity(0.8);}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
     <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
@@ -2214,56 +2214,6 @@ errors defaults to 'strict'.</p>
                                 <dd id="ModelId.root_model" class="variable"><a href="../generic/v0_2.html#ResourceId.root_model">root_model</a></dd>
 
             </div>
-            <div><dt>builtins.str</dt>
-                                <dd id="ModelId.encode" class="function">encode</dd>
-                <dd id="ModelId.replace" class="function">replace</dd>
-                <dd id="ModelId.split" class="function">split</dd>
-                <dd id="ModelId.rsplit" class="function">rsplit</dd>
-                <dd id="ModelId.join" class="function">join</dd>
-                <dd id="ModelId.capitalize" class="function">capitalize</dd>
-                <dd id="ModelId.casefold" class="function">casefold</dd>
-                <dd id="ModelId.title" class="function">title</dd>
-                <dd id="ModelId.center" class="function">center</dd>
-                <dd id="ModelId.count" class="function">count</dd>
-                <dd id="ModelId.expandtabs" class="function">expandtabs</dd>
-                <dd id="ModelId.find" class="function">find</dd>
-                <dd id="ModelId.partition" class="function">partition</dd>
-                <dd id="ModelId.index" class="function">index</dd>
-                <dd id="ModelId.ljust" class="function">ljust</dd>
-                <dd id="ModelId.lower" class="function">lower</dd>
-                <dd id="ModelId.lstrip" class="function">lstrip</dd>
-                <dd id="ModelId.rfind" class="function">rfind</dd>
-                <dd id="ModelId.rindex" class="function">rindex</dd>
-                <dd id="ModelId.rjust" class="function">rjust</dd>
-                <dd id="ModelId.rstrip" class="function">rstrip</dd>
-                <dd id="ModelId.rpartition" class="function">rpartition</dd>
-                <dd id="ModelId.splitlines" class="function">splitlines</dd>
-                <dd id="ModelId.strip" class="function">strip</dd>
-                <dd id="ModelId.swapcase" class="function">swapcase</dd>
-                <dd id="ModelId.translate" class="function">translate</dd>
-                <dd id="ModelId.upper" class="function">upper</dd>
-                <dd id="ModelId.startswith" class="function">startswith</dd>
-                <dd id="ModelId.endswith" class="function">endswith</dd>
-                <dd id="ModelId.removeprefix" class="function">removeprefix</dd>
-                <dd id="ModelId.removesuffix" class="function">removesuffix</dd>
-                <dd id="ModelId.isascii" class="function">isascii</dd>
-                <dd id="ModelId.islower" class="function">islower</dd>
-                <dd id="ModelId.isupper" class="function">isupper</dd>
-                <dd id="ModelId.istitle" class="function">istitle</dd>
-                <dd id="ModelId.isspace" class="function">isspace</dd>
-                <dd id="ModelId.isdecimal" class="function">isdecimal</dd>
-                <dd id="ModelId.isdigit" class="function">isdigit</dd>
-                <dd id="ModelId.isnumeric" class="function">isnumeric</dd>
-                <dd id="ModelId.isalpha" class="function">isalpha</dd>
-                <dd id="ModelId.isalnum" class="function">isalnum</dd>
-                <dd id="ModelId.isidentifier" class="function">isidentifier</dd>
-                <dd id="ModelId.isprintable" class="function">isprintable</dd>
-                <dd id="ModelId.zfill" class="function">zfill</dd>
-                <dd id="ModelId.format" class="function">format</dd>
-                <dd id="ModelId.format_map" class="function">format_map</dd>
-                <dd id="ModelId.maketrans" class="function">maketrans</dd>
-
-            </div>
                                 </dl>
                             </div>
                 </section>
@@ -2355,56 +2305,6 @@ errors defaults to 'strict'.</p>
                                 <dd id="TensorName.root_model" class="variable"><a href="../_internal/types.html#LowerCaseIdentifier.root_model">root_model</a></dd>
 
             </div>
-            <div><dt>builtins.str</dt>
-                                <dd id="TensorName.encode" class="function">encode</dd>
-                <dd id="TensorName.replace" class="function">replace</dd>
-                <dd id="TensorName.split" class="function">split</dd>
-                <dd id="TensorName.rsplit" class="function">rsplit</dd>
-                <dd id="TensorName.join" class="function">join</dd>
-                <dd id="TensorName.capitalize" class="function">capitalize</dd>
-                <dd id="TensorName.casefold" class="function">casefold</dd>
-                <dd id="TensorName.title" class="function">title</dd>
-                <dd id="TensorName.center" class="function">center</dd>
-                <dd id="TensorName.count" class="function">count</dd>
-                <dd id="TensorName.expandtabs" class="function">expandtabs</dd>
-                <dd id="TensorName.find" class="function">find</dd>
-                <dd id="TensorName.partition" class="function">partition</dd>
-                <dd id="TensorName.index" class="function">index</dd>
-                <dd id="TensorName.ljust" class="function">ljust</dd>
-                <dd id="TensorName.lower" class="function">lower</dd>
-                <dd id="TensorName.lstrip" class="function">lstrip</dd>
-                <dd id="TensorName.rfind" class="function">rfind</dd>
-                <dd id="TensorName.rindex" class="function">rindex</dd>
-                <dd id="TensorName.rjust" class="function">rjust</dd>
-                <dd id="TensorName.rstrip" class="function">rstrip</dd>
-                <dd id="TensorName.rpartition" class="function">rpartition</dd>
-                <dd id="TensorName.splitlines" class="function">splitlines</dd>
-                <dd id="TensorName.strip" class="function">strip</dd>
-                <dd id="TensorName.swapcase" class="function">swapcase</dd>
-                <dd id="TensorName.translate" class="function">translate</dd>
-                <dd id="TensorName.upper" class="function">upper</dd>
-                <dd id="TensorName.startswith" class="function">startswith</dd>
-                <dd id="TensorName.endswith" class="function">endswith</dd>
-                <dd id="TensorName.removeprefix" class="function">removeprefix</dd>
-                <dd id="TensorName.removesuffix" class="function">removesuffix</dd>
-                <dd id="TensorName.isascii" class="function">isascii</dd>
-                <dd id="TensorName.islower" class="function">islower</dd>
-                <dd id="TensorName.isupper" class="function">isupper</dd>
-                <dd id="TensorName.istitle" class="function">istitle</dd>
-                <dd id="TensorName.isspace" class="function">isspace</dd>
-                <dd id="TensorName.isdecimal" class="function">isdecimal</dd>
-                <dd id="TensorName.isdigit" class="function">isdigit</dd>
-                <dd id="TensorName.isnumeric" class="function">isnumeric</dd>
-                <dd id="TensorName.isalpha" class="function">isalpha</dd>
-                <dd id="TensorName.isalnum" class="function">isalnum</dd>
-                <dd id="TensorName.isidentifier" class="function">isidentifier</dd>
-                <dd id="TensorName.isprintable" class="function">isprintable</dd>
-                <dd id="TensorName.zfill" class="function">zfill</dd>
-                <dd id="TensorName.format" class="function">format</dd>
-                <dd id="TensorName.format_map" class="function">format_map</dd>
-                <dd id="TensorName.maketrans" class="function">maketrans</dd>
-
-            </div>
                                 </dl>
                             </div>
                 </section>
@@ -2459,7 +2359,7 @@ errors defaults to 'strict'.</p>
                             <div id="CallableFromDepencency.check_submodules" class="classattr">
                                         <input id="CallableFromDepencency.check_submodules-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@field_validator(&#39;module_name&#39;, mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-field_validator">@field_validator(&#39;module_name&#39;, mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">check_submodules</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
@@ -2497,56 +2397,6 @@ errors defaults to 'strict'.</p>
                                     <div><dt><a href="../_internal/common_nodes.html#StringNode">bioimageio.spec._internal.common_nodes.StringNode</a></dt>
                                 <dd id="CallableFromDepencency.__init__" class="function"><a href="../_internal/common_nodes.html#StringNode.__init__">StringNode</a></dd>
                 <dd id="CallableFromDepencency.model_fields" class="variable"><a href="../_internal/common_nodes.html#StringNode.model_fields">model_fields</a></dd>
-
-            </div>
-            <div><dt>collections.UserString</dt>
-                                <dd id="CallableFromDepencency.capitalize" class="function">capitalize</dd>
-                <dd id="CallableFromDepencency.casefold" class="function">casefold</dd>
-                <dd id="CallableFromDepencency.center" class="function">center</dd>
-                <dd id="CallableFromDepencency.count" class="function">count</dd>
-                <dd id="CallableFromDepencency.removeprefix" class="function">removeprefix</dd>
-                <dd id="CallableFromDepencency.removesuffix" class="function">removesuffix</dd>
-                <dd id="CallableFromDepencency.encode" class="function">encode</dd>
-                <dd id="CallableFromDepencency.endswith" class="function">endswith</dd>
-                <dd id="CallableFromDepencency.expandtabs" class="function">expandtabs</dd>
-                <dd id="CallableFromDepencency.find" class="function">find</dd>
-                <dd id="CallableFromDepencency.format" class="function">format</dd>
-                <dd id="CallableFromDepencency.format_map" class="function">format_map</dd>
-                <dd id="CallableFromDepencency.index" class="function">index</dd>
-                <dd id="CallableFromDepencency.isalpha" class="function">isalpha</dd>
-                <dd id="CallableFromDepencency.isalnum" class="function">isalnum</dd>
-                <dd id="CallableFromDepencency.isascii" class="function">isascii</dd>
-                <dd id="CallableFromDepencency.isdecimal" class="function">isdecimal</dd>
-                <dd id="CallableFromDepencency.isdigit" class="function">isdigit</dd>
-                <dd id="CallableFromDepencency.isidentifier" class="function">isidentifier</dd>
-                <dd id="CallableFromDepencency.islower" class="function">islower</dd>
-                <dd id="CallableFromDepencency.isnumeric" class="function">isnumeric</dd>
-                <dd id="CallableFromDepencency.isprintable" class="function">isprintable</dd>
-                <dd id="CallableFromDepencency.isspace" class="function">isspace</dd>
-                <dd id="CallableFromDepencency.istitle" class="function">istitle</dd>
-                <dd id="CallableFromDepencency.isupper" class="function">isupper</dd>
-                <dd id="CallableFromDepencency.join" class="function">join</dd>
-                <dd id="CallableFromDepencency.ljust" class="function">ljust</dd>
-                <dd id="CallableFromDepencency.lower" class="function">lower</dd>
-                <dd id="CallableFromDepencency.lstrip" class="function">lstrip</dd>
-                <dd id="CallableFromDepencency.maketrans" class="function">maketrans</dd>
-                <dd id="CallableFromDepencency.partition" class="function">partition</dd>
-                <dd id="CallableFromDepencency.replace" class="function">replace</dd>
-                <dd id="CallableFromDepencency.rfind" class="function">rfind</dd>
-                <dd id="CallableFromDepencency.rindex" class="function">rindex</dd>
-                <dd id="CallableFromDepencency.rjust" class="function">rjust</dd>
-                <dd id="CallableFromDepencency.rpartition" class="function">rpartition</dd>
-                <dd id="CallableFromDepencency.rstrip" class="function">rstrip</dd>
-                <dd id="CallableFromDepencency.split" class="function">split</dd>
-                <dd id="CallableFromDepencency.rsplit" class="function">rsplit</dd>
-                <dd id="CallableFromDepencency.splitlines" class="function">splitlines</dd>
-                <dd id="CallableFromDepencency.startswith" class="function">startswith</dd>
-                <dd id="CallableFromDepencency.strip" class="function">strip</dd>
-                <dd id="CallableFromDepencency.swapcase" class="function">swapcase</dd>
-                <dd id="CallableFromDepencency.title" class="function">title</dd>
-                <dd id="CallableFromDepencency.translate" class="function">translate</dd>
-                <dd id="CallableFromDepencency.upper" class="function">upper</dd>
-                <dd id="CallableFromDepencency.zfill" class="function">zfill</dd>
 
             </div>
                                 </dl>
@@ -2587,7 +2437,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="CallableFromFile.source_file" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source_file</span><span class="annotation">: Annotated[Union[<a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source_file</span><span class="annotation">: Annotated[Union[<a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -2617,56 +2467,6 @@ errors defaults to 'strict'.</p>
                                     <div><dt><a href="../_internal/common_nodes.html#StringNode">bioimageio.spec._internal.common_nodes.StringNode</a></dt>
                                 <dd id="CallableFromFile.__init__" class="function"><a href="../_internal/common_nodes.html#StringNode.__init__">StringNode</a></dd>
                 <dd id="CallableFromFile.model_fields" class="variable"><a href="../_internal/common_nodes.html#StringNode.model_fields">model_fields</a></dd>
-
-            </div>
-            <div><dt>collections.UserString</dt>
-                                <dd id="CallableFromFile.capitalize" class="function">capitalize</dd>
-                <dd id="CallableFromFile.casefold" class="function">casefold</dd>
-                <dd id="CallableFromFile.center" class="function">center</dd>
-                <dd id="CallableFromFile.count" class="function">count</dd>
-                <dd id="CallableFromFile.removeprefix" class="function">removeprefix</dd>
-                <dd id="CallableFromFile.removesuffix" class="function">removesuffix</dd>
-                <dd id="CallableFromFile.encode" class="function">encode</dd>
-                <dd id="CallableFromFile.endswith" class="function">endswith</dd>
-                <dd id="CallableFromFile.expandtabs" class="function">expandtabs</dd>
-                <dd id="CallableFromFile.find" class="function">find</dd>
-                <dd id="CallableFromFile.format" class="function">format</dd>
-                <dd id="CallableFromFile.format_map" class="function">format_map</dd>
-                <dd id="CallableFromFile.index" class="function">index</dd>
-                <dd id="CallableFromFile.isalpha" class="function">isalpha</dd>
-                <dd id="CallableFromFile.isalnum" class="function">isalnum</dd>
-                <dd id="CallableFromFile.isascii" class="function">isascii</dd>
-                <dd id="CallableFromFile.isdecimal" class="function">isdecimal</dd>
-                <dd id="CallableFromFile.isdigit" class="function">isdigit</dd>
-                <dd id="CallableFromFile.isidentifier" class="function">isidentifier</dd>
-                <dd id="CallableFromFile.islower" class="function">islower</dd>
-                <dd id="CallableFromFile.isnumeric" class="function">isnumeric</dd>
-                <dd id="CallableFromFile.isprintable" class="function">isprintable</dd>
-                <dd id="CallableFromFile.isspace" class="function">isspace</dd>
-                <dd id="CallableFromFile.istitle" class="function">istitle</dd>
-                <dd id="CallableFromFile.isupper" class="function">isupper</dd>
-                <dd id="CallableFromFile.join" class="function">join</dd>
-                <dd id="CallableFromFile.ljust" class="function">ljust</dd>
-                <dd id="CallableFromFile.lower" class="function">lower</dd>
-                <dd id="CallableFromFile.lstrip" class="function">lstrip</dd>
-                <dd id="CallableFromFile.maketrans" class="function">maketrans</dd>
-                <dd id="CallableFromFile.partition" class="function">partition</dd>
-                <dd id="CallableFromFile.replace" class="function">replace</dd>
-                <dd id="CallableFromFile.rfind" class="function">rfind</dd>
-                <dd id="CallableFromFile.rindex" class="function">rindex</dd>
-                <dd id="CallableFromFile.rjust" class="function">rjust</dd>
-                <dd id="CallableFromFile.rpartition" class="function">rpartition</dd>
-                <dd id="CallableFromFile.rstrip" class="function">rstrip</dd>
-                <dd id="CallableFromFile.split" class="function">split</dd>
-                <dd id="CallableFromFile.rsplit" class="function">rsplit</dd>
-                <dd id="CallableFromFile.splitlines" class="function">splitlines</dd>
-                <dd id="CallableFromFile.startswith" class="function">startswith</dd>
-                <dd id="CallableFromFile.strip" class="function">strip</dd>
-                <dd id="CallableFromFile.swapcase" class="function">swapcase</dd>
-                <dd id="CallableFromFile.title" class="function">title</dd>
-                <dd id="CallableFromFile.translate" class="function">translate</dd>
-                <dd id="CallableFromFile.upper" class="function">upper</dd>
-                <dd id="CallableFromFile.zfill" class="function">zfill</dd>
 
             </div>
                                 </dl>
@@ -2733,7 +2533,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Dependencies.file" class="classattr">
                                 <div class="attr variable">
-            <span class="name">file</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;, &#39;pom.xml&#39;, &#39;requirements.txt&#39;])]</span>
+            <span class="name">file</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;, &#39;pom.xml&#39;, &#39;requirements.txt&#39;])]</span>
 
         
     </div>
@@ -2750,56 +2550,6 @@ errors defaults to 'strict'.</p>
                                     <div><dt><a href="../_internal/common_nodes.html#StringNode">bioimageio.spec._internal.common_nodes.StringNode</a></dt>
                                 <dd id="Dependencies.__init__" class="function"><a href="../_internal/common_nodes.html#StringNode.__init__">StringNode</a></dd>
                 <dd id="Dependencies.model_fields" class="variable"><a href="../_internal/common_nodes.html#StringNode.model_fields">model_fields</a></dd>
-
-            </div>
-            <div><dt>collections.UserString</dt>
-                                <dd id="Dependencies.capitalize" class="function">capitalize</dd>
-                <dd id="Dependencies.casefold" class="function">casefold</dd>
-                <dd id="Dependencies.center" class="function">center</dd>
-                <dd id="Dependencies.count" class="function">count</dd>
-                <dd id="Dependencies.removeprefix" class="function">removeprefix</dd>
-                <dd id="Dependencies.removesuffix" class="function">removesuffix</dd>
-                <dd id="Dependencies.encode" class="function">encode</dd>
-                <dd id="Dependencies.endswith" class="function">endswith</dd>
-                <dd id="Dependencies.expandtabs" class="function">expandtabs</dd>
-                <dd id="Dependencies.find" class="function">find</dd>
-                <dd id="Dependencies.format" class="function">format</dd>
-                <dd id="Dependencies.format_map" class="function">format_map</dd>
-                <dd id="Dependencies.index" class="function">index</dd>
-                <dd id="Dependencies.isalpha" class="function">isalpha</dd>
-                <dd id="Dependencies.isalnum" class="function">isalnum</dd>
-                <dd id="Dependencies.isascii" class="function">isascii</dd>
-                <dd id="Dependencies.isdecimal" class="function">isdecimal</dd>
-                <dd id="Dependencies.isdigit" class="function">isdigit</dd>
-                <dd id="Dependencies.isidentifier" class="function">isidentifier</dd>
-                <dd id="Dependencies.islower" class="function">islower</dd>
-                <dd id="Dependencies.isnumeric" class="function">isnumeric</dd>
-                <dd id="Dependencies.isprintable" class="function">isprintable</dd>
-                <dd id="Dependencies.isspace" class="function">isspace</dd>
-                <dd id="Dependencies.istitle" class="function">istitle</dd>
-                <dd id="Dependencies.isupper" class="function">isupper</dd>
-                <dd id="Dependencies.join" class="function">join</dd>
-                <dd id="Dependencies.ljust" class="function">ljust</dd>
-                <dd id="Dependencies.lower" class="function">lower</dd>
-                <dd id="Dependencies.lstrip" class="function">lstrip</dd>
-                <dd id="Dependencies.maketrans" class="function">maketrans</dd>
-                <dd id="Dependencies.partition" class="function">partition</dd>
-                <dd id="Dependencies.replace" class="function">replace</dd>
-                <dd id="Dependencies.rfind" class="function">rfind</dd>
-                <dd id="Dependencies.rindex" class="function">rindex</dd>
-                <dd id="Dependencies.rjust" class="function">rjust</dd>
-                <dd id="Dependencies.rpartition" class="function">rpartition</dd>
-                <dd id="Dependencies.rstrip" class="function">rstrip</dd>
-                <dd id="Dependencies.split" class="function">split</dd>
-                <dd id="Dependencies.rsplit" class="function">rsplit</dd>
-                <dd id="Dependencies.splitlines" class="function">splitlines</dd>
-                <dd id="Dependencies.startswith" class="function">startswith</dd>
-                <dd id="Dependencies.strip" class="function">strip</dd>
-                <dd id="Dependencies.swapcase" class="function">swapcase</dd>
-                <dd id="Dependencies.title" class="function">title</dd>
-                <dd id="Dependencies.translate" class="function">translate</dd>
-                <dd id="Dependencies.upper" class="function">upper</dd>
-                <dd id="Dependencies.zfill" class="function">zfill</dd>
 
             </div>
                                 </dl>
@@ -2931,7 +2681,7 @@ errors defaults to 'strict'.</p>
                             <div id="WeightsDescr.check_one_entry" class="classattr">
                                         <input id="WeightsDescr.check_one_entry-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">check_one_entry</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -3012,35 +2762,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="WeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="WeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="WeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="WeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="WeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="WeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="WeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="WeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="WeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="WeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="WeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="WeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="WeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="WeightsDescr.dict" class="function">dict</dd>
-                <dd id="WeightsDescr.json" class="function">json</dd>
-                <dd id="WeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="WeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="WeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="WeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="WeightsDescr.construct" class="function">construct</dd>
-                <dd id="WeightsDescr.copy" class="function">copy</dd>
-                <dd id="WeightsDescr.schema" class="function">schema</dd>
-                <dd id="WeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="WeightsDescr.validate" class="function">validate</dd>
-                <dd id="WeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="WeightsDescr.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -3142,7 +2864,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="WeightsEntryDescrBase.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -3155,7 +2877,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="WeightsEntryDescrBase.attachments" class="classattr">
                                 <div class="attr variable">
-            <span class="name">attachments</span><span class="annotation">: Annotated[Optional[<a href="../generic/v0_2.html#AttachmentsDescr">bioimageio.spec.generic.v0_2.AttachmentsDescr</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f6412fbc4a0&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]</span>
+            <span class="name">attachments</span><span class="annotation">: Annotated[Optional[<a href="../generic/v0_2.html#AttachmentsDescr">bioimageio.spec.generic.v0_2.AttachmentsDescr</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f0060103920&gt;, severity=35, msg=&#39;Weights entry depends on additional attachments.&#39;, context={&#39;typ&#39;: None})]</span>
 
         
     </div>
@@ -3185,7 +2907,7 @@ Or the person(s) who have converted the weights to this weights format.
                             </div>
                             <div id="WeightsEntryDescrBase.dependencies" class="classattr">
                                 <div class="attr variable">
-            <span class="name">dependencies</span><span class="annotation">: Annotated[Optional[<a href="#Dependencies">Dependencies</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f6412fbe340&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;])]</span>
+            <span class="name">dependencies</span><span class="annotation">: Annotated[Optional[<a href="#Dependencies">Dependencies</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f00601039c0&gt;, severity=30, msg=&#39;Custom dependencies ({value}) specified. Avoid this whenever possible to allow execution in a wider range of software environments.&#39;, context={&#39;typ&#39;: None}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;conda:environment.yaml&#39;, &#39;maven:./pom.xml&#39;, &#39;pip:./requirements.txt&#39;])]</span>
 
         
     </div>
@@ -3216,7 +2938,7 @@ need to have this field.</p>
                             <div id="WeightsEntryDescrBase.check_parent_is_not_self" class="classattr">
                                         <input id="WeightsEntryDescrBase.check_parent_is_not_self-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">check_parent_is_not_self</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -3287,35 +3009,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="WeightsEntryDescrBase.__init__" class="function">BaseModel</dd>
-                <dd id="WeightsEntryDescrBase.model_extra" class="variable">model_extra</dd>
-                <dd id="WeightsEntryDescrBase.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="WeightsEntryDescrBase.model_construct" class="function">model_construct</dd>
-                <dd id="WeightsEntryDescrBase.model_copy" class="function">model_copy</dd>
-                <dd id="WeightsEntryDescrBase.model_dump" class="function">model_dump</dd>
-                <dd id="WeightsEntryDescrBase.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="WeightsEntryDescrBase.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="WeightsEntryDescrBase.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="WeightsEntryDescrBase.model_post_init" class="function">model_post_init</dd>
-                <dd id="WeightsEntryDescrBase.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="WeightsEntryDescrBase.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="WeightsEntryDescrBase.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="WeightsEntryDescrBase.dict" class="function">dict</dd>
-                <dd id="WeightsEntryDescrBase.json" class="function">json</dd>
-                <dd id="WeightsEntryDescrBase.parse_obj" class="function">parse_obj</dd>
-                <dd id="WeightsEntryDescrBase.parse_raw" class="function">parse_raw</dd>
-                <dd id="WeightsEntryDescrBase.parse_file" class="function">parse_file</dd>
-                <dd id="WeightsEntryDescrBase.from_orm" class="function">from_orm</dd>
-                <dd id="WeightsEntryDescrBase.construct" class="function">construct</dd>
-                <dd id="WeightsEntryDescrBase.copy" class="function">copy</dd>
-                <dd id="WeightsEntryDescrBase.schema" class="function">schema</dd>
-                <dd id="WeightsEntryDescrBase.schema_json" class="function">schema_json</dd>
-                <dd id="WeightsEntryDescrBase.validate" class="function">validate</dd>
-                <dd id="WeightsEntryDescrBase.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/io.html#FileDescr">bioimageio.spec._internal.io.FileDescr</a></dt>
+                                    <div><dt><a href="../_internal/io.html#FileDescr">bioimageio.spec._internal.io.FileDescr</a></dt>
                                 <dd id="WeightsEntryDescrBase.sha256" class="variable"><a href="../_internal/io.html#FileDescr.sha256">sha256</a></dd>
                 <dd id="WeightsEntryDescrBase.validate_sha256" class="function"><a href="../_internal/io.html#FileDescr.validate_sha256">validate_sha256</a></dd>
                 <dd id="WeightsEntryDescrBase.download" class="function"><a href="../_internal/io.html#FileDescr.download">download</a></dd>
@@ -3451,35 +3145,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="KerasHdf5WeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="KerasHdf5WeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="KerasHdf5WeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="KerasHdf5WeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="KerasHdf5WeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="KerasHdf5WeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="KerasHdf5WeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="KerasHdf5WeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="KerasHdf5WeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="KerasHdf5WeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="KerasHdf5WeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="KerasHdf5WeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="KerasHdf5WeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="KerasHdf5WeightsDescr.dict" class="function">dict</dd>
-                <dd id="KerasHdf5WeightsDescr.json" class="function">json</dd>
-                <dd id="KerasHdf5WeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="KerasHdf5WeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="KerasHdf5WeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="KerasHdf5WeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="KerasHdf5WeightsDescr.construct" class="function">construct</dd>
-                <dd id="KerasHdf5WeightsDescr.copy" class="function">copy</dd>
-                <dd id="KerasHdf5WeightsDescr.schema" class="function">schema</dd>
-                <dd id="KerasHdf5WeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="KerasHdf5WeightsDescr.validate" class="function">validate</dd>
-                <dd id="KerasHdf5WeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="KerasHdf5WeightsDescr.source" class="variable"><a href="#WeightsEntryDescrBase.source">source</a></dd>
                 <dd id="KerasHdf5WeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="KerasHdf5WeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
@@ -3625,35 +3291,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="OnnxWeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="OnnxWeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="OnnxWeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="OnnxWeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="OnnxWeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="OnnxWeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="OnnxWeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="OnnxWeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="OnnxWeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="OnnxWeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="OnnxWeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="OnnxWeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="OnnxWeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="OnnxWeightsDescr.dict" class="function">dict</dd>
-                <dd id="OnnxWeightsDescr.json" class="function">json</dd>
-                <dd id="OnnxWeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="OnnxWeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="OnnxWeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="OnnxWeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="OnnxWeightsDescr.construct" class="function">construct</dd>
-                <dd id="OnnxWeightsDescr.copy" class="function">copy</dd>
-                <dd id="OnnxWeightsDescr.schema" class="function">schema</dd>
-                <dd id="OnnxWeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="OnnxWeightsDescr.validate" class="function">validate</dd>
-                <dd id="OnnxWeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="OnnxWeightsDescr.source" class="variable"><a href="#WeightsEntryDescrBase.source">source</a></dd>
                 <dd id="OnnxWeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="OnnxWeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
@@ -3808,7 +3446,7 @@ if the architecture is not defined in a module listed in <code><a href="#Pytorch
                             <div id="PytorchStateDictWeightsDescr.check_architecture_sha256" class="classattr">
                                         <input id="PytorchStateDictWeightsDescr.check_architecture_sha256-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">check_architecture_sha256</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -3916,35 +3554,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="PytorchStateDictWeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="PytorchStateDictWeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="PytorchStateDictWeightsDescr.dict" class="function">dict</dd>
-                <dd id="PytorchStateDictWeightsDescr.json" class="function">json</dd>
-                <dd id="PytorchStateDictWeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="PytorchStateDictWeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="PytorchStateDictWeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="PytorchStateDictWeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="PytorchStateDictWeightsDescr.construct" class="function">construct</dd>
-                <dd id="PytorchStateDictWeightsDescr.copy" class="function">copy</dd>
-                <dd id="PytorchStateDictWeightsDescr.schema" class="function">schema</dd>
-                <dd id="PytorchStateDictWeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="PytorchStateDictWeightsDescr.validate" class="function">validate</dd>
-                <dd id="PytorchStateDictWeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="PytorchStateDictWeightsDescr.source" class="variable"><a href="#WeightsEntryDescrBase.source">source</a></dd>
                 <dd id="PytorchStateDictWeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="PytorchStateDictWeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
@@ -4089,35 +3699,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="TorchscriptWeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="TorchscriptWeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="TorchscriptWeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="TorchscriptWeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="TorchscriptWeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="TorchscriptWeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="TorchscriptWeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="TorchscriptWeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="TorchscriptWeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="TorchscriptWeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="TorchscriptWeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="TorchscriptWeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="TorchscriptWeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="TorchscriptWeightsDescr.dict" class="function">dict</dd>
-                <dd id="TorchscriptWeightsDescr.json" class="function">json</dd>
-                <dd id="TorchscriptWeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="TorchscriptWeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="TorchscriptWeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="TorchscriptWeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="TorchscriptWeightsDescr.construct" class="function">construct</dd>
-                <dd id="TorchscriptWeightsDescr.copy" class="function">copy</dd>
-                <dd id="TorchscriptWeightsDescr.schema" class="function">schema</dd>
-                <dd id="TorchscriptWeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="TorchscriptWeightsDescr.validate" class="function">validate</dd>
-                <dd id="TorchscriptWeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="TorchscriptWeightsDescr.source" class="variable"><a href="#WeightsEntryDescrBase.source">source</a></dd>
                 <dd id="TorchscriptWeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="TorchscriptWeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
@@ -4218,7 +3800,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="TensorflowJsWeightsDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -4280,35 +3862,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="TensorflowJsWeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="TensorflowJsWeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="TensorflowJsWeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="TensorflowJsWeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="TensorflowJsWeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="TensorflowJsWeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="TensorflowJsWeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="TensorflowJsWeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="TensorflowJsWeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="TensorflowJsWeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="TensorflowJsWeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="TensorflowJsWeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="TensorflowJsWeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="TensorflowJsWeightsDescr.dict" class="function">dict</dd>
-                <dd id="TensorflowJsWeightsDescr.json" class="function">json</dd>
-                <dd id="TensorflowJsWeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="TensorflowJsWeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="TensorflowJsWeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="TensorflowJsWeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="TensorflowJsWeightsDescr.construct" class="function">construct</dd>
-                <dd id="TensorflowJsWeightsDescr.copy" class="function">copy</dd>
-                <dd id="TensorflowJsWeightsDescr.schema" class="function">schema</dd>
-                <dd id="TensorflowJsWeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="TensorflowJsWeightsDescr.validate" class="function">validate</dd>
-                <dd id="TensorflowJsWeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="TensorflowJsWeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="TensorflowJsWeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
                 <dd id="TensorflowJsWeightsDescr.dependencies" class="variable"><a href="#WeightsEntryDescrBase.dependencies">dependencies</a></dd>
@@ -4452,35 +4006,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="TensorflowSavedModelBundleWeightsDescr.__init__" class="function">BaseModel</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_construct" class="function">model_construct</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_copy" class="function">model_copy</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_dump" class="function">model_dump</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.dict" class="function">dict</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.json" class="function">json</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.parse_file" class="function">parse_file</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.from_orm" class="function">from_orm</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.construct" class="function">construct</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.copy" class="function">copy</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.schema" class="function">schema</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.schema_json" class="function">schema_json</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.validate" class="function">validate</dd>
-                <dd id="TensorflowSavedModelBundleWeightsDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
+                                    <div><dt><a href="#WeightsEntryDescrBase">WeightsEntryDescrBase</a></dt>
                                 <dd id="TensorflowSavedModelBundleWeightsDescr.source" class="variable"><a href="#WeightsEntryDescrBase.source">source</a></dd>
                 <dd id="TensorflowSavedModelBundleWeightsDescr.attachments" class="variable"><a href="#WeightsEntryDescrBase.attachments">attachments</a></dd>
                 <dd id="TensorflowSavedModelBundleWeightsDescr.authors" class="variable"><a href="#WeightsEntryDescrBase.authors">authors</a></dd>
@@ -4567,7 +4093,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div id="ParameterizedInputShape.matching_lengths" class="classattr">
                                         <input id="ParameterizedInputShape.matching_lengths-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">matching_lengths</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -4638,35 +4164,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ParameterizedInputShape.__init__" class="function">BaseModel</dd>
-                <dd id="ParameterizedInputShape.model_extra" class="variable">model_extra</dd>
-                <dd id="ParameterizedInputShape.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ParameterizedInputShape.model_construct" class="function">model_construct</dd>
-                <dd id="ParameterizedInputShape.model_copy" class="function">model_copy</dd>
-                <dd id="ParameterizedInputShape.model_dump" class="function">model_dump</dd>
-                <dd id="ParameterizedInputShape.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ParameterizedInputShape.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ParameterizedInputShape.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ParameterizedInputShape.model_post_init" class="function">model_post_init</dd>
-                <dd id="ParameterizedInputShape.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ParameterizedInputShape.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ParameterizedInputShape.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ParameterizedInputShape.dict" class="function">dict</dd>
-                <dd id="ParameterizedInputShape.json" class="function">json</dd>
-                <dd id="ParameterizedInputShape.parse_obj" class="function">parse_obj</dd>
-                <dd id="ParameterizedInputShape.parse_raw" class="function">parse_raw</dd>
-                <dd id="ParameterizedInputShape.parse_file" class="function">parse_file</dd>
-                <dd id="ParameterizedInputShape.from_orm" class="function">from_orm</dd>
-                <dd id="ParameterizedInputShape.construct" class="function">construct</dd>
-                <dd id="ParameterizedInputShape.copy" class="function">copy</dd>
-                <dd id="ParameterizedInputShape.schema" class="function">schema</dd>
-                <dd id="ParameterizedInputShape.schema_json" class="function">schema_json</dd>
-                <dd id="ParameterizedInputShape.validate" class="function">validate</dd>
-                <dd id="ParameterizedInputShape.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="ParameterizedInputShape.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -4764,7 +4262,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div id="ImplicitOutputShape.matching_lengths" class="classattr">
                                         <input id="ImplicitOutputShape.matching_lengths-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">matching_lengths</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -4841,35 +4339,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ImplicitOutputShape.__init__" class="function">BaseModel</dd>
-                <dd id="ImplicitOutputShape.model_extra" class="variable">model_extra</dd>
-                <dd id="ImplicitOutputShape.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ImplicitOutputShape.model_construct" class="function">model_construct</dd>
-                <dd id="ImplicitOutputShape.model_copy" class="function">model_copy</dd>
-                <dd id="ImplicitOutputShape.model_dump" class="function">model_dump</dd>
-                <dd id="ImplicitOutputShape.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ImplicitOutputShape.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ImplicitOutputShape.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ImplicitOutputShape.model_post_init" class="function">model_post_init</dd>
-                <dd id="ImplicitOutputShape.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ImplicitOutputShape.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ImplicitOutputShape.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ImplicitOutputShape.dict" class="function">dict</dd>
-                <dd id="ImplicitOutputShape.json" class="function">json</dd>
-                <dd id="ImplicitOutputShape.parse_obj" class="function">parse_obj</dd>
-                <dd id="ImplicitOutputShape.parse_raw" class="function">parse_raw</dd>
-                <dd id="ImplicitOutputShape.parse_file" class="function">parse_file</dd>
-                <dd id="ImplicitOutputShape.from_orm" class="function">from_orm</dd>
-                <dd id="ImplicitOutputShape.construct" class="function">construct</dd>
-                <dd id="ImplicitOutputShape.copy" class="function">copy</dd>
-                <dd id="ImplicitOutputShape.schema" class="function">schema</dd>
-                <dd id="ImplicitOutputShape.schema_json" class="function">schema_json</dd>
-                <dd id="ImplicitOutputShape.validate" class="function">validate</dd>
-                <dd id="ImplicitOutputShape.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="ImplicitOutputShape.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -4944,7 +4414,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="TensorDescrBase.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f6420e24ea0&gt;)]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;bitczyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f006e0e8ea0&gt;)]</span>
 
         
     </div>
@@ -5058,35 +4528,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="TensorDescrBase.__init__" class="function">BaseModel</dd>
-                <dd id="TensorDescrBase.model_extra" class="variable">model_extra</dd>
-                <dd id="TensorDescrBase.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="TensorDescrBase.model_construct" class="function">model_construct</dd>
-                <dd id="TensorDescrBase.model_copy" class="function">model_copy</dd>
-                <dd id="TensorDescrBase.model_dump" class="function">model_dump</dd>
-                <dd id="TensorDescrBase.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="TensorDescrBase.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="TensorDescrBase.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="TensorDescrBase.model_post_init" class="function">model_post_init</dd>
-                <dd id="TensorDescrBase.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="TensorDescrBase.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="TensorDescrBase.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="TensorDescrBase.dict" class="function">dict</dd>
-                <dd id="TensorDescrBase.json" class="function">json</dd>
-                <dd id="TensorDescrBase.parse_obj" class="function">parse_obj</dd>
-                <dd id="TensorDescrBase.parse_raw" class="function">parse_raw</dd>
-                <dd id="TensorDescrBase.parse_file" class="function">parse_file</dd>
-                <dd id="TensorDescrBase.from_orm" class="function">from_orm</dd>
-                <dd id="TensorDescrBase.construct" class="function">construct</dd>
-                <dd id="TensorDescrBase.copy" class="function">copy</dd>
-                <dd id="TensorDescrBase.schema" class="function">schema</dd>
-                <dd id="TensorDescrBase.schema_json" class="function">schema_json</dd>
-                <dd id="TensorDescrBase.validate" class="function">validate</dd>
-                <dd id="TensorDescrBase.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="TensorDescrBase.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -5162,35 +4604,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ProcessingKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ProcessingKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ProcessingKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ProcessingKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ProcessingKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ProcessingKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ProcessingKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ProcessingKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ProcessingKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ProcessingKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ProcessingKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ProcessingKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ProcessingKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ProcessingKwargs.dict" class="function">dict</dd>
-                <dd id="ProcessingKwargs.json" class="function">json</dd>
-                <dd id="ProcessingKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ProcessingKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ProcessingKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ProcessingKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ProcessingKwargs.construct" class="function">construct</dd>
-                <dd id="ProcessingKwargs.copy" class="function">copy</dd>
-                <dd id="ProcessingKwargs.schema" class="function">schema</dd>
-                <dd id="ProcessingKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ProcessingKwargs.validate" class="function">validate</dd>
-                <dd id="ProcessingKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ProcessingKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -5288,35 +4702,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ProcessingDescrBase.__init__" class="function">BaseModel</dd>
-                <dd id="ProcessingDescrBase.model_extra" class="variable">model_extra</dd>
-                <dd id="ProcessingDescrBase.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ProcessingDescrBase.model_construct" class="function">model_construct</dd>
-                <dd id="ProcessingDescrBase.model_copy" class="function">model_copy</dd>
-                <dd id="ProcessingDescrBase.model_dump" class="function">model_dump</dd>
-                <dd id="ProcessingDescrBase.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ProcessingDescrBase.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ProcessingDescrBase.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ProcessingDescrBase.model_post_init" class="function">model_post_init</dd>
-                <dd id="ProcessingDescrBase.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ProcessingDescrBase.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ProcessingDescrBase.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ProcessingDescrBase.dict" class="function">dict</dd>
-                <dd id="ProcessingDescrBase.json" class="function">json</dd>
-                <dd id="ProcessingDescrBase.parse_obj" class="function">parse_obj</dd>
-                <dd id="ProcessingDescrBase.parse_raw" class="function">parse_raw</dd>
-                <dd id="ProcessingDescrBase.parse_file" class="function">parse_file</dd>
-                <dd id="ProcessingDescrBase.from_orm" class="function">from_orm</dd>
-                <dd id="ProcessingDescrBase.construct" class="function">construct</dd>
-                <dd id="ProcessingDescrBase.copy" class="function">copy</dd>
-                <dd id="ProcessingDescrBase.schema" class="function">schema</dd>
-                <dd id="ProcessingDescrBase.schema_json" class="function">schema_json</dd>
-                <dd id="ProcessingDescrBase.validate" class="function">validate</dd>
-                <dd id="ProcessingDescrBase.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
                                 <dd id="ProcessingDescrBase.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
 
             </div>
@@ -5410,35 +4796,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="BinarizeKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="BinarizeKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="BinarizeKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="BinarizeKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="BinarizeKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="BinarizeKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="BinarizeKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="BinarizeKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="BinarizeKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="BinarizeKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="BinarizeKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="BinarizeKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="BinarizeKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="BinarizeKwargs.dict" class="function">dict</dd>
-                <dd id="BinarizeKwargs.json" class="function">json</dd>
-                <dd id="BinarizeKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="BinarizeKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="BinarizeKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="BinarizeKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="BinarizeKwargs.construct" class="function">construct</dd>
-                <dd id="BinarizeKwargs.copy" class="function">copy</dd>
-                <dd id="BinarizeKwargs.schema" class="function">schema</dd>
-                <dd id="BinarizeKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="BinarizeKwargs.validate" class="function">validate</dd>
-                <dd id="BinarizeKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="BinarizeKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -5547,35 +4905,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="BinarizeDescr.__init__" class="function">BaseModel</dd>
-                <dd id="BinarizeDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="BinarizeDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="BinarizeDescr.model_construct" class="function">model_construct</dd>
-                <dd id="BinarizeDescr.model_copy" class="function">model_copy</dd>
-                <dd id="BinarizeDescr.model_dump" class="function">model_dump</dd>
-                <dd id="BinarizeDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="BinarizeDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="BinarizeDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="BinarizeDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="BinarizeDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="BinarizeDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="BinarizeDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="BinarizeDescr.dict" class="function">dict</dd>
-                <dd id="BinarizeDescr.json" class="function">json</dd>
-                <dd id="BinarizeDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="BinarizeDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="BinarizeDescr.parse_file" class="function">parse_file</dd>
-                <dd id="BinarizeDescr.from_orm" class="function">from_orm</dd>
-                <dd id="BinarizeDescr.construct" class="function">construct</dd>
-                <dd id="BinarizeDescr.copy" class="function">copy</dd>
-                <dd id="BinarizeDescr.schema" class="function">schema</dd>
-                <dd id="BinarizeDescr.schema_json" class="function">schema_json</dd>
-                <dd id="BinarizeDescr.validate" class="function">validate</dd>
-                <dd id="BinarizeDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="BinarizeDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -5689,35 +5019,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ClipKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ClipKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ClipKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ClipKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ClipKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ClipKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ClipKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ClipKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ClipKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ClipKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ClipKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ClipKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ClipKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ClipKwargs.dict" class="function">dict</dd>
-                <dd id="ClipKwargs.json" class="function">json</dd>
-                <dd id="ClipKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ClipKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ClipKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ClipKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ClipKwargs.construct" class="function">construct</dd>
-                <dd id="ClipKwargs.copy" class="function">copy</dd>
-                <dd id="ClipKwargs.schema" class="function">schema</dd>
-                <dd id="ClipKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ClipKwargs.validate" class="function">validate</dd>
-                <dd id="ClipKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ClipKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -5824,35 +5126,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ClipDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ClipDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ClipDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ClipDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ClipDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ClipDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ClipDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ClipDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ClipDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ClipDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="ClipDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ClipDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ClipDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ClipDescr.dict" class="function">dict</dd>
-                <dd id="ClipDescr.json" class="function">json</dd>
-                <dd id="ClipDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ClipDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ClipDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ClipDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ClipDescr.construct" class="function">construct</dd>
-                <dd id="ClipDescr.copy" class="function">copy</dd>
-                <dd id="ClipDescr.schema" class="function">schema</dd>
-                <dd id="ClipDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ClipDescr.validate" class="function">validate</dd>
-                <dd id="ClipDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="ClipDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -5915,7 +5189,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 
                             <div id="ScaleLinearKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f6420e24ea0&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f006e0e8ea0&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -5956,7 +5230,7 @@ For example xy to scale the two image axes for 2d data jointly.</p>
                             <div id="ScaleLinearKwargs.either_gain_or_offset" class="classattr">
                                         <input id="ScaleLinearKwargs.either_gain_or_offset-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">either_gain_or_offset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -6038,35 +5312,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleLinearKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleLinearKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleLinearKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleLinearKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleLinearKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleLinearKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleLinearKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleLinearKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleLinearKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleLinearKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleLinearKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleLinearKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleLinearKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleLinearKwargs.dict" class="function">dict</dd>
-                <dd id="ScaleLinearKwargs.json" class="function">json</dd>
-                <dd id="ScaleLinearKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleLinearKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleLinearKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleLinearKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleLinearKwargs.construct" class="function">construct</dd>
-                <dd id="ScaleLinearKwargs.copy" class="function">copy</dd>
-                <dd id="ScaleLinearKwargs.schema" class="function">schema</dd>
-                <dd id="ScaleLinearKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleLinearKwargs.validate" class="function">validate</dd>
-                <dd id="ScaleLinearKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ScaleLinearKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -6172,35 +5418,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleLinearDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleLinearDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleLinearDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleLinearDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleLinearDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleLinearDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleLinearDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleLinearDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleLinearDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleLinearDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleLinearDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleLinearDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleLinearDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleLinearDescr.dict" class="function">dict</dd>
-                <dd id="ScaleLinearDescr.json" class="function">json</dd>
-                <dd id="ScaleLinearDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleLinearDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleLinearDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleLinearDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleLinearDescr.construct" class="function">construct</dd>
-                <dd id="ScaleLinearDescr.copy" class="function">copy</dd>
-                <dd id="ScaleLinearDescr.schema" class="function">schema</dd>
-                <dd id="ScaleLinearDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleLinearDescr.validate" class="function">validate</dd>
-                <dd id="ScaleLinearDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="ScaleLinearDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -6323,35 +5541,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="SigmoidDescr.__init__" class="function">BaseModel</dd>
-                <dd id="SigmoidDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="SigmoidDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="SigmoidDescr.model_construct" class="function">model_construct</dd>
-                <dd id="SigmoidDescr.model_copy" class="function">model_copy</dd>
-                <dd id="SigmoidDescr.model_dump" class="function">model_dump</dd>
-                <dd id="SigmoidDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="SigmoidDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="SigmoidDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="SigmoidDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="SigmoidDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="SigmoidDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="SigmoidDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="SigmoidDescr.dict" class="function">dict</dd>
-                <dd id="SigmoidDescr.json" class="function">json</dd>
-                <dd id="SigmoidDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="SigmoidDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="SigmoidDescr.parse_file" class="function">parse_file</dd>
-                <dd id="SigmoidDescr.from_orm" class="function">from_orm</dd>
-                <dd id="SigmoidDescr.construct" class="function">construct</dd>
-                <dd id="SigmoidDescr.copy" class="function">copy</dd>
-                <dd id="SigmoidDescr.schema" class="function">schema</dd>
-                <dd id="SigmoidDescr.schema_json" class="function">schema_json</dd>
-                <dd id="SigmoidDescr.validate" class="function">validate</dd>
-                <dd id="SigmoidDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="SigmoidDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -6458,7 +5648,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="ZeroMeanUnitVarianceKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f6420e24ea0&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f006e0e8ea0&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -6513,7 +5703,7 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
                             <div id="ZeroMeanUnitVarianceKwargs.mean_and_std_match_mode" class="classattr">
                                         <input id="ZeroMeanUnitVarianceKwargs.mean_and_std_match_mode-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">mean_and_std_match_mode</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -6586,35 +5776,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ZeroMeanUnitVarianceKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.dict" class="function">dict</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.json" class="function">json</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.construct" class="function">construct</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.copy" class="function">copy</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.schema" class="function">schema</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.validate" class="function">validate</dd>
-                <dd id="ZeroMeanUnitVarianceKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ZeroMeanUnitVarianceKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -6720,35 +5882,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ZeroMeanUnitVarianceDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.dict" class="function">dict</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.json" class="function">json</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.construct" class="function">construct</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.copy" class="function">copy</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.schema" class="function">schema</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.validate" class="function">validate</dd>
-                <dd id="ZeroMeanUnitVarianceDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="ZeroMeanUnitVarianceDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -6855,7 +5989,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="ScaleRangeKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f6420e24ea0&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f006e0e8ea0&gt;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -6899,7 +6033,7 @@ accepting percentiles specified in the range 0.0 to 1.0.</p>
                             <div id="ScaleRangeKwargs.min_smaller_max" class="classattr">
                                         <input id="ScaleRangeKwargs.min_smaller_max-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">min_smaller_max</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">info</span><span class="p">:</span> <span class="n">pydantic_core</span><span class="o">.</span><span class="n">core_schema</span><span class="o">.</span><span class="n">ValidationInfo</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -7003,35 +6137,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleRangeKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleRangeKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleRangeKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleRangeKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleRangeKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleRangeKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleRangeKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleRangeKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleRangeKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleRangeKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleRangeKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleRangeKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleRangeKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleRangeKwargs.dict" class="function">dict</dd>
-                <dd id="ScaleRangeKwargs.json" class="function">json</dd>
-                <dd id="ScaleRangeKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleRangeKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleRangeKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleRangeKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleRangeKwargs.construct" class="function">construct</dd>
-                <dd id="ScaleRangeKwargs.copy" class="function">copy</dd>
-                <dd id="ScaleRangeKwargs.schema" class="function">schema</dd>
-                <dd id="ScaleRangeKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleRangeKwargs.validate" class="function">validate</dd>
-                <dd id="ScaleRangeKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ScaleRangeKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -7137,35 +6243,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleRangeDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleRangeDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleRangeDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleRangeDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleRangeDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleRangeDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleRangeDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleRangeDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleRangeDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleRangeDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleRangeDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleRangeDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleRangeDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleRangeDescr.dict" class="function">dict</dd>
-                <dd id="ScaleRangeDescr.json" class="function">json</dd>
-                <dd id="ScaleRangeDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleRangeDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleRangeDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleRangeDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleRangeDescr.construct" class="function">construct</dd>
-                <dd id="ScaleRangeDescr.copy" class="function">copy</dd>
-                <dd id="ScaleRangeDescr.schema" class="function">schema</dd>
-                <dd id="ScaleRangeDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleRangeDescr.validate" class="function">validate</dd>
-                <dd id="ScaleRangeDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="ScaleRangeDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -7265,7 +6343,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="ScaleMeanVarianceKwargs.axes" class="classattr">
                                 <div class="attr variable">
-            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f6420e24ea0&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
+            <span class="name">axes</span><span class="annotation">: Annotated[Optional[Annotated[str, RestrictCharacters(alphabet=&#39;czyx&#39;), AfterValidator(func=&lt;function validate_unique_entries at 0x7f006e0e8ea0&gt;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;xy&#39;])]</span>
 
         
     </div>
@@ -7342,35 +6420,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleMeanVarianceKwargs.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleMeanVarianceKwargs.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleMeanVarianceKwargs.dict" class="function">dict</dd>
-                <dd id="ScaleMeanVarianceKwargs.json" class="function">json</dd>
-                <dd id="ScaleMeanVarianceKwargs.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleMeanVarianceKwargs.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleMeanVarianceKwargs.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleMeanVarianceKwargs.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleMeanVarianceKwargs.construct" class="function">construct</dd>
-                <dd id="ScaleMeanVarianceKwargs.copy" class="function">copy</dd>
-                <dd id="ScaleMeanVarianceKwargs.schema" class="function">schema</dd>
-                <dd id="ScaleMeanVarianceKwargs.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleMeanVarianceKwargs.validate" class="function">validate</dd>
-                <dd id="ScaleMeanVarianceKwargs.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
+                                    <div><dt><a href="../_internal/common_nodes.html#KwargsNode">bioimageio.spec._internal.common_nodes.KwargsNode</a></dt>
                                 <dd id="ScaleMeanVarianceKwargs.get" class="function"><a href="../_internal/common_nodes.html#KwargsNode.get">get</a></dd>
 
             </div>
@@ -7476,35 +6526,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ScaleMeanVarianceDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ScaleMeanVarianceDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ScaleMeanVarianceDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ScaleMeanVarianceDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ScaleMeanVarianceDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ScaleMeanVarianceDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ScaleMeanVarianceDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ScaleMeanVarianceDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ScaleMeanVarianceDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ScaleMeanVarianceDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="ScaleMeanVarianceDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ScaleMeanVarianceDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ScaleMeanVarianceDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ScaleMeanVarianceDescr.dict" class="function">dict</dd>
-                <dd id="ScaleMeanVarianceDescr.json" class="function">json</dd>
-                <dd id="ScaleMeanVarianceDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ScaleMeanVarianceDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ScaleMeanVarianceDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ScaleMeanVarianceDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ScaleMeanVarianceDescr.construct" class="function">construct</dd>
-                <dd id="ScaleMeanVarianceDescr.copy" class="function">copy</dd>
-                <dd id="ScaleMeanVarianceDescr.schema" class="function">schema</dd>
-                <dd id="ScaleMeanVarianceDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ScaleMeanVarianceDescr.validate" class="function">validate</dd>
-                <dd id="ScaleMeanVarianceDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
+                                    <div><dt><a href="#ProcessingDescrBase">ProcessingDescrBase</a></dt>
                                 <dd id="ScaleMeanVarianceDescr.fields_to_set_explicitly" class="variable"><a href="#ProcessingDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
 
             </div>
@@ -7661,7 +6683,7 @@ The data flow in bioimage.io models is explained
                             <div id="InputTensorDescr.zero_batch_step_and_one_batch_size" class="classattr">
                                         <input id="InputTensorDescr.zero_batch_step_and_one_batch_size-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">zero_batch_step_and_one_batch_size</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -7702,7 +6724,7 @@ The data flow in bioimage.io models is explained
                             <div id="InputTensorDescr.validate_preprocessing_kwargs" class="classattr">
                                         <input id="InputTensorDescr.validate_preprocessing_kwargs-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">validate_preprocessing_kwargs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -7780,35 +6802,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="InputTensorDescr.__init__" class="function">BaseModel</dd>
-                <dd id="InputTensorDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="InputTensorDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="InputTensorDescr.model_construct" class="function">model_construct</dd>
-                <dd id="InputTensorDescr.model_copy" class="function">model_copy</dd>
-                <dd id="InputTensorDescr.model_dump" class="function">model_dump</dd>
-                <dd id="InputTensorDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="InputTensorDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="InputTensorDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="InputTensorDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="InputTensorDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="InputTensorDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="InputTensorDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="InputTensorDescr.dict" class="function">dict</dd>
-                <dd id="InputTensorDescr.json" class="function">json</dd>
-                <dd id="InputTensorDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="InputTensorDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="InputTensorDescr.parse_file" class="function">parse_file</dd>
-                <dd id="InputTensorDescr.from_orm" class="function">from_orm</dd>
-                <dd id="InputTensorDescr.construct" class="function">construct</dd>
-                <dd id="InputTensorDescr.copy" class="function">copy</dd>
-                <dd id="InputTensorDescr.schema" class="function">schema</dd>
-                <dd id="InputTensorDescr.schema_json" class="function">schema_json</dd>
-                <dd id="InputTensorDescr.validate" class="function">validate</dd>
-                <dd id="InputTensorDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#TensorDescrBase">TensorDescrBase</a></dt>
+                                    <div><dt><a href="#TensorDescrBase">TensorDescrBase</a></dt>
                                 <dd id="InputTensorDescr.name" class="variable"><a href="#TensorDescrBase.name">name</a></dd>
                 <dd id="InputTensorDescr.description" class="variable"><a href="#TensorDescrBase.description">description</a></dd>
                 <dd id="InputTensorDescr.axes" class="variable"><a href="#TensorDescrBase.axes">axes</a></dd>
@@ -7948,7 +6942,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
                             <div id="OutputTensorDescr.matching_halo_length" class="classattr">
                                         <input id="OutputTensorDescr.matching_halo_length-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">matching_halo_length</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -7974,7 +6968,7 @@ To document a <code><a href="#OutputTensorDescr.halo">halo</a></code> that is al
                             <div id="OutputTensorDescr.validate_postprocessing_kwargs" class="classattr">
                                         <input id="OutputTensorDescr.validate_postprocessing_kwargs-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">validate_postprocessing_kwargs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -8050,35 +7044,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="OutputTensorDescr.__init__" class="function">BaseModel</dd>
-                <dd id="OutputTensorDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="OutputTensorDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="OutputTensorDescr.model_construct" class="function">model_construct</dd>
-                <dd id="OutputTensorDescr.model_copy" class="function">model_copy</dd>
-                <dd id="OutputTensorDescr.model_dump" class="function">model_dump</dd>
-                <dd id="OutputTensorDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="OutputTensorDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="OutputTensorDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="OutputTensorDescr.model_post_init" class="function">model_post_init</dd>
-                <dd id="OutputTensorDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="OutputTensorDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="OutputTensorDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="OutputTensorDescr.dict" class="function">dict</dd>
-                <dd id="OutputTensorDescr.json" class="function">json</dd>
-                <dd id="OutputTensorDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="OutputTensorDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="OutputTensorDescr.parse_file" class="function">parse_file</dd>
-                <dd id="OutputTensorDescr.from_orm" class="function">from_orm</dd>
-                <dd id="OutputTensorDescr.construct" class="function">construct</dd>
-                <dd id="OutputTensorDescr.copy" class="function">copy</dd>
-                <dd id="OutputTensorDescr.schema" class="function">schema</dd>
-                <dd id="OutputTensorDescr.schema_json" class="function">schema_json</dd>
-                <dd id="OutputTensorDescr.validate" class="function">validate</dd>
-                <dd id="OutputTensorDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="#TensorDescrBase">TensorDescrBase</a></dt>
+                                    <div><dt><a href="#TensorDescrBase">TensorDescrBase</a></dt>
                                 <dd id="OutputTensorDescr.name" class="variable"><a href="#TensorDescrBase.name">name</a></dd>
                 <dd id="OutputTensorDescr.description" class="variable"><a href="#TensorDescrBase.description">description</a></dd>
                 <dd id="OutputTensorDescr.axes" class="variable"><a href="#TensorDescrBase.axes">axes</a></dd>
@@ -8132,7 +7098,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 
                             <div id="RunMode.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[Union[Literal[&#39;deepimagej&#39;], str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f64145f59e0&gt;, severity=30, msg=&#34;Unknown run mode &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: Literal[&#39;deepimagej&#39;]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[Union[Literal[&#39;deepimagej&#39;], str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f00601036a0&gt;, severity=30, msg=&#34;Unknown run mode &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: Literal[&#39;deepimagej&#39;]})]</span>
 
         
     </div>
@@ -8206,35 +7172,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="RunMode.__init__" class="function">BaseModel</dd>
-                <dd id="RunMode.model_extra" class="variable">model_extra</dd>
-                <dd id="RunMode.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="RunMode.model_construct" class="function">model_construct</dd>
-                <dd id="RunMode.model_copy" class="function">model_copy</dd>
-                <dd id="RunMode.model_dump" class="function">model_dump</dd>
-                <dd id="RunMode.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="RunMode.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="RunMode.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="RunMode.model_post_init" class="function">model_post_init</dd>
-                <dd id="RunMode.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="RunMode.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="RunMode.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="RunMode.dict" class="function">dict</dd>
-                <dd id="RunMode.json" class="function">json</dd>
-                <dd id="RunMode.parse_obj" class="function">parse_obj</dd>
-                <dd id="RunMode.parse_raw" class="function">parse_raw</dd>
-                <dd id="RunMode.parse_file" class="function">parse_file</dd>
-                <dd id="RunMode.from_orm" class="function">from_orm</dd>
-                <dd id="RunMode.construct" class="function">construct</dd>
-                <dd id="RunMode.copy" class="function">copy</dd>
-                <dd id="RunMode.schema" class="function">schema</dd>
-                <dd id="RunMode.schema_json" class="function">schema_json</dd>
-                <dd id="RunMode.validate" class="function">validate</dd>
-                <dd id="RunMode.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="RunMode.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -8343,35 +7281,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="LinkedModel.__init__" class="function">BaseModel</dd>
-                <dd id="LinkedModel.model_extra" class="variable">model_extra</dd>
-                <dd id="LinkedModel.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="LinkedModel.model_construct" class="function">model_construct</dd>
-                <dd id="LinkedModel.model_copy" class="function">model_copy</dd>
-                <dd id="LinkedModel.model_dump" class="function">model_dump</dd>
-                <dd id="LinkedModel.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="LinkedModel.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="LinkedModel.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="LinkedModel.model_post_init" class="function">model_post_init</dd>
-                <dd id="LinkedModel.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="LinkedModel.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="LinkedModel.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="LinkedModel.dict" class="function">dict</dd>
-                <dd id="LinkedModel.json" class="function">json</dd>
-                <dd id="LinkedModel.parse_obj" class="function">parse_obj</dd>
-                <dd id="LinkedModel.parse_raw" class="function">parse_raw</dd>
-                <dd id="LinkedModel.parse_file" class="function">parse_file</dd>
-                <dd id="LinkedModel.from_orm" class="function">from_orm</dd>
-                <dd id="LinkedModel.construct" class="function">construct</dd>
-                <dd id="LinkedModel.copy" class="function">copy</dd>
-                <dd id="LinkedModel.schema" class="function">schema</dd>
-                <dd id="LinkedModel.schema_json" class="function">schema_json</dd>
-                <dd id="LinkedModel.validate" class="function">validate</dd>
-                <dd id="LinkedModel.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
                                 <dd id="LinkedModel.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
@@ -8768,7 +7678,7 @@ The <code><a href="#ModelDescr.format_version">format_version</a></code> is impo
                             </div>
                             <div id="ModelDescr.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -8797,7 +7707,7 @@ with details on how to quantitatively validate the model on unseen data.</p>
                             </div>
                             <div id="ModelDescr.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f64145f4a40&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, str], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f0060103a60&gt;, severity=30, msg=&#34;Unknown license id &#39;{value}&#39;.&#34;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
 
         
     </div>
@@ -8813,7 +7723,7 @@ We do notsupport custom license beyond the SPDX license list, if you need that p
                             </div>
                             <div id="ModelDescr.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f64145f5800&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f6412fbda80&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f0060102fc0&gt;, severity=20, msg=&#39;Name shorter than 5 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MinLen(min_length=5)]}), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f00601020c0&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
 
         
     </div>
@@ -8841,8 +7751,8 @@ It should be no longer than 64 characters and only contain letter, number, under
                             <div id="ModelDescr.unique_tensor_descr_names" class="classattr">
                                         <input id="ModelDescr.unique_tensor_descr_names-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@field_validator(&#39;inputs&#39;, &#39;outputs&#39;)</div>
-        <div class="decorator">@classmethod</div>
+                    <div class="decorator decorator-field_validator">@field_validator(&#39;inputs&#39;, &#39;outputs&#39;)</div>
+        <div class="decorator decorator-classmethod">@classmethod</div>
 
         <span class="def">def</span>
         <span class="name">unique_tensor_descr_names</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n"><a href="#InputTensorDescr">InputTensorDescr</a></span><span class="p">,</span> <span class="n"><a href="#OutputTensorDescr">OutputTensorDescr</a></span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n"><a href="#InputTensorDescr">InputTensorDescr</a></span><span class="p">,</span> <span class="n"><a href="#OutputTensorDescr">OutputTensorDescr</a></span><span class="p">]]</span>:</span></span>
@@ -8870,7 +7780,7 @@ It should be no longer than 64 characters and only contain letter, number, under
                             <div id="ModelDescr.unique_io_names" class="classattr">
                                         <input id="ModelDescr.unique_io_names-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">unique_io_names</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -8895,7 +7805,7 @@ It should be no longer than 64 characters and only contain letter, number, under
                             <div id="ModelDescr.minimum_shape2valid_output" class="classattr">
                                         <input id="ModelDescr.minimum_shape2valid_output-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">minimum_shape2valid_output</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -8954,7 +7864,7 @@ It should be no longer than 64 characters and only contain letter, number, under
                             <div id="ModelDescr.validate_tensor_references_in_inputs" class="classattr">
                                         <input id="ModelDescr.validate_tensor_references_in_inputs-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">validate_tensor_references_in_inputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -8991,7 +7901,7 @@ It should be no longer than 64 characters and only contain letter, number, under
                             <div id="ModelDescr.validate_tensor_references_in_outputs" class="classattr">
                                         <input id="ModelDescr.validate_tensor_references_in_outputs-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@model_validator(mode=&#39;after&#39;)</div>
+                    <div class="decorator decorator-model_validator">@model_validator(mode=&#39;after&#39;)</div>
 
         <span class="def">def</span>
         <span class="name">validate_tensor_references_in_outputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
@@ -9049,8 +7959,8 @@ Only required if those persons differ from the <code><a href="#ModelDescr.author
                             <div id="ModelDescr.ignore_url_parent" class="classattr">
                                         <input id="ModelDescr.ignore_url_parent-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-                    <div class="decorator">@field_validator(&#39;parent&#39;, mode=&#39;before&#39;)</div>
-        <div class="decorator">@classmethod</div>
+                    <div class="decorator decorator-field_validator">@field_validator(&#39;parent&#39;, mode=&#39;before&#39;)</div>
+        <div class="decorator decorator-classmethod">@classmethod</div>
 
         <span class="def">def</span>
         <span class="name">ignore_url_parent</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">parent</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">):</span></span>
@@ -9090,7 +8000,7 @@ No standard run modes are defined yet.</p>
                             </div>
                             <div id="ModelDescr.sample_inputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">sample_inputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">sample_inputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -9105,7 +8015,7 @@ The sample files primarily serve to inform a human user about an example use cas
                             </div>
                             <div id="ModelDescr.sample_outputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">sample_outputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">sample_outputs</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -9118,7 +8028,7 @@ The sample files primarily serve to inform a human user about an example use cas
                             </div>
                             <div id="ModelDescr.test_inputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">test_inputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
+            <span class="name">test_inputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
 
         
     </div>
@@ -9135,7 +8045,7 @@ The extension must be '.npy'.</p>
                             </div>
                             <div id="ModelDescr.test_outputs" class="classattr">
                                 <div class="attr variable">
-            <span class="name">test_outputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6420ef0860&gt;), PlainSerializer(func=&lt;function _package at 0x7f6420ef1300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
+            <span class="name">test_outputs</span><span class="annotation">: Annotated[List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f006e1bc860&gt;), PlainSerializer(func=&lt;function _package at 0x7f006e1bd300&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.npy&#39;, case_sensitive=True)]], MinLen(min_length=1)]</span>
 
         
     </div>
@@ -9175,7 +8085,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                             <div id="ModelDescr.weights" class="classattr">
                                 <div class="attr variable">
-            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f64153ebf60&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
+            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f00625cff60&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
 
         
     </div>
@@ -9330,34 +8240,7 @@ method.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>pydantic.main.BaseModel</dt>
-                                <dd id="ModelDescr.__init__" class="function">BaseModel</dd>
-                <dd id="ModelDescr.model_extra" class="variable">model_extra</dd>
-                <dd id="ModelDescr.model_fields_set" class="variable">model_fields_set</dd>
-                <dd id="ModelDescr.model_construct" class="function">model_construct</dd>
-                <dd id="ModelDescr.model_copy" class="function">model_copy</dd>
-                <dd id="ModelDescr.model_dump" class="function">model_dump</dd>
-                <dd id="ModelDescr.model_dump_json" class="function">model_dump_json</dd>
-                <dd id="ModelDescr.model_json_schema" class="function">model_json_schema</dd>
-                <dd id="ModelDescr.model_parametrized_name" class="function">model_parametrized_name</dd>
-                <dd id="ModelDescr.model_rebuild" class="function">model_rebuild</dd>
-                <dd id="ModelDescr.model_validate_json" class="function">model_validate_json</dd>
-                <dd id="ModelDescr.model_validate_strings" class="function">model_validate_strings</dd>
-                <dd id="ModelDescr.dict" class="function">dict</dd>
-                <dd id="ModelDescr.json" class="function">json</dd>
-                <dd id="ModelDescr.parse_obj" class="function">parse_obj</dd>
-                <dd id="ModelDescr.parse_raw" class="function">parse_raw</dd>
-                <dd id="ModelDescr.parse_file" class="function">parse_file</dd>
-                <dd id="ModelDescr.from_orm" class="function">from_orm</dd>
-                <dd id="ModelDescr.construct" class="function">construct</dd>
-                <dd id="ModelDescr.copy" class="function">copy</dd>
-                <dd id="ModelDescr.schema" class="function">schema</dd>
-                <dd id="ModelDescr.schema_json" class="function">schema_json</dd>
-                <dd id="ModelDescr.validate" class="function">validate</dd>
-                <dd id="ModelDescr.update_forward_refs" class="function">update_forward_refs</dd>
-
-            </div>
-            <div><dt><a href="../generic/v0_2.html#GenericModelDescrBase">bioimageio.spec.generic.v0_2.GenericModelDescrBase</a></dt>
+                                    <div><dt><a href="../generic/v0_2.html#GenericModelDescrBase">bioimageio.spec.generic.v0_2.GenericModelDescrBase</a></dt>
                                 <dd id="ModelDescr.description" class="variable"><a href="../generic/v0_2.html#GenericModelDescrBase.description">description</a></dd>
                 <dd id="ModelDescr.covers" class="variable"><a href="../generic/v0_2.html#GenericModelDescrBase.covers">covers</a></dd>
                 <dd id="ModelDescr.id_emoji" class="variable"><a href="../generic/v0_2.html#GenericModelDescrBase.id_emoji">id_emoji</a></dd>
