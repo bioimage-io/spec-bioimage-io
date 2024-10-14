@@ -23,6 +23,7 @@ from ._io import (
 )
 from ._io import load_model_description as load_model_description
 from ._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
+from ._package import get_resource_package_content as get_resource_package_content
 from ._package import save_bioimageio_package as save_bioimageio_package
 from ._package import (
     save_bioimageio_package_as_folder as save_bioimageio_package_as_folder,

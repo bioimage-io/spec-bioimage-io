@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 # pyright: reportUnnecessaryTypeIgnoreComment=warning
-
 import hashlib
 import sys
 import warnings
@@ -20,6 +19,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Protocol,
     Sequence,
     Tuple,
     Type,
@@ -560,9 +560,21 @@ def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
     return unique_name
 
 
+class Progressbar(Protocol):
+    count: int
+    total: int
+
+    def update(self, i: int): ...
+
+    def reset(self): ...
+
+    def close(self): ...
+
+
 def download(
     source: Union[PermissiveFileSource, FileDescr],
     /,
+    progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
     """download `source` URL (or pass local file path)"""
@@ -584,15 +596,20 @@ def download(
 
         if settings.CI:
             headers = {"User-Agent": "ci"}
-            progressbar = False
+            if progressbar is None:
+                progressbar = False
         else:
             headers = {}
-            progressbar = True
+            if progressbar is None:
+                progressbar = True
 
         if settings.user_agent is not None:
             headers["User-Agent"] = settings.user_agent
 
-        downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
+        downloader = pooch.HTTPDownloader(
+            headers=headers,
+            progressbar=progressbar,  # pyright: ignore[reportArgumentType]
+        )
         fname = _get_unique_file_name(strict_source)
         _ls: Any = pooch.retrieve(
             url=str(strict_source),
