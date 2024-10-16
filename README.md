@@ -52,7 +52,7 @@ These are primarily intended for syntax highlighting and form generation.
 
 A flattened view of the types used by the spec that also shows values constraints.
 
-[rendered](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/interactive_docs_v0-5.html)
+[rendered](https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html)
 
 You can also generate these docs locally by running `PYTHONPATH=./scripts python -m interactive_docs`
 
