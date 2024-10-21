@@ -143,10 +143,13 @@ class ValidationDetail(BaseModel, extra="allow"):
         if hide_tracebacks:
             tbs = [""] * len(self.errors)
         else:
-            tbs = [
-                ("\n      Traceback:\n      " if e.traceback else "")
-                + "\n      ".join(e.traceback)
+            slim_tracebacks = [
+                [tt.replace("\n", "<br>") for t in e.traceback if (tt := t.strip())]
                 for e in self.errors
+            ]
+            tbs = [
+                ("<br>      Traceback:<br>      " if st else "") + "<br>      ".join(st)
+                for st in slim_tracebacks
             ]
 
         def join_parts(parts: Iterable[Tuple[str, str]]):
@@ -154,9 +157,9 @@ class ValidationDetail(BaseModel, extra="allow"):
             lines: List[str] = []
             for loc, msg in parts:
                 if loc == last_loc:
-                    lines.append(f"\n  {loc} {msg}")
+                    lines.append(f"<br>  {loc} {msg}")
                 else:
-                    lines.append(f"\n- {loc} {msg}")
+                    lines.append(f"<br>- {loc} {msg}")
 
                 last_loc = loc
 
@@ -214,6 +217,9 @@ class ValidationSummary(BaseModel, extra="allow"):
         assert all(len(row) == n_cols for row in rows)
         col_widths = [max(max(len(row[i]) for row in rows), 3) for i in range(n_cols)]
 
+        # fix new lines in table cell
+        rows = [[line.replace("\n", "<br>") for line in r] for r in rows]
+
         lines = [" | ".join(rows[0][i].center(col_widths[i]) for i in range(n_cols))]
         lines.append(" | ".join("---".center(col_widths[i]) for i in range(n_cols)))
         lines.extend(
@@ -244,7 +250,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
 
         details = [["❓", "location", "detail"]]
-        for i, d in enumerate(self.details):
+        for d in self.details:
             details.append([d.status_icon, "", d.name])
             if d.context is not None:
                 details.append(
@@ -264,10 +270,17 @@ class ValidationSummary(BaseModel, extra="allow"):
                 )
 
             for entry in d.errors:
-                details.append(["❌", format_loc(entry.loc), entry.msg])
+                details.append(
+                    [
+                        "❌",
+                        format_loc(entry.loc),
+                        entry.msg.replace("\n\n", "<br>").replace("\n", "<br>"),
+                    ]
+                )
                 if hide_tracebacks:
                     continue
 
+                formatted_tb_lines: List[str] = []
                 for tb in entry.traceback:
                     if not (tb_stripped := tb.strip()):
                         continue
@@ -294,13 +307,12 @@ class ValidationSummary(BaseModel, extra="allow"):
                     else:
                         tb_rest = ""
 
-                    details.append(["", "", first_tb_line + tb_rest])
+                    formatted_tb_lines.append(first_tb_line + tb_rest)
+
+                details.append(["", "", "<br>".join(formatted_tb_lines)])
 
             for entry in d.warnings:
                 details.append(["⚠", format_loc(entry.loc), entry.msg])
-
-            if i != len(details) - 1:
-                details.append(["", "", ""])
 
         return f"{info}{self._format_md_table(details)}"
 
