@@ -132,11 +132,11 @@ _IdMap = RootModel[Dict[str, LightHttpFileDescr]]
 
 def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
-        logger.error("invalid id map url: {}", url)
+        logger.opt(depth=1).error("invalid id map url: {}", url)
     try:
         id_map_raw: Any = requests.get(url, timeout=10).json()
     except Exception as e:
-        logger.error("failed to get {}: {}", url, e)
+        logger.opt(depth=1).error("failed to get {}: {}", url, e)
         return {}
 
     id_map = _IdMap.model_validate(id_map_raw)

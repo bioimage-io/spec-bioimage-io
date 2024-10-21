@@ -2350,7 +2350,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
 
-    training_data: Union[None, LinkedDataset, DatasetDescr, DatasetDescr02] = None
+    training_data: Annotated[
+        Union[None, LinkedDataset, DatasetDescr, DatasetDescr02],
+        Field(union_mode="left_to_right"),
+    ] = None
     """The dataset used to train this model"""
 
     weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]

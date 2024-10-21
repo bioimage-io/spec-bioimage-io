@@ -146,4 +146,4 @@ def issue_warning(
         raise PydanticCustomError("warning", msg, msg_context)
     elif validation_context_var.get().log_warnings:
         log_msg = (field + ": " if field else "") + (msg.format(**msg_context))
-        logger.log(severity, log_msg)
+        logger.opt(depth=1).log(severity, log_msg)
