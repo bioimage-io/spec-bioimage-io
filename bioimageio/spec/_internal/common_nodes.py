@@ -312,7 +312,7 @@ class ResourceDescrBase(
     def _set_init_validation_summary(self) -> Self:
         context = validation_context_var.get()
         self._validation_summary = ValidationSummary(
-            name="bioimageio validation",
+            name="bioimageio format validation",
             source_name=context.source_name,
             type=self.type,
             format_version=self.format_version,
