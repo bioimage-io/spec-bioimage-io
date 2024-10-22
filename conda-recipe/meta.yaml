@@ -33,7 +33,9 @@ test:
     - example_descriptions
   requires:
     {% for dep in setup_py_data['extras_require']['dev'] %}
+    {% if dep not in ('json_schema_for_humans',): %}
     - {{ dep.replace('torch', 'pytorch').lower() }}
+    {% endif %}
     {% endfor %}
   commands:
     - pytest -n auto --capture=no
