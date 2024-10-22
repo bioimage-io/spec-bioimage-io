@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+# pyright: reportUnnecessaryTypeIgnoreComment=warning
 import hashlib
 import sys
 import warnings
 from abc import abstractmethod
+from collections.abc import Mapping as MappingAbc
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
@@ -17,6 +19,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Protocol,
     Sequence,
     Tuple,
     Type,
@@ -27,7 +30,7 @@ from typing import (
 from urllib.parse import urlparse, urlsplit, urlunsplit
 from zipfile import ZipFile, is_zipfile
 
-import pooch
+import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pydantic
 from pydantic import (
     AnyUrl,
@@ -49,6 +52,7 @@ from typing_extensions import (
     LiteralString,
     NotRequired,
     Self,
+    TypeGuard,
     Unpack,
     assert_never,
 )
@@ -171,25 +175,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         return cls(PurePath(value))
 
 
-class RelativePath(
-    RelativePathBase[Union[AbsoluteFilePath, AbsoluteDirectory, HttpUrl]], frozen=True
-):
-    def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl"
-    ) -> "AbsoluteFilePath | AbsoluteDirectory | HttpUrl":
-        absolute = self._get_absolute_impl(root)
-        if (
-            isinstance(absolute, Path)
-            and (context := validation_context_var.get()).perform_io_checks
-            and str(self.root) not in context.known_files
-            and not absolute.exists()
-        ):
-            raise ValueError(f"{absolute} does not exist")
-
-        return absolute
-
-
 class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
+    """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
+
     def model_post_init(self, __context: Any) -> None:
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
@@ -235,7 +223,10 @@ FileSource = Annotated[
 PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
-path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
+# the type hints available for different python versions require this ignoring of reportUnknownVariableType
+path_or_url_adapter = TypeAdapter(  # pyright: ignore [reportUnknownVariableType]
+    Union[FilePath, DirectoryPath, HttpUrl]
+)
 
 
 def validate_suffix(
@@ -490,6 +481,28 @@ BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 
 
+def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
+    return isinstance(value, (bool, _date, _datetime, int, float, str, type(None)))
+
+
+def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+    return isinstance(value, Sequence) and all(
+        is_yaml_value(item)
+        for item in value  # pyright: ignore [reportUnknownVariableType]
+    )
+
+
+def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
+    return isinstance(value, MappingAbc) and all(
+        isinstance(key, str) and is_yaml_value(val)
+        for key, val in value.items()  # pyright: ignore [reportUnknownVariableType]
+    )
+
+
+def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
+    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_mapping(value)
+
+
 @dataclass
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent
@@ -508,7 +521,9 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Optional[Sha256]]
 
 
-_file_source_adapter = TypeAdapter(FileSource)
+_file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = (
+    TypeAdapter(FileSource)
+)
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
@@ -545,9 +560,21 @@ def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
     return unique_name
 
 
+class Progressbar(Protocol):
+    count: int
+    total: int
+
+    def update(self, i: int): ...
+
+    def reset(self): ...
+
+    def close(self): ...
+
+
 def download(
     source: Union[PermissiveFileSource, FileDescr],
     /,
+    progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
 ) -> DownloadedFile:
     """download `source` URL (or pass local file path)"""
@@ -569,15 +596,20 @@ def download(
 
         if settings.CI:
             headers = {"User-Agent": "ci"}
-            progressbar = False
+            if progressbar is None:
+                progressbar = False
         else:
             headers = {}
-            progressbar = True
+            if progressbar is None:
+                progressbar = True
 
         if settings.user_agent is not None:
             headers["User-Agent"] = settings.user_agent
 
-        downloader = pooch.HTTPDownloader(headers=headers, progressbar=progressbar)
+        downloader = pooch.HTTPDownloader(
+            headers=headers,
+            progressbar=progressbar,  # pyright: ignore[reportArgumentType]
+        )
         fname = _get_unique_file_name(strict_source)
         _ls: Any = pooch.retrieve(
             url=str(strict_source),

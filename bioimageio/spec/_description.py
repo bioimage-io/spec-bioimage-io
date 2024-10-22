@@ -5,7 +5,7 @@ from typing import Any, Literal, Optional, TypeVar, Union
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from ._build_description import DISCOVER, build_description_impl, get_rd_class_impl
+from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
 from ._internal.types import FormatVersionPlaceholder
@@ -131,6 +131,22 @@ def build_description(
     context: Optional[ValidationContext] = None,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
 ) -> Union[ResourceDescr, InvalidDescr]:
+    """build a bioimage.io resource description from an RDF's content.
+
+    Use `load_description` if you want to build a resource description from an rdf.yaml
+    or bioimage.io zip-package.
+
+    Args:
+        content: loaded rdf.yaml file (loaded with YAML, not bioimageio.spec)
+        context: validation context to use during validation
+        format_version: (optional) use this argument to load the resource and
+                        convert its metadata to a higher format_version
+
+    Returns:
+        An object holding all metadata of the bioimage.io resource
+
+    """
+
     return build_description_impl(
         content,
         context=context,
@@ -162,3 +178,51 @@ def update_format(
 ) -> BioimageioYamlContent:
     """update a bioimageio.yaml file without validating it"""
     raise NotImplementedError("Oh no! This feature is not yet implemented")
+
+
+def ensure_description_is_model(
+    rd: Union[InvalidDescr, ResourceDescr],
+) -> AnyModelDescr:
+    if isinstance(rd, InvalidDescr):
+        rd.validation_summary.display()
+        raise ValueError("resource description is invalid")
+
+    if rd.type != "model":
+        rd.validation_summary.display()
+        raise ValueError(
+            f"expected a model resource, but got resource type '{rd.type}'"
+        )
+
+    assert not isinstance(
+        rd,
+        (
+            GenericDescr02,
+            GenericDescr03,
+        ),
+    )
+
+    return rd
+
+
+def ensure_description_is_dataset(
+    rd: Union[InvalidDescr, ResourceDescr],
+) -> AnyDatasetDescr:
+    if isinstance(rd, InvalidDescr):
+        rd.validation_summary.display()
+        raise ValueError("resource description is invalid")
+
+    if rd.type != "dataset":
+        rd.validation_summary.display()
+        raise ValueError(
+            f"expected a dataset resource, but got resource type '{rd.type}'"
+        )
+
+    assert not isinstance(
+        rd,
+        (
+            GenericDescr02,
+            GenericDescr03,
+        ),
+    )
+
+    return rd

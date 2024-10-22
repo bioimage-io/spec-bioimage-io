@@ -127,9 +127,9 @@ class StringNode(collections.UserString, ABC):
 
     @classmethod
     def _validate(cls, value: str) -> Self:
-        contrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
-        contrained_str_adapter = TypeAdapter(cast(str, contrained_str_type))
-        valid_string_data = contrained_str_adapter.validate_python(value)
+        constrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
+        constrained_str_adapter: TypeAdapter[str] = TypeAdapter(constrained_str_type)
+        valid_string_data = constrained_str_adapter.validate_python(value)
         data = cls._get_data(valid_string_data)
         self = cls(valid_string_data)
         object.__setattr__(self, "_node", self._node_class.model_validate(data))
@@ -309,10 +309,10 @@ class ResourceDescrBase(
         return data
 
     @model_validator(mode="after")
-    def _set_init_validation_summary(self):
+    def _set_init_validation_summary(self) -> Self:
         context = validation_context_var.get()
         self._validation_summary = ValidationSummary(
-            name="bioimageio validation",
+            name="bioimageio format validation",
             source_name=context.source_name,
             type=self.type,
             format_version=self.format_version,

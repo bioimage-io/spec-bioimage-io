@@ -32,10 +32,9 @@ from typing import (
     cast,
 )
 
-import imageio
 import numpy as np
 from annotated_types import Ge, Gt, Interval, MaxLen, MinLen, Predicate
-from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
+from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from pydantic import (
     Discriminator,
@@ -228,10 +227,13 @@ PreprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
+ParameterizedSize_N = int
+
+
 class ParameterizedSize(Node):
     """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
 
-    N: ClassVar[Type[int]] = int
+    N: ClassVar[Type[int]] = ParameterizedSize_N
     """integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
@@ -248,10 +250,10 @@ class ParameterizedSize(Node):
 
         return size
 
-    def get_size(self, n: ParameterizedSize.N) -> int:
+    def get_size(self, n: ParameterizedSize_N) -> int:
         return self.min + self.step * n
 
-    def get_n(self, s: int) -> ParameterizedSize.N:
+    def get_n(self, s: int) -> ParameterizedSize_N:
         """return smallest n parameterizing a size greater or equal than `s`"""
         return ceil((s - self.min) / self.step)
 
@@ -343,7 +345,7 @@ class SizeReference(Node):
             SpaceOutputAxis,
             SpaceOutputAxisWithHalo,
         ],
-        n: ParameterizedSize.N,
+        n: ParameterizedSize_N,
     ):
         """helper method to compute concrete size for a given axis and its reference axis.
         If the reference axis is parameterized, `n` is used to compute the concrete size of it, see `ParameterizedSize`.
@@ -1252,10 +1254,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes")
+            if kwargs_axes is None:
+                continue
+
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
-                    f"Expeted `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
+                    f"Expected `preprocessing.i.kwargs.axes` to be a sequence, but got {type(kwargs_axes)}"
                 )
 
             if any(a not in axes_ids for a in kwargs_axes):
@@ -1365,7 +1370,7 @@ def convert_axes(
             assert not isinstance(size, ParameterizedSize)
             if isinstance(size, SizeReference):
                 warnings.warn(
-                    "Conversion of channel size from an implicit output shape may by"
+                    "Conversion of channel size from an implicit output shape may be"
                     + " wrong"
                 )
                 ret.append(
@@ -1952,7 +1957,7 @@ class WeightsDescr(Node):
         if len(entries_wo_parent) != 1:
             issue_warning(
                 "Exactly one weights entry may not specify the `parent` field (got"
-                + " {value}).That entry is considered the original set of model weights."
+                + " {value}). That entry is considered the original set of model weights."
                 + " Other weight formats are created through conversion of the orignal or"
                 + " already converted weights. They have to reference the weights format"
                 + " they were converted from as their `parent`.",
@@ -2049,7 +2054,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
             return value
 
         doc_path = download(value).path
-        doc_content = doc_path.read_text()
+        doc_content = doc_path.read_text(encoding="utf-8")
         if not re.match("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
@@ -2345,7 +2350,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
 
-    training_data: Union[None, LinkedDataset, DatasetDescr, DatasetDescr02] = None
+    training_data: Annotated[
+        Union[None, LinkedDataset, DatasetDescr, DatasetDescr02],
+        Field(union_mode="left_to_right"),
+    ] = None
     """The dataset used to train this model"""
 
     weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]
@@ -2416,7 +2424,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return tensor_sizes.outputs
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
-        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize.N] = {}
+        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize_N] = {}
         axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
             for aid, s in input_sizes[tid].items():
@@ -2431,7 +2439,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         return ret
 
     def get_tensor_sizes(
-        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
     ) -> _TensorSizes:
         axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
         return _TensorSizes(
@@ -2454,7 +2462,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         )
 
     def get_axis_sizes(
-        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize.N], batch_size: int
+        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
     ) -> _AxisSizes:
         all_axes = {
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
@@ -2942,10 +2950,10 @@ def generate_covers(
     cover_folder = Path(mkdtemp())
     if ipt_img.shape == out_img.shape:
         covers = [cover_folder / "cover.png"]
-        imageio.imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
+        imwrite(covers[0], create_diagonal_split_image(ipt_img, out_img))
     else:
         covers = [cover_folder / "input.png", cover_folder / "output.png"]
-        imageio.imwrite(covers[0], ipt_img)
-        imageio.imwrite(covers[1], out_img)
+        imwrite(covers[0], ipt_img)
+        imwrite(covers[1], out_img)
 
     return covers

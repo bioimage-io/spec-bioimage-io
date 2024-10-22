@@ -1,6 +1,8 @@
 import json
 from typing import List, TypedDict
 
+from ._description import ensure_description_is_dataset as ensure_description_is_dataset
+from ._description import ensure_description_is_model as ensure_description_is_model
 from ._internal.io import download as download
 from ._internal.io import extract_file_name as extract_file_name
 from ._internal.io import get_sha256 as get_sha256

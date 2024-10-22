@@ -10,7 +10,9 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 
 
 def test_single_suffix():
-    adapter = TypeAdapter(Annotated[FileSource, WithSuffix(".py", case_sensitive=True)])
+    adapter: TypeAdapter[FileSource] = TypeAdapter(
+        Annotated[FileSource, WithSuffix(".py", case_sensitive=True)]
+    )
     with ValidationContext(root=Path(__file__).parent):
         _ = adapter.validate_python(Path(__file__).name)
 
@@ -20,13 +22,15 @@ def test_single_suffix():
 
 
 def test_case_sensitive_suffix():
-    adapter = TypeAdapter(Annotated[FileSource, WithSuffix(".py", case_sensitive=True)])
+    adapter: TypeAdapter[FileSource] = TypeAdapter(
+        Annotated[FileSource, WithSuffix(".py", case_sensitive=True)]
+    )
     with ValidationContext(perform_io_checks=False), pytest.raises(ValidationError):
         _ = adapter.validate_python("https://example.com/lala.PY")
 
 
 def test_multiple_suffix():
-    adapter = TypeAdapter(
+    adapter: TypeAdapter[FileSource] = TypeAdapter(
         Annotated[FileSource, WithSuffix((".py", ".md"), case_sensitive=True)]
     )
     with ValidationContext(root=Path(__file__).parent):

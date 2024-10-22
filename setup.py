@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
 
-from setuptools import find_namespace_packages, setup
+from setuptools import (
+    find_namespace_packages,
+    setup,  # pyright: ignore[reportUnknownVariableType]
+)
 
 # Get the long description from the README file
 ROOT_DIR = Path(__file__).parent.resolve()
@@ -58,7 +61,7 @@ _ = setup(
             "json_schema_for_humans",
             "pre-commit",
             "psutil",  # parallel pytest with '-n auto'
-            "pyright",
+            "pyright==1.1.378",
             "pytest-xdist",  # parallel pytest
             "pytest",
             "python-devtools",

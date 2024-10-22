@@ -1,3 +1,5 @@
+"""implementation details for building a bioimage.io resource description"""
+
 from typing import Any, Callable, List, Mapping, Optional, Type, TypeVar, Union
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase

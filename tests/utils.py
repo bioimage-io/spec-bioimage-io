@@ -16,13 +16,13 @@ from typing import (
 
 import jsonschema
 import pytest
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # pyright: ignore [reportMissingTypeStubs]
 from pydantic import (
     DirectoryPath,
     RootModel,
     TypeAdapter,
     ValidationError,
-    create_model,  # type: ignore
+    create_model,
 )
 from ruyaml import YAML
 

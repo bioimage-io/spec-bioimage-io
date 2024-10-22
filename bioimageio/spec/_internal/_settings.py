@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional, Union
 
-import pooch
+import pooch  # pyright: ignore [reportMissingTypeStubs]
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Annotated

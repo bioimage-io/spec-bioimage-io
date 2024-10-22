@@ -1,6 +1,9 @@
 ![License](https://img.shields.io/github/license/bioimage-io/spec-bioimage-io.svg)
-![PyPI](https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout)
-![conda-version](https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg)
+[![PyPI](https://img.shields.io/pypi/v/bioimageio-spec.svg?style=popout)](https://pypi.org/project/bioimageio.spec/)
+[![conda-version](https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg)](https://anaconda.org/conda-forge/bioimageio.spec/)
+[![downloads](https://static.pepy.tech/badge/bioimageio.spec)](https://pepy.tech/project/bioimageio.spec)
+[![conda-forge downloads](https://img.shields.io/conda/dn/conda-forge/bioimageio.spec.svg?label=conda-forge)](https://anaconda.org/conda-forge/bioimageio.spec/)
+![code style](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 # Specifications for bioimage.io
 
@@ -44,6 +47,14 @@ Simplified descriptions are available as [JSON schema](https://json-schema.org/)
 | 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) [rendered](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/json_schema_gui_v0-5/index.html)|
 
 These are primarily intended for syntax highlighting and form generation.
+
+## Flattened, interactive docs
+
+A flattened view of the types used by the spec that also shows values constraints.
+
+[rendered](https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html)
+
+You can also generate these docs locally by running `PYTHONPATH=./scripts python -m interactive_docs`
 
 ## Examples
 
@@ -101,9 +112,36 @@ TODO: link to settings in dev docs
 
 Made with [contrib.rocks](https://contrib.rocks).
 
+## 🛈 Versioining scheme
+
+To keep the bioimageio.spec Python package version in sync with the (model) description format version, bioimageio.spec is versioned as MAJOR.MINRO.PATCH.LIB, where MAJOR.MINRO.PATCH correspond to the latest model description format version implemented and LIB may be bumpbed for library changes that do not affect the format version.
+[This change was introduced with bioimageio.spec 0.5.3.1](#bioimageiospec-0531).
+
 ## Δ Changelog
 
 ### bioimageio.spec Python package
+
+#### bioimageio.spec 0.5.3.3
+
+* expose `progressbar` to customize display of download progress
+* expose `get_resource_package_content`
+* prefer `rdf.yaml` over `bioimageio.yaml` (name `bioimageio.yaml` file `rdf.yaml` file when packaging, look for `rdf.yaml` first, etc.)
+* enforce: (generic 0.3/model 0.5 spec) documentation source file encoding has to be UTF-8.
+* bugfix: allow optional pre- and postprocessing to be missing in an RDF (before it required an empty dict).
+
+#### bioimageio.spec 0.5.3.2
+
+* bugfix "reset known files if root changes" (#619)
+
+#### bioimageio.spec 0.5.3.1
+
+note: the versioning scheme was changed as our previous `post` releases include changes beyond what a post release should entail (only changing docstrings, etc).
+This was motivated by the desire to keep the library version in sync with the (model) format version to avoid confusion.
+To keep this relation, but avoid overbearing post releases a library version number is now added as the 4th part MAJOR.MINOR.PATCH.LIB_VERSION.
+
+* add `load_model_description` and `load_dataset_description`
+* add `ensure_description_is_model` and `ensure_description_is_dataset`
+* expose `perform_io_checks` and `known_files` from `ValidationContext` to `load_description` and `load_description_and_validate_format_only`
 
 #### bioimageio.spec 0.5.3post4
 
