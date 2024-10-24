@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
+from zipfile import ZipFile
 
 from pydantic import DirectoryPath
 
@@ -20,7 +21,7 @@ class ValidationContext:
         init=False, default_factory=list
     )
 
-    root: Union[RootHttpUrl, AbsoluteDirectory] = Path()
+    root: Union[RootHttpUrl, AbsoluteDirectory, ZipFile] = Path()
     """url/directory serving as base to resolve any relative file paths"""
 
     warning_level: WarningLevel = 50
@@ -43,7 +44,7 @@ class ValidationContext:
 
     def replace(
         self,
-        root: Optional[Union[RootHttpUrl, DirectoryPath]] = None,
+        root: Optional[Union[RootHttpUrl, DirectoryPath, ZipFile]] = None,
         warning_level: Optional[WarningLevel] = None,
         log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,

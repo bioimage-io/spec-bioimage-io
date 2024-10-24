@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import sys
 import warnings
+import zipfile
 from abc import abstractmethod
 from collections.abc import Mapping as MappingAbc
 from dataclasses import dataclass
@@ -82,7 +83,8 @@ else:
 
 
 AbsolutePathT = TypeVar(
-    "AbsolutePathT", bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath]
+    "AbsolutePathT",
+    bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, zipfile.Path],
 )
 
 
@@ -132,18 +134,21 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     @abstractmethod
     def get_absolute(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl]
+        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
     ) -> AbsolutePathT: ...
 
     def _get_absolute_impl(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl]
-    ) -> Union[Path, HttpUrl]:
+        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
+    ) -> Union[Path, HttpUrl, zipfile.Path]:
         if isinstance(root, Path):
             return (root / self.root).absolute()
 
+        rel_path = self.root.as_posix().strip("/")
+        if isinstance(root, ZipFile):
+            return zipfile.Path(root, rel_path)
+
         parsed = urlsplit(str(root))
         path = list(parsed.path.strip("/").split("/"))
-        rel_path = self.root.as_posix().strip("/")
         if (
             parsed.netloc == "zenodo.org"
             and parsed.path.startswith("/api/records/")
@@ -175,7 +180,9 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         return cls(PurePath(value))
 
 
-class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], frozen=True):
+class RelativeFilePath(
+    RelativePathBase[Union[AbsoluteFilePath, HttpUrl, zipfile.Path]], frozen=True
+):
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
     def model_post_init(self, __context: Any) -> None:
@@ -185,8 +192,8 @@ class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], froze
         super().model_post_init(__context)
 
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl"
-    ) -> "AbsoluteFilePath | HttpUrl":
+        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
+    ) -> "AbsoluteFilePath | HttpUrl | zipfile.Path":
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -200,11 +207,11 @@ class RelativeFilePath(RelativePathBase[Union[AbsoluteFilePath, HttpUrl]], froze
 
 
 class RelativeDirectory(
-    RelativePathBase[Union[AbsoluteDirectory, HttpUrl]], frozen=True
+    RelativePathBase[Union[AbsoluteDirectory, HttpUrl, zipfile.Path]], frozen=True
 ):
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl"
-    ) -> "AbsoluteDirectory | HttpUrl":
+        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
+    ) -> "AbsoluteDirectory | HttpUrl | zipfile.Path":
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -506,14 +513,14 @@ def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
 @dataclass
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent
-    original_root: Union[AbsoluteDirectory, RootHttpUrl]
+    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
 @dataclass
 class DownloadedFile:
-    path: FilePath
-    original_root: Union[AbsoluteDirectory, RootHttpUrl]
+    path: Union[FilePath, zipfile.Path]
+    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
@@ -571,6 +578,16 @@ class Progressbar(Protocol):
     def close(self): ...
 
 
+# def open(source: Union[PermissiveFileSource, FileDescr], /, progressbar: Union[Progressbar, bool, None] = None,
+#     **kwargs: Unpack[HashKwargs]):
+#     if isinstance(source, FileDescr):
+#         if kwargs.get("sha256") is None:
+#             kwargs["sha256"] = source.sha256
+#         source = source.source
+
+#     if isinstance(source, RelativeFilePath):
+
+
 def download(
     source: Union[PermissiveFileSource, FileDescr],
     /,
@@ -580,10 +597,22 @@ def download(
     """download `source` URL (or pass local file path)"""
     if isinstance(source, FileDescr):
         return source.download()
+    elif isinstance(source, zipfile.Path):
+        zip_root = source.root
+        assert isinstance(zip_root, ZipFile)
+        return DownloadedFile(
+            source,
+            zip_root,
+            extract_file_name(source),
+        )
 
     strict_source = interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
         strict_source = strict_source.absolute()
+        if isinstance(strict_source, zipfile.Path):
+            return DownloadedFile(
+                strict_source, strict_source.root, extract_file_name(strict_source)
+            )
 
     if isinstance(strict_source, PurePath):
         if not strict_source.exists():
@@ -677,9 +706,11 @@ class FileDescr(Node):
 
 
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath],
+    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath, zipfile.Path],
 ) -> FileName:
-    if isinstance(src, RelativeFilePath):
+    if isinstance(src, zipfile.Path):
+        return src.name or src.root.filename or "bioimageio.zip"
+    elif isinstance(src, RelativeFilePath):
         return src.path.name
     elif isinstance(src, PurePath):
         return src.name
