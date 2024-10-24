@@ -1,4 +1,5 @@
 from typing import Dict, Literal, Optional, TextIO, Union, cast
+from zipfile import ZipFile
 
 from loguru import logger
 from pydantic import FilePath, NewPath
@@ -26,7 +27,7 @@ from .summary import ValidationSummary
 
 
 def load_description(
-    source: PermissiveFileSource,
+    source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -72,7 +73,7 @@ def load_description(
 
 
 def load_model_description(
-    source: PermissiveFileSource,
+    source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -92,7 +93,7 @@ def load_model_description(
 
 
 def load_dataset_description(
-    source: PermissiveFileSource,
+    source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
@@ -131,7 +132,7 @@ def save_bioimageio_yaml_only(
 
 
 def load_description_and_validate_format_only(
-    source: PermissiveFileSource,
+    source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,

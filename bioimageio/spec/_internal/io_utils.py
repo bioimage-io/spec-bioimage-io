@@ -1,5 +1,6 @@
 import io
 import warnings
+import zipfile
 from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
@@ -10,7 +11,6 @@ from typing import (
     Dict,
     Mapping,
     Optional,
-    TextIO,
     Union,
     cast,
 )
@@ -35,6 +35,7 @@ from .io import (
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
+    identify_bioimageio_yaml_file_name,
 )
 from .io_basics import FileName
 from .types import FileSource, PermissiveFileSource
@@ -43,7 +44,7 @@ from .utils import cache
 yaml = YAML(typ="safe")
 
 
-def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
+def read_yaml(file: Union[FilePath, IO[str], IO[bytes]]) -> YamlValue:
     if isinstance(file, Path):
         cm = file.open("r", encoding="utf-8")
     else:
@@ -55,7 +56,9 @@ def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
     return content
 
 
-def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
+def write_yaml(
+    content: YamlValue, /, file: Union[NewPath, FilePath, IO[str], IO[bytes]]
+):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
     else:
@@ -81,9 +84,26 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
+def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimageioYaml:
+    with source.open(rdf_name) as f:
+        content = _sanitize_bioimageio_yaml(read_yaml(f))
+
+    return OpenedBioimageioYaml(content, source, source.filename or "bioimageio.zip")
+
+
+def _open_bioimageio_zip(source: ZipFile) -> OpenedBioimageioYaml:
+    rdf_name = identify_bioimageio_yaml_file_name(
+        [info.filename for info in source.filelist]
+    )
+    return _open_bioimageio_rdf_in_zip(source, rdf_name)
+
+
 def open_bioimageio_yaml(
-    source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]
+    source: Union[PermissiveFileSource, ZipFile], /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
+    if isinstance(source, ZipFile):
+        return _open_bioimageio_zip(source)
+
     try:
         downloaded = download(source, **kwargs)
     except Exception:
@@ -113,17 +133,18 @@ def open_bioimageio_yaml(
         downloaded = entry.download()
 
     local_source = downloaded.path
-    root = downloaded.original_root
-
-    if is_zipfile(local_source):
-        local_source = unzip(local_source)
+    if isinstance(local_source, zipfile.Path):
+        return _open_bioimageio_rdf_in_zip(local_source.root, local_source.name)
+    elif is_zipfile(local_source):
+        return _open_bioimageio_zip(ZipFile(local_source))
 
     if local_source.is_dir():
         root = local_source
         local_source = local_source / find_bioimageio_yaml_file_name(local_source)
+    else:
+        root = downloaded.original_root
 
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
-
     return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
 
 
@@ -244,9 +265,10 @@ def write_zip(
 
 def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:
     path = download(source).path
+    with path.open(mode="rb") as f:
+        return numpy.load(f, allow_pickle=False)
 
-    return numpy.load(path, allow_pickle=False)
 
-
-def save_array(path: Path, array: NDArray[Any]) -> None:
-    return numpy.save(path, array, allow_pickle=False)
+def save_array(path: Union[Path, zipfile.Path], array: NDArray[Any]) -> None:
+    with path.open(mode="wb") as f:
+        return numpy.save(f, array, allow_pickle=False)
