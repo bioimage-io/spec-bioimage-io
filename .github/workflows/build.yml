@@ -43,11 +43,13 @@ jobs:
         if: matrix.test-format
       - run: pyright --version
       - run: pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
-      - if: matrix.python-version != '3.12'
+      - if: matrix.python-version != '3.12' || github.event_name != 'pull_request'
         run: pytest
       - if: matrix.python-version == '3.12' && github.event_name == 'pull_request'
+        run: pip install pytest-cov
+      - if: matrix.python-version == '3.12' && github.event_name == 'pull_request'
         run: pytest --cov-report xml:coverage.xml
-      - if: matrix.python-version != '3.12' || github.event_name != 'pull_request'
+      - if: matrix.python-version == '3.12' && github.event_name == 'pull_request'
         uses: orgoro/coverage@v3.2
         with:
           coverageFile: coverage.xml
