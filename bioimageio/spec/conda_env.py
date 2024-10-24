@@ -134,6 +134,12 @@ def _get_default_pytorch_env(
         deps = [f"pytorch=={v}", "torchvision==0.17.2", "torchaudio==2.2.2"]
     elif v == "2.3.0":
         deps = [f"pytorch=={v}", "torchvision==0.18.0", "torchaudio==2.3.0"]
+    elif v == "2.3.1":
+        deps = [f"pytorch=={v}", "torchvision==0.18.1", "torchaudio==2.3.1"]
+    elif v == "2.4.0":
+        deps = [f"pytorch=={v}", "torchvision==0.19.0", "torchaudio==2.4.0"]
+    elif v == "2.4.1":
+        deps = [f"pytorch=={v}", "torchvision==0.19.1", "torchaudio==2.4.1"]
     else:
         warnings.warn(
             "UPDATE NEEDED: Unknown pins for additional pytorch dependencies!"
