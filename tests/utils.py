@@ -145,7 +145,7 @@ def check_bioimageio_yaml(
     downloaded_source = download(source)
     root = downloaded_source.original_root
     with downloaded_source.path.open(encoding="utf-8") as f:
-        data: Union[Any, Dict[Any, Any]] = yaml.load(f)
+        data: Dict[Any, Any] = yaml.load(f)
 
     assert isinstance(data, dict), type(data)
     format_version = "latest" if as_latest else "discover"
@@ -205,6 +205,7 @@ def check_bioimageio_yaml(
     deserialized = rd.model_dump(
         mode="json", exclude=exclude_from_comp, exclude_unset=True
     )
+
     expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
     assert_rdf_dict_equal(
         deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True
