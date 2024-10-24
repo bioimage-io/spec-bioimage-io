@@ -5,6 +5,7 @@ from typing import List, Optional, TypedDict, Union
 from ruyaml import YAML
 from typing_extensions import assert_never
 
+from bioimageio.spec._internal.gh_utils import set_github_warning
 from bioimageio.spec.common import RelativeFilePath
 from bioimageio.spec.model import v0_4, v0_5
 from bioimageio.spec.model.v0_5 import Version
@@ -141,8 +142,8 @@ def _get_default_pytorch_env(
     elif v == "2.4.1":
         deps = [f"pytorch=={v}", "torchvision==0.19.1", "torchaudio==2.4.1"]
     else:
-        warnings.warn(
-            "UPDATE NEEDED: Unknown pins for additional pytorch dependencies!"
+        set_github_warning(
+            "UPDATE NEEDED", "Specify pins for additional pytorch dependencies!"
         )
         deps = [f"pytorch=={v}", "torchvision", "torchaudio"]
 
