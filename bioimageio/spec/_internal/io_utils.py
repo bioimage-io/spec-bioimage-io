@@ -231,9 +231,33 @@ def unzip(
     return out_path
 
 
+def write_content_to_zip(
+    content: Mapping[FileName, Union[str, FilePath, zipfile.Path, Dict[Any, Any]]],
+    zip: zipfile.ZipFile,
+):
+    """write strings as text, dictionaries as yaml and files to a ZipFile
+    Args:
+        content: dict mapping archive names to local file paths,
+                 strings (for text files), or dict (for yaml files).
+        zip: ZipFile
+    """
+    for arc_name, file in content.items():
+        if isinstance(file, dict):
+            buf = io.StringIO()
+            write_yaml(file, buf)
+            file = buf.getvalue()
+
+        if isinstance(file, str):
+            zip.writestr(arc_name, file.encode("utf-8"))
+        elif isinstance(file, zipfile.Path):
+            zip.writestr(arc_name, file.open("rb").read())
+        else:
+            zip.write(file, arcname=arc_name)
+
+
 def write_zip(
     path: Union[FilePath, IO[bytes]],
-    content: Mapping[FileName, Union[str, FilePath, Dict[Any, Any]]],
+    content: Mapping[FileName, Union[str, FilePath, zipfile.Path, Dict[Any, Any]]],
     *,
     compression: int,
     compression_level: int,
@@ -250,17 +274,8 @@ def write_zip(
     """
     with ZipFile(
         path, "w", compression=compression, compresslevel=compression_level
-    ) as myzip:
-        for arc_name, file in content.items():
-            if isinstance(file, dict):
-                buf = io.StringIO()
-                write_yaml(file, buf)
-                file = buf.getvalue()
-
-            if isinstance(file, str):
-                myzip.writestr(arc_name, file.encode("utf-8"))
-            else:
-                myzip.write(file, arcname=arc_name)
+    ) as zip:
+        write_content_to_zip(content, zip)
 
 
 def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:

@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import collections.abc
 import traceback
+import zipfile
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from io import BytesIO
+from pathlib import Path
 from typing import (
+    IO,
     TYPE_CHECKING,
     Any,
     ClassVar,
@@ -21,6 +25,7 @@ from typing import (
     cast,
     get_type_hints,
 )
+from zipfile import ZipFile
 
 import pydantic
 from pydantic import (
@@ -52,9 +57,15 @@ from ..summary import (
 )
 from .field_warning import issue_warning
 from .io import BioimageioYamlContent
+from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
+from .io_utils import write_content_to_zip
 from .node import Node as Node
+from .packaging_context import PackagingContext
 from .url import HttpUrl
-from .utils import assert_all_params_set_explicitly, get_format_version_tuple
+from .utils import (
+    assert_all_params_set_explicitly,
+    get_format_version_tuple,
+)
 from .validation_context import (
     ValidationContext,
     validation_context_var,
@@ -449,6 +460,50 @@ class ResourceDescrBase(
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
 
         return rd, val_errors, val_warnings
+
+    def package(
+        self, dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None, /
+    ) -> ZipFile:
+        """package the described resource as a zip archive
+
+        Args:
+            dest: (path/bytes stream of) destination zipfile
+        """
+        if dest is None:
+            dest = BytesIO()
+
+        if isinstance(dest, ZipFile):
+            zip = dest
+            if "r" in zip.mode:
+                raise ValueError(
+                    f"zip file {dest} opened in '{zip.mode}' mode,"
+                    + " but write access is needed for packaging."
+                )
+        else:
+            zip = ZipFile(dest, mode="w")
+
+        content = self.get_package_content()
+        write_content_to_zip(content, zip)
+        return zip
+
+    def get_package_content(
+        self,
+    ) -> Dict[
+        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, zipfile.Path]
+    ]:
+        """Returns package content without creating the package."""
+        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, zipfile.Path]] = {}
+        with PackagingContext(
+            bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
+            file_sources=content,
+        ):
+            rdf_content: BioimageioYamlContent = self.model_dump(
+                mode="json", exclude_unset=True
+            )
+
+        _ = rdf_content.pop("rdf_source", None)
+
+        return {**content, BIOIMAGEIO_YAML: rdf_content}
 
 
 class InvalidDescr(

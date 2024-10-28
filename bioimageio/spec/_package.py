@@ -1,6 +1,6 @@
 import collections.abc
-import re
 import shutil
+import zipfile
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
@@ -22,14 +22,11 @@ from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
 from ._internal.packaging_context import PackagingContext
 from ._internal.url import HttpUrl
+from ._internal.utils import get_os_friendly_file_name
 from ._internal.validation_context import validation_context_var
 from ._internal.warning_levels import ERROR
 from ._io import load_description
 from .model.v0_4 import WeightsFormat
-
-
-def get_os_friendly_file_name(name: str) -> str:
-    return re.sub(r"\W+|^(?=\d)", "_", name)
 
 
 def get_resource_package_content(
@@ -38,7 +35,9 @@ def get_resource_package_content(
     *,
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
-) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent]]:
+) -> Dict[
+    FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, zipfile.Path]
+]:
     """
     Args:
         rd: resource description
@@ -55,7 +54,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
         bioimageio_yaml_file_name
     )
-    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath]] = {}
+    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, zipfile.Path]] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,
@@ -75,7 +74,7 @@ def _prepare_resource_package(
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
-) -> Dict[FileName, Union[FilePath, BioimageioYamlContent]]:
+) -> Dict[FileName, Union[FilePath, BioimageioYamlContent, zipfile.Path]]:
     """Prepare to package a resource description; downloads all required files.
 
     Args:
@@ -109,9 +108,11 @@ def _prepare_resource_package(
             weights_priority_order=weights_priority_order,
         )
 
-    local_package_content: Dict[FileName, Union[FilePath, BioimageioYamlContent]] = {}
+    local_package_content: Dict[
+        FileName, Union[FilePath, BioimageioYamlContent, zipfile.Path]
+    ] = {}
     for k, v in package_content.items():
-        if not isinstance(v, collections.abc.Mapping):
+        if not isinstance(v, (collections.abc.Mapping, zipfile.Path)):
             v = download(v).path
 
         local_package_content[k] = v
@@ -158,11 +159,22 @@ def save_bioimageio_package_as_folder(
         output_path = Path(output_path)
 
     output_path.mkdir(exist_ok=True, parents=True)
-    for name, source in package_content.items():
-        if isinstance(source, collections.abc.Mapping):
-            write_yaml(cast(YamlValue, source), output_path / name)
+    for name, src in package_content.items():
+        if isinstance(src, collections.abc.Mapping):
+            write_yaml(cast(YamlValue, src), output_path / name)
+        elif isinstance(src, zipfile.Path):
+            extracted = Path(src.root.extract(src.name, output_path))
+            if extracted.name != src.name:
+                try:
+                    shutil.move(str(extracted), output_path / src.name)
+                except Exception as e:
+                    raise RuntimeError(
+                        f"Failed to rename extracted file '{extracted.name}'"
+                        + f" to '{src.name}'."
+                        + f" (extracted from '{src.name}' in '{src.root.filename}')"
+                    ) from e
         else:
-            shutil.copy(source, output_path / name)
+            shutil.copy(src, output_path / name)
 
     return output_path
 

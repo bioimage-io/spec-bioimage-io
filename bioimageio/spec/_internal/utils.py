@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from functools import wraps
 from inspect import signature
@@ -133,3 +134,7 @@ def assert_all_params_set_explicitly(fn: Callable[P, T]) -> Callable[P, T]:
         return fn(*args, **kwargs)
 
     return wrapper
+
+
+def get_os_friendly_file_name(name: str) -> str:
+    return re.sub(r"\W+|^(?=\d)", "_", name)

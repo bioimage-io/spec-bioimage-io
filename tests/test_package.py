@@ -3,7 +3,22 @@ import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from deepdiff import DeepDiff
+
 from bioimageio.spec.model import v0_5
+
+
+def test_package(unet2d_path: Path):
+    from bioimageio.spec import dump_description, load_description
+
+    descr = load_description(unet2d_path)
+    rdf = dump_description(descr)
+    zip = descr.package()
+    descr2 = load_description(zip)
+    rdf2 = dump_description(descr2)
+    diff = DeepDiff(rdf, rdf2)
+    assert not diff, diff.pretty()
+    assert descr == descr2
 
 
 def test_save_bioimageio_package(unet2d_path: Path):
