@@ -44,6 +44,14 @@ jobs:
       - run: pyright --version
       - run: pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
       - run: pytest
+      - run: ls coverage.xml
+      - if: matrix.python-version == '3.12' && github.event_name == 'pull_request'
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
 
   deploy:
     runs-on: ubuntu-latest

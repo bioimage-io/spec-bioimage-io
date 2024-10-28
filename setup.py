@@ -62,6 +62,7 @@ _ = setup(
             "pre-commit",
             "psutil",  # parallel pytest with '-n auto'
             "pyright==1.1.378",
+            "pytest-cov",
             "pytest-xdist",  # parallel pytest
             "pytest",
             "python-devtools",
