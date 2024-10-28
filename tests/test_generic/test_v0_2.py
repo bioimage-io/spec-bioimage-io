@@ -167,7 +167,12 @@ EXAMPLE_COM = "https://example.com/"
     ],
 )
 def test_node(node_class: Type[Node], kwargs: Dict[str, Any], is_valid: bool):
-    check_node(node_class, kwargs, is_invalid=not is_valid)
+    check_node(
+        node_class,
+        kwargs,
+        is_invalid=not is_valid,
+        context=ValidationContext(perform_io_checks=True),
+    )
 
 
 def test_deprecated_license_in_generic():
