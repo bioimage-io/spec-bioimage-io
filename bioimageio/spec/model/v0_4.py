@@ -57,7 +57,6 @@ from .._internal.types import ImportantFileSource, LowerCaseIdentifier
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validation_context import validation_context_var
 from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
@@ -892,11 +891,10 @@ def package_weights(
                 + f" ({ctxt.weights_priority_order}) is present in the given model."
             )
 
-        # create WeightsDescr with single weight format entry
-        with validation_context_var.get().replace(perform_io_checks=False):
-            new_w = w.model_copy()
-            new_w.parent = None
-            value = value.__class__(**{wf: new_w})
+        assert isinstance(w, Node), type(w)
+        # construct WeightsDescr with new single weight format entry
+        new_w = w.model_construct(**{k: v for k, v in w if k != "parent"})
+        value = value.model_construct(None, **{wf: new_w})
 
     return handler(
         value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
