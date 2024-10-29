@@ -4,6 +4,7 @@
 [![downloads](https://static.pepy.tech/badge/bioimageio.spec)](https://pepy.tech/project/bioimageio.spec)
 [![conda-forge downloads](https://img.shields.io/conda/dn/conda-forge/bioimageio.spec.svg?label=conda-forge)](https://anaconda.org/conda-forge/bioimageio.spec/)
 ![code style](https://img.shields.io/badge/code%20style-black-000000.svg)
+[![coverage](https://bioimage-io.github.io/spec-bioimage-io/coverage/coverage-badge.svg)](https://bioimage-io.github.io/spec-bioimage-io/coverage/index.html)
 
 # Specifications for bioimage.io
 

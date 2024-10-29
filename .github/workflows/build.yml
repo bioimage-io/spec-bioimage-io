@@ -50,13 +50,28 @@ jobs:
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-
+      - if: matrix.python-version == '3.12'
+        run: |
+          pip install genbadge[coverage]
+          genbadge coverage --input-file coverage.xml --output-file ./dist/coverage/coverage-badge.svg
+          coverage html -d dist/coverage
+      - if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          retention-days: 1
+          path: dist
 
 
   deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: dist
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
