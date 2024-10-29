@@ -875,7 +875,7 @@ class LinkedModel(Node):
 
 
 def package_weights(
-    value: Node,
+    value: Node,  # Union[v0_4.WeightsDescr, v0_5.WeightsDescr]
     handler: SerializerFunctionWrapHandler,
     info: SerializationInfo,
 ):
@@ -891,14 +891,10 @@ def package_weights(
                 + f" ({ctxt.weights_priority_order}) is present in the given model."
             )
 
-        # remove links to parent entry (otherwise we cannot remove the parent)
-        for _, w in value:
-            if w is not None:
-                w.parent = None
-
-        for field_name in value.model_fields:
-            if field_name != wf:
-                setattr(value, field_name, None)
+        assert isinstance(w, Node), type(w)
+        # construct WeightsDescr with new single weight format entry
+        new_w = w.model_construct(**{k: v for k, v in w if k != "parent"})
+        value = value.model_construct(None, **{wf: new_w})
 
     return handler(
         value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
