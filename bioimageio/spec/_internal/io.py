@@ -589,7 +589,7 @@ class Progressbar(Protocol):
 
 
 def download(
-    source: Union[PermissiveFileSource, FileDescr],
+    source: Union[PermissiveFileSource, FileDescr, zipfile.Path],
     /,
     progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
