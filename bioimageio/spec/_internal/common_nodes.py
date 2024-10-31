@@ -253,7 +253,7 @@ class NodeWithExplicitlySetFields(Node):
                         call_default_factory=True
                     )
 
-        return data
+        return data  # pyright: ignore[reportUnknownVariableType]
 
 
 if TYPE_CHECKING:
@@ -298,12 +298,12 @@ class ResourceDescrBase(
             or not isinstance(data, dict)
             or "format_version" not in data
         ):
-            return data
+            return data  # pyright: ignore[reportUnknownVariableType]
 
-        value = data["format_version"]
+        value: Any = data["format_version"]
         fv = get_format_version_tuple(value)
         if fv is None:
-            return data
+            return data  # pyright: ignore[reportUnknownVariableType]
 
         if (
             fv[0] == cls.implemented_format_version_tuple[0]
@@ -317,7 +317,7 @@ class ResourceDescrBase(
             )
             data["format_version"] = cls.implemented_format_version
 
-        return data
+        return data  # pyright: ignore[reportUnknownVariableType]
 
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
