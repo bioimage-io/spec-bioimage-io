@@ -122,6 +122,15 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3.4 (to be released)
+
+* support loading and saving from/to zipfile.ZipFile objects
+* fix bug when packaging with weights priority order (#638)
+* add conda_env module providing helper to create recommended conda environments for model descriptions
+* fix summary formatting
+* improve logged origin for logged messages
+* make the `model.v0_5.ModelDescr.training_data` field a `left_to_right` Union to avoid warnings
+
 #### bioimageio.spec 0.5.3.3
 
 * expose `progressbar` to customize display of download progress
