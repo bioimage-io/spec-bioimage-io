@@ -4,6 +4,7 @@ import zipfile
 from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
+from tempfile import mktemp
 from types import MappingProxyType
 from typing import (
     IO,
@@ -189,46 +190,47 @@ def unzip(
     if isinstance(zip_file, ZipFile):
         zip_context = nullcontext(zip_file)
         if out_path is None:
-            raise ValueError("Missing argument: out_path")
+            if zip_file.filename is None:
+                out_path = Path(mktemp())
+            else:
+                zip_path = Path(zip_file.filename)
+                out_path = zip_path.with_suffix(zip_path.suffix + ".unzip")
     else:
         zip_context = ZipFile(zip_file, "r")
         if out_path is None:
             out_path = zip_file.with_suffix(zip_file.suffix + ".unzip")
 
+    if overwrite and out_path.exists():
+        warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
+
     with zip_context as f:
-        if out_path.exists() and overwrite:
-            if overwrite:
-                warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
+        if overwrite or not out_path.exists():
+            f.extractall(out_path)
+            return out_path
+
+        found_content = {p.relative_to(out_path).as_posix() for p in out_path.glob("*")}
+        expected_content = {info.filename for info in f.filelist}
+        if expected_missing := expected_content - found_content:
+            parts = out_path.name.split("_")
+            nr, *suffixes = parts[-1].split(".")
+            if nr.isdecimal():
+                nr = str(int(nr) + 1)
             else:
-                found_content = {
-                    p.relative_to(out_path).as_posix() for p in out_path.glob("*")
-                }
-                expected_content = {info.filename for info in f.filelist}
-                if expected_content - found_content:
-                    warnings.warn(
-                        f"Unzipped archive at {out_path} is missing expected files."
-                    )
-                    parts = out_path.name.split("_")
-                    nr, *suffixes = parts[-1].split(".")
-                    if nr.isdecimal():
-                        nr = str(int(nr) + 1)
-                    else:
-                        nr = f"1.{nr}"
+                nr = f"1.{nr}"
 
-                    parts[-1] = ".".join([nr, *suffixes])
-                    return unzip(
-                        f, out_path.with_name("_".join(parts)), overwrite=overwrite
-                    )
-                else:
-                    warnings.warn(
-                        "Using already unzipped archive with all expected files at"
-                        + f" {out_path}."
-                    )
-                    return out_path
-
-        f.extractall(out_path)
-
-    return out_path
+            parts[-1] = ".".join([nr, *suffixes])
+            out_path_new = out_path.with_name("_".join(parts))
+            warnings.warn(
+                f"Unzipped archive at {out_path} is missing expected files"
+                + f" {expected_missing}."
+                + f" Unzipping to {out_path_new} instead to avoid overwriting."
+            )
+            return unzip(f, out_path_new, overwrite=overwrite)
+        else:
+            warnings.warn(
+                f"Found unzipped archive with all expected files at {out_path}."
+            )
+            return out_path
 
 
 def write_content_to_zip(
