@@ -183,10 +183,15 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
 
 
 def unzip(
-    zip_file: Union[FilePath, ZipFile],
+    zip_file: Union[FilePath, ZipFile, zipfile.Path],
     out_path: Optional[DirectoryPath] = None,
     overwrite: bool = False,
 ) -> DirectoryPath:
+    extract_member = None
+    if isinstance(zip_file, zipfile.Path):
+        extract_member = zip_file.at
+        zip_file = zip_file.root
+
     if isinstance(zip_file, ZipFile):
         zip_context = nullcontext(zip_file)
         if out_path is None:
@@ -204,7 +209,16 @@ def unzip(
         warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
 
     with zip_context as f:
-        if overwrite or not out_path.exists():
+        if extract_member is not None:
+            extracted_file_path = out_path / extract_member
+            if extracted_file_path.exists() and not overwrite:
+                warnings.warn(f"Found unzipped {extracted_file_path}.")
+            else:
+                _ = f.extract(extract_member, out_path)
+
+            return out_path
+
+        elif overwrite or not out_path.exists():
             f.extractall(out_path)
             return out_path
 
