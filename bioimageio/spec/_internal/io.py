@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-# pyright: reportUnnecessaryTypeIgnoreComment=warning
 import hashlib
 import sys
 import warnings
 import zipfile
 from abc import abstractmethod
 from collections.abc import Mapping as MappingAbc
+
+# pyright: reportUnnecessaryTypeIgnoreComment=warning
+from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import lru_cache
 from math import ceil
 from pathlib import Path, PurePath
+from tempfile import mktemp
 from typing import (
     Any,
     Dict,
@@ -518,9 +521,16 @@ class OpenedBioimageioYaml:
 
 
 @dataclass
-class DownloadedFile:
-    path: Union[FilePath, zipfile.Path]
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
+class LocalFile:
+    path: FilePath
+    original_root: Union[AbsoluteDirectory, RootHttpUrl, FileInZip]
+    original_file_name: FileName
+
+
+@dataclass
+class FileInZip:
+    path: zipfile.Path
+    original_root: ZipFile
     original_file_name: FileName
 
 
@@ -578,29 +588,84 @@ class Progressbar(Protocol):
     def close(self): ...
 
 
-# def open(source: Union[PermissiveFileSource, FileDescr], /, progressbar: Union[Progressbar, bool, None] = None,
-#     **kwargs: Unpack[HashKwargs]):
-#     if isinstance(source, FileDescr):
-#         if kwargs.get("sha256") is None:
-#             kwargs["sha256"] = source.sha256
-#         source = source.source
+def extract(
+    source: Union[FilePath, ZipFile, zipfile.Path],
+    folder: Optional[DirectoryPath] = None,
+    overwrite: bool = False,
+) -> DirectoryPath:
+    extract_member = None
+    if isinstance(source, zipfile.Path):
+        extract_member = source.at
+        source = source.root
 
-#     if isinstance(source, RelativeFilePath):
+    if isinstance(source, ZipFile):
+        zip_context = nullcontext(source)
+        if folder is None:
+            if source.filename is None:
+                folder = Path(mktemp())
+            else:
+                zip_path = Path(source.filename)
+                folder = zip_path.with_suffix(zip_path.suffix + ".unzip")
+    else:
+        zip_context = ZipFile(source, "r")
+        if folder is None:
+            folder = source.with_suffix(source.suffix + ".unzip")
+
+    if overwrite and folder.exists():
+        warnings.warn(f"Overwriting existing unzipped archive at {folder}")
+
+    with zip_context as f:
+        if extract_member is not None:
+            extracted_file_path = folder / extract_member
+            if extracted_file_path.exists() and not overwrite:
+                warnings.warn(f"Found unzipped {extracted_file_path}.")
+            else:
+                _ = f.extract(extract_member, folder)
+
+            return folder
+
+        elif overwrite or not folder.exists():
+            f.extractall(folder)
+            return folder
+
+        found_content = {p.relative_to(folder).as_posix() for p in folder.glob("*")}
+        expected_content = {info.filename for info in f.filelist}
+        if expected_missing := expected_content - found_content:
+            parts = folder.name.split("_")
+            nr, *suffixes = parts[-1].split(".")
+            if nr.isdecimal():
+                nr = str(int(nr) + 1)
+            else:
+                nr = f"1.{nr}"
+
+            parts[-1] = ".".join([nr, *suffixes])
+            out_path_new = folder.with_name("_".join(parts))
+            warnings.warn(
+                f"Unzipped archive at {folder} is missing expected files"
+                + f" {expected_missing}."
+                + f" Unzipping to {out_path_new} instead to avoid overwriting."
+            )
+            return extract(f, out_path_new, overwrite=overwrite)
+        else:
+            warnings.warn(
+                f"Found unzipped archive with all expected files at {folder}."
+            )
+            return folder
 
 
-def download(
+def resolve(
     source: Union[PermissiveFileSource, FileDescr, zipfile.Path],
     /,
     progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
-) -> DownloadedFile:
-    """download `source` URL (or pass local file path)"""
+) -> Union[LocalFile, FileInZip]:
+    """Resolve file `source` (download if needed)"""
     if isinstance(source, FileDescr):
         return source.download()
     elif isinstance(source, zipfile.Path):
         zip_root = source.root
         assert isinstance(zip_root, ZipFile)
-        return DownloadedFile(
+        return FileInZip(
             source,
             zip_root,
             extract_file_name(source),
@@ -610,7 +675,7 @@ def download(
     if isinstance(strict_source, RelativeFilePath):
         strict_source = strict_source.absolute()
         if isinstance(strict_source, zipfile.Path):
-            return DownloadedFile(
+            return FileInZip(
                 strict_source, strict_source.root, extract_file_name(strict_source)
             )
 
@@ -650,10 +715,38 @@ def download(
         local_source = Path(_ls).absolute()
         root = strict_source.parent
 
-    return DownloadedFile(
+    return LocalFile(
         local_source,
         root,
         extract_file_name(strict_source),
+    )
+
+
+download = resolve
+
+
+def resolve_and_extract(
+    source: Union[PermissiveFileSource, FileDescr, zipfile.Path],
+    /,
+    progressbar: Union[Progressbar, bool, None] = None,
+    **kwargs: Unpack[HashKwargs],
+) -> LocalFile:
+    """Resolve `source` within current ValidationContext,
+    download if needed and
+    extract file if within zip archive.
+
+    note: If source points to a zip file it is not extracted
+    """
+    local = resolve(source, progressbar=progressbar)
+    if isinstance(local, LocalFile):
+        return local
+
+    extracted = extract(local.path)
+    # local.original_root
+    # local.original_root.extract(local.original_file_name, output_path)
+
+    return LocalFile(
+        extracted, original_root=local, original_file_name=local.original_file_name
     )
 
 
