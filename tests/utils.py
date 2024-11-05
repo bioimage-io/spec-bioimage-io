@@ -146,7 +146,7 @@ def check_bioimageio_yaml(
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
-    data: Union[Any, Dict[Any, Any]] = yaml.load(
+    data: Dict[Any, Any] = yaml.load(
         StringIO(downloaded_source.path.read_bytes().decode(encoding="utf-8"))
     )
 

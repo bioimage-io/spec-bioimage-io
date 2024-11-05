@@ -32,6 +32,7 @@ from pydantic_core import PydanticUndefined, PydanticUndefinedType
 from typing_extensions import List, TypeAlias, TypeAliasType, assert_never
 
 from bioimageio.spec._internal.io import YamlValue, is_yaml_leaf_value, is_yaml_value
+from bioimageio.spec._internal.validated_string import ValidatedString
 
 
 def eprint(message: str):
@@ -341,7 +342,7 @@ class RootModelHint(Hint):
         if issubclass(raw_hint, RootModel):
             inner = raw_hint.model_fields["root"]
             inner_hint = get_field_annotation(inner)
-        elif any(klass.__name__ == "ValidatedString" for klass in raw_hint.__mro__):
+        elif issubclass(raw_hint, ValidatedString):
             inner_hint = raw_hint.root_model
         else:
             return Unrecognized(raw_hint=raw_hint)
