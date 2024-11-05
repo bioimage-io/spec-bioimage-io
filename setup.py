@@ -42,7 +42,6 @@ _ = setup(
         "pydantic-settings",
         "pydantic>=2.7.0,<3",
         "python-dateutil",
-        "python-dotenv",
         "requests",
         "rich",
         "ruyaml",
@@ -64,14 +63,16 @@ _ = setup(
         "dev": test_extras
         + [
             "black",
-            "json_schema_for_humans",
-            "jsonschema",
             "jupyter",
             "pdoc",
             "pre-commit",
             "pyright==1.1.378",  # requires py>=3.13
             "python-devtools",
             "ruff",  # check line length in cases black cannot fix it
+        ],
+        "json": [
+            "json_schema_for_humans",
+            "jsonschema",
         ],
     },
     scripts=[],
