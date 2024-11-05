@@ -1,7 +1,8 @@
 import warnings
 import zipfile
-from typing import List, Optional, TypedDict, Union
+from typing import Any, List, Literal, Optional, Union
 
+from pydantic import BaseModel, Field, field_validator, model_validator
 from ruyaml import YAML
 from typing_extensions import assert_never
 
@@ -26,23 +27,79 @@ SupportedWeightsEntry = Union[
 ]
 
 
-class PipDeps(TypedDict):
-    pip: List[str]
+class PipDeps(BaseModel):
+    pip: List[str] = Field(default_factory=list)
+
+    def __lt__(self, other: Any):
+        if isinstance(other, PipDeps):
+            return len(self.pip) < len(other.pip)
+        else:
+            return False
 
 
-class CondaEnv(TypedDict):
-    name: str
-    channels: List[str]
-    dependencies: List[
-        Union[str, PipDeps]
-    ]  # TODO: improve typing: last entry is PipDeps
+class CondaEnv(BaseModel):
+    name: Optional[str] = None
+    channels: List[str] = Field(default_factory=list)
+    dependencies: List[Union[str, PipDeps]] = Field(default_factory=list)
+
+    @field_validator("name", mode="after")
+    def _ensure_valid_conda_env_name(self, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+
+        for illegal in ("/", " ", ":", "#"):
+            value = value.replace(illegal, "")
+
+        return value or "empty"
+
+    @property
+    def wo_name(self):
+        return self.model_construct(**{k: v for k, v in self if k != "name"})
+
+
+class BioimageioCondaEnv(CondaEnv):
+    @model_validator(mode="after")
+    def _normalize_bioimageio_conda_env(self):
+        """update a conda env such that we have bioimageio.core and sorted dependencies"""
+        for req_channel in ("conda-forge", "nodefaults"):
+            if req_channel not in self.channels:
+                self.channels.append(req_channel)
+
+        if "defaults" in self.channels:
+            warnings.warn("removing 'defaults' from conda-channels")
+            self.channels.remove("defaults")
+
+        if "pip" not in self.dependencies:
+            self.dependencies.append("pip")
+
+        for dep in self.dependencies:
+            if isinstance(dep, PipDeps):
+                pip_section = dep
+                pip_section.pip.sort()
+                break
+        else:
+            pip_section = None
+
+        if (
+            pip_section is not None
+            and any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
+        ) and not any(
+            d.startswith("bioimageio.core")
+            or d.startswith("conda-forge::bioimageio.core")
+            for d in self.dependencies
+            if not isinstance(d, PipDeps)
+        ):
+            self.dependencies.append("conda-forge::bioimageio.core")
+
+        self.dependencies.sort()
+        return self
 
 
 def get_conda_env(
     *,
     entry: SupportedWeightsEntry,
-    env_name: Optional[str] = None,
-) -> CondaEnv:
+    env_name: Optional[Union[Literal["DROP"], str]] = None,
+) -> BioimageioCondaEnv:
     """get the recommended Conda environment for a given weights entry description"""
     if isinstance(entry, (v0_4.OnnxWeightsDescr, v0_5.OnnxWeightsDescr)):
         conda_env = _get_default_onnx_env(opset_version=entry.opset_version)
@@ -77,20 +134,24 @@ def get_conda_env(
     else:
         assert_never(entry)
 
-    _normalize_bioimageio_conda_env(conda_env, env_name)
+    if env_name == "DROP":
+        conda_env.name = None
+    elif env_name is not None:
+        conda_env.name = env_name
+
     return conda_env
 
 
 def _get_default_pytorch_env(
     *,
     pytorch_version: Optional[Version] = None,
-) -> CondaEnv:
+) -> BioimageioCondaEnv:
     if pytorch_version is None:
         pytorch_version = Version("1.10.1")
 
     # dependencies to install pytorch according to https://pytorch.org/get-started/previous-versions/
     if (v := str(pytorch_version)) == "1.6.0":
-        deps = [f"pytorch=={v}", "torchvision==0.7.0"]
+        deps: List[Union[str, PipDeps]] = [f"pytorch=={v}", "torchvision==0.7.0"]
     elif v == "1.7.0":
         deps = [f"pytorch=={v}", "torchvision==0.8.0", "torchaudio==0.7.0"]
     elif v == "1.7.1":
@@ -172,25 +233,22 @@ def _get_default_pytorch_env(
     else:
         deps.append("numpy >=2,<3")
 
-    return CondaEnv(
-        name="env",
-        channels=["pytorch", "conda-forge"],
-        dependencies=list(deps),
+    return BioimageioCondaEnv(
+        channels=["pytorch", "conda-forge", "nodefaults"],
+        dependencies=deps,
     )
 
 
-def _get_default_onnx_env(*, opset_version: Optional[int]) -> CondaEnv:
+def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv:
     if opset_version is None:
         opset_version = 15
 
     # note: we should not need to worry about the opset version,
     # see https://github.com/microsoft/onnxruntime/blob/master/docs/Versioning.md
-    return CondaEnv(
-        name="env", channels=["nodefaults", "conda-forge"], dependencies=["onnxruntime"]
-    )
+    return BioimageioCondaEnv(dependencies=["onnxruntime"])
 
 
-def _get_default_tf_env(tensorflow_version: Optional[Version]) -> CondaEnv:
+def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCondaEnv:
     if tensorflow_version is None:
         tensorflow_version = Version("1.15")
 
@@ -210,22 +268,18 @@ def _get_default_tf_env(tensorflow_version: Optional[Version]) -> CondaEnv:
                 ]
             ),
         )
-        return CondaEnv(
-            name="env",
-            channels=["nodefaults", "conda-forge"],
+        return BioimageioCondaEnv(
             dependencies=list(deps),
         )
     else:
-        return CondaEnv(
-            name="env",
-            channels=["nodefaults", "conda-forge"],
+        return BioimageioCondaEnv(
             dependencies=["bioimageio.core", f"tensorflow =={tensorflow_version}"],
         )
 
 
 def _get_env_from_deps(
     deps: Union[v0_4.Dependencies, v0_5.EnvironmentFileDescr],
-) -> CondaEnv:
+) -> BioimageioCondaEnv:
     if isinstance(deps, v0_4.Dependencies):
         if deps.manager == "pip":
             pip_deps = [
@@ -234,10 +288,8 @@ def _get_env_from_deps(
             if "bioimageio.core" not in pip_deps:
                 pip_deps.append("bioimageio.core")
 
-            return CondaEnv(
-                name="env",
-                channels=["nodefaults", "conda-forge"],
-                dependencies=["pip", PipDeps(pip=pip_deps)],
+            return BioimageioCondaEnv(
+                dependencies=[PipDeps(pip=pip_deps)],
             )
         elif deps.manager not in ("conda", "mamba"):
             raise ValueError(f"Dependency manager {deps.manager} not supported")
@@ -252,74 +304,9 @@ def _get_env_from_deps(
             else:
                 local = download(deps_source).path
 
-            return CondaEnv(**yaml.load(local))
+            return BioimageioCondaEnv(**yaml.load(local))
     elif isinstance(deps, v0_5.EnvironmentFileDescr):
         local = download(deps.source).path
-        return CondaEnv(**yaml.load(local))
+        return BioimageioCondaEnv(**yaml.load(local))
     else:
         assert_never(deps)
-
-
-def _normalize_bioimageio_conda_env(env: CondaEnv, env_name: Optional[str] = None):
-    """update a conda env such that we have bioimageio.core and sorted dependencies
-
-    Args:
-
-    """
-    if env_name is None:
-        env["name"] = _ensure_valid_conda_env_name(env.get("name", ""))
-    else:
-        env["name"] = env_name
-
-    if "name" not in env:
-        env["name"] = "env"
-
-    if "channels" not in env:
-        env["channels"] = ["conda-forge", "nodefaults"]
-
-    if "dependencies" not in env:
-        env["dependencies"] = []
-
-    if "conda-forge" not in env["channels"]:
-        env["channels"].append("conda-forge")
-
-    if "defaults" in env["channels"]:
-        warnings.warn("removing 'defaults' from conda-channels")
-        env["channels"].remove("defaults")
-
-    if "nodefaults" not in env["channels"]:
-        env["channels"].append("nodefaults")
-
-    if "pip" not in env["dependencies"]:
-        env["dependencies"].append("pip")
-
-    for i in range(len(deps := env["dependencies"])):
-        if isinstance(deps[i], dict) and "pip" in deps[i]:
-            found_pip_section = deps.pop(i)
-            assert isinstance(found_pip_section, dict)
-            pip_section = found_pip_section
-            del found_pip_section
-            break
-    else:
-        pip_section: PipDeps = {"pip": []}
-
-    if (
-        "bioimageio.core" not in env["dependencies"]
-        or "conda-forge::bioimageio.core" not in env["dependencies"]
-        or "bioimageio.core" not in pip_section["pip"]
-    ):
-        env["dependencies"].append("conda-forge::bioimageio.core")
-
-    assert all(
-        isinstance(dep, str) for dep in env["dependencies"]
-    ), "found mapping in dependencies even after removing pip section"
-    env["dependencies"].sort()  # pyright: ignore[reportCallIssue]
-    pip_section["pip"].sort()
-    env["dependencies"].append(pip_section)
-
-
-def _ensure_valid_conda_env_name(name: str) -> str:
-    for illegal in ("/", " ", ":", "#"):
-        name = name.replace(illegal, "")
-
-    return name or "empty"
