@@ -12,7 +12,6 @@ long_description = (ROOT_DIR / "README.md").read_text(encoding="utf-8")
 VERSION_FILE = ROOT_DIR / "bioimageio" / "spec" / "VERSION"
 VERSION = json.loads(VERSION_FILE.read_text(encoding="utf-8"))["version"]
 
-
 _ = setup(
     name="bioimageio.spec",
     version=VERSION,
@@ -29,6 +28,7 @@ _ = setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     packages=find_namespace_packages(exclude=["tests"]),  # Required
     install_requires=[
@@ -50,24 +50,29 @@ _ = setup(
         "typing-extensions",
     ],
     extras_require={
-        "dev": [
+        "tests": (
+            test_extras := [
+                "deepdiff",
+                "filelock",  # for session fixtures due to pytest-xdist
+                "lxml",
+                "psutil",  # parallel pytest with '-n auto'
+                "pytest-cov",
+                "pytest-xdist",  # parallel pytest
+                "pytest",
+            ]
+        ),
+        "dev": test_extras
+        + [
             "black",
-            "deepdiff",
-            "filelock",  # for session fixtures due to pytest-xdist
+            "json_schema_for_humans",
             "jsonschema",
             "jupyter",
-            "lxml",
             "pdoc",
-            "json_schema_for_humans",
             "pre-commit",
-            "psutil",  # parallel pytest with '-n auto'
-            "pyright==1.1.378",
-            "pytest-cov",
-            "pytest-xdist",  # parallel pytest
-            "pytest",
+            "pyright==1.1.378",  # requires py>=3.13
             "python-devtools",
             "ruff",  # check line length in cases black cannot fix it
-        ]
+        ],
     },
     scripts=[],
     include_package_data=True,
