@@ -6,11 +6,11 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from ruyaml import YAML
 from typing_extensions import assert_never
 
-from bioimageio.spec._internal.gh_utils import set_github_warning
-from bioimageio.spec.common import RelativeFilePath
-from bioimageio.spec.model import v0_4, v0_5
-from bioimageio.spec.model.v0_5 import Version
-from bioimageio.spec.utils import download
+from ._internal.gh_utils import set_github_warning
+from .common import RelativeFilePath
+from .model import v0_4, v0_5
+from .model.v0_5 import Version
+from .utils import download
 
 yaml = YAML(typ="safe")
 
@@ -43,7 +43,7 @@ class CondaEnv(BaseModel):
     dependencies: List[Union[str, PipDeps]] = Field(default_factory=list)
 
     @field_validator("name", mode="after")
-    def _ensure_valid_conda_env_name(self, value: Optional[str]) -> Optional[str]:
+    def _ensure_valid_conda_env_name(cls, value: Optional[str]) -> Optional[str]:
         if value is None:
             return None
 
