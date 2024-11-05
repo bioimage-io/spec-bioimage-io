@@ -1122,11 +1122,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         ):
             return self
 
-        down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-
-        local_source = down.path
+        local = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
         tensor: NDArray[Any] = imread(
-            local_source, extension=PurePosixPath(down.original_file_name).suffix
+            local.path,  # pyright: ignore[reportArgumentType]
+            extension=PurePosixPath(local.original_file_name).suffix,
         )
         n_dims = len(tensor.squeeze().shape)
         n_dims_min = n_dims_max = len(self.axes)
@@ -1254,7 +1253,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes")
+            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
             if kwargs_axes is None:
                 continue
 
@@ -1339,11 +1338,8 @@ def convert_axes(
                     axis_id=AxisId(a_id),
                     offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
-        elif isinstance(shape, collections.abc.Sequence):
-            size = shape[i]
-            assert isinstance(size, int)
         else:
-            assert_never(shape)
+            size = shape[i]
 
         if axis_type == "time":
             if tensor_type == "input":
@@ -1595,7 +1591,10 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     def _validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
+            if kwargs_axes is None:
+                continue
+
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
                     f"expected `axes` sequence, but got {type(kwargs_axes)}"

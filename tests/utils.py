@@ -1,5 +1,6 @@
 from contextlib import nullcontext
 from copy import deepcopy
+from io import StringIO
 from pathlib import Path
 from typing import (
     Any,
@@ -13,6 +14,7 @@ from typing import (
     Type,
     Union,
 )
+from zipfile import ZipFile
 
 import jsonschema
 import pytest
@@ -135,7 +137,7 @@ def check_bioimageio_yaml(
     source: Union[Path, HttpUrl],
     /,
     *,
-    root: Union[RootHttpUrl, DirectoryPath] = Path(),
+    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Set[str] = set(),
     is_invalid: bool = False,
@@ -144,8 +146,9 @@ def check_bioimageio_yaml(
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
-    with downloaded_source.path.open(encoding="utf-8") as f:
-        data: Union[Any, Dict[Any, Any]] = yaml.load(f)
+    data: Union[Any, Dict[Any, Any]] = yaml.load(
+        StringIO(downloaded_source.path.read_bytes().decode(encoding="utf-8"))
+    )
 
     assert isinstance(data, dict), type(data)
     format_version = "latest" if as_latest else "discover"

@@ -231,7 +231,7 @@ def write_zip(
         write_content_to_zip(content, zip)
 
 
-def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:
+def load_array(source: Union[FileSource, FileDescr, zipfile.Path]) -> NDArray[Any]:
     path = download(source).path
     with path.open(mode="rb") as f:
         return numpy.load(f, allow_pickle=False)

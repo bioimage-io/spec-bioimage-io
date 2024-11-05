@@ -1,3 +1,4 @@
+# pyright: reportUnnecessaryTypeIgnoreComment=warning
 from __future__ import annotations
 
 import hashlib
@@ -6,8 +7,6 @@ import warnings
 import zipfile
 from abc import abstractmethod
 from collections.abc import Mapping as MappingAbc
-
-# pyright: reportUnnecessaryTypeIgnoreComment=warning
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
@@ -523,7 +522,7 @@ class OpenedBioimageioYaml:
 @dataclass
 class LocalFile:
     path: FilePath
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, FileInZip]
+    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
@@ -741,12 +740,12 @@ def resolve_and_extract(
     if isinstance(local, LocalFile):
         return local
 
-    extracted = extract(local.path)
-    # local.original_root
-    # local.original_root.extract(local.original_file_name, output_path)
+    folder = extract(local.path)
 
     return LocalFile(
-        extracted, original_root=local, original_file_name=local.original_file_name
+        folder / local.path.at,
+        original_root=local.original_root,
+        original_file_name=local.original_file_name,
     )
 
 
