@@ -107,6 +107,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         return self._absolute
 
     def model_post_init(self, __context: Any) -> None:
+        """set `_absolute` property with validation context at creation time. @private"""
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
 
@@ -188,6 +189,7 @@ class RelativeFilePath(
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
     def model_post_init(self, __context: Any) -> None:
+        """add validation @private"""
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
 
