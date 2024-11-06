@@ -2423,23 +2423,27 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def get_output_tensor_sizes(
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
     ) -> Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]:
+        """Returns the tensor output sizes for given **input_sizes**.
+        Only if **input_sizes** has a valid input shape, the tensor output size is exact.
+        Otherwise it might be larger than the actual (valid) output"""
         batch_size = self.get_batch_size(input_sizes)
         ns = self.get_ns(input_sizes)
 
         tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
-        assert tensor_sizes.inputs == {k: dict(v) for k, v in input_sizes.items()}
         return tensor_sizes.outputs
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
+        """get parameter `n` for each parameterized axis
+        such that the valid input size is >= the given input size"""
         ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize_N] = {}
         axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
             for aid, s in input_sizes[tid].items():
                 size_descr = axes[tid][aid].size
-                if size_descr is None or isinstance(size_descr, (int, SizeReference)):
-                    pass
-                elif isinstance(size_descr, ParameterizedSize):
+                if isinstance(size_descr, ParameterizedSize):
                     ret[(tid, aid)] = size_descr.get_n(s)
+                elif size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                    pass
                 else:
                     assert_never(size_descr)
 
