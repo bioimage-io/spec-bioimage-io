@@ -43,15 +43,13 @@ from .utils import cache
 yaml = YAML(typ="safe")
 
 
-def read_yaml(file: Union[FilePath, IO[str], IO[bytes]]) -> YamlValue:
-    if isinstance(file, Path):
-        cm = file.open("r", encoding="utf-8")
+def read_yaml(file: Union[FilePath, zipfile.Path, IO[str], IO[bytes]]) -> YamlValue:
+    if isinstance(file, (zipfile.Path, Path)):
+        data = file.read_text(encoding="utf-8")
     else:
-        cm = nullcontext(file)
+        data = file
 
-    with cm as f:
-        content: YamlValue = yaml.load(f)
-
+    content: YamlValue = yaml.load(data)
     return content
 
 
