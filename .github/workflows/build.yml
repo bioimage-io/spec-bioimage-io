@@ -133,6 +133,7 @@ jobs:
           condarc: |
             channels:
             - conda-forge
+            - nodefaults
           create-args: >-
             boa
       - name: linux conda build
