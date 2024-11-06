@@ -10,21 +10,21 @@ from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, validation_context_var
-from .application import AnyApplicationDescr, ApplicationDescr
-from .application.v0_2 import ApplicationDescr as ApplicationDescr02
-from .application.v0_3 import ApplicationDescr as ApplicationDescr03
-from .dataset import AnyDatasetDescr, DatasetDescr
-from .dataset.v0_2 import DatasetDescr as DatasetDescr02
-from .dataset.v0_3 import DatasetDescr as DatasetDescr03
-from .generic import AnyGenericDescr, GenericDescr
-from .generic.v0_2 import GenericDescr as GenericDescr02
-from .generic.v0_3 import GenericDescr as GenericDescr03
-from .model import AnyModelDescr, ModelDescr
-from .model.v0_4 import ModelDescr as ModelDescr04
-from .model.v0_5 import ModelDescr as ModelDescr05
-from .notebook import AnyNotebookDescr, NotebookDescr
-from .notebook.v0_2 import NotebookDescr as NotebookDescr02
-from .notebook.v0_3 import NotebookDescr as NotebookDescr03
+from .application import (
+    AnyApplicationDescr,
+    ApplicationDescr,
+    ApplicationDescr_v0_2,
+    ApplicationDescr_v0_3,
+)
+from .dataset import AnyDatasetDescr, DatasetDescr, DatasetDescr_v0_2, DatasetDescr_v0_3
+from .generic import AnyGenericDescr, GenericDescr, GenericDescr_v0_2, GenericDescr_v0_3
+from .model import AnyModelDescr, ModelDescr, ModelDescr_v0_4, ModelDescr_v0_5
+from .notebook import (
+    AnyNotebookDescr,
+    NotebookDescr,
+    NotebookDescr_v0_2,
+    NotebookDescr_v0_3,
+)
 from .summary import ValidationSummary
 
 LATEST: FormatVersionPlaceholder = "latest"
@@ -75,44 +75,44 @@ DESCRIPTIONS_MAP = MappingProxyType(
     {
         None: MappingProxyType(
             {
-                "0.2": GenericDescr02,
-                "0.3": GenericDescr03,
+                "0.2": GenericDescr_v0_2,
+                "0.3": GenericDescr_v0_3,
                 None: GenericDescr,
             }
         ),
         "generic": MappingProxyType(
             {
-                "0.2": GenericDescr02,
-                "0.3": GenericDescr03,
+                "0.2": GenericDescr_v0_2,
+                "0.3": GenericDescr_v0_3,
                 None: GenericDescr,
             }
         ),
         "application": MappingProxyType(
             {
-                "0.2": ApplicationDescr02,
-                "0.3": ApplicationDescr03,
+                "0.2": ApplicationDescr_v0_2,
+                "0.3": ApplicationDescr_v0_3,
                 None: ApplicationDescr,
             }
         ),
         "dataset": MappingProxyType(
             {
-                "0.2": DatasetDescr02,
-                "0.3": DatasetDescr03,
+                "0.2": DatasetDescr_v0_2,
+                "0.3": DatasetDescr_v0_3,
                 None: DatasetDescr,
             }
         ),
         "notebook": MappingProxyType(
             {
-                "0.2": NotebookDescr02,
-                "0.3": NotebookDescr03,
+                "0.2": NotebookDescr_v0_2,
+                "0.3": NotebookDescr_v0_3,
                 None: NotebookDescr,
             }
         ),
         "model": MappingProxyType(
             {
-                "0.3": ModelDescr04,
-                "0.4": ModelDescr04,
-                "0.5": ModelDescr05,
+                "0.3": ModelDescr_v0_4,
+                "0.4": ModelDescr_v0_4,
+                "0.5": ModelDescr_v0_5,
                 None: ModelDescr,
             }
         ),
@@ -198,8 +198,8 @@ def ensure_description_is_model(
     assert not isinstance(
         rd,
         (
-            GenericDescr02,
-            GenericDescr03,
+            GenericDescr_v0_2,
+            GenericDescr_v0_3,
         ),
     )
 
@@ -222,8 +222,8 @@ def ensure_description_is_dataset(
     assert not isinstance(
         rd,
         (
-            GenericDescr02,
-            GenericDescr03,
+            GenericDescr_v0_2,
+            GenericDescr_v0_3,
         ),
     )
 

@@ -59,7 +59,7 @@ from .field_warning import issue_warning
 from .io import BioimageioYamlContent
 from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
 from .io_utils import write_content_to_zip
-from .node import Node as Node
+from .node import Node
 from .packaging_context import PackagingContext
 from .url import HttpUrl
 from .utils import (
