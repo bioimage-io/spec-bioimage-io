@@ -1,10 +1,7 @@
 import json
 from pathlib import Path
 
-from setuptools import (
-    find_namespace_packages,
-    setup,  # pyright: ignore[reportUnknownVariableType]
-)
+from setuptools import find_namespace_packages, setup
 
 # Get the long description from the README file
 ROOT_DIR = Path(__file__).parent.resolve()
@@ -63,16 +60,14 @@ _ = setup(
         "dev": test_extras
         + [
             "black",
+            # "json_schema_for_humans",  # currently requires py<3.13
+            "jsonschema",
+            "jupyter-black",
             "jupyter",
             "pdoc",
             "pre-commit",
-            "pyright==1.1.378",  # requires py>=3.13
-            "python-devtools",
-            "ruff",  # check line length in cases black cannot fix it
-        ],
-        "json": [
-            "json_schema_for_humans",
-            "jsonschema",
+            "pyright==1.1.388",  # requires py>=3.13
+            "ruff",
         ],
     },
     scripts=[],

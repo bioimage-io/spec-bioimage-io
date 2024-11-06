@@ -80,7 +80,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e .[dev,json]
+          pip install -e .[dev]
       - name: Generate spec docs
         run: python scripts/generate_spec_documentation.py --dist dist/user_docs
       - name: Generate interactive documentation
@@ -89,6 +89,7 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
+      - run: pip install json-schema-for-humans
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - id: get_version
@@ -100,7 +101,7 @@ jobs:
           --logo-link "https://bioimage.io/" \
           --favicon "https://bioimage.io/static/img/bioimage-io-icon-small.svg" \
           --footer-text "bioimageio.spec ${{steps.get_version.outputs.version}}" \
-          -o ./dist bioimageio.spec bioimageio.spec._internal
+          -o ./dist bioimageio.spec
       - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
