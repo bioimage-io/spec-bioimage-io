@@ -200,7 +200,15 @@ class AxisId(LowerCaseIdentifier):
     ]
 
 
-NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
+def _is_batch(a: str) -> bool:
+    return a == BATCH_AXIS_ID
+
+
+def _is_not_batch(a: str) -> bool:
+    return not _is_batch(a)
+
+
+NonBatchAxisId = Annotated[AxisId, Predicate(_is_not_batch)]
 
 PostprocessingId = Literal[
     "binarize",
@@ -434,7 +442,7 @@ BATCH_AXIS_ID = AxisId("batch")
 
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-    id: Annotated[AxisId, Predicate(lambda x: x == BATCH_AXIS_ID)] = BATCH_AXIS_ID
+    id: Annotated[AxisId, Predicate(_is_batch)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""

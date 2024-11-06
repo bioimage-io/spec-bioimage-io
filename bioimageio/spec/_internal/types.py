@@ -123,6 +123,13 @@ class OrcidId(ValidatedString):
     ]
 
 
+def _normalize_multiplication(si_unit: Union[Any, str]) -> Union[Any, str]:
+    if isinstance(si_unit, str):
+        return si_unit.replace("×", "·").replace("*", "·").replace(" ", "·")
+    else:
+        return si_unit
+
+
 class SiUnit(ValidatedString):
     """Si unit"""
 
@@ -130,12 +137,6 @@ class SiUnit(ValidatedString):
         Annotated[
             str,
             StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
-            BeforeValidator(
-                lambda s: (
-                    s.replace("×", "·").replace("*", "·").replace(" ", "·")
-                    if isinstance(s, str)
-                    else s
-                )
-            ),
+            BeforeValidator(_normalize_multiplication),
         ]
     ]
