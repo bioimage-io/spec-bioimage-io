@@ -64,16 +64,22 @@ WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyTyp
 
 
 class ValidationEntry(BaseModel):
+    """Base of `ErrorEntry` and `WarningEntry`"""
+
     loc: Loc
     msg: str
     type: Union[ErrorType, str]
 
 
 class ErrorEntry(ValidationEntry):
+    """An error in a `ValidationDetail`"""
+
     traceback: List[str] = Field(default_factory=list)
 
 
 class WarningEntry(ValidationEntry):
+    """A warning in a `ValidationDetail`"""
+
     severity: WarningSeverity = WARNING
     severity_name: WarningSeverityName = WARNING_NAME
 
@@ -103,6 +109,7 @@ class WarningEntry(ValidationEntry):
 
 
 def format_loc(loc: Loc, enclose_in: str = "`") -> str:
+    """helper to format a location tuple `Loc` as Markdown string"""
     if not loc:
         loc = ("__root__",)
 
@@ -130,9 +137,12 @@ class ValidationContextSummary(TypedDict):
 
 
 class ValidationDetail(BaseModel, extra="allow"):
+    """a detail in a validation summary"""
+
     name: str
     status: Literal["passed", "failed"]
     loc: Loc = ()
+    """location in the RDF that this detail applies to"""
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
     context: Optional[ValidationContextSummary] = None
@@ -167,6 +177,7 @@ class ValidationDetail(BaseModel, extra="allow"):
             return "❌"
 
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
+        """format as Markdown string"""
         indent = "    " if root_loc else ""
         errs_wrns = self._format_errors_and_warnings(
             hide_tracebacks=hide_tracebacks, root_loc=root_loc
@@ -214,6 +225,9 @@ class ValidationDetail(BaseModel, extra="allow"):
 
 
 class ValidationSummary(BaseModel, extra="allow"):
+    """Summarizes output of all bioimageio validations and tests
+    for one specific `ResourceDescr` instance."""
+
     name: str
     source_name: str
     type: str
@@ -275,6 +289,10 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_env: bool = False,
         root_loc: Loc = (),
     ) -> str:
+        """Format summary as Markdown string
+
+        Suitable to embed in HTML using '<br>' instead of '\n'.
+        """
         info = self._format_md_table(
             [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
             + ([] if hide_source else [["source", self.source_name]])

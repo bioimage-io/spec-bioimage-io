@@ -28,6 +28,8 @@ SupportedWeightsEntry = Union[
 
 
 class PipDeps(BaseModel):
+    """Pip dependencies to include in conda dependecies"""
+
     pip: List[str] = Field(default_factory=list)
 
     def __lt__(self, other: Any):
@@ -38,6 +40,8 @@ class PipDeps(BaseModel):
 
 
 class CondaEnv(BaseModel):
+    """Represenation of the content of a conda environment.yaml file"""
+
     name: Optional[str] = None
     channels: List[str] = Field(default_factory=list)
     dependencies: List[Union[str, PipDeps]] = Field(default_factory=list)
@@ -58,6 +62,11 @@ class CondaEnv(BaseModel):
 
 
 class BioimageioCondaEnv(CondaEnv):
+    """A special `CondaEnv` that
+    - automatically adds bioimageio specific dependencies
+    - sorts dependencies
+    """
+
     @model_validator(mode="after")
     def _normalize_bioimageio_conda_env(self):
         """update a conda env such that we have bioimageio.core and sorted dependencies"""

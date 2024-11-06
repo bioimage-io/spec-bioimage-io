@@ -118,6 +118,8 @@ DESCRIPTIONS_MAP = MappingProxyType(
         ),
     }
 )
+"""A mapping to determine the appropriate Description class
+ for a given **type** and **format_version**."""
 
 
 def _get_rd_class(typ: Any, format_version: Any):
