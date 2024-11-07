@@ -1,7 +1,6 @@
 import zipfile
 from typing import List, Literal, Optional, Union
 
-from ruyaml import YAML
 from typing_extensions import assert_never
 
 from ._internal.gh_utils import set_github_warning
@@ -11,9 +10,6 @@ from .conda_env import BioimageioCondaEnv, PipDeps
 from .model import v0_4, v0_5
 from .model.v0_5 import Version
 from .utils import download
-
-yaml = YAML(typ="safe")
-
 
 SupportedWeightsEntry = Union[
     v0_4.OnnxWeightsDescr,
@@ -145,7 +141,7 @@ def _get_default_pytorch_env(
     # avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`
     # see https://github.com/pytorch/pytorch/issues/123097
     if pytorch_version < Version(
-        "2.2.0"  # TODO: check if this is the correct cutoff where the fix is not longer needed
+        "2.1.0"  # TODO: check if this is the correct cutoff where the fix is not longer needed
     ):
         deps.append("mkl ==2024.0.0")
 
@@ -157,7 +153,7 @@ def _get_default_pytorch_env(
         deps.append("setuptools <70.0.0")
 
     if pytorch_version < Version(
-        "2.4"
+        "2.3"
     ):  # TODO: verify that future pytorch 2.4 is numpy 2.0 compatible
         # make sure we have a compatible numpy version
         # see https://github.com/pytorch/vision/issues/8460
