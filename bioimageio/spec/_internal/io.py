@@ -1,4 +1,3 @@
-# pyright: reportUnnecessaryTypeIgnoreComment=warning
 from __future__ import annotations
 
 import hashlib
@@ -6,7 +5,6 @@ import sys
 import warnings
 import zipfile
 from abc import abstractmethod
-from collections.abc import Mapping as MappingAbc
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
@@ -74,6 +72,7 @@ from .io_basics import (
 from .node import Node
 from .packaging_context import packaging_context_var
 from .root_url import RootHttpUrl
+from .type_guards import is_mapping, is_sequence
 from .url import HttpUrl
 from .validation_context import validation_context_var
 from .validator_annotations import AfterValidator
@@ -235,9 +234,7 @@ PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
 # the type hints available for different python versions require this ignoring of reportUnknownVariableType
-path_or_url_adapter = TypeAdapter(  # pyright: ignore [reportUnknownVariableType]
-    Union[FilePath, DirectoryPath, HttpUrl]
-)
+path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
 
 
 def validate_suffix(
@@ -497,16 +494,12 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
 
 
 def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
-    return isinstance(value, Sequence) and all(
-        is_yaml_value(item)
-        for item in value  # pyright: ignore [reportUnknownVariableType]
-    )
+    return is_sequence(value) and all(is_yaml_value(item) for item in value)
 
 
 def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
-    return isinstance(value, MappingAbc) and all(
-        isinstance(key, str) and is_yaml_value(val)
-        for key, val in value.items()  # pyright: ignore [reportUnknownVariableType]
+    return is_mapping(value) and all(
+        isinstance(key, str) and is_yaml_value(val) for key, val in value.items()
     )
 
 

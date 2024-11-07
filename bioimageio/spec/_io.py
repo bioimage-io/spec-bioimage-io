@@ -4,8 +4,6 @@ from zipfile import ZipFile
 from loguru import logger
 from pydantic import FilePath, NewPath
 
-from bioimageio.spec._internal.io_basics import Sha256
-
 from ._description import (
     DISCOVER,
     InvalidDescr,
@@ -18,6 +16,7 @@ from ._description import (
 from ._internal._settings import settings
 from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, YamlValue
+from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
 from ._internal.validation_context import validation_context_var
 from .common import PermissiveFileSource

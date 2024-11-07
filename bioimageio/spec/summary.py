@@ -5,7 +5,6 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from types import MappingProxyType
 from typing import (
-    TYPE_CHECKING,
     Any,
     Dict,
     Iterable,
@@ -30,6 +29,7 @@ from typing_extensions import TypedDict, assert_never
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
+from ._internal.type_guards import is_mapping
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -42,9 +42,7 @@ from ._internal.warning_levels import (
     WarningLevel,
     WarningSeverity,
 )
-
-if TYPE_CHECKING:
-    from .conda_env import CondaEnv
+from .conda_env import CondaEnv
 
 Loc = Tuple[Union[int, str], ...]
 """location of error/warning in a nested data structure"""
@@ -88,9 +86,8 @@ class WarningEntry(ValidationEntry):
     def sync_severity_with_severity_name(
         cls, data: Union[Mapping[Any, Any], Any]
     ) -> Any:
-        if isinstance(data, dict):
+        if is_mapping(data):
             data = dict(data)
-            assert isinstance(data, dict)
             if (
                 "severity" in data
                 and "severity_name" not in data
@@ -147,7 +144,7 @@ class ValidationDetail(BaseModel, extra="allow"):
     warnings: List[WarningEntry] = Field(default_factory=list)
     context: Optional[ValidationContextSummary] = None
 
-    recommended_env: Optional["CondaEnv"] = None
+    recommended_env: Optional[CondaEnv] = None
     """recommended conda environemnt for this validation detail"""
     conda_compare: Optional[str] = None
     """output of `conda compare <recommended env>`"""
