@@ -266,9 +266,6 @@ class ParameterizedSize(Node):
         return ceil((s - self.min) / self.step)
 
 
-ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
-
-
 class DataDependentSize(Node):
     min: Annotated[int, Gt(0)] = 1
     max: Annotated[Optional[int], Gt(1)] = None
