@@ -44,8 +44,8 @@ Simplified descriptions are available as [JSON schema](https://json-schema.org/)
 
 | bioimageio.spec version | JSON schema |
 | --- | --- |
-| latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) ([documentation (WIP)]([https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html))|
-| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) ([documentation (WIP)]([https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html))|
+| latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) ([documentation (WIP)](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html)) |
+| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) ([documentation (WIP)](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html)) |
 
 These are primarily intended for syntax highlighting.
 
