@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import lru_cache
-from math import ceil
 from pathlib import Path, PurePath
 from tempfile import mktemp
 from typing import (
@@ -816,20 +815,32 @@ def extract_file_name(
 
 
 @lru_cache
-def get_sha256(path: Path) -> Sha256:
+def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
-    h = hashlib.sha256()
-    chunksize = 128 * 1024
-    b = bytearray(chunksize)
-    mv = memoryview(b)
     desc = f"computing SHA256 of {path.name}"
-    pbar = tqdm(desc=desc, total=ceil(path.stat().st_size / chunksize))
-    with open(path, "rb", buffering=0) as f:
-        for n in iter(lambda: f.readinto(mv), 0):
-            h.update(mv[:n])
-            _ = pbar.update()
-    sha = h.hexdigest()
+    if isinstance(path, ZipPath):
+        # no buffered reading available
+        zf = path.root
+        assert isinstance(zf, ZipFile)
+        file_size = zf.NameToInfo[path.at].file_size
+        pbar = tqdm(desc=desc, total=file_size)
+        data = path.read_bytes()
+        assert isinstance(data, bytes)
+        h = hashlib.sha256(data)
+    else:
+        file_size = path.stat().st_size
+        pbar = tqdm(desc=desc, total=file_size)
+        h = hashlib.sha256()
+        chunksize = 128 * 1024
+        b = bytearray(chunksize)
+        mv = memoryview(b)
+        with open(path, "rb", buffering=0) as f:
+            for n in iter(lambda: f.readinto(mv), 0):
+                h.update(mv[:n])
+                _ = pbar.update(n)
 
+    sha = h.hexdigest()
     pbar.set_description(desc=desc + f" (result: {sha})")
+    pbar.close()
     assert len(sha) == 64
     return Sha256(sha)
