@@ -14,7 +14,7 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11","3.12", "3.13"]
         include:
-          - python-version: "3.13"
+          - python-version: "3.12"
             is-dev-version: true
     steps:
       - uses: actions/checkout@v4
@@ -89,19 +89,10 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
-      - run: pip install json-schema-for-humans
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
-      - id: get_version
-        run: python -c 'import bioimageio.spec;print(f"version={bioimageio.spec.__version__}")' >> $GITHUB_OUTPUT
       - name: Generate developer docs
-        run: |
-          pdoc \
-          --logo "https://bioimage.io/static/img/bioimage-io-logo.svg" \
-          --logo-link "https://bioimage.io/" \
-          --favicon "https://bioimage.io/static/img/bioimage-io-icon-small.svg" \
-          --footer-text "bioimageio.spec ${{steps.get_version.outputs.version}}" \
-          -o ./dist bioimageio.spec
+        run: ./scripts/pdoc/run.sh
       - name: copy legacy file until BioImage.IO-packager is updated  # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to

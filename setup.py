@@ -61,13 +61,13 @@ _ = setup(
         "dev": test_extras
         + [
             "black",
-            # "json_schema_for_humans",  # currently requires py<3.13
+            "json_schema_for_humans",  # currently requires py<3.13
             "jsonschema",
             "jupyter-black",
             "jupyter",
             "pdoc",
             "pre-commit",
-            "pyright==1.1.388",  # requires py>=3.13
+            "pyright==1.1.388",
             "ruff",
         ],
     },
