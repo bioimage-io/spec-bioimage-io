@@ -1,6 +1,5 @@
 import collections.abc
 import shutil
-import zipfile
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
@@ -18,7 +17,7 @@ from ._internal.io import (
     download,
     ensure_is_valid_bioimageio_yaml_name,
 )
-from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
+from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
 from ._internal.packaging_context import PackagingContext
 from ._internal.url import HttpUrl
@@ -35,9 +34,7 @@ def get_resource_package_content(
     *,
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
-) -> Dict[
-    FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, zipfile.Path]
-]:
+) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
     """
     Args:
         rd: resource description
@@ -54,7 +51,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
         bioimageio_yaml_file_name
     )
-    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, zipfile.Path]] = {}
+    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,
@@ -74,7 +71,7 @@ def _prepare_resource_package(
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
-) -> Dict[FileName, Union[FilePath, BioimageioYamlContent, zipfile.Path]]:
+) -> Dict[FileName, Union[FilePath, BioimageioYamlContent, ZipPath]]:
     """Prepare to package a resource description; downloads all required files.
 
     Args:
@@ -109,10 +106,10 @@ def _prepare_resource_package(
         )
 
     local_package_content: Dict[
-        FileName, Union[FilePath, BioimageioYamlContent, zipfile.Path]
+        FileName, Union[FilePath, BioimageioYamlContent, ZipPath]
     ] = {}
     for k, v in package_content.items():
-        if not isinstance(v, (collections.abc.Mapping, zipfile.Path)):
+        if not isinstance(v, (collections.abc.Mapping, ZipPath)):
             v = download(v).path
 
         local_package_content[k] = v
@@ -162,7 +159,7 @@ def save_bioimageio_package_as_folder(
     for name, src in package_content.items():
         if isinstance(src, collections.abc.Mapping):
             write_yaml(cast(YamlValue, src), output_path / name)
-        elif isinstance(src, zipfile.Path):
+        elif isinstance(src, ZipPath):
             extracted = Path(src.root.extract(src.name, output_path))
             if extracted.name != src.name:
                 try:

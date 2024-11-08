@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections.abc
 import traceback
-import zipfile
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from io import BytesIO
@@ -57,7 +56,7 @@ from ..summary import (
 )
 from .field_warning import issue_warning
 from .io import BioimageioYamlContent
-from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName
+from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
 from .io_utils import write_content_to_zip
 from .node import Node
 from .packaging_context import PackagingContext
@@ -489,10 +488,10 @@ class ResourceDescrBase(
     def get_package_content(
         self,
     ) -> Dict[
-        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, zipfile.Path]
+        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
     ]:
         """Returns package content without creating the package."""
-        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, zipfile.Path]] = {}
+        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,

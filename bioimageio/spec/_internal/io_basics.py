@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, ClassVar, Type
 
+import zipp
 from annotated_types import Predicate
 from pydantic import DirectoryPath, FilePath, RootModel, StringConstraints
 from typing_extensions import Annotated
@@ -14,6 +15,8 @@ AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
 BIOIMAGEIO_YAML = "rdf.yaml"
 ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
 ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
+
+ZipPath = zipp.Path  # not zipfile.Path due to https://bugs.python.org/issue40564
 
 
 class Sha256(ValidatedString):

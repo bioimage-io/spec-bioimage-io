@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import sys
 import warnings
-import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -68,6 +67,7 @@ from .io_basics import (
     AbsoluteFilePath,
     FileName,
     Sha256,
+    ZipPath,
 )
 from .node import Node
 from .packaging_context import packaging_context_var
@@ -85,7 +85,7 @@ else:
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
-    bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, zipfile.Path],
+    bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, ZipPath],
 )
 
 
@@ -141,13 +141,13 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     def _get_absolute_impl(
         self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
-    ) -> Union[Path, HttpUrl, zipfile.Path]:
+    ) -> Union[Path, HttpUrl, ZipPath]:
         if isinstance(root, Path):
             return (root / self.root).absolute()
 
         rel_path = self.root.as_posix().strip("/")
         if isinstance(root, ZipFile):
-            return zipfile.Path(root, rel_path)
+            return ZipPath(root, rel_path)
 
         parsed = urlsplit(str(root))
         path = list(parsed.path.strip("/").split("/"))
@@ -183,7 +183,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
 
 class RelativeFilePath(
-    RelativePathBase[Union[AbsoluteFilePath, HttpUrl, zipfile.Path]], frozen=True
+    RelativePathBase[Union[AbsoluteFilePath, HttpUrl, ZipPath]], frozen=True
 ):
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
@@ -196,7 +196,7 @@ class RelativeFilePath(
 
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteFilePath | HttpUrl | zipfile.Path":
+    ) -> "AbsoluteFilePath | HttpUrl | ZipPath":
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -210,11 +210,11 @@ class RelativeFilePath(
 
 
 class RelativeDirectory(
-    RelativePathBase[Union[AbsoluteDirectory, HttpUrl, zipfile.Path]], frozen=True
+    RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
 ):
     def get_absolute(
         self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteDirectory | HttpUrl | zipfile.Path":
+    ) -> "AbsoluteDirectory | HttpUrl | ZipPath":
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -233,8 +233,9 @@ FileSource = Annotated[
 PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 V_suffix = TypeVar("V_suffix", bound=FileSource)
-# the type hints available for different python versions require this ignoring of reportUnknownVariableType
-path_or_url_adapter = TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
+path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
+    TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
+)
 
 
 def validate_suffix(
@@ -523,7 +524,7 @@ class LocalFile:
 
 @dataclass
 class FileInZip:
-    path: zipfile.Path
+    path: ZipPath
     original_root: ZipFile
     original_file_name: FileName
 
@@ -583,12 +584,12 @@ class Progressbar(Protocol):
 
 
 def extract(
-    source: Union[FilePath, ZipFile, zipfile.Path],
+    source: Union[FilePath, ZipFile, ZipPath],
     folder: Optional[DirectoryPath] = None,
     overwrite: bool = False,
 ) -> DirectoryPath:
     extract_member = None
-    if isinstance(source, zipfile.Path):
+    if isinstance(source, ZipPath):
         extract_member = source.at
         source = source.root
 
@@ -648,7 +649,7 @@ def extract(
 
 
 def resolve(
-    source: Union[PermissiveFileSource, FileDescr, zipfile.Path],
+    source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
     progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
@@ -656,7 +657,7 @@ def resolve(
     """Resolve file `source` (download if needed)"""
     if isinstance(source, FileDescr):
         return source.download()
-    elif isinstance(source, zipfile.Path):
+    elif isinstance(source, ZipPath):
         zip_root = source.root
         assert isinstance(zip_root, ZipFile)
         return FileInZip(
@@ -668,7 +669,7 @@ def resolve(
     strict_source = interprete_file_source(source)
     if isinstance(strict_source, RelativeFilePath):
         strict_source = strict_source.absolute()
-        if isinstance(strict_source, zipfile.Path):
+        if isinstance(strict_source, ZipPath):
             return FileInZip(
                 strict_source, strict_source.root, extract_file_name(strict_source)
             )
@@ -720,7 +721,7 @@ download = resolve
 
 
 def resolve_and_extract(
-    source: Union[PermissiveFileSource, FileDescr, zipfile.Path],
+    source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
     progressbar: Union[Progressbar, bool, None] = None,
     **kwargs: Unpack[HashKwargs],
@@ -793,9 +794,9 @@ class FileDescr(Node):
 
 
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath, zipfile.Path],
+    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath, ZipPath],
 ) -> FileName:
-    if isinstance(src, zipfile.Path):
+    if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
     elif isinstance(src, RelativeFilePath):
         return src.path.name

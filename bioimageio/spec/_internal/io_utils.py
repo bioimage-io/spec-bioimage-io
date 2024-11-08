@@ -36,15 +36,15 @@ from .io import (
     find_bioimageio_yaml_file_name,
     identify_bioimageio_yaml_file_name,
 )
-from .io_basics import FileName
+from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
 from .utils import cache
 
 yaml = YAML(typ="safe")
 
 
-def read_yaml(file: Union[FilePath, zipfile.Path, IO[str], IO[bytes]]) -> YamlValue:
-    if isinstance(file, (zipfile.Path, Path)):
+def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
+    if isinstance(file, (ZipPath, Path)):
         data = file.read_text(encoding="utf-8")
     else:
         data = file
@@ -54,7 +54,9 @@ def read_yaml(file: Union[FilePath, zipfile.Path, IO[str], IO[bytes]]) -> YamlVa
 
 
 def write_yaml(
-    content: YamlValue, /, file: Union[NewPath, FilePath, IO[str], IO[bytes]]
+    content: YamlValue,
+    /,
+    file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
 ):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
@@ -130,7 +132,7 @@ def open_bioimageio_yaml(
         downloaded = entry.download()
 
     local_source = downloaded.path
-    if isinstance(local_source, zipfile.Path):
+    if isinstance(local_source, ZipPath):
         return _open_bioimageio_rdf_in_zip(local_source.root, local_source.name)
     elif is_zipfile(local_source):
         return _open_bioimageio_zip(ZipFile(local_source))
@@ -183,7 +185,7 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
 
 
 def write_content_to_zip(
-    content: Mapping[FileName, Union[str, FilePath, zipfile.Path, Dict[Any, Any]]],
+    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
     zip: zipfile.ZipFile,
 ):
     """write strings as text, dictionaries as yaml and files to a ZipFile
@@ -200,15 +202,15 @@ def write_content_to_zip(
 
         if isinstance(file, str):
             zip.writestr(arc_name, file.encode("utf-8"))
-        elif isinstance(file, zipfile.Path):
-            zip.writestr(arc_name, file.open("rb").read())
+        elif isinstance(file, ZipPath):
+            zip.writestr(arc_name, file.read_bytes())
         else:
             zip.write(file, arcname=arc_name)
 
 
 def write_zip(
     path: Union[FilePath, IO[bytes]],
-    content: Mapping[FileName, Union[str, FilePath, zipfile.Path, Dict[Any, Any]]],
+    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
     *,
     compression: int,
     compression_level: int,
@@ -229,12 +231,14 @@ def write_zip(
         write_content_to_zip(content, zip)
 
 
-def load_array(source: Union[FileSource, FileDescr, zipfile.Path]) -> NDArray[Any]:
+def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
     path = download(source).path
     with path.open(mode="rb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
         return numpy.load(f, allow_pickle=False)
 
 
-def save_array(path: Union[Path, zipfile.Path], array: NDArray[Any]) -> None:
+def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
     with path.open(mode="wb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
         return numpy.save(f, array, allow_pickle=False)

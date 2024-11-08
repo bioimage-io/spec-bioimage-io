@@ -1,10 +1,9 @@
-import zipfile
 from typing import List, Literal, Optional, Union
 
 from typing_extensions import assert_never
 
 from ._internal.gh_utils import set_github_warning
-from ._internal.io_utils import read_yaml
+from ._internal.io_utils import ZipPath, read_yaml
 from .common import RelativeFilePath
 from .conda_env import BioimageioCondaEnv, PipDeps
 from .model import v0_4, v0_5
@@ -210,9 +209,9 @@ def _get_env_from_deps(
 ) -> BioimageioCondaEnv:
     if isinstance(deps, v0_4.Dependencies):
         if deps.manager == "pip":
-            pip_deps = [
-                d.strip() for d in download(deps.file).path.read_text().split("\n")
-            ]
+            pip_deps_str = download(deps.file).path.read_text(encoding="utf-8")
+            assert isinstance(pip_deps_str, str)
+            pip_deps = [d.strip() for d in pip_deps_str.split("\n")]
             if "bioimageio.core" not in pip_deps:
                 pip_deps.append("bioimageio.core")
 
@@ -227,7 +226,7 @@ def _get_env_from_deps(
                 if isinstance(deps.file, RelativeFilePath)
                 else deps.file
             )
-            if isinstance(deps_source, zipfile.Path):
+            if isinstance(deps_source, ZipPath):
                 local = deps_source
             else:
                 local = download(deps_source).path

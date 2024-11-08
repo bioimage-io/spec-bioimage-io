@@ -44,6 +44,7 @@ _ = setup(
         "ruyaml",
         "tqdm",
         "typing-extensions",
+        "zipp",
     ],
     extras_require={
         "tests": (

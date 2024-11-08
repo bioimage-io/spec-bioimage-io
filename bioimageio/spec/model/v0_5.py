@@ -63,7 +63,6 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
-from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
 from .._internal.types import (
     ImportantFileSource,
@@ -71,7 +70,6 @@ from .._internal.types import (
     LowerCaseIdentifierAnno,
     SiUnit,
 )
-from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -90,6 +88,7 @@ from ..generic.v0_3 import (
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
@@ -98,6 +97,7 @@ from ..generic.v0_3 import (
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
 from ..generic.v0_3 import Doi as Doi
+from ..generic.v0_3 import LicenseId as LicenseId
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
@@ -2059,6 +2059,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
+        assert isinstance(doc_content, str)
         if not re.match("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
