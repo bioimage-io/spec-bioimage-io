@@ -89,6 +89,7 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
+      - run: pip install json_schema_for_humans
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - name: Generate developer docs

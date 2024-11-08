@@ -61,7 +61,7 @@ _ = setup(
         "dev": test_extras
         + [
             "black",
-            "json_schema_for_humans; python_version < 3.13",
+            # "json_schema_for_humans; python_version < 3.13",
             "jsonschema",
             "jupyter-black",
             "jupyter",
