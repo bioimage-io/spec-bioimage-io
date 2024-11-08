@@ -43,3 +43,6 @@ testpaths = ["bioimageio/spec", "tests", "scripts"]
 line-length = 88
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 target-version = "py312"
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
