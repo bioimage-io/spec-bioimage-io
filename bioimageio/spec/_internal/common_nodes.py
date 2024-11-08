@@ -481,6 +481,11 @@ class ResourceDescrBase(
         else:
             zip = ZipFile(dest, mode="w")
 
+        if zip.filename is None:
+            zip.filename = (
+                str(getattr(self, "id", getattr(self, "name", "bioimageio"))) + ".zip"
+            )
+
         content = self.get_package_content()
         write_content_to_zip(content, zip)
         return zip
