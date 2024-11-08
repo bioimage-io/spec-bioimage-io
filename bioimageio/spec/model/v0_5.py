@@ -1129,7 +1129,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         local = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
         tensor: NDArray[Any] = imread(
-            local.path,  # pyright: ignore[reportArgumentType]
+            local.path.read_bytes(),
             extension=PurePosixPath(local.original_file_name).suffix,
         )
         n_dims = len(tensor.squeeze().shape)
