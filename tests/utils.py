@@ -146,9 +146,9 @@ def check_bioimageio_yaml(
 ) -> None:
     downloaded_source = download(source)
     root = downloaded_source.original_root
-    data: Dict[Any, Any] = yaml.load(
-        StringIO(downloaded_source.path.read_bytes().decode(encoding="utf-8"))
-    )
+    raw = downloaded_source.path.read_text(encoding="utf-8")
+    assert isinstance(raw, str)
+    data: Dict[Any, Any] = yaml.load(StringIO(raw))
 
     assert isinstance(data, dict), type(data)
     format_version = "latest" if as_latest else "discover"

@@ -148,6 +148,7 @@ def process(info: Info, check: bool):
             for tv in black_config.pop("target_version")
         )
     )
+    black_config.pop("extend_exclude")
     updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
     if check:
         if init_content == updated:
