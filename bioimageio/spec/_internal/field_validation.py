@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections.abc
 from datetime import date, datetime
 from typing import (
     Any,
@@ -15,6 +14,7 @@ import requests
 from ._settings import settings
 from .constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
 from .field_warning import issue_warning
+from .type_guards import is_mapping, is_sequence, is_tuple
 from .validation_context import validation_context_var
 
 
@@ -25,21 +25,19 @@ def is_valid_yaml_leaf_value(value: Any) -> bool:
 def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
     return (
         is_valid_yaml_leaf_value(value)
-        or isinstance(value, tuple)
+        or is_tuple(value)
         and all(is_valid_yaml_leaf_value(v) for v in value)
     )
 
 
 def is_valid_yaml_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
-    return isinstance(value, collections.abc.Mapping) and all(
+    return is_mapping(value) and all(
         is_valid_yaml_key(k) and is_valid_yaml_value(v) for k, v in value.items()
     )
 
 
 def is_valid_yaml_sequence(value: Union[Any, Sequence[Any]]) -> bool:
-    return isinstance(value, collections.abc.Sequence) and all(
-        is_valid_yaml_value(v) for v in value
-    )
+    return is_sequence(value) and all(is_valid_yaml_value(v) for v in value)
 
 
 def is_valid_yaml_value(value: Any) -> bool:
