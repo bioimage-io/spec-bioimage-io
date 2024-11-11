@@ -158,7 +158,10 @@ class ValidationDetail(BaseModel, extra="allow"):
                 with NamedTemporaryFile(encoding="utf-8") as f:
                     write_yaml(dumped_env, f)
                     self.conda_compare = subprocess.run(
-                        ["conda", "compare", f.name], capture_output=True, text=True
+                        ["conda", "compare", f.name],
+                        capture_output=True,
+                        shell=True,
+                        text=True,
                     ).stdout
             else:
                 self.conda_compare = "Failed to dump recommended env to valid yaml"
