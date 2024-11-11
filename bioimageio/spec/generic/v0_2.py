@@ -1,4 +1,3 @@
-import collections.abc
 import string
 from typing import (
     Any,
@@ -37,6 +36,7 @@ from .._internal.io import (
     include_in_package_serializer,
 )
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
     FileSource,
@@ -233,7 +233,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     @classmethod
     def accept_author_strings(cls, authors: Union[Any, Sequence[Any]]) -> Any:
         """we unofficially accept strings as author entries"""
-        if isinstance(authors, collections.abc.Sequence):
+        if is_sequence(authors):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
 
         if not authors:

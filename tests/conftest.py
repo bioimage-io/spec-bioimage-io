@@ -14,6 +14,7 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_GH_USERS,
     N_KNOWN_INVALID_GH_USERS,
 )
+from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
 
 yaml = YAML(typ="safe")
 
@@ -43,7 +44,7 @@ def bioimageio_json_schema(
 
             schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
 
-    assert isinstance(schema, dict)
+    assert is_dict(schema)
     return schema
 
 
@@ -63,9 +64,9 @@ def unet2d_path() -> Path:
 @pytest.fixture(scope="session")
 def unet2d_data(unet2d_path: Path):
     with unet2d_path.open() as f:
-        data: Union[Any, Dict[Any, Any]] = yaml.load(f)
+        data = yaml.load(f)
 
-    assert isinstance(data, dict)
+    assert is_kwargs(data)
     return MappingProxyType(data)
 
 
