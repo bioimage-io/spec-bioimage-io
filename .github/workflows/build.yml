@@ -39,6 +39,9 @@ jobs:
         run: python scripts/generate_version_submodule_imports.py check
       - run: black --check .
         if: matrix.is-dev-version
+      - name: install additinal deps for a full pyright check
+        run: pip install json_schema_for_humans
+        if: matrix.is-dev-version
       - run: ruff check **/*.py # ignore notebooks for now
         if: matrix.is-dev-version
       - run: pyright --version
