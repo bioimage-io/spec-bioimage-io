@@ -155,7 +155,7 @@ class ValidationDetail(BaseModel, extra="allow"):
         if self.recommended_env is not None and self.conda_compare is None:
             dumped_env = self.recommended_env.model_dump(mode="json")
             if is_yaml_value(dumped_env):
-                with NamedTemporaryFile(encoding="utf-8") as f:
+                with NamedTemporaryFile(mode="w", encoding="utf-8") as f:
                     write_yaml(dumped_env, f)
                     self.conda_compare = subprocess.run(
                         ["conda", "compare", f.name],
