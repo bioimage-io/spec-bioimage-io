@@ -54,6 +54,9 @@ jobs:
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.85
+          thresholdNew: 0.9
+          thresholdModified: 0.85
       - if: matrix.is-dev-version
         run: |
           pip install genbadge[coverage]
