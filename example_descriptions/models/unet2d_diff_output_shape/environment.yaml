@@ -1,3 +1,0 @@
-channels: [pytorch, conda-forge]
-dependencies: pytorch>=1.6,<2.0
-name: torch-em-deploy

@@ -1,5 +1,5 @@
 import io
-import warnings
+import zipfile
 from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
@@ -9,8 +9,6 @@ from typing import (
     Any,
     Dict,
     Mapping,
-    Optional,
-    TextIO,
     Union,
     cast,
 )
@@ -20,7 +18,7 @@ import numpy
 import requests
 from loguru import logger
 from numpy.typing import NDArray
-from pydantic import DirectoryPath, FilePath, NewPath, RootModel
+from pydantic import FilePath, NewPath, RootModel
 from ruyaml import YAML
 from typing_extensions import Unpack
 
@@ -29,33 +27,37 @@ from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
+    FileInZip,
     HashKwargs,
     LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
     download,
     find_bioimageio_yaml_file_name,
+    identify_bioimageio_yaml_file_name,
 )
-from .io_basics import FileName
+from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
 from .utils import cache
 
 yaml = YAML(typ="safe")
 
 
-def read_yaml(file: Union[FilePath, TextIO]) -> YamlValue:
-    if isinstance(file, Path):
-        cm = file.open("r", encoding="utf-8")
+def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
+    if isinstance(file, (ZipPath, Path)):
+        data = file.read_text(encoding="utf-8")
     else:
-        cm = nullcontext(file)
+        data = file
 
-    with cm as f:
-        content: YamlValue = yaml.load(f)
-
+    content: YamlValue = yaml.load(data)
     return content
 
 
-def write_yaml(content: YamlValue, /, file: Union[NewPath, FilePath, TextIO]):
+def write_yaml(
+    content: YamlValue,
+    /,
+    file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
+):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
     else:
@@ -81,9 +83,26 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
+def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimageioYaml:
+    with source.open(rdf_name) as f:
+        content = _sanitize_bioimageio_yaml(read_yaml(f))
+
+    return OpenedBioimageioYaml(content, source, source.filename or "bioimageio.zip")
+
+
+def _open_bioimageio_zip(source: ZipFile) -> OpenedBioimageioYaml:
+    rdf_name = identify_bioimageio_yaml_file_name(
+        [info.filename for info in source.filelist]
+    )
+    return _open_bioimageio_rdf_in_zip(source, rdf_name)
+
+
 def open_bioimageio_yaml(
-    source: PermissiveFileSource, /, **kwargs: Unpack[HashKwargs]
+    source: Union[PermissiveFileSource, ZipFile], /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
+    if isinstance(source, ZipFile):
+        return _open_bioimageio_zip(source)
+
     try:
         downloaded = download(source, **kwargs)
     except Exception:
@@ -113,18 +132,23 @@ def open_bioimageio_yaml(
         downloaded = entry.download()
 
     local_source = downloaded.path
-    root = downloaded.original_root
-
-    if is_zipfile(local_source):
-        local_source = unzip(local_source)
+    if isinstance(local_source, ZipPath):
+        return _open_bioimageio_rdf_in_zip(local_source.root, local_source.name)
+    elif is_zipfile(local_source):
+        return _open_bioimageio_zip(ZipFile(local_source))
 
     if local_source.is_dir():
         root = local_source
         local_source = local_source / find_bioimageio_yaml_file_name(local_source)
+    else:
+        root = downloaded.original_root
 
     content = _sanitize_bioimageio_yaml(read_yaml(local_source))
-
-    return OpenedBioimageioYaml(content, root, downloaded.original_file_name)
+    return OpenedBioimageioYaml(
+        content,
+        root.original_root if isinstance(root, FileInZip) else root,
+        downloaded.original_file_name,
+    )
 
 
 _IdMap = RootModel[Dict[str, LightHttpFileDescr]]
@@ -160,59 +184,33 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
     return MappingProxyType(ret)
 
 
-def unzip(
-    zip_file: Union[FilePath, ZipFile],
-    out_path: Optional[DirectoryPath] = None,
-    overwrite: bool = False,
-) -> DirectoryPath:
-    if isinstance(zip_file, ZipFile):
-        zip_context = nullcontext(zip_file)
-        if out_path is None:
-            raise ValueError("Missing argument: out_path")
-    else:
-        zip_context = ZipFile(zip_file, "r")
-        if out_path is None:
-            out_path = zip_file.with_suffix(zip_file.suffix + ".unzip")
+def write_content_to_zip(
+    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
+    zip: zipfile.ZipFile,
+):
+    """write strings as text, dictionaries as yaml and files to a ZipFile
+    Args:
+        content: dict mapping archive names to local file paths,
+                 strings (for text files), or dict (for yaml files).
+        zip: ZipFile
+    """
+    for arc_name, file in content.items():
+        if isinstance(file, dict):
+            buf = io.StringIO()
+            write_yaml(file, buf)
+            file = buf.getvalue()
 
-    with zip_context as f:
-        if out_path.exists() and overwrite:
-            if overwrite:
-                warnings.warn(f"Overwriting existing unzipped archive at {out_path}")
-            else:
-                found_content = {
-                    p.relative_to(out_path).as_posix() for p in out_path.glob("*")
-                }
-                expected_content = {info.filename for info in f.filelist}
-                if expected_content - found_content:
-                    warnings.warn(
-                        f"Unzipped archive at {out_path} is missing expected files."
-                    )
-                    parts = out_path.name.split("_")
-                    nr, *suffixes = parts[-1].split(".")
-                    if nr.isdecimal():
-                        nr = str(int(nr) + 1)
-                    else:
-                        nr = f"1.{nr}"
-
-                    parts[-1] = ".".join([nr, *suffixes])
-                    return unzip(
-                        f, out_path.with_name("_".join(parts)), overwrite=overwrite
-                    )
-                else:
-                    warnings.warn(
-                        "Using already unzipped archive with all expected files at"
-                        + f" {out_path}."
-                    )
-                    return out_path
-
-        f.extractall(out_path)
-
-    return out_path
+        if isinstance(file, str):
+            zip.writestr(arc_name, file.encode("utf-8"))
+        elif isinstance(file, ZipPath):
+            zip.writestr(arc_name, file.read_bytes())
+        else:
+            zip.write(file, arcname=arc_name)
 
 
 def write_zip(
     path: Union[FilePath, IO[bytes]],
-    content: Mapping[FileName, Union[str, FilePath, Dict[Any, Any]]],
+    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
     *,
     compression: int,
     compression_level: int,
@@ -229,24 +227,18 @@ def write_zip(
     """
     with ZipFile(
         path, "w", compression=compression, compresslevel=compression_level
-    ) as myzip:
-        for arc_name, file in content.items():
-            if isinstance(file, dict):
-                buf = io.StringIO()
-                write_yaml(file, buf)
-                file = buf.getvalue()
-
-            if isinstance(file, str):
-                myzip.writestr(arc_name, file.encode("utf-8"))
-            else:
-                myzip.write(file, arcname=arc_name)
+    ) as zip:
+        write_content_to_zip(content, zip)
 
 
-def load_array(source: Union[FileSource, FileDescr]) -> NDArray[Any]:
+def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
     path = download(source).path
+    with path.open(mode="rb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
+        return numpy.load(f, allow_pickle=False)
 
-    return numpy.load(path, allow_pickle=False)
 
-
-def save_array(path: Path, array: NDArray[Any]) -> None:
-    return numpy.save(path, array, allow_pickle=False)
+def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
+    with path.open(mode="wb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
+        return numpy.save(f, array, allow_pickle=False)

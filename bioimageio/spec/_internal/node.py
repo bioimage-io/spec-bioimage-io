@@ -12,6 +12,7 @@ from typing_extensions import (
     Self,
 )
 
+from .type_guards import is_kwargs
 from .validation_context import ValidationContext, validation_context_var
 
 
@@ -58,8 +59,7 @@ class Node(
         elif isinstance(context, dict):
             context = ValidationContext(**context)
 
-        if isinstance(obj, dict):
-            assert all(isinstance(k, str) for k in obj), obj
+        assert not isinstance(obj, dict) or is_kwargs(obj), obj
 
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate

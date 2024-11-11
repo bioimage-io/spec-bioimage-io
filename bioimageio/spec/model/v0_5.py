@@ -63,7 +63,6 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.types import Datetime as Datetime
-from .._internal.types import DeprecatedLicenseId as DeprecatedLicenseId
 from .._internal.types import Identifier as Identifier
 from .._internal.types import (
     ImportantFileSource,
@@ -71,7 +70,6 @@ from .._internal.types import (
     LowerCaseIdentifierAnno,
     SiUnit,
 )
-from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -90,6 +88,7 @@ from ..generic.v0_3 import (
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
@@ -98,6 +97,7 @@ from ..generic.v0_3 import (
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
 from ..generic.v0_3 import Doi as Doi
+from ..generic.v0_3 import LicenseId as LicenseId
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
@@ -200,7 +200,15 @@ class AxisId(LowerCaseIdentifier):
     ]
 
 
-NonBatchAxisId = Annotated[AxisId, Predicate(lambda x: x != "batch")]
+def _is_batch(a: str) -> bool:
+    return a == BATCH_AXIS_ID
+
+
+def _is_not_batch(a: str) -> bool:
+    return not _is_batch(a)
+
+
+NonBatchAxisId = Annotated[AxisId, Predicate(_is_not_batch)]
 
 PostprocessingId = Literal[
     "binarize",
@@ -256,9 +264,6 @@ class ParameterizedSize(Node):
     def get_n(self, s: int) -> ParameterizedSize_N:
         """return smallest n parameterizing a size greater or equal than `s`"""
         return ceil((s - self.min) / self.step)
-
-
-ARBITRARY_SIZE = ParameterizedSize(min=1, step=1)
 
 
 class DataDependentSize(Node):
@@ -434,7 +439,7 @@ BATCH_AXIS_ID = AxisId("batch")
 
 class BatchAxis(AxisBase):
     type: Literal["batch"] = "batch"
-    id: Annotated[AxisId, Predicate(lambda x: x == BATCH_AXIS_ID)] = BATCH_AXIS_ID
+    id: Annotated[AxisId, Predicate(_is_batch)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
@@ -1122,11 +1127,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         ):
             return self
 
-        down = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-
-        local_source = down.path
+        local = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
         tensor: NDArray[Any] = imread(
-            local_source, extension=PurePosixPath(down.original_file_name).suffix
+            local.path.read_bytes(),
+            extension=PurePosixPath(local.original_file_name).suffix,
         )
         n_dims = len(tensor.squeeze().shape)
         n_dims_min = n_dims_max = len(self.axes)
@@ -1254,7 +1258,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes")
+            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
             if kwargs_axes is None:
                 continue
 
@@ -1339,11 +1343,8 @@ def convert_axes(
                     axis_id=AxisId(a_id),
                     offset=int(offset_from_scale + 2 * shape.offset[i]),
                 )
-        elif isinstance(shape, collections.abc.Sequence):
-            size = shape[i]
-            assert isinstance(size, int)
         else:
-            assert_never(shape)
+            size = shape[i]
 
         if axis_type == "time":
             if tensor_type == "input":
@@ -1595,7 +1596,10 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     def _validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
-            kwargs_axes: Union[Any, Sequence[Any]] = p.kwargs.get("axes", ())
+            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
+            if kwargs_axes is None:
+                continue
+
             if not isinstance(kwargs_axes, collections.abc.Sequence):
                 raise ValueError(
                     f"expected `axes` sequence, but got {type(kwargs_axes)}"
@@ -2055,6 +2059,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
 
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
+        assert isinstance(doc_content, str)
         if not re.match("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
@@ -2416,23 +2421,27 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     def get_output_tensor_sizes(
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
     ) -> Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]:
+        """Returns the tensor output sizes for given **input_sizes**.
+        Only if **input_sizes** has a valid input shape, the tensor output size is exact.
+        Otherwise it might be larger than the actual (valid) output"""
         batch_size = self.get_batch_size(input_sizes)
         ns = self.get_ns(input_sizes)
 
         tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
-        assert tensor_sizes.inputs == {k: dict(v) for k, v in input_sizes.items()}
         return tensor_sizes.outputs
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
+        """get parameter `n` for each parameterized axis
+        such that the valid input size is >= the given input size"""
         ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize_N] = {}
         axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
             for aid, s in input_sizes[tid].items():
                 size_descr = axes[tid][aid].size
-                if size_descr is None or isinstance(size_descr, (int, SizeReference)):
-                    pass
-                elif isinstance(size_descr, ParameterizedSize):
+                if isinstance(size_descr, ParameterizedSize):
                     ret[(tid, aid)] = size_descr.get_n(s)
+                elif size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                    pass
                 else:
                     assert_never(size_descr)
 

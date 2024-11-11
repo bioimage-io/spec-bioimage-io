@@ -12,15 +12,16 @@ import black.mode
 ROOT_PATH = Path(__file__).parent.parent
 
 AUTOGEN_START = "# autogen: start\n"
-AUTOGEN_BODY_SINGLE = """from . import {info.all_version_modules_import_as}
-from .{info.latest_version_module} import {info.target_node} as {info.target_node}
+AUTOGEN_BODY_SINGLE = """from . import {info.latest_version_module}
 
-Any{info.target_node} = {info.target_node}
+{info.target_node} = {info.latest_version_module}.{info.target_node}
+Any{info.target_node} = {info.latest_version_module}.{info.target_node}
 """
 AUTOGEN_BODY_MULTIPLE = """\"\"\"
 implementaions of all released minor versions are available in submodules:
 {info.submodule_list}
 \"\"\"
+
 from typing import Union
 
 from pydantic import Discriminator
@@ -96,14 +97,13 @@ class Info:
             f"{m} as {m}" for m in self.all_version_modules
         )
 
-        avmi = [
-            f"from .{m} import {self.target_node} as {self.target_node}_{m}"
-            for m in self.all_version_modules
-        ]
-        avmi.insert(
-            -1,
-            f"from .{self.latest_version_module} import {self.target_node} as "
-            + f"{self.target_node}",
+        avmi = (
+            [f"from . import {', '.join(self.all_version_modules)}"]
+            + [f"{self.target_node} = {self.latest_version_module}.{self.target_node}"]
+            + [
+                f"{self.target_node}_{m} = {m}.{self.target_node}"
+                for m in self.all_version_modules
+            ]
         )
         self.all_version_modules_imports = "\n".join(avmi)
 
@@ -148,6 +148,7 @@ def process(info: Info, check: bool):
             for tv in black_config.pop("target_version")
         )
     )
+    black_config.pop("extend_exclude", None)
     updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
     if check:
         if init_content == updated:

@@ -41,7 +41,6 @@ weights:
   pytorch_state_dict:
     architecture: unet.py:UNet2d
     architecture_sha256: 3aeda0ace2e9a595025fa103a3eae2fd620a95924b3fba00ff5d4451acf4ad53
-    dependencies: conda:environment.yaml
     kwargs:
       {
         depth: 3,
@@ -55,3 +54,4 @@ weights:
       }
     sha256: bcf26f08c26f5ef8f891c08dba2c8812bec7991643fb7c0f7b5d3e7dc321092f
     source: weights.pt
+    pytorch_version: 1.6

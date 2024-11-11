@@ -3,7 +3,32 @@ import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from deepdiff import DeepDiff
+
 from bioimageio.spec.model import v0_5
+
+
+def test_package(unet2d_path: Path):
+    from bioimageio.spec import dump_description, load_description
+
+    descr = load_description(unet2d_path)
+    rdf1 = dump_description(descr)
+    zip = descr.package()
+    descr2 = load_description(zip)
+    rdf2 = dump_description(descr2)
+
+    # assert expected differences
+    assert (
+        rdf1["weights"]["pytorch_state_dict"].pop("source")  # type: ignore
+        == "https://zenodo.org/records/3446812/files/unet2d_weights.torch"
+    )
+    assert (
+        rdf2["weights"]["pytorch_state_dict"].pop("source")  # type: ignore
+        == "unet2d_weights.torch"
+    )
+
+    diff = DeepDiff(rdf1, rdf2)
+    assert not diff, diff.pretty()
 
 
 def test_save_bioimageio_package(unet2d_path: Path):

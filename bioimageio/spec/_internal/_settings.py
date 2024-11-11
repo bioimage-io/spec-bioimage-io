@@ -66,3 +66,4 @@ class Settings(BaseSettings, extra="ignore"):
 
 
 settings = Settings()
+"""parsed environment variables for bioimageio.spec"""

@@ -4,7 +4,7 @@ from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from typing import Dict, List, Literal, Optional, Sequence, Union
 
-from .io_basics import AbsoluteFilePath, FileName
+from .io_basics import AbsoluteFilePath, FileName, ZipPath
 from .url import HttpUrl
 
 
@@ -16,7 +16,7 @@ class PackagingContext:
 
     bioimageio_yaml_file_name: FileName
 
-    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]
+    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl, ZipPath]]
     """File sources to include in the packaged resource"""
 
     weights_priority_order: Optional[Sequence[str]] = None
@@ -26,7 +26,9 @@ class PackagingContext:
         self,
         *,
         bioimageio_yaml_file_name: Optional[FileName] = None,
-        file_sources: Optional[Dict[FileName, Union[AbsoluteFilePath, HttpUrl]]] = None,
+        file_sources: Optional[
+            Dict[FileName, Union[AbsoluteFilePath, HttpUrl, ZipPath]]
+        ] = None,
         weights_priority_order: Union[
             Optional[Sequence[str]], Literal["unchanged"]
         ] = "unchanged",

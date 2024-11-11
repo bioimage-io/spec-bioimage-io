@@ -4,7 +4,10 @@ import collections.abc
 import traceback
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from io import BytesIO
+from pathlib import Path
 from typing import (
+    IO,
     TYPE_CHECKING,
     Any,
     ClassVar,
@@ -21,6 +24,7 @@ from typing import (
     cast,
     get_type_hints,
 )
+from zipfile import ZipFile
 
 import pydantic
 from pydantic import (
@@ -52,9 +56,15 @@ from ..summary import (
 )
 from .field_warning import issue_warning
 from .io import BioimageioYamlContent
-from .node import Node as Node
+from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
+from .io_utils import write_content_to_zip
+from .node import Node
+from .packaging_context import PackagingContext
 from .url import HttpUrl
-from .utils import assert_all_params_set_explicitly, get_format_version_tuple
+from .utils import (
+    assert_all_params_set_explicitly,
+    get_format_version_tuple,
+)
 from .validation_context import (
     ValidationContext,
     validation_context_var,
@@ -242,7 +252,7 @@ class NodeWithExplicitlySetFields(Node):
                         call_default_factory=True
                     )
 
-        return data
+        return data  # pyright: ignore[reportUnknownVariableType]
 
 
 if TYPE_CHECKING:
@@ -287,12 +297,12 @@ class ResourceDescrBase(
             or not isinstance(data, dict)
             or "format_version" not in data
         ):
-            return data
+            return data  # pyright: ignore[reportUnknownVariableType]
 
-        value = data["format_version"]
+        value: Any = data["format_version"]
         fv = get_format_version_tuple(value)
         if fv is None:
-            return data
+            return data  # pyright: ignore[reportUnknownVariableType]
 
         if (
             fv[0] == cls.implemented_format_version_tuple[0]
@@ -306,7 +316,7 @@ class ResourceDescrBase(
             )
             data["format_version"] = cls.implemented_format_version
 
-        return data
+        return data  # pyright: ignore[reportUnknownVariableType]
 
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
@@ -449,6 +459,55 @@ class ResourceDescrBase(
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
 
         return rd, val_errors, val_warnings
+
+    def package(
+        self, dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None, /
+    ) -> ZipFile:
+        """package the described resource as a zip archive
+
+        Args:
+            dest: (path/bytes stream of) destination zipfile
+        """
+        if dest is None:
+            dest = BytesIO()
+
+        if isinstance(dest, ZipFile):
+            zip = dest
+            if "r" in zip.mode:
+                raise ValueError(
+                    f"zip file {dest} opened in '{zip.mode}' mode,"
+                    + " but write access is needed for packaging."
+                )
+        else:
+            zip = ZipFile(dest, mode="w")
+
+        if zip.filename is None:
+            zip.filename = (
+                str(getattr(self, "id", getattr(self, "name", "bioimageio"))) + ".zip"
+            )
+
+        content = self.get_package_content()
+        write_content_to_zip(content, zip)
+        return zip
+
+    def get_package_content(
+        self,
+    ) -> Dict[
+        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
+    ]:
+        """Returns package content without creating the package."""
+        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
+        with PackagingContext(
+            bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
+            file_sources=content,
+        ):
+            rdf_content: BioimageioYamlContent = self.model_dump(
+                mode="json", exclude_unset=True
+            )
+
+        _ = rdf_content.pop("rdf_source", None)
+
+        return {**content, BIOIMAGEIO_YAML: rdf_content}
 
 
 class InvalidDescr(

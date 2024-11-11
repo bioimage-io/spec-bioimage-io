@@ -362,13 +362,15 @@ class GenericModelDescrBase(ResourceDescrBase):
     """The version of the resource following SemVer 2.0."""
 
     @model_validator(mode="before")
-    def _remove_version_number(cls, value: Union[Any, Dict[Any, Any]]):
+    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
+        cls, value: Union[Any, Dict[Any, Any]]
+    ):
         if isinstance(value, dict):
             vn: Any = value.pop("version_number", None)
             if vn is not None and "id" in value:
                 value["id"] = f"{value['id']}/{vn}"
 
-        return value
+        return value  # pyright: ignore[reportUnknownVariableType]
 
 
 class GenericDescrBase(GenericModelDescrBase):
@@ -441,10 +443,12 @@ class GenericDescr(
 class LinkedResourceNode(Node):
 
     @model_validator(mode="before")
-    def _remove_version_number(cls, value: Union[Any, Dict[Any, Any]]):
+    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
+        cls, value: Union[Any, Dict[Any, Any]]
+    ):
         if isinstance(value, dict):
             vn: Any = value.pop("version_number", None)
             if vn is not None and "id" in value:
                 value["id"] = f"{value['id']}/{vn}"
 
-        return value
+        return value  # pyright: ignore[reportUnknownVariableType]

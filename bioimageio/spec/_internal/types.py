@@ -10,21 +10,35 @@ from pydantic import PlainSerializer, RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
-from .io import FileSource as FileSource
-from .io import ImportantFileSource as ImportantFileSource
-from .io import PermissiveFileSource as PermissiveFileSource
-from .io import RelativeFilePath as RelativeFilePath
-from .io_basics import AbsoluteDirectory as AbsoluteDirectory
-from .io_basics import AbsoluteFilePath as AbsoluteFilePath
-from .io_basics import FileName as FileName
-from .io_basics import Sha256 as Sha256
-from .license_id import DeprecatedLicenseId as DeprecatedLicenseId
-from .license_id import LicenseId as LicenseId
-from .url import HttpUrl as HttpUrl
+from .io import FileSource, ImportantFileSource, PermissiveFileSource, RelativeFilePath
+from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, Sha256
+from .license_id import DeprecatedLicenseId, LicenseId
+from .url import HttpUrl
 from .validated_string import ValidatedString
 from .validator_annotations import AfterValidator, BeforeValidator
-from .version_type import Version as Version
+from .version_type import Version
 
+__all__ = [
+    "AbsoluteDirectory",
+    "AbsoluteFilePath",
+    "Datetime",
+    "DeprecatedLicenseId",
+    "Doi",
+    "FileName",
+    "FileSource",
+    "HttpUrl",
+    "Identifier",
+    "ImportantFileSource",
+    "LicenseId",
+    "LowerCaseIdentifier",
+    "NotEmpty",
+    "OrcidId",
+    "PermissiveFileSource",
+    "RelativeFilePath",
+    "Sha256",
+    "SiUnit",
+    "Version",
+]
 S = TypeVar("S", bound=Sequence[Any])
 NotEmpty = Annotated[S, annotated_types.MinLen(1)]
 
@@ -123,6 +137,13 @@ class OrcidId(ValidatedString):
     ]
 
 
+def _normalize_multiplication(si_unit: Union[Any, str]) -> Union[Any, str]:
+    if isinstance(si_unit, str):
+        return si_unit.replace("×", "·").replace("*", "·").replace(" ", "·")
+    else:
+        return si_unit
+
+
 class SiUnit(ValidatedString):
     """Si unit"""
 
@@ -130,12 +151,6 @@ class SiUnit(ValidatedString):
         Annotated[
             str,
             StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),
-            BeforeValidator(
-                lambda s: (
-                    s.replace("×", "·").replace("*", "·").replace(" ", "·")
-                    if isinstance(s, str)
-                    else s
-                )
-            ),
+            BeforeValidator(_normalize_multiplication),
         ]
     ]

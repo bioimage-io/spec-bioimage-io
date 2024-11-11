@@ -4,7 +4,6 @@ cite:
   - { text: training library, doi: "10.5281/zenodo.5108853" }
   - { text: architecture, doi: "10.1007/978-3-319-24574-4_28" }
 covers: [cover.jpg]
-dependencies: conda:environment.yaml
 description: Different output shape
 documentation: documentation.md
 format_version: 0.4.0
@@ -44,3 +43,4 @@ weights:
     kwargs: { depth: 3, in_channels: 1, initial_features: 16, out_channels: 1 }
     sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838
     source: weights.pt
+    pytorch_version: 1.6

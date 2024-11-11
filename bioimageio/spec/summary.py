@@ -1,13 +1,20 @@
+import subprocess
+from io import StringIO
 from itertools import chain
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from types import MappingProxyType
 from typing import (
     Any,
+    Dict,
     Iterable,
     List,
     Literal,
     Mapping,
+    NamedTuple,
     Optional,
+    Sequence,
+    Set,
     Tuple,
     Union,
     no_type_check,
@@ -15,11 +22,14 @@ from typing import (
 
 import rich.console
 import rich.markdown
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
 
 from ._internal.constants import VERSION
+from ._internal.io import is_yaml_value
+from ._internal.io_utils import write_yaml
+from ._internal.type_guards import is_mapping
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -32,6 +42,7 @@ from ._internal.warning_levels import (
     WarningLevel,
     WarningSeverity,
 )
+from .conda_env import CondaEnv
 
 Loc = Tuple[Union[int, str], ...]
 """location of error/warning in a nested data structure"""
@@ -51,16 +62,22 @@ WARNING_NAME_TO_LEVEL: Mapping[WarningLevelName, WarningLevel] = MappingProxyTyp
 
 
 class ValidationEntry(BaseModel):
+    """Base of `ErrorEntry` and `WarningEntry`"""
+
     loc: Loc
     msg: str
     type: Union[ErrorType, str]
 
 
 class ErrorEntry(ValidationEntry):
+    """An error in a `ValidationDetail`"""
+
     traceback: List[str] = Field(default_factory=list)
 
 
 class WarningEntry(ValidationEntry):
+    """A warning in a `ValidationDetail`"""
+
     severity: WarningSeverity = WARNING
     severity_name: WarningSeverityName = WARNING_NAME
 
@@ -69,9 +86,8 @@ class WarningEntry(ValidationEntry):
     def sync_severity_with_severity_name(
         cls, data: Union[Mapping[Any, Any], Any]
     ) -> Any:
-        if isinstance(data, dict):
+        if is_mapping(data):
             data = dict(data)
-            assert isinstance(data, dict)
             if (
                 "severity" in data
                 and "severity_name" not in data
@@ -90,6 +106,7 @@ class WarningEntry(ValidationEntry):
 
 
 def format_loc(loc: Loc, enclose_in: str = "`") -> str:
+    """helper to format a location tuple `Loc` as Markdown string"""
     if not loc:
         loc = ("__root__",)
 
@@ -102,9 +119,11 @@ def format_loc(loc: Loc, enclose_in: str = "`") -> str:
     return f"{enclose_in}{brief_loc_str}{enclose_in}"
 
 
-class InstalledPackage(TypedDict):
+class InstalledPackage(NamedTuple):
     name: str
     version: str
+    build: str = ""
+    channel: str = ""
 
 
 class ValidationContextSummary(TypedDict):
@@ -115,11 +134,37 @@ class ValidationContextSummary(TypedDict):
 
 
 class ValidationDetail(BaseModel, extra="allow"):
+    """a detail in a validation summary"""
+
     name: str
     status: Literal["passed", "failed"]
+    loc: Loc = ()
+    """location in the RDF that this detail applies to"""
     errors: List[ErrorEntry] = Field(default_factory=list)
     warnings: List[WarningEntry] = Field(default_factory=list)
     context: Optional[ValidationContextSummary] = None
+
+    recommended_env: Optional[CondaEnv] = None
+    """recommended conda environemnt for this validation detail"""
+    conda_compare: Optional[str] = None
+    """output of `conda compare <recommended env>`"""
+
+    def model_post_init(self, __context: Any):
+        """create `conda_compare` default value if needed"""
+        super().model_post_init(__context)
+        if self.recommended_env is not None and self.conda_compare is None:
+            dumped_env = self.recommended_env.model_dump(mode="json")
+            if is_yaml_value(dumped_env):
+                with NamedTemporaryFile(mode="w", encoding="utf-8") as f:
+                    write_yaml(dumped_env, f)
+                    self.conda_compare = subprocess.run(
+                        ["conda", "compare", f.name],
+                        capture_output=True,
+                        shell=True,
+                        text=True,
+                    ).stdout
+            else:
+                self.conda_compare = "Failed to dump recommended env to valid yaml"
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
@@ -132,6 +177,7 @@ class ValidationDetail(BaseModel, extra="allow"):
             return "❌"
 
     def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
+        """format as Markdown string"""
         indent = "    " if root_loc else ""
         errs_wrns = self._format_errors_and_warnings(
             hide_tracebacks=hide_tracebacks, root_loc=root_loc
@@ -179,18 +225,24 @@ class ValidationDetail(BaseModel, extra="allow"):
 
 
 class ValidationSummary(BaseModel, extra="allow"):
+    """Summarizes output of all bioimageio validations and tests
+    for one specific `ResourceDescr` instance."""
+
     name: str
     source_name: str
     type: str
     format_version: str
     status: Literal["passed", "failed"]
     details: List[ValidationDetail]
-    env: List[InstalledPackage] = Field(
-        default_factory=lambda: [
+    env: Set[InstalledPackage] = Field(
+        default_factory=lambda: {
             InstalledPackage(name="bioimageio.spec", version=VERSION)
-        ]
+        }
     )
     """list of selected, relevant package versions"""
+
+    conda_list: Optional[Sequence[InstalledPackage]] = None
+    """parsed output of conda list"""
 
     @property
     def status_icon(self):
@@ -237,13 +289,17 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_env: bool = False,
         root_loc: Loc = (),
     ) -> str:
+        """Format summary as Markdown string
+
+        Suitable to embed in HTML using '<br>' instead of '\n'.
+        """
         info = self._format_md_table(
             [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
             + ([] if hide_source else [["source", self.source_name]])
             + [
                 ["format version", f"{self.type} {self.format_version}"],
             ]
-            + ([] if hide_env else [[e["name"], e["version"]] for e in self.env])
+            + ([] if hide_env else [[e.name, e.version] for e in self.env])
         )
 
         def format_loc(loc: Loc):
@@ -251,7 +307,7 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         details = [["❓", "location", "detail"]]
         for d in self.details:
-            details.append([d.status_icon, "", d.name])
+            details.append([d.status_icon, format_loc(d.loc), d.name])
             if d.context is not None:
                 details.append(
                     [
@@ -267,6 +323,24 @@ class ValidationSummary(BaseModel, extra="allow"):
 
                 details.append(
                     ["🔍", "context.warning_level", d.context["warning_level"]]
+                )
+
+            if d.recommended_env is not None:
+                rec_env = StringIO()
+                json_env = d.recommended_env.model_dump(mode="json")
+                assert is_yaml_value(json_env)
+                write_yaml(json_env, rec_env)
+                details.append(
+                    [
+                        "🐍",
+                        "recommended conda env",
+                        f"```yaml\n{rec_env.read()}\n```".replace("\n", "<br>"),
+                    ]
+                )
+
+            if d.conda_compare is not None:
+                details.append(
+                    ["🐍", "actual conda env", d.conda_compare.replace("\n", "<br>")]
                 )
 
             for entry in d.errors:
@@ -341,3 +415,18 @@ class ValidationSummary(BaseModel, extra="allow"):
             assert_never(detail.status)
 
         self.details.append(detail)
+
+    @field_validator("env", mode="before")
+    def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):
+        """convert old env value for backwards compatibility"""
+        if isinstance(value, list):
+            return [
+                (
+                    (v["name"], v["version"], v.get("build", ""), v.get("channel", ""))
+                    if isinstance(v, dict) and "name" in v and "version" in v
+                    else v
+                )
+                for v in value
+            ]
+        else:
+            return value

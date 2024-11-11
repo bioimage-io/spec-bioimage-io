@@ -2,6 +2,7 @@ import collections.abc
 from typing import Any, Dict, Mapping, Union
 
 from .._internal.io import BioimageioYamlContent
+from .._internal.type_guards import is_mapping
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:
@@ -51,7 +52,7 @@ def remove_slashes_from_names(data: Dict[Any, Any]) -> None:
     def rm_slashes_in_person_name(
         person: Union[Any, Mapping[Union[Any, str], Any]],
     ) -> Any:
-        if not isinstance(person, collections.abc.Mapping):
+        if not is_mapping(person):
             return person
 
         new_person = dict(person)

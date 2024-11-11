@@ -109,7 +109,7 @@ weights:
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies:
       source: environment.yaml
-      sha256: 2c92c4d3c66981651881cdae2a910488d2f395babb59e63701047669ef586de9
+      sha256: 129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10
     pytorch_version: "1.5.1"
   onnx:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
