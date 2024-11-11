@@ -1,6 +1,5 @@
 [tool.black]
 line-length = 88
-extend_exclude = "^/scripts/pdoc/original.py | ^/scripts/pdoc/patched.py"
 target-version = ["py38", "py39", "py310", "py311", "py312"]
 preview = true
 
