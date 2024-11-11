@@ -33,12 +33,6 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="variable" href="#yaml">yaml</a>
-            </li>
-            <li>
-                    <a class="variable" href="#SupportedWeightsEntry">SupportedWeightsEntry</a>
-            </li>
-            <li>
                     <a class="class" href="#PipDeps">PipDeps</a>
                             <ul class="memberlist">
                         <li>
@@ -59,11 +53,17 @@
                         <li>
                                 <a class="variable" href="#CondaEnv.dependencies">dependencies</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#CondaEnv.wo_name">wo_name</a>
+                        </li>
                 </ul>
 
             </li>
             <li>
-                    <a class="function" href="#get_conda_env">get_conda_env</a>
+                    <a class="class" href="#BioimageioCondaEnv">BioimageioCondaEnv</a>
+                            <ul class="memberlist">
+                </ul>
+
             </li>
     </ul>
 
@@ -87,377 +87,118 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.conda_env    </h1>
 
                         <label class="view-source-button" for="mod-conda_env-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">import</span> <span class="nn">warnings</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">import</span> <span class="nn">zipfile</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Union</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">ruyaml</span> <span class="kn">import</span> <span class="n">YAML</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">assert_never</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec._internal.gh_utils</span> <span class="kn">import</span> <span class="n">set_github_warning</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec.common</span> <span class="kn">import</span> <span class="n">RelativeFilePath</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec.model</span> <span class="kn">import</span> <span class="n">v0_4</span><span class="p">,</span> <span class="n">v0_5</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec.model.v0_5</span> <span class="kn">import</span> <span class="n">Version</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">bioimageio.spec.utils</span> <span class="kn">import</span> <span class="n">download</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s2">&quot;safe&quot;</span><span class="p">)</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="n">SupportedWeightsEntry</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">v0_4</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">,</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">v0_4</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">v0_4</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">v0_4</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">v0_5</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">,</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">v0_5</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">v0_5</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">v0_5</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="p">]</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">class</span> <span class="nc">PipDeps</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">pip</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="k">class</span> <span class="nc">CondaEnv</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">dependencies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>        <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">]</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="p">]</span>  <span class="c1"># TODO: improve typing: last entry is PipDeps</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">def</span> <span class="nf">get_conda_env</span><span class="p">(</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">entry</span><span class="p">:</span> <span class="n">SupportedWeightsEntry</span><span class="p">,</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">env_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;get the recommended Conda environment for a given weights entry description&quot;&quot;&quot;</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="p">(</span><span class="n">v0_4</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">)):</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_onnx_env</span><span class="p">(</span><span class="n">opset_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">opset_version</span><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>        <span class="n">entry</span><span class="p">,</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>        <span class="p">(</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="p">),</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="p">):</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>        <span class="k">if</span> <span class="p">(</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>            <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">)</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>            <span class="ow">or</span> <span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="p">):</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_pytorch_env</span><span class="p">(</span><span class="n">pytorch_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">pytorch_version</span><span class="p">)</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_env_from_deps</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="n">entry</span><span class="p">,</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="p">(</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="p">),</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="p">):</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_tf_env</span><span class="p">(</span><span class="n">tensorflow_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">tensorflow_version</span><span class="p">)</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_env_from_deps</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="n">assert_never</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="n">_normalize_bioimageio_conda_env</span><span class="p">(</span><span class="n">conda_env</span><span class="p">,</span> <span class="n">env_name</span><span class="p">)</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="k">return</span> <span class="n">conda_env</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="k">def</span> <span class="nf">_get_default_pytorch_env</span><span class="p">(</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">pytorch_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Version</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="k">if</span> <span class="n">pytorch_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">pytorch_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;1.10.1&quot;</span><span class="p">)</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="c1"># dependencies to install pytorch according to https://pytorch.org/get-started/previous-versions/</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">:=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pytorch_version</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;1.6.0&quot;</span><span class="p">:</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.7.0&quot;</span><span class="p">]</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.7.0&quot;</span><span class="p">:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.8.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.7.0&quot;</span><span class="p">]</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.7.1&quot;</span><span class="p">:</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.8.2&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.7.1&quot;</span><span class="p">]</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.8.0&quot;</span><span class="p">:</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.9.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.8.0&quot;</span><span class="p">]</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.8.1&quot;</span><span class="p">:</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.9.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.8.1&quot;</span><span class="p">]</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.9.0&quot;</span><span class="p">:</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.10.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.9.0&quot;</span><span class="p">]</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.9.1&quot;</span><span class="p">:</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.10.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.9.1&quot;</span><span class="p">]</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.10.0&quot;</span><span class="p">:</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.11.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.10.0&quot;</span><span class="p">]</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.10.1&quot;</span><span class="p">:</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.11.2&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.10.1&quot;</span><span class="p">]</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.11.0&quot;</span><span class="p">:</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.12.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.11.0&quot;</span><span class="p">]</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.12.0&quot;</span><span class="p">:</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.13.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.12.0&quot;</span><span class="p">]</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.12.1&quot;</span><span class="p">:</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.13.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.12.1&quot;</span><span class="p">]</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.13.0&quot;</span><span class="p">:</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.14.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.13.0&quot;</span><span class="p">]</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;1.13.1&quot;</span><span class="p">:</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.14.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==0.13.1&quot;</span><span class="p">]</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.0.0&quot;</span><span class="p">:</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.15.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.0.0&quot;</span><span class="p">]</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.0.1&quot;</span><span class="p">:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.15.2&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.0.2&quot;</span><span class="p">]</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.1.0&quot;</span><span class="p">:</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.16.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.1.0&quot;</span><span class="p">]</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.1.1&quot;</span><span class="p">:</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.16.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.1.1&quot;</span><span class="p">]</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.1.2&quot;</span><span class="p">:</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.16.2&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.1.2&quot;</span><span class="p">]</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.2.0&quot;</span><span class="p">:</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.17.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.2.0&quot;</span><span class="p">]</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.2.1&quot;</span><span class="p">:</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.17.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.2.1&quot;</span><span class="p">]</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.2.2&quot;</span><span class="p">:</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.17.2&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.2.2&quot;</span><span class="p">]</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.3.0&quot;</span><span class="p">:</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.18.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.3.0&quot;</span><span class="p">]</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.3.1&quot;</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.18.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.3.1&quot;</span><span class="p">]</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.4.0&quot;</span><span class="p">:</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.19.0&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.4.0&quot;</span><span class="p">]</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;2.4.1&quot;</span><span class="p">:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision==0.19.1&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio==2.4.1&quot;</span><span class="p">]</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="n">set_github_warning</span><span class="p">(</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>            <span class="s2">&quot;UPDATE NEEDED&quot;</span><span class="p">,</span> <span class="s2">&quot;Specify pins for additional pytorch dependencies!&quot;</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="p">)</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pytorch==</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;torchvision&quot;</span><span class="p">,</span> <span class="s2">&quot;torchaudio&quot;</span><span class="p">]</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cpuonly&quot;</span><span class="p">)</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="c1"># avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="c1"># see https://github.com/pytorch/pytorch/issues/123097</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="k">if</span> <span class="n">pytorch_version</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>        <span class="s2">&quot;2.2.0&quot;</span>  <span class="c1"># TODO: check if this is the correct cutoff where the fix is not longer needed</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="p">):</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mkl ==2024.0.0&quot;</span><span class="p">)</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="k">if</span> <span class="n">pytorch_version</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>        <span class="n">pytorch_version</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">pytorch_version</span><span class="o">.</span><span class="n">minor</span> <span class="o">&lt;</span> <span class="mi">2</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="p">):</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="c1"># avoid ImportError: cannot import name &#39;packaging&#39; from &#39;pkg_resources&#39;</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="c1"># see https://github.com/pypa/setuptools/issues/4376#issuecomment-2126162839</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;setuptools &lt;70.0.0&quot;</span><span class="p">)</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="k">if</span> <span class="n">pytorch_version</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="s2">&quot;2.4&quot;</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="p">):</span>  <span class="c1"># TODO: verify that future pytorch 2.4 is numpy 2.0 compatible</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="c1"># make sure we have a compatible numpy version</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="c1"># see https://github.com/pytorch/vision/issues/8460</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;numpy &lt;2&quot;</span><span class="p">)</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;numpy &gt;=2,&lt;3&quot;</span><span class="p">)</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pytorch&quot;</span><span class="p">,</span> <span class="s2">&quot;conda-forge&quot;</span><span class="p">],</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="n">dependencies</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">deps</span><span class="p">),</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="p">)</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="k">def</span> <span class="nf">_get_default_onnx_env</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">opset_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">if</span> <span class="n">opset_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>        <span class="n">opset_version</span> <span class="o">=</span> <span class="mi">15</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="c1"># note: we should not need to worry about the opset version,</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>    <span class="c1"># see https://github.com/microsoft/onnxruntime/blob/master/docs/Versioning.md</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nodefaults&quot;</span><span class="p">,</span> <span class="s2">&quot;conda-forge&quot;</span><span class="p">],</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;onnxruntime&quot;</span><span class="p">]</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="p">)</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="k">def</span> <span class="nf">_get_default_tf_env</span><span class="p">(</span><span class="n">tensorflow_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Version</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>    <span class="k">if</span> <span class="n">tensorflow_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>        <span class="n">tensorflow_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;1.15&quot;</span><span class="p">)</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="c1"># tensorflow 1 is not available on conda, so we need to inject this as a pip dependency</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="k">if</span> <span class="n">tensorflow_version</span><span class="o">.</span><span class="n">major</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>        <span class="n">tensorflow_version</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>            <span class="n">tensorflow_version</span><span class="p">,</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;1.13&quot;</span><span class="p">)</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>        <span class="p">)</span>  <span class="c1"># tf &lt;1.13 not available anymore</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>        <span class="n">deps</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>            <span class="s2">&quot;python=3.7.*&quot;</span><span class="p">,</span>  <span class="c1"># tf 1.15 not available for py&gt;=3.8</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>            <span class="n">PipDeps</span><span class="p">(</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>                <span class="n">pip</span><span class="o">=</span><span class="p">[</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>                    <span class="s2">&quot;bioimageio.core&quot;</span><span class="p">,</span>  <span class="c1"># get bioimageio.core (and its dependencies) via pip as well to avoid conda/pip mix</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>                    <span class="sa">f</span><span class="s2">&quot;tensorflow ==</span><span class="si">{</span><span class="n">tensorflow_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>                    <span class="s2">&quot;protobuf &lt;4.0&quot;</span><span class="p">,</span>  <span class="c1"># protobuf pin: tf 1 does not pin an upper limit for protobuf, but fails to load models saved with protobuf 3 when installing protobuf 4.</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>                <span class="p">]</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>            <span class="p">),</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>        <span class="p">)</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>        <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>            <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nodefaults&quot;</span><span class="p">,</span> <span class="s2">&quot;conda-forge&quot;</span><span class="p">],</span>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>            <span class="n">dependencies</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">deps</span><span class="p">),</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>        <span class="p">)</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>        <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>            <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nodefaults&quot;</span><span class="p">,</span> <span class="s2">&quot;conda-forge&quot;</span><span class="p">],</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>            <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tensorflow ==</span><span class="si">{</span><span class="n">tensorflow_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>        <span class="p">)</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="k">def</span> <span class="nf">_get_env_from_deps</span><span class="p">(</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="n">deps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">v0_4</span><span class="o">.</span><span class="n">Dependencies</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">EnvironmentFileDescr</span><span class="p">],</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deps</span><span class="p">,</span> <span class="n">v0_4</span><span class="o">.</span><span class="n">Dependencies</span><span class="p">):</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>        <span class="k">if</span> <span class="n">deps</span><span class="o">.</span><span class="n">manager</span> <span class="o">==</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>            <span class="n">pip_deps</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>                <span class="n">d</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">download</span><span class="p">(</span><span class="n">deps</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>            <span class="p">]</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>            <span class="k">if</span> <span class="s2">&quot;bioimageio.core&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pip_deps</span><span class="p">:</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>                <span class="n">pip_deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">)</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>            <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>                <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nodefaults&quot;</span><span class="p">,</span> <span class="s2">&quot;conda-forge&quot;</span><span class="p">],</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>                <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">(</span><span class="n">pip</span><span class="o">=</span><span class="n">pip_deps</span><span class="p">)],</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>            <span class="p">)</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>        <span class="k">elif</span> <span class="n">deps</span><span class="o">.</span><span class="n">manager</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;mamba&quot;</span><span class="p">):</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dependency manager </span><span class="si">{</span><span class="n">deps</span><span class="o">.</span><span class="n">manager</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>            <span class="n">deps_source</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="n">deps</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deps</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">)</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                <span class="k">else</span> <span class="n">deps</span><span class="o">.</span><span class="n">file</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>            <span class="p">)</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deps_source</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>                <span class="n">local</span> <span class="o">=</span> <span class="n">deps_source</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>                <span class="n">local</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">deps_source</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>            <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span><span class="o">**</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">local</span><span class="p">))</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deps</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">EnvironmentFileDescr</span><span class="p">):</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>        <span class="n">local</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">deps</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>        <span class="k">return</span> <span class="n">CondaEnv</span><span class="p">(</span><span class="o">**</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">local</span><span class="p">))</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="n">assert_never</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="k">def</span> <span class="nf">_normalize_bioimageio_conda_env</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">CondaEnv</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;update a conda env such that we have bioimageio.core and sorted dependencies</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">    Args:</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>    <span class="k">if</span> <span class="n">env_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ensure_valid_conda_env_name</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_name</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>    <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;env&quot;</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="k">if</span> <span class="s2">&quot;channels&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;conda-forge&quot;</span><span class="p">,</span> <span class="s2">&quot;nodefaults&quot;</span><span class="p">]</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>    <span class="k">if</span> <span class="s2">&quot;dependencies&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>    <span class="k">if</span> <span class="s2">&quot;conda-forge&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]:</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;conda-forge&quot;</span><span class="p">)</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>    <span class="k">if</span> <span class="s2">&quot;defaults&quot;</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]:</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;removing &#39;defaults&#39; from conda-channels&quot;</span><span class="p">)</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">)</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>    <span class="k">if</span> <span class="s2">&quot;nodefaults&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]:</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nodefaults&quot;</span><span class="p">)</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>    <span class="k">if</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]:</span>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">)</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">deps</span> <span class="o">:=</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">])):</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deps</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>            <span class="n">found_pip_section</span> <span class="o">=</span> <span class="n">deps</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">found_pip_section</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>            <span class="n">pip_section</span> <span class="o">=</span> <span class="n">found_pip_section</span>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>            <span class="k">del</span> <span class="n">found_pip_section</span>
-</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>            <span class="k">break</span>
-</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>        <span class="n">pip_section</span><span class="p">:</span> <span class="n">PipDeps</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pip&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>
-</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>        <span class="s2">&quot;bioimageio.core&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
-</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>        <span class="ow">or</span> <span class="s2">&quot;conda-forge::bioimageio.core&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>        <span class="ow">or</span> <span class="s2">&quot;bioimageio.core&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pip_section</span><span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">]</span>
-</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>    <span class="p">):</span>
-</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;conda-forge::bioimageio.core&quot;</span><span class="p">)</span>
-</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>        <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
-</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>    <span class="p">),</span> <span class="s2">&quot;found mapping in dependencies even after removing pip section&quot;</span>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>    <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># pyright: ignore[reportCallIssue]</span>
-</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>    <span class="n">pip_section</span><span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>    <span class="n">env</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pip_section</span><span class="p">)</span>
-</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>
-</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="k">def</span> <span class="nf">_ensure_valid_conda_env_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>    <span class="k">for</span> <span class="n">illegal</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">):</span>
-</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">illegal</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>
-</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>    <span class="k">return</span> <span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;empty&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">import</span> <span class="nn">warnings</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">class</span> <span class="nc">PipDeps</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pip dependencies to include in conda dependecies&quot;&quot;&quot;</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="n">pip</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">):</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">class</span> <span class="nc">CondaEnv</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represenation of the content of a conda environment.yaml file&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">dependencies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">_ensure_valid_conda_env_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>        <span class="k">for</span> <span class="n">illegal</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">):</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">illegal</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="n">value</span> <span class="ow">or</span> <span class="s2">&quot;empty&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">wo_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_construct</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">})</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="k">class</span> <span class="nc">BioimageioCondaEnv</span><span class="p">(</span><span class="n">CondaEnv</span><span class="p">):</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A special `CondaEnv` that</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    - automatically adds bioimageio specific dependencies</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">    - sorts dependencies</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">_normalize_bioimageio_conda_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;update a conda env such that we have bioimageio.core and sorted dependencies&quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="k">for</span> <span class="n">req_channel</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;conda-forge&quot;</span><span class="p">,</span> <span class="s2">&quot;nodefaults&quot;</span><span class="p">):</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="k">if</span> <span class="n">req_channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">req_channel</span><span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="k">if</span> <span class="s2">&quot;defaults&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;removing &#39;defaults&#39; from conda-channels&quot;</span><span class="p">)</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">)</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">if</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">):</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>                <span class="n">pip_section</span> <span class="o">=</span> <span class="n">dep</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>                <span class="n">pip_section</span><span class="o">.</span><span class="n">pip</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>                <span class="k">break</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>            <span class="n">pip_section</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>            <span class="n">pip_section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>            <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">pip_section</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>            <span class="ow">or</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;conda-forge::bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">)</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="p">):</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;conda-forge::bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span></pre></div>
 
 
             </section>
-                <section id="yaml">
-                    <div class="attr variable">
-            <span class="name">yaml</span>        =
-<span class="default_value">&lt;ruyaml.main.YAML object&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#yaml"></a>
-    
-    
-
-                </section>
-                <section id="SupportedWeightsEntry">
-                    <div class="attr variable">
-            <span class="name">SupportedWeightsEntry</span>        =
-<input id="SupportedWeightsEntry-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="SupportedWeightsEntry-view-value"></label><span class="default_value">typing.Union[<a href="model/v0_4.html#OnnxWeightsDescr">bioimageio.spec.model.v0_4.OnnxWeightsDescr</a>, <a href="model/v0_4.html#PytorchStateDictWeightsDescr">bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr</a>, <a href="model/v0_4.html#TensorflowSavedModelBundleWeightsDescr">bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr</a>, <a href="model/v0_4.html#TorchscriptWeightsDescr">bioimageio.spec.model.v0_4.TorchscriptWeightsDescr</a>, <a href="model/v0_5.html#OnnxWeightsDescr">bioimageio.spec.model.v0_5.OnnxWeightsDescr</a>, <a href="model/v0_5.html#PytorchStateDictWeightsDescr">bioimageio.spec.model.v0_5.PytorchStateDictWeightsDescr</a>, <a href="model/v0_5.html#TensorflowSavedModelBundleWeightsDescr">bioimageio.spec.model.v0_5.TensorflowSavedModelBundleWeightsDescr</a>, <a href="model/v0_5.html#TorchscriptWeightsDescr">bioimageio.spec.model.v0_5.TorchscriptWeightsDescr</a>]</span>
-
-        
-    </div>
-    <a class="headerlink" href="#SupportedWeightsEntry"></a>
-    
-    
-
-                </section>
                 <section id="PipDeps">
                             <input id="PipDeps-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">PipDeps</span><wbr>(<span class="base">typing.TypedDict</span>):
+    <span class="name">PipDeps</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
 
                 <label class="view-source-button" for="PipDeps-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#PipDeps"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PipDeps-30"><a href="#PipDeps-30"><span class="linenos">30</span></a><span class="k">class</span> <span class="nc">PipDeps</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="PipDeps-31"><a href="#PipDeps-31"><span class="linenos">31</span></a>    <span class="n">pip</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PipDeps-8"><a href="#PipDeps-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">PipDeps</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="PipDeps-9"><a href="#PipDeps-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Pip dependencies to include in conda dependecies&quot;&quot;&quot;</span>
+</span><span id="PipDeps-10"><a href="#PipDeps-10"><span class="linenos">10</span></a>
+</span><span id="PipDeps-11"><a href="#PipDeps-11"><span class="linenos">11</span></a>    <span class="n">pip</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="PipDeps-12"><a href="#PipDeps-12"><span class="linenos">12</span></a>
+</span><span id="PipDeps-13"><a href="#PipDeps-13"><span class="linenos">13</span></a>    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="PipDeps-14"><a href="#PipDeps-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">):</span>
+</span><span id="PipDeps-15"><a href="#PipDeps-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span>
+</span><span id="PipDeps-16"><a href="#PipDeps-16"><span class="linenos">16</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PipDeps-17"><a href="#PipDeps-17"><span class="linenos">17</span></a>            <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Pip dependencies to include in conda dependecies</p>
+</div>
+
 
                             <div id="PipDeps.pip" class="classattr">
                                 <div class="attr variable">
@@ -476,26 +217,42 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.conda_env    </h1>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">CondaEnv</span><wbr>(<span class="base">typing.TypedDict</span>):
+    <span class="name">CondaEnv</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
 
                 <label class="view-source-button" for="CondaEnv-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#CondaEnv"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CondaEnv-34"><a href="#CondaEnv-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">CondaEnv</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="CondaEnv-35"><a href="#CondaEnv-35"><span class="linenos">35</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="CondaEnv-36"><a href="#CondaEnv-36"><span class="linenos">36</span></a>    <span class="n">channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="CondaEnv-37"><a href="#CondaEnv-37"><span class="linenos">37</span></a>    <span class="n">dependencies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
-</span><span id="CondaEnv-38"><a href="#CondaEnv-38"><span class="linenos">38</span></a>        <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">]</span>
-</span><span id="CondaEnv-39"><a href="#CondaEnv-39"><span class="linenos">39</span></a>    <span class="p">]</span>  <span class="c1"># TODO: improve typing: last entry is PipDeps</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CondaEnv-20"><a href="#CondaEnv-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">CondaEnv</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="CondaEnv-21"><a href="#CondaEnv-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Represenation of the content of a conda environment.yaml file&quot;&quot;&quot;</span>
+</span><span id="CondaEnv-22"><a href="#CondaEnv-22"><span class="linenos">22</span></a>
+</span><span id="CondaEnv-23"><a href="#CondaEnv-23"><span class="linenos">23</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CondaEnv-24"><a href="#CondaEnv-24"><span class="linenos">24</span></a>    <span class="n">channels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="CondaEnv-25"><a href="#CondaEnv-25"><span class="linenos">25</span></a>    <span class="n">dependencies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="CondaEnv-26"><a href="#CondaEnv-26"><span class="linenos">26</span></a>
+</span><span id="CondaEnv-27"><a href="#CondaEnv-27"><span class="linenos">27</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="CondaEnv-28"><a href="#CondaEnv-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="nf">_ensure_valid_conda_env_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="CondaEnv-29"><a href="#CondaEnv-29"><span class="linenos">29</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CondaEnv-30"><a href="#CondaEnv-30"><span class="linenos">30</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="CondaEnv-31"><a href="#CondaEnv-31"><span class="linenos">31</span></a>
+</span><span id="CondaEnv-32"><a href="#CondaEnv-32"><span class="linenos">32</span></a>        <span class="k">for</span> <span class="n">illegal</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">):</span>
+</span><span id="CondaEnv-33"><a href="#CondaEnv-33"><span class="linenos">33</span></a>            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">illegal</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="CondaEnv-34"><a href="#CondaEnv-34"><span class="linenos">34</span></a>
+</span><span id="CondaEnv-35"><a href="#CondaEnv-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="n">value</span> <span class="ow">or</span> <span class="s2">&quot;empty&quot;</span>
+</span><span id="CondaEnv-36"><a href="#CondaEnv-36"><span class="linenos">36</span></a>
+</span><span id="CondaEnv-37"><a href="#CondaEnv-37"><span class="linenos">37</span></a>    <span class="nd">@property</span>
+</span><span id="CondaEnv-38"><a href="#CondaEnv-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="nf">wo_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CondaEnv-39"><a href="#CondaEnv-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_construct</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">})</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Represenation of the content of a conda environment.yaml file</p>
+</div>
+
 
                             <div id="CondaEnv.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: str</span>
+            <span class="name">name</span><span class="annotation">: Optional[str]</span>
 
         
     </div>
@@ -526,66 +283,101 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.conda_env    </h1>
     
 
                             </div>
-                </section>
-                <section id="get_conda_env">
-                            <input id="get_conda_env-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_conda_env</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">entry</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="model/v0_4.html#OnnxWeightsDescr">bioimageio.spec.model.v0_4.OnnxWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_4.html#PytorchStateDictWeightsDescr">bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_4.html#TensorflowSavedModelBundleWeightsDescr">bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_4.html#TorchscriptWeightsDescr">bioimageio.spec.model.v0_4.TorchscriptWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_5.html#OnnxWeightsDescr">bioimageio.spec.model.v0_5.OnnxWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_5.html#PytorchStateDictWeightsDescr">bioimageio.spec.model.v0_5.PytorchStateDictWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_5.html#TensorflowSavedModelBundleWeightsDescr">bioimageio.spec.model.v0_5.TensorflowSavedModelBundleWeightsDescr</a></span><span class="p">,</span> <span class="n"><a href="model/v0_5.html#TorchscriptWeightsDescr">bioimageio.spec.model.v0_5.TorchscriptWeightsDescr</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">env_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n"><a href="#CondaEnv">CondaEnv</a></span>:</span></span>
+                            <div id="CondaEnv.wo_name" class="classattr">
+                                        <input id="CondaEnv.wo_name-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">wo_name</span>
 
-                <label class="view-source-button" for="get_conda_env-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CondaEnv.wo_name-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#get_conda_env"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_conda_env-42"><a href="#get_conda_env-42"><span class="linenos">42</span></a><span class="k">def</span> <span class="nf">get_conda_env</span><span class="p">(</span>
-</span><span id="get_conda_env-43"><a href="#get_conda_env-43"><span class="linenos">43</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="get_conda_env-44"><a href="#get_conda_env-44"><span class="linenos">44</span></a>    <span class="n">entry</span><span class="p">:</span> <span class="n">SupportedWeightsEntry</span><span class="p">,</span>
-</span><span id="get_conda_env-45"><a href="#get_conda_env-45"><span class="linenos">45</span></a>    <span class="n">env_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="get_conda_env-46"><a href="#get_conda_env-46"><span class="linenos">46</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CondaEnv</span><span class="p">:</span>
-</span><span id="get_conda_env-47"><a href="#get_conda_env-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;get the recommended Conda environment for a given weights entry description&quot;&quot;&quot;</span>
-</span><span id="get_conda_env-48"><a href="#get_conda_env-48"><span class="linenos">48</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="p">(</span><span class="n">v0_4</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">)):</span>
-</span><span id="get_conda_env-49"><a href="#get_conda_env-49"><span class="linenos">49</span></a>        <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_onnx_env</span><span class="p">(</span><span class="n">opset_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">opset_version</span><span class="p">)</span>
-</span><span id="get_conda_env-50"><a href="#get_conda_env-50"><span class="linenos">50</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="get_conda_env-51"><a href="#get_conda_env-51"><span class="linenos">51</span></a>        <span class="n">entry</span><span class="p">,</span>
-</span><span id="get_conda_env-52"><a href="#get_conda_env-52"><span class="linenos">52</span></a>        <span class="p">(</span>
-</span><span id="get_conda_env-53"><a href="#get_conda_env-53"><span class="linenos">53</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-54"><a href="#get_conda_env-54"><span class="linenos">54</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">PytorchStateDictWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-55"><a href="#get_conda_env-55"><span class="linenos">55</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-56"><a href="#get_conda_env-56"><span class="linenos">56</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-57"><a href="#get_conda_env-57"><span class="linenos">57</span></a>        <span class="p">),</span>
-</span><span id="get_conda_env-58"><a href="#get_conda_env-58"><span class="linenos">58</span></a>    <span class="p">):</span>
-</span><span id="get_conda_env-59"><a href="#get_conda_env-59"><span class="linenos">59</span></a>        <span class="k">if</span> <span class="p">(</span>
-</span><span id="get_conda_env-60"><a href="#get_conda_env-60"><span class="linenos">60</span></a>            <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">TorchscriptWeightsDescr</span><span class="p">)</span>
-</span><span id="get_conda_env-61"><a href="#get_conda_env-61"><span class="linenos">61</span></a>            <span class="ow">or</span> <span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="get_conda_env-62"><a href="#get_conda_env-62"><span class="linenos">62</span></a>        <span class="p">):</span>
-</span><span id="get_conda_env-63"><a href="#get_conda_env-63"><span class="linenos">63</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_pytorch_env</span><span class="p">(</span><span class="n">pytorch_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">pytorch_version</span><span class="p">)</span>
-</span><span id="get_conda_env-64"><a href="#get_conda_env-64"><span class="linenos">64</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="get_conda_env-65"><a href="#get_conda_env-65"><span class="linenos">65</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_env_from_deps</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
-</span><span id="get_conda_env-66"><a href="#get_conda_env-66"><span class="linenos">66</span></a>
-</span><span id="get_conda_env-67"><a href="#get_conda_env-67"><span class="linenos">67</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span id="get_conda_env-68"><a href="#get_conda_env-68"><span class="linenos">68</span></a>        <span class="n">entry</span><span class="p">,</span>
-</span><span id="get_conda_env-69"><a href="#get_conda_env-69"><span class="linenos">69</span></a>        <span class="p">(</span>
-</span><span id="get_conda_env-70"><a href="#get_conda_env-70"><span class="linenos">70</span></a>            <span class="n">v0_4</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-71"><a href="#get_conda_env-71"><span class="linenos">71</span></a>            <span class="n">v0_5</span><span class="o">.</span><span class="n">TensorflowSavedModelBundleWeightsDescr</span><span class="p">,</span>
-</span><span id="get_conda_env-72"><a href="#get_conda_env-72"><span class="linenos">72</span></a>        <span class="p">),</span>
-</span><span id="get_conda_env-73"><a href="#get_conda_env-73"><span class="linenos">73</span></a>    <span class="p">):</span>
-</span><span id="get_conda_env-74"><a href="#get_conda_env-74"><span class="linenos">74</span></a>        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="get_conda_env-75"><a href="#get_conda_env-75"><span class="linenos">75</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_tf_env</span><span class="p">(</span><span class="n">tensorflow_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">tensorflow_version</span><span class="p">)</span>
-</span><span id="get_conda_env-76"><a href="#get_conda_env-76"><span class="linenos">76</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="get_conda_env-77"><a href="#get_conda_env-77"><span class="linenos">77</span></a>            <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_env_from_deps</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
-</span><span id="get_conda_env-78"><a href="#get_conda_env-78"><span class="linenos">78</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="get_conda_env-79"><a href="#get_conda_env-79"><span class="linenos">79</span></a>        <span class="n">assert_never</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
-</span><span id="get_conda_env-80"><a href="#get_conda_env-80"><span class="linenos">80</span></a>
-</span><span id="get_conda_env-81"><a href="#get_conda_env-81"><span class="linenos">81</span></a>    <span class="n">_normalize_bioimageio_conda_env</span><span class="p">(</span><span class="n">conda_env</span><span class="p">,</span> <span class="n">env_name</span><span class="p">)</span>
-</span><span id="get_conda_env-82"><a href="#get_conda_env-82"><span class="linenos">82</span></a>    <span class="k">return</span> <span class="n">conda_env</span>
+    <a class="headerlink" href="#CondaEnv.wo_name"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CondaEnv.wo_name-37"><a href="#CondaEnv.wo_name-37"><span class="linenos">37</span></a>    <span class="nd">@property</span>
+</span><span id="CondaEnv.wo_name-38"><a href="#CondaEnv.wo_name-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="nf">wo_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CondaEnv.wo_name-39"><a href="#CondaEnv.wo_name-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_construct</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">})</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>get the recommended Conda environment for a given weights entry description</p>
+    
+
+                            </div>
+                </section>
+                <section id="BioimageioCondaEnv">
+                            <input id="BioimageioCondaEnv-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BioimageioCondaEnv</span><wbr>(<span class="base"><a href="#CondaEnv">CondaEnv</a></span>):
+
+                <label class="view-source-button" for="BioimageioCondaEnv-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BioimageioCondaEnv"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BioimageioCondaEnv-42"><a href="#BioimageioCondaEnv-42"><span class="linenos">42</span></a><span class="k">class</span> <span class="nc">BioimageioCondaEnv</span><span class="p">(</span><span class="n">CondaEnv</span><span class="p">):</span>
+</span><span id="BioimageioCondaEnv-43"><a href="#BioimageioCondaEnv-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A special `CondaEnv` that</span>
+</span><span id="BioimageioCondaEnv-44"><a href="#BioimageioCondaEnv-44"><span class="linenos">44</span></a><span class="sd">    - automatically adds bioimageio specific dependencies</span>
+</span><span id="BioimageioCondaEnv-45"><a href="#BioimageioCondaEnv-45"><span class="linenos">45</span></a><span class="sd">    - sorts dependencies</span>
+</span><span id="BioimageioCondaEnv-46"><a href="#BioimageioCondaEnv-46"><span class="linenos">46</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BioimageioCondaEnv-47"><a href="#BioimageioCondaEnv-47"><span class="linenos">47</span></a>
+</span><span id="BioimageioCondaEnv-48"><a href="#BioimageioCondaEnv-48"><span class="linenos">48</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-49"><a href="#BioimageioCondaEnv-49"><span class="linenos">49</span></a>    <span class="k">def</span> <span class="nf">_normalize_bioimageio_conda_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="BioimageioCondaEnv-50"><a href="#BioimageioCondaEnv-50"><span class="linenos">50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;update a conda env such that we have bioimageio.core and sorted dependencies&quot;&quot;&quot;</span>
+</span><span id="BioimageioCondaEnv-51"><a href="#BioimageioCondaEnv-51"><span class="linenos">51</span></a>        <span class="k">for</span> <span class="n">req_channel</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;conda-forge&quot;</span><span class="p">,</span> <span class="s2">&quot;nodefaults&quot;</span><span class="p">):</span>
+</span><span id="BioimageioCondaEnv-52"><a href="#BioimageioCondaEnv-52"><span class="linenos">52</span></a>            <span class="k">if</span> <span class="n">req_channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+</span><span id="BioimageioCondaEnv-53"><a href="#BioimageioCondaEnv-53"><span class="linenos">53</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">req_channel</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-54"><a href="#BioimageioCondaEnv-54"><span class="linenos">54</span></a>
+</span><span id="BioimageioCondaEnv-55"><a href="#BioimageioCondaEnv-55"><span class="linenos">55</span></a>        <span class="k">if</span> <span class="s2">&quot;defaults&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+</span><span id="BioimageioCondaEnv-56"><a href="#BioimageioCondaEnv-56"><span class="linenos">56</span></a>            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;removing &#39;defaults&#39; from conda-channels&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-57"><a href="#BioimageioCondaEnv-57"><span class="linenos">57</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-58"><a href="#BioimageioCondaEnv-58"><span class="linenos">58</span></a>
+</span><span id="BioimageioCondaEnv-59"><a href="#BioimageioCondaEnv-59"><span class="linenos">59</span></a>        <span class="k">if</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+</span><span id="BioimageioCondaEnv-60"><a href="#BioimageioCondaEnv-60"><span class="linenos">60</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-61"><a href="#BioimageioCondaEnv-61"><span class="linenos">61</span></a>
+</span><span id="BioimageioCondaEnv-62"><a href="#BioimageioCondaEnv-62"><span class="linenos">62</span></a>        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+</span><span id="BioimageioCondaEnv-63"><a href="#BioimageioCondaEnv-63"><span class="linenos">63</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">):</span>
+</span><span id="BioimageioCondaEnv-64"><a href="#BioimageioCondaEnv-64"><span class="linenos">64</span></a>                <span class="n">pip_section</span> <span class="o">=</span> <span class="n">dep</span>
+</span><span id="BioimageioCondaEnv-65"><a href="#BioimageioCondaEnv-65"><span class="linenos">65</span></a>                <span class="n">pip_section</span><span class="o">.</span><span class="n">pip</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span id="BioimageioCondaEnv-66"><a href="#BioimageioCondaEnv-66"><span class="linenos">66</span></a>                <span class="k">break</span>
+</span><span id="BioimageioCondaEnv-67"><a href="#BioimageioCondaEnv-67"><span class="linenos">67</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="BioimageioCondaEnv-68"><a href="#BioimageioCondaEnv-68"><span class="linenos">68</span></a>            <span class="n">pip_section</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="BioimageioCondaEnv-69"><a href="#BioimageioCondaEnv-69"><span class="linenos">69</span></a>
+</span><span id="BioimageioCondaEnv-70"><a href="#BioimageioCondaEnv-70"><span class="linenos">70</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="BioimageioCondaEnv-71"><a href="#BioimageioCondaEnv-71"><span class="linenos">71</span></a>            <span class="n">pip_section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span id="BioimageioCondaEnv-72"><a href="#BioimageioCondaEnv-72"><span class="linenos">72</span></a>            <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">pip_section</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-73"><a href="#BioimageioCondaEnv-73"><span class="linenos">73</span></a>        <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+</span><span id="BioimageioCondaEnv-74"><a href="#BioimageioCondaEnv-74"><span class="linenos">74</span></a>            <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-75"><a href="#BioimageioCondaEnv-75"><span class="linenos">75</span></a>            <span class="ow">or</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;conda-forge::bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-76"><a href="#BioimageioCondaEnv-76"><span class="linenos">76</span></a>            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span>
+</span><span id="BioimageioCondaEnv-77"><a href="#BioimageioCondaEnv-77"><span class="linenos">77</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">PipDeps</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-78"><a href="#BioimageioCondaEnv-78"><span class="linenos">78</span></a>        <span class="p">):</span>
+</span><span id="BioimageioCondaEnv-79"><a href="#BioimageioCondaEnv-79"><span class="linenos">79</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;conda-forge::bioimageio.core&quot;</span><span class="p">)</span>
+</span><span id="BioimageioCondaEnv-80"><a href="#BioimageioCondaEnv-80"><span class="linenos">80</span></a>
+</span><span id="BioimageioCondaEnv-81"><a href="#BioimageioCondaEnv-81"><span class="linenos">81</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span id="BioimageioCondaEnv-82"><a href="#BioimageioCondaEnv-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>A special <code><a href="#CondaEnv">CondaEnv</a></code> that</p>
+
+<ul>
+<li>automatically adds bioimageio specific dependencies</li>
+<li>sorts dependencies</li>
+</ul>
 </div>
 
 
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#CondaEnv">CondaEnv</a></dt>
+                                <dd id="BioimageioCondaEnv.name" class="variable"><a href="#CondaEnv.name">name</a></dd>
+                <dd id="BioimageioCondaEnv.channels" class="variable"><a href="#CondaEnv.channels">channels</a></dd>
+                <dd id="BioimageioCondaEnv.dependencies" class="variable"><a href="#CondaEnv.dependencies">dependencies</a></dd>
+                <dd id="BioimageioCondaEnv.wo_name" class="variable"><a href="#CondaEnv.wo_name">wo_name</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
     </main>
 <script>

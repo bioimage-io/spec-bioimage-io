@@ -59,15 +59,6 @@
                         <li>
                                 <a class="variable" href="#Author.github_user">github_user</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#Author.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Author.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Author.model_computed_fields">model_computed_fields</a>
-                        </li>
                 </ul>
 
             </li>
@@ -82,15 +73,6 @@
                         </li>
                         <li>
                                 <a class="function" href="#Maintainer.validate_gh_user">validate_gh_user</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Maintainer.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Maintainer.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Maintainer.model_computed_fields">model_computed_fields</a>
                         </li>
                 </ul>
 
@@ -107,15 +89,6 @@
                         <li>
                                 <a class="variable" href="#CiteEntry.url">url</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#CiteEntry.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#CiteEntry.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#CiteEntry.model_computed_fields">model_computed_fields</a>
-                        </li>
                 </ul>
 
             </li>
@@ -124,15 +97,6 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="variable" href="#LinkedResource.id">id</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#LinkedResource.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#LinkedResource.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#LinkedResource.model_computed_fields">model_computed_fields</a>
                         </li>
                 </ul>
 
@@ -195,15 +159,6 @@
                                 <a class="variable" href="#GenericModelDescrBase.version">version</a>
                         </li>
                         <li>
-                                <a class="variable" href="#GenericModelDescrBase.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericModelDescrBase.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericModelDescrBase.model_computed_fields">model_computed_fields</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#GenericModelDescrBase.model_post_init">model_post_init</a>
                         </li>
                 </ul>
@@ -226,15 +181,6 @@
                         </li>
                         <li>
                                 <a class="variable" href="#GenericDescrBase.implemented_format_version_tuple">implemented_format_version_tuple</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericDescrBase.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericDescrBase.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericDescrBase.model_computed_fields">model_computed_fields</a>
                         </li>
                         <li>
                                 <a class="function" href="#GenericDescrBase.model_post_init">model_post_init</a>
@@ -267,15 +213,6 @@
                                 <a class="variable" href="#GenericDescr.implemented_format_version_tuple">implemented_format_version_tuple</a>
                         </li>
                         <li>
-                                <a class="variable" href="#GenericDescr.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericDescr.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#GenericDescr.model_computed_fields">model_computed_fields</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#GenericDescr.model_post_init">model_post_init</a>
                         </li>
                 </ul>
@@ -284,15 +221,6 @@
             <li>
                     <a class="class" href="#LinkedResourceNode">LinkedResourceNode</a>
                             <ul class="memberlist">
-                        <li>
-                                <a class="variable" href="#LinkedResourceNode.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#LinkedResourceNode.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#LinkedResourceNode.model_computed_fields">model_computed_fields</a>
-                        </li>
                 </ul>
 
             </li>
@@ -682,92 +610,96 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>
 </span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>    <span class="p">):</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
-</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="k">class</span> <span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions except for the model descriptions&quot;&quot;&quot;</span>
-</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;0.3.0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.3.0&quot;</span>
-</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The **format** version of this resource specification&quot;&quot;&quot;</span>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>
-</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>    <span class="k">def</span> <span class="nf">_convert_from_older_format</span><span class="p">(</span>
-</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="o">/</span>
-</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
-</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>        <span class="n">convert_from_older_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>        <span class="k">return</span> <span class="n">data</span>
-</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>
-</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>    <span class="n">documentation</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">DocumentationSource</span><span class="p">],</span>
-</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>        <span class="n">Field</span><span class="p">(</span>
-</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>            <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
-</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>                <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
-</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>                <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
-</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>            <span class="p">],</span>
-</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>        <span class="p">),</span>
-</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.</span>
-</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a><span class="sd">    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&quot;&quot;&quot;</span>
-</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>
-</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>    <span class="n">badges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BadgeDescr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;badges associated with this resource&quot;&quot;&quot;</span>
-</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>
-</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>
-</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a><span class="n">ResourceDescrType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ResourceDescrType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">GenericDescrBase</span><span class="p">)</span>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a><span class="k">class</span> <span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions except for the model descriptions&quot;&quot;&quot;</span>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;0.3.0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.3.0&quot;</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The **format** version of this resource specification&quot;&quot;&quot;</span>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>    <span class="k">def</span> <span class="nf">_convert_from_older_format</span><span class="p">(</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="o">/</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>        <span class="n">convert_from_older_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>
+</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>    <span class="n">documentation</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">DocumentationSource</span><span class="p">],</span>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>        <span class="n">Field</span><span class="p">(</span>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>            <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>                <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>                <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>            <span class="p">],</span>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>        <span class="p">),</span>
+</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.</span>
+</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a><span class="sd">    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&quot;&quot;&quot;</span>
+</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>
+</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>    <span class="n">badges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BadgeDescr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;badges associated with this resource&quot;&quot;&quot;</span>
+</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>
 </span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>
-</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>
-</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span>
-</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io generic specification&quot;</span>
-</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a><span class="p">):</span>
-</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
-</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>
-</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
-</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a><span class="sd">    Note that those resources are described with a type-specific RDF.</span>
-</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a><span class="sd">    Use this generic resource description, if none of the known specific types matches your resource.</span>
-</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>
-</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
-</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>
-</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>
-</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>
-</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>            <span class="p">)</span>
-</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>
-</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a><span class="n">ResourceDescrType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ResourceDescrType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">GenericDescrBase</span><span class="p">)</span>
+</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>
+</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>
+</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span>
+</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io generic specification&quot;</span>
+</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a><span class="p">):</span>
+</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
+</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>
+</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
+</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a><span class="sd">    Note that those resources are described with a type-specific RDF.</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a><span class="sd">    Use this generic resource description, if none of the known specific types matches your resource.</span>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
+</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>
+</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>            <span class="p">)</span>
 </span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>
-</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>
-</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>
-</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>    <span class="p">):</span>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span></pre></div>
 
 
@@ -801,7 +733,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ResourceId</span><wbr>(<span class="base"><a href="../_internal/validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
+    <span class="name">ResourceId</span><wbr>(<span class="base">bioimageio.spec._internal.validated_string.ValidatedString</span>):
 
                 <label class="view-source-button" for="ResourceId-view-source"><span>View Source</span></label>
 
@@ -852,7 +784,7 @@ errors defaults to 'strict'.</p>
                     <div class="attr variable">
             <span class="name">DocumentationSource</span>        =
 <input id="DocumentationSource-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="DocumentationSource-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <label class="view-value-button pdoc-button" for="DocumentationSource-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix&gt;), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -891,7 +823,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f7708f1d080&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f52ddd96980&gt;)]</span>
 
         
     </div>
@@ -911,53 +843,6 @@ errors defaults to 'strict'.</p>
     
 
                             </div>
-                            <div id="Author.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="Author.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Author.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Author.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="Author.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="Author.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Author.model_fields-view-value"></label><span class="default_value">{&#39;affiliation&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None, description=&#39;Affiliation&#39;), &#39;email&#39;: FieldInfo(annotation=Union[EmailStr, NoneType], required=False, default=None, description=&#39;Email&#39;), &#39;orcid&#39;: FieldInfo(annotation=Union[OrcidId, NoneType], required=False, default=None, description=&#39;An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)&#39;, examples=[&#39;0000-0001-2345-6789&#39;]), &#39;name&#39;: FieldInfo(annotation=str, required=True, metadata=[Predicate(func=&lt;function _has_no_slash&gt;)]), &#39;github_user&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Author.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="Author.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Author.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -965,10 +850,6 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                                 <dd id="Author.affiliation" class="variable"><a href="v0_2.html#_Person.affiliation">affiliation</a></dd>
                 <dd id="Author.email" class="variable"><a href="v0_2.html#_Person.email">email</a></dd>
                 <dd id="Author.orcid" class="variable"><a href="v0_2.html#_Person.orcid">orcid</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="Author.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
                                 </dl>
@@ -1001,7 +882,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f7708f1d080&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f52ddd96980&gt;)]]</span>
 
         
     </div>
@@ -1042,53 +923,6 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
     
 
                             </div>
-                            <div id="Maintainer.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="Maintainer.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Maintainer.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Maintainer.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="Maintainer.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="Maintainer.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Maintainer.model_fields-view-value"></label><span class="default_value">{&#39;affiliation&#39;: FieldInfo(annotation=Union[str, NoneType], required=False, default=None, description=&#39;Affiliation&#39;), &#39;email&#39;: FieldInfo(annotation=Union[EmailStr, NoneType], required=False, default=None, description=&#39;Email&#39;), &#39;orcid&#39;: FieldInfo(annotation=Union[OrcidId, NoneType], required=False, default=None, description=&#39;An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)&#39;, examples=[&#39;0000-0001-2345-6789&#39;]), &#39;name&#39;: FieldInfo(annotation=Union[Annotated[str, Predicate], NoneType], required=False, default=None), &#39;github_user&#39;: FieldInfo(annotation=str, required=True)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Maintainer.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="Maintainer.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Maintainer.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -1096,10 +930,6 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                                 <dd id="Maintainer.affiliation" class="variable"><a href="v0_2.html#_Person.affiliation">affiliation</a></dd>
                 <dd id="Maintainer.email" class="variable"><a href="v0_2.html#_Person.email">email</a></dd>
                 <dd id="Maintainer.orcid" class="variable"><a href="v0_2.html#_Person.orcid">orcid</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="Maintainer.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
                                 </dl>
@@ -1110,7 +940,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">CiteEntry</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
+    <span class="name">CiteEntry</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
 
                 <label class="view-source-button" for="CiteEntry-view-source"><span>View Source</span></label>
 
@@ -1155,7 +985,7 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
                             </div>
                             <div id="CiteEntry.doi" class="classattr">
                                 <div class="attr variable">
-            <span class="name">doi</span><span class="annotation">: Optional[<a href="../_internal/types.html#Doi">bioimageio.spec._internal.types.Doi</a>]</span>
+            <span class="name">doi</span><span class="annotation">: Optional[bioimageio.spec._internal.types.Doi]</span>
 
         
     </div>
@@ -1169,7 +999,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
                             </div>
                             <div id="CiteEntry.url" class="classattr">
                                 <div class="attr variable">
-            <span class="name">url</span><span class="annotation">: Optional[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>]</span>
+            <span class="name">url</span><span class="annotation">: Optional[bioimageio.spec._internal.url.HttpUrl]</span>
 
         
     </div>
@@ -1180,69 +1010,13 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
 
                             </div>
-                            <div id="CiteEntry.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="CiteEntry.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="CiteEntry.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#CiteEntry.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="CiteEntry.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="CiteEntry.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="CiteEntry.model_fields-view-value"></label><span class="default_value">{&#39;text&#39;: FieldInfo(annotation=str, required=True, description=&#39;free text description&#39;), &#39;doi&#39;: FieldInfo(annotation=Union[Doi, NoneType], required=False, default=None, description=&#39;A digital object identifier (DOI) is the prefered citation reference.\nSee https://www.doi.org/ for details. (alternatively specify `url`)&#39;), &#39;url&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;URL to cite (preferably specify a `doi` instead)&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#CiteEntry.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="CiteEntry.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#CiteEntry.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="CiteEntry.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
                 <section id="LinkedResource">
                             <input id="LinkedResource-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LinkedResource</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
+    <span class="name">LinkedResource</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
 
                 <label class="view-source-button" for="LinkedResource-view-source"><span>View Source</span></label>
 
@@ -1273,69 +1047,13 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 
 
                             </div>
-                            <div id="LinkedResource.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="LinkedResource.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="LinkedResource.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResource.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="LinkedResource.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="LinkedResource.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="LinkedResource.model_fields-view-value"></label><span class="default_value">{&#39;id&#39;: FieldInfo(annotation=ResourceId, required=True, description=&#39;A valid resource `id` from the official bioimage.io collection.&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResource.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="LinkedResource.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResource.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="LinkedResource.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
                 <section id="GenericModelDescrBase">
                             <input id="GenericModelDescrBase-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GenericModelDescrBase</span><wbr>(<span class="base"><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></span>):
+    <span class="name">GenericModelDescrBase</span><wbr>(<span class="base">bioimageio.spec._internal.common_nodes.ResourceDescrBase</span>):
 
                 <label class="view-source-button" for="GenericModelDescrBase-view-source"><span>View Source</span></label>
 
@@ -1515,13 +1233,15 @@ mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] ob
 </span><span id="GenericModelDescrBase-363"><a href="#GenericModelDescrBase-363"><span class="linenos">363</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span><span id="GenericModelDescrBase-364"><a href="#GenericModelDescrBase-364"><span class="linenos">364</span></a>
 </span><span id="GenericModelDescrBase-365"><a href="#GenericModelDescrBase-365"><span class="linenos">365</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="GenericModelDescrBase-366"><a href="#GenericModelDescrBase-366"><span class="linenos">366</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
-</span><span id="GenericModelDescrBase-367"><a href="#GenericModelDescrBase-367"><span class="linenos">367</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="GenericModelDescrBase-368"><a href="#GenericModelDescrBase-368"><span class="linenos">368</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="GenericModelDescrBase-369"><a href="#GenericModelDescrBase-369"><span class="linenos">369</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="GenericModelDescrBase-370"><a href="#GenericModelDescrBase-370"><span class="linenos">370</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="GenericModelDescrBase-371"><a href="#GenericModelDescrBase-371"><span class="linenos">371</span></a>
-</span><span id="GenericModelDescrBase-372"><a href="#GenericModelDescrBase-372"><span class="linenos">372</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="GenericModelDescrBase-366"><a href="#GenericModelDescrBase-366"><span class="linenos">366</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="GenericModelDescrBase-367"><a href="#GenericModelDescrBase-367"><span class="linenos">367</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="GenericModelDescrBase-368"><a href="#GenericModelDescrBase-368"><span class="linenos">368</span></a>    <span class="p">):</span>
+</span><span id="GenericModelDescrBase-369"><a href="#GenericModelDescrBase-369"><span class="linenos">369</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="GenericModelDescrBase-370"><a href="#GenericModelDescrBase-370"><span class="linenos">370</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="GenericModelDescrBase-371"><a href="#GenericModelDescrBase-371"><span class="linenos">371</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="GenericModelDescrBase-372"><a href="#GenericModelDescrBase-372"><span class="linenos">372</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GenericModelDescrBase-373"><a href="#GenericModelDescrBase-373"><span class="linenos">373</span></a>
+</span><span id="GenericModelDescrBase-374"><a href="#GenericModelDescrBase-374"><span class="linenos">374</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span></pre></div>
 
 
@@ -1545,7 +1265,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.description" class="classattr">
                                 <div class="attr variable">
-            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f76fd704ae0&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
+            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f52dc477380&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
 
         
     </div>
@@ -1558,7 +1278,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.covers" class="classattr">
                                 <div class="attr variable">
-            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f770b8a16c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
+            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f52e99304a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
 
         
     </div>
@@ -1597,7 +1317,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.attachments" class="classattr">
                                 <div class="attr variable">
-            <span class="name">attachments</span><span class="annotation">: List[<a href="../_internal/io.html#FileDescr">bioimageio.spec._internal.io.FileDescr</a>]</span>
+            <span class="name">attachments</span><span class="annotation">: List[bioimageio.spec._internal.io.FileDescr]</span>
 
         
     </div>
@@ -1623,7 +1343,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, <a href="../_internal/license_id.html#DeprecatedLicenseId">bioimageio.spec._internal.license_id.DeprecatedLicenseId</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f76fdd0ae80&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.license_id.LicenseId, bioimageio.spec._internal.license_id.DeprecatedLicenseId], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f52dc477100&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;bioimageio.spec._internal.license_id.LicenseId&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
 
         
     </div>
@@ -1672,7 +1392,7 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
                             </div>
                             <div id="GenericModelDescrBase.git_repo" class="classattr">
                                 <div class="attr variable">
-            <span class="name">git_repo</span><span class="annotation">: Annotated[Optional[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;])]</span>
+            <span class="name">git_repo</span><span class="annotation">: Annotated[Optional[bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;])]</span>
 
         
     </div>
@@ -1685,7 +1405,7 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
                             </div>
                             <div id="GenericModelDescrBase.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f770b8a02c0&gt;), PlainSerializer(func=&lt;function _package at 0x7f770b8a16c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
+            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f52e98ffce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f52e99304a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
 
         
     </div>
@@ -1809,60 +1529,13 @@ If not specified, <code><a href="#GenericModelDescrBase.authors">authors</a></co
                             </div>
                             <div id="GenericModelDescrBase.version" class="classattr">
                                 <div class="attr variable">
-            <span class="name">version</span><span class="annotation">: Optional[<a href="../_internal/version_type.html#Version">bioimageio.spec._internal.version_type.Version</a>]</span>
+            <span class="name">version</span><span class="annotation">: Optional[bioimageio.spec._internal.version_type.Version]</span>
 
         
     </div>
     <a class="headerlink" href="#GenericModelDescrBase.version"></a>
     
             <div class="docstring"><p>The version of the resource following SemVer 2.0.</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericModelDescrBase.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="GenericModelDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericModelDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericModelDescrBase.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericModelDescrBase.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="GenericModelDescrBase.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericModelDescrBase.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.&#39;, metadata=[MinLen(min_length=1), MaxLen(max_length=128)]), &#39;description&#39;: FieldInfo(annotation=str, required=True, description=&#39;A string containing a brief description.&#39;, metadata=[MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=512)]})]), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of this resource description and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=List[FileDescr], required=False, default_factory=list, description=&#39;file attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=True, description=&#39;citations&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, DeprecatedLicenseId], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;git_repo&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration, e.g. on bioimage.io&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericModelDescrBase.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericModelDescrBase.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericModelDescrBase.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
 </div>
 
 
@@ -1893,33 +1566,6 @@ method.</p>
 
 
                             </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
-                                <dd id="GenericModelDescrBase.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
-                <dd id="GenericModelDescrBase.implemented_format_version" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_format_version">implemented_format_version</a></dd>
-                <dd id="GenericModelDescrBase.implemented_format_version_tuple" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_format_version_tuple">implemented_format_version_tuple</a></dd>
-                <dd id="GenericModelDescrBase.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
-                <dd id="GenericModelDescrBase.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
-                <dd id="GenericModelDescrBase.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
-                                <dd id="GenericModelDescrBase.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="GenericModelDescrBase.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol">bioimageio.spec._internal.common_nodes._ResourceDescrBaseAbstractFieldsProtocol</a></dt>
-                                <dd id="GenericModelDescrBase.type" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.type">type</a></dd>
-                <dd id="GenericModelDescrBase.format_version" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.format_version">format_version</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
                 <section id="GenericDescrBase">
                             <input id="GenericDescrBase-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -1932,34 +1578,34 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#GenericDescrBase"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescrBase-375"><a href="#GenericDescrBase-375"><span class="linenos">375</span></a><span class="k">class</span> <span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
-</span><span id="GenericDescrBase-376"><a href="#GenericDescrBase-376"><span class="linenos">376</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions except for the model descriptions&quot;&quot;&quot;</span>
-</span><span id="GenericDescrBase-377"><a href="#GenericDescrBase-377"><span class="linenos">377</span></a>
-</span><span id="GenericDescrBase-378"><a href="#GenericDescrBase-378"><span class="linenos">378</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;0.3.0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.3.0&quot;</span>
-</span><span id="GenericDescrBase-379"><a href="#GenericDescrBase-379"><span class="linenos">379</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The **format** version of this resource specification&quot;&quot;&quot;</span>
-</span><span id="GenericDescrBase-380"><a href="#GenericDescrBase-380"><span class="linenos">380</span></a>
-</span><span id="GenericDescrBase-381"><a href="#GenericDescrBase-381"><span class="linenos">381</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="GenericDescrBase-382"><a href="#GenericDescrBase-382"><span class="linenos">382</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescrBase-383"><a href="#GenericDescrBase-383"><span class="linenos">383</span></a>    <span class="k">def</span> <span class="nf">_convert_from_older_format</span><span class="p">(</span>
-</span><span id="GenericDescrBase-384"><a href="#GenericDescrBase-384"><span class="linenos">384</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="o">/</span>
-</span><span id="GenericDescrBase-385"><a href="#GenericDescrBase-385"><span class="linenos">385</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
-</span><span id="GenericDescrBase-386"><a href="#GenericDescrBase-386"><span class="linenos">386</span></a>        <span class="n">convert_from_older_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="GenericDescrBase-387"><a href="#GenericDescrBase-387"><span class="linenos">387</span></a>        <span class="k">return</span> <span class="n">data</span>
-</span><span id="GenericDescrBase-388"><a href="#GenericDescrBase-388"><span class="linenos">388</span></a>
-</span><span id="GenericDescrBase-389"><a href="#GenericDescrBase-389"><span class="linenos">389</span></a>    <span class="n">documentation</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="GenericDescrBase-390"><a href="#GenericDescrBase-390"><span class="linenos">390</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">DocumentationSource</span><span class="p">],</span>
-</span><span id="GenericDescrBase-391"><a href="#GenericDescrBase-391"><span class="linenos">391</span></a>        <span class="n">Field</span><span class="p">(</span>
-</span><span id="GenericDescrBase-392"><a href="#GenericDescrBase-392"><span class="linenos">392</span></a>            <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
-</span><span id="GenericDescrBase-393"><a href="#GenericDescrBase-393"><span class="linenos">393</span></a>                <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
-</span><span id="GenericDescrBase-394"><a href="#GenericDescrBase-394"><span class="linenos">394</span></a>                <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
-</span><span id="GenericDescrBase-395"><a href="#GenericDescrBase-395"><span class="linenos">395</span></a>            <span class="p">],</span>
-</span><span id="GenericDescrBase-396"><a href="#GenericDescrBase-396"><span class="linenos">396</span></a>        <span class="p">),</span>
-</span><span id="GenericDescrBase-397"><a href="#GenericDescrBase-397"><span class="linenos">397</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescrBase-398"><a href="#GenericDescrBase-398"><span class="linenos">398</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.</span>
-</span><span id="GenericDescrBase-399"><a href="#GenericDescrBase-399"><span class="linenos">399</span></a><span class="sd">    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&quot;&quot;&quot;</span>
-</span><span id="GenericDescrBase-400"><a href="#GenericDescrBase-400"><span class="linenos">400</span></a>
-</span><span id="GenericDescrBase-401"><a href="#GenericDescrBase-401"><span class="linenos">401</span></a>    <span class="n">badges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BadgeDescr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="GenericDescrBase-402"><a href="#GenericDescrBase-402"><span class="linenos">402</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;badges associated with this resource&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescrBase-377"><a href="#GenericDescrBase-377"><span class="linenos">377</span></a><span class="k">class</span> <span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
+</span><span id="GenericDescrBase-378"><a href="#GenericDescrBase-378"><span class="linenos">378</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions except for the model descriptions&quot;&quot;&quot;</span>
+</span><span id="GenericDescrBase-379"><a href="#GenericDescrBase-379"><span class="linenos">379</span></a>
+</span><span id="GenericDescrBase-380"><a href="#GenericDescrBase-380"><span class="linenos">380</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;0.3.0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.3.0&quot;</span>
+</span><span id="GenericDescrBase-381"><a href="#GenericDescrBase-381"><span class="linenos">381</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The **format** version of this resource specification&quot;&quot;&quot;</span>
+</span><span id="GenericDescrBase-382"><a href="#GenericDescrBase-382"><span class="linenos">382</span></a>
+</span><span id="GenericDescrBase-383"><a href="#GenericDescrBase-383"><span class="linenos">383</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="GenericDescrBase-384"><a href="#GenericDescrBase-384"><span class="linenos">384</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescrBase-385"><a href="#GenericDescrBase-385"><span class="linenos">385</span></a>    <span class="k">def</span> <span class="nf">_convert_from_older_format</span><span class="p">(</span>
+</span><span id="GenericDescrBase-386"><a href="#GenericDescrBase-386"><span class="linenos">386</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="o">/</span>
+</span><span id="GenericDescrBase-387"><a href="#GenericDescrBase-387"><span class="linenos">387</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
+</span><span id="GenericDescrBase-388"><a href="#GenericDescrBase-388"><span class="linenos">388</span></a>        <span class="n">convert_from_older_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="GenericDescrBase-389"><a href="#GenericDescrBase-389"><span class="linenos">389</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="GenericDescrBase-390"><a href="#GenericDescrBase-390"><span class="linenos">390</span></a>
+</span><span id="GenericDescrBase-391"><a href="#GenericDescrBase-391"><span class="linenos">391</span></a>    <span class="n">documentation</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="GenericDescrBase-392"><a href="#GenericDescrBase-392"><span class="linenos">392</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">DocumentationSource</span><span class="p">],</span>
+</span><span id="GenericDescrBase-393"><a href="#GenericDescrBase-393"><span class="linenos">393</span></a>        <span class="n">Field</span><span class="p">(</span>
+</span><span id="GenericDescrBase-394"><a href="#GenericDescrBase-394"><span class="linenos">394</span></a>            <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
+</span><span id="GenericDescrBase-395"><a href="#GenericDescrBase-395"><span class="linenos">395</span></a>                <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
+</span><span id="GenericDescrBase-396"><a href="#GenericDescrBase-396"><span class="linenos">396</span></a>                <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+</span><span id="GenericDescrBase-397"><a href="#GenericDescrBase-397"><span class="linenos">397</span></a>            <span class="p">],</span>
+</span><span id="GenericDescrBase-398"><a href="#GenericDescrBase-398"><span class="linenos">398</span></a>        <span class="p">),</span>
+</span><span id="GenericDescrBase-399"><a href="#GenericDescrBase-399"><span class="linenos">399</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescrBase-400"><a href="#GenericDescrBase-400"><span class="linenos">400</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.</span>
+</span><span id="GenericDescrBase-401"><a href="#GenericDescrBase-401"><span class="linenos">401</span></a><span class="sd">    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&quot;&quot;&quot;</span>
+</span><span id="GenericDescrBase-402"><a href="#GenericDescrBase-402"><span class="linenos">402</span></a>
+</span><span id="GenericDescrBase-403"><a href="#GenericDescrBase-403"><span class="linenos">403</span></a>    <span class="n">badges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BadgeDescr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="GenericDescrBase-404"><a href="#GenericDescrBase-404"><span class="linenos">404</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;badges associated with this resource&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1982,7 +1628,7 @@ method.</p>
                             </div>
                             <div id="GenericDescrBase.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f770b8e32e0&gt;), PlainSerializer(func=&lt;function _package at 0x7f770b8a16c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f52e77ef560&gt;), PlainSerializer(func=&lt;function _package at 0x7f52e99304a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -2029,53 +1675,6 @@ The recommended documentation file name is <code>README.md</code>. An <code>.md<
     <a class="headerlink" href="#GenericDescrBase.implemented_format_version_tuple"></a>
     
     
-
-                            </div>
-                            <div id="GenericDescrBase.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="GenericDescrBase.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericDescrBase.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescrBase.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericDescrBase.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="GenericDescrBase.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericDescrBase.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.&#39;, metadata=[MinLen(min_length=1), MaxLen(max_length=128)]), &#39;description&#39;: FieldInfo(annotation=str, required=True, description=&#39;A string containing a brief description.&#39;, metadata=[MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=512)]})]), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of this resource description and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=List[FileDescr], required=False, default_factory=list, description=&#39;file attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=True, description=&#39;citations&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, DeprecatedLicenseId], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;git_repo&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration, e.g. on bioimage.io&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.3.0&#39;], required=False, default=&#39;0.3.0&#39;, description=&#39;The **format** version of this resource specification&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&#39;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;]), &#39;badges&#39;: FieldInfo(annotation=List[BadgeDescr], required=False, default_factory=list, description=&#39;badges associated with this resource&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescrBase.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericDescrBase.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescrBase.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
 
                             </div>
                             <div id="GenericDescrBase.model_post_init" class="classattr">
@@ -2128,25 +1727,6 @@ method.</p>
                 <dd id="GenericDescrBase.version" class="variable"><a href="#GenericModelDescrBase.version">version</a></dd>
 
             </div>
-            <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
-                                <dd id="GenericDescrBase.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
-                <dd id="GenericDescrBase.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
-                <dd id="GenericDescrBase.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
-                <dd id="GenericDescrBase.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
-                                <dd id="GenericDescrBase.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="GenericDescrBase.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol">bioimageio.spec._internal.common_nodes._ResourceDescrBaseAbstractFieldsProtocol</a></dt>
-                                <dd id="GenericDescrBase.type" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.type">type</a></dd>
-
-            </div>
                                 </dl>
                             </div>
                 </section>
@@ -2161,38 +1741,38 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#GenericDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-408"><a href="#GenericDescr-408"><span class="linenos">408</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span>
-</span><span id="GenericDescr-409"><a href="#GenericDescr-409"><span class="linenos">409</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io generic specification&quot;</span>
-</span><span id="GenericDescr-410"><a href="#GenericDescr-410"><span class="linenos">410</span></a><span class="p">):</span>
-</span><span id="GenericDescr-411"><a href="#GenericDescr-411"><span class="linenos">411</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
-</span><span id="GenericDescr-412"><a href="#GenericDescr-412"><span class="linenos">412</span></a>
-</span><span id="GenericDescr-413"><a href="#GenericDescr-413"><span class="linenos">413</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
-</span><span id="GenericDescr-414"><a href="#GenericDescr-414"><span class="linenos">414</span></a><span class="sd">    Note that those resources are described with a type-specific RDF.</span>
-</span><span id="GenericDescr-415"><a href="#GenericDescr-415"><span class="linenos">415</span></a><span class="sd">    Use this generic resource description, if none of the known specific types matches your resource.</span>
-</span><span id="GenericDescr-416"><a href="#GenericDescr-416"><span class="linenos">416</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="GenericDescr-417"><a href="#GenericDescr-417"><span class="linenos">417</span></a>
-</span><span id="GenericDescr-418"><a href="#GenericDescr-418"><span class="linenos">418</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="GenericDescr-419"><a href="#GenericDescr-419"><span class="linenos">419</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-420"><a href="#GenericDescr-420"><span class="linenos">420</span></a>
-</span><span id="GenericDescr-421"><a href="#GenericDescr-421"><span class="linenos">421</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-422"><a href="#GenericDescr-422"><span class="linenos">422</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-423"><a href="#GenericDescr-423"><span class="linenos">423</span></a>
-</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a>
-</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>
-</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>
-</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-410"><a href="#GenericDescr-410"><span class="linenos">410</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span>
+</span><span id="GenericDescr-411"><a href="#GenericDescr-411"><span class="linenos">411</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io generic specification&quot;</span>
+</span><span id="GenericDescr-412"><a href="#GenericDescr-412"><span class="linenos">412</span></a><span class="p">):</span>
+</span><span id="GenericDescr-413"><a href="#GenericDescr-413"><span class="linenos">413</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
+</span><span id="GenericDescr-414"><a href="#GenericDescr-414"><span class="linenos">414</span></a>
+</span><span id="GenericDescr-415"><a href="#GenericDescr-415"><span class="linenos">415</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
+</span><span id="GenericDescr-416"><a href="#GenericDescr-416"><span class="linenos">416</span></a><span class="sd">    Note that those resources are described with a type-specific RDF.</span>
+</span><span id="GenericDescr-417"><a href="#GenericDescr-417"><span class="linenos">417</span></a><span class="sd">    Use this generic resource description, if none of the known specific types matches your resource.</span>
+</span><span id="GenericDescr-418"><a href="#GenericDescr-418"><span class="linenos">418</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="GenericDescr-419"><a href="#GenericDescr-419"><span class="linenos">419</span></a>
+</span><span id="GenericDescr-420"><a href="#GenericDescr-420"><span class="linenos">420</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="GenericDescr-421"><a href="#GenericDescr-421"><span class="linenos">421</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-422"><a href="#GenericDescr-422"><span class="linenos">422</span></a>
+</span><span id="GenericDescr-423"><a href="#GenericDescr-423"><span class="linenos">423</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a>
+</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a>
+</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a>
+</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a>
+</span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -2245,7 +1825,7 @@ Use this generic resource description, if none of the known specific types match
                             </div>
                             <div id="GenericDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Optional[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>]</span>
+            <span class="name">source</span><span class="annotation">: Optional[bioimageio.spec._internal.url.HttpUrl]</span>
 
         
     </div>
@@ -2269,16 +1849,16 @@ Use this generic resource description, if none of the known specific types match
 
     </div>
     <a class="headerlink" href="#GenericDescr.check_specific_types"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-430"><a href="#GenericDescr.check_specific_types-430"><span class="linenos">430</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-431"><a href="#GenericDescr.check_specific_types-431"><span class="linenos">431</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr.check_specific_types-432"><a href="#GenericDescr.check_specific_types-432"><span class="linenos">432</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-433"><a href="#GenericDescr.check_specific_types-433"><span class="linenos">433</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-434"><a href="#GenericDescr.check_specific_types-434"><span class="linenos">434</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>
-</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-432"><a href="#GenericDescr.check_specific_types-432"><span class="linenos">432</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-433"><a href="#GenericDescr.check_specific_types-433"><span class="linenos">433</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr.check_specific_types-434"><a href="#GenericDescr.check_specific_types-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-440"><a href="#GenericDescr.check_specific_types-440"><span class="linenos">440</span></a>
+</span><span id="GenericDescr.check_specific_types-441"><a href="#GenericDescr.check_specific_types-441"><span class="linenos">441</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -2307,53 +1887,6 @@ Use this generic resource description, if none of the known specific types match
     <a class="headerlink" href="#GenericDescr.implemented_format_version_tuple"></a>
     
     
-
-                            </div>
-                            <div id="GenericDescr.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="GenericDescr.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericDescr.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;ignore&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True, &#39;title&#39;: &#39;bioimage.io generic specification&#39;}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescr.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericDescr.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<input id="GenericDescr.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="GenericDescr.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True, description=&#39;A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.&#39;, metadata=[MinLen(min_length=1), MaxLen(max_length=128)]), &#39;description&#39;: FieldInfo(annotation=str, required=True, description=&#39;A string containing a brief description.&#39;, metadata=[MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: typing.Annotated[typing.Any, MaxLen(max_length=512)]})]), &#39;covers&#39;: FieldInfo(annotation=List[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix, PlainSerializer]], required=False, default_factory=list, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[]), &#39;id_emoji&#39;: FieldInfo(annotation=Union[Annotated[str, Len], NoneType], required=False, default=None, description=&#39;UTF-8 emoji for display alongside the `id`.&#39;), &#39;authors&#39;: FieldInfo(annotation=List[Author], required=True, description=&#39;The authors are the creators of this resource description and the primary points of contact.&#39;, metadata=[MinLen(min_length=1)]), &#39;attachments&#39;: FieldInfo(annotation=List[FileDescr], required=False, default_factory=list, description=&#39;file attachments&#39;), &#39;cite&#39;: FieldInfo(annotation=List[CiteEntry], required=True, description=&#39;citations&#39;, metadata=[MinLen(min_length=1)]), &#39;license&#39;: FieldInfo(annotation=Union[LicenseId, DeprecatedLicenseId], required=True, description=&#39;A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.&#39;, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>&#39;&gt;})]), &#39;config&#39;: FieldInfo(annotation=Dict[str, YamlValue], required=False, default_factory=dict, description=&#39;A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)&#39;, examples=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}]), &#39;git_repo&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;A URL to the Git repository where the resource is being developed.&#39;, examples=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;]), &#39;icon&#39;: FieldInfo(annotation=Union[Annotated[str, Len], Annotated[Union[HttpUrl, RelativeFilePath, Annotated[Path, PathType]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;An icon for illustration, e.g. on bioimage.io&#39;), &#39;links&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;IDs of other bioimage.io resources&#39;, examples=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)]), &#39;uploader&#39;: FieldInfo(annotation=Union[Uploader, NoneType], required=False, default=None, description=&#39;The person who uploaded the model (e.g. to bioimage.io)&#39;), &#39;maintainers&#39;: FieldInfo(annotation=List[Maintainer], required=False, default_factory=list, description=&#39;Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name&#39;), &#39;tags&#39;: FieldInfo(annotation=List[str], required=False, default_factory=list, description=&#39;Associated tags&#39;, examples=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)]), &#39;version&#39;: FieldInfo(annotation=Union[Version, NoneType], required=False, default=None, description=&#39;The version of the resource following SemVer 2.0.&#39;), &#39;format_version&#39;: FieldInfo(annotation=Literal[&#39;0.3.0&#39;], required=False, default=&#39;0.3.0&#39;, description=&#39;The **format** version of this resource specification&#39;), &#39;documentation&#39;: FieldInfo(annotation=Union[Annotated[Union[Annotated[Path, PathType, Predicate], RelativeFilePath, HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator, PlainSerializer], NoneType], required=False, default=None, description=&#39;∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.&#39;, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;]), &#39;badges&#39;: FieldInfo(annotation=List[BadgeDescr], required=False, default_factory=list, description=&#39;badges associated with this resource&#39;), &#39;type&#39;: FieldInfo(annotation=str, required=False, default=&#39;generic&#39;, description=&#39;The resource type assigns a broad category to the resource.&#39;, frozen=True, metadata=[typing.Annotated[~_StrType, Predicate(str.islower)]]), &#39;id&#39;: FieldInfo(annotation=Union[ResourceId, NoneType], required=False, default=None, description=&#39;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&#39;), &#39;parent&#39;: FieldInfo(annotation=Union[ResourceId, NoneType], required=False, default=None, description=&#39;The description from which this one is derived&#39;), &#39;source&#39;: FieldInfo(annotation=Union[HttpUrl, NoneType], required=False, default=None, description=&#39;The primary source of the resource&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescr.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="GenericDescr.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GenericDescr.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
 
                             </div>
                             <div id="GenericDescr.model_post_init" class="classattr">
@@ -2412,21 +1945,6 @@ method.</p>
                 <dd id="GenericDescr.version" class="variable"><a href="#GenericModelDescrBase.version">version</a></dd>
 
             </div>
-            <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
-                                <dd id="GenericDescr.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
-                <dd id="GenericDescr.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
-                <dd id="GenericDescr.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
-                <dd id="GenericDescr.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
-                                <dd id="GenericDescr.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
-
-            </div>
-            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="GenericDescr.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
                                 </dl>
                             </div>
                 </section>
@@ -2435,22 +1953,24 @@ method.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LinkedResourceNode</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
+    <span class="name">LinkedResourceNode</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
 
                 <label class="view-source-button" for="LinkedResourceNode-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#LinkedResourceNode"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResourceNode-442"><a href="#LinkedResourceNode-442"><span class="linenos">442</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-</span><span id="LinkedResourceNode-443"><a href="#LinkedResourceNode-443"><span class="linenos">443</span></a>
-</span><span id="LinkedResourceNode-444"><a href="#LinkedResourceNode-444"><span class="linenos">444</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="LinkedResourceNode-445"><a href="#LinkedResourceNode-445"><span class="linenos">445</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
-</span><span id="LinkedResourceNode-446"><a href="#LinkedResourceNode-446"><span class="linenos">446</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LinkedResourceNode-447"><a href="#LinkedResourceNode-447"><span class="linenos">447</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="LinkedResourceNode-448"><a href="#LinkedResourceNode-448"><span class="linenos">448</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="LinkedResourceNode-449"><a href="#LinkedResourceNode-449"><span class="linenos">449</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="LinkedResourceNode-450"><a href="#LinkedResourceNode-450"><span class="linenos">450</span></a>
-</span><span id="LinkedResourceNode-451"><a href="#LinkedResourceNode-451"><span class="linenos">451</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResourceNode-444"><a href="#LinkedResourceNode-444"><span class="linenos">444</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="LinkedResourceNode-445"><a href="#LinkedResourceNode-445"><span class="linenos">445</span></a>
+</span><span id="LinkedResourceNode-446"><a href="#LinkedResourceNode-446"><span class="linenos">446</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="LinkedResourceNode-447"><a href="#LinkedResourceNode-447"><span class="linenos">447</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="LinkedResourceNode-448"><a href="#LinkedResourceNode-448"><span class="linenos">448</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="LinkedResourceNode-449"><a href="#LinkedResourceNode-449"><span class="linenos">449</span></a>    <span class="p">):</span>
+</span><span id="LinkedResourceNode-450"><a href="#LinkedResourceNode-450"><span class="linenos">450</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LinkedResourceNode-451"><a href="#LinkedResourceNode-451"><span class="linenos">451</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="LinkedResourceNode-452"><a href="#LinkedResourceNode-452"><span class="linenos">452</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="LinkedResourceNode-453"><a href="#LinkedResourceNode-453"><span class="linenos">453</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="LinkedResourceNode-454"><a href="#LinkedResourceNode-454"><span class="linenos">454</span></a>
+</span><span id="LinkedResourceNode-455"><a href="#LinkedResourceNode-455"><span class="linenos">455</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span></pre></div>
 
 
@@ -2458,61 +1978,6 @@ method.</p>
 </div>
 
 
-                            <div id="LinkedResourceNode.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span><span class="annotation">: ClassVar[pydantic.config.ConfigDict]</span>        =
-<input id="LinkedResourceNode.model_config-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="LinkedResourceNode.model_config-view-value"></label><span class="default_value">{&#39;extra&#39;: &#39;forbid&#39;, &#39;frozen&#39;: False, &#39;populate_by_name&#39;: True, &#39;revalidate_instances&#39;: &#39;never&#39;, &#39;validate_assignment&#39;: True, &#39;validate_default&#39;: False, &#39;validate_return&#39;: True, &#39;use_attribute_docstrings&#39;: True}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResourceNode.model_config"></a>
-    
-            <div class="docstring"><p>Configuration for the model, should be a dictionary conforming to [<code>ConfigDict</code>][pydantic.config.ConfigDict].</p>
-</div>
-
-
-                            </div>
-                            <div id="LinkedResourceNode.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.FieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResourceNode.model_fields"></a>
-    
-            <div class="docstring"><p>Metadata about the fields defined on the model,
-mapping of field names to [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</p>
-
-<p>This replaces <code>Model.__fields__</code> from Pydantic V1.</p>
-</div>
-
-
-                            </div>
-                            <div id="LinkedResourceNode.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span><span class="annotation">: ClassVar[Dict[str, pydantic.fields.ComputedFieldInfo]]</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#LinkedResourceNode.model_computed_fields"></a>
-    
-            <div class="docstring"><p>A dictionary of computed field names and their corresponding <code>ComputedFieldInfo</code> objects.</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
-                                <dd id="LinkedResourceNode.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
