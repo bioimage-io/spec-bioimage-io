@@ -4,7 +4,6 @@ cite:
   - { text: training library, doi: "10.5281/zenodo.5108853" }
   - { text: architecture, doi: "10.1007/978-3-319-24574-4_28" }
 covers: [cover.jpg]
-dependencies: conda:environment.yaml
 description: Multi tensor
 documentation: documentation.md
 format_version: 0.4.0
@@ -60,9 +59,11 @@ weights:
     sha256: 097bb5062df1fe48a5e7473ea2f6025c77d334a9e3f92af79fc3d6d530c01720
     source: weights-torchscript.pt
     parent: pytorch_state_dict
+    pytorch_version: 1.6
   pytorch_state_dict:
     architecture: multi_tensor_unet.py:MultiTensorUNet
     architecture_sha256: 89204f8f3513b3c227127a8137bedaec9eafe49925f7734c73c6650ec135b34e
     kwargs: { depth: 3, in_channels: 2, initial_features: 16, out_channels: 2 }
     sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00
     source: weights.pt
+    pytorch_version: 1.6
