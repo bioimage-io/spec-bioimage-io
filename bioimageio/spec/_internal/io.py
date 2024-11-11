@@ -12,6 +12,7 @@ from functools import lru_cache
 from pathlib import Path, PurePath
 from tempfile import mktemp
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     Generic,
@@ -481,10 +482,16 @@ YamlLeafValue = Union[
 YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
 ]
-YamlValue = _TypeAliasType(
-    "YamlValue",
-    Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
-)
+if TYPE_CHECKING:
+    YamlValue = Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]]
+else:
+    # for pydantic validation we need to use `TypeAliasType`,
+    # see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
+    # however this results in a partially unknown type with the current pyright 1.1.388
+    YamlValue = _TypeAliasType(
+        "YamlValue",
+        Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
+    )
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 
