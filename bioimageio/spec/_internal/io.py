@@ -55,7 +55,6 @@ from typing_extensions import (
     Unpack,
     assert_never,
 )
-from typing_extensions import TypeAliasType as _TypeAliasType
 
 from ._settings import settings
 from .io_basics import (
@@ -481,10 +480,19 @@ YamlLeafValue = Union[
 YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
 ]
-YamlValue = _TypeAliasType(
-    "YamlValue",
-    Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
-)
+_YV0 = Union[YamlLeafValue, List[YamlLeafValue], Dict[YamlKey, YamlLeafValue]]
+_YV1 = Union[_YV0, List[_YV0], Dict[YamlKey, _YV0]]
+_YV2 = Union[_YV1, List[_YV1], Dict[YamlKey, _YV1]]
+_YV3 = Union[_YV2, List[_YV2], Dict[YamlKey, _YV2]]
+_YV4 = Union[_YV3, List[_YV3], Dict[YamlKey, _YV3]]
+_YV5 = Union[_YV4, List[_YV4], Dict[YamlKey, _YV4]]
+_YV6 = Union[_YV5, List[_YV5], Dict[YamlKey, _YV5]]
+_YV7 = Union[_YV6, List[_YV6], Dict[YamlKey, _YV6]]
+_YV8 = Union[_YV7, List[_YV7], Dict[YamlKey, _YV7]]
+_YV9 = Union[_YV8, List[_YV8], Dict[YamlKey, _YV8]]
+YamlValue = Union[_YV9, List[_YV9], Dict[YamlKey, _YV9]]
+"""A Yaml value with a maximum nesting depth of 10"""
+
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
 
