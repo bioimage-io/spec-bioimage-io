@@ -453,3 +453,6 @@ class LinkedResourceNode(Node):
                 value["version"] = vn
 
         return value  # pyright: ignore[reportUnknownVariableType]
+
+    version: Optional[Version] = None
+    """The version of the linked resource following SemVer 2.0."""
