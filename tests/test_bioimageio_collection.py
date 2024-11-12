@@ -17,7 +17,12 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version",  # may be set from deprecated `version_number`
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
-    "affable-shark/1.1": {"inputs"}
+    "affable-shark/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "philosophical-panda/0.0.11": {"outputs"},  # int -> float
+    "philosophical-panda/0.1.0": {"outputs"},  # int -> float
+    "dynamic-t-rex/1": {"inputs"},  # int -> float
+    "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
+    "impartial-shrimp/1.1": {"inputs"},  # preprocessing assert_dtype added
 }
 
 
