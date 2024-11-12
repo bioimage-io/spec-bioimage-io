@@ -4,13 +4,13 @@ from io import StringIO
 from pathlib import Path
 from typing import (
     Any,
+    Collection,
     ContextManager,
     Dict,
     Mapping,
     Optional,
     Protocol,
     Sequence,
-    Set,
     Type,
     Union,
 )
@@ -32,9 +32,9 @@ from bioimageio.spec._description import InvalidDescr, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
 from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
+from bioimageio.spec.common import HttpUrl
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
 from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
@@ -139,7 +139,7 @@ def check_bioimageio_yaml(
     *,
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path(),
     as_latest: bool,
-    exclude_fields_from_roundtrip: Set[str] = set(),
+    exclude_fields_from_roundtrip: Collection[str] = set(),
     is_invalid: bool = False,
     bioimageio_json_schema: Optional[Mapping[Any, Any]],
     perform_io_checks: bool = True,
