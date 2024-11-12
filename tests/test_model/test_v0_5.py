@@ -179,9 +179,6 @@ def test_input_tensor_invalid(kwargs: Dict[str, Any]):
     )
 
 
-@pytest.mark.skip(
-    "possibly bug in pydantic? in some envs it passes, in ohters not"
-)  # TODO: fix
 def test_input_tensor_error_count(model_data: Dict[str, Any]):
     """this test checks that the discrminated union for `InputAxis` does its
     thing and we don't get errors for all options"""
