@@ -4,7 +4,7 @@ from typing import Any, Dict, Union
 import pytest
 from pydantic import RootModel, ValidationError
 
-from bioimageio.spec import validate_format
+from bioimageio.spec import build_description, validate_format
 from bioimageio.spec._internal.io import FileDescr
 from bioimageio.spec._internal.license_id import LicenseId
 from bioimageio.spec._internal.url import HttpUrl
@@ -478,16 +478,45 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
     model_data["outputs"][0]["axes"] = [
-        {"type": "space", "id": "x", "size": {"tensor_id": "input_1", "axis_id": "x"}},
-        {"type": "space", "id": "y", "size": {"tensor_id": "input_1", "axis_id": "y"}},
+        {
+            "type": "space",
+            "id": "x",
+            "size": {"tensor_id": "input_1", "axis_id": "y"},
+            "scale": 0.5,
+        },
+        {
+            "type": "space",
+            "id": "y",
+            "size": {"tensor_id": "input_1", "axis_id": "y"},
+            "scale": 4,
+        },
         {"type": "space", "id": "z", "size": 7},
         {"type": "channel", "channel_names": list("abc")},
+        {"type": "batch"},
     ]
 
-    summary = validate_format(
+    model = build_description(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert isinstance(model, ModelDescr), model.validation_summary.format()
+    actual_inputs, actual_outputs = model.get_axis_sizes(
+        {(TensorId("input_1"), AxisId("y")): 1}, batch_size=13
+    )
+    expected_inputs = {
+        (TensorId("input_1"), AxisId("batch")): 13,
+        (TensorId("input_1"), AxisId("channel")): 1,
+        (TensorId("input_1"), AxisId("x")): 256 + 8,
+        (TensorId("input_1"), AxisId("y")): 256 + 8,
+    }
+    expected_outputs = {
+        (TensorId("output_1"), AxisId("batch")): 13,
+        (TensorId("output_1"), AxisId("channel")): 3,
+        (TensorId("output_1"), AxisId("x")): 2 * (256 + 8),
+        (TensorId("output_1"), AxisId("y")): (256 + 8) // 4,
+        (TensorId("output_1"), AxisId("z")): 7,
+    }
+    assert actual_inputs == expected_inputs
+    assert actual_outputs == expected_outputs
 
 
 def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
@@ -520,3 +549,10 @@ def test_empty_axis_data():
 
     with pytest.raises(ValidationError):
         _ = OutputAxis.model_validate({})
+
+
+@pytest.mark.parametrize(
+    "a,b", [(TensorId("t"), TensorId("t")), (AxisId("a"), AxisId("a"))]
+)
+def test_identifier_identity(a: Any, b: Any):
+    assert a == b

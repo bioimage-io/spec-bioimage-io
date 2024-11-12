@@ -2611,7 +2611,7 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
         # resolve all output axis sizes
         for t_descr in self.outputs:
             for a in t_descr.axes:
-                assert not isinstance(a.size, SizeReference)
+                assert not isinstance(a.size, ParameterizedSize)
                 s = get_axis_size(a)
                 outputs[t_descr.id, a.id] = s
 
