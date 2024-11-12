@@ -2043,7 +2043,8 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
     """Specialized resource type 'model'"""
 
     id: Optional[ModelId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+    """bioimage.io-wide unique resource identifier
+    assigned by bioimage.io; version **un**specific."""
 
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""

@@ -450,7 +450,8 @@ class GenericDescr(
     """The resource type assigns a broad category to the resource."""
 
     id: Optional[ResourceId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+    """bioimage.io-wide unique resource identifier
+    assigned by bioimage.io; version **un**specific."""
 
     source: Optional[HttpUrl] = None
     """The primary source of the resource"""
