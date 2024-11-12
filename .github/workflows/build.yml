@@ -33,7 +33,7 @@ jobs:
           echo "date=$(date +'%Y-%b')"
           echo "date=$(date +'%Y-%b')" >> $GITHUB_OUTPUT
         shell: bash
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: bioimageio_cache
           key: "py${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}"
