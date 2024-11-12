@@ -1,3 +1,4 @@
+import os
 from contextlib import nullcontext
 from copy import deepcopy
 from io import StringIO
@@ -44,6 +45,11 @@ yaml = YAML(typ="safe")
 
 
 unset = object()
+
+skip_expensive = pytest.mark.skipif(
+    (run := os.getenv("SKIP_EXPENSIVE_TESTS")) == "true",
+    reason=f"Skipping expensive test (SKIP_EXPENSIVE_TESTS {run}!=true )",
+)
 
 
 def check_node(

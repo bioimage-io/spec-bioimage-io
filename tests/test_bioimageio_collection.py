@@ -7,7 +7,7 @@ import pytest
 
 from bioimageio.spec import settings
 from bioimageio.spec.common import HttpUrl, Sha256
-from tests.utils import ParameterSet, check_bioimageio_yaml
+from tests.utils import ParameterSet, check_bioimageio_yaml, skip_expensive
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
@@ -57,6 +57,7 @@ def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
         yield pytest.param(descr_url, sha, key, id=key)
 
 
+@skip_expensive
 @pytest.mark.parametrize("descr_url,sha,key", list(yield_bioimageio_yaml_urls()))
 def test_rdf(
     descr_url: Path,
@@ -79,6 +80,7 @@ def test_rdf(
     )
 
 
+@skip_expensive
 @pytest.mark.parametrize(
     "rdf_id",
     [

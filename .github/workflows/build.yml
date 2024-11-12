@@ -16,6 +16,8 @@ jobs:
         include:
           - python-version: "3.12"
             is-dev-version: true
+          - python-version: "3.13"
+            run_expensive_tests: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,6 +53,7 @@ jobs:
       - run: pytest
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
+          SKIP_EXPENSIVE_TESTS: ${{ matrix.run_expensive_tests && 'false' || 'true' }}
       - if: matrix.is-dev-version && github.event_name == 'pull_request'
         uses: orgoro/coverage@v3.2
         with:
