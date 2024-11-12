@@ -84,11 +84,11 @@ def test_rdf(
 @pytest.mark.parametrize(
     "rdf_id",
     [
-        "affable-shark/1.1",
+        "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
         "ambitious-sloth/1.2",
     ],
 )
-def test_examplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
+def test_exemplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
     """test a list of models we expect to be compatible with the latest spec version"""
     source, sha = ALL_RDF_SOURCES[rdf_id]
     check_bioimageio_yaml(
