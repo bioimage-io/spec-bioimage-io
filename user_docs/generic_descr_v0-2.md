@@ -57,7 +57,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7ff9fec37880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f6750f1f880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -129,7 +129,7 @@ badge icon
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7ff9fec37880>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f6750f1f880>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -206,7 +206,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7ff9fec37880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f6750f1f880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -220,7 +220,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7ff9fec37880>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f6750f1f880>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -245,7 +245,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7ff9fec37880>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f6750f1f880>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
