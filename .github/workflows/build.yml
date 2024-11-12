@@ -16,7 +16,6 @@ jobs:
         include:
           - python-version: "3.12"
             is-dev-version: true
-          - python-version: "3.13"
             run_expensive_tests: true
     steps:
       - uses: actions/checkout@v4
