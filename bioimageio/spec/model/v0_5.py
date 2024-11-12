@@ -2549,17 +2549,11 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                         + f" '{a.id}' of tensor '{t_descr.id}'."
                     )
                 n = ns[(t_descr.id, a.id)]
-                s_n = a.size.get_size(n)
                 s_max = max_input_shape.get((t_descr.id, a.id))
                 if s_max is None:
-                    return s_n
-
-                for n_min in range(n):
-                    s = a.size.get_size(n_min)
-                    if s >= s_max:
-                        return s
-
-                return s_n  # n == 0
+                    return n
+                else:
+                    return min(n, a.size.get_n(s_max))
 
             elif isinstance(a.size, SizeReference):
                 if (t_descr.id, a.id) in ns:
