@@ -85,7 +85,10 @@ def test_rdf(
     "rdf_id",
     [
         "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
+        "ambitious-sloth/1",
         "ambitious-sloth/1.2",
+        "ilastik/ilastik/1",
+        "uplifting-ice-cream/1",
     ],
 )
 def test_exemplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
