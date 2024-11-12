@@ -84,8 +84,8 @@ def test_rdf(
 @pytest.mark.parametrize(
     "rdf_id",
     [
-        "affable-shark",
-        "ambitious-sloth",
+        "affable-shark/1.1",
+        "ambitious-sloth/1.2",
     ],
 )
 def test_examplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
