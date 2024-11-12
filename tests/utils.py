@@ -28,13 +28,12 @@ from pydantic import (
 )
 from ruyaml import YAML
 
-from bioimageio.spec._description import InvalidDescr, build_description
+from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
 from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
-from bioimageio.spec.common import HttpUrl
+from bioimageio.spec.common import HttpUrl, Sha256
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
 from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
@@ -137,6 +136,7 @@ def check_bioimageio_yaml(
     source: Union[Path, HttpUrl],
     /,
     *,
+    sha: Optional[Sha256] = None,
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Collection[str] = set(),
@@ -144,7 +144,7 @@ def check_bioimageio_yaml(
     bioimageio_json_schema: Optional[Mapping[Any, Any]],
     perform_io_checks: bool = True,
 ) -> None:
-    downloaded_source = download(source)
+    downloaded_source = download(source, sha256=sha)
     root = downloaded_source.original_root
     raw = downloaded_source.path.read_text(encoding="utf-8")
     assert isinstance(raw, str)
