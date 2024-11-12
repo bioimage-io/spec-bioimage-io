@@ -24,6 +24,8 @@ from bioimageio.spec.model.v0_5 import (
     ModelDescr,
     OnnxWeightsDescr,
     OutputTensorDescr,
+    ParameterizedSize,
+    SizeReference,
     SpaceInputAxis,
     SpaceOutputAxis,
     TensorDescrBase,
@@ -254,8 +256,15 @@ def model_data():
                     axes=[
                         BatchAxis(),
                         ChannelAxis(channel_names=[Identifier("intensity")]),
-                        SpaceInputAxis(id=AxisId("x"), size=512),
-                        SpaceInputAxis(id=AxisId("y"), size=512),
+                        SpaceInputAxis(
+                            id=AxisId("x"),
+                            size=SizeReference(
+                                tensor_id=TensorId("input_1"), axis_id=AxisId("y")
+                            ),
+                        ),
+                        SpaceInputAxis(
+                            id=AxisId("y"), size=ParameterizedSize(min=256, step=8)
+                        ),
                     ],
                     test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
                 ),
