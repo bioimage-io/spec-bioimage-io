@@ -2550,10 +2550,10 @@ class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification")
                     )
                 n = ns[(t_descr.id, a.id)]
                 s_max = max_input_shape.get((t_descr.id, a.id))
-                if s_max is None:
-                    return n
-                else:
-                    return min(n, a.size.get_n(s_max))
+                if s_max is not None:
+                    n = min(n, a.size.get_n(s_max))
+
+                return a.size.get_size(n)
 
             elif isinstance(a.size, SizeReference):
                 if (t_descr.id, a.id) in ns:
