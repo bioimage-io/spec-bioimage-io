@@ -383,6 +383,25 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.format()
 
 
+def test_get_axis_sizes_with_surplus_n(model_data: Dict[str, Any]):
+    with ValidationContext(perform_io_checks=False):
+        model = ModelDescr(**model_data)
+
+    key = (model.inputs[0].id, AxisId("y"))
+    _ = model.get_axis_sizes(ns={key: 1}, batch_size=1)
+
+
+def test_get_axis_sizes_with_partial_max_size(model_data: Dict[str, Any]):
+    with ValidationContext(perform_io_checks=False):
+        model = ModelDescr(**model_data)
+
+    key = (model.inputs[0].id, AxisId("y"))
+    ns = {key: 100}
+    wo_max_shape = model.get_axis_sizes(ns=ns)
+    with_max_shape = model.get_axis_sizes(ns=ns, max_input_shape={key: 32})
+    assert wo_max_shape.inputs[key] > with_max_shape.inputs[key]
+
+
 def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
     model_data["inputs"][0]["axes"][2] = {
         "type": "space",
