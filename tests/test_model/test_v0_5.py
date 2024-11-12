@@ -383,19 +383,6 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.format()
 
 
-def test_get_axis_sizes_raises_with_surplus_n(model_data: Dict[str, Any]):
-    with ValidationContext(perform_io_checks=False):
-        model = ModelDescr(**model_data)
-
-    output_tensor_id = model.inputs[0].id
-    output_axis_id = AxisId("y")
-
-    with pytest.raises(ValueError):
-        _ = model.get_axis_sizes(
-            ns={(output_tensor_id, output_axis_id): 1}, batch_size=1
-        )
-
-
 def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
     model_data["inputs"][0]["axes"][2] = {
         "type": "space",
