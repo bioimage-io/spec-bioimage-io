@@ -716,7 +716,11 @@ class MappingHint(Hint):
             return Unrecognized(raw_hint)
         type_args: Tuple[Type[Any], Type[Any]] = getattr(raw_hint, "__args__")
         key_type = type_args[0]
-        if key_type != str and key_type != int and key_type != typing.Union[int, str]:
+        if (
+            key_type is not str
+            and key_type is not int
+            and key_type != typing.Union[int, str]
+        ):
             return ParsingError(
                 f"Mappings with keys that are not ints or strings is not supported yet: {raw_hint}"
             )
@@ -992,15 +996,15 @@ class PrimitiveHint(Hint):
 
     def get_example(self) -> Example:
         hint_type = self.hint_type
-        if hint_type == int:
+        if hint_type is int:
             return Example(123456)
-        if hint_type == float:
+        if hint_type is float:
             return Example(3.14)
-        if hint_type == bool:
+        if hint_type is bool:
             return Example(True)
-        if hint_type == str:
+        if hint_type is str:
             return Example("some free-format string")
-        if hint_type == type(None):
+        if hint_type is type(None):
             return Example(None)
         return Example("--- NO EXAMPLES PROVIDED ---")
 
