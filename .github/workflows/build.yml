@@ -44,7 +44,7 @@ jobs:
       - name: install additinal deps for a full pyright check
         run: pip install json_schema_for_humans
         if: matrix.is-dev-version
-      - run: ruff check **/*.py # ignore notebooks for now
+      - run: ruff check
         if: matrix.is-dev-version
       - run: pyright --version
         if: matrix.is-dev-version

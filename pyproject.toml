@@ -49,7 +49,6 @@ testpaths = ["bioimageio/spec", "tests", "scripts"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 exclude = [
     "bioimageio_cache",
     "scripts/pdoc/original.py",
