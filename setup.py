@@ -52,6 +52,7 @@ _ = setup(
             test_extras := [
                 "deepdiff",
                 "filelock",  # for session fixtures due to pytest-xdist
+                "h5py",
                 "lxml",
                 "psutil",  # parallel pytest with '-n auto'
                 "pytest-cov",
