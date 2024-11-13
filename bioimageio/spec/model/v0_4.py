@@ -520,12 +520,14 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields):
 
 
 class BinarizeKwargs(ProcessingKwargs):
+    """key word arguments for `BinarizeDescr`"""
+
     threshold: float
     """The fixed threshold"""
 
 
 class BinarizeDescr(ProcessingDescrBase):
-    """BinarizeDescr the tensor with a fixed threshold.
+    """BinarizeDescr the tensor with a fixed `BinarizeKwargs.threshold`.
     Values above the threshold will be set to one, values below the threshold to zero.
     """
 
@@ -534,6 +536,8 @@ class BinarizeDescr(ProcessingDescrBase):
 
 
 class ClipKwargs(ProcessingKwargs):
+    """key word arguments for `ClipDescr`"""
+
     min: float
     """minimum value for clipping"""
     max: float
@@ -541,7 +545,11 @@ class ClipKwargs(ProcessingKwargs):
 
 
 class ClipDescr(ProcessingDescrBase):
-    """Set tensor values below min to min and above max to max."""
+    """Clip tensor values to a range.
+
+    Set tensor values below `ClipKwargs.min` to `ClipKwargs.min`
+    and above `ClipKwargs.max` to `ClipKwargs.max`.
+    """
 
     name: Literal["clip"] = "clip"
 
@@ -549,6 +557,8 @@ class ClipDescr(ProcessingDescrBase):
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleLinearDescr`"""
+
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
@@ -597,6 +607,8 @@ class SigmoidDescr(ProcessingDescrBase):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+    """key word arguments for `ZeroMeanUnitVarianceDescr`"""
+
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
     """Mode for computing mean and variance.
     |     mode    |             description              |
@@ -642,6 +654,8 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleRangeDescr`"""
+
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing percentiles.
     |     mode    |             description              |
@@ -691,6 +705,8 @@ class ScaleRangeDescr(ProcessingDescrBase):
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleMeanVarianceDescr`"""
+
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing mean and variance.
     |     mode    |             description              |
