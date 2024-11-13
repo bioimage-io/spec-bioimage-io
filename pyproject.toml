@@ -49,8 +49,11 @@ testpaths = ["bioimageio/spec", "tests", "scripts"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
-exclude = ["scripts/pdoc/original.py", "scripts/pdoc/patched.py"]
+exclude = [
+    "bioimageio_cache",
+    "scripts/pdoc/original.py",
+    "scripts/pdoc/patched.py",
+]
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]

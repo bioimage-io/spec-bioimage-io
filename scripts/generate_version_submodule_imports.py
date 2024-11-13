@@ -164,7 +164,7 @@ def process(info: Info, check: bool):
                 )
             )
     else:
-        with package_init.open("w", newline="\n") as f:
+        with package_init.open("w", newline="\n", encoding="utf-8") as f:
             _ = f.write(updated)
 
 

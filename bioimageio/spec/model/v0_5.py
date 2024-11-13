@@ -789,11 +789,15 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
 
 
 class BinarizeKwargs(ProcessingKwargs):
+    """key word arguments for `BinarizeDescr`"""
+
     threshold: float
     """The fixed threshold"""
 
 
 class BinarizeAlongAxisKwargs(ProcessingKwargs):
+    """key word arguments for `BinarizeDescr`"""
+
     threshold: NotEmpty[List[float]]
     """The fixed threshold values along `axis`"""
 
@@ -803,7 +807,9 @@ class BinarizeAlongAxisKwargs(ProcessingKwargs):
 
 class BinarizeDescr(ProcessingDescrBase):
     """Binarize the tensor with a fixed threshold.
-    Values above the threshold will be set to one, values below the threshold to zero.
+
+    Values above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`
+    will be set to one, values below the threshold to zero.
     """
 
     id: Literal["binarize"] = "binarize"
@@ -818,6 +824,8 @@ class ClipDescr(ProcessingDescrBase):
 
 
 class EnsureDtypeKwargs(ProcessingKwargs):
+    """key word arguments for `EnsureDtypeDescr`"""
+
     dtype: Literal[
         "float32",
         "float64",
@@ -834,11 +842,15 @@ class EnsureDtypeKwargs(ProcessingKwargs):
 
 
 class EnsureDtypeDescr(ProcessingDescrBase):
+    """cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching)"""
+
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleLinearDescr`"""
+
     gain: float = 1.0
     """multiplicative factor"""
 
@@ -857,6 +869,8 @@ class ScaleLinearKwargs(ProcessingKwargs):
 
 
 class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleLinearDescr`"""
+
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of of gains/offsets values."""
 
@@ -912,8 +926,7 @@ class SigmoidDescr(ProcessingDescrBase):
 
 
 class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
-    """Normalize with fixed, precomputed values for mean and variance.
-    See `zero_mean_unit_variance` for data dependent normalization."""
+    """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
 
     mean: float
     """The mean value to normalize with."""
@@ -923,8 +936,7 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
 
 
 class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
-    """Normalize with fixed, precomputed values for mean and variance.
-    See `zero_mean_unit_variance` for data dependent normalization."""
+    """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
 
     mean: NotEmpty[List[float]]
     """The mean value(s) to normalize with."""
@@ -949,7 +961,13 @@ class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
 
 
 class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
-    """Subtract a given mean and divide by a given variance."""
+    """Subtract a given mean and divide by the standard deviation.
+
+    Normalize with fixed, precomputed values for
+    `FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`
+    Use `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given
+    axes.
+    """
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
     kwargs: Union[
@@ -958,6 +976,8 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+    """key word arguments for `ZeroMeanUnitVarianceDescr`"""
+
     axes: Annotated[
         Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
     ] = None
@@ -979,6 +999,15 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
+    """key word arguments for `ScaleRangeDescr`
+
+    For `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)
+    this processing step normalizes data to the [0, 1] intervall.
+    For other percentiles the normalized values will partially be outside the [0, 1]
+    intervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the
+    normalized values to a range.
+    """
+
     axes: Annotated[
         Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
     ] = None
@@ -989,10 +1018,10 @@ class ScaleRangeKwargs(ProcessingKwargs):
     Default: Scale all axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
-    """The lower percentile used for normalization."""
+    """The lower percentile used to determine the value to align with zero."""
 
     max_percentile: Annotated[float, Interval(gt=1, le=100)] = 100.0
-    """The upper percentile used for normalization
+    """The upper percentile used to determine the value to align with one.
     Has to be bigger than `min_percentile`.
     The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
     accepting percentiles specified in the range 0.0 to 1.0."""
@@ -1023,8 +1052,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
-    """Scale a tensor's data distribution to match another tensor's mean/std.
-    `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
+    """key word arguments for `ScaleMeanVarianceKwargs`"""
 
     reference_tensor: TensorId
     """Name of tensor to match."""
@@ -1044,7 +1072,9 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
 
 
 class ScaleMeanVarianceDescr(ProcessingDescrBase):
-    """Scale the tensor s.t. its mean and variance match a reference tensor."""
+    """Scale a tensor's data distribution to match another tensor's mean/std.
+    `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`
+    """
 
     id: Literal["scale_mean_variance"] = "scale_mean_variance"
     kwargs: ScaleMeanVarianceKwargs
