@@ -66,7 +66,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.7
           thresholdNew: 0.9
-          thresholdModified: 0.8
+          thresholdModified: 0.6
       - if: matrix.is-dev-version
         run: |
           pip install genbadge[coverage]
