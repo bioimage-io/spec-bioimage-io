@@ -288,6 +288,7 @@
         },
         "BinarizeAlongAxisKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `BinarizeDescr`",
             "properties": {
                 "threshold": {
                     "description": "The fixed threshold values along `axis`",
@@ -316,6 +317,7 @@
         },
         "BinarizeKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `BinarizeDescr`",
             "properties": {
                 "threshold": {
                     "description": "The fixed threshold",
@@ -410,6 +412,7 @@
         },
         "ClipKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ClipDescr`",
             "properties": {
                 "min": {
                     "description": "minimum value for clipping",
@@ -463,6 +466,7 @@
         },
         "EnsureDtypeDescr": {
             "additionalProperties": false,
+            "description": "cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching)",
             "properties": {
                 "id": {
                     "const": "ensure_dtype",
@@ -485,6 +489,7 @@
         },
         "EnsureDtypeKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `EnsureDtypeDescr`",
             "properties": {
                 "dtype": {
                     "enum": [
@@ -593,7 +598,7 @@
         },
         "FixedZeroMeanUnitVarianceAlongAxisKwargs": {
             "additionalProperties": false,
-            "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
+            "description": "key word arguments for `FixedZeroMeanUnitVarianceDescr`",
             "properties": {
                 "mean": {
                     "description": "The mean value(s) to normalize with.",
@@ -634,7 +639,7 @@
         },
         "FixedZeroMeanUnitVarianceDescr": {
             "additionalProperties": false,
-            "description": "Subtract a given mean and divide by a given variance.",
+            "description": "Subtract a given mean and divide by the standard deviation.\n\nNormalize with fixed, precomputed values for\n`FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`\nUse `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given\naxes.",
             "properties": {
                 "id": {
                     "const": "fixed_zero_mean_unit_variance",
@@ -665,7 +670,7 @@
         },
         "FixedZeroMeanUnitVarianceKwargs": {
             "additionalProperties": false,
-            "description": "Normalize with fixed, precomputed values for mean and variance.\nSee `zero_mean_unit_variance` for data dependent normalization.",
+            "description": "key word arguments for `FixedZeroMeanUnitVarianceDescr`",
             "properties": {
                 "mean": {
                     "description": "The mean value to normalize with.",
@@ -1201,6 +1206,7 @@
         },
         "ScaleLinearAlongAxisKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "axis": {
                     "description": "The axis of of gains/offsets values.",
@@ -3382,7 +3388,7 @@
         },
         "bioimageio__spec__model__v0_4__BinarizeDescr": {
             "additionalProperties": false,
-            "description": "BinarizeDescr the tensor with a fixed threshold.\nValues above the threshold will be set to one, values below the threshold to zero.",
+            "description": "BinarizeDescr the tensor with a fixed `BinarizeKwargs.threshold`.\nValues above the threshold will be set to one, values below the threshold to zero.",
             "properties": {
                 "name": {
                     "const": "binarize",
@@ -3405,7 +3411,7 @@
         },
         "bioimageio__spec__model__v0_4__ClipDescr": {
             "additionalProperties": false,
-            "description": "Set tensor values below min to min and above max to max.",
+            "description": "Clip tensor values to a range.\n\nSet tensor values below `ClipKwargs.min` to `ClipKwargs.min`\nand above `ClipKwargs.max` to `ClipKwargs.max`.",
             "properties": {
                 "name": {
                     "const": "clip",
@@ -4646,6 +4652,7 @@
         },
         "bioimageio__spec__model__v0_4__ScaleLinearKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "axes": {
                     "anyOf": [
@@ -4724,6 +4731,7 @@
         },
         "bioimageio__spec__model__v0_4__ScaleMeanVarianceKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleMeanVarianceDescr`",
             "properties": {
                 "mode": {
                     "description": "Mode for computing mean and variance.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | Compute for the entire dataset       |\n| per_sample  | Compute for each sample individually |",
@@ -4796,6 +4804,7 @@
         },
         "bioimageio__spec__model__v0_4__ScaleRangeKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleRangeDescr`\n\nFor `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)\nthis processing step normalizes data to the [0, 1] intervall.\nFor other percentiles the normalized values will partially be outside the [0, 1]\nintervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the\nnormalized values to a range.",
             "properties": {
                 "mode": {
                     "description": "Mode for computing percentiles.\n|     mode    |             description              |\n| ----------- | ------------------------------------ |\n| per_dataset | compute for the entire dataset       |\n| per_sample  | compute for each sample individually |",
@@ -4824,7 +4833,7 @@
                         }
                     ],
                     "default": 0.0,
-                    "description": "The lower percentile used for normalization.",
+                    "description": "The lower percentile used to determine the value to align with zero.",
                     "ge": 0,
                     "lt": 100,
                     "title": "Min Percentile"
@@ -4839,7 +4848,7 @@
                         }
                     ],
                     "default": 100.0,
-                    "description": "The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
+                    "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
                     "gt": 1,
                     "le": 100,
                     "title": "Max Percentile"
@@ -5354,6 +5363,7 @@
         },
         "bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ZeroMeanUnitVarianceDescr`",
             "properties": {
                 "mode": {
                     "default": "fixed",
@@ -5445,7 +5455,7 @@
         },
         "bioimageio__spec__model__v0_5__BinarizeDescr": {
             "additionalProperties": false,
-            "description": "Binarize the tensor with a fixed threshold.\nValues above the threshold will be set to one, values below the threshold to zero.",
+            "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.",
             "properties": {
                 "id": {
                     "const": "binarize",
@@ -6091,7 +6101,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2024-11-13T08:45:23.980756",
+                    "default": "2024-11-13T21:27:38.124561",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -6552,6 +6562,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleLinearKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "gain": {
                     "default": 1.0,
@@ -6571,7 +6582,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr": {
             "additionalProperties": false,
-            "description": "Scale the tensor s.t. its mean and variance match a reference tensor.",
+            "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
             "properties": {
                 "id": {
                     "const": "scale_mean_variance",
@@ -6594,7 +6605,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleMeanVarianceKwargs": {
             "additionalProperties": false,
-            "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
+            "description": "key word arguments for `ScaleMeanVarianceKwargs`",
             "properties": {
                 "reference_tensor": {
                     "description": "Name of tensor to match.",
@@ -6664,6 +6675,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleRangeKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ScaleRangeDescr`\n\nFor `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)\nthis processing step normalizes data to the [0, 1] intervall.\nFor other percentiles the normalized values will partially be outside the [0, 1]\nintervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the\nnormalized values to a range.",
             "properties": {
                 "axes": {
                     "anyOf": [
@@ -6690,7 +6702,7 @@
                 },
                 "min_percentile": {
                     "default": 0.0,
-                    "description": "The lower percentile used for normalization.",
+                    "description": "The lower percentile used to determine the value to align with zero.",
                     "exclusiveMaximum": 100.0,
                     "minimum": 0.0,
                     "title": "Min Percentile",
@@ -6698,7 +6710,7 @@
                 },
                 "max_percentile": {
                     "default": 100.0,
-                    "description": "The upper percentile used for normalization\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
+                    "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
                     "exclusiveMinimum": 1.0,
                     "maximum": 100.0,
                     "title": "Max Percentile",
@@ -7108,6 +7120,7 @@
         },
         "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs": {
             "additionalProperties": false,
+            "description": "key word arguments for `ZeroMeanUnitVarianceDescr`",
             "properties": {
                 "axes": {
                     "anyOf": [

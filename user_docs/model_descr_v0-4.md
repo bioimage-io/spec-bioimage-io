@@ -339,12 +339,12 @@ For example xy to normalize the two image axes for 2d data jointly.
 
 
 ##### `inputs.i.preprocessing.i.kwargs.min_percentile`<sub> Union[int, float]</sub> ≝ `0.0`
-The lower percentile used for normalization.
+The lower percentile used to determine the value to align with zero.
 
 
 
 ##### `inputs.i.preprocessing.i.kwargs.max_percentile`<sub> Union[int, float]</sub> ≝ `100.0`
-The upper percentile used for normalization
+The upper percentile used to determine the value to align with one.
 Has to be bigger than `min_percentile`.
 The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
 accepting percentiles specified in the range 0.0 to 1.0.
@@ -665,12 +665,12 @@ For example xy to normalize the two image axes for 2d data jointly.
 
 
 ##### `outputs.i.postprocessing.i.kwargs.min_percentile`<sub> Union[int, float]</sub> ≝ `0.0`
-The lower percentile used for normalization.
+The lower percentile used to determine the value to align with zero.
 
 
 
 ##### `outputs.i.postprocessing.i.kwargs.max_percentile`<sub> Union[int, float]</sub> ≝ `100.0`
-The upper percentile used for normalization
+The upper percentile used to determine the value to align with one.
 Has to be bigger than `min_percentile`.
 The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
 accepting percentiles specified in the range 0.0 to 1.0.
@@ -755,7 +755,7 @@ The extension must be '.npy'.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -767,7 +767,7 @@ Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (Pa
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -826,7 +826,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -940,7 +940,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1053,7 +1053,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1194,7 +1194,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1308,7 +1308,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1422,7 +1422,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1517,7 +1517,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1584,7 +1584,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1609,7 +1609,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -1785,7 +1785,7 @@ The sample files primarily serve to inform a human user about an example use cas
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1797,7 +1797,7 @@ Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (Pa
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1847,7 +1847,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1915,7 +1915,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1993,7 +1993,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2133,7 +2133,7 @@ badge icon
 
 Union of
 - Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -2159,7 +2159,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe89554f880>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f26686ff880>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
