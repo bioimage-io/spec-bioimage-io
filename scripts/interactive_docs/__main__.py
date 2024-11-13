@@ -21,7 +21,7 @@ elif isinstance(html_result, str):
     )
     docs_output_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"[INFO] Writing interactive docs to {docs_output_path}")
-    with open(docs_output_path, "w") as f:
+    with open(docs_output_path, "w", encoding="utf-8") as f:
         _ = f.write(html_result)
         print(f"Wrote {_} bytes to {docs_output_path}")
 else:
