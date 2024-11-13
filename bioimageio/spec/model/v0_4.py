@@ -654,7 +654,14 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
-    """key word arguments for `ScaleRangeDescr`"""
+    """key word arguments for `ScaleRangeDescr`
+
+    For `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)
+    this processing step normalizes data to the [0, 1] intervall.
+    For other percentiles the normalized values will partially be outside the [0, 1]
+    intervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the
+    normalized values to a range.
+    """
 
     mode: Literal["per_dataset", "per_sample"]
     """Mode for computing percentiles.
@@ -668,10 +675,10 @@ class ScaleRangeKwargs(ProcessingKwargs):
     For example xy to normalize the two image axes for 2d data jointly."""
 
     min_percentile: Annotated[Union[int, float], Interval(ge=0, lt=100)] = 0.0
-    """The lower percentile used for normalization."""
+    """The lower percentile used to determine the value to align with zero."""
 
     max_percentile: Annotated[Union[int, float], Interval(gt=1, le=100)] = 100.0
-    """The upper percentile used for normalization
+    """The upper percentile used to determine the value to align with one.
     Has to be bigger than `min_percentile`.
     The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
     accepting percentiles specified in the range 0.0 to 1.0."""
