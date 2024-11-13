@@ -743,21 +743,22 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
 </span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>
 </span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>
-</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>
-</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>            <span class="p">)</span>
-</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>
-</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>            <span class="p">)</span>
+</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>
+</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -893,7 +894,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="AttachmentsDescr.files" class="classattr">
                                 <div class="attr variable">
-            <span class="name">files</span><span class="annotation">: List[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">files</span><span class="annotation">: List[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -943,7 +944,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Uploader.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f637e3cf380&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f560c7e3380&gt;)]]</span>
 
         
     </div>
@@ -978,7 +979,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f637e3cf380&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f560c7e3380&gt;)]</span>
 
         
     </div>
@@ -1033,7 +1034,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f637e3cf380&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f560c7e3380&gt;)]]</span>
 
         
     </div>
@@ -1119,7 +1120,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="BadgeDescr.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)], bioimageio.spec._internal.io.RelativeFilePath], AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], bioimageio.spec._internal.url.HttpUrl, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
+            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)], bioimageio.spec._internal.io.RelativeFilePath], AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], bioimageio.spec._internal.url.HttpUrl, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
 
         
     </div>
@@ -1495,7 +1496,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
                             <div id="GenericModelDescrBase.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f637dd59e40&gt;, severity=30, msg=&#39;Longer than 128 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=128)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f560334de40&gt;, severity=30, msg=&#39;Longer than 128 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=128)]})]</span>
 
         
     </div>
@@ -1519,7 +1520,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
                             </div>
                             <div id="GenericModelDescrBase.covers" class="classattr">
                                 <div class="attr variable">
-            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;])]</span>
+            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;])]</span>
 
         
     </div>
@@ -1676,7 +1677,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
                             </div>
                             <div id="GenericModelDescrBase.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
+            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
 
         
     </div>
@@ -1952,7 +1953,7 @@ The <code><a href="#GenericDescrBase.format_version">format_version</a></code> i
                             </div>
                             <div id="GenericDescrBase.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -2128,21 +2129,22 @@ method.</p>
 </span><span id="GenericDescr-451"><a href="#GenericDescr-451"><span class="linenos">451</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
 </span><span id="GenericDescr-452"><a href="#GenericDescr-452"><span class="linenos">452</span></a>
 </span><span id="GenericDescr-453"><a href="#GenericDescr-453"><span class="linenos">453</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-454"><a href="#GenericDescr-454"><span class="linenos">454</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-455"><a href="#GenericDescr-455"><span class="linenos">455</span></a>
-</span><span id="GenericDescr-456"><a href="#GenericDescr-456"><span class="linenos">456</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-457"><a href="#GenericDescr-457"><span class="linenos">457</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-458"><a href="#GenericDescr-458"><span class="linenos">458</span></a>
-</span><span id="GenericDescr-459"><a href="#GenericDescr-459"><span class="linenos">459</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr-460"><a href="#GenericDescr-460"><span class="linenos">460</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr-461"><a href="#GenericDescr-461"><span class="linenos">461</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr-462"><a href="#GenericDescr-462"><span class="linenos">462</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr-463"><a href="#GenericDescr-463"><span class="linenos">463</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr-464"><a href="#GenericDescr-464"><span class="linenos">464</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr-465"><a href="#GenericDescr-465"><span class="linenos">465</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr-466"><a href="#GenericDescr-466"><span class="linenos">466</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr-467"><a href="#GenericDescr-467"><span class="linenos">467</span></a>
-</span><span id="GenericDescr-468"><a href="#GenericDescr-468"><span class="linenos">468</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="GenericDescr-454"><a href="#GenericDescr-454"><span class="linenos">454</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="GenericDescr-455"><a href="#GenericDescr-455"><span class="linenos">455</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-456"><a href="#GenericDescr-456"><span class="linenos">456</span></a>
+</span><span id="GenericDescr-457"><a href="#GenericDescr-457"><span class="linenos">457</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-458"><a href="#GenericDescr-458"><span class="linenos">458</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-459"><a href="#GenericDescr-459"><span class="linenos">459</span></a>
+</span><span id="GenericDescr-460"><a href="#GenericDescr-460"><span class="linenos">460</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr-461"><a href="#GenericDescr-461"><span class="linenos">461</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr-462"><a href="#GenericDescr-462"><span class="linenos">462</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr-463"><a href="#GenericDescr-463"><span class="linenos">463</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr-464"><a href="#GenericDescr-464"><span class="linenos">464</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr-465"><a href="#GenericDescr-465"><span class="linenos">465</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr-466"><a href="#GenericDescr-466"><span class="linenos">466</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr-467"><a href="#GenericDescr-467"><span class="linenos">467</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr-468"><a href="#GenericDescr-468"><span class="linenos">468</span></a>
+</span><span id="GenericDescr-469"><a href="#GenericDescr-469"><span class="linenos">469</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -2175,7 +2177,8 @@ Use this generic resource description, if none of the known specific types match
     </div>
     <a class="headerlink" href="#GenericDescr.id"></a>
     
-            <div class="docstring"><p>Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)</p>
+            <div class="docstring"><p>bioimage.io-wide unique resource identifier
+assigned by bioimage.io; version <strong>un</strong>specific.</p>
 </div>
 
 
@@ -2206,16 +2209,16 @@ Use this generic resource description, if none of the known specific types match
 
     </div>
     <a class="headerlink" href="#GenericDescr.check_specific_types"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-459"><a href="#GenericDescr.check_specific_types-459"><span class="linenos">459</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-460"><a href="#GenericDescr.check_specific_types-460"><span class="linenos">460</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr.check_specific_types-461"><a href="#GenericDescr.check_specific_types-461"><span class="linenos">461</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-462"><a href="#GenericDescr.check_specific_types-462"><span class="linenos">462</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-463"><a href="#GenericDescr.check_specific_types-463"><span class="linenos">463</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr.check_specific_types-464"><a href="#GenericDescr.check_specific_types-464"><span class="linenos">464</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr.check_specific_types-465"><a href="#GenericDescr.check_specific_types-465"><span class="linenos">465</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr.check_specific_types-466"><a href="#GenericDescr.check_specific_types-466"><span class="linenos">466</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-467"><a href="#GenericDescr.check_specific_types-467"><span class="linenos">467</span></a>
-</span><span id="GenericDescr.check_specific_types-468"><a href="#GenericDescr.check_specific_types-468"><span class="linenos">468</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-460"><a href="#GenericDescr.check_specific_types-460"><span class="linenos">460</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-461"><a href="#GenericDescr.check_specific_types-461"><span class="linenos">461</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr.check_specific_types-462"><a href="#GenericDescr.check_specific_types-462"><span class="linenos">462</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-463"><a href="#GenericDescr.check_specific_types-463"><span class="linenos">463</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-464"><a href="#GenericDescr.check_specific_types-464"><span class="linenos">464</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr.check_specific_types-465"><a href="#GenericDescr.check_specific_types-465"><span class="linenos">465</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr.check_specific_types-466"><a href="#GenericDescr.check_specific_types-466"><span class="linenos">466</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr.check_specific_types-467"><a href="#GenericDescr.check_specific_types-467"><span class="linenos">467</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-468"><a href="#GenericDescr.check_specific_types-468"><span class="linenos">468</span></a>
+</span><span id="GenericDescr.check_specific_types-469"><a href="#GenericDescr.check_specific_types-469"><span class="linenos">469</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 

@@ -132,23 +132,24 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../applicat
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;application&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">ImportantFileSource</span><span class="p">],</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;URL or path to the source of the application&quot;</span><span class="p">),</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the application&quot;&quot;&quot;</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">ImportantFileSource</span><span class="p">],</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;URL or path to the source of the application&quot;</span><span class="p">),</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the application&quot;&quot;&quot;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="k">class</span> <span class="nc">LinkedApplication</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io application.&quot;&quot;&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ApplicationId</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A valid application `id` from the bioimage.io collection.&quot;&quot;&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">LinkedApplication</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io application.&quot;&quot;&quot;</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ApplicationId</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A valid application `id` from the bioimage.io collection.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -209,16 +210,17 @@ errors defaults to 'strict'.</p>
 </span><span id="ApplicationDescr-35"><a href="#ApplicationDescr-35"><span class="linenos">35</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;application&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application&quot;</span>
 </span><span id="ApplicationDescr-36"><a href="#ApplicationDescr-36"><span class="linenos">36</span></a>
 </span><span id="ApplicationDescr-37"><a href="#ApplicationDescr-37"><span class="linenos">37</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ApplicationDescr-38"><a href="#ApplicationDescr-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="ApplicationDescr-39"><a href="#ApplicationDescr-39"><span class="linenos">39</span></a>
-</span><span id="ApplicationDescr-40"><a href="#ApplicationDescr-40"><span class="linenos">40</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ApplicationDescr-41"><a href="#ApplicationDescr-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="ApplicationDescr-42"><a href="#ApplicationDescr-42"><span class="linenos">42</span></a>
-</span><span id="ApplicationDescr-43"><a href="#ApplicationDescr-43"><span class="linenos">43</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="ApplicationDescr-44"><a href="#ApplicationDescr-44"><span class="linenos">44</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">ImportantFileSource</span><span class="p">],</span>
-</span><span id="ApplicationDescr-45"><a href="#ApplicationDescr-45"><span class="linenos">45</span></a>        <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;URL or path to the source of the application&quot;</span><span class="p">),</span>
-</span><span id="ApplicationDescr-46"><a href="#ApplicationDescr-46"><span class="linenos">46</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ApplicationDescr-47"><a href="#ApplicationDescr-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the application&quot;&quot;&quot;</span>
+</span><span id="ApplicationDescr-38"><a href="#ApplicationDescr-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="ApplicationDescr-39"><a href="#ApplicationDescr-39"><span class="linenos">39</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="ApplicationDescr-40"><a href="#ApplicationDescr-40"><span class="linenos">40</span></a>
+</span><span id="ApplicationDescr-41"><a href="#ApplicationDescr-41"><span class="linenos">41</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ApplicationId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ApplicationDescr-42"><a href="#ApplicationDescr-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="ApplicationDescr-43"><a href="#ApplicationDescr-43"><span class="linenos">43</span></a>
+</span><span id="ApplicationDescr-44"><a href="#ApplicationDescr-44"><span class="linenos">44</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="ApplicationDescr-45"><a href="#ApplicationDescr-45"><span class="linenos">45</span></a>        <span class="n">Optional</span><span class="p">[</span><span class="n">ImportantFileSource</span><span class="p">],</span>
+</span><span id="ApplicationDescr-46"><a href="#ApplicationDescr-46"><span class="linenos">46</span></a>        <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;URL or path to the source of the application&quot;</span><span class="p">),</span>
+</span><span id="ApplicationDescr-47"><a href="#ApplicationDescr-47"><span class="linenos">47</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ApplicationDescr-48"><a href="#ApplicationDescr-48"><span class="linenos">48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the application&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -245,7 +247,8 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#ApplicationDescr.id"></a>
     
-            <div class="docstring"><p>Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)</p>
+            <div class="docstring"><p>bioimage.io-wide unique resource identifier
+assigned by bioimage.io; version <strong>un</strong>specific.</p>
 </div>
 
 
@@ -265,7 +268,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="ApplicationDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
 
         
     </div>
@@ -370,11 +373,11 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#LinkedApplication"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedApplication-50"><a href="#LinkedApplication-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">LinkedApplication</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
-</span><span id="LinkedApplication-51"><a href="#LinkedApplication-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io application.&quot;&quot;&quot;</span>
-</span><span id="LinkedApplication-52"><a href="#LinkedApplication-52"><span class="linenos">52</span></a>
-</span><span id="LinkedApplication-53"><a href="#LinkedApplication-53"><span class="linenos">53</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ApplicationId</span>
-</span><span id="LinkedApplication-54"><a href="#LinkedApplication-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A valid application `id` from the bioimage.io collection.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedApplication-51"><a href="#LinkedApplication-51"><span class="linenos">51</span></a><span class="k">class</span> <span class="nc">LinkedApplication</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+</span><span id="LinkedApplication-52"><a href="#LinkedApplication-52"><span class="linenos">52</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io application.&quot;&quot;&quot;</span>
+</span><span id="LinkedApplication-53"><a href="#LinkedApplication-53"><span class="linenos">53</span></a>
+</span><span id="LinkedApplication-54"><a href="#LinkedApplication-54"><span class="linenos">54</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ApplicationId</span>
+</span><span id="LinkedApplication-55"><a href="#LinkedApplication-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A valid application `id` from the bioimage.io collection.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -394,6 +397,15 @@ method.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../generic/v0_3.html#LinkedResourceNode">bioimageio.spec.generic.v0_3.LinkedResourceNode</a></dt>
+                                <dd id="LinkedApplication.version" class="variable"><a href="../generic/v0_3.html#LinkedResourceNode.version">version</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
     </main>

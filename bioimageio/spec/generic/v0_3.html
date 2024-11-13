@@ -221,6 +221,9 @@
             <li>
                     <a class="class" href="#LinkedResourceNode">LinkedResourceNode</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#LinkedResourceNode.version">version</a>
+                        </li>
                 </ul>
 
             </li>
@@ -615,8 +618,8 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>    <span class="p">):</span>
 </span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vn</span>
 </span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
 </span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>
@@ -668,38 +671,42 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
 </span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>
 </span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>
-</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>            <span class="p">)</span>
-</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>
-</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>        <span class="k">return</span> <span class="n">value</span>
-</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>            <span class="p">)</span>
+</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>
-</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>    <span class="p">):</span>
-</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>
-</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>    <span class="p">):</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vn</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>    <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Version</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the linked resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -823,7 +830,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6374976980&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f560328e980&gt;)]</span>
 
         
     </div>
@@ -882,7 +889,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6374976980&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f560328e980&gt;)]]</span>
 
         
     </div>
@@ -1238,8 +1245,8 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 </span><span id="GenericModelDescrBase-368"><a href="#GenericModelDescrBase-368"><span class="linenos">368</span></a>    <span class="p">):</span>
 </span><span id="GenericModelDescrBase-369"><a href="#GenericModelDescrBase-369"><span class="linenos">369</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="GenericModelDescrBase-370"><a href="#GenericModelDescrBase-370"><span class="linenos">370</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="GenericModelDescrBase-371"><a href="#GenericModelDescrBase-371"><span class="linenos">371</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="GenericModelDescrBase-372"><a href="#GenericModelDescrBase-372"><span class="linenos">372</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GenericModelDescrBase-371"><a href="#GenericModelDescrBase-371"><span class="linenos">371</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GenericModelDescrBase-372"><a href="#GenericModelDescrBase-372"><span class="linenos">372</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vn</span>
 </span><span id="GenericModelDescrBase-373"><a href="#GenericModelDescrBase-373"><span class="linenos">373</span></a>
 </span><span id="GenericModelDescrBase-374"><a href="#GenericModelDescrBase-374"><span class="linenos">374</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span></pre></div>
@@ -1265,7 +1272,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.description" class="classattr">
                                 <div class="attr variable">
-            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f6372dfb380&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
+            <span class="name">description</span><span class="annotation">: Annotated[str, MaxLen(max_length=1024), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f5601967600&gt;, severity=30, msg=&#39;Description longer than 512 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=512)]})]</span>
 
         
     </div>
@@ -1278,7 +1285,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.covers" class="classattr">
                                 <div class="attr variable">
-            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
+            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;)&#34;, examples=[])]</span>
 
         
     </div>
@@ -1343,7 +1350,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
                             </div>
                             <div id="GenericModelDescrBase.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.license_id.LicenseId, bioimageio.spec._internal.license_id.DeprecatedLicenseId], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f6372dfb100&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;bioimageio.spec._internal.license_id.LicenseId&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.license_id.LicenseId, bioimageio.spec._internal.license_id.DeprecatedLicenseId], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f5601967880&gt;, severity=30, msg=&#39;{value} is deprecated, see https://spdx.org/licenses/{value}.html&#39;, context={&#39;typ&#39;: &lt;class &#39;bioimageio.spec._internal.license_id.LicenseId&#39;&gt;}), FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</span>
 
         
     </div>
@@ -1405,7 +1412,7 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
                             </div>
                             <div id="GenericModelDescrBase.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f63806efce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
+            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f560edf7ce0&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
 
         
     </div>
@@ -1628,7 +1635,7 @@ method.</p>
                             </div>
                             <div id="GenericDescrBase.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f637e3cf560&gt;), PlainSerializer(func=&lt;function _package at 0x7f63805244a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f560c7e3560&gt;), PlainSerializer(func=&lt;function _package at 0x7f560ee284a0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -1755,24 +1762,25 @@ method.</p>
 </span><span id="GenericDescr-421"><a href="#GenericDescr-421"><span class="linenos">421</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
 </span><span id="GenericDescr-422"><a href="#GenericDescr-422"><span class="linenos">422</span></a>
 </span><span id="GenericDescr-423"><a href="#GenericDescr-423"><span class="linenos">423</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a>
-</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a>
-</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a>
-</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a>
-</span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a>
+</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>
+</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>
+</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>
+</span><span id="GenericDescr-442"><a href="#GenericDescr-442"><span class="linenos">442</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -1805,7 +1813,8 @@ Use this generic resource description, if none of the known specific types match
     </div>
     <a class="headerlink" href="#GenericDescr.id"></a>
     
-            <div class="docstring"><p>Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)</p>
+            <div class="docstring"><p>bioimage.io-wide unique resource identifier
+assigned by bioimage.io; version <strong>un</strong>specific.</p>
 </div>
 
 
@@ -1849,16 +1858,16 @@ Use this generic resource description, if none of the known specific types match
 
     </div>
     <a class="headerlink" href="#GenericDescr.check_specific_types"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-432"><a href="#GenericDescr.check_specific_types-432"><span class="linenos">432</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-433"><a href="#GenericDescr.check_specific_types-433"><span class="linenos">433</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr.check_specific_types-434"><a href="#GenericDescr.check_specific_types-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-440"><a href="#GenericDescr.check_specific_types-440"><span class="linenos">440</span></a>
-</span><span id="GenericDescr.check_specific_types-441"><a href="#GenericDescr.check_specific_types-441"><span class="linenos">441</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-433"><a href="#GenericDescr.check_specific_types-433"><span class="linenos">433</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-434"><a href="#GenericDescr.check_specific_types-434"><span class="linenos">434</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr.check_specific_types-440"><a href="#GenericDescr.check_specific_types-440"><span class="linenos">440</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-441"><a href="#GenericDescr.check_specific_types-441"><span class="linenos">441</span></a>
+</span><span id="GenericDescr.check_specific_types-442"><a href="#GenericDescr.check_specific_types-442"><span class="linenos">442</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -1959,18 +1968,21 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#LinkedResourceNode"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResourceNode-444"><a href="#LinkedResourceNode-444"><span class="linenos">444</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-</span><span id="LinkedResourceNode-445"><a href="#LinkedResourceNode-445"><span class="linenos">445</span></a>
-</span><span id="LinkedResourceNode-446"><a href="#LinkedResourceNode-446"><span class="linenos">446</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="LinkedResourceNode-447"><a href="#LinkedResourceNode-447"><span class="linenos">447</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
-</span><span id="LinkedResourceNode-448"><a href="#LinkedResourceNode-448"><span class="linenos">448</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="LinkedResourceNode-449"><a href="#LinkedResourceNode-449"><span class="linenos">449</span></a>    <span class="p">):</span>
-</span><span id="LinkedResourceNode-450"><a href="#LinkedResourceNode-450"><span class="linenos">450</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LinkedResourceNode-451"><a href="#LinkedResourceNode-451"><span class="linenos">451</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="LinkedResourceNode-452"><a href="#LinkedResourceNode-452"><span class="linenos">452</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="LinkedResourceNode-453"><a href="#LinkedResourceNode-453"><span class="linenos">453</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">vn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="LinkedResourceNode-454"><a href="#LinkedResourceNode-454"><span class="linenos">454</span></a>
-</span><span id="LinkedResourceNode-455"><a href="#LinkedResourceNode-455"><span class="linenos">455</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResourceNode-445"><a href="#LinkedResourceNode-445"><span class="linenos">445</span></a><span class="k">class</span> <span class="nc">LinkedResourceNode</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="LinkedResourceNode-446"><a href="#LinkedResourceNode-446"><span class="linenos">446</span></a>
+</span><span id="LinkedResourceNode-447"><a href="#LinkedResourceNode-447"><span class="linenos">447</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="LinkedResourceNode-448"><a href="#LinkedResourceNode-448"><span class="linenos">448</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="LinkedResourceNode-449"><a href="#LinkedResourceNode-449"><span class="linenos">449</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="LinkedResourceNode-450"><a href="#LinkedResourceNode-450"><span class="linenos">450</span></a>    <span class="p">):</span>
+</span><span id="LinkedResourceNode-451"><a href="#LinkedResourceNode-451"><span class="linenos">451</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LinkedResourceNode-452"><a href="#LinkedResourceNode-452"><span class="linenos">452</span></a>            <span class="n">vn</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;version_number&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="LinkedResourceNode-453"><a href="#LinkedResourceNode-453"><span class="linenos">453</span></a>            <span class="k">if</span> <span class="n">vn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="LinkedResourceNode-454"><a href="#LinkedResourceNode-454"><span class="linenos">454</span></a>                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vn</span>
+</span><span id="LinkedResourceNode-455"><a href="#LinkedResourceNode-455"><span class="linenos">455</span></a>
+</span><span id="LinkedResourceNode-456"><a href="#LinkedResourceNode-456"><span class="linenos">456</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+</span><span id="LinkedResourceNode-457"><a href="#LinkedResourceNode-457"><span class="linenos">457</span></a>
+</span><span id="LinkedResourceNode-458"><a href="#LinkedResourceNode-458"><span class="linenos">458</span></a>    <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Version</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="LinkedResourceNode-459"><a href="#LinkedResourceNode-459"><span class="linenos">459</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the linked resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1978,6 +1990,19 @@ method.</p>
 </div>
 
 
+                            <div id="LinkedResourceNode.version" class="classattr">
+                                <div class="attr variable">
+            <span class="name">version</span><span class="annotation">: Optional[bioimageio.spec._internal.version_type.Version]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LinkedResourceNode.version"></a>
+    
+            <div class="docstring"><p>The version of the linked resource following SemVer 2.0.</p>
+</div>
+
+
+                            </div>
                 </section>
     </main>
 <script>

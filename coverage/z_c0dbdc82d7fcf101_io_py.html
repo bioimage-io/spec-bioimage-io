@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">406 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">318<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">88<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">316<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">90<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">6<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-12 08:38 +0000
+            created at 2024-11-13 08:44 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -344,7 +344,7 @@
     <p class="pln"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t">            <span class="key">and</span> <span class="nam">path</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"/api/records/"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">            <span class="key">and</span> <span class="nam">path</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="str">"/content"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">            <span class="nam">actual_suffix</span> <span class="op">=</span> <span class="str">"."</span> <span class="op">+</span> <span class="nam">path</span><span class="op">[</span><span class="op">:</span> <span class="op">-</span><span class="nam">len</span><span class="op">(</span><span class="str">"/content"</span><span class="op">)</span><span class="op">]</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">            <span class="nam">actual_suffix</span> <span class="op">=</span> <span class="str">"."</span> <span class="op">+</span> <span class="nam">path</span><span class="op">[</span><span class="op">:</span> <span class="op">-</span><span class="nam">len</span><span class="op">(</span><span class="str">"/content"</span><span class="op">)</span><span class="op">]</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">            <span class="nam">actual_suffix</span> <span class="op">=</span> <span class="str">"."</span> <span class="op">+</span> <span class="nam">path</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -898,7 +898,7 @@
     <p class="pln"><span class="n"><a id="t816" href="#t816">816</a></span><span class="t">            <span class="key">and</span> <span class="nam">url</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"/api/records/"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t817" href="#t817">817</a></span><span class="t">            <span class="key">and</span> <span class="nam">url</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="str">"/content"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">            <span class="key">return</span> <span class="nam">url</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"/"</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">2</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">            <span class="key">return</span> <span class="nam">url</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"/"</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">2</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t820" href="#t820">820</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">            <span class="key">return</span> <span class="nam">url</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"/"</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t822" href="#t822">822</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -942,7 +942,7 @@
             <a class="nav" href="z_c0dbdc82d7fcf101_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-12 08:38 +0000
+            created at 2024-11-13 08:44 +0000
         </p>
     </div>
 </footer>

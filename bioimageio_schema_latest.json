@@ -2301,7 +2301,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "source": {
@@ -2607,7 +2607,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "parent": {
@@ -2984,7 +2984,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "source": {
@@ -3312,7 +3312,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "parent": {
@@ -3356,6 +3356,18 @@
             "additionalProperties": false,
             "description": "Reference to a bioimage.io dataset.",
             "properties": {
+                "version": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The version of the linked resource following SemVer 2.0."
+                },
                 "id": {
                     "description": "A valid dataset `id` from the bioimage.io collection.",
                     "title": "Id",
@@ -3983,7 +3995,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "documentation": {
@@ -5736,6 +5748,18 @@
             "additionalProperties": false,
             "description": "Reference to a bioimage.io model.",
             "properties": {
+                "version": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Version"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The version of the linked resource following SemVer 2.0."
+                },
                 "id": {
                     "description": "A valid model `id` from the bioimage.io collection.",
                     "title": "Id",
@@ -5992,7 +6016,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "documentation": {
@@ -6067,7 +6091,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2024-11-12T08:39:49.618269",
+                    "default": "2024-11-13T08:45:23.980756",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -7450,7 +7474,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "source": {
@@ -7753,7 +7777,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)",
+                    "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
                     "title": "Id"
                 },
                 "parent": {
