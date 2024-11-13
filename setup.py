@@ -42,6 +42,7 @@ _ = setup(
         "requests",
         "rich",
         "ruyaml",
+        "tifffile",
         "tqdm",
         "typing-extensions",
         "zipp",

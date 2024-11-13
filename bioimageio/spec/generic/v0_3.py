@@ -367,8 +367,8 @@ class GenericModelDescrBase(ResourceDescrBase):
     ):
         if isinstance(value, dict):
             vn: Any = value.pop("version_number", None)
-            if vn is not None and "id" in value:
-                value["id"] = f"{value['id']}/{vn}"
+            if vn is not None and value.get("version") is None:
+                value["version"] = vn
 
         return value  # pyright: ignore[reportUnknownVariableType]
 
@@ -420,7 +420,8 @@ class GenericDescr(
     """The resource type assigns a broad category to the resource."""
 
     id: Optional[ResourceId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+    """bioimage.io-wide unique resource identifier
+    assigned by bioimage.io; version **un**specific."""
 
     parent: Optional[ResourceId] = None
     """The description from which this one is derived"""
@@ -448,7 +449,10 @@ class LinkedResourceNode(Node):
     ):
         if isinstance(value, dict):
             vn: Any = value.pop("version_number", None)
-            if vn is not None and "id" in value:
-                value["id"] = f"{value['id']}/{vn}"
+            if vn is not None and value.get("version") is None:
+                value["version"] = vn
 
         return value  # pyright: ignore[reportUnknownVariableType]
+
+    version: Optional[Version] = None
+    """The version of the linked resource following SemVer 2.0."""

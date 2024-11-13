@@ -33,7 +33,8 @@ class ApplicationDescr(GenericDescrBase, title="bioimage.io application specific
     type: Literal["application"] = "application"
 
     id: Optional[ApplicationId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+    """bioimage.io-wide unique resource identifier
+    assigned by bioimage.io; version **un**specific."""
 
     source: Annotated[
         Optional[ImportantFileSource],

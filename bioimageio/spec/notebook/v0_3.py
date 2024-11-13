@@ -32,7 +32,8 @@ class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"
     type: Literal["notebook"] = "notebook"
 
     id: Optional[NotebookId] = None
-    """Model zoo (bioimage.io) wide, unique identifier (assigned by bioimage.io)"""
+    """bioimage.io-wide unique resource identifier
+    assigned by bioimage.io; version **un**specific."""
 
     parent: Optional[NotebookId] = None
     """The description from which this one is derived"""

@@ -9,7 +9,7 @@ exclude = [
     "**/node_modules",
     "scripts/pdoc/original.py",
     "scripts/pdoc/patched.py",
-    "tests/cache",
+    "bioimageio_cache",
     "tests/old_*",
 ]
 include = ["bioimageio", "scripts", "tests"]

@@ -10,9 +10,9 @@ coverage.xml
 dist/
 docs/
 output/
-tests/cache
 tests/generated_json_schemas
 tmp/
 user_docs/
 scripts/pdoc/original.py
 scripts/pdoc/patched.py
+bioimageio_cache/

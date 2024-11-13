@@ -130,6 +130,7 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 * fix summary formatting
 * improve logged origin for logged messages
 * make the `model.v0_5.ModelDescr.training_data` field a `left_to_right` Union to avoid warnings
+* the deprecated `version_number` is no longer appended to the `id`, but instead set as `version` if no `version` is specified.
 
 #### bioimageio.spec 0.5.3.3
 

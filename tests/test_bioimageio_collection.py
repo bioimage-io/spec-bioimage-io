@@ -1,270 +1,106 @@
-import datetime
 import json
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping
+from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
 
 import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pytest
 
 from bioimageio.spec import settings
-from bioimageio.spec._description import DISCOVER, LATEST
-from bioimageio.spec._internal.types import FormatVersionPlaceholder
-from tests.utils import ParameterSet, check_bioimageio_yaml
+from bioimageio.spec.common import HttpUrl, Sha256
+from tests.utils import ParameterSet, check_bioimageio_yaml, skip_expensive
 
-BASE_URL = "https://bioimage-io.github.io/collection-bioimage-io/"
-RDF_BASE_URL = BASE_URL + "rdfs/"
-WEEK = f"{datetime.datetime.now().year}week{datetime.datetime.now().isocalendar()[1]}"
-CACHE_PATH = Path(__file__).parent / "cache" / WEEK
+BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
+
+KNOWN_INVALID: Collection[str] = set()
+EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
+    "version_number",  # deprecated field that gets dropped in favor of `version``
+    "version",  # may be set from deprecated `version_number`
+}
+EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
+    "affable-shark/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "philosophical-panda/0.0.11": {"outputs"},  # int -> float
+    "philosophical-panda/0.1.0": {"outputs"},  # int -> float
+    "dynamic-t-rex/1": {"inputs"},  # int -> float
+    "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
+    "impartial-shrimp/1.1": {"inputs"},  # preprocessing assert_dtype added
+}
 
 
-KNOWN_INVALID = {
-    "10.5281/zenodo.5749843/5888237/rdf.yaml",
-    "10.5281/zenodo.5910163/5942853/rdf.yaml",
-    "10.5281/zenodo.5910854/6539073/rdf.yaml",
-    "10.5281/zenodo.5914248/6514622/rdf.yaml",
-    "10.5281/zenodo.6559929/6559930/rdf.yaml",
-    "10.5281/zenodo.7614645/7642674/rdf.yaml",
-    "biapy/biapy/latest/rdf.yaml",
-    "biapy/notebook_classification_2d/latest/rdf.yaml",
-    "biapy/Notebook_semantic_segmentation_3d/latest/rdf.yaml",
-    "deepimagej/deepimagej/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
-    "deepimagej/MU-Lux_CTC_PhC-C2DL-PSC/latest/rdf.yaml",
-    "deepimagej/SkinLesionClassification/latest/rdf.yaml",
-    "deepimagej/SMLMDensityMapEstimationDEFCoN/latest/rdf.yaml",
-    "deepimagej/UNet2DGlioblastomaSegmentation/latest/rdf.yaml",
-    "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",
-    "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
-    "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
-    "fiji/N2VSEMDemo/latest/rdf.yaml",
-    "ilastik/mitoem_segmentation_challenge/latest/rdf.yaml",
-    "imjoy/LuCa-7color/latest/rdf.yaml",
-    "zero/Dataset_CARE_2D_coli_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_fnet_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_Noise2Void_2D_subtilis_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_SplineDist_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_StarDist_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_U-Net_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_U-Net_2D_multilabel_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_YOLOv2_antibiotic_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_YOLOv2_coli_DeepBacs/latest/rdf.yaml",
-    "zero/Notebook_CycleGAN_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DecoNoising_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Detectron2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DRMIME_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_EmbedSeg_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_MaskRCNN_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_pix2pix_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_RetinaNet_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_StarDist_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_multilabel_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-}
-KNOWN_INVALID_AS_LATEST = {
-    "10.5281/zenodo.5749843/5888237/rdf.yaml",
-    "10.5281/zenodo.5874841/6630266/rdf.yaml",
-    "10.5281/zenodo.5910163/5942853/rdf.yaml",
-    "10.5281/zenodo.5914248/6514622/rdf.yaml",
-    "10.5281/zenodo.5914248/8186255/rdf.yaml",
-    "10.5281/zenodo.6383429/7774505/rdf.yaml",
-    "10.5281/zenodo.6406803/6406804/rdf.yaml",
-    "10.5281/zenodo.6559474/6559475/rdf.yaml",
-    "10.5281/zenodo.6559929/6559930/rdf.yaml",
-    "10.5281/zenodo.6811491/6811492/rdf.yaml",
-    "10.5281/zenodo.6865412/6919253/rdf.yaml",
-    "10.5281/zenodo.7274275/8123818/rdf.yaml",
-    "10.5281/zenodo.7380171/7405349/rdf.yaml",
-    "10.5281/zenodo.7614645/7642674/rdf.yaml",
-    "10.5281/zenodo.8401064/8429203/rdf.yaml",
-    "10.5281/zenodo.8421755/8432366/rdf.yaml",
-    "biapy/biapy/latest/rdf.yaml",
-    "biapy/notebook_classification_2d/latest/rdf.yaml",
-    "biapy/notebook_classification_3d/latest/rdf.yaml",
-    "biapy/notebook_denoising_2d/latest/rdf.yaml",
-    "biapy/notebook_denoising_3d/latest/rdf.yaml",
-    "biapy/notebook_detection_2d/latest/rdf.yaml",
-    "biapy/notebook_detection_3d/latest/rdf.yaml",
-    "biapy/notebook_instance_segmentation_2d/latest/rdf.yaml",
-    "biapy/notebook_instance_segmentation_3d/latest/rdf.yaml",
-    "biapy/notebook_self_supervision_2d/latest/rdf.yaml",
-    "biapy/notebook_self_supervision_3d/latest/rdf.yaml",
-    "biapy/notebook_semantic_segmentation_2d/latest/rdf.yaml",
-    "biapy/Notebook_semantic_segmentation_3d/latest/rdf.yaml",
-    "biapy/notebook_super_resolution_2d/latest/rdf.yaml",
-    "biapy/notebook_super_resolution_3d/latest/rdf.yaml",
-    "bioimageio/stardist/latest/rdf.yaml",
-    "deepimagej/deepimagej-web/latest/rdf.yaml",
-    "deepimagej/deepimagej/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/DeepSTORMZeroCostDL4Mic/latest/rdf.yaml",
-    "deepimagej/EVsTEMsegmentationFRUNet/latest/rdf.yaml",
-    "deepimagej/MoNuSeg_digital_pathology_miccai2018/latest/rdf.yaml",
-    "deepimagej/Mt3VirtualStaining/latest/rdf.yaml",
-    "deepimagej/MU-Lux_CTC_PhC-C2DL-PSC/latest/rdf.yaml",
-    "deepimagej/SkinLesionClassification/latest/rdf.yaml",
-    "deepimagej/smlm-deepimagej/latest/rdf.yaml",
-    "deepimagej/SMLMDensityMapEstimationDEFCoN/latest/rdf.yaml",
-    "deepimagej/unet-pancreaticcellsegmentation/latest/rdf.yaml",
-    "deepimagej/UNet2DGlioblastomaSegmentation/latest/rdf.yaml",
-    "deepimagej/WidefieldDapiSuperResolution/latest/rdf.yaml",
-    "deepimagej/WidefieldFitcSuperResolution/latest/rdf.yaml",
-    "deepimagej/WidefieldTxredSuperResolution/latest/rdf.yaml",
-    "dl4miceverywhere/DL4MicEverywhere/latest/rdf.yaml",
-    "dl4miceverywhere/Notebook_bioimageio_pytorch/latest/rdf.yaml",
-    "dl4miceverywhere/Notebook_bioimageio_tensorflow/latest/rdf.yaml",
-    "fiji/Fiji/latest/rdf.yaml",
-    "hpa/HPA-Classification/latest/rdf.yaml",
-    "hpa/hpa-kaggle-2021-dataset/latest/rdf.yaml",
-    "icy/icy/latest/rdf.yaml",
-    "ilastik/arabidopsis_tissue_atlas/latest/rdf.yaml",
-    "ilastik/cremi_training_data/latest/rdf.yaml",
-    "ilastik/ilastik/latest/rdf.yaml",
-    "ilastik/isbi2012_neuron_segmentation_challenge/latest/rdf.yaml",
-    "ilastik/mitoem_segmentation_challenge/latest/rdf.yaml",
-    "ilastik/mws-segmentation/latest/rdf.yaml",
-    "imjoy/BioImageIO-Packager/latest/rdf.yaml",
-    "imjoy/GenericBioEngineApp/latest/rdf.yaml",
-    "imjoy/HPA-Single-Cell/latest/rdf.yaml",
-    "imjoy/ImageJ.JS/latest/rdf.yaml",
-    "imjoy/ImJoy/latest/rdf.yaml",
-    "imjoy/LuCa-7color/latest/rdf.yaml",
-    "imjoy/vizarr/latest/rdf.yaml",
-    "qupath/QuPath/latest/rdf.yaml",
-    "stardist/stardist/latest/rdf.yaml",
-    "zero/Dataset_CARE_2D_coli_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_CARE_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_CARE_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_CycleGAN_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_Deep-STORM_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_fnet_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_fnet_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_Noise2Void_2D_subtilis_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_Noise2Void_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_Noise2Void_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_Noisy_Nuclei_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_pix2pix_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_SplineDist_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_StarDist_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_StarDist_2D_ZeroCostDL4Mic_2D/latest/rdf.yaml",
-    "zero/Dataset_StarDist_brightfield_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_StarDist_brightfield2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_StarDist_Fluo_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_StarDist_fluo2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Dataset_U-Net_2D_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_U-Net_2D_multilabel_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_YOLOv2_antibiotic_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_YOLOv2_coli_DeepBacs/latest/rdf.yaml",
-    "zero/Dataset_YOLOv2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook Preview/latest/rdf.yaml",
-    "zero/Notebook_Augmentor_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_CARE_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_CARE_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Cellpose_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_CycleGAN_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_CycleGAN_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DecoNoising_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DecoNoising_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Deep-STORM_2D_ZeroCostDL4Mic_DeepImageJ/latest/rdf.yaml",
-    "zero/Notebook_Deep-STORM_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DenoiSeg_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Detectron2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Detectron2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DFCAN_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DRMIME_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_DRMIME_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_EmbedSeg_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_EmbedSeg_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_fnet_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_fnet_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Interactive_Segmentation_Kaibu_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_MaskRCNN_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_MaskRCNN_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Noise2Void_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_Noise2Void_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_pix2pix_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_pix2pix_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/notebook_preview/latest/rdf.yaml-latest",
-    "zero/notebook_preview/latest/rdf.yaml",
-    "zero/Notebook_Quality_Control_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_RCAN_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_RetinaNet_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_RetinaNet_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_SplineDist_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_StarDist_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_StarDist_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_StarDist_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_multilabel_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_multilabel_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_2D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_U-Net_3D_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/Notebook_YOLOv2_ZeroCostDL4Mic/latest/rdf.yaml",
-    "zero/WGAN_ZeroCostDL4Mic.ipynb/latest/rdf.yaml",
-}
-EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
-    "10.5281/zenodo.6348728/6348729/rdf.yaml": {"cite"},  # doi prefixed
-    "10.5281/zenodo.6406803/6406804/rdf.yaml": {"cite"},  # doi prefixed
-    "10.5281/zenodo.6338614/6338615/rdf.yaml": {"cite"},  # doi prefixed
-    "10.5281/zenodo.5914248/8186255/rdf.yaml": {"cite"},  # doi prefixed
-    "10.5281/zenodo.7274275/8123818/rdf.yaml": {"inputs", "parent"},
-    "10.5281/zenodo.7315440/7315441/rdf.yaml": {
-        "cite",
-        "maintainers",
-        "weights",
-    },  # weights.onnx: missing sh256, cite[0].doi: prefix
-    "10.5281/zenodo.7772662/7781091/rdf.yaml": {
-        "weights"
-    },  # upper to lower case sha256
-    "10.5281/zenodo.6028097/6028098/rdf.yaml": {
-        "authors",  # gh username "Constantin Pape" -> contantinpape
-        "maintainers",
-    },
-    "zero/Notebook Preview/latest/rdf.yaml": {"rdf_source"},  # ' ' -> %20
-}
+def _get_rdf_sources():
+    all_versions_path: Any = pooch.retrieve(
+        BASE_URL + "all_versions.json", None, path=settings.cache_path
+    )
+    with Path(all_versions_path).open(encoding="utf-8") as f:
+        entries = json.load(f)["entries"]
+
+    ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
+    for entry in entries:
+        for version in entry["versions"]:
+            ret[f"{entry['concept']}/{version['v']}"] = (
+                HttpUrl(version["source"]),
+                Sha256(version["sha256"]),
+            )
+
+    return ret
+
+
+ALL_RDF_SOURCES: Mapping[str, Tuple[HttpUrl, Sha256]] = _get_rdf_sources()
 
 
 def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
-    collection_path: Any = pooch.retrieve(
-        BASE_URL + "collection.json", None, path=settings.cache_path
-    )
-    with Path(collection_path).open(encoding="utf-8") as f:
-        collection_data = json.load(f)["collection"]
-
-    collection_registry: Dict[str, None] = {
-        entry["rdf_source"].replace(RDF_BASE_URL, ""): None for entry in collection_data
-    }
-
-    for rdf in collection_registry:
-        descr_url = RDF_BASE_URL + rdf
-        key = rdf
-        yield pytest.param(descr_url, key, id=key)
+    for descr_url, sha in ALL_RDF_SOURCES.values():
+        key = (
+            descr_url.replace(BASE_URL, "")
+            .replace("/files/rdf.yaml", "")
+            .replace("/files/bioimageio.yaml", "")
+        )
+        yield pytest.param(descr_url, sha, key, id=key)
 
 
-@pytest.mark.parametrize("format_version", [DISCOVER, LATEST])
-@pytest.mark.parametrize("descr_url,key", list(yield_bioimageio_yaml_urls()))
+@skip_expensive
+@pytest.mark.parametrize("descr_url,sha,key", list(yield_bioimageio_yaml_urls()))
 def test_rdf(
     descr_url: Path,
+    sha: Sha256,
     key: str,
-    format_version: FormatVersionPlaceholder,
     bioimageio_json_schema: Mapping[Any, Any],
 ):
-    if (
-        format_version == DISCOVER
-        and key in KNOWN_INVALID
-        or format_version == LATEST
-        and key in KNOWN_INVALID_AS_LATEST
-    ):
+    if key in KNOWN_INVALID:
         pytest.skip("known failure")
 
     check_bioimageio_yaml(
         descr_url,
-        as_latest=format_version == LATEST,
-        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
+        sha=sha,
+        as_latest=False,
+        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(
+            key, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT
+        ),
         bioimageio_json_schema=bioimageio_json_schema,
         perform_io_checks=False,
+    )
+
+
+@skip_expensive
+@pytest.mark.parametrize(
+    "rdf_id",
+    [
+        "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
+        "ambitious-sloth/1.2",
+        "breezy-handbag/1",
+        "ilastik/ilastik/1",
+        "uplifting-ice-cream/1",
+    ],
+)
+def test_exemplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
+    """test a list of models we expect to be compatible with the latest spec version"""
+    source, sha = ALL_RDF_SOURCES[rdf_id]
+    check_bioimageio_yaml(
+        source,
+        sha=sha,
+        as_latest=True,
+        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(
+            rdf_id, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT
+        ),
+        bioimageio_json_schema=bioimageio_json_schema,
+        perform_io_checks=True,
     )
