@@ -15,6 +15,12 @@ class PipDeps(BaseModel):
         else:
             return False
 
+    def __gt__(self, other: Any):
+        if isinstance(other, PipDeps):
+            return len(self.pip) > len(other.pip)
+        else:
+            return False
+
 
 class CondaEnv(BaseModel):
     """Represenation of the content of a conda environment.yaml file"""
