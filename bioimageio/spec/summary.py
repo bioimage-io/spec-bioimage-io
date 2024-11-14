@@ -1,3 +1,4 @@
+import itertools
 import subprocess
 from io import StringIO
 from itertools import chain
@@ -275,6 +276,26 @@ class ValidationSummary(BaseModel, extra="allow"):
 
     @staticmethod
     def _format_md_table(rows: List[List[str]]) -> str:
+        """format `rows` as markdown table using html tags"""
+        head_row, *body_rows = rows
+        return (
+            "<table>"
+            + "<thead><tr>"
+            + "".join([f"<th>{h}</th>" for h in head_row])
+            + "</tr></thead>"
+            + "<tbody>"
+            + "".join(
+                [
+                    "<tr>" + "".join([f"<td>{d}</td>" for d in brow]) + "</tr>"
+                    for brow in body_rows
+                ]
+            )
+            + "</tbody>"
+            + "</table>\n"
+        )
+
+    @staticmethod
+    def _format_md_table_vanilla_md(rows: List[List[str]]) -> str:
         """format `rows` as markdown table"""
         n_cols = len(rows[0])
         assert all(len(row) == n_cols for row in rows)
@@ -345,6 +366,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                     [
                         "🐍",
                         "recommended conda env",
+                        f"```yaml\n{rec_env.getvalue()}```",
                         f'<pre><code>{rec_env.getvalue().replace(
                             "\n", "</code><br><code>"
                         )}</code></pre>',
