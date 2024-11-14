@@ -345,7 +345,9 @@ class ValidationSummary(BaseModel, extra="allow"):
                     [
                         "🐍",
                         "recommended conda env",
-                        f"```yaml\n{rec_env.read()}\n```".replace("\n", "<br>"),
+                        f'<pre lang="yaml"><code>{rec_env.getvalue().replace(
+                            '\n', '</code><br><code>'
+                        )}</code></pre>',
                     ]
                 )
 
