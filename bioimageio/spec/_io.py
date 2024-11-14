@@ -81,6 +81,9 @@ def load_model_description(
 ) -> AnyModelDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'model'.
+
+    Raises:
+        ValueError: for invalid or non-model resources
     """
     rd = load_description(
         source,

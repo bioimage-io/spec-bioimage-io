@@ -185,6 +185,10 @@ def update_format(
 def ensure_description_is_model(
     rd: Union[InvalidDescr, ResourceDescr],
 ) -> AnyModelDescr:
+    """
+    Raises:
+        ValueError: for invalid or non-model resources
+    """
     if isinstance(rd, InvalidDescr):
         rd.validation_summary.display()
         raise ValueError("resource description is invalid")
