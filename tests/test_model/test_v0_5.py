@@ -370,6 +370,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
+    summary.display()
     assert summary.status == "passed", summary.format()
 
 
