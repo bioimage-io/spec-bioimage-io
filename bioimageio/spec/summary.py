@@ -341,13 +341,12 @@ class ValidationSummary(BaseModel, extra="allow"):
                 json_env = d.recommended_env.model_dump(mode="json")
                 assert is_yaml_value(json_env)
                 write_yaml(json_env, rec_env)
+                rec_env_code = rec_env.getvalue().replace("\n", "</code><br><code>")
                 details.append(
                     [
                         "🐍",
                         "recommended conda env",
-                        f'<pre><code>{rec_env.getvalue().replace(
-                            "\n", "</code><br><code>"
-                        )}</code></pre>',
+                        f"<pre><code>{rec_env_code}</code></pre>",
                     ]
                 )
 
