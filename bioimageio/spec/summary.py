@@ -2,7 +2,7 @@ import subprocess
 from io import StringIO
 from itertools import chain
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 from types import MappingProxyType
 from typing import (
     Any,
@@ -152,19 +152,30 @@ class ValidationDetail(BaseModel, extra="allow"):
     def model_post_init(self, __context: Any):
         """create `conda_compare` default value if needed"""
         super().model_post_init(__context)
-        if self.recommended_env is not None and self.conda_compare is None:
-            dumped_env = self.recommended_env.model_dump(mode="json")
-            if is_yaml_value(dumped_env):
-                with NamedTemporaryFile(mode="w", encoding="utf-8") as f:
-                    write_yaml(dumped_env, f)
-                    self.conda_compare = subprocess.run(
-                        ["conda", "compare", f.name],
-                        capture_output=True,
-                        shell=True,
-                        text=True,
-                    ).stdout
-            else:
-                self.conda_compare = "Failed to dump recommended env to valid yaml"
+        if self.recommended_env is None or self.conda_compare is not None:
+            return
+
+        dumped_env = self.recommended_env.model_dump(mode="json")
+        if not is_yaml_value(dumped_env):
+            self.conda_compare = "Failed to dump recommended env to valid yaml"
+            return
+
+        with TemporaryDirectory() as d:
+            path = Path(d) / "env.yaml"
+            with path.open("w", encoding="utf-8") as f:
+                write_yaml(dumped_env, f)
+
+            compare_proc = subprocess.run(
+                ["conda", "compare", str(path)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                shell=True,
+                text=True,
+            )
+            self.conda_compare = (
+                compare_proc.stdout
+                or f"conda compare exited with {compare_proc.returncode}"
+            )
 
     def __str__(self):
         return f"{self.__class__.__name__}:\n" + self.format()
@@ -330,17 +341,18 @@ class ValidationSummary(BaseModel, extra="allow"):
                 json_env = d.recommended_env.model_dump(mode="json")
                 assert is_yaml_value(json_env)
                 write_yaml(json_env, rec_env)
+                rec_env_code = rec_env.getvalue().replace("\n", "</code><br><code>")
                 details.append(
                     [
                         "🐍",
                         "recommended conda env",
-                        f"```yaml\n{rec_env.read()}\n```".replace("\n", "<br>"),
+                        f"<pre><code>{rec_env_code}</code></pre>",
                     ]
                 )
 
-            if d.conda_compare is not None:
+            if d.conda_compare:
                 details.append(
-                    ["🐍", "actual conda env", d.conda_compare.replace("\n", "<br>")]
+                    ["🐍", "conda compare", d.conda_compare.replace("\n", "<br>")]
                 )
 
             for entry in d.errors:

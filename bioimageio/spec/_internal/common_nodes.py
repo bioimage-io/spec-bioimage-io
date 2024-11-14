@@ -515,6 +515,8 @@ class InvalidDescr(
     extra="allow",
     title="An invalid resource description",
 ):
+    """A representation of an invalid resource description"""
+
     type: Any = "unknown"
     format_version: Any = "unknown"
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
