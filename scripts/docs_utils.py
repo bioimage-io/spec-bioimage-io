@@ -10,13 +10,14 @@ def get_ref_url(
 ) -> str:
     """get github url with line range fragment to reference implementation from non-raw github file url
 
-    example:
-    >>> get_ref_url(
-    ...     "class",
-    ...     "Binarize",
-    ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
-    ... )
-    'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L120-L127'
+    Example:
+        >>> get_ref_url(
+        ...     "class",
+        ...     "Binarize",
+        ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py"
+        ... )
+        'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/prediction_pipeline/_processing.py#L120-L127'
+
     """
     # hotfix to handle requests not available in pyodide, see
     # https://github.com/bioimage-io/bioimage.io/issues/216#issuecomment-1012422194
