@@ -122,7 +122,7 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.3.4 (to be released)
+#### bioimageio.spec 0.5.3.4
 
 * support loading and saving from/to zipfile.ZipFile objects
 * fix bug when packaging with weights priority order (#638)
