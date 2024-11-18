@@ -11,10 +11,12 @@ from .model.v0_5 import Version
 from .utils import download
 
 SupportedWeightsEntry = Union[
+    v0_4.KerasHdf5WeightsDescr,
     v0_4.OnnxWeightsDescr,
     v0_4.PytorchStateDictWeightsDescr,
     v0_4.TensorflowSavedModelBundleWeightsDescr,
     v0_4.TorchscriptWeightsDescr,
+    v0_5.KerasHdf5WeightsDescr,
     v0_5.OnnxWeightsDescr,
     v0_5.PytorchStateDictWeightsDescr,
     v0_5.TensorflowSavedModelBundleWeightsDescr,
@@ -58,6 +60,14 @@ def get_conda_env(
             conda_env = _get_default_tf_env(tensorflow_version=entry.tensorflow_version)
         else:
             conda_env = _get_env_from_deps(entry.dependencies)
+    elif isinstance(
+        entry,
+        (
+            v0_4.KerasHdf5WeightsDescr,
+            v0_5.KerasHdf5WeightsDescr,
+        ),
+    ):
+        conda_env = _get_default_tf_env(tensorflow_version=entry.tensorflow_version)
     else:
         assert_never(entry)
 
