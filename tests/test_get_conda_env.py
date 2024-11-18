@@ -118,7 +118,7 @@ def test_get_default_pytorch_env():
         _get_default_pytorch_env(pytorch_version=Version.model_validate(v))
         for v in versions["pytorch"]
     ]
-    for p in ["torchvision", "torch_audio"]:
+    for p in ["torchvision", "torchaudio"]:
         versions[p] = [
             env._get_version(p) for env in envs  # pyright: ignore[reportPrivateUsage]
         ]
