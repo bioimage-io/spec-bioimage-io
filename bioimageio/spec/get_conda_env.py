@@ -140,7 +140,7 @@ def _get_default_pytorch_env(
         deps = [f"pytorch=={v}", "torchvision==0.20.0", "torchaudio==2.5.0"]
     else:
         set_github_warning(
-            "UPDATE NEEDED", "Specify pins for additional pytorch dependencies!"
+            "UPDATE NEEDED", f"Specify pins for additional pytorch=={v} dependencies!"
         )
         deps = [f"pytorch=={v}", "torchvision", "torchaudio"]
 

@@ -43,6 +43,19 @@ class CondaEnv(BaseModel):
     def wo_name(self):
         return self.model_construct(**{k: v for k, v in self if k != "name"})
 
+    def _get_version(self, package: str):
+        """Helper to return any verison pin for **package**
+
+        TODO: improve: interprete version pin and return structured information.
+        """
+        for d in self.dependencies:
+            if isinstance(d, PipDeps):
+                for p in d.pip:
+                    if p.startswith(package):
+                        return p[len(package) :]
+            elif d.startswith(package):
+                return d[len(package) :]
+
 
 class BioimageioCondaEnv(CondaEnv):
     """A special `CondaEnv` that
