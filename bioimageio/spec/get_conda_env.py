@@ -62,10 +62,7 @@ def get_conda_env(
             conda_env = _get_env_from_deps(entry.dependencies)
     elif isinstance(
         entry,
-        (
-            v0_4.KerasHdf5WeightsDescr,
-            v0_5.KerasHdf5WeightsDescr,
-        ),
+        (v0_4.KerasHdf5WeightsDescr, v0_5.KerasHdf5WeightsDescr),
     ):
         conda_env = _get_default_tf_env(tensorflow_version=entry.tensorflow_version)
     else:
