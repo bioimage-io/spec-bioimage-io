@@ -122,7 +122,7 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
-#### bioimageio.spec 0.5.3.5 (to be released)
+#### bioimageio.spec 0.5.3.5
 
 * fix loading tifffile in python 3.8 (pin tifffile)
 * use default tensorflow environments for Keras H5 weights
