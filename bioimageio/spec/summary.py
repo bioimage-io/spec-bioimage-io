@@ -338,21 +338,29 @@ class ValidationSummary(BaseModel, extra="allow"):
 
             if d.recommended_env is not None:
                 rec_env = StringIO()
-                json_env = d.recommended_env.model_dump(mode="json")
+                json_env = d.recommended_env.model_dump(
+                    mode="json", exclude_defaults=True
+                )
                 assert is_yaml_value(json_env)
                 write_yaml(json_env, rec_env)
                 rec_env_code = rec_env.getvalue().replace("\n", "</code><br><code>")
                 details.append(
                     [
                         "🐍",
-                        "recommended conda env",
-                        f"<pre><code>{rec_env_code}</code></pre>",
+                        format_loc(d.loc),
+                        f"recommended conda env ({d.name})<br>"
+                        + f"<pre><code>{rec_env_code}</code></pre>",
                     ]
                 )
 
             if d.conda_compare:
                 details.append(
-                    ["🐍", "conda compare", d.conda_compare.replace("\n", "<br>")]
+                    [
+                        "🐍",
+                        format_loc(d.loc),
+                        "conda compare ({d.name}):<br>"
+                        + d.conda_compare.replace("\n", "<br>"),
+                    ]
                 )
 
             for entry in d.errors:
