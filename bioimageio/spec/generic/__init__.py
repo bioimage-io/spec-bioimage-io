@@ -7,7 +7,7 @@ implementaions of all released minor versions are available in submodules:
 
 from typing import Union
 
-from pydantic import Discriminator
+from pydantic import Discriminator, Field
 from typing_extensions import Annotated
 
 from . import v0_2, v0_3
@@ -17,7 +17,12 @@ GenericDescr_v0_2 = v0_2.GenericDescr
 GenericDescr_v0_3 = v0_3.GenericDescr
 
 AnyGenericDescr = Annotated[
-    Union[GenericDescr_v0_2, GenericDescr_v0_3], Discriminator("format_version")
+    Union[
+        Annotated[GenericDescr_v0_2, Field(title="0.2")],
+        Annotated[GenericDescr_v0_3, Field(title="0.3")],
+    ],
+    Discriminator("format_version"),
+    Field(title="generic"),
 ]
 """Union of any released generic desription"""
 # autogen: stop

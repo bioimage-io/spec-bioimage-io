@@ -24,12 +24,12 @@ implementaions of all released minor versions are available in submodules:
 
 from typing import Union
 
-from pydantic import Discriminator
+from pydantic import Discriminator, Field
 from typing_extensions import Annotated
 
 {info.all_version_modules_imports}
 
-Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain_aliases}], Discriminator("format_version")]
+Any{info.target_node} = Annotated[Union[{info.all_target_nodes_plain_aliases_annotated}], Discriminator("format_version"), Field(title="{info.target}")]
 \"\"\"Union of any released {info.target} desription\"\"\"
 """
 
@@ -78,6 +78,7 @@ class Info:
     target_node: str = field(init=False)
     all_target_nodes_plain: str = field(init=False)
     all_target_nodes_plain_aliases: str = field(init=False)
+    all_target_nodes_plain_aliases_annotated: str = field(init=False)
     latest_version_module: str = field(init=False)
     all_version_modules_import_as: str = field(init=False)
     all_version_modules_imports: str = field(init=False)
@@ -91,6 +92,12 @@ class Info:
         )
         self.all_target_nodes_plain_aliases = ", ".join(
             [f"{self.target_node}_{vm}" for vm in self.all_version_modules]
+        )
+        self.all_target_nodes_plain_aliases_annotated = ", ".join(
+            [
+                f'Annotated[{self.target_node}_{vm}, Field(title="{vm.strip("v").replace("_", ".")}")]'
+                for vm in self.all_version_modules
+            ]
         )
         self.latest_version_module = self.all_version_modules[-1]
         self.all_version_modules_import_as = ", ".join(

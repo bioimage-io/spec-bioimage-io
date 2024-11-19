@@ -7,7 +7,7 @@ implementaions of all released minor versions are available in submodules:
 
 from typing import Union
 
-from pydantic import Discriminator
+from pydantic import Discriminator, Field
 from typing_extensions import Annotated
 
 from . import v0_4, v0_5
@@ -17,7 +17,12 @@ ModelDescr_v0_4 = v0_4.ModelDescr
 ModelDescr_v0_5 = v0_5.ModelDescr
 
 AnyModelDescr = Annotated[
-    Union[ModelDescr_v0_4, ModelDescr_v0_5], Discriminator("format_version")
+    Union[
+        Annotated[ModelDescr_v0_4, Field(title="0.4")],
+        Annotated[ModelDescr_v0_5, Field(title="0.5")],
+    ],
+    Discriminator("format_version"),
+    Field(title="model"),
 ]
 """Union of any released model desription"""
 # autogen: stop
