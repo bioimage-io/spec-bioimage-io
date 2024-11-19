@@ -36,7 +36,7 @@ _ = setup(
         "numpy>=1.21",
         "packaging>=17.0",
         "pooch>=1.5,<2",
-        "pydantic-settings",
+        "pydantic-settings>=2.5,<3",
         "pydantic>=2.7.0,<3",
         "python-dateutil",
         "requests",
